@@ -1,8 +1,13 @@
 import Image from "next/image";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 
 export default function Home() {
   return (
     <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
         <Image
           className="dark:invert"
@@ -12,6 +17,30 @@ export default function Home() {
           height={38}
           priority
         />
+        <SignedOut>
+          <div className="text-center p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+            <h2 className="text-xl font-semibold mb-2">Welcome! Please sign in to continue</h2>
+            <p className="text-gray-600 dark:text-gray-400">
+              This app uses Clerk for authentication. Click "Sign In" or "Sign Up" in the header to get started.
+            </p>
+          </div>
+        </SignedOut>
+        
+        <SignedIn>
+          <div className="text-center p-6 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+            <h2 className="text-xl font-semibold mb-2">🎉 You're successfully authenticated!</h2>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              Welcome to your protected Next.js app with Clerk integration and Drizzle ORM.
+            </p>
+            <a
+              href="/test-db"
+              className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-medium transition-colors"
+            >
+              🗄️ Tester la Base de Données
+            </a>
+          </div>
+        </SignedIn>
+
         <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
           <li className="mb-2 tracking-[-.01em]">
             Get started by editing{" "}
