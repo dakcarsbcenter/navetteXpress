@@ -1,0 +1,146 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/db';
+import { quotesTable } from '@/schema';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { eq } from 'drizzle-orm';
+
+// GET - Récupérer une demande de devis spécifique
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    
+    if (!session?.user?.id) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Non authentifié' 
+      }, { status: 401 });
+    }
+
+    const quote = await db
+      .select()
+      .from(quotesTable)
+      .where(eq(quotesTable.id, parseInt(params.id)))
+      .limit(1);
+
+    if (quote.length === 0) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Demande de devis non trouvée' 
+      }, { status: 404 });
+    }
+
+    return NextResponse.json({ 
+      success: true, 
+      data: quote[0] 
+    });
+
+  } catch (error) {
+    console.error('Erreur lors de la récupération de la demande de devis:', error);
+    return NextResponse.json({ 
+      success: false, 
+      error: 'Erreur interne du serveur' 
+    }, { status: 500 });
+  }
+}
+
+// PUT - Mettre à jour une demande de devis
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    
+    if (!session?.user?.id) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Non authentifié' 
+      }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const { 
+      status,
+      adminNotes,
+      estimatedPrice,
+      assignedTo
+    } = body;
+
+    const updatedQuote = await db
+      .update(quotesTable)
+      .set({
+        status: status || undefined,
+        adminNotes: adminNotes || undefined,
+        estimatedPrice: estimatedPrice || undefined,
+        assignedTo: assignedTo || undefined,
+        updatedAt: new Date()
+      })
+      .where(eq(quotesTable.id, parseInt(params.id)))
+      .returning();
+
+    if (updatedQuote.length === 0) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Demande de devis non trouvée' 
+      }, { status: 404 });
+    }
+
+    return NextResponse.json({ 
+      success: true, 
+      data: updatedQuote[0],
+      message: 'Demande de devis mise à jour avec succès'
+    });
+
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour de la demande de devis:', error);
+    return NextResponse.json({ 
+      success: false, 
+      error: 'Erreur interne du serveur' 
+    }, { status: 500 });
+  }
+}
+
+// DELETE - Supprimer une demande de devis
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    
+    if (!session?.user?.id) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Non authentifié' 
+      }, { status: 401 });
+    }
+
+    const deletedQuote = await db
+      .delete(quotesTable)
+      .where(eq(quotesTable.id, parseInt(params.id)))
+      .returning();
+
+    if (deletedQuote.length === 0) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Demande de devis non trouvée' 
+      }, { status: 404 });
+    }
+
+    return NextResponse.json({ 
+      success: true, 
+      message: 'Demande de devis supprimée avec succès'
+    });
+
+  } catch (error) {
+    console.error('Erreur lors de la suppression de la demande de devis:', error);
+    return NextResponse.json({ 
+      success: false, 
+      error: 'Erreur interne du serveur' 
+    }, { status: 500 });
+  }
+}

@@ -1,0 +1,128 @@
+---
+alwaysApply: false
+---
+- Use the App Router for better performance and organization of routes.
+- Implement proper error boundaries to handle errors gracefully.
+- Utilize dynamic routing and API routes effectively for server-side functionality.
+- Optimize images and assets using Next.js built-in features.
+
+---
+name: react-best-practices.mdc
+description: Best practices for React applications
+globs: **/*.{ts,tsx,js,jsx}
+---
+
+- Use functional components and hooks for state management.
+- Keep components small and focused on a single responsibility.
+- Leverage React's Context API for global state management when necessary.
+- Optimize performance with React.memo and useCallback.
+
+---
+name: typescript-best-practices.mdc 
+description: TypeScript coding standards and type safety guidelines
+globs: **/*.{ts,tsx}
+---
+
+- Use strict null checks to avoid runtime errors.
+- Prefer interfaces over types for object shapes.
+- Implement type guards and assertions for better type safety.
+- Utilize generics for reusable components and functions.
+
+---
+name: tailwindcss-best-practices.mdc
+description: Guidelines for styling with Tailwind CSS
+globs: **/*.{ts,tsx,css}
+---
+
+- Use utility classes for rapid styling and avoid custom CSS where possible.
+- Organize Tailwind classes logically for readability and maintainability.
+- Leverage responsive design features to ensure mobile compatibility.
+- Use the `@apply` directive for reusable styles in custom CSS.
+
+---
+name: shadcn-ui-best-practices.mdc
+description: Best practices for using Shadcn UI components
+globs: **/*.{ts,tsx}
+---
+
+- Follow Shadcn's design principles for consistent UI components.
+- Use the provided theming capabilities to maintain a cohesive look.
+- Ensure components are accessible and follow ARIA standards.
+- Customize components sparingly to maintain compatibility with updates.
+
+---
+name: lucide-react-best-practices.mdc
+description: Best practices for using Lucide React icons
+globs: **/*.{ts,tsx}
+---
+
+- Use icons that are relevant to the context and enhance usability.
+- Optimize icon usage by importing only the icons you need.
+- Ensure icons are accessible by providing appropriate alt text.
+- Maintain consistent sizing and spacing for a polished look.
+
+---
+name: nextauth-best-practices.mdc
+description: Best practices for authentication with NextAuth.js
+globs: **/*.{ts,tsx}
+---
+
+- Use secure session management practices, including JWTs or database sessions.
+- Implement role-based access control for sensitive routes.
+- Regularly update dependencies to mitigate security vulnerabilities.
+- Use callbacks to customize session and JWT behavior.
+
+---
+name: zod-best-practices.mdc
+description: Best practices for schema validation with Zod
+globs: **/*.{ts,tsx}
+---
+
+- Define schemas for all data inputs to ensure type safety.
+- Use Zod's built-in validation methods for comprehensive checks.
+- Leverage asynchronous validation for complex data requirements.
+- Keep schemas modular and reusable across different components.
+
+---
+name: drizzle-orm-best-practices.mdc
+description: Best practices for using Drizzle ORM
+globs: **/*.{ts,tsx}
+---
+
+- Use migrations to manage database schema changes effectively.
+- Define models clearly to reflect the database structure.
+- Utilize TypeScript types for strong typing in queries.
+- Optimize queries to minimize database load and improve performance.
+
+---
+name: bcryptjs-best-practices.mdc
+description: Best practices for password hashing with bcryptjs
+globs: **/*.{ts,tsx}
+---
+
+- Always use a strong salt factor for hashing passwords.
+- Store only hashed passwords in the database, never plain text.
+- Implement rate limiting on login attempts to prevent brute force attacks.
+- Regularly review and update security practices to stay current.
+
+---
+name: resend-best-practices.mdc
+description: Best practices for using Resend for email services
+globs: **/*.{ts,tsx}
+---
+
+- Use templates for consistent email formatting and branding.
+- Implement error handling for failed email deliveries.
+- Ensure compliance with email regulations (e.g., GDPR, CAN-SPAM).
+- Monitor email delivery rates and adjust strategies as needed.
+
+---
+name: postcss-best-practices.mdc
+description: Best practices for using PostCSS
+globs: **/*.{ts,tsx,css}
+---
+
+- Use PostCSS plugins to enhance CSS capabilities (e.g., autoprefixer).
+- Organize your PostCSS configuration for clarity and maintainability.
+- Leverage PostCSS for optimizing CSS output and reducing file size.
+- Keep your PostCSS dependencies updated to benefit from improvements.

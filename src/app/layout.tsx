@@ -2,14 +2,8 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import {
-  ClerkProvider,
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/nextjs";
+import { AuthSessionProvider } from "@/components/providers/session-provider";
+import { GoogleAnalytics } from "./google-analytics";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -18,8 +12,61 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Next.js App with Clerk Authentication",
-  description: "A Next.js application with Clerk authentication integration",
+  title: "Navette Xpress - Transfert Aéroport Dakar AIBD | Chauffeur Privé Sénégal",
+  description: "Service de transfert aéroport AIBD Dakar, Thies, Mbour. Chauffeurs privés professionnels 24h/24. Réservation instantanée, véhicules de luxe, prix compétitifs.",
+  keywords: "transfert aéroport Dakar, navette AIBD, chauffeur privé Sénégal, transport privé Dakar, transfert aéroport Thies, transfert aéroport Mbour, service chauffeur 24h Dakar",
+  authors: [{ name: "Navette Xpress Sénégal" }],
+  creator: "Navette Xpress",
+  publisher: "Navette Xpress Sénégal",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL('https://navettexpress.sn'),
+  alternates: {
+    canonical: '/',
+    languages: {
+      'fr-SN': '/',
+      'en-SN': '/en',
+    },
+  },
+  openGraph: {
+    title: "Navette Xpress - Transfert Aéroport Dakar AIBD | Chauffeur Privé Sénégal",
+    description: "Service de transfert aéroport AIBD Dakar, Thies, Mbour. Chauffeurs privés professionnels 24h/24. Réservation instantanée, véhicules de luxe.",
+    url: 'https://navettexpress.sn',
+    siteName: 'Navette Xpress Sénégal',
+    images: [
+      {
+        url: '/og-image-navette-xpress.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Navette Xpress - Service de Transfert Aéroport Dakar AIBD',
+      },
+    ],
+    locale: 'fr_SN',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "Navette Xpress - Transfert Aéroport Dakar AIBD",
+    description: "Service de transfert aéroport AIBD Dakar, Thies, Mbour. Chauffeurs privés professionnels 24h/24.",
+    images: ['/og-image-navette-xpress.jpg'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: 'your-google-verification-code',
+  },
 };
 
 export default function RootLayout({
@@ -27,50 +74,123 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const schemaOrg = {
+    "@context": "https://schema.org",
+    "@type": "TransportationService",
+    "name": "Navette Xpress Sénégal",
+    "description": "Service de transfert aéroport AIBD Dakar, Thies, Mbour. Chauffeurs privés professionnels 24h/24 pour tous vos déplacements au Sénégal.",
+    "url": "https://navettexpress.sn",
+    "telephone": "+221781319191",
+    "email": "contact@navettexpress.sn",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Avenue Léopold Sédar Senghor",
+      "addressLocality": "Dakar",
+      "addressRegion": "Dakar",
+      "addressCountry": "SN",
+      "postalCode": "10000"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": "14.6928",
+      "longitude": "-17.4467"
+    },
+    "areaServed": [
+      {
+        "@type": "City",
+        "name": "Dakar",
+        "containedInPlace": {
+          "@type": "Country",
+          "name": "Sénégal"
+        }
+      },
+      {
+        "@type": "City", 
+        "name": "Thiès",
+        "containedInPlace": {
+          "@type": "Country",
+          "name": "Sénégal"
+        }
+      },
+      {
+        "@type": "City",
+        "name": "Mbour", 
+        "containedInPlace": {
+          "@type": "Country",
+          "name": "Sénégal"
+        }
+      }
+    ],
+    "serviceType": [
+      "Transfert Aéroport",
+      "Transport Privé",
+      "Chauffeur Privé",
+      "Navette Aéroport"
+    ],
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Services de Transport",
+      "itemListElement": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Transfert Aéroport AIBD Dakar",
+            "description": "Service de transfert vers et depuis l'aéroport AIBD de Dakar"
+          }
+        },
+        {
+          "@type": "Offer", 
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Transfert Aéroport Thies",
+            "description": "Service de transfert vers et depuis l'aéroport de Thies"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service", 
+            "name": "Transfert Aéroport Mbour",
+            "description": "Service de transfert vers et depuis l'aéroport de Mbour"
+          }
+        }
+      ]
+    },
+    "openingHours": "Mo-Su 00:00-23:59",
+    "priceRange": "€€",
+    "foundingDate": "2024",
+    "sameAs": [
+      "https://www.facebook.com/navettexpresssenegal",
+      "https://www.instagram.com/navettexpresssenegal"
+    ]
+  };
+
   return (
-    <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body
-          className={`${poppins.variable} antialiased font-sans`}
-        >
+    <html lang="fr" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(schemaOrg),
+          }}
+        />
+      </head>
+      <body
+        className={`${poppins.variable} antialiased font-sans`}
+      >
+        <AuthSessionProvider>
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"
             enableSystem
             disableTransitionOnChange
           >
-            <header className="p-4 border-b border-gray-200 dark:border-gray-800">
-              <div className="max-w-7xl mx-auto flex justify-between items-center">
-                <h1 className="text-xl font-semibold">My Next.js App</h1>
-                <div className="flex items-center gap-4">
-                  <SignedOut>
-                    <SignInButton mode="modal">
-                      <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
-                        Sign In
-                      </button>
-                    </SignInButton>
-                    <SignUpButton mode="modal">
-                      <button className="border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 px-4 py-2 rounded-md text-sm font-medium transition-colors">
-                        Sign Up
-                      </button>
-                    </SignUpButton>
-                  </SignedOut>
-                  <SignedIn>
-                    <UserButton 
-                      appearance={{
-                        elements: {
-                          avatarBox: "w-8 h-8"
-                        }
-                      }}
-                    />
-                  </SignedIn>
-                </div>
-              </div>
-            </header>
             {children}
           </ThemeProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+        </AuthSessionProvider>
+        <GoogleAnalytics />
+      </body>
+    </html>
   );
 }

@@ -1,0 +1,92 @@
+---
+alwaysApply: false
+---
+# Règles d'Interaction avec la Base de Données
+
+## Utilisation Obligatoire du Schéma Drizzle
+
+Toutes les interactions avec la base de données DOIVENT utiliser le schéma Drizzle défini dans [schema.ts](mdc:src/schema.ts).
+
+### Tables Disponibles
+- `driversTable` - Gestion des chauffeurs
+- `vehiclesTable` - Gestion des véhicules  
+- `bookingsTable` - Gestion des réservations
+
+### Types TypeScript Obligatoires
+
+Utilisez TOUJOURS les types inférés du schéma :
+
+```typescript
+// Pour les insertions
+import type { InsertDriver, InsertVehicle, InsertBooking } from '@/schema'
+
+// Pour les sélections/lectures
+import type { SelectDriver, SelectVehicle, SelectBooking } from '@/schema'
+```
+
+### Requêtes Drizzle Standardisées
+
+#### Import du schéma et de la base de données
+```typescript
+import { db } from '@/lib/db'
+import { driversTable, vehiclesTable, bookingsTable } from '@/schema'
+import { eq, and, or, desc, asc } from 'drizzle-orm'
+```
+
+#### Patterns de Requêtes Recommandés
+
+**SELECT avec types :**
+```typescript
+const drivers: SelectDriver[] = await db.select().from(driversTable).where(eq(driversTable.isActive, true))
+```
+
+**INSERT avec validation des types :**
+```typescript
+const newDriver: InsertDriver = {
+  clerkUserId: 'user_123',
+  name: 'John Doe',
+  email: 'john@example.com',
+  // ... autres champs requis
+}
+const result = await db.insert(driversTable).values(newDriver).returning()
+```
+
+**Jointures avec relations :**
+```typescript
+const bookingsWithDrivers = await db
+  .select({
+    booking: bookingsTable,
+    driver: driversTable,
+    vehicle: vehiclesTable
+  })
+  .from(bookingsTable)
+  .leftJoin(driversTable, eq(bookingsTable.driverId, driversTable.id))
+  .leftJoin(vehiclesTable, eq(bookingsTable.vehicleId, vehiclesTable.id))
+```
+
+### Règles Strictes
+
+1. **INTERDIT** : Utilisation de SQL brut sans passer par Drizzle
+2. **OBLIGATOIRE** : Validation des types TypeScript pour tous les inputs
+3. **OBLIGATOIRE** : Gestion des erreurs avec try/catch pour toutes les opérations DB
+4. **RECOMMANDÉ** : Utilisation des transactions pour les opérations multiples
+
+### Gestion des Erreurs
+
+```typescript
+try {
+  const result = await db.insert(driversTable).values(newDriver)
+  return { success: true, data: result }
+} catch (error) {
+  console.error('Database error:', error)
+  return { success: false, error: 'Failed to create driver' }
+}
+```
+
+### Relations et Contraintes
+
+Respectez les contraintes définies dans le schéma :
+- `driverId` dans `vehiclesTable` → cascade delete
+- `driverId` et `vehicleId` dans `bookingsTable` → set null
+
+Cette règle garantit la cohérence et la sécurité de toutes les interactions avec la base de données PostgreSQL via Drizzle ORM.
