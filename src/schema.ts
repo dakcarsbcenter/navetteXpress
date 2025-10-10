@@ -66,6 +66,10 @@ export const vehiclesTable = pgTable('vehicles', {
   capacity: integer('capacity').notNull(),
   vehicleType: vehicleTypeEnum('vehicle_type').notNull().default('sedan'),
   photo: text('photo'),
+  // Nouveaux champs pour la page Flotte
+  category: text('category'), // Ex: "Berline de Luxe", "Berline Executive", etc.
+  description: text('description'), // Description du véhicule
+  features: text('features'), // JSON stringifié des équipements ["Cuir premium", "Wi-Fi", ...]
   // Chauffeur assigné (optionnel)
   driverId: text('driver_id').references(() => users.id, { onDelete: 'set null' }),
   isActive: boolean('is_active').notNull().default(true),
@@ -98,10 +102,7 @@ export const bookingsTable = pgTable('bookings', {
   notes: text('notes'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().$onUpdate(() => new Date()),
-}, (table) => ({
-  // Contrainte supprimée car elle bloque les mises à jour des réservations passées
-  // La vérification de date future sera faite côté application lors de la création
-}));
+});
 
 // Avis
 export const reviewsTable = pgTable('reviews', {
@@ -156,3 +157,33 @@ export type InsertPermission = typeof permissionsTable.$inferInsert;
 export type SelectPermission = typeof permissionsTable.$inferSelect;
 export type InsertQuote = typeof quotesTable.$inferInsert;
 export type SelectQuote = typeof quotesTable.$inferSelect;
+
+// Types pour les drivers (alias pour les utilisateurs avec le rôle driver)
+export type InsertDriver = InsertUser;
+export type SelectDriver = SelectUser;
+
+// Types pour les rapports de véhicules
+export type VehicleReport = {
+  id: number;
+  title: string;
+  description: string;
+  category: 'mechanical' | 'electrical' | 'bodywork' | 'interior' | 'other';
+  severity: 'low' | 'medium' | 'high' | 'urgent';
+  reportedAt: string;
+  vehicleInfo: {
+    make: string;
+    model: string;
+    year: number;
+    plateNumber: string;
+  };
+};
+
+// Types pour les réponses API
+export type ApiResponse<T = unknown> = {
+  success: boolean;
+  message?: string;
+  error?: string;
+  data?: T;
+  emailStatus?: 'sent' | 'failed';
+  emailError?: string;
+};

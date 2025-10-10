@@ -1,7 +1,5 @@
 import React from 'react';
 import { Card, CardContent, CardHeader } from '../ui/Card';
-import { Button } from '../ui/Button';
-import { Badge } from '../ui/Badge';
 
 const DesignGuidelines: React.FC = () => {
   return (
@@ -37,7 +35,7 @@ const DesignGuidelines: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-slate-600 dark:text-slate-300">
-                  Chaque décision de design doit prioriser les besoins de l'utilisateur, 
+                  Chaque décision de design doit prioriser les besoins de l&apos;utilisateur, 
                   particulièrement pour les services de transport où la clarté et la confiance sont primordiales.
                 </p>
               </CardContent>
@@ -106,7 +104,7 @@ const DesignGuidelines: React.FC = () => {
               <CardContent>
                 <p className="text-slate-600 dark:text-slate-300">
                   Maintenir une identité visuelle cohérente à travers tous les composants 
-                  et pages de l'application.
+                  et pages de l&apos;application.
                 </p>
               </CardContent>
             </Card>
@@ -141,10 +139,10 @@ const DesignGuidelines: React.FC = () => {
                 <span className="text-2xl">💼</span>
               </div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
-                Voyageurs d'Affaires
+                Voyageurs d&apos;Affaires
               </h3>
               <p className="text-sm text-slate-600 dark:text-slate-300">
-                Besoin d'efficacité, fiabilité et service professionnel
+                Besoin d&apos;efficacité, fiabilité et service professionnel
               </p>
             </Card>
 
@@ -168,7 +166,7 @@ const DesignGuidelines: React.FC = () => {
                 Résidents Locaux
               </h3>
               <p className="text-sm text-slate-600 dark:text-slate-300">
-                Veulent commodité, tarifs compétitifs et patterns d'interface familiers
+                Veulent commodité, tarifs compétitifs et patterns d&apos;interface familiers
               </p>
             </Card>
 
@@ -239,7 +237,7 @@ const DesignGuidelines: React.FC = () => {
                 <div>
                   <h4 className="font-semibold text-slate-900 dark:text-white mb-2">Accents</h4>
                   <p className="text-sm text-slate-600 dark:text-slate-300">
-                    Utiliser l'orange pour les call-to-action et les éléments d'interaction
+                    Utiliser l&apos;orange pour les call-to-action et les éléments d&apos;interaction
                   </p>
                 </div>
                 <div>
@@ -333,7 +331,7 @@ const DesignGuidelines: React.FC = () => {
         {/* Guidelines d'Espacement */}
         <section className="mb-20">
           <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-8">
-            Guidelines d'Espacement
+            Guidelines d&apos;Espacement
           </h2>
           <Card className="p-6">
             <CardContent>
@@ -384,7 +382,7 @@ const DesignGuidelines: React.FC = () => {
         {/* Guidelines d'Accessibilité */}
         <section className="mb-20">
           <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-8">
-            Guidelines d'Accessibilité
+            Guidelines d&apos;Accessibilité
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <Card className="p-6">
@@ -409,12 +407,12 @@ const DesignGuidelines: React.FC = () => {
                   <span className="text-2xl">🔍</span>
                 </div>
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white">
-                  Lecteurs d'Écran
+                  Lecteurs d&apos;Écran
                 </h3>
               </CardHeader>
               <CardContent>
                 <p className="text-slate-600 dark:text-slate-300">
-                  Utiliser des labels ARIA appropriés et du HTML sémantique pour les lecteurs d'écran.
+                  Utiliser des labels ARIA appropriés et du HTML sémantique pour les lecteurs d&apos;écran.
                 </p>
               </CardContent>
             </Card>
@@ -430,7 +428,7 @@ const DesignGuidelines: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-slate-600 dark:text-slate-300">
-                  Maintenir un contraste suffisant entre le texte et l'arrière-plan.
+                  Maintenir un contraste suffisant entre le texte et l&apos;arrière-plan.
                 </p>
               </CardContent>
             </Card>
@@ -480,7 +478,7 @@ const DesignGuidelines: React.FC = () => {
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
                       </div>
-                      <span className="text-slate-700 dark:text-slate-300">Vérifier l'accessibilité</span>
+                      <span className="text-slate-700 dark:text-slate-300">Vérifier l&apos;accessibilité</span>
                     </li>
                   </ul>
                 </div>
@@ -519,7 +517,7 @@ const DesignGuidelines: React.FC = () => {
                           <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                         </svg>
                       </div>
-                      <span className="text-slate-700 dark:text-slate-300">Problèmes d'accessibilité</span>
+                      <span className="text-slate-700 dark:text-slate-300">Problèmes d&apos;accessibilité</span>
                     </li>
                   </ul>
                 </div>

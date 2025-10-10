@@ -4,7 +4,6 @@ import { ServiceCard } from '../ui/ServiceCard';
 import { VehicleCard } from '../ui/VehicleCard';
 import { TestimonialCard } from '../ui/TestimonialCard';
 import { StatsCard } from '../ui/StatsCard';
-import { Badge } from '../ui/Badge';
 
 const HomePageMockup: React.FC = () => {
   return (
@@ -122,7 +121,7 @@ const HomePageMockup: React.FC = () => {
           <div className="grid md:grid-cols-3 gap-8">
             <ServiceCard
               title="Transfert Aéroport AIBD Dakar"
-              description="Service de transfert vers et depuis l'aéroport AIBD de Dakar. Chauffeurs professionnels, véhicules de luxe, prix compétitifs."
+              description="Service de transfert vers et depuis l&apos;aéroport AIBD de Dakar. Chauffeurs professionnels, véhicules de luxe, prix compétitifs."
               icon="✈️"
               features={[
                 "Suivi des vols en temps réel",
@@ -292,7 +291,7 @@ const HomePageMockup: React.FC = () => {
               Nos Performances
             </h2>
             <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-              Des chiffres qui parlent d'eux-mêmes
+              Des chiffres qui parlent d&apos;eux-mêmes
             </p>
           </div>
           
@@ -343,7 +342,7 @@ const HomePageMockup: React.FC = () => {
             Prêt à Réserver ?
           </h2>
           <p className="text-lg text-orange-100 mb-12 max-w-2xl mx-auto">
-            Découvrez l'excellence de nos services de transport de luxe
+            Découvrez l&apos;excellence de nos services de transport de luxe
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

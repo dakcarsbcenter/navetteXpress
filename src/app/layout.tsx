@@ -158,7 +158,7 @@ export default function RootLayout({
       ]
     },
     "openingHours": "Mo-Su 00:00-23:59",
-    "priceRange": "€€",
+    "priceRange": "$$",
     "foundingDate": "2024",
     "sameAs": [
       "https://www.facebook.com/navettexpresssenegal",

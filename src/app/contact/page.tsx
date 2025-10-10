@@ -2,6 +2,13 @@
 
 import { Navigation } from "@/components/navigation";
 import InteractiveMap from "@/components/ui/InteractiveMap";
+import { 
+  BookNowIcon, 
+  PhoneIcon, 
+  EmailIcon, 
+  LocationIcon, 
+  ClockIcon 
+} from "@/components/icons/custom-icons";
 import { useState } from "react";
 
 export default function ContactPage() {
@@ -49,10 +56,10 @@ export default function ContactPage() {
           message: ''
         });
       } else {
-        throw new Error(result.error || 'Erreur lors de l\'envoi de la demande');
+        throw new Error(result.error || 'Erreur lors de l&apos;envoi de la demande');
       }
     } catch (error) {
-      console.error('Erreur lors de l\'envoi:', error);
+      console.error('Erreur lors de l&apos;envoi:', error);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
@@ -66,27 +73,43 @@ export default function ContactPage() {
     }));
   };
 
+  // Function to get icon component for each contact method
+  const getContactIcon = (type: string) => {
+    switch (type) {
+      case 'phone':
+        return <PhoneIcon size={32} color="primary" />;
+      case 'email':
+        return <EmailIcon size={32} color="secondary" />;
+      case 'location':
+        return <LocationIcon size={32} color="primary" />;
+      case 'hours':
+        return <ClockIcon size={32} color="neutral" />;
+      default:
+        return <PhoneIcon size={32} color="primary" />;
+    }
+  };
+
   const contactInfo = [
     {
-      icon: "📞",
+      type: "phone",
       title: "Téléphone",
       details: ["+221 78 131 91 91", "Service disponible 24h/24"],
       link: "tel:+221781319191"
     },
     {
-      icon: "📧",
+      type: "email",
       title: "Email",
       details: ["contact@navettexpress.sn", "Réponse sous 2h en journée"],
       link: "mailto:contact@navettexpress.sn"
     },
     {
-      icon: "📍",
+      type: "location",
       title: "Adresse",
       details: ["Avenue Léopold Sédar Senghor", "Plateau, Dakar, Sénégal"],
       link: "https://maps.google.com"
     },
     {
-      icon: "⏰",
+      type: "hours",
       title: "Horaires",
       details: ["Bureau: Lun-Ven 8h-20h", "Service: 24h/24, 7j/7"],
       link: null
@@ -151,7 +174,7 @@ export default function ContactPage() {
               <div className="mb-6 p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg">
                 <div className="flex items-center gap-2 text-red-800 dark:text-red-200">
                   <span className="text-xl">❌</span>
-                  <span className="font-semibold">Erreur lors de l'envoi</span>
+                  <span className="font-semibold">Erreur lors de l&apos;envoi</span>
                 </div>
                 <p className="text-red-700 dark:text-red-300 mt-1 text-sm">
                   Veuillez réessayer ou nous appeler directement.
@@ -294,7 +317,9 @@ export default function ContactPage() {
               {contactInfo.map((info, index) => (
                 <div key={index} className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
                   <div className="flex items-start gap-4">
-                    <div className="text-3xl">{info.icon}</div>
+                    <div className="p-3 bg-slate-50 dark:bg-slate-700 rounded-xl">
+                      {getContactIcon(info.type)}
+                    </div>
                     <div className="flex-1">
                       <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
                         {info.title}
@@ -365,13 +390,13 @@ export default function ContactPage() {
                     Urgence 24h/24
                   </h3>
                   <p className="text-red-800 dark:text-red-300 mb-3">
-                    En cas d'urgence ou pour une réservation de dernière minute
+                    En cas d&apos;urgence ou pour une réservation de dernière minute
                   </p>
                   <a
                     href="tel:+221781319191"
                     className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors inline-flex items-center gap-2"
                   >
-                    📞 Appeler l'urgence
+                    📞 Appeler l&apos;urgence
                   </a>
                 </div>
               </div>
@@ -383,7 +408,7 @@ export default function ContactPage() {
                 Notre Localisation
               </h3>
               <p className="text-slate-600 dark:text-slate-300 mb-4">
-                Trouvez-nous facilement au Plateau, Dakar. Cliquez sur le marqueur pour plus d'informations.
+                Trouvez-nous facilement au Plateau, Dakar. Cliquez sur le marqueur pour plus d&apos;informations.
               </p>
               <InteractiveMap
                 center={[14.74342, -17.472408]} // Cité Magistrats, Foire,Dakar

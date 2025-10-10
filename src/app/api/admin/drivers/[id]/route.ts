@@ -7,12 +7,13 @@ import { requireAdminRole } from '@/utils/admin-permissions';
 // GET - Récupérer un chauffeur par ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdminRole(); // Vérification du rôle admin
 
-    const id = params.id;
+    const resolvedParams = await params;
+    const id = resolvedParams.id;
     if (!id) {
       return NextResponse.json({ 
         success: false, 
@@ -49,12 +50,13 @@ export async function GET(
 // PUT - Mettre à jour un chauffeur
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdminRole(); // Vérification du rôle admin
 
-    const id = params.id;
+    const resolvedParams = await params;
+    const id = resolvedParams.id;
     if (!id) {
       return NextResponse.json({ 
         success: false, 
@@ -102,12 +104,13 @@ export async function PUT(
 // DELETE - Supprimer un chauffeur
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdminRole(); // Vérification du rôle admin
 
-    const id = params.id;
+    const resolvedParams = await params;
+    const id = resolvedParams.id;
     if (!id) {
       return NextResponse.json({ 
         success: false, 

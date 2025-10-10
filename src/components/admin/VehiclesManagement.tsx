@@ -1,20 +1,26 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ConfirmationModal } from "@/components/ui/ConfirmationModal"
+import Image from "next/image"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { FilterBar } from "@/components/ui/FilterBar"
 import { useNotification } from "@/hooks/useNotification"
+import { ImageUploader } from "@/components/ImageUploader"
 
 interface Vehicle {
   id: number
   make: string
   model: string
   year: number
-  licensePlate: string
+  plateNumber: string
   capacity: number
+  vehicleType?: string
+  photo?: string | null
+  category?: string | null
+  description?: string | null
+  features?: string | null
+  driverId?: string | null
   isActive: boolean
-  photo?: string
   createdAt: string
 }
 
@@ -34,10 +40,19 @@ export function VehiclesManagement() {
     make: '',
     model: '',
     year: new Date().getFullYear(),
-    licensePlate: '',
+    plateNumber: '',
     capacity: 4,
+    vehicleType: 'sedan',
+    photo: '',
+    category: '',
+    description: '',
+    features: '',
     isActive: true
   })
+  
+  // État pour gérer les features comme tableau
+  const [featuresList, setFeaturesList] = useState<string[]>([])
+  const [newFeature, setNewFeature] = useState('')
 
   useEffect(() => {
     fetchVehicles()
@@ -45,6 +60,7 @@ export function VehiclesManagement() {
 
   useEffect(() => {
     applyFilters()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vehicles, filters])
 
   const fetchVehicles = async () => {
@@ -93,7 +109,7 @@ export function VehiclesManagement() {
       filtered = filtered.filter(vehicle => 
         vehicle.make.toLowerCase().includes(searchTerm) ||
         vehicle.model.toLowerCase().includes(searchTerm) ||
-        vehicle.licensePlate.toLowerCase().includes(searchTerm)
+        vehicle.plateNumber.toLowerCase().includes(searchTerm)
       )
     }
 
@@ -131,13 +147,32 @@ export function VehiclesManagement() {
     return { capacityCounts, statusCounts }
   }
 
+  // Fonction pour gérer l'upload d'image Cloudinary
+  const handleImageUpload = (url: string) => {
+    console.log('✅ Image uploadée vers Cloudinary:', url);
+    setFormData(prev => ({ ...prev, photo: url }));
+  };
+
   const handleCreateVehicle = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Validation de l'image obligatoire
+    if (!formData.photo || !formData.photo.trim()) {
+      showError('Veuillez uploader une photo du véhicule', 'Photo obligatoire')
+      return
+    }
+    
     try {
+      // Convertir featuresList en JSON string
+      const dataToSend = {
+        ...formData,
+        features: JSON.stringify(featuresList),
+      }
+      
       const response = await fetch('/api/admin/vehicles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(dataToSend)
       })
       
       if (response.ok) {
@@ -159,11 +194,23 @@ export function VehiclesManagement() {
     e.preventDefault()
     if (!editingVehicle) return
     
+    // Validation de l'image obligatoire
+    if (!formData.photo || !formData.photo.trim()) {
+      showError('Veuillez uploader une photo du véhicule', 'Photo obligatoire')
+      return
+    }
+    
     try {
+      // Convertir featuresList en JSON string
+      const dataToSend = {
+        ...formData,
+        features: JSON.stringify(featuresList),
+      }
+      
       const response = await fetch(`/api/admin/vehicles/${editingVehicle.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(dataToSend)
       })
       
       if (response.ok) {
@@ -208,22 +255,59 @@ export function VehiclesManagement() {
       make: '',
       model: '',
       year: new Date().getFullYear(),
-      licensePlate: '',
+      plateNumber: '',
       capacity: 4,
+      vehicleType: 'sedan',
+      photo: '',
+      category: '',
+      description: '',
+      features: '',
       isActive: true
     })
+    setFeaturesList([])
+    setNewFeature('')
+  }
+  
+  // Gérer l'ajout d'une feature
+  const handleAddFeature = () => {
+    if (newFeature.trim()) {
+      setFeaturesList([...featuresList, newFeature.trim()])
+      setNewFeature('')
+    }
+  }
+  
+  // Supprimer une feature
+  const handleRemoveFeature = (index: number) => {
+    setFeaturesList(featuresList.filter((_, i) => i !== index))
   }
 
   const openEditModal = (vehicle: Vehicle) => {
     setEditingVehicle(vehicle)
+    
+    // Parser les features si elles existent
+    let parsedFeatures: string[] = []
+    if (vehicle.features) {
+      try {
+        parsedFeatures = JSON.parse(vehicle.features)
+      } catch {
+        parsedFeatures = []
+      }
+    }
+    
     setFormData({
       make: vehicle.make,
       model: vehicle.model,
       year: vehicle.year,
-      licensePlate: vehicle.licensePlate,
+      plateNumber: vehicle.plateNumber,
       capacity: vehicle.capacity,
+      vehicleType: vehicle.vehicleType || 'sedan',
+      photo: vehicle.photo || '',
+      category: vehicle.category || '',
+      description: vehicle.description || '',
+      features: vehicle.features || '',
       isActive: vehicle.isActive
     })
+    setFeaturesList(parsedFeatures)
     setIsModalOpen(true)
   }
 
@@ -334,15 +418,15 @@ export function VehiclesManagement() {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex-shrink-0 h-10 w-10">
                       {vehicle.photo ? (
-                        <img
-                          className="h-10 w-10 rounded object-cover"
-                          src={vehicle.photo}
-                          alt={`Photo de ${vehicle.make} ${vehicle.model}`}
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none'
-                            e.currentTarget.nextElementSibling?.classList.remove('hidden')
-                          }}
-                        />
+                        <div className="relative h-10 w-10 rounded overflow-hidden">
+                          <Image
+                            fill
+                            className="object-cover"
+                            src={vehicle.photo}
+                            alt={`Photo de ${vehicle.make} ${vehicle.model}`}
+                            sizes="40px"
+                          />
+                        </div>
                       ) : null}
                       <div className={`h-10 w-10 rounded bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-gray-600 dark:text-gray-300 text-sm font-medium ${vehicle.photo ? 'hidden' : ''}`}>
                         🚗
@@ -360,7 +444,7 @@ export function VehiclesManagement() {
                     {vehicle.year}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                    {vehicle.licensePlate}
+                    {vehicle.plateNumber}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                     {vehicle.capacity} places
@@ -408,17 +492,17 @@ export function VehiclesManagement() {
 
       {/* Modal de création/édition */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-2xl">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               {editingVehicle ? 'Modifier le véhicule' : 'Nouveau véhicule'}
             </h3>
             
-            <form onSubmit={editingVehicle ? handleUpdateVehicle : handleCreateVehicle} className="space-y-4">
+            <form onSubmit={editingVehicle ? handleUpdateVehicle : handleCreateVehicle} className="space-y-4 max-h-[80vh] overflow-y-auto">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Marque
+                    Marque *
                   </label>
                   <input
                     type="text"
@@ -431,7 +515,7 @@ export function VehiclesManagement() {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Modèle
+                    Modèle *
                   </label>
                   <input
                     type="text"
@@ -446,7 +530,7 @@ export function VehiclesManagement() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Année
+                    Année *
                   </label>
                   <input
                     type="number"
@@ -459,7 +543,7 @@ export function VehiclesManagement() {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Capacité
+                    Capacité *
                   </label>
                   <select
                     value={formData.capacity}
@@ -476,18 +560,144 @@ export function VehiclesManagement() {
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Plaque d'immatriculation
+                  Plaque d&apos;immatriculation *
                 </label>
                 <input
                   type="text"
-                  value={formData.licensePlate}
-                  onChange={(e) => setFormData({...formData, licensePlate: e.target.value})}
+                  value={formData.plateNumber}
+                  onChange={(e) => setFormData({...formData, plateNumber: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                   required
                 />
               </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
+                  📸 Photo du véhicule *
+                </label>
+                <ImageUploader 
+                  onUploadComplete={handleImageUpload}
+                  currentImage={formData.photo}
+                  className="mb-4"
+                />
+                
+                {/* Option URL manuelle */}
+                <details className="mt-2">
+                  <summary className="text-xs text-gray-500 dark:text-gray-400 cursor-pointer hover:text-gray-700 dark:hover:text-gray-300">
+                    ⚙️ Saisir une URL manuellement (optionnel)
+                  </summary>
+                  <div className="mt-2 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                    <input
+                      type="url"
+                      value={formData.photo}
+                      onChange={(e) => setFormData({...formData, photo: e.target.value})}
+                      placeholder="https://exemple.com/photo-vehicule.jpg"
+                      className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    />
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      ⚠️ Utilisez de préférence l'upload Cloudinary ci-dessus
+                    </p>
+                  </div>
+                </details>
+                
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                  ✓ Upload automatique vers Cloudinary avec optimisation et CDN
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Type de véhicule *
+                </label>
+                <select
+                  value={formData.vehicleType}
+                  onChange={(e) => setFormData({...formData, vehicleType: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                  required
+                >
+                  <option value="sedan">Berline</option>
+                  <option value="luxury">Berline de Luxe</option>
+                  <option value="suv">SUV</option>
+                  <option value="van">Van</option>
+                  <option value="bus">Bus</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Catégorie personnalisée 🏷️
+                </label>
+                <input
+                  type="text"
+                  value={formData.category}
+                  onChange={(e) => setFormData({...formData, category: e.target.value})}
+                  placeholder="Ex: Berline Executive, SUV Premium..."
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Ce badge sera affiché sur la carte du véhicule (ex: &quot;Berline&quot;, &quot;SUV&quot;)
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Description pour la page Flotte 📝
+                </label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  placeholder="Description du véhicule pour la page publique..."
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Équipements (affichés sur la page Flotte) ⚙️
+                </label>
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newFeature}
+                      onChange={(e) => setNewFeature(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddFeature())}
+                      placeholder="Ex: Wi-Fi gratuit, Climatisation..."
+                      className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddFeature}
+                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium"
+                    >
+                      + Ajouter
+                    </button>
+                  </div>
+                  
+                  {featuresList.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2 p-2 bg-gray-50 dark:bg-gray-700 rounded-md">
+                      {featuresList.map((feature, index) => (
+                        <div
+                          key={index}
+                          className="bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm flex items-center gap-2"
+                        >
+                          <span>{feature}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveFeature(index)}
+                            className="text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-100 font-bold"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
               
-              <div className="flex items-center">
+              <div className="flex items-center pt-2 border-t border-gray-200 dark:border-gray-700">
                 <input
                   type="checkbox"
                   id="isActive"
@@ -496,7 +706,7 @@ export function VehiclesManagement() {
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <label htmlFor="isActive" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
-                  Véhicule actif
+                  Véhicule actif (visible sur la page Flotte)
                 </label>
               </div>
               

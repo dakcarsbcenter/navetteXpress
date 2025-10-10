@@ -219,7 +219,7 @@ export default function DevenirPartenaire() {
             </p>
             
             <Link href="/" className="inline-block">
-              <button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-xl font-semibold transition-colors duration-200">
+              <button className="bg-gradient-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl">
                 Retour à l&apos;accueil
               </button>
             </Link>
@@ -287,7 +287,7 @@ export default function DevenirPartenaire() {
                     required
                     value={formData.prenom}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-slate-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-slate-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FF7E38] focus:border-transparent"
                     placeholder="Votre prénom"
                   />
                 </div>
@@ -302,7 +302,7 @@ export default function DevenirPartenaire() {
                     required
                     value={formData.nom}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-slate-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-slate-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FF7E38] focus:border-transparent"
                     placeholder="Votre nom"
                   />
                 </div>
@@ -319,7 +319,7 @@ export default function DevenirPartenaire() {
                     required
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-slate-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-slate-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FF7E38] focus:border-transparent"
                     placeholder="votre.email@exemple.com"
                   />
                 </div>
@@ -334,7 +334,7 @@ export default function DevenirPartenaire() {
                     required
                     value={formData.telephone}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-slate-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-slate-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FF7E38] focus:border-transparent"
                     placeholder="06 12 34 56 78"
                   />
                 </div>
@@ -349,7 +349,7 @@ export default function DevenirPartenaire() {
                   required
                   value={formData.experience}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent [&>option]:text-slate-900 [&>option]:bg-white"
+                  className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FF7E38] focus:border-transparent [&>option]:text-slate-900 [&>option]:bg-white"
                 >
                   <option value="" className="text-slate-900 bg-white">Sélectionner</option>
                   <option value="1-3" className="text-slate-900 bg-white">1-3 ans</option>
@@ -373,7 +373,7 @@ export default function DevenirPartenaire() {
                       required
                       value={formData.vehicule.marque}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent [&>option]:text-slate-900 [&>option]:bg-white"
+                      className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FF7E38] focus:border-transparent [&>option]:text-slate-900 [&>option]:bg-white"
                     >
                       <option value="" className="text-slate-900 bg-white">Sélectionner une marque</option>
                       {Object.keys(vehicleData).map(marque => (
@@ -394,7 +394,7 @@ export default function DevenirPartenaire() {
                       value={formData.vehicule.modele}
                       onChange={handleInputChange}
                       disabled={!formData.vehicule.marque}
-                      className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed [&>option]:text-slate-900 [&>option]:bg-white"
+                      className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FF7E38] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed [&>option]:text-slate-900 [&>option]:bg-white"
                     >
                       <option value="" className="text-slate-900 bg-white">
                         {formData.vehicule.marque ? 'Sélectionner un modèle' : 'Choisissez d\'abord une marque'}
@@ -418,7 +418,7 @@ export default function DevenirPartenaire() {
                       required
                       value={formData.vehicule.annee}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent [&>option]:text-slate-900 [&>option]:bg-white"
+                      className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FF7E38] focus:border-transparent [&>option]:text-slate-900 [&>option]:bg-white"
                     >
                       <option value="" className="text-slate-900 bg-white">Sélectionner l&apos;année</option>
                       {years.map(year => (
@@ -439,7 +439,7 @@ export default function DevenirPartenaire() {
                       required
                       value={formData.vehicule.immatriculation}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-slate-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-slate-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FF7E38] focus:border-transparent"
                       placeholder="AB-123-CD"
                     />
                   </div>
@@ -452,7 +452,7 @@ export default function DevenirPartenaire() {
                       name="vehicule.assurance"
                       checked={formData.vehicule.assurance}
                       onChange={handleInputChange}
-                      className="w-4 h-4 text-orange-500 bg-white dark:bg-slate-700 border-gray-300 dark:border-gray-600 rounded focus:ring-orange-500 focus:ring-2"
+                      className="w-4 h-4 text-orange-500 bg-white dark:bg-slate-700 border-gray-300 dark:border-gray-600 rounded focus:ring-[#FF7E38] focus:ring-2"
                     />
                     <label className="ml-3 text-sm text-slate-700 dark:text-slate-300">
                       J&apos;ai une assurance valide
@@ -465,7 +465,7 @@ export default function DevenirPartenaire() {
                       name="vehicule.permis"
                       checked={formData.vehicule.permis}
                       onChange={handleInputChange}
-                      className="w-4 h-4 text-orange-500 bg-white dark:bg-slate-700 border-gray-300 dark:border-gray-600 rounded focus:ring-orange-500 focus:ring-2"
+                      className="w-4 h-4 text-orange-500 bg-white dark:bg-slate-700 border-gray-300 dark:border-gray-600 rounded focus:ring-[#FF7E38] focus:ring-2"
                     />
                     <label className="ml-3 text-sm text-slate-700 dark:text-slate-300">
                       J&apos;ai un permis de conduire valide depuis plus de 3 ans
@@ -485,7 +485,7 @@ export default function DevenirPartenaire() {
                   rows={4}
                   value={formData.motivation}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-slate-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-slate-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FF7E38] focus:border-transparent"
                   placeholder="Pourquoi souhaitez-vous devenir partenaire chauffeur ? Parlez-nous de votre expérience..."
                 />
               </div>
@@ -499,7 +499,7 @@ export default function DevenirPartenaire() {
                   required
                   value={formData.disponibilite}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent [&>option]:text-slate-900 [&>option]:bg-white"
+                  className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FF7E38] focus:border-transparent [&>option]:text-slate-900 [&>option]:bg-white"
                 >
                   <option value="" className="text-slate-900 bg-white">Sélectionner</option>
                   <option value="temps-plein" className="text-slate-900 bg-white">Temps plein (35h+/semaine)</option>

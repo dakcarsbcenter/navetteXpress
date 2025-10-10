@@ -181,7 +181,7 @@ export function AuthPrompt({ onAuthSuccess, prefillData }: AuthPromptProps) {
               onClick={() => setShowSigninForm(true)}
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors"
             >
-              J'ai déjà un compte
+              J&apos;ai déjà un compte
             </button>
             <button
               onClick={() => setShowSignupModal(true)}

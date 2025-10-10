@@ -4,13 +4,14 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Phone, Mail, Menu, X, ChevronDown } from "lucide-react";
 
 interface NavigationProps {
   variant?: "transparent" | "solid";
   showUserRole?: boolean;
 }
 
-export function Navigation({ variant = "solid", showUserRole = false }: NavigationProps) {
+export function Navigation({ variant = "solid" }: NavigationProps) {
   const { data: session } = useSession();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -42,12 +43,12 @@ export function Navigation({ variant = "solid", showUserRole = false }: Navigati
 
   // Éviter les différences d'hydratation en utilisant des classes fixes pour le premier rendu
   const baseClasses = variant === "transparent" 
-    ? `fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+    ? `fixed top-10 left-0 right-0 z-40 transition-all duration-300 ${
         isMounted && isScrolled 
           ? "bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-lg" 
           : "bg-slate-900/95 backdrop-blur-md"
       }`
-    : "bg-white dark:bg-slate-900 shadow-sm border-b border-slate-200/20 dark:border-slate-700/20";
+    : "bg-white dark:bg-slate-900 shadow-sm border-b border-slate-200/20 dark:border-slate-700/20 mt-10";
 
   const textClasses = variant === "transparent"
     ? isMounted && isScrolled 
@@ -63,22 +64,18 @@ export function Navigation({ variant = "solid", showUserRole = false }: Navigati
 
   return (
     <>
-      {/* Menu supérieur - Informations de contact */}
-      <div className="bg-slate-900 text-white text-sm py-2">
+      {/* Menu supérieur - Informations de contact - Toujours visible */}
+      <div className="bg-[#1E293B] text-white text-sm py-2 fixed top-0 left-0 right-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-6">
               <div className="flex items-center space-x-2">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                </svg>
+                <Phone className="w-4 h-4" />
                 <span className="hidden sm:inline">+221 78 131 91 91</span>
                 <span className="sm:hidden">+221 78 131 91 91</span>
               </div>
               <div className="hidden md:flex items-center space-x-2">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
+                <Mail className="w-4 h-4" />
                 <span>contact@navettexpress.sn</span>
               </div>
             </div>
@@ -101,7 +98,7 @@ export function Navigation({ variant = "solid", showUserRole = false }: Navigati
                     href="/auth/signup"
                     className="border border-white/30 text-white hover:bg-white/10 px-3 py-1 rounded text-sm font-medium transition-colors duration-200"
                   >
-                    S'inscrire
+                    S&apos;inscrire
                   </Link>
                 </div>
               )}
@@ -155,10 +152,10 @@ export function Navigation({ variant = "solid", showUserRole = false }: Navigati
               href="/reservation"
               className={`px-6 py-2.5 rounded-lg font-semibold transition-all duration-300 ${
                 variant === "transparent" && isMounted && isScrolled
-                  ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100"
+                  ? "bg-gradient-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white shadow-lg"
                   : variant === "transparent"
                   ? "bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
-                  : "bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100"
+                  : "bg-gradient-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white shadow-lg"
               }`}
             >
               Réserver
@@ -167,10 +164,10 @@ export function Navigation({ variant = "solid", showUserRole = false }: Navigati
             {/* Tableau de bord adaptatif selon le rôle */}
             {session?.user && (
               <Link
-                href={session.user.role === 'admin' ? '/admin/dashboard' : '/client/dashboard'}
+                href={(session.user as unknown as { role?: string })?.role === 'admin' ? '/admin/dashboard' : '/client/dashboard'}
                 className={`${linkClasses} font-medium transition-all duration-200 hover:scale-105`}
               >
-                {session.user.role === 'admin' ? 'Dashboard Admin' : 'Mon Espace'}
+                {(session.user as unknown as { role?: string })?.role === 'admin' ? 'Dashboard Admin' : 'Mon Espace'}
               </Link>
             )}
 
@@ -184,9 +181,7 @@ export function Navigation({ variant = "solid", showUserRole = false }: Navigati
                     {session.user.name?.charAt(0).toUpperCase() || 'U'}
                   </span>
                   <span className="hidden md:block">{session.user.name}</span>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
+                  <ChevronDown className="w-4 h-4" />
                 </button>
                 
                 {/* Dropdown menu */}
@@ -195,7 +190,7 @@ export function Navigation({ variant = "solid", showUserRole = false }: Navigati
                     <p className="text-sm font-medium text-slate-900 dark:text-white">{session.user.name}</p>
                     <p className="text-xs text-slate-500 dark:text-slate-400">{session.user.email}</p>
                     <span className="inline-block mt-1 px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
-                      {session.user.role === 'admin' ? 'Admin' : 'Client'}
+                      {(session.user as unknown as { role?: string })?.role === 'admin' ? 'Admin' : 'Client'}
                     </span>
                   </div>
                   <div className="p-2">
@@ -223,13 +218,11 @@ export function Navigation({ variant = "solid", showUserRole = false }: Navigati
               className={`${textClasses} p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200`}
               aria-label="Toggle menu"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {isMobileMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
+              {isMobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
         </div>
@@ -275,7 +268,7 @@ export function Navigation({ variant = "solid", showUserRole = false }: Navigati
             
             <Link
               href="/reservation"
-              className="block bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-3 rounded-lg font-semibold transition-all duration-200 w-fit mx-4"
+              className="block bg-gradient-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white px-4 py-3 rounded-lg font-semibold transition-all duration-200 shadow-lg w-fit mx-4"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Réserver
@@ -283,11 +276,11 @@ export function Navigation({ variant = "solid", showUserRole = false }: Navigati
 
             {session?.user && (
               <Link
-                href={session.user.role === 'admin' ? '/admin/dashboard' : '/client/dashboard'}
+                href={(session.user as unknown as { role?: string })?.role === 'admin' ? '/admin/dashboard' : '/client/dashboard'}
                 className={`${linkClasses} block px-4 py-3 rounded-lg font-medium transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-800`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                {session.user.role === 'admin' ? 'Dashboard Admin' : 'Mon Espace'}
+                {(session.user as unknown as { role?: string })?.role === 'admin' ? 'Dashboard Admin' : 'Mon Espace'}
               </Link>
             )}
 
@@ -296,7 +289,7 @@ export function Navigation({ variant = "solid", showUserRole = false }: Navigati
                 <div className="flex flex-col gap-2">
                   <Link
                     href="/auth/signin"
-                    className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer text-center"
+                    className="w-full bg-gradient-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg cursor-pointer text-center"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Se connecter
@@ -306,7 +299,7 @@ export function Navigation({ variant = "solid", showUserRole = false }: Navigati
                     className="w-full border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer text-center"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    S'inscrire
+                    S&apos;inscrire
                   </Link>
                 </div>
               </div>
@@ -322,7 +315,7 @@ export function Navigation({ variant = "solid", showUserRole = false }: Navigati
                     <p className="text-sm font-medium text-slate-900 dark:text-white">{session.user.name}</p>
                     <p className="text-xs text-slate-500 dark:text-slate-400">{session.user.email}</p>
                     <span className="inline-block mt-1 px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
-                      {session.user.role === 'admin' ? 'Admin' : 'Client'}
+                      {(session.user as unknown as { role?: string })?.role === 'admin' ? 'Admin' : 'Client'}
                     </span>
                   </div>
                 </div>

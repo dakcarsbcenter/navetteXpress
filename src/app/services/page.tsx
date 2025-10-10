@@ -1,13 +1,39 @@
 import { Navigation } from "@/components/navigation";
+import { 
+  AirportIcon, 
+  LuxuryCarIcon, 
+  PrivateDriverIcon, 
+  SafetyFirstIcon,
+  BookNowIcon
+} from "@/components/icons/custom-icons";
 import Link from "next/link";
 
 export default function ServicesPage() {
+  // Function to get icon component for each service
+  const getServiceIcon = (serviceId: number) => {
+    switch (serviceId) {
+      case 1:
+        return <AirportIcon size={48} color="primary" />;
+      case 2:
+        return <LuxuryCarIcon size={48} color="secondary" />;
+      case 3:
+        return <PrivateDriverIcon size={48} color="primary" />;
+      case 4:
+        return <SafetyFirstIcon size={48} color="secondary" />;
+      case 5:
+        return <LuxuryCarIcon size={48} color="primary" />;
+      case 6:
+        return <PrivateDriverIcon size={48} color="neutral" />;
+      default:
+        return <AirportIcon size={48} color="primary" />;
+    }
+  };
+
   const services = [
     {
       id: 1,
       title: "Transfert Aéroport AIBD Dakar",
-      icon: "✈️",
-      description: "Service de transfert vers et depuis l'aéroport AIBD de Dakar. Chauffeurs professionnels, véhicules de luxe, prix compétitifs.",
+      description: "Service de transfert vers et depuis l&apos;aéroport AIBD de Dakar. Chauffeurs professionnels, véhicules de luxe, prix compétitifs.",
       features: [
         "Suivi des vols en temps réel",
         "Accueil personnalisé avec panneau",
@@ -19,7 +45,6 @@ export default function ServicesPage() {
     {
       id: 2,
       title: "Transfert Aéroport Thies & Mbour",
-      icon: "🚗",
       description: "Service de transfert vers les aéroports de Thies et Mbour. Déplacements confortables et sécurisés au Sénégal.",
       features: [
         "Véhicules modernes et climatisés",
@@ -32,7 +57,6 @@ export default function ServicesPage() {
     {
       id: 3,
       title: "Chauffeur Privé Dakar",
-      icon: "🚙",
       description: "Service de chauffeur privé pour tous vos déplacements dans Dakar et ses environs. Confort et sécurité garantis.",
       features: [
         "Véhicules de luxe modernes",
@@ -45,7 +69,6 @@ export default function ServicesPage() {
     {
       id: 4,
       title: "Tours & Excursions",
-      icon: "🛣️",
       description: "Découvrez Dakar et ses environs avec nos guides-chauffeurs expérimentés pour une expérience unique.",
       features: [
         "Guides-chauffeurs multilingues",
@@ -58,8 +81,7 @@ export default function ServicesPage() {
     {
       id: 5,
       title: "Services VIP",
-      icon: "👑",
-      description: "Service ultra-premium avec véhicules d'exception et prestations sur-mesure pour une clientèle exigeante.",
+      description: "Service ultra-premium avec véhicules d&apos;exception et prestations sur-mesure pour une clientèle exigeante.",
       features: [
         "Véhicules de collection",
         "Butler personnel disponible",
@@ -71,13 +93,12 @@ export default function ServicesPage() {
     {
       id: 6,
       title: "Mise à Disposition",
-      icon: "🕐",
       description: "Véhicule et chauffeur à votre disposition pour une durée déterminée avec flexibilité maximale.",
       features: [
         "Chauffeur dédié exclusivement",
         "Planification flexible en temps réel",
         "Aucun frais de détour",
-        "Temps d'attente inclus",
+        "Temps d&apos;attente inclus",
         "Service multi-destinations"
       ]
     }
@@ -112,7 +133,9 @@ export default function ServicesPage() {
                 <div className="p-8">
                   {/* Header */}
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="text-5xl">{service.icon}</div>
+                    <div className="p-3 bg-slate-50 dark:bg-slate-700 rounded-xl">
+                      {getServiceIcon(service.id)}
+                    </div>
                     <div>
                       <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
                         {service.title}
@@ -143,8 +166,9 @@ export default function ServicesPage() {
                   <div className="flex gap-3">
                     <Link
                       href="/reservation"
-                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold text-center transition-colors"
+                      className="flex-1 bg-blue-600 hover:bg-blue-700 hover:scale-105 text-white px-6 py-3 rounded-lg font-semibold text-center transition-all duration-200 flex items-center justify-center gap-2"
                     >
+                      <BookNowIcon size={16} color="white" />
                       Réserver ce service
                     </Link>
                     <Link
@@ -164,7 +188,7 @@ export default function ServicesPage() {
       {/* Call to Action */}
       <section className="py-16 px-8 bg-slate-900 dark:bg-slate-950 text-white">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4">Besoin d'un Service Personnalisé ?</h2>
+          <h2 className="text-3xl font-bold mb-4">Besoin d&apos;un Service Personnalisé ?</h2>
           <p className="text-slate-300 mb-8 text-lg">
             Nos équipes sont à votre disposition pour créer une solution sur-mesure 
             adaptée à vos besoins spécifiques.
@@ -172,8 +196,9 @@ export default function ServicesPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/contact"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors"
+              className="bg-blue-600 hover:bg-blue-700 hover:scale-105 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center gap-2"
             >
+              <BookNowIcon size={20} color="white" />
               Nous Contacter
             </Link>
             <a

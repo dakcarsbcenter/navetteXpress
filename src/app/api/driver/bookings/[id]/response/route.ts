@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { db } from '@/db';
 import { bookingsTable, users } from '@/schema';
@@ -9,19 +9,19 @@ import { sendBookingApprovalNotificationToCustomer } from '@/lib/brevo-email';
 // PUT - Approuver ou rejeter une réservation (chauffeur uniquement)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Vérifier l'authentification et le rôle chauffeur
-    const session = await getServerSession(authOptions);
-    if (!session?.user || session.user.role !== 'driver') {
+    const session = await getServerSession(authOptions) as { user?: { id?: string; role?: string } } | null;
+    if (!session?.user || (session.user as { role?: string }).role !== 'driver') {
       return NextResponse.json(
         { error: "Accès refusé. Seuls les chauffeurs peuvent accéder à cette ressource." },
         { status: 403 }
       );
     }
 
-    const id = parseInt(params.id);
+    const id = parseInt((await params).id);
     if (isNaN(id)) {
       return NextResponse.json({ 
         success: false, 
@@ -39,12 +39,13 @@ export async function PUT(
     }
 
     // Vérifier que la réservation existe et est assignée au chauffeur connecté
+    const userSession = session as unknown as { user: { id: string } }
     const existingBooking = await db
       .select()
       .from(bookingsTable)
       .where(and(
         eq(bookingsTable.id, id),
-        eq(bookingsTable.driverId, session.user.id),
+        eq(bookingsTable.driverId, userSession.user.id),
         eq(bookingsTable.status, 'assigned')
       ))
       .limit(1);
@@ -71,7 +72,7 @@ export async function PUT(
     const responseBooking = updatedBooking[0];
     const originalBooking = existingBooking[0];
     
-    console.log(`✅ Réservation #${responseBooking.id} ${action === 'approve' ? 'approuvée' : 'rejetée'} par ${session.user.name}`);
+    console.log(`✅ Réservation #${responseBooking.id} ${action === 'approve' ? 'approuvée' : 'rejetée'} par le chauffeur`);
 
     // Si approuvée, envoyer notification de confirmation au client
     if (action === 'approve') {
@@ -80,7 +81,7 @@ export async function PUT(
         const driverInfo = await db
           .select()
           .from(users)
-          .where(eq(users.id, session.user.id))
+          .where(eq(users.id, userSession.user.id))
           .limit(1);
 
         const driver = driverInfo[0];
@@ -97,7 +98,7 @@ export async function PUT(
             pickupAddress: originalBooking.pickupAddress,
             dropoffAddress: originalBooking.dropoffAddress,
             scheduledDateTime: originalBooking.scheduledDateTime.toISOString(),
-            price: originalBooking.price,
+            price: originalBooking.price || "0",
             vehicleInfo: undefined, // TODO: À récupérer de la DB des véhicules
             notes: originalBooking.notes || undefined
           }

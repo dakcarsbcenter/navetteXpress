@@ -2,7 +2,7 @@
 
 import { useSession, signOut } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense } from "react"
 import { Navigation } from "@/components/navigation"
 import Link from "next/link"
 import { CreateReviewModal } from "@/components/client/CreateReviewModal"
@@ -58,7 +58,7 @@ interface UserProfile {
 
 type TabType = 'overview' | 'bookings' | 'reviews' | 'create-reviews' | 'profile'
 
-export default function ClientDashboard() {
+function ClientDashboardContent() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -69,7 +69,7 @@ export default function ClientDashboard() {
   const [reviewableBookings, setReviewableBookings] = useState<ReviewableBooking[]>([])
   const [selectedBookingForReview, setSelectedBookingForReview] = useState<ReviewableBooking | null>(null)
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false)
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
+  const [userProfile] = useState<UserProfile | null>(null)
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false)
   const [stats, setStats] = useState({
     totalBookings: 0,
@@ -88,7 +88,7 @@ export default function ClientDashboard() {
       return
     }
     
-    if (session?.user && session.user.role !== 'customer') {
+    if (session?.user && (session.user as unknown as { role?: string }).role !== 'customer') {
       router.push("/dashboard") // Redirection vers dashboard générique
       return
     }
@@ -98,9 +98,10 @@ export default function ClientDashboard() {
 
   // Charger les données client
   useEffect(() => {
-    if (session?.user?.id) {
+    if (session?.user && (session.user as unknown as { id?: string }).id) {
       loadClientData()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session])
 
   // Gérer les paramètres d'URL pour l'onglet actif
@@ -164,7 +165,7 @@ export default function ClientDashboard() {
     )
   }
 
-  if (!session?.user || session.user.role !== 'customer') {
+  if (!session?.user || (session.user as unknown as { role?: string }).role !== 'customer') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
         <div className="text-xl text-red-600">Accès refusé. Page réservée aux clients.</div>
@@ -552,7 +553,7 @@ export default function ClientDashboard() {
                 <div className="text-center py-8">
                   <p className="text-slate-500 dark:text-slate-400">Aucun avis donné pour le moment</p>
                   <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">
-                    Vous pourrez évaluer vos trajets une fois qu'ils seront terminés
+                    Vous pourrez évaluer vos trajets une fois qu&apos;ils seront terminés
                   </p>
                 </div>
               )}
@@ -663,7 +664,7 @@ export default function ClientDashboard() {
                         ID Client
                       </label>
                       <p className="text-slate-600 dark:text-slate-400 text-sm font-mono">
-                        {userProfile?.id?.slice(0, 8) || session?.user?.id?.slice(0, 8) || "N/A"}...
+                        {userProfile?.id?.slice(0, 8) || (session?.user as unknown as { id?: string })?.id?.slice(0, 8) || "N/A"}...
                       </p>
                     </div>
                   </div>
@@ -847,5 +848,20 @@ export default function ClientDashboard() {
         }}
       />
     </div>
+  )
+}
+
+export default function ClientDashboard() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-slate-600 dark:text-slate-400">Chargement du tableau de bord...</p>
+        </div>
+      </div>
+    }>
+      <ClientDashboardContent />
+    </Suspense>
   )
 }

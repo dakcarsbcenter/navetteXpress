@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { Card, CardContent, CardHeader } from './Card';
 import { Button } from './Button';
 import { Badge } from './Badge';
@@ -46,10 +47,12 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
       {/* Image Container */}
       <div className="relative h-48 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 overflow-hidden">
         {image ? (
-          <img 
+          <Image 
             src={image} 
             alt={name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-6xl">
@@ -91,7 +94,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
             {name}
           </h3>
           <div className="text-right">
-            <div className="text-2xl font-bold text-orange-600">
+            <div className="text-2xl font-bold text-[#FF7E38]">
               {price}
             </div>
             <div className="text-xs text-slate-500 dark:text-slate-400">
@@ -121,7 +124,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
         <div className="space-y-2 mb-6">
           {features.slice(0, 3).map((feature, index) => (
             <div key={index} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-              <div className="w-1.5 h-1.5 bg-orange-500 rounded-full flex-shrink-0" />
+              <div className="w-1.5 h-1.5 bg-[#FF7E38] rounded-full flex-shrink-0" />
               <span>{feature}</span>
             </div>
           ))}

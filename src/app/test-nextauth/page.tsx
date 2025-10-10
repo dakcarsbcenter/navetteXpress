@@ -2,6 +2,7 @@
 
 import { useSession, signIn, signOut } from "next-auth/react"
 import { useState } from "react"
+import Link from "next/link"
 
 export default function TestNextAuthPage() {
   const { data: session, status } = useSession()
@@ -59,7 +60,7 @@ export default function TestNextAuthPage() {
               Bonjour, {session.user?.name || session.user?.email} !
             </p>
             <div className="space-y-2 text-sm text-green-600">
-              <p><strong>ID:</strong> {session.user?.id}</p>
+              <p><strong>ID:</strong> {(session.user as unknown as { id?: string })?.id}</p>
               <p><strong>Email:</strong> {session.user?.email}</p>
               <p><strong>Nom:</strong> {session.user?.name}</p>
             </div>
@@ -95,7 +96,7 @@ export default function TestNextAuthPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                placeholder="n'importe quel mot de passe"
+                placeholder="n&apos;importe quel mot de passe"
                 required
               />
             </div>
@@ -111,9 +112,9 @@ export default function TestNextAuthPage() {
         )}
 
         <div className="text-center">
-          <a href="/" className="text-blue-600 hover:text-blue-500">
-            ← Retour à l'accueil
-          </a>
+          <Link href="/" className="text-blue-600 hover:text-blue-500">
+            ← Retour à l&apos;accueil
+          </Link>
         </div>
       </div>
     </div>

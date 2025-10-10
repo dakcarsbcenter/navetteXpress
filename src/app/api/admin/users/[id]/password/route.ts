@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
+import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/db"
 import { users } from "@/schema"
@@ -9,12 +9,12 @@ import bcrypt from "bcryptjs"
 // PUT - Réinitialiser le mot de passe d'un utilisateur
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Vérifier l'authentification et le rôle admin
-    const session = await getServerSession(authOptions)
-    if (!session?.user || session.user.role !== 'admin') {
+    const session = await getServerSession(authOptions) as { user?: { role?: string } } | null
+    if (!session?.user || (session.user as { role?: string }).role !== 'admin') {
       return NextResponse.json(
         { error: "Accès refusé. Seuls les administrateurs peuvent accéder à cette ressource." },
         { status: 403 }
@@ -34,7 +34,7 @@ export async function PUT(
     const existingUser = await db
       .select()
       .from(users)
-      .where(eq(users.id, params.id))
+      .where(eq(users.id, (await params).id))
       .limit(1)
 
     if (existingUser.length === 0) {
@@ -54,7 +54,7 @@ export async function PUT(
         password: hashedPassword,
         updatedAt: new Date()
       })
-      .where(eq(users.id, params.id))
+      .where(eq(users.id, (await params).id))
       .returning({
         id: users.id,
         name: users.name,

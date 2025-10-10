@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useSession } from 'next-auth/react'
 
 interface DriverStatsProps {
@@ -24,9 +24,9 @@ interface StatsData {
 }
 
 export function DriverStats({ onBack }: DriverStatsProps) {
-  const { data: session } = useSession()
+  useSession()
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'year'>('month')
-  const [stats, setStats] = useState<StatsData>({
+  const [stats] = useState<StatsData>({
     period: 'month',
     totalRides: 156,
     completedRides: 148,
@@ -174,12 +174,12 @@ export function DriverStats({ onBack }: DriverStatsProps) {
             </div>
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">Revenus Totaux</p>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.totalEarnings.toLocaleString()}€</p>
+              <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.totalEarnings.toLocaleString()} FCFA</p>
             </div>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600 dark:text-gray-400">{getEarningsPerHour()}€/h</span>
-            <span className="text-gray-600 dark:text-gray-400">{getEarningsPerKm()}€/km</span>
+            <span className="text-gray-600 dark:text-gray-400">{getEarningsPerHour()} FCFA/h</span>
+            <span className="text-gray-600 dark:text-gray-400">{getEarningsPerKm()} FCFA/km</span>
           </div>
         </div>
 
@@ -222,7 +222,7 @@ export function DriverStats({ onBack }: DriverStatsProps) {
         <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">
           <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Performance Mensuelle</h3>
           <div className="space-y-4">
-            {stats.monthlyData.map((month, index) => (
+            {stats.monthlyData.map((month) => (
               <div key={month.month} className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <div className="w-12 text-sm font-medium text-gray-600 dark:text-gray-400">
@@ -234,7 +234,7 @@ export function DriverStats({ onBack }: DriverStatsProps) {
                         {month.rides} courses
                       </span>
                       <span className="text-sm text-green-600 dark:text-green-400">
-                        {month.earnings.toLocaleString()}€
+                        {month.earnings.toLocaleString()} FCFA
                       </span>
                     </div>
                     <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
@@ -340,12 +340,12 @@ export function DriverStats({ onBack }: DriverStatsProps) {
                   <div className="flex items-center space-x-3 text-xs text-gray-600 dark:text-gray-400">
                     <span>{route.count} courses</span>
                     <span>•</span>
-                    <span>Prix moyen: {route.avgPrice}€</span>
+                    <span>Prix moyen: {route.avgPrice} FCFA</span>
                   </div>
                 </div>
                 <div className="text-right">
                   <div className="text-lg font-bold text-green-600 dark:text-green-400">
-                    {(route.count * route.avgPrice).toLocaleString()}€
+                    {(route.count * route.avgPrice).toLocaleString()} FCFA
                   </div>
                   <div className="text-xs text-gray-500 dark:text-gray-400">
                     total
@@ -379,7 +379,7 @@ export function DriverStats({ onBack }: DriverStatsProps) {
             <div className="text-3xl mb-3">⭐</div>
             <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Service Client</h4>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Votre note de {stats.averageRating}/5 témoigne d'un service de qualité
+              Votre note de {stats.averageRating}/5 témoigne d&apos;un service de qualité
             </p>
           </div>
         </div>

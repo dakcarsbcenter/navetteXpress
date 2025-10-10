@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { Card, CardContent } from './Card';
 import { Badge } from './Badge';
 import { cn } from '@/lib/utils';
@@ -53,13 +54,17 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg overflow-hidden">
               {avatar ? (
-                <img 
-                  src={avatar} 
-                  alt={name}
-                  className="w-full h-full rounded-full object-cover"
-                />
+                <div className="relative w-full h-full">
+                  <Image 
+                    src={avatar} 
+                    alt={name}
+                    fill
+                    className="object-cover"
+                    sizes="48px"
+                  />
+                </div>
               ) : (
                 name.charAt(0).toUpperCase()
               )}
@@ -104,7 +109,7 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
         
         {/* Content */}
         <blockquote className="text-slate-700 dark:text-slate-300 leading-relaxed">
-          "{content}"
+          &quot;{content}&quot;
         </blockquote>
         
         {/* Quote Icon */}

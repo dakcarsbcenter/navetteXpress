@@ -92,7 +92,7 @@ export function MindBlowingNotification({
           life: 1,
           color: colors[Math.floor(Math.random() * colors.length)],
           size: Math.random() * 6 + 3,
-          trail: Array.from({ length: 5 }, (_, j) => ({
+          trail: Array.from({ length: 5 }, () => ({
             x: Math.random() * 100,
             y: Math.random() * 100,
             life: 1
@@ -109,7 +109,7 @@ export function MindBlowingNotification({
           y: Math.random() * 100,
           life: 1,
           intensity: Math.random() * 0.8 + 0.2,
-          branches: Array.from({ length: 3 }, (_, j) => ({
+          branches: Array.from({ length: 3 }, () => ({
             x: Math.random() * 100,
             y: Math.random() * 100,
             life: 1

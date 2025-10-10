@@ -160,7 +160,7 @@ export default function TemoignagesPage() {
 
                 {/* Commentaire */}
                 <p className="text-slate-700 mb-4 italic">
-                  "{temoignage.commentaire}"
+                  &quot;{temoignage.commentaire}&quot;
                 </p>
 
                 {/* Service */}
@@ -202,7 +202,7 @@ export default function TemoignagesPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="/reservation"
-              className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-colors"
+              className="bg-gradient-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl"
             >
               Réserver Maintenant
             </a>

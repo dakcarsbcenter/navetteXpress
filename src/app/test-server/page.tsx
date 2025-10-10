@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 
 export default function TestServerPage() {
   const [result, setResult] = useState("")
@@ -67,9 +68,9 @@ export default function TestServerPage() {
           <p className="text-sm text-gray-600">
             Si le test fonctionne, le problème vient de la configuration de la base de données.
           </p>
-          <a href="/" className="text-blue-600 hover:text-blue-500">
-            ← Retour à l'accueil
-          </a>
+          <Link href="/" className="text-blue-600 hover:text-blue-500">
+            ← Retour à l&apos;accueil
+          </Link>
         </div>
       </div>
     </div>

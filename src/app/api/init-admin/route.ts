@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { userRolesTable } from '@/schema';
+import { users } from '@/schema';
 import { eq } from 'drizzle-orm';
 
 /**
@@ -15,8 +15,8 @@ export async function POST(request: NextRequest) {
       // En production, on vérifie s'il y a déjà des admins
       const existingAdmins = await db
         .select()
-        .from(userRolesTable)
-        .where(eq(userRolesTable.role, 'admin'));
+        .from(users)
+        .where(eq(users.role, 'admin'));
 
       if (existingAdmins.length > 0) {
         return NextResponse.json({ 
@@ -27,63 +27,58 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { clerkUserId } = body;
+    const { email, name } = body;
 
-    if (!clerkUserId) {
+    if (!email || !name) {
       return NextResponse.json({ 
         success: false, 
-        error: 'clerkUserId est obligatoire' 
+        error: 'email et name sont obligatoires' 
       }, { status: 400 });
     }
 
-    if (!clerkUserId.startsWith('user_')) {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'Format d\'ID Clerk invalide (doit commencer par user_)' 
-      }, { status: 400 });
-    }
-
-    // Vérifier si l'utilisateur a déjà un rôle
-    const existingRole = await db
+    // Vérifier si l'utilisateur existe déjà
+    const existingUser = await db
       .select()
-      .from(userRolesTable)
-      .where(eq(userRolesTable.clerkUserId, clerkUserId))
+      .from(users)
+      .where(eq(users.email, email))
       .limit(1);
 
-    if (existingRole.length > 0) {
+    if (existingUser.length > 0) {
       // Mettre à jour vers admin si ce n'est pas déjà le cas
-      if (existingRole[0].role !== 'admin') {
+      if (existingUser[0].role !== 'admin') {
         await db
-          .update(userRolesTable)
+          .update(users)
           .set({ role: 'admin', updatedAt: new Date() })
-          .where(eq(userRolesTable.clerkUserId, clerkUserId));
+          .where(eq(users.email, email));
         
         return NextResponse.json({ 
           success: true, 
-          message: `Rôle mis à jour de ${existingRole[0].role} vers admin pour l'utilisateur ${clerkUserId}`,
+          message: `Rôle mis à jour de ${existingUser[0].role} vers admin pour l'utilisateur ${email}`,
           action: 'updated'
         });
       } else {
         return NextResponse.json({ 
           success: true, 
-          message: `L'utilisateur ${clerkUserId} est déjà administrateur`,
+          message: `L'utilisateur ${email} est déjà administrateur`,
           action: 'already_admin'
         });
       }
     } else {
-      // Créer un nouveau rôle admin
-      const newRole = await db
-        .insert(userRolesTable)
+      // Créer un nouvel utilisateur admin
+      const newUser = await db
+        .insert(users)
         .values({
-          clerkUserId,
+          id: `admin_${Date.now()}`,
+          email,
+          name,
           role: 'admin',
         })
         .returning();
 
       return NextResponse.json({ 
         success: true, 
-        message: `Rôle admin assigné avec succès à l'utilisateur ${clerkUserId}`,
-        data: newRole[0],
+        message: `Utilisateur admin créé avec succès pour ${email}`,
+        data: newUser[0],
         action: 'created'
       }, { status: 201 });
     }
@@ -101,8 +96,8 @@ export async function GET() {
   try {
     const admins = await db
       .select()
-      .from(userRolesTable)
-      .where(eq(userRolesTable.role, 'admin'));
+      .from(users)
+      .where(eq(users.role, 'admin'));
 
     return NextResponse.json({ 
       success: true, 
@@ -120,7 +115,3 @@ export async function GET() {
     }, { status: 500 });
   }
 }
-
-
-
-

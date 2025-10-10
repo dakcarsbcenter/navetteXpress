@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useSession } from 'next-auth/react'
 
 interface PlanningProps {
@@ -23,10 +23,10 @@ interface Booking {
 }
 
 export function DriverPlanning({ onBack }: PlanningProps) {
-  const { data: session } = useSession()
+  useSession()
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [weekView, setWeekView] = useState(true)
-  const [bookings, setBookings] = useState<Booking[]>([
+  const [bookings] = useState<Booking[]>([
     {
       id: 1,
       client: "M. Dubois",
@@ -221,7 +221,7 @@ export function DriverPlanning({ onBack }: PlanningProps) {
                         {dayBookings.length} course{dayBookings.length !== 1 ? 's' : ''}
                         {dayBookings.length > 0 && (
                           <span className="ml-2 font-medium text-green-600 dark:text-green-400">
-                            {dayBookings.reduce((sum, booking) => sum + booking.price, 0)}€
+                            {dayBookings.reduce((sum, booking) => sum + booking.price, 0)} FCFA
                           </span>
                         )}
                       </p>
@@ -258,7 +258,7 @@ export function DriverPlanning({ onBack }: PlanningProps) {
                           </div>
                           <div className="text-right space-y-1">
                             <div className="text-lg font-bold text-green-600 dark:text-green-400">
-                              {booking.price}€
+                              {booking.price} FCFA
                             </div>
                             <div className="text-sm text-gray-500 dark:text-gray-400">
                               {booking.duration}
@@ -370,7 +370,7 @@ export function DriverPlanning({ onBack }: PlanningProps) {
                   </div>
                   <div className="text-right space-y-2">
                     <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                      {booking.price}€
+                      {booking.price} FCFA
                     </div>
                     <div className="text-sm text-gray-500 dark:text-gray-400">
                       {booking.phone}

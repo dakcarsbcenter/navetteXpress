@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { sendQuoteEmail } from '@/lib/brevo-email';
 import { db } from '@/db';
@@ -8,10 +8,10 @@ import { eq } from 'drizzle-orm';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession(authOptions) as { user?: { id?: string; role?: string } } | null;
 
     // Vérifier l'authentification et le rôle admin
     if (!session?.user) {
@@ -28,7 +28,7 @@ export async function POST(
       );
     }
 
-    const quoteId = parseInt(params.id);
+    const quoteId = parseInt((await params).id);
     if (isNaN(quoteId)) {
       return NextResponse.json(
         { success: false, error: 'ID de devis invalide' },

@@ -7,12 +7,13 @@ import { requireAdminRole } from '@/utils/admin-permissions';
 // GET - Récupérer une réservation par ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdminRole(); // Vérification du rôle admin
 
-    const id = parseInt(params.id);
+    const resolvedParams = await params;
+    const id = parseInt(resolvedParams.id);
     if (isNaN(id)) {
       return NextResponse.json({ 
         success: false, 
@@ -49,12 +50,13 @@ export async function GET(
 // PUT - Mettre à jour une réservation
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdminRole(); // Vérification du rôle admin
 
-    const id = parseInt(params.id);
+    const resolvedParams = await params;
+    const id = parseInt(resolvedParams.id);
     if (isNaN(id)) {
       return NextResponse.json({ 
         success: false, 
@@ -119,12 +121,13 @@ export async function PUT(
 // DELETE - Supprimer une réservation
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdminRole(); // Vérification du rôle admin
 
-    const id = parseInt(params.id);
+    const resolvedParams = await params;
+    const id = parseInt(resolvedParams.id);
     if (isNaN(id)) {
       return NextResponse.json({ 
         success: false, 

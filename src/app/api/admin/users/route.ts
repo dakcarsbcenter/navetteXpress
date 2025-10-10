@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
+import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/db"
 import { users } from "@/schema"
@@ -11,8 +11,8 @@ import { randomUUID } from "crypto"
 export async function GET(request: NextRequest) {
   try {
     // Vérifier l'authentification et le rôle admin
-    const session = await getServerSession(authOptions)
-    if (!session?.user || session.user.role !== 'admin') {
+    const session = await getServerSession(authOptions) as { user?: { role?: string } } | null
+    if (!session?.user || (session.user as { role?: string }).role !== 'admin') {
       return NextResponse.json(
         { error: "Accès refusé. Seuls les administrateurs peuvent accéder à cette ressource." },
         { status: 403 }
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
     }).from(users)
 
     const rows = normalizedRole
-      ? await baseSelect.where(eq(users.role, normalizedRole as any))
+      ? await baseSelect.where(eq(users.role, normalizedRole))
       : await baseSelect
 
     return NextResponse.json({ success: true, data: rows })
@@ -65,8 +65,8 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // Vérifier l'authentification et le rôle admin
-    const session = await getServerSession(authOptions)
-    if (!session?.user || session.user.role !== 'admin') {
+    const session = await getServerSession(authOptions) as { user?: { role?: string } } | null
+    if (!session?.user || (session.user as { role?: string }).role !== 'admin') {
       return NextResponse.json(
         { error: "Accès refusé. Seuls les administrateurs peuvent accéder à cette ressource." },
         { status: 403 }
@@ -110,7 +110,17 @@ export async function POST(request: NextRequest) {
     const finalPassword = password || "password123" // Utiliser le mot de passe fourni ou le défaut
     const hashedPassword = await bcrypt.hash(finalPassword, 12)
 
-    const insertValues: any = {
+    const insertValues: {
+      id: string;
+      name: string;
+      email: string;
+      phone?: string;
+      licenseNumber?: string;
+      isActive: boolean;
+      password: string;
+      emailVerified: Date;
+        role?: 'admin' | 'driver' | 'customer';
+    } = {
       id: userId,
       name,
       email,

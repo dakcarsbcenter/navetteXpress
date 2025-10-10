@@ -1,21 +1,21 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
+import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/db"
-import { reviewsTable, bookingsTable, users } from "@/schema"
+import { reviewsTable, bookingsTable } from "@/schema"
 import { eq, desc, and } from "drizzle-orm"
 
 // GET - Récupérer les avis du client
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions) as { user?: { id?: string; role?: string } } | null
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Non autorisé" }, { status: 401 })
     }
 
     // Vérifier que l'utilisateur est un client
-    if (session.user.role !== 'customer') {
+    if ((session.user as { role?: string }).role !== 'customer') {
       return NextResponse.json({ error: "Accès refusé" }, { status: 403 })
     }
 
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
       })
       .from(reviewsTable)
       .leftJoin(bookingsTable, eq(reviewsTable.bookingId, bookingsTable.id))
-      .where(eq(reviewsTable.customerId, session.user.id))
+      .where(eq(reviewsTable.customerId, (session as unknown as { user: { id: string } }).user.id))
       .orderBy(desc(reviewsTable.createdAt))
 
     return NextResponse.json({ 
@@ -55,14 +55,14 @@ export async function GET(request: NextRequest) {
 // POST - Créer un nouvel avis (clients seulement)
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions) as { user?: { id?: string; role?: string } } | null
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Non autorisé" }, { status: 401 })
     }
 
     // Vérifier que l'utilisateur est un client
-    if (session.user.role !== 'customer') {
+    if ((session.user as { role?: string }).role !== 'customer') {
       return NextResponse.json({ error: "Accès refusé" }, { status: 403 })
     }
 
@@ -105,7 +105,8 @@ export async function POST(request: NextRequest) {
     const bookingData = booking[0]
 
     // Vérifier que la réservation appartient au client
-    if (bookingData.userId !== session.user.id) {
+    const userSession = session as unknown as { user: { id: string } }
+    if (bookingData.userId !== userSession.user.id) {
       return NextResponse.json(
         { error: "Cette réservation ne vous appartient pas" },
         { status: 403 }
@@ -135,7 +136,7 @@ export async function POST(request: NextRequest) {
       .where(
         and(
           eq(reviewsTable.bookingId, parseInt(bookingId)),
-          eq(reviewsTable.customerId, session.user.id)
+          eq(reviewsTable.customerId, userSession.user.id)
         )
       )
       .limit(1)
@@ -152,7 +153,7 @@ export async function POST(request: NextRequest) {
       .insert(reviewsTable)
       .values({
         bookingId: parseInt(bookingId),
-        customerId: session.user.id,
+        customerId: userSession.user.id,
         driverId: bookingData.driverId,
         rating,
         comment: comment || null

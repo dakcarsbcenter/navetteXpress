@@ -6,12 +6,12 @@ import { requireAdminRole } from "@/utils/admin-permissions"
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdminRole()
 
-    const vehicleId = parseInt(params.id)
+    const vehicleId = parseInt((await params).id)
     if (isNaN(vehicleId)) {
       return NextResponse.json(
         { success: false, error: "ID de véhicule invalide" },
@@ -19,9 +19,23 @@ export async function PUT(
       )
     }
 
-    const { make, model, year, licensePlate, capacity, isActive } = await request.json()
+    const data = await request.json()
+    const { 
+      make, 
+      model, 
+      year, 
+      plateNumber, 
+      capacity, 
+      photo,
+      category,
+      description,
+      features,
+      vehicleType,
+      driverId,
+      isActive 
+    } = data
 
-    if (!make || !model || !licensePlate) {
+    if (!make || !model || !plateNumber) {
       return NextResponse.json(
         { success: false, error: "Marque, modèle et plaque d'immatriculation requis" },
         { status: 400 }
@@ -34,8 +48,14 @@ export async function PUT(
         make,
         model,
         year: year || new Date().getFullYear(),
-        licensePlate,
+        plateNumber,
         capacity: capacity || 4,
+        vehicleType: vehicleType || 'sedan',
+        photo: photo || null,
+        category: category || null,
+        description: description || null,
+        features: features || null,
+        driverId: driverId || null,
         isActive: isActive !== undefined ? isActive : true,
         updatedAt: new Date(),
       })
@@ -61,12 +81,12 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdminRole()
 
-    const vehicleId = parseInt(params.id)
+    const vehicleId = parseInt((await params).id)
     if (isNaN(vehicleId)) {
       return NextResponse.json(
         { success: false, error: "ID de véhicule invalide" },

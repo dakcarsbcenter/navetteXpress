@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ConfirmationModal } from "@/components/ui/ConfirmationModal"
+import Image from "next/image"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { FilterBar } from "@/components/ui/FilterBar"
 import { useNotification } from "@/hooks/useNotification"
@@ -31,7 +31,7 @@ export function DriverBookings() {
   const [bookings, setBookings] = useState<DriverBooking[]>([])
   const [filteredBookings, setFilteredBookings] = useState<DriverBooking[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [filter, setFilter] = useState<'all' | 'assigned' | 'approved' | 'rejected'>('all')
+  const [filter] = useState<'all' | 'assigned' | 'approved' | 'rejected'>('all')
   const { notifications, showSuccess, showError, removeNotification } = useNotification()
   const [filters, setFilters] = useState({
     status: 'assigned',
@@ -40,10 +40,12 @@ export function DriverBookings() {
 
   useEffect(() => {
     fetchBookings()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter])
 
   useEffect(() => {
     applyFilters()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookings, filters])
 
   const fetchBookings = async () => {
@@ -282,15 +284,15 @@ export function DriverBookings() {
                   <td className="px-6 py-4">
                     <div className="flex-shrink-0 h-8 w-8">
                       {booking.vehicle?.photo ? (
-                        <img
-                          className="h-8 w-8 rounded object-cover"
-                          src={booking.vehicle.photo}
-                          alt={`Photo de ${booking.vehicle.make} ${booking.vehicle.model}`}
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none'
-                            e.currentTarget.nextElementSibling?.classList.remove('hidden')
-                          }}
-                        />
+                        <div className="relative h-8 w-8 rounded overflow-hidden">
+                          <Image
+                            fill
+                            className="object-cover"
+                            src={booking.vehicle.photo}
+                            alt={`Photo de ${booking.vehicle.make} ${booking.vehicle.model}`}
+                            sizes="32px"
+                          />
+                        </div>
                       ) : null}
                       <div className={`h-8 w-8 rounded bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-gray-600 dark:text-gray-300 text-xs font-medium ${booking.vehicle?.photo ? 'hidden' : ''}`}>
                         🚗
@@ -305,7 +307,7 @@ export function DriverBookings() {
                       </div>
                       {booking.price && (
                         <div className="text-green-600 dark:text-green-400 font-medium">
-                          💰 {booking.price}€
+                          💰 {booking.price} FCFA
                         </div>
                       )}
                     </div>

@@ -1,4 +1,4 @@
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { db } from '@/db';
 import { users } from '@/schema';
@@ -73,7 +73,7 @@ export async function getUserRole(userId: string): Promise<string | null> {
 /**
  * Assigne un rôle à un utilisateur
  */
-export async function assignUserRole(userId: string, role: 'chauffeur' | 'admin'): Promise<void> {
+export async function assignUserRole(userId: string, role: 'driver' | 'admin'): Promise<void> {
   try {
     // Mettre à jour le rôle de l'utilisateur
     await db

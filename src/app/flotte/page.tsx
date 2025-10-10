@@ -1,64 +1,93 @@
 import { Navigation } from "@/components/navigation";
 import Link from "next/link";
+import Image from "next/image";
+import { Calendar, Users } from "lucide-react";
+import { LuxuryCarIcon, VanIcon, BookNowIcon } from "@/components/icons/custom-icons";
 
-const vehicles = [
-  {
-    id: 1,
-    name: "Mercedes-Benz Classe S",
-    category: "Berline de Luxe",
-    capacity: "1-3 passagers",
-    features: ["Cuir premium", "Climatisation multi-zones", "Wi-Fi gratuit", "Boissons offertes"],
-    image: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&h=600&fit=crop&crop=center",
-    description: "L'excellence allemande pour vos déplacements d'affaires et occasions spéciales."
-  },
-  {
-    id: 2,
-    name: "BMW Série 7",
-    category: "Berline Executive",
-    capacity: "1-3 passagers", 
-    features: ["Sièges massants", "Système audio premium", "Écrans arrière", "Minibar"],
-    image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800&h=600&fit=crop&crop=center",
-    description: "Confort et technologie de pointe pour un voyage d'exception."
-  },
-  {
-    id: 3,
-    name: "Audi A8",
-    category: "Berline Premium",
-    capacity: "1-3 passagers",
-    features: ["Conduite semi-autonome", "Éclairage ambiant", "Isolation phonique", "Chargeurs sans fil"],
-    image: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&h=600&fit=crop&crop=center",
-    description: "Innovation et élégance pour tous vos trajets professionnels."
-  },
-  {
-    id: 4,
-    name: "Mercedes-Benz Sprinter VIP",
-    category: "Van de Luxe",
-    capacity: "6-8 passagers",
-    features: ["Salon mobile", "Table de réunion", "Écran TV", "Réfrigérateur"],
-    image: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&h=600&fit=crop&crop=center",
-    description: "Espace et confort pour vos groupes et événements d'entreprise."
-  },
-  {
-    id: 5,
-    name: "Volkswagen Jetta",
-    category: "Berline Confort",
-    capacity: "1-4 passagers",
-    features: ["Climatisation automatique", "Système audio premium", "Sièges en cuir", "Connexion Bluetooth"],
-    image: "https://imgs.search.brave.com/fERixDCjr205BraPZ-X2ULAigpBJmX-P04pFkn49CY4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9wbGF0/Zm9ybS5jc3RhdGlj/LWltYWdlcy5jb20v/aW4vdjIvc3RvY2tf/cGhvdG9zLzc5OGRj/MmNiLWI2NDgtNDg0/YS05ODFjLWUzNjIw/NDEwMjZhZS85NWEz/ZDI1Mi1kNmQwLTRj/ZGUtYmY4Zi0wNmNk/NzllMjUwZDcucG5n",
-    description: "Confort et fiabilité allemande pour vos déplacements quotidiens et professionnels."
-  },
-  {
-    id: 6,
-    name: "Ford Escape",
-    category: "SUV Compact",
-    capacity: "1-5 passagers",
-    features: ["4x4 disponible", "Système SYNC", "Caméra de recul", "Toit ouvrant"],
-    image: "https://imgs.search.brave.com/NdNBxVaqeVaqXlTwVc328Lky1uVW5psbACbgaxoiOm8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/YmVyZ3N0cm9tYXV0/by5jb20vaW52ZW50/b3J5cGhvdG9zLzE3/NTM4LzFmbWN1OWdu/MnN1YjcwMjc2L2lw/LzMuanBnP3RpbWVz/dGFtcD0yMDI1LTA4/LTMwVDIwOjMwOjMw/WiZiZy1jb2xvcj1G/RkZGRkYmd2lkdGg9/NDAw",
-    description: "Polyvalence et robustesse américaine pour tous vos déplacements urbains et extra-urbains."
+// Helper function to get vehicle icon based on category
+function getVehicleIcon(category: string, size: number = 24) {
+  const categoryLower = category.toLowerCase();
+  
+  if (categoryLower.includes('van') || categoryLower.includes('minibus') || categoryLower.includes('9')) {
+    return <VanIcon size={size} color="primary" />;
+  } else if (categoryLower.includes('luxe') || categoryLower.includes('premium') || categoryLower.includes('executive')) {
+    return <LuxuryCarIcon size={size} color="primary" />;
+  } else {
+    return <LuxuryCarIcon size={size} color="secondary" />; // Default luxury car
   }
-];
+}
 
-export default function FlottePage() {
+// Fonction pour récupérer les véhicules depuis l'API
+async function getVehicles() {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/vehicles`, {
+      cache: 'no-store', // Toujours récupérer les données les plus récentes
+    });
+    
+    if (!res.ok) {
+      console.error('Erreur lors de la récupération des véhicules');
+      return [];
+    }
+    
+    const data = await res.json();
+    return data.success ? data.data : [];
+  } catch (error) {
+    console.error('Erreur:', error);
+    return [];
+  }
+}
+
+// Fonction helper pour mapper le type de véhicule vers une catégorie
+function getVehicleCategory(vehicleType: string, customCategory?: string | null) {
+  if (customCategory) return customCategory;
+  
+  const categoryMap: Record<string, string> = {
+    'sedan': 'Berline',
+    'luxury': 'Berline de Luxe',
+    'suv': 'SUV',
+    'van': 'Van',
+    'bus': 'Bus',
+  };
+  
+  return categoryMap[vehicleType] || 'Véhicule';
+}
+
+// Fonction helper pour parser les features
+function parseFeatures(features: string | null): string[] {
+  if (!features) return [];
+  
+  try {
+    return JSON.parse(features);
+  } catch {
+    return [];
+  }
+}
+
+export default async function FlottePage() {
+  // Récupérer les véhicules depuis la base de données
+  const dbVehicles = await getVehicles();
+  
+  // Mapper les véhicules de la BD vers le format attendu
+  const vehicles = dbVehicles.map((vehicle: {
+    id: number;
+    make: string;
+    model: string;
+    year: number;
+    vehicleType: string;
+    category: string | null;
+    capacity: number;
+    features: string | null;
+    photo: string | null;
+    description: string | null;
+  }) => ({
+    id: vehicle.id,
+    name: `${vehicle.make} ${vehicle.model}`,
+    category: getVehicleCategory(vehicle.vehicleType, vehicle.category),
+    capacity: `${vehicle.capacity} ${vehicle.capacity === 1 ? 'passager' : 'passagers'}`,
+    features: parseFeatures(vehicle.features),
+    image: vehicle.photo || 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&h=600&fit=crop&crop=center',
+    description: vehicle.description || `${vehicle.make} ${vehicle.model} ${vehicle.year}`,
+  }));
   return (
     <div className="font-sans min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       <Navigation variant="solid" />
@@ -121,7 +150,7 @@ export default function FlottePage() {
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {vehicles.map((vehicle, index) => (
+            {vehicles.map((vehicle: { id: number; name: string; category: string; capacity: string; features: string[]; image: string; description: string }) => (
               <div 
                 key={vehicle.id}
                 className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden hover:shadow-xl transition-shadow duration-200"
@@ -129,59 +158,63 @@ export default function FlottePage() {
                 {/* Vehicle Header */}
                 <div className="bg-slate-50 dark:bg-slate-700 p-6 text-center">
                   <div className="relative w-full h-48 mb-4 rounded-xl overflow-hidden">
-                    <img 
+                    <Image 
                       src={vehicle.image} 
                       alt={vehicle.name}
-                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                      loading="lazy"
+                      fill
+                      className="object-cover transition-transform duration-300 hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                   </div>
-                  <div className="inline-block bg-orange-100 dark:bg-orange-900/50 text-orange-800 dark:text-orange-200 px-3 py-1 rounded-full text-sm font-medium">
-                    {vehicle.category}
+                                    <div className="inline-block bg-[#FFB885]/20 dark:bg-[#FF7E38]/20 text-[#FF7E38] dark:text-[#FFB885] px-3 py-1 rounded-full text-sm font-medium">
+                    Disponible
                   </div>
                 </div>
 
                 {/* Vehicle Info */}
                 <div className="p-6">
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
-                    {vehicle.name}
-                  </h3>
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 bg-[#FFB885]/10 rounded-lg">
+                      {getVehicleIcon(vehicle.category, 20)}
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+                      {vehicle.name}
+                    </h3>
+                  </div>
                   <p className="text-slate-600 dark:text-slate-300 mb-4 text-sm">
                     {vehicle.description}
                   </p>
                   
                   <div className="flex items-center text-slate-500 dark:text-slate-400 mb-4 text-sm">
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
+                    <Users className="w-4 h-4 mr-2" />
                     <span className="font-medium">{vehicle.capacity}</span>
                   </div>
 
                   {/* Key Features - Only 3 most important */}
-                  <div className="mb-6">
-                    <h4 className="font-semibold text-slate-900 dark:text-white mb-3 text-sm">Équipements inclus :</h4>
-                    <ul className="space-y-2">
-                      {vehicle.features.slice(0, 3).map((feature, featureIndex) => (
-                        <li key={featureIndex} className="flex items-center text-slate-600 dark:text-slate-300 text-sm">
-                          <div className="w-4 h-4 bg-green-100 dark:bg-green-900/50 rounded-full flex items-center justify-center mr-2 flex-shrink-0">
-                            <span className="text-green-600 dark:text-green-400 text-xs">✓</span>
-                          </div>
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  {vehicle.features && vehicle.features.length > 0 && (
+                    <div className="mb-6">
+                      <h4 className="font-semibold text-slate-900 dark:text-white mb-3 text-sm">Équipements inclus :</h4>
+                      <ul className="space-y-2">
+                        {vehicle.features.slice(0, 3).map((feature: string, featureIndex: number) => (
+                          <li key={featureIndex} className="flex items-center text-slate-600 dark:text-slate-300 text-sm">
+                            <div className="w-4 h-4 bg-green-100 dark:bg-green-900/50 rounded-full flex items-center justify-center mr-2 flex-shrink-0">
+                              <span className="text-green-600 dark:text-green-400 text-xs">✓</span>
+                            </div>
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
                   {/* CTA */}
                   <div className="border-t border-slate-200 dark:border-slate-700 pt-4">
                     <Link
                       href="/reservation"
-                      className="w-full bg-orange-500 hover:bg-orange-600 text-white px-4 py-3 rounded-lg font-semibold text-sm transition-colors duration-200 flex items-center justify-center gap-2"
+                      className="w-full bg-gradient-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white px-4 py-3 rounded-lg font-semibold text-sm transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
+                      <BookNowIcon size={16} color="white" />
                       Réserver
                     </Link>
                   </div>
@@ -204,7 +237,7 @@ export default function FlottePage() {
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="bg-white dark:bg-slate-700 p-6 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-600 text-center">
               <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/50 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -233,23 +266,10 @@ export default function FlottePage() {
               </p>
             </div>
             
+
             <div className="bg-white dark:bg-slate-700 p-6 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-600 text-center">
-              <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/50 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-                Suivi en Temps Réel
-              </h3>
-              <p className="text-slate-600 dark:text-slate-300 text-sm">
-                Suivez votre trajet en direct
-              </p>
-            </div>
-            
-            <div className="bg-white dark:bg-slate-700 p-6 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-600 text-center">
-              <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/50 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-12 h-12 bg-[#FFB885]/20 dark:bg-[#FF7E38]/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <svg className="w-6 h-6 text-[#FF7E38]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M12 2.25a9.75 9.75 0 100 19.5 9.75 9.75 0 000-19.5z" />
                 </svg>
               </div>
@@ -271,13 +291,13 @@ export default function FlottePage() {
             Prêt à Réserver ?
           </h2>
           <p className="text-lg text-slate-300 mb-12 max-w-2xl mx-auto">
-            Découvrez l'excellence de nos services de transport de luxe
+            Découvrez l&apos;excellence de nos services de transport de luxe
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             <Link
               href="/reservation"
-              className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-colors duration-200 flex items-center gap-3"
+              className="bg-gradient-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-3"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -333,8 +353,7 @@ export default function FlottePage() {
           <div className="grid md:grid-cols-4 gap-8 mb-12">
             <div className="md:col-span-2">
               <div className="flex items-center gap-3 mb-6">
-                <span className="text-4xl">🚗</span>
-                <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <span className="text-2xl font-bold text-white">
                   Navette Xpress
                 </span>
               </div>
@@ -375,7 +394,7 @@ export default function FlottePage() {
               <ul className="space-y-3">
                 <li><a href="/services" className="text-slate-400 hover:text-white transition-colors duration-300">Transferts Aéroport</a></li>
                 <li><a href="/services" className="text-slate-400 hover:text-white transition-colors duration-300">Événements Spéciaux</a></li>
-                <li><a href="/services" className="text-slate-400 hover:text-white transition-colors duration-300">Voyages d'Affaires</a></li>
+                <li><a href="/services" className="text-slate-400 hover:text-white transition-colors duration-300">Voyages d&apos;Affaires</a></li>
                 <li><a href="/flotte" className="text-slate-400 hover:text-white transition-colors duration-300">Notre Flotte</a></li>
               </ul>
             </div>

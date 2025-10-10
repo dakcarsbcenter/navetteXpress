@@ -22,9 +22,10 @@ export function AuthRedirect({ children }: AuthRedirectProps) {
 
     if (session?.user) {
       // Redirection basée sur le rôle
-      if (session.user.role === 'admin') {
+      const userRole = (session.user as unknown as { role?: string })?.role
+      if (userRole === 'admin') {
         router.push("/admin/dashboard")
-      } else if (session.user.role === 'customer') {
+      } else if (userRole === 'customer') {
         router.push("/client/dashboard")
       } else {
         router.push("/dashboard")

@@ -1,16 +1,16 @@
-import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
+import { NextResponse } from "next/server"
+import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/db"
 import { sessions, users } from "@/schema"
-import { eq, desc, sql } from "drizzle-orm"
+import { eq, desc } from "drizzle-orm"
 
 // GET - Récupérer toutes les sessions avec les détails des utilisateurs
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Vérifier l'authentification et le rôle admin
-    const session = await getServerSession(authOptions)
-    if (!session?.user || session.user.role !== 'admin') {
+    const session = await getServerSession(authOptions) as { user?: { role?: string } } | null
+    if (!session?.user || (session.user as { role?: string }).role !== 'admin') {
       return NextResponse.json(
         { error: "Accès refusé. Seuls les administrateurs peuvent accéder à cette ressource." },
         { status: 403 }

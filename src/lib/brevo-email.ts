@@ -2,8 +2,9 @@ import * as brevo from '@getbrevo/brevo';
 
 // Configuration Brevo
 const apiInstance = new brevo.TransactionalEmailsApi();
-const apiKey = apiInstance.authentications['apiKey'];
-apiKey.apiKey = process.env.BREVO_API_KEY;
+if (process.env.BREVO_API_KEY) {
+  apiInstance.setApiKey(brevo.TransactionalEmailsApiApiKeys.apiKey, process.env.BREVO_API_KEY);
+}
 
 interface EmailOptions {
   to: string;
@@ -11,7 +12,11 @@ interface EmailOptions {
   htmlContent: string;
   textContent?: string;
   replyTo?: string;
-  attachments?: any[];
+  attachments?: Array<{
+    content: string;
+    name: string;
+    type: string;
+  }>;
 }
 
 // Service d'envoi email générique
@@ -57,11 +62,12 @@ export async function sendEmail(options: EmailOptions) {
       data: result.body 
     };
     
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
     console.error('❌ Erreur envoi email:', error);
     return { 
       success: false, 
-      error: error.message || 'Erreur lors de l\'envoi de l\'email'
+      error: errorMessage || 'Erreur lors de l\'envoi de l\'email'
     };
   }
 }
@@ -118,7 +124,7 @@ export async function sendQuoteEmail(
               </h3>
               <div style="background: #667eea; color: white; padding: 15px 25px; border-radius: 50px; display: inline-block; margin: 10px 0;">
                 <span style="font-size: 32px; font-weight: bold;">
-                  ${quoteData.estimatedPrice}€
+                  ${quoteData.estimatedPrice} FCFA
                 </span>
               </div>
             </div>
@@ -192,7 +198,7 @@ export async function sendQuoteEmail(
     Voici votre devis personnalisé :
     
     Service: ${quoteData.service}
-    Prix: ${quoteData.estimatedPrice}€
+    Prix: ${quoteData.estimatedPrice} FCFA
     ${quoteData.preferredDate ? `Date: ${new Date(quoteData.preferredDate).toLocaleDateString('fr-FR')}` : ''}
     ${quoteData.adminNotes ? `\nNotes: ${quoteData.adminNotes}` : ''}
     
@@ -458,7 +464,7 @@ export async function sendNewBookingNotificationToAdmin(
                 <strong>📅 Date/Heure:</strong> ${new Date(bookingData.scheduledDateTime).toLocaleString('fr-FR')}
               </p>
               <p style="margin: 5px 0; color: #666;">
-                <strong>💰 Prix estimé:</strong> <span style="color: #28a745; font-size: 18px; font-weight: bold;">${bookingData.price}€</span>
+                <strong>💰 Prix estimé:</strong> <span style="color: #28a745; font-size: 18px; font-weight: bold;">${bookingData.price} FCFA</span>
               </p>
               ${bookingData.notes ? `
                 <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #dee2e6;">
@@ -576,7 +582,7 @@ export async function sendDriverAssignmentNotification(
                 <strong>🎯 Destination:</strong> ${bookingData.dropoffAddress}
               </p>
               <p style="margin: 0 0 10px 0; color: #666;">
-                <strong>💰 Tarif:</strong> <span style="color: #28a745; font-size: 20px; font-weight: bold;">${bookingData.price}€</span>
+                <strong>💰 Tarif:</strong> <span style="color: #28a745; font-size: 20px; font-weight: bold;">${bookingData.price} FCFA</span>
               </p>
               ${bookingData.notes ? `
                 <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
@@ -719,7 +725,7 @@ export async function sendBookingApprovalNotificationToCustomer(
                 <strong>🎯 Destination:</strong> ${bookingData.dropoffAddress}
               </p>
               <p style="margin: 10px 0; color: #666; font-size: 16px;">
-                <strong>💰 Tarif:</strong> <span style="color: #28a745; font-size: 22px; font-weight: bold;">${bookingData.price}€</span>
+                <strong>💰 Tarif:</strong> <span style="color: #28a745; font-size: 22px; font-weight: bold;">${bookingData.price} FCFA</span>
               </p>
               ${bookingData.vehicleInfo ? `
                 <p style="margin: 10px 0; color: #666; font-size: 16px;">
@@ -817,7 +823,7 @@ export async function sendBookingApprovalNotificationToCustomer(
     Heure: ${new Date(bookingData.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
     Départ: ${bookingData.pickupAddress}
     Destination: ${bookingData.dropoffAddress}
-    Tarif: ${bookingData.price}€
+    Tarif: ${bookingData.price} FCFA
     
     VOTRE CHAUFFEUR:
     ${bookingData.driverName}
@@ -863,10 +869,11 @@ export async function testBrevoConnection() {
         credits: account.body.plan?.map(p => ({ type: p.type, credits: p.credits }))
       }
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
     return {
       success: false,
-      error: error.message
+      error: errorMessage
     };
   }
 }

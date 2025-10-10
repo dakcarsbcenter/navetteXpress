@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
+import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/db"
 import { users } from "@/schema"
@@ -8,12 +8,12 @@ import { eq } from "drizzle-orm"
 // GET - Récupérer un utilisateur spécifique
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Vérifier l'authentification et le rôle admin
-    const session = await getServerSession(authOptions)
-    if (!session?.user || session.user.role !== 'admin') {
+    const session = await getServerSession(authOptions) as { user?: { role?: string } } | null
+    if (!session?.user || (session.user as { role?: string }).role !== 'admin') {
       return NextResponse.json(
         { error: "Accès refusé. Seuls les administrateurs peuvent accéder à cette ressource." },
         { status: 403 }
@@ -32,7 +32,7 @@ export async function GET(
         createdAt: users.createdAt
       })
       .from(users)
-      .where(eq(users.id, params.id))
+      .where(eq(users.id, (await params).id))
       .limit(1)
 
     if (user.length === 0) {
@@ -56,12 +56,12 @@ export async function GET(
 // PUT - Mettre à jour un utilisateur
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Vérifier l'authentification et le rôle admin
-    const session = await getServerSession(authOptions)
-    if (!session?.user || session.user.role !== 'admin') {
+    const session = await getServerSession(authOptions) as { user?: { role?: string } } | null
+    if (!session?.user || (session.user as { role?: string }).role !== 'admin') {
       return NextResponse.json(
         { error: "Accès refusé. Seuls les administrateurs peuvent accéder à cette ressource." },
         { status: 403 }
@@ -74,7 +74,7 @@ export async function PUT(
     const existingUser = await db
       .select()
       .from(users)
-      .where(eq(users.id, params.id))
+      .where(eq(users.id, (await params).id))
       .limit(1)
 
     if (existingUser.length === 0) {
@@ -112,7 +112,7 @@ export async function PUT(
         isActive,
         updatedAt: new Date()
       })
-      .where(eq(users.id, params.id))
+      .where(eq(users.id, (await params).id))
       .returning()
 
     return NextResponse.json(
@@ -131,12 +131,12 @@ export async function PUT(
 // DELETE - Supprimer un utilisateur
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Vérifier l'authentification et le rôle admin
-    const session = await getServerSession(authOptions)
-    if (!session?.user || session.user.role !== 'admin') {
+    const session = await getServerSession(authOptions) as { user?: { role?: string } } | null
+    if (!session?.user || (session.user as { role?: string }).role !== 'admin') {
       return NextResponse.json(
         { error: "Accès refusé. Seuls les administrateurs peuvent accéder à cette ressource." },
         { status: 403 }
@@ -147,7 +147,7 @@ export async function DELETE(
     const existingUser = await db
       .select()
       .from(users)
-      .where(eq(users.id, params.id))
+      .where(eq(users.id, (await params).id))
       .limit(1)
 
     if (existingUser.length === 0) {
@@ -158,7 +158,8 @@ export async function DELETE(
     }
 
     // Empêcher l'auto-suppression
-    if (session.user.id === params.id) {
+    const userSession = session as unknown as { user: { id: string } }
+    if (userSession.user.id === (await params).id) {
       return NextResponse.json(
         { error: "Vous ne pouvez pas supprimer votre propre compte" },
         { status: 400 }
@@ -168,7 +169,7 @@ export async function DELETE(
     // Supprimer l'utilisateur
     await db
       .delete(users)
-      .where(eq(users.id, params.id))
+      .where(eq(users.id, (await params).id))
 
     return NextResponse.json(
       { message: "Utilisateur supprimé avec succès" }

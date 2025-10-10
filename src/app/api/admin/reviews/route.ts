@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
+import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/db"
 import { reviewsTable, bookingsTable } from "@/schema"
 import { eq, desc } from "drizzle-orm"
 
 // GET - Récupérer tous les avis avec les détails des réservations
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Vérifier l'authentification et le rôle admin
-    const session = await getServerSession(authOptions)
-    if (!session?.user || session.user.role !== 'admin') {
+    const session = await getServerSession(authOptions) as { user?: { role?: string } } | null
+    if (!session?.user || (session.user as { role?: string }).role !== 'admin') {
       return NextResponse.json(
         { error: "Accès refusé. Seuls les administrateurs peuvent accéder à cette ressource." },
         { status: 403 }
@@ -51,8 +51,8 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // Vérifier l'authentification et le rôle admin
-    const session = await getServerSession(authOptions)
-    if (!session?.user || session.user.role !== 'admin') {
+    const session = await getServerSession(authOptions) as { user?: { role?: string } } | null
+    if (!session?.user || (session.user as { role?: string }).role !== 'admin') {
       return NextResponse.json(
         { error: "Accès refusé. Seuls les administrateurs peuvent accéder à cette ressource." },
         { status: 403 }
@@ -75,10 +75,15 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Récupérer l'ID depuis la session correctement typée
+    const userSession = session as unknown as { user: { id: string } }
+    
     const newReview = await db
       .insert(reviewsTable)
       .values({
+        driverId: userSession.user.id,
         bookingId: parseInt(bookingId),
+        customerId: userSession.user.id,
         rating,
         comment
       })

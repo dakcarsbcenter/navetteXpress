@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { NotificationCenter } from "@/components/ui/NotificationCenter";
 import { FilterBar } from "@/components/ui/FilterBar";
 import { useNotification } from "@/hooks/useNotification";
@@ -51,10 +50,12 @@ export function QuotesManagement() {
 
   useEffect(() => {
     fetchQuotes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     applyFilters();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quotes, filters]);
 
   useEffect(() => {
@@ -126,7 +127,7 @@ export function QuotesManagement() {
     setFilters(prev => ({ ...prev, [key]: value }));
   };
 
-  const handleInputChange = (field: keyof typeof formData, value: any) => {
+  const handleInputChange = (field: keyof typeof formData, value: string | number | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -307,9 +308,14 @@ export function QuotesManagement() {
             label: 'Recherche',
             placeholder: 'Nom, email, service...',
             value: filters.search,
-            onChange: (value) => handleFilterChange('search', value)
+            onChange: (value) => handleFilterChange('search', value),
+            type: 'search'
           }
         }}
+        onClearAll={() => {
+          setFilters({ status: '', search: '' });
+        }}
+        activeFiltersCount={(filters.status ? 1 : 0) + (filters.search ? 1 : 0)}
       />
 
       {/* Tableau des demandes de devis */}
@@ -374,7 +380,7 @@ export function QuotesManagement() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                    {quote.estimatedPrice ? `${quote.estimatedPrice}€` : '-'}
+                    {quote.estimatedPrice ? `${quote.estimatedPrice} FCFA` : '-'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     {new Date(quote.createdAt).toLocaleDateString('fr-FR')}
@@ -573,7 +579,7 @@ export function QuotesManagement() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Prix estimé (€)
+                  Prix estimé (FCFA)
                 </label>
                 <input
                   type="number"

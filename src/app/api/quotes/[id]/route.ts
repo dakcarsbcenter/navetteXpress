@@ -1,18 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { quotesTable } from '@/schema';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { eq } from 'drizzle-orm';
 
 // GET - Récupérer une demande de devis spécifique
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    
+    const session = await getServerSession(authOptions) as { user?: { id?: string } } | null;
+
     if (!session?.user?.id) {
       return NextResponse.json({ 
         success: false, 
@@ -23,7 +23,7 @@ export async function GET(
     const quote = await db
       .select()
       .from(quotesTable)
-      .where(eq(quotesTable.id, parseInt(params.id)))
+      .where(eq(quotesTable.id, parseInt((await params).id)))
       .limit(1);
 
     if (quote.length === 0) {
@@ -50,11 +50,11 @@ export async function GET(
 // PUT - Mettre à jour une demande de devis
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    
+    const session = await getServerSession(authOptions) as { user?: { id?: string } } | null;
+
     if (!session?.user?.id) {
       return NextResponse.json({ 
         success: false, 
@@ -79,7 +79,7 @@ export async function PUT(
         assignedTo: assignedTo || undefined,
         updatedAt: new Date()
       })
-      .where(eq(quotesTable.id, parseInt(params.id)))
+      .where(eq(quotesTable.id, parseInt((await params).id)))
       .returning();
 
     if (updatedQuote.length === 0) {
@@ -107,11 +107,11 @@ export async function PUT(
 // DELETE - Supprimer une demande de devis
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    
+    const session = await getServerSession(authOptions) as { user?: { id?: string } } | null;
+
     if (!session?.user?.id) {
       return NextResponse.json({ 
         success: false, 
@@ -121,7 +121,7 @@ export async function DELETE(
 
     const deletedQuote = await db
       .delete(quotesTable)
-      .where(eq(quotesTable.id, parseInt(params.id)))
+      .where(eq(quotesTable.id, parseInt((await params).id)))
       .returning();
 
     if (deletedQuote.length === 0) {

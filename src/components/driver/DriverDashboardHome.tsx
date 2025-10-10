@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useSession } from 'next-auth/react'
 
 interface Stats {
@@ -11,7 +11,14 @@ interface Stats {
   ridesGrowth: number
   hoursGrowth: number
   earningsGrowth: number
-  currentRides: any[]
+  currentRides: Array<{
+    id: string;
+    customerName: string;
+    pickupAddress: string;
+    dropoffAddress: string;
+    scheduledDateTime: string;
+    status: string;
+  }>
 }
 
 interface DriverDashboardHomeProps {
@@ -20,7 +27,7 @@ interface DriverDashboardHomeProps {
 
 export function DriverDashboardHome({ onNavigate }: DriverDashboardHomeProps) {
   const { data: session } = useSession()
-  const [stats, setStats] = useState<Stats>({
+  const [stats] = useState<Stats>({
     weeklyRides: 28,
     hoursWorked: 156,
     earnings: 3420,
@@ -30,7 +37,7 @@ export function DriverDashboardHome({ onNavigate }: DriverDashboardHomeProps) {
     earningsGrowth: 15,
     currentRides: []
   })
-  const [currentRides, setCurrentRides] = useState([
+  const [currentRides] = useState([
     {
       id: 1,
       client: "M. Dubois",
@@ -112,7 +119,7 @@ export function DriverDashboardHome({ onNavigate }: DriverDashboardHomeProps) {
             </div>
           </div>
           <div className="text-right">
-            <p className="text-sm text-gray-500 dark:text-gray-400">Aujourd'hui</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Aujourd&apos;hui</p>
             <p className="font-semibold text-gray-900 dark:text-white">
               {formatDate(currentDate)}
             </p>
@@ -165,7 +172,7 @@ export function DriverDashboardHome({ onNavigate }: DriverDashboardHomeProps) {
             </div>
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">Revenus</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.earnings}€</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.earnings} FCFA</p>
             </div>
           </div>
           <p className="text-sm text-green-600 dark:text-green-400">
@@ -197,7 +204,7 @@ export function DriverDashboardHome({ onNavigate }: DriverDashboardHomeProps) {
             </div>
             <div>
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Courses d'aujourd'hui
+                Courses d&apos;aujourd&apos;hui
               </h2>
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 {currentRides.length} courses programmées
@@ -207,7 +214,7 @@ export function DriverDashboardHome({ onNavigate }: DriverDashboardHomeProps) {
           <div className="text-right">
             <p className="text-sm text-gray-500 dark:text-gray-400">Total estimé</p>
             <p className="text-lg font-semibold text-orange-600 dark:text-orange-400">
-              {currentRides.reduce((sum, ride) => sum + ride.price, 0)}€
+              {currentRides.reduce((sum, ride) => sum + ride.price, 0)} FCFA
             </p>
           </div>
         </div>

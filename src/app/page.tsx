@@ -1,17 +1,19 @@
 import { Navigation } from "@/components/navigation";
 import { SignedIn, SignedOut } from "@/components/auth/auth-components";
 import Link from "next/link";
+import { Calendar, Users, Phone, ChevronDown, Clock, CheckCircle, Shield } from "lucide-react";
+import { BookNowIcon, PrivateDriverIcon } from "@/components/icons/custom-icons";
 
 export default function Home() {
   return (
     <div className="font-sans min-h-screen">
       <Navigation variant="transparent" />
 
-      {/* Hero Section - Simplified */}
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800 dark:from-slate-950 dark:to-slate-900 pt-24">
-        {/* Subtle background pattern */}
+      {/* Hero Section - Nouvelle Palette */}
+      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-[#1E293B] via-[#0F5B8A] to-[#334155] dark:from-[#0F172A] dark:via-[#083A5C] dark:to-[#1E293B] pt-28">
+        {/* Subtle background pattern avec accent orange */}
         <div className="absolute inset-0 opacity-5" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='20' cy='20' r='1'/%3E%3C/g%3E%3C/svg%3E")`
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23FF7E38' fill-opacity='0.1'%3E%3Ccircle cx='20' cy='20' r='1'/%3E%3C/g%3E%3C/svg%3E")`
         }}></div>
 
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -20,11 +22,11 @@ export default function Home() {
             <div className="space-y-6">
               <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-white leading-tight">
                 Transfert Aéroport AIBD Dakar
-                <span className="block text-3xl sm:text-4xl lg:text-5xl text-blue-300 mt-2">
+                <span className="block text-3xl sm:text-4xl lg:text-5xl text-[#FFB885] mt-2">
                   Chauffeur Privé 24h/24
                 </span>
               </h1>
-              <p className="text-lg sm:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-lg sm:text-xl text-[#B8D5E8] max-w-3xl mx-auto leading-relaxed">
                 Service de transfert aéroport AIBD, Thies, Mbour. Chauffeurs professionnels, véhicules modernes, 
                 réservation instantanée. Votre transport privé de confiance au Sénégal.
               </p>
@@ -55,18 +57,14 @@ export default function Home() {
               <SignedOut>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto">
                   <Link href="/reservation" className="w-full">
-                    <button className="w-full bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-3">
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
+                    <button className="w-full bg-gradient-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-3 group">
+                      <BookNowIcon size={24} color="white" className="group-hover:scale-110 transition-transform" />
                       Réserver Maintenant
                     </button>
                   </Link>
                   <Link href="/devenir-partenaire" className="w-full">
-                    <div className="w-full border border-white/30 text-white hover:bg-white/10 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 flex items-center justify-center gap-3 cursor-pointer">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                      </svg>
+                    <div className="w-full border border-white/30 text-white hover:bg-white/10 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 flex items-center justify-center gap-3 cursor-pointer group">
+                      <PrivateDriverIcon size={20} color="white" className="group-hover:scale-110 transition-transform" />
                       Devenir Partenaire
                     </div>
                   </Link>
@@ -75,10 +73,8 @@ export default function Home() {
 
               <SignedIn>
                 <Link href="/reservation" className="inline-block">
-                  <button className="bg-orange-500 hover:bg-orange-600 text-white px-12 py-4 rounded-xl font-semibold text-xl transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-3 mx-auto">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
+                  <button className="bg-gradient-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white px-12 py-4 rounded-xl font-semibold text-xl transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-3 mx-auto group">
+                    <BookNowIcon size={24} color="white" className="group-hover:scale-110 transition-transform" />
                     Réserver Maintenant
                   </button>
                 </Link>
@@ -112,13 +108,13 @@ export default function Home() {
       </section>
 
       {/* Services Section - Simplified */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white dark:bg-slate-900">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[#FAFBFC] dark:bg-[#1E293B]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-4">
+            <h2 className="text-3xl sm:text-4xl font-bold text-[#1E293B] dark:text-white mb-4">
               Nos Services Premium
             </h2>
-            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+            <p className="text-lg text-[#64748B] dark:text-[#B8D5E8] max-w-2xl mx-auto">
               Transferts aéroport, chauffeur privé et mise à disposition. Services professionnels 24h/24 pour tous vos déplacements
             </p>
           </div>
@@ -132,7 +128,7 @@ export default function Home() {
                 Transfert Aéroport AIBD Dakar
               </h3>
               <p className="text-slate-600 dark:text-slate-300 mb-4">
-                Service de transfert vers et depuis l'aéroport AIBD de Dakar. Chauffeurs professionnels, véhicules modernes, prix compétitifs.
+                Service de transfert vers et depuis l&apos;aéroport AIBD de Dakar. Chauffeurs professionnels, véhicules modernes, prix compétitifs.
               </p>
               <ul className="space-y-2 text-sm text-slate-500 dark:text-slate-400 mb-6">
                 <li>• Suivi des vols en temps réel</li>
@@ -176,7 +172,7 @@ export default function Home() {
                 <li>• Chauffeur dédié exclusivement</li>
                 <li>• Planification flexible en temps réel</li>
                 <li>• Aucun frais de détour</li>
-                <li>• Temps d'attente inclus</li>
+                <li>• Temps d&apos;attente inclus</li>
                 <li>• Service multi-destinations</li>
               </ul>
             </div>
@@ -188,9 +184,7 @@ export default function Home() {
               href="/flotte"
               className="inline-flex items-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-8 py-3 rounded-xl font-semibold hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors duration-200"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
+              <ChevronDown className="w-5 h-5" />
               Découvrir Notre Flotte
             </Link>
           </div>
@@ -242,7 +236,7 @@ export default function Home() {
                 Voyagez sereinement
               </h3>
               <p className="text-slate-600 dark:text-slate-300">
-                Votre chauffeur vous attend à l'aéroport avec un panneau
+                Votre chauffeur vous attend à l&apos;aéroport avec un panneau
               </p>
             </div>
           </div>
@@ -251,11 +245,9 @@ export default function Home() {
           <div className="text-center mt-12">
             <Link
               href="/reservation"
-              className="inline-flex items-center gap-3 bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+              className="inline-flex items-center gap-3 bg-gradient-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
+              <Calendar className="w-6 h-6" />
               Réserver Maintenant
             </Link>
           </div>
@@ -363,9 +355,7 @@ export default function Home() {
             
             <Link href="/devenir-partenaire">
               <button className="bg-white text-green-600 hover:bg-green-50 px-12 py-4 rounded-xl font-semibold text-xl transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-3 mx-auto">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
+                <Users className="w-6 h-6" />
                 Postuler Maintenant
               </button>
             </Link>
@@ -386,20 +376,16 @@ export default function Home() {
           <div className="flex flex-col lg:flex-row gap-4 justify-center items-center mb-12">
             <SignedOut>
               <Link href="/reservation" className="w-full sm:w-auto">
-                <button className="w-full bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-colors duration-200 flex items-center justify-center gap-3">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
+                <button className="w-full bg-gradient-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-3 group">
+                  <BookNowIcon size={24} color="white" className="group-hover:scale-110 transition-transform" />
                   Réserver Maintenant
                 </button>
               </Link>
             </SignedOut>
             <SignedIn>
               <Link href="/reservation" className="w-full sm:w-auto">
-                <button className="w-full bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-colors duration-200 flex items-center justify-center gap-3">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
+                <button className="w-full bg-gradient-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-3 group">
+                  <BookNowIcon size={24} color="white" className="group-hover:scale-110 transition-transform" />
                   Réserver Maintenant
                 </button>
               </Link>
@@ -408,18 +394,14 @@ export default function Home() {
               href="tel:+221781319191"
               className="w-full sm:w-auto border border-white/30 text-white hover:bg-white/10 px-8 py-4 rounded-xl font-semibold text-lg transition-colors duration-200 flex items-center justify-center gap-3"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-              </svg>
+              <Phone className="w-5 h-5" />
               Appeler
             </a>
             <Link 
               href="/devenir-partenaire"
               className="w-full sm:w-auto bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
+              <Users className="w-5 h-5" />
               Devenir Partenaire
             </Link>
           </div>
@@ -427,27 +409,21 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
             <div className="text-center">
               <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <Clock className="w-6 h-6 text-blue-400" />
               </div>
               <h3 className="text-lg font-semibold text-white mb-2">Disponible 24h/24</h3>
               <p className="text-slate-400 text-sm">Service continu</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                </svg>
+                <CheckCircle className="w-6 h-6 text-green-400" />
               </div>
               <h3 className="text-lg font-semibold text-white mb-2">Réservation Instantanée</h3>
               <p className="text-slate-400 text-sm">En quelques clics</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <svg className="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
+                <Shield className="w-6 h-6 text-purple-400" />
               </div>
               <h3 className="text-lg font-semibold text-white mb-2">Assurance</h3>
               <p className="text-slate-400 text-sm">Sécurité garantie</p>
@@ -462,8 +438,7 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-8 mb-12">
             <div className="md:col-span-2">
               <div className="flex items-center gap-3 mb-6">
-                <span className="text-4xl">🚗</span>
-                <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <span className="text-2xl font-bold text-white">
                   Navette Xpress
                 </span>
               </div>

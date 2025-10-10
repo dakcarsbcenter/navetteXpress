@@ -8,13 +8,14 @@ import { sendDriverAssignmentNotification } from '@/lib/brevo-email';
 // PUT - Assigner une réservation à un chauffeur
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdminRole(); // Vérification du rôle admin
 
-    const id = parseInt(params.id);
-    if (isNaN(id)) {
+    const { id } = await params;
+    const bookingId = parseInt(id);
+    if (isNaN(bookingId)) {
       return NextResponse.json({ 
         success: false, 
         error: 'ID invalide' 
@@ -48,7 +49,7 @@ export async function PUT(
     const existingBooking = await db
       .select()
       .from(bookingsTable)
-      .where(eq(bookingsTable.id, id))
+      .where(eq(bookingsTable.id, bookingId))
       .limit(1);
 
     if (existingBooking.length === 0) {
@@ -66,7 +67,7 @@ export async function PUT(
         status: 'assigned', // Nouveau statut pour les réservations assignées
         updatedAt: new Date(),
       })
-      .where(eq(bookingsTable.id, id))
+      .where(eq(bookingsTable.id, bookingId))
       .returning();
 
     const assignedBooking = updatedBooking[0];
@@ -88,7 +89,7 @@ export async function PUT(
           pickupAddress: assignedBooking.pickupAddress,
           dropoffAddress: assignedBooking.dropoffAddress,
           scheduledDateTime: assignedBooking.scheduledDateTime.toISOString(),
-          price: assignedBooking.price,
+          price: assignedBooking.price || "0",
           notes: assignedBooking.notes || undefined
         }
       );

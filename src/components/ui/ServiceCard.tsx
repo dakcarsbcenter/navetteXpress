@@ -37,7 +37,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       hover 
       className={cn(
         "relative h-full flex flex-col",
-        isPopular && "ring-2 ring-orange-500 shadow-2xl",
+        isPopular && "ring-2 ring-[#FF7E38] shadow-2xl",
         !isAvailable && "opacity-60",
         className
       )}

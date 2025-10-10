@@ -1,4 +1,4 @@
-import { NextAuthOptions } from "next-auth"
+// NextAuthOptions type removed - using plain object
 import CredentialsProvider from "next-auth/providers/credentials"
 import GoogleProvider from "next-auth/providers/google"
 import { db } from "@/db"
@@ -15,7 +15,7 @@ if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
   console.warn("Google OAuth credentials manquantes. L'authentification Google ne sera pas disponible.")
 }
 
-export const authOptions: NextAuthOptions = {
+export const authOptions = {
   secret: NEXTAUTH_SECRET,
   providers: [
     // Google Provider (conditionnel)
@@ -86,10 +86,11 @@ export const authOptions: NextAuthOptions = {
     })
   ],
   session: {
-    strategy: "jwt",
+    strategy: "jwt" as const,
   },
   callbacks: {
-    async jwt({ token, user, account }) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async jwt({ token, user, account }: any) {
       if (user) {
         token.id = user.id
         token.role = user.role
@@ -115,14 +116,16 @@ export const authOptions: NextAuthOptions = {
       
       return token
     },
-    async session({ session, token }) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async session({ session, token }: any) {
       if (token) {
         session.user.id = token.id as string
         session.user.role = token.role as string
       }
       return session
     },
-    async signIn({ user, account, profile, email, credentials }) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async signIn({ user, account }: any) {
       // Si c'est une connexion Google
       if (account?.provider === "google") {
         try {
@@ -136,10 +139,11 @@ export const authOptions: NextAuthOptions = {
           if (existingUser.length === 0) {
             // Créer un nouvel utilisateur pour Google
             const newUser = {
+              id: user.id!,
               name: user.name || "",
               email: user.email!,
               image: user.image || null,
-              role: "client", // Par défaut, les utilisateurs Google sont des clients
+              role: "customer" as const, // Par défaut, les utilisateurs Google sont des clients
               password: null, // Pas de mot de passe pour les utilisateurs Google
               emailVerified: new Date(),
               createdAt: new Date(),
@@ -171,7 +175,6 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: "/auth/signin",
-    signUp: "/auth/signup",
     error: "/auth/signin", // Rediriger vers la page de connexion en cas d'erreur
   },
 }

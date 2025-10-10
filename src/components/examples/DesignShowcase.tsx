@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '../ui/Button';
-import { Card, CardContent, CardHeader } from '../ui/Card';
+import { Card } from '../ui/Card';
 import { Badge } from '../ui/Badge';
 import { ServiceCard } from '../ui/ServiceCard';
 import { VehicleCard } from '../ui/VehicleCard';

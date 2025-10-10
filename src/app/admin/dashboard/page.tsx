@@ -29,7 +29,7 @@ export default function AdminDashboard() {
       redirect("/auth/signin")
     }
     
-    if (session?.user && session.user.role !== 'admin') {
+    if (session?.user && (session.user as { role?: string }).role !== 'admin') {
       redirect("/dashboard")
     }
     
@@ -44,7 +44,7 @@ export default function AdminDashboard() {
     )
   }
 
-  if (!session?.user || session.user.role !== 'admin') {
+  if (!session?.user || (session.user as { role?: string }).role !== 'admin') {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-xl text-red-600">Accès refusé. Seuls les administrateurs peuvent accéder à cette page.</div>

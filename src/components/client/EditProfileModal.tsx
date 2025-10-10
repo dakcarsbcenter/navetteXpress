@@ -31,7 +31,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess }: EditProfileModa
       setFormData({
         name: session.user.name || "",
         email: session.user.email || "",
-        phone: (session.user as any).phone || ""
+        phone: (session.user as { phone?: string }).phone || ""
       })
       setError("")
     }

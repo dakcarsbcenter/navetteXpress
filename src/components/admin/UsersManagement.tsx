@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ConfirmationModal } from "@/components/ui/ConfirmationModal"
+import Image from "next/image"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { FilterBar } from "@/components/ui/FilterBar"
 import { useNotification } from "@/hooks/useNotification"
@@ -10,7 +10,7 @@ interface User {
   id: string
   name: string
   email: string
-  role: 'admin' | 'chauffeur'
+  role: 'admin' | 'driver' | 'customer'
   phone?: string
   licenseNumber?: string
   isActive: boolean
@@ -33,7 +33,7 @@ export function UsersManagement() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    role: 'customer' as 'admin' | 'chauffeur' | 'customer',
+    role: 'customer' as 'admin' | 'driver' | 'customer',
     phone: '',
     licenseNumber: '',
     isActive: true,
@@ -49,6 +49,7 @@ export function UsersManagement() {
 
   useEffect(() => {
     applyFilters()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [users, filters])
 
   const fetchUsers = async () => {
@@ -122,7 +123,7 @@ export function UsersManagement() {
   const getFilterCounts = () => {
     const roleCounts = {
       admin: users.filter(u => u.role === 'admin').length,
-      chauffeur: users.filter(u => u.role === 'chauffeur').length,
+      chauffeur: users.filter(u => u.role === 'driver').length,
       customer: users.filter(u => u.role === 'customer').length
     }
     
@@ -221,7 +222,7 @@ export function UsersManagement() {
     setFormData({
       name: '',
       email: '',
-      role: 'chauffeur',
+      role: 'driver',
       phone: '',
       licenseNumber: '',
       isActive: true,
@@ -243,7 +244,8 @@ export function UsersManagement() {
       role: user.role,
       phone: user.phone || '',
       licenseNumber: user.licenseNumber || '',
-      isActive: user.isActive
+      isActive: user.isActive,
+      password: '' // Ajouter le champ password manquant
     })
     setIsModalOpen(true)
   }
@@ -291,7 +293,7 @@ export function UsersManagement() {
             options: [
               { value: '', label: 'Tous les rôles' },
               { value: 'admin', label: '👑 Administrateur', count: getFilterCounts().roleCounts.admin },
-              { value: 'chauffeur', label: '🚗 Chauffeur', count: getFilterCounts().roleCounts.chauffeur },
+              { value: 'driver', label: '🚗 Chauffeur', count: getFilterCounts().roleCounts.chauffeur },
               { value: 'customer', label: '👤 Client', count: getFilterCounts().roleCounts.customer }
             ],
             value: filters.role,
@@ -351,15 +353,15 @@ export function UsersManagement() {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex-shrink-0 h-10 w-10">
                       {user.image ? (
-                        <img
-                          className="h-10 w-10 rounded-full object-cover"
-                          src={user.image}
-                          alt={`Photo de ${user.name}`}
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none'
-                            e.currentTarget.nextElementSibling?.classList.remove('hidden')
-                          }}
-                        />
+                        <div className="relative h-10 w-10 rounded-full overflow-hidden">
+                          <Image
+                            fill
+                            className="object-cover"
+                            src={user.image}
+                            alt={`Photo de ${user.name}`}
+                            sizes="40px"
+                          />
+                        </div>
                       ) : null}
                       <div className={`h-10 w-10 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-gray-600 dark:text-gray-300 text-sm font-medium ${user.image ? 'hidden' : ''}`}>
                         {user.name.charAt(0).toUpperCase()}
@@ -475,11 +477,11 @@ export function UsersManagement() {
                 </label>
                 <select
                   value={formData.role}
-                  onChange={(e) => setFormData({...formData, role: e.target.value as 'admin' | 'chauffeur' | 'customer'})}
+                  onChange={(e) => setFormData({...formData, role: e.target.value as 'admin' | 'driver' | 'customer'})}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                 >
                   <option value="customer">👤 Client</option>
-                  <option value="chauffeur">🚗 Chauffeur</option>
+                  <option value="driver">🚗 Chauffeur</option>
                   <option value="admin">👑 Admin</option>
                 </select>
               </div>

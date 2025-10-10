@@ -1,11 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { signIn, getSession } from "next-auth/react"
+import { useState, useEffect, Suspense } from "react"
+import { signIn } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 
-export default function SignInPage() {
+function SignInForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -114,7 +114,6 @@ export default function SignInPage() {
       <div className="max-w-md w-full space-y-8 p-8">
         <div className="text-center">
           <div className="flex items-center justify-center gap-3 mb-6">
-            <span className="text-4xl">🚗</span>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Navette Xpress
             </h1>
@@ -210,5 +209,20 @@ export default function SignInPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-slate-600 dark:text-slate-400">Chargement...</p>
+        </div>
+      </div>
+    }>
+      <SignInForm />
+    </Suspense>
   )
 }

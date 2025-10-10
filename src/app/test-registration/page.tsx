@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 
 export default function TestRegistrationPage() {
   const [formData, setFormData] = useState({
@@ -43,9 +44,9 @@ export default function TestRegistrationPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full space-y-8 p-8">
         <div>
-          <h2 className="text-3xl font-bold text-center">Test d'inscription</h2>
+          <h2 className="text-3xl font-bold text-center">Test d&apos;inscription</h2>
           <p className="text-center text-gray-600 mt-2">
-            Testez l'API d'inscription
+            Testez l&apos;API d&apos;inscription
           </p>
         </div>
 
@@ -94,7 +95,7 @@ export default function TestRegistrationPage() {
             disabled={isLoading}
             className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50"
           >
-            {isLoading ? "Test en cours..." : "Tester l'inscription"}
+            {isLoading ? "Test en cours..." : "Tester l&apos;inscription"}
           </button>
         </form>
 
@@ -107,9 +108,9 @@ export default function TestRegistrationPage() {
         )}
 
         <div className="text-center">
-          <a href="/auth/signup" className="text-blue-600 hover:text-blue-500">
-            ← Retour à la page d'inscription normale
-          </a>
+          <Link href="/auth/signup" className="text-blue-600 hover:text-blue-500">
+            ← Retour à la page d&apos;inscription normale
+          </Link>
         </div>
       </div>
     </div>

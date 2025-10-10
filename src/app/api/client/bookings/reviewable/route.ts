@@ -1,21 +1,21 @@
-import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
+import { NextResponse } from "next/server"
+import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/db"
 import { bookingsTable, reviewsTable, users } from "@/schema"
 import { eq, desc, and, isNull } from "drizzle-orm"
 
 // GET - Récupérer les réservations terminées qui peuvent être évaluées
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions) as { user?: { id?: string; role?: string } } | null
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Non autorisé" }, { status: 401 })
     }
 
     // Vérifier que l'utilisateur est un client
-    if (session.user.role !== 'customer') {
+    if ((session.user as { role?: string }).role !== 'customer') {
       return NextResponse.json({ error: "Accès refusé" }, { status: 403 })
     }
 
@@ -42,12 +42,12 @@ export async function GET(request: NextRequest) {
       .leftJoin(reviewsTable, 
         and(
           eq(reviewsTable.bookingId, bookingsTable.id),
-          eq(reviewsTable.customerId, session.user.id)
+          eq(reviewsTable.customerId, (session as unknown as { user: { id: string } }).user.id)
         )
       )
       .where(
         and(
-          eq(bookingsTable.userId, session.user.id),
+          eq(bookingsTable.userId, (session as unknown as { user: { id: string } }).user.id),
           eq(bookingsTable.status, 'completed'),
           // Réservation avec chauffeur assigné
           eq(bookingsTable.driverId, users.id),
@@ -64,11 +64,11 @@ export async function GET(request: NextRequest) {
       dropoffAddress: item.booking.dropoffAddress,
       scheduledDateTime: item.booking.scheduledDateTime,
       createdAt: item.booking.createdAt,
-      driver: {
+      driver: item.driver ? {
         id: item.driver.id,
         name: item.driver.name,
         email: item.driver.email
-      }
+      } : null
     }))
 
     return NextResponse.json({ 

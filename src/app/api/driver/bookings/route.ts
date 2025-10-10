@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { db } from '@/db';
-import { bookingsTable, users, vehiclesTable } from '@/schema';
-import { eq, and, or } from 'drizzle-orm';
+import { bookingsTable, vehiclesTable } from '@/schema';
+import { eq, and } from 'drizzle-orm';
 
 // GET - Récupérer les réservations du chauffeur connecté
 export async function GET(request: NextRequest) {
   try {
     // Vérifier l'authentification et le rôle chauffeur
-    const session = await getServerSession(authOptions);
-    if (!session?.user || session.user.role !== 'driver') {
+    const session = await getServerSession(authOptions) as { user?: { id?: string; role?: string } } | null;
+    if (!session?.user || (session.user as { role?: string }).role !== 'driver') {
       return NextResponse.json(
         { error: "Accès refusé. Seuls les chauffeurs peuvent accéder à cette ressource." },
         { status: 403 }
@@ -19,26 +19,26 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
+    
+    const userSession = session as unknown as { user: { id: string } }
 
     // Construire la requête avec filtres
-    let query = db
+    // Construire la requête avec les conditions appropriées
+    const whereConditions = status 
+      ? and(
+          eq(bookingsTable.driverId, userSession.user.id),
+          eq(bookingsTable.status, status as 'pending' | 'assigned' | 'approved' | 'rejected' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled')
+        )
+      : eq(bookingsTable.driverId, userSession.user.id);
+
+    const bookings = await db
       .select({
         booking: bookingsTable,
         vehicle: vehiclesTable,
       })
       .from(bookingsTable)
       .leftJoin(vehiclesTable, eq(bookingsTable.vehicleId, vehiclesTable.id))
-      .where(eq(bookingsTable.driverId, session.user.id));
-
-    // Filtrer par statut si spécifié
-    if (status) {
-      query = query.where(and(
-        eq(bookingsTable.driverId, session.user.id),
-        eq(bookingsTable.status, status as any)
-      ));
-    }
-
-    const bookings = await query;
+      .where(whereConditions);
 
     return NextResponse.json({ 
       success: true, 

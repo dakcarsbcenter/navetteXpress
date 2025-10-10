@@ -147,8 +147,8 @@ export default async function DashboardPage() {
 
           <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
             <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/50 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-12 h-12 bg-[#FFB885]/20 dark:bg-[#FF7E38]/20 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-[#FF7E38]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                 </svg>
               </div>
@@ -202,9 +202,9 @@ export default async function DashboardPage() {
                 </p>
               </div>
             </div>
-            <div className="bg-orange-50 dark:bg-orange-900/20 px-4 py-2 rounded-lg border border-orange-200 dark:border-orange-800">
+            <div className="bg-[#FFB885]/10 dark:bg-[#FF7E38]/10 px-4 py-2 rounded-lg border border-[#FFB885]/30 dark:border-[#FF7E38]/30">
               <div className="text-sm text-slate-600 dark:text-slate-400">Total estimé</div>
-              <div className="text-xl font-bold text-orange-600 dark:text-orange-400">
+              <div className="text-xl font-bold text-[#FF7E38] dark:text-[#FFB885]">
                 {todayRides.reduce((sum, ride) => sum + ride.price, 0)}€
               </div>
             </div>
@@ -233,7 +233,7 @@ export default async function DashboardPage() {
 
                   {/* Client Info */}
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                    <div className="w-8 h-8 bg-gradient-to-r from-[#FF7E38] to-[#E6682F] rounded-full flex items-center justify-center text-white font-semibold text-sm">
                       {ride.client.charAt(0)}
                     </div>
                     <div>

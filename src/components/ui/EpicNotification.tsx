@@ -100,12 +100,12 @@ export function EpicNotification({
           life: 1,
           color: colors[Math.floor(Math.random() * colors.length)],
           size: Math.random() * 8 + 4,
-          trail: Array.from({ length: 8 }, (_, j) => ({
+          trail: Array.from({ length: 8 }, () => ({
             x: Math.random() * 100,
             y: Math.random() * 100,
             life: 1
           })),
-          sparkles: Array.from({ length: 12 }, (_, k) => ({
+          sparkles: Array.from({ length: 12 }, () => ({
             x: Math.random() * 100,
             y: Math.random() * 100,
             life: 1,
@@ -123,12 +123,12 @@ export function EpicNotification({
           y: Math.random() * 100,
           life: 1,
           intensity: Math.random() * 0.9 + 0.1,
-          branches: Array.from({ length: 5 }, (_, j) => ({
+          branches: Array.from({ length: 5 }, () => ({
             x: Math.random() * 100,
             y: Math.random() * 100,
             life: 1
           })),
-          forks: Array.from({ length: 3 }, (_, k) => ({
+          forks: Array.from({ length: 3 }, () => ({
             x: Math.random() * 100,
             y: Math.random() * 100,
             life: 1
@@ -177,7 +177,7 @@ export function EpicNotification({
           life: 1,
           size: Math.random() * 4 + 2,
           color: colors[Math.floor(Math.random() * colors.length)],
-          trail: Array.from({ length: 6 }, (_, j) => ({
+          trail: Array.from({ length: 6 }, () => ({
             x: Math.random() * 100,
             y: Math.random() * 100,
             life: 1

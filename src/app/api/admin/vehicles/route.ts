@@ -3,7 +3,7 @@ import { db } from "@/db"
 import { vehiclesTable } from "@/schema"
 import { requireAdminRole } from "@/utils/admin-permissions"
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     await requireAdminRole()
 
@@ -23,9 +23,23 @@ export async function POST(request: NextRequest) {
   try {
     await requireAdminRole()
 
-    const { make, model, year, licensePlate, capacity, isActive } = await request.json()
+    const data = await request.json()
+    const { 
+      make, 
+      model, 
+      year, 
+      plateNumber, 
+      capacity, 
+      photo,
+      category,
+      description,
+      features,
+      vehicleType,
+      driverId,
+      isActive 
+    } = data
 
-    if (!make || !model || !licensePlate) {
+    if (!make || !model || !plateNumber) {
       return NextResponse.json(
         { success: false, error: "Marque, modèle et plaque d'immatriculation requis" },
         { status: 400 }
@@ -38,8 +52,14 @@ export async function POST(request: NextRequest) {
         make,
         model,
         year: year || new Date().getFullYear(),
-        licensePlate,
+        plateNumber,
         capacity: capacity || 4,
+        vehicleType: vehicleType || 'sedan',
+        photo: photo || null,
+        category: category || null,
+        description: description || null,
+        features: features || null,
+        driverId: driverId || null,
         isActive: isActive !== undefined ? isActive : true,
       })
       .returning()

@@ -1,17 +1,17 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { SelectBooking, SelectDriver, SelectVehicle, InsertBooking } from '@/schema';
+import { SelectBooking, SelectUser, SelectVehicle, InsertBooking } from '@/schema';
 
 interface BookingWithDetails {
   booking: SelectBooking;
-  driver: SelectDriver | null;
+  driver: SelectUser | null;
   vehicle: SelectVehicle | null;
 }
 
 export function BookingsManager() {
   const [bookings, setBookings] = useState<BookingWithDetails[]>([]);
-  const [drivers, setDrivers] = useState<SelectDriver[]>([]);
+  const [drivers, setDrivers] = useState<SelectUser[]>([]);
   const [vehicles, setVehicles] = useState<SelectVehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -63,7 +63,7 @@ export function BookingsManager() {
       const result = await response.json();
       
       if (result.success) {
-        setDrivers(result.data.filter((d: SelectDriver) => d.isActive));
+        setDrivers(result.data.filter((d: SelectUser) => d.isActive));
       }
     } catch (error) {
       console.error('Erreur lors du chargement des chauffeurs:', error);
@@ -76,7 +76,7 @@ export function BookingsManager() {
       const result = await response.json();
       
       if (result.success) {
-        setVehicles(result.data.map((v: any) => v.vehicle).filter((v: SelectVehicle) => v.isActive));
+        setVehicles(result.data.map((v: { vehicle: SelectVehicle }) => v.vehicle).filter((v: SelectVehicle) => v.isActive));
       }
     } catch (error) {
       console.error('Erreur lors du chargement des véhicules:', error);
@@ -398,7 +398,7 @@ export function BookingsManager() {
                 </label>
                 <select
                   value={formData.status || 'pending'}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, status: e.target.value as 'pending' | 'assigned' | 'approved' | 'rejected' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled' })}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
                 >
                   <option value="pending">En attente</option>
@@ -411,7 +411,7 @@ export function BookingsManager() {
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Prix (€)
+                  Prix (FCFA)
                 </label>
                 <input
                   type="number"
@@ -429,7 +429,7 @@ export function BookingsManager() {
                 </label>
                 <select
                   value={formData.driverId || ''}
-                  onChange={(e) => setFormData({ ...formData, driverId: e.target.value ? parseInt(e.target.value) : undefined })}
+                  onChange={(e) => setFormData({ ...formData, driverId: e.target.value || null })}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
                 >
                   <option value="">Aucun chauffeur assigné</option>
@@ -564,7 +564,7 @@ export function BookingsManager() {
                   </td>
                   <td className="py-4">
                     <span className="text-sm text-slate-900 dark:text-white">
-                      {item.booking.price ? `${item.booking.price}€` : '-'}
+                      {item.booking.price ? `${item.booking.price} FCFA` : '-'}
                     </span>
                   </td>
                   <td className="py-4">

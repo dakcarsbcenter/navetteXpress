@@ -7,7 +7,7 @@ import { DriverPlanning } from "@/components/driver/DriverPlanning"
 import { VehicleReport } from "@/components/driver/VehicleReport"
 import { DriverStats } from "@/components/driver/DriverStats"
 import Link from "next/link"
-import { SimpleDriverTest } from "@/components/driver/SimpleDriverTest"
+// import { SimpleDriverTest } from "@/components/driver/SimpleDriverTest"
 
 type ViewType = 'home' | 'planning' | 'vehicle-report' | 'stats'
 

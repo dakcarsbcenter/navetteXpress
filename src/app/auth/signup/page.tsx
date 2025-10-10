@@ -128,7 +128,6 @@ export default function SignUpPage() {
       <div className="max-w-md w-full space-y-8 p-8">
         <div className="text-center">
           <div className="flex items-center justify-center gap-3 mb-6">
-            <span className="text-4xl">🚗</span>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Navette Xpress
             </h1>

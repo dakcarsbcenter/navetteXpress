@@ -108,18 +108,18 @@ export function LegendaryNotification({
           life: 1,
           color: colors[Math.floor(Math.random() * colors.length)],
           size: Math.random() * 10 + 5,
-          trail: Array.from({ length: 12 }, (_, j) => ({
+          trail: Array.from({ length: 12 }, () => ({
             x: Math.random() * 100,
             y: Math.random() * 100,
             life: 1
           })),
-          sparkles: Array.from({ length: 20 }, (_, k) => ({
+          sparkles: Array.from({ length: 20 }, () => ({
             x: Math.random() * 100,
             y: Math.random() * 100,
             life: 1,
             color: colors[Math.floor(Math.random() * colors.length)]
           })),
-          rings: Array.from({ length: 8 }, (_, l) => ({
+          rings: Array.from({ length: 8 }, () => ({
             x: Math.random() * 100,
             y: Math.random() * 100,
             life: 1,
@@ -137,17 +137,17 @@ export function LegendaryNotification({
           y: Math.random() * 100,
           life: 1,
           intensity: Math.random() * 0.95 + 0.05,
-          branches: Array.from({ length: 8 }, (_, j) => ({
+          branches: Array.from({ length: 8 }, () => ({
             x: Math.random() * 100,
             y: Math.random() * 100,
             life: 1
           })),
-          forks: Array.from({ length: 5 }, (_, k) => ({
+          forks: Array.from({ length: 5 }, () => ({
             x: Math.random() * 100,
             y: Math.random() * 100,
             life: 1
           })),
-          sparks: Array.from({ length: 10 }, (_, l) => ({
+          sparks: Array.from({ length: 10 }, () => ({
             x: Math.random() * 100,
             y: Math.random() * 100,
             life: 1,
@@ -199,7 +199,7 @@ export function LegendaryNotification({
           life: 1,
           size: Math.random() * 6 + 3,
           color: colors[Math.floor(Math.random() * colors.length)],
-          trail: Array.from({ length: 10 }, (_, j) => ({
+          trail: Array.from({ length: 10 }, () => ({
             x: Math.random() * 100,
             y: Math.random() * 100,
             life: 1

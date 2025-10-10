@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { sendVehicleReportEmail } from '@/lib/brevo-email';
 
@@ -13,7 +13,7 @@ interface VehicleReportRequest {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession(authOptions) as { user?: { id?: string; name?: string; email?: string; role?: string } } | null;
 
     if (!session?.user) {
       return NextResponse.json(
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Vérifier que c'est un chauffeur
-    if (session.user.role !== 'driver' && session.user.role !== 'admin') {
+    if ((session.user as { role?: string }).role !== 'driver' && (session.user as { role?: string }).role !== 'admin') {
       return NextResponse.json(
         { success: false, error: 'Seuls les chauffeurs peuvent créer des rapports véhicule' },
         { status: 403 }
@@ -138,10 +138,11 @@ export async function POST(request: NextRequest) {
       emailError: emailError || undefined
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Erreur interne du serveur';
     console.error('❌ Erreur création rapport véhicule:', error);
     return NextResponse.json(
-      { success: false, error: error.message || 'Erreur interne du serveur' },
+      { success: false, error: errorMessage },
       { status: 500 }
     );
   }

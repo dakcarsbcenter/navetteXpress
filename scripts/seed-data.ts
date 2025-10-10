@@ -25,82 +25,82 @@ const usersData = [
   },
   // 9 Chauffeurs
   {
-    id: "chauffeur-001",
+    id: "driver-001",
     name: "Pierre Dubois",
     email: "pierre.dubois@taxi-service.com",
-    role: "chauffeur" as const,
+    role: "driver" as const,
     phone: "+33123456790",
     licenseNumber: "LIC001234",
     isActive: true
   },
   {
-    id: "chauffeur-002", 
+    id: "driver-002", 
     name: "Marie Martin",
     email: "marie.martin@taxi-service.com",
-    role: "chauffeur" as const,
+    role: "driver" as const,
     phone: "+33123456791",
     licenseNumber: "LIC001235",
     isActive: true
   },
   {
-    id: "chauffeur-003",
+    id: "driver-003",
     name: "Jean Bernard",
     email: "jean.bernard@taxi-service.com", 
-    role: "chauffeur" as const,
+    role: "driver" as const,
     phone: "+33123456792",
     licenseNumber: "LIC001236",
     isActive: true
   },
   {
-    id: "chauffeur-004",
+    id: "driver-004",
     name: "Sophie Laurent",
     email: "sophie.laurent@taxi-service.com",
-    role: "chauffeur" as const, 
+    role: "driver" as const, 
     phone: "+33123456793",
     licenseNumber: "LIC001237",
     isActive: true
   },
   {
-    id: "chauffeur-005",
+    id: "driver-005",
     name: "Michel Roux",
     email: "michel.roux@taxi-service.com",
-    role: "chauffeur" as const,
+    role: "driver" as const,
     phone: "+33123456794", 
     licenseNumber: "LIC001238",
     isActive: true
   },
   {
-    id: "chauffeur-006",
+    id: "driver-006",
     name: "Isabelle Moreau",
     email: "isabelle.moreau@taxi-service.com",
-    role: "chauffeur" as const,
+    role: "driver" as const,
     phone: "+33123456795",
     licenseNumber: "LIC001239",
     isActive: true
   },
   {
-    id: "chauffeur-007",
+    id: "driver-007",
     name: "Alain Petit",
     email: "alain.petit@taxi-service.com",
-    role: "chauffeur" as const,
+    role: "driver" as const,
     phone: "+33123456796",
     licenseNumber: "LIC001240",
     isActive: true
   },
   {
-    id: "chauffeur-008",
+    id: "driver-008",
     name: "Nathalie Simon",
     email: "nathalie.simon@taxi-service.com",
-    role: "chauffeur" as const,
+    role: "driver" as const,
     phone: "+33123456797",
     licenseNumber: "LIC001241",
     isActive: true
   },
   {
-    id: "chauffeur-009",
+    id: "driver-009",
     name: "Philippe Durand",
     email: "philippe.durand@taxi-service.com",
-    role: "chauffeur" as const,
+    role: "driver" as const,
     phone: "+33123456798",
     licenseNumber: "LIC001242",
     isActive: true
@@ -109,7 +109,7 @@ const usersData = [
 
 // Données des véhicules
 const vehiclesData = [
-  // Véhicules pour les chauffeurs
+  // Véhicules pour les drivers
   {
     make: "Peugeot",
     model: "308",
@@ -117,7 +117,7 @@ const vehiclesData = [
     plateNumber: "AB-123-CD",
     capacity: 4,
     vehicleType: "sedan" as const,
-    driverId: "chauffeur-001",
+    driverId: "driver-001",
     isActive: true
   },
   {
@@ -127,7 +127,7 @@ const vehiclesData = [
     plateNumber: "EF-456-GH",
     capacity: 4,
     vehicleType: "sedan" as const, 
-    driverId: "chauffeur-002",
+    driverId: "driver-002",
     isActive: true
   },
   {
@@ -137,7 +137,7 @@ const vehiclesData = [
     plateNumber: "IJ-789-KL",
     capacity: 4,
     vehicleType: "sedan" as const,
-    driverId: "chauffeur-003",
+    driverId: "driver-003",
     isActive: true
   },
   {
@@ -147,7 +147,7 @@ const vehiclesData = [
     plateNumber: "MN-012-OP",
     capacity: 5,
     vehicleType: "suv" as const,
-    driverId: "chauffeur-004",
+    driverId: "driver-004",
     isActive: true
   },
   {
@@ -157,7 +157,7 @@ const vehiclesData = [
     plateNumber: "QR-345-ST",
     capacity: 4,
     vehicleType: "luxury" as const,
-    driverId: "chauffeur-005",
+    driverId: "driver-005",
     isActive: true
   },
   {
@@ -167,7 +167,7 @@ const vehiclesData = [
     plateNumber: "UV-678-WX",
     capacity: 4,
     vehicleType: "sedan" as const,
-    driverId: "chauffeur-006",
+    driverId: "driver-006",
     isActive: true
   },
   {
@@ -177,7 +177,7 @@ const vehiclesData = [
     plateNumber: "YZ-901-AB",
     capacity: 4,
     vehicleType: "luxury" as const,
-    driverId: "chauffeur-007",
+    driverId: "driver-007",
     isActive: true
   },
   {
@@ -187,7 +187,7 @@ const vehiclesData = [
     plateNumber: "CD-234-EF",
     capacity: 8,
     vehicleType: "van" as const,
-    driverId: "chauffeur-008",
+    driverId: "driver-008",
     isActive: true
   },
   {
@@ -197,7 +197,7 @@ const vehiclesData = [
     plateNumber: "GH-567-IJ",
     capacity: 4,
     vehicleType: "sedan" as const,
-    driverId: "chauffeur-009",
+    driverId: "driver-009",
     isActive: true
   }
 ];
@@ -260,7 +260,7 @@ function generateBookingData(customerIndex: number, driverId: string, vehicleId:
 // Fonction pour générer des avis
 function generateReviewData(bookingId: number, customerId: string, driverId: string) {
   const comments = [
-    "Excellent service, chauffeur très professionnel",
+    "Excellent service, driver très professionnel",
     "Très ponctuel et courtois",
     "Véhicule propre et confortable",
     "Service impeccable, je recommande",
@@ -302,9 +302,9 @@ async function seedDatabase() {
     // 3. Insérer les réservations (5 par utilisateur)
     console.log("📋 Insertion des réservations...");
     const insertedBookings = [];
-    const drivers = usersData.filter(u => u.role === "chauffeur");
+    const drivers = usersData.filter(u => u.role === "driver");
     
-    for (let i = 0; i < 50; i++) { // 5 réservations par chauffeur (9 chauffeurs)
+    for (let i = 0; i < 50; i++) { // 5 réservations par driver (9 drivers)
       const driver = drivers[i % drivers.length];
       const vehicle = insertedVehicles.find(v => v.driverId === driver.id);
       
@@ -320,8 +320,10 @@ async function seedDatabase() {
     const completedBookings = insertedBookings.filter(b => b.status === "completed");
     
     for (const booking of completedBookings) {
-      const review = generateReviewData(booking.id, baseUserId, booking.driverId);
-      await db.insert(reviewsTable).values(review);
+      if (booking.driverId) {
+        const review = generateReviewData(booking.id, baseUserId, booking.driverId);
+        await db.insert(reviewsTable).values(review);
+      }
     }
 
     console.log("✅ Seeding terminé avec succès!");

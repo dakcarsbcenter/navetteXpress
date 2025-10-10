@@ -1,12 +1,13 @@
 "use client"
 
-import { useSession, signIn, signOut } from "next-auth/react"
+import { useSession, signOut } from "next-auth/react"
 import Link from "next/link"
+import Image from "next/image"
 import { useState } from "react"
 
 // Composant pour les utilisateurs connectés
 export function SignedIn({ children }: { children: React.ReactNode }) {
-  const { data: session, status } = useSession()
+  const { status } = useSession()
   
   if (status === "loading") {
     return <div>Chargement...</div>
@@ -21,7 +22,7 @@ export function SignedIn({ children }: { children: React.ReactNode }) {
 
 // Composant pour les utilisateurs non connectés
 export function SignedOut({ children }: { children: React.ReactNode }) {
-  const { data: session, status } = useSession()
+  const { status } = useSession()
   
   if (status === "loading") {
     return <div>Chargement...</div>
@@ -117,11 +118,15 @@ export function UserButton({
         className={`${appearance?.elements?.avatarBox || "w-8 h-8"} rounded-full overflow-hidden border-2 border-slate-300 dark:border-slate-600 hover:border-blue-500 transition-colors`}
       >
         {session.user.image ? (
-          <img 
-            src={session.user.image} 
-            alt={session.user.name || "User"} 
-            className="w-full h-full object-cover"
-          />
+          <div className="relative w-full h-full">
+            <Image 
+              src={session.user.image} 
+              alt={session.user.name || "User"} 
+              fill
+              className="object-cover"
+              sizes="32px"
+            />
+          </div>
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-semibold">
             {session.user.name?.charAt(0) || session.user.email?.charAt(0) || "U"}

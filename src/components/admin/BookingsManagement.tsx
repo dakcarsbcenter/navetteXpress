@@ -1,10 +1,11 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ConfirmationModal } from "@/components/ui/ConfirmationModal"
+import Image from "next/image"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { FilterBar } from "@/components/ui/FilterBar"
 import { useNotification } from "@/hooks/useNotification"
+import { formatPrice } from "@/lib/utils"
 
 interface Booking {
   id: number
@@ -17,7 +18,7 @@ interface Booking {
   status: 'pending' | 'assigned' | 'approved' | 'rejected' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled'
   driverId: string | null
   vehicleId: number | null
-  price?: number
+  price?: string | null
   notes?: string
   createdAt: string
   driver?: {
@@ -28,7 +29,7 @@ interface Booking {
   vehicle?: {
     make: string
     model: string
-    licensePlate: string
+    plateNumber: string
     photo?: string
   }
 }
@@ -39,8 +40,21 @@ export function BookingsManagement() {
   const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingBooking, setEditingBooking] = useState<Booking | null>(null)
-  const [drivers, setDrivers] = useState<any[]>([])
-  const [vehicles, setVehicles] = useState<any[]>([])
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false)
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
+  const [drivers, setDrivers] = useState<Array<{
+    id: string;
+    name: string;
+    email: string;
+    phone?: string;
+  }>>([])
+  const [vehicles, setVehicles] = useState<Array<{
+    id: string;
+    make: string;
+    model: string;
+    year: number;
+    plateNumber: string;
+  }>>([])
   const { notifications, showSuccess, showError, removeNotification } = useNotification()
   
   // Pagination state
@@ -78,6 +92,7 @@ export function BookingsManagement() {
 
   useEffect(() => {
     applyFilters()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookings, filters])
   
   useEffect(() => {
@@ -113,7 +128,25 @@ export function BookingsManagement() {
         if (result.success) {
           // L'API renvoie { booking, driver, vehicle } - on normalise vers Booking
           const normalized: Booking[] = Array.isArray(result.data)
-            ? result.data.map((row: any) => {
+            ? result.data.map((row: {
+                booking: {
+                  id: string;
+                  customerName: string;
+                  customerEmail: string;
+                  customerPhone: string;
+                  pickupAddress: string;
+                  dropoffAddress: string;
+                  scheduledDateTime: string;
+                  status: string;
+                  driverId: string;
+                  vehicleId: string;
+                  price: string;
+                  notes: string;
+                  createdAt: string;
+                };
+                driver?: { name: string; email: string };
+                vehicle?: { make: string; model: string };
+              }) => {
                 const b = row.booking ?? row
                 return {
                   id: b.id,
@@ -355,6 +388,27 @@ export function BookingsManagement() {
     setIsModalOpen(true)
   }
 
+  const openDetailsModal = (booking: Booking) => {
+    setSelectedBooking(booking)
+    setIsDetailsModalOpen(true)
+  }
+
+  const parseBookingNotes = (notes: string | null | undefined) => {
+    if (!notes) return {}
+    
+    const data: { [key: string]: string } = {}
+    const lines = notes.split('\n')
+    
+    lines.forEach(line => {
+      const [key, ...valueParts] = line.split(': ')
+      if (key && valueParts.length > 0) {
+        data[key.trim()] = valueParts.join(': ').trim()
+      }
+    })
+    
+    return data
+  }
+
   const toggleDropdown = (bookingId: number, event: React.MouseEvent) => {
     event.preventDefault()
     event.stopPropagation()
@@ -485,6 +539,16 @@ export function BookingsManagement() {
         activeFiltersCount={Object.values(filters).filter(v => v !== '').length}
       />
 
+      {/* Information utilisateur */}
+      <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+        <div className="flex items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>💡 <strong>Astuce :</strong> Cliquez sur une ligne pour voir les détails complets de la réservation, ou utilisez le menu Actions pour plus d'options.</span>
+        </div>
+      </div>
+
       {/* Tableau des réservations */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div className="overflow-x-auto">
@@ -516,7 +580,18 @@ export function BookingsManagement() {
             </thead>
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {paginatedBookings.map((booking) => (
-                <tr key={booking.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                <tr 
+                  key={booking.id} 
+                  className="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200"
+                  onClick={(e) => {
+                    // Éviter d'ouvrir le modal si on clique sur le menu Actions
+                    const target = e.target as HTMLElement
+                    if (target.closest('[data-dropdown-container]') || target.closest('button')) {
+                      return
+                    }
+                    openDetailsModal(booking)
+                  }}
+                >
                   <td className="px-3 py-4 whitespace-nowrap">
                     <div>
                       <div className="text-sm font-medium text-gray-900 dark:text-white truncate max-w-32">
@@ -550,15 +625,15 @@ export function BookingsManagement() {
                     <div className="flex items-center space-x-2">
                       <div className="flex-shrink-0 h-6 w-6">
                         {booking.driver?.image ? (
-                          <img
-                            className="h-6 w-6 rounded-full object-cover"
-                            src={booking.driver.image}
-                            alt={`Photo de ${booking.driver.name}`}
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none'
-                              e.currentTarget.nextElementSibling?.classList.remove('hidden')
-                            }}
-                          />
+                          <div className="relative h-6 w-6 rounded-full overflow-hidden">
+                            <Image
+                              fill
+                              className="object-cover"
+                              src={booking.driver.image}
+                              alt={`Photo de ${booking.driver.name}`}
+                              sizes="24px"
+                            />
+                          </div>
                         ) : null}
                         <div className={`h-6 w-6 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-gray-600 dark:text-gray-300 text-xs font-medium ${booking.driver?.image ? 'hidden' : ''}`}>
                           {booking.driver?.name ? booking.driver.name.charAt(0).toUpperCase() : '?'}
@@ -575,15 +650,15 @@ export function BookingsManagement() {
                     <div className="flex items-center space-x-2">
                       <div className="flex-shrink-0 h-6 w-6">
                         {booking.vehicle?.photo ? (
-                          <img
-                            className="h-6 w-6 rounded object-cover"
-                            src={booking.vehicle.photo}
-                            alt={`Photo de ${booking.vehicle.make} ${booking.vehicle.model}`}
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none'
-                              e.currentTarget.nextElementSibling?.classList.remove('hidden')
-                            }}
-                          />
+                          <div className="relative h-6 w-6 rounded overflow-hidden">
+                            <Image
+                              fill
+                              className="object-cover"
+                              src={booking.vehicle.photo}
+                              alt={`Photo de ${booking.vehicle.make} ${booking.vehicle.model}`}
+                              sizes="24px"
+                            />
+                          </div>
                         ) : null}
                         <div className={`h-6 w-6 rounded bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-gray-600 dark:text-gray-300 text-xs font-medium ${booking.vehicle?.photo ? 'hidden' : ''}`}>
                           🚗
@@ -595,7 +670,7 @@ export function BookingsManagement() {
                         </div>
                         {booking.price && (
                           <div className="text-green-600 dark:text-green-400 font-medium">
-                            💰 {booking.price}€
+                            💰 {formatPrice(booking.price)}
                           </div>
                         )}
                       </div>
@@ -618,6 +693,22 @@ export function BookingsManagement() {
                       {openDropdownId === booking.id && (
                         <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 z-50">
                           <div className="py-1">
+                            {/* Option Voir détails */}
+                            <button
+                              onClick={() => {
+                                console.log('Voir détails clicked for booking:', booking.id)
+                                openDetailsModal(booking)
+                                setOpenDropdownId(null)
+                              }}
+                              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:text-indigo-600 dark:hover:text-indigo-400 w-full text-left transition-colors duration-200"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                              </svg>
+                              Voir détails
+                            </button>
+
                             {/* Option Modifier */}
                             <button
                               onClick={() => {
@@ -876,7 +967,7 @@ export function BookingsManagement() {
                   </label>
                   <select
                     value={formData.status}
-                    onChange={(e) => setFormData({...formData, status: e.target.value as any})}
+                    onChange={(e) => setFormData({...formData, status: e.target.value as 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled'})}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                   >
                     <option value="pending">⏳ En attente</option>
@@ -921,7 +1012,7 @@ export function BookingsManagement() {
                     <option value="">Sélectionner un véhicule</option>
                     {vehicles.map((vehicle) => (
                       <option key={vehicle.id} value={vehicle.id}>
-                        {vehicle.make} {vehicle.model} ({vehicle.licensePlate})
+                        {vehicle.make} {vehicle.model} ({vehicle.plateNumber})
                       </option>
                     ))}
                   </select>
@@ -930,7 +1021,7 @@ export function BookingsManagement() {
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Prix (€)
+                  Prix (FCFA)
                 </label>
                 <input
                   type="number"
@@ -969,6 +1060,231 @@ export function BookingsManagement() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de détails de la réservation */}
+      {isDetailsModalOpen && selectedBooking && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity z-50" onClick={() => setIsDetailsModalOpen(false)}>
+          <div className="fixed inset-0 z-50 w-screen overflow-y-auto">
+            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+              <div 
+                className="relative transform overflow-hidden rounded-lg bg-white dark:bg-gray-900 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="bg-white dark:bg-gray-900 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                  <div className="sm:flex sm:items-start">
+                    <div className="w-full">
+                      {/* Header */}
+                      <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                          📋 Détails de la réservation #{selectedBooking.id}
+                        </h3>
+                        <button
+                          onClick={() => setIsDetailsModalOpen(false)}
+                          className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
+                        >
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+
+                      {/* Status Badge */}
+                      <div className="mb-6">
+                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                          selectedBooking.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' :
+                          selectedBooking.status === 'assigned' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400' :
+                          selectedBooking.status === 'confirmed' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' :
+                          selectedBooking.status === 'in_progress' ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/20 dark:text-indigo-400' :
+                          selectedBooking.status === 'completed' ? 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400' :
+                          selectedBooking.status === 'cancelled' ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400' :
+                          'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400'
+                        }`}>
+                          {selectedBooking.status === 'pending' ? '⏳ En attente' :
+                           selectedBooking.status === 'assigned' ? '👨‍✈️ Assigné' :
+                           selectedBooking.status === 'confirmed' ? '✅ Confirmé' :
+                           selectedBooking.status === 'in_progress' ? '🚗 En cours' :
+                           selectedBooking.status === 'completed' ? '✅ Terminé' :
+                           selectedBooking.status === 'cancelled' ? '❌ Annulé' :
+                           selectedBooking.status}
+                        </span>
+                      </div>
+
+                      {/* Content Grid */}
+                      <div className="grid md:grid-cols-2 gap-6">
+                        {/* Informations Client */}
+                        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                          <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                            👤 Informations Client
+                          </h4>
+                          <div className="space-y-3">
+                            <div>
+                              <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Nom:</span>
+                              <p className="text-gray-900 dark:text-white">{selectedBooking.customerName}</p>
+                            </div>
+                            <div>
+                              <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Email:</span>
+                              <p className="text-gray-900 dark:text-white">{selectedBooking.customerEmail}</p>
+                            </div>
+                            <div>
+                              <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Téléphone:</span>
+                              <p className="text-gray-900 dark:text-white">{selectedBooking.customerPhone}</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Informations Trajet */}
+                        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                          <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                            🗺️ Informations Trajet
+                          </h4>
+                          <div className="space-y-3">
+                            <div>
+                              <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Départ:</span>
+                              <p className="text-gray-900 dark:text-white">{selectedBooking.pickupAddress}</p>
+                            </div>
+                            <div>
+                              <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Destination:</span>
+                              <p className="text-gray-900 dark:text-white">{selectedBooking.dropoffAddress}</p>
+                            </div>
+                            <div>
+                              <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Date et heure:</span>
+                              <p className="text-gray-900 dark:text-white">
+                                {new Date(selectedBooking.scheduledDateTime).toLocaleString('fr-FR')}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Détails du Service */}
+                        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                          <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                            🚖 Détails du Service
+                          </h4>
+                          <div className="space-y-3">
+                            {(() => {
+                              const parsedNotes = parseBookingNotes(selectedBooking.notes)
+                              return (
+                                <>
+                                  <div>
+                                    <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Type de service:</span>
+                                    <p className="text-gray-900 dark:text-white">{parsedNotes.Service || 'Non spécifié'}</p>
+                                  </div>
+                                  <div>
+                                    <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Nombre de passagers:</span>
+                                    <p className="text-gray-900 dark:text-white">{parsedNotes.Passagers || 'Non spécifié'}</p>
+                                  </div>
+                                  <div>
+                                    <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Nombre de valises:</span>
+                                    <p className="text-gray-900 dark:text-white">{parsedNotes.Valises || 'Non spécifié'}</p>
+                                  </div>
+                                  <div>
+                                    <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Durée:</span>
+                                    <p className="text-gray-900 dark:text-white">{parsedNotes.Durée || 'Non spécifiée'}</p>
+                                  </div>
+                                </>
+                              )
+                            })()}
+                          </div>
+                        </div>
+
+                        {/* Assignation et Prix */}
+                        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                          <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                            💼 Assignation & Tarification
+                          </h4>
+                          <div className="space-y-3">
+                            <div>
+                              <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Chauffeur:</span>
+                              <p className="text-gray-900 dark:text-white">
+                                {selectedBooking.driver?.name || 'Non assigné'}
+                              </p>
+                            </div>
+                            <div>
+                              <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Véhicule:</span>
+                              <p className="text-gray-900 dark:text-white">
+                                {selectedBooking.vehicle ? 
+                                  `${selectedBooking.vehicle.make} ${selectedBooking.vehicle.model}` : 
+                                  'Non assigné'
+                                }
+                              </p>
+                            </div>
+                            <div>
+                              <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Prix:</span>
+                              <p className="text-gray-900 dark:text-white font-bold text-lg">
+                                {selectedBooking.price ? `${formatPrice(selectedBooking.price)}` : 'Non défini'}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Services additionnels et demandes spéciales */}
+                      {(() => {
+                        const parsedNotes = parseBookingNotes(selectedBooking.notes)
+                        const hasAdditionalInfo = parsedNotes['Services additionnels'] || parsedNotes['Demandes spéciales']
+                        
+                        if (hasAdditionalInfo) {
+                          return (
+                            <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+                              <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                                ✨ Informations Supplémentaires
+                              </h4>
+                              <div className="space-y-3">
+                                {parsedNotes['Services additionnels'] && (
+                                  <div>
+                                    <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Services additionnels:</span>
+                                    <p className="text-gray-900 dark:text-white">{parsedNotes['Services additionnels']}</p>
+                                  </div>
+                                )}
+                                {parsedNotes['Demandes spéciales'] && (
+                                  <div>
+                                    <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Demandes spéciales:</span>
+                                    <p className="text-gray-900 dark:text-white">{parsedNotes['Demandes spéciales']}</p>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )
+                        }
+                        return null
+                      })()}
+
+                      {/* Informations système */}
+                      <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
+                          <span>Créée le: {new Date(selectedBooking.createdAt).toLocaleString('fr-FR')}</span>
+                          <span>ID: #{selectedBooking.id}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Actions Footer */}
+                <div className="bg-gray-50 dark:bg-gray-800 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                  <button
+                    type="button"
+                    className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
+                    onClick={() => {
+                      setIsDetailsModalOpen(false)
+                      openEditModal(selectedBooking)
+                    }}
+                  >
+                    ✏️ Modifier
+                  </button>
+                  <button
+                    type="button"
+                    className="mt-3 inline-flex w-full justify-center rounded-md bg-white dark:bg-gray-700 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-gray-200 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 sm:mt-0 sm:w-auto"
+                    onClick={() => setIsDetailsModalOpen(false)}
+                  >
+                    Fermer
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}

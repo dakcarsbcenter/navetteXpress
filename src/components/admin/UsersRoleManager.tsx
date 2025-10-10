@@ -3,7 +3,13 @@
 import { useState, useEffect } from 'react';
 
 export function UsersRoleManager() {
-  const [userRoles, setUserRoles] = useState<any[]>([]);
+  const [userRoles, setUserRoles] = useState<Array<{
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+    isActive: boolean;
+  }>>([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -101,7 +107,7 @@ export function UsersRoleManager() {
   };
 
   const filteredUserRoles = userRoles.filter(userRole =>
-    userRole.clerkUserId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    userRole.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
     userRole.role.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -277,7 +283,7 @@ export function UsersRoleManager() {
                 <tr key={userRole.id} className="border-b border-gray-100 dark:border-gray-700">
                   <td className="py-4">
                     <div className="font-mono text-sm bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
-                      {userRole.clerkUserId}
+                      {userRole.id}
                     </div>
                   </td>
                   <td className="py-4">
@@ -290,12 +296,12 @@ export function UsersRoleManager() {
                   </td>
                   <td className="py-4">
                     <span className="text-sm text-slate-900 dark:text-white">
-                      {new Date(userRole.createdAt).toLocaleDateString('fr-FR')}
+                      N/A
                     </span>
                   </td>
                   <td className="py-4">
                     <span className="text-sm text-slate-900 dark:text-white">
-                      {new Date(userRole.updatedAt).toLocaleDateString('fr-FR')}
+                      N/A
                     </span>
                   </td>
                 </tr>

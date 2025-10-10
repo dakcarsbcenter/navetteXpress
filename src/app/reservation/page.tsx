@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Navigation } from "@/components/navigation";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+import { BookNowIcon } from "@/components/icons/custom-icons";
 import Link from "next/link";
 
 // Types de services disponibles
@@ -60,10 +61,12 @@ interface FormData {
   pickupAddress: string;
   destinationAddress: string;
   passengers: number;
+  luggage: number;
   duration: number;
   additionalServices: string[];
   specialRequests: string;
   contactPhone: string;
+  contactEmail: string;
   // Champs pour les utilisateurs non connectés
   clientName: string;
   clientEmail: string;
@@ -74,7 +77,7 @@ export default function ReservationPage() {
   const router = useRouter();
   const isSignedIn = !!session;
   const isLoaded = status !== "loading";
-  const user = session?.user;
+  const user = session?.user as unknown as { id?: string; name?: string; email?: string; role?: string } | undefined;
   
   // États du formulaire
   const [formData, setFormData] = useState<FormData>({
@@ -85,10 +88,12 @@ export default function ReservationPage() {
     pickupAddress: "",
     destinationAddress: "",
     passengers: 1,
+    luggage: 1,
     duration: 2,
     additionalServices: [],
     specialRequests: "",
     contactPhone: "",
+    contactEmail: user?.email || "",
     clientName: "",
     clientEmail: ""
   });
@@ -97,14 +102,23 @@ export default function ReservationPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
+  // Mettre à jour automatiquement l'email de contact quand l'utilisateur est chargé
+  useEffect(() => {
+    if (user?.email && !formData.contactEmail) {
+      setFormData(prev => ({
+        ...prev,
+        contactEmail: user.email || ''
+      }));
+    }
+  }, [user?.email, formData.contactEmail]);
 
-  const handleInputChange = (field: keyof FormData, value: any) => {
+  const handleInputChange = (field: keyof FormData, value: string | number | boolean | string[]) => {
     setFormData(prev => {
       // Si on change le type de service, réinitialiser le service personnalisé
       if (field === 'serviceType' && value !== 'other') {
-        return { ...prev, [field]: value, customServiceType: '' };
+        return { ...prev, [field]: value as string, customServiceType: '' };
       }
-      return { ...prev, [field]: value };
+      return { ...prev, [field]: value as string | number | boolean | string[] };
     });
   };
 
@@ -134,10 +148,12 @@ export default function ReservationPage() {
           pickupAddress: formData.pickupAddress,
           destinationAddress: formData.destinationAddress,
           passengers: formData.passengers,
+          luggage: formData.luggage,
           duration: formData.duration,
           additionalServices: formData.additionalServices,
           specialRequests: formData.specialRequests,
           contactPhone: formData.contactPhone,
+          contactEmail: formData.contactEmail,
           clientName: formData.clientName,
           clientEmail: formData.clientEmail,
           userId: user?.id
@@ -211,14 +227,14 @@ export default function ReservationPage() {
               <div key={step} className="flex items-center">
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm ${
                   currentStep >= step 
-                    ? 'bg-orange-500 text-white' 
+                    ? 'bg-gradient-to-r from-[#FF7E38] to-[#E6682F] text-white shadow-lg' 
                     : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
                 }`}>
                   {step}
                 </div>
                 {step < 3 && (
                   <div className={`h-1 w-32 mx-4 ${
-                    currentStep > step ? 'bg-orange-500' : 'bg-gray-200 dark:bg-gray-700'
+                    currentStep > step ? 'bg-gradient-to-r from-[#FF7E38] to-[#E6682F]' : 'bg-gray-200 dark:bg-gray-700'
                   }`} />
                 )}
               </div>
@@ -278,7 +294,7 @@ export default function ReservationPage() {
                     value={formData.customServiceType}
                     onChange={(e) => handleInputChange('customServiceType', e.target.value)}
                     placeholder="Ex: Transport pour tournage, livraison urgente, etc."
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-[#FF7E38] focus:border-[#FF7E38]"
                   />
                 </div>
               )}
@@ -295,7 +311,7 @@ export default function ReservationPage() {
               
               {/* Informations client pour les utilisateurs non connectés */}
               {!isSignedIn && (
-                <div className="bg-orange-50 dark:bg-orange-900/20 p-6 rounded-xl border border-orange-200 dark:border-orange-800">
+                <div className="bg-[#FFB885]/10 dark:bg-[#FF7E38]/10 p-6 rounded-xl border border-[#FFB885]/30 dark:border-[#FF7E38]/30">
                   <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
                     Vos informations
                   </h3>
@@ -355,33 +371,35 @@ export default function ReservationPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                  Adresse de départ
-                </label>
-                <input
-                  type="text"
-                  value={formData.pickupAddress}
-                  onChange={(e) => handleInputChange('pickupAddress', e.target.value)}
-                  placeholder="Saisissez l'adresse de départ"
-                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                  Adresse de destination
-                </label>
-                <input
-                  type="text"
-                  value={formData.destinationAddress}
-                  onChange={(e) => handleInputChange('destinationAddress', e.target.value)}
-                  placeholder="Saisissez l'adresse de destination"
-                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                />
-              </div>
-
               <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Adresse de départ
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.pickupAddress}
+                    onChange={(e) => handleInputChange('pickupAddress', e.target.value)}
+                    placeholder="Saisissez l'adresse de départ"
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Adresse de destination
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.destinationAddress}
+                    onChange={(e) => handleInputChange('destinationAddress', e.target.value)}
+                    placeholder="Saisissez l'adresse de destination"
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                     Nombre de passagers
@@ -394,6 +412,28 @@ export default function ReservationPage() {
                     {[...Array(10)].map((_, i) => (
                       <option key={i+1} value={i+1}>{i+1} passager{i > 0 ? 's' : ''}</option>
                     ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Nombre de valise(s)
+                  </label>
+                  <select
+                    value={formData.luggage}
+                    onChange={(e) => handleInputChange('luggage', Number(e.target.value))}
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  >
+                    <option value={1}>1 valise</option>
+                    <option value={2}>2 valises</option>
+                    <option value={3}>3 valises</option>
+                    <option value={4}>4 valises</option>
+                    <option value={5}>5 valises</option>
+                    <option value={6}>6 valises</option>
+                    <option value={7}>7 valises</option>
+                    <option value={8}>8 valises</option>
+                    <option value={9}>9 valises</option>
+                    <option value={10}>+10 valises</option>
                   </select>
                 </div>
 
@@ -413,17 +453,32 @@ export default function ReservationPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                  Téléphone de contact
-                </label>
-                <input
-                  type="tel"
-                  value={formData.contactPhone}
-                  onChange={(e) => handleInputChange('contactPhone', e.target.value)}
-                  placeholder="+33 6 12 34 56 78"
-                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                />
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Téléphone de contact
+                  </label>
+                  <input
+                    type="tel"
+                    value={formData.contactPhone}
+                    onChange={(e) => handleInputChange('contactPhone', e.target.value)}
+                    placeholder="77 650 01 02"
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Email de contact
+                  </label>
+                  <input
+                    type="email"
+                    value={formData.contactEmail}
+                    onChange={(e) => handleInputChange('contactEmail', e.target.value)}
+                    placeholder="votre.email@exemple.com"
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  />
+                </div>
               </div>
 
               {/* Services additionnels intégrés */}
@@ -531,6 +586,13 @@ export default function ReservationPage() {
                   </div>
                   
                   <div className="flex justify-between">
+                    <span className="text-slate-600 dark:text-slate-300">Valise(s):</span>
+                    <span className="text-slate-900 dark:text-white">
+                      {formData.luggage === 10 ? '+10' : formData.luggage}
+                    </span>
+                  </div>
+                  
+                  <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-300">Durée:</span>
                     <span className="text-slate-900 dark:text-white">{formData.duration}h</span>
                   </div>
@@ -543,6 +605,17 @@ export default function ReservationPage() {
                       </span>
                     </div>
                   )}
+                  
+                  <div className="border-t border-gray-200 dark:border-gray-600 pt-3 mt-3">
+                    <div className="flex justify-between">
+                      <span className="text-slate-600 dark:text-slate-300">Téléphone:</span>
+                      <span className="text-slate-900 dark:text-white">{formData.contactPhone}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-600 dark:text-slate-300">Email:</span>
+                      <span className="text-slate-900 dark:text-white">{formData.contactEmail}</span>
+                    </div>
+                  </div>
                 </div>
                 
                 <div className="border-t mt-4 pt-4">
@@ -591,7 +664,7 @@ export default function ReservationPage() {
                       (!isSignedIn && (!formData.clientName || !formData.clientEmail))
                     ))
                   }
-                  className="px-8 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                  className="px-8 py-3 bg-orange-500 hover:bg-orange-600 hover:scale-105 text-white font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2"
                 >
                   Suivant
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -602,7 +675,7 @@ export default function ReservationPage() {
                 <button
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                  className="px-8 py-3 bg-green-600 hover:bg-green-700 hover:scale-105 text-white font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2"
                 >
                   {isSubmitting ? (
                     <>
@@ -614,9 +687,7 @@ export default function ReservationPage() {
                     </>
                   ) : (
                     <>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
+                      <BookNowIcon size={16} color="white" />
                       Confirmer la Réservation
                     </>
                   )}
@@ -632,7 +703,7 @@ export default function ReservationPage() {
       <ConfirmationModal
         isOpen={showSuccessModal}
         onClose={() => setShowSuccessModal(false)}
-        title="Réservation confirmée !"
+        title="Réservation effectuée !"
         message="Votre réservation a été soumise avec succès. Notre équipe vous contactera dans les plus brefs délais pour confirmer les détails de votre service."
         type="success"
         confirmText="Parfait !"
@@ -653,10 +724,12 @@ export default function ReservationPage() {
               pickupAddress: "",
               destinationAddress: "",
               passengers: 1,
+              luggage: 1,
               duration: 2,
               additionalServices: [],
               specialRequests: "",
               contactPhone: "",
+              contactEmail: user?.email || "",
               clientName: "",
               clientEmail: ""
             });

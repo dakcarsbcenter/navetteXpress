@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { quotesTable } from '@/schema';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-import { eq, desc } from 'drizzle-orm';
+import { desc } from 'drizzle-orm';
 
 // POST - Créer une nouvelle demande de devis
 export async function POST(request: NextRequest) {
@@ -56,10 +56,10 @@ export async function POST(request: NextRequest) {
 }
 
 // GET - Récupérer les demandes de devis (admin seulement)
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const session = await getServerSession(authOptions);
-    
+    const session = await getServerSession(authOptions) as { user?: { id?: string } } | null;
+
     if (!session?.user?.id) {
       return NextResponse.json({ 
         success: false, 

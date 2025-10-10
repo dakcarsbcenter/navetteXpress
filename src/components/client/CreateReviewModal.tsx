@@ -250,7 +250,7 @@ export function CreateReviewModal({ isOpen, onClose, booking, onSuccess }: Creat
                 ) : (
                   <>
                     <span className="text-lg">⭐</span>
-                    Publier l'avis
+                    Publier l&apos;avis
                   </>
                 )}
               </button>

@@ -1,7 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
+import { useState } from 'react'
 
 interface VehicleReportProps {
   onBack: () => void
@@ -25,7 +24,6 @@ interface VehicleIssue {
 }
 
 export function VehicleReport({ onBack }: VehicleReportProps) {
-  const { data: session } = useSession()
   const [showReportForm, setShowReportForm] = useState(false)
   const [reports, setReports] = useState<VehicleIssue[]>([
     {
@@ -115,25 +113,41 @@ export function VehicleReport({ onBack }: VehicleReportProps) {
         body: JSON.stringify(formData)
       });
 
-      const result = await response.json();
+      const result: { 
+        success: boolean; 
+        message?: string; 
+        error?: string;
+        id?: number;
+        title?: string;
+        description?: string;
+        severity?: string;
+        reportedAt?: string;
+        vehicleInfo?: {
+          make: string;
+          model: string;
+          year: number;
+          plateNumber: string;
+        };
+        emailStatus?: string;
+        emailError?: string;
+      } = await response.json();
 
       if (!response.ok) {
         throw new Error(result.error || 'Erreur lors de la création du rapport');
       }
 
-      console.log('✅ Rapport créé avec succès:', result.data.id)
+      console.log('✅ Rapport créé avec succès:', result.id)
 
       // Ajouter le nouveau rapport à la liste locale
-      const selectedVehicle = vehicles.find(v => v.id === formData.vehicleId)
       const newReport: VehicleIssue = {
-        id: result.data.id,
-        title: result.data.title,
-        description: result.data.description,
+        id: result.id || 0,
+        title: result.title || '',
+        description: result.description || '',
         category: formData.category, // Garder l'enum original
-        severity: result.data.severity,
+        severity: (result.severity as 'low' | 'medium' | 'high' | 'urgent') || 'medium',
         status: 'open',
-        reportedAt: result.data.reportedAt,
-        vehicleInfo: result.data.vehicleInfo
+        reportedAt: result.reportedAt || new Date().toISOString(),
+        vehicleInfo: result.vehicleInfo || { make: '', model: '', year: 0, plateNumber: '' }
       }
 
       setReports(prev => [newReport, ...prev])
@@ -159,9 +173,10 @@ export function VehicleReport({ onBack }: VehicleReportProps) {
       
       alert(successMessage)
 
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
       console.error('❌ Erreur:', error)
-      alert(`❌ Erreur: ${error.message}`)
+      alert(`❌ Erreur: ${errorMessage}`)
     }
   }
 
@@ -315,7 +330,7 @@ export function VehicleReport({ onBack }: VehicleReportProps) {
                   </label>
                   <select
                     value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value as 'mechanical' })}
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                     required
                   >
@@ -335,7 +350,7 @@ export function VehicleReport({ onBack }: VehicleReportProps) {
                     <button
                       key={key}
                       type="button"
-                      onClick={() => setFormData({ ...formData, severity: key as any })}
+                      onClick={() => setFormData({ ...formData, severity: key as 'medium' })}
                       className={`px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
                         formData.severity === key
                           ? 'bg-orange-600 text-white'
@@ -454,7 +469,7 @@ export function VehicleReport({ onBack }: VehicleReportProps) {
               Aucun rapport encore
             </h3>
             <p className="text-gray-500 dark:text-gray-400 mb-6">
-              Vous n'avez signalé aucun problème de véhicule pour le moment.
+              Vous n&apos;avez signalé aucun problème de véhicule pour le moment.
             </p>
             <button
               onClick={() => setShowReportForm(true)}

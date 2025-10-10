@@ -1,12 +1,11 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { SelectDriver, InsertDriver } from '@/schema';
 
-interface DriverWithDetails extends SelectDriver {
-  // Ajout d'éventuelles informations supplémentaires
-}
+type DriverWithDetails = SelectDriver;
 
 export function DriversManager() {
   const { data: session, status } = useSession();
@@ -18,18 +17,17 @@ export function DriversManager() {
 
   // Formulaire état
   const [formData, setFormData] = useState<Partial<InsertDriver>>({
-    clerkUserId: '',
     name: '',
     email: '',
     phone: '',
     licenseNumber: '',
-    photo: '',
+    image: '',
     isActive: true,
   });
 
   useEffect(() => {
     // Only fetch drivers if user is authenticated and has admin role
-    if (status === 'authenticated' && session?.user?.role === 'admin') {
+    if (status === 'authenticated' && (session?.user as unknown as { role?: string })?.role === 'admin') {
       fetchDrivers();
     } else if (status === 'unauthenticated') {
       setLoading(false);
@@ -118,12 +116,11 @@ export function DriversManager() {
 
   const resetForm = () => {
     setFormData({
-      clerkUserId: '',
       name: '',
       email: '',
       phone: '',
       licenseNumber: '',
-      photo: '',
+      image: '',
       isActive: true,
     });
     setEditingDriver(null);
@@ -132,12 +129,11 @@ export function DriversManager() {
 
   const startEdit = (driver: DriverWithDetails) => {
     setFormData({
-      clerkUserId: driver.clerkUserId,
       name: driver.name,
       email: driver.email,
-      phone: driver.phone,
-      licenseNumber: driver.licenseNumber,
-      photo: driver.photo || '',
+      phone: driver.phone || '',
+      licenseNumber: driver.licenseNumber || '',
+      image: driver.image || '',
       isActive: driver.isActive,
     });
     setEditingDriver(driver);
@@ -147,8 +143,8 @@ export function DriversManager() {
   const filteredDrivers = drivers.filter(driver =>
     driver.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     driver.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    driver.phone.includes(searchTerm) ||
-    driver.licenseNumber.includes(searchTerm)
+    (driver.phone && driver.phone.includes(searchTerm)) ||
+    (driver.licenseNumber && driver.licenseNumber.includes(searchTerm))
   );
 
   if (status === 'unauthenticated') {
@@ -161,7 +157,7 @@ export function DriversManager() {
     );
   }
 
-  if (session?.user?.role !== 'admin') {
+  if ((session?.user as unknown as { role?: string })?.role !== 'admin') {
     return (
       <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-6">
         <div className="text-center text-red-600">
@@ -243,18 +239,6 @@ export function DriversManager() {
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  ID Clerk (obligatoire)
-                </label>
-                <input
-                  type="text"
-                  value={formData.clerkUserId || ''}
-                  onChange={(e) => setFormData({ ...formData, clerkUserId: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
-                  required
-                />
-              </div>
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
@@ -314,8 +298,8 @@ export function DriversManager() {
                 </label>
                 <input
                   type="url"
-                  value={formData.photo || ''}
-                  onChange={(e) => setFormData({ ...formData, photo: e.target.value })}
+                  value={formData.image || ''}
+                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
                 />
               </div>
@@ -375,12 +359,16 @@ export function DriversManager() {
                 <tr key={driver.id} className="border-b border-gray-100 dark:border-gray-700">
                   <td className="py-4">
                     <div className="flex items-center gap-3">
-                      {driver.photo && (
-                        <img
-                          src={driver.photo}
-                          alt={driver.name}
-                          className="w-10 h-10 rounded-full object-cover"
-                        />
+                      {driver.image && (
+                        <div className="relative w-10 h-10 rounded-full overflow-hidden">
+                          <Image
+                            src={driver.image}
+                            alt={driver.name}
+                            fill
+                            className="object-cover"
+                            sizes="40px"
+                          />
+                        </div>
                       )}
                       <div>
                         <div className="font-medium text-slate-900 dark:text-white">
@@ -421,7 +409,7 @@ export function DriversManager() {
                         Modifier
                       </button>
                       <button
-                        onClick={() => handleDelete(driver.id)}
+                        onClick={() => handleDelete(parseInt(driver.id))}
                         className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
                       >
                         Supprimer

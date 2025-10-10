@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { bookingsTable } from '@/schema';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { eq, desc } from 'drizzle-orm';
 import { sendNewBookingNotificationToAdmin } from '@/lib/brevo-email';
@@ -22,8 +22,9 @@ export async function POST(request: NextRequest) {
       additionalServices,
       specialRequests,
       contactPhone,
+      contactEmail,
       clientName,
-      clientEmail,
+      clientEmail: fallbackClientEmail,
       // Champs pour utilisateurs connectés
       userId
     } = body;
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Pour les utilisateurs non connectés, vérifier les champs client
-    if (!userId && (!clientName || !clientEmail)) {
+    if (!userId && (!clientName || !fallbackClientEmail)) {
       return NextResponse.json({ 
         success: false, 
         error: 'Nom et email requis pour les utilisateurs non connectés' 
@@ -45,10 +46,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Récupérer la session pour les utilisateurs connectés
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession(authOptions) as { user?: { id?: string; name?: string; email?: string } } | null;
     const finalUserId = userId || session?.user?.id || null;
     const finalClientName = clientName || session?.user?.name || '';
-    const finalClientEmail = clientEmail || session?.user?.email || '';
+    const finalClientEmail = fallbackClientEmail || session?.user?.email || '';
 
     // Créer la date/heure combinée
     const scheduledDateTime = new Date(`${date}T${time}`);
@@ -96,7 +97,7 @@ export async function POST(request: NextRequest) {
         driverId: null, // Sera assigné plus tard par l'admin
         vehicleId: null, // Sera assigné plus tard par l'admin
         price: estimatedPrice.toString(),
-        notes: `Service: ${serviceType}\nPassagers: ${passengers}\nDurée: ${duration}h\nServices additionnels: ${additionalServices?.join(', ') || 'Aucun'}\nDemandes spéciales: ${specialRequests || 'Aucune'}`
+        notes: `Service: ${serviceType}\nPassagers: ${passengers}\nValises: ${body.luggage || 1}\nDurée: ${duration}h\nContact: ${contactPhone}${contactEmail ? ` - ${contactEmail}` : ''}\nServices additionnels: ${additionalServices?.join(', ') || 'Aucun'}\nDemandes spéciales: ${specialRequests || 'Aucune'}`
       })
       .returning();
 
@@ -117,7 +118,7 @@ export async function POST(request: NextRequest) {
         pickupAddress: createdBooking.pickupAddress,
         dropoffAddress: createdBooking.dropoffAddress,
         scheduledDateTime: createdBooking.scheduledDateTime.toISOString(),
-        price: createdBooking.price,
+        price: createdBooking.price || "0",
         notes: createdBooking.notes || undefined
       });
 
@@ -150,12 +151,12 @@ export async function POST(request: NextRequest) {
 // GET - Récupérer les réservations de l'utilisateur connecté
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    
+    const session = await getServerSession(authOptions) as { user?: { id?: string } } | null;
+
     if (!session?.user?.id) {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'Non authentifié' 
+      return NextResponse.json({
+        success: false,
+        error: 'Non authentifié'
       }, { status: 401 });
     }
 

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendNotificationEmail, testBrevoConnection } from '@/lib/brevo-email';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Tester la connexion Brevo
     const connectionTest = await testBrevoConnection();
@@ -29,10 +29,11 @@ export async function GET(request: NextRequest) {
       }
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
     return NextResponse.json({
       success: false,
-      error: error.message,
+      error: errorMessage,
       help: 'Vérifiez la configuration de vos variables d\'environnement Brevo'
     }, { status: 500 });
   }
@@ -83,10 +84,11 @@ export async function POST(request: NextRequest) {
       error: 'Action non supportée. Utilisez ?action=send&email=votre-email@example.com'
     }, { status: 400 });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
     return NextResponse.json({
       success: false,
-      error: error.message
+      error: errorMessage
     }, { status: 500 });
   }
 }

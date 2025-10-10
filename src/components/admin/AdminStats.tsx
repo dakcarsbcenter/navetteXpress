@@ -9,9 +9,29 @@ interface AdminStats {
   totalQuotes: number
   totalReviews: number
   activeSessions: number
-  recentBookings: any[]
-  recentQuotes: any[]
-  topVehicles: any[]
+  recentBookings: Array<{
+    id: string;
+    customerName: string;
+    status: string;
+    createdAt: string;
+    pickupAddress: string;
+    dropoffAddress: string;
+  }>
+  recentQuotes: Array<{
+    id: string;
+    customerName: string;
+    status: string;
+    createdAt: string;
+    service: string;
+  }>
+  topVehicles: Array<{
+    id: string;
+    make: string;
+    model: string;
+    year: number;
+    capacity: number;
+    bookingsCount: number;
+  }>
 }
 
 export function AdminStats() {
@@ -117,7 +137,7 @@ export function AdminStats() {
           Tableau de bord administrateur
         </h1>
         <p className="text-gray-600 dark:text-gray-400">
-          Vue d'ensemble de votre plateforme Navette Xpress
+          Vue d&apos;ensemble de votre plateforme Navette Xpress
         </p>
       </div>
 
@@ -233,7 +253,7 @@ export function AdminStats() {
                     </p>
                   </div>
                   <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
-                    {vehicle.bookingCount} réservations
+                    {vehicle.bookingsCount} réservations
                   </span>
                 </div>
               ))

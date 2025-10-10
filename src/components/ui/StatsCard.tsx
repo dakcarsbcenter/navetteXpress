@@ -34,8 +34,8 @@ const StatsCard: React.FC<StatsCardProps> = ({
       trend: 'text-green-600 dark:text-green-400'
     },
     orange: {
-      icon: 'bg-orange-100 text-orange-600 dark:bg-orange-900/50 dark:text-orange-400',
-      trend: 'text-orange-600 dark:text-orange-400'
+      icon: 'bg-[#FFB885]/20 text-[#FF7E38] dark:bg-[#FF7E38]/20 dark:text-[#FFB885]',
+      trend: 'text-[#FF7E38] dark:text-[#FFB885]'
     },
     purple: {
       icon: 'bg-purple-100 text-purple-600 dark:bg-purple-900/50 dark:text-purple-400',

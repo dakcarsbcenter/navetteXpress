@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
+import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/db"
 import { sessions } from "@/schema"
@@ -8,12 +8,12 @@ import { eq } from "drizzle-orm"
 // GET - Récupérer une session spécifique
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Vérifier l'authentification et le rôle admin
-    const session = await getServerSession(authOptions)
-    if (!session?.user || session.user.role !== 'admin') {
+    const session = await getServerSession(authOptions) as { user?: { role?: string } } | null
+    if (!session?.user || (session.user as { role?: string }).role !== 'admin') {
       return NextResponse.json(
         { error: "Accès refusé. Seuls les administrateurs peuvent accéder à cette ressource." },
         { status: 403 }
@@ -23,7 +23,7 @@ export async function GET(
     const sessionData = await db
       .select()
       .from(sessions)
-      .where(eq(sessions.id, params.id))
+      .where(eq(sessions.id, (await params).id))
       .limit(1)
 
     if (sessionData.length === 0) {
@@ -47,12 +47,12 @@ export async function GET(
 // DELETE - Supprimer une session
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Vérifier l'authentification et le rôle admin
-    const session = await getServerSession(authOptions)
-    if (!session?.user || session.user.role !== 'admin') {
+    const session = await getServerSession(authOptions) as { user?: { role?: string } } | null
+    if (!session?.user || (session.user as { role?: string }).role !== 'admin') {
       return NextResponse.json(
         { error: "Accès refusé. Seuls les administrateurs peuvent accéder à cette ressource." },
         { status: 403 }
@@ -63,7 +63,7 @@ export async function DELETE(
     const existingSession = await db
       .select()
       .from(sessions)
-      .where(eq(sessions.id, params.id))
+      .where(eq(sessions.id, (await params).id))
       .limit(1)
 
     if (existingSession.length === 0) {
@@ -76,7 +76,7 @@ export async function DELETE(
     // Supprimer la session
     await db
       .delete(sessions)
-      .where(eq(sessions.id, params.id))
+      .where(eq(sessions.id, (await params).id))
 
     return NextResponse.json(
       { message: "Session supprimée avec succès" }

@@ -1,12 +1,12 @@
 import { requireAdminRole } from "@/utils/admin-permissions";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { Navigation } from "@/components/navigation";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 
 export default async function AdminPage() {
-  const userId = await requireAdminRole();
-  const session = await getServerSession(authOptions);
+  await requireAdminRole();
+  const session = await getServerSession(authOptions) as { user?: { name?: string | null } } | null;
 
   return (
     <div className="font-sans min-h-screen bg-slate-50 dark:bg-slate-900">

@@ -10,7 +10,7 @@ import { useSession } from 'next-auth/react';
  */
 export default function InitAdminPage() {
   const { data: session, status } = useSession();
-  const userId = session?.user?.id;
+  const userId = (session?.user as unknown as { id?: string })?.id;
   const isLoaded = status !== "loading";
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');

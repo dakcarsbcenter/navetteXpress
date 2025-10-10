@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
+import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/db"
 import { users } from "@/schema"
@@ -8,14 +8,14 @@ import { eq } from "drizzle-orm"
 // PUT - Mettre à jour le profil du client
 export async function PUT(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions) as { user?: { id?: string; name?: string; email?: string; role?: string } } | null
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Non autorisé" }, { status: 401 })
     }
 
     // Vérifier que l'utilisateur est un client
-    if (session.user.role !== 'customer') {
+    if ((session.user as { role?: string }).role !== 'customer') {
       return NextResponse.json({ error: "Accès refusé" }, { status: 403 })
     }
 
@@ -62,7 +62,7 @@ export async function PUT(request: NextRequest) {
         email: email.trim(),
         phone: phone?.trim() || null
       })
-      .where(eq(users.id, session.user.id))
+      .where(eq(users.id, (session as unknown as { user: { id: string } }).user.id))
       .returning()
 
     if (updatedUser.length === 0) {
@@ -94,16 +94,16 @@ export async function PUT(request: NextRequest) {
 }
 
 // GET - Récupérer le profil du client
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions) as { user?: { id?: string; name?: string; email?: string; role?: string } } | null
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Non autorisé" }, { status: 401 })
     }
 
     // Vérifier que l'utilisateur est un client
-    if (session.user.role !== 'customer') {
+    if ((session.user as { role?: string }).role !== 'customer') {
       return NextResponse.json({ error: "Accès refusé" }, { status: 403 })
     }
 
@@ -118,7 +118,7 @@ export async function GET(request: NextRequest) {
         createdAt: users.createdAt
       })
       .from(users)
-      .where(eq(users.id, session.user.id))
+      .where(eq(users.id, (session as unknown as { user: { id: string } }).user.id))
       .limit(1)
 
     if (user.length === 0) {
