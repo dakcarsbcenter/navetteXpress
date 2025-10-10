@@ -8,7 +8,7 @@ Créez un fichier `.env.local` avec les variables suivantes :
 
 ```env
 # Google Analytics
-NEXT_PUBLIC_GA_ID="G-XXXXXXXXXX"
+NEXT_PUBLIC_GA_ID="G-X1NDJE79VS"
 
 # Google Search Console
 GOOGLE_SITE_VERIFICATION="your-google-verification-code"
@@ -29,11 +29,13 @@ NEXT_PUBLIC_CONTACT_EMAIL="contact@navettexpress.sn"
 ### 3. Configuration Google Analytics 4
 
 1. **Créez une propriété GA4** : https://analytics.google.com
-2. **Ajoutez l'ID de suivi** dans les variables d'environnement
-3. **Configurez les objectifs** :
+2. **Ajoutez l'ID de suivi** dans les variables d'environnement : `G-X1NDJE79VS`
+3. **Testez l'intégration** : Visitez `/test-analytics` sur votre site
+4. **Configurez les objectifs** :
    - Réservations de transfert
    - Appels téléphoniques
    - Soumissions de formulaire
+   - Demandes de devis
 
 ### 4. Optimisations Techniques
 

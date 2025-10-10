@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Phone, Mail, Menu, X, ChevronDown } from "lucide-react";
+import { trackPhoneCall, trackEmailClick } from "@/lib/analytics";
 
 interface NavigationProps {
   variant?: "transparent" | "solid";
@@ -69,15 +70,23 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-6">
-              <div className="flex items-center space-x-2">
+              <a 
+                href="tel:+221781319191" 
+                className="flex items-center space-x-2 hover:text-white/80 transition-colors"
+                onClick={() => trackPhoneCall('header')}
+              >
                 <Phone className="w-4 h-4" />
                 <span className="hidden sm:inline">+221 78 131 91 91</span>
                 <span className="sm:hidden">+221 78 131 91 91</span>
-              </div>
-              <div className="hidden md:flex items-center space-x-2">
+              </a>
+              <a 
+                href="mailto:contact@navettexpress.sn" 
+                className="hidden md:flex items-center space-x-2 hover:text-white/80 transition-colors"
+                onClick={() => trackEmailClick('header')}
+              >
                 <Mail className="w-4 h-4" />
                 <span>contact@navettexpress.sn</span>
-              </div>
+              </a>
             </div>
             <div className="flex items-center space-x-6">
               <div className="hidden sm:flex items-center space-x-4">
