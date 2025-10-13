@@ -54,11 +54,30 @@ export default function MigrateImagesPage() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Erreur API');
+        // Gestion améliorée des erreurs API
+        let errorMessage = `HTTP ${response.status}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorData.message || errorMessage;
+        } catch {
+          // Si ce n'est pas du JSON, récupérer le texte
+          const errorText = await response.text();
+          if (errorText.includes('<!DOCTYPE')) {
+            errorMessage = 'Erreur serveur - Page HTML reçue au lieu de JSON';
+          } else {
+            errorMessage = errorText.length > 100 
+              ? errorText.substring(0, 100) + '...' 
+              : errorText;
+          }
+        }
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.error || 'Migration échouée');
+      }
+      
       return data.newUrl;
       
     } catch (error) {
@@ -92,12 +111,28 @@ export default function MigrateImagesPage() {
         });
 
         if (updateResponse.ok) {
-          addProgress(`✅ ${vehicle.make} ${vehicle.model} migré avec succès`);
-          addProgress(`   📸 Nouvelle URL: ${newUrl.substring(0, 60)}...`);
-          migrated++;
+          const responseData = await updateResponse.json();
+          if (responseData.success) {
+            addProgress(`✅ ${vehicle.make} ${vehicle.model} migré avec succès`);
+            addProgress(`   📸 Nouvelle URL: ${newUrl ? newUrl.substring(0, 60) + '...' : 'URL non disponible'}`);
+            migrated++;
+          } else {
+            throw new Error(`API Error: ${responseData.error || 'Unknown'}`);
+          }
         } else {
-          const errorData = await updateResponse.json();
-          throw new Error(`Erreur mise à jour DB: ${errorData.error || 'Unknown'}`);
+          // Essayer de parser en JSON, sinon afficher le texte brut
+          let errorMessage = `HTTP ${updateResponse.status}`;
+          try {
+            const errorData = await updateResponse.json();
+            errorMessage = errorData.error || errorData.message || errorMessage;
+          } catch {
+            // Si ce n'est pas du JSON, récupérer le texte brut
+            const errorText = await updateResponse.text();
+            errorMessage = errorText.length > 100 
+              ? errorText.substring(0, 100) + '...' 
+              : errorText;
+          }
+          throw new Error(`Erreur mise à jour DB: ${errorMessage}`);
         }
         
       } catch (error) {

@@ -434,6 +434,32 @@ export default function ContactPage() {
           </div>
         </div>
       </div>
+
+      {/* CTA Section */}
+      <section className="py-20 px-8 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+            Rejoignez nos clients satisfaits
+          </h2>
+          <p className="text-xl mb-8 text-blue-100">
+            Découvrez pourquoi plus de 1000 clients nous font confiance pour leurs transferts aéroport au Sénégal
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <a
+              href="/reservation"
+              className="bg-gradient-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+            >
+              Réserver Maintenant
+            </a>
+            <a
+              href="tel:+221781319191"
+              className="border-2 border-white text-white hover:bg-white hover:text-blue-600 px-8 py-4 rounded-xl font-semibold text-lg transition-colors"
+            >
+              📞 +221 78 131 91 91
+            </a>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

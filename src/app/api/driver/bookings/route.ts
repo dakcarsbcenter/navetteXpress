@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { db } from '@/db';
 import { bookingsTable, vehiclesTable } from '@/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, ne } from 'drizzle-orm';
 
 // GET - Récupérer les réservations du chauffeur connecté
 export async function GET(request: NextRequest) {
@@ -23,13 +23,19 @@ export async function GET(request: NextRequest) {
     const userSession = session as unknown as { user: { id: string } }
 
     // Construire la requête avec filtres
-    // Construire la requête avec les conditions appropriées
+    // Exclure automatiquement les réservations "pending" pour les chauffeurs (réservées aux admins)
     const whereConditions = status 
       ? and(
           eq(bookingsTable.driverId, userSession.user.id),
-          eq(bookingsTable.status, status as 'pending' | 'assigned' | 'approved' | 'rejected' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled')
+          eq(bookingsTable.status, status as 'assigned' | 'approved' | 'rejected' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled'),
+          // Exclure les statuts "pending" qui sont réservés aux admins
+          ne(bookingsTable.status, 'pending')
         )
-      : eq(bookingsTable.driverId, userSession.user.id);
+      : and(
+          eq(bookingsTable.driverId, userSession.user.id),
+          // Exclure les statuts "pending" qui sont réservés aux admins
+          ne(bookingsTable.status, 'pending')
+        );
 
     const bookings = await db
       .select({

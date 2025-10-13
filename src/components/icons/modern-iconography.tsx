@@ -1,3 +1,5 @@
+import { Menu, Phone } from 'lucide-react';
+
 /**
  * Iconographie Moderne NavetteXpress - Propositions d'Upgrade
  * 
@@ -64,7 +66,7 @@ export const TransportIcons = {
  */
 export const StyledLucideIcons = {
   // Navigation moderne
-  Menu: ({ className = "", variant = "default" }) => {
+  Menu: ({ className = "", variant = "default" }: { className?: string; variant?: "default" | "primary" | "secondary" }) => {
     const variants = {
       default: "text-slate-600 dark:text-slate-300",
       primary: "text-[#FF7E38]",
@@ -74,7 +76,7 @@ export const StyledLucideIcons = {
   },
   
   // Communication avec style
-  Phone: ({ className = "", variant = "default" }) => {
+  Phone: ({ className = "", variant = "default" }: { className?: string; variant?: "default" | "success" | "primary" }) => {
     const variants = {
       default: "text-slate-600 dark:text-slate-300",
       success: "text-[#10B981]",

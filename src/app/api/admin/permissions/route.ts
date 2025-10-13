@@ -17,9 +17,36 @@ export async function GET() {
       )
     }
 
-    const permissions = await db.select().from(permissionsTable)
+    // Définir toutes les permissions possibles
+    const allPossiblePermissions = [
+      { resource: 'users', action: 'manage', category: 'users' },
+      { resource: 'users', action: 'read', category: 'users' },
+      { resource: 'vehicles', action: 'manage', category: 'vehicles' },
+      { resource: 'vehicles', action: 'read', category: 'vehicles' },
+      { resource: 'bookings', action: 'manage', category: 'bookings' },
+      { resource: 'bookings', action: 'read', category: 'bookings' },
+      { resource: 'quotes', action: 'manage', category: 'quotes' },
+      { resource: 'quotes', action: 'read', category: 'quotes' },
+      { resource: 'reviews', action: 'manage', category: 'reviews' },
+      { resource: 'reviews', action: 'read', category: 'reviews' }
+    ]
 
-    return NextResponse.json(permissions)
+    // Transformer les données avec des IDs basés sur resource+action
+    const formattedPermissions = allPossiblePermissions.map((perm, index) => ({
+      id: index + 1, // ID basé sur l'index
+      name: `${perm.action} ${perm.resource}`,
+      description: `Permission pour ${perm.action} sur ${perm.resource}`,
+      category: perm.category,
+      resource: perm.resource,
+      action: perm.action,
+      isActive: true, // Toujours actif pour l'affichage
+      createdAt: new Date().toISOString()
+    }))
+
+    return NextResponse.json({
+      success: true,
+      data: formattedPermissions
+    })
 
   } catch (error) {
     console.error("Erreur lors de la récupération des permissions:", error)

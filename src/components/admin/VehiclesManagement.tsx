@@ -24,9 +24,18 @@ interface Vehicle {
   createdAt: string
 }
 
+interface Driver {
+  id: string
+  name: string
+  email: string
+  phone?: string
+  isActive: boolean
+}
+
 export function VehiclesManagement() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([])
   const [filteredVehicles, setFilteredVehicles] = useState<Vehicle[]>([])
+  const [drivers, setDrivers] = useState<Driver[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null)
@@ -47,6 +56,7 @@ export function VehiclesManagement() {
     category: '',
     description: '',
     features: '',
+    driverId: '',
     isActive: true
   })
   
@@ -56,6 +66,7 @@ export function VehiclesManagement() {
 
   useEffect(() => {
     fetchVehicles()
+    fetchDrivers()
   }, [])
 
   useEffect(() => {
@@ -83,6 +94,28 @@ export function VehiclesManagement() {
       setVehicles([])
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const fetchDrivers = async () => {
+    try {
+      const response = await fetch('/api/admin/users?role=driver')
+      if (response.ok) {
+        const result = await response.json()
+        if (result?.success) {
+          console.log('🚗 Chauffeurs chargés:', result.data?.length || 0)
+          setDrivers(result.data ?? [])
+        } else {
+          console.error('❌ Erreur lors du chargement des chauffeurs:', result?.error)
+          setDrivers([])
+        }
+      } else {
+        console.error('❌ Réponse HTTP:', response.status)
+        setDrivers([])
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors du chargement des chauffeurs:', error)
+      setDrivers([])
     }
   }
 
@@ -262,6 +295,7 @@ export function VehiclesManagement() {
       category: '',
       description: '',
       features: '',
+      driverId: '',
       isActive: true
     })
     setFeaturesList([])
@@ -305,15 +339,18 @@ export function VehiclesManagement() {
       category: vehicle.category || '',
       description: vehicle.description || '',
       features: vehicle.features || '',
+      driverId: vehicle.driverId || '',
       isActive: vehicle.isActive
     })
     setFeaturesList(parsedFeatures)
+    fetchDrivers() // Recharger les chauffeurs à l'ouverture du modal
     setIsModalOpen(true)
   }
 
   const openCreateModal = () => {
     setEditingVehicle(null)
     resetForm()
+    fetchDrivers() // Charger les chauffeurs à l'ouverture du modal
     setIsModalOpen(true)
   }
 
@@ -499,203 +536,202 @@ export function VehiclesManagement() {
             </h3>
             
             <form onSubmit={editingVehicle ? handleUpdateVehicle : handleCreateVehicle} className="space-y-4 max-h-[80vh] overflow-y-auto">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Marque *
-                  </label>
+              
+              {/* 📋 Informations de base */}
+              <div className="bg-slate-50 dark:bg-slate-700/50 p-3 rounded-lg">
+                <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">📋 Informations essentielles</h4>
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Marque *</label>
+                    <input
+                      type="text"
+                      value={formData.make}
+                      onChange={(e) => setFormData({...formData, make: e.target.value})}
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                      placeholder="Mercedes"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Modèle *</label>
+                    <input
+                      type="text"
+                      value={formData.model}
+                      onChange={(e) => setFormData({...formData, model: e.target.value})}
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                      placeholder="Classe S"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Année *</label>
+                    <input
+                      type="number"
+                      value={formData.year}
+                      onChange={(e) => setFormData({...formData, year: parseInt(e.target.value)})}
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                      min="2000"
+                      max="2030"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-3 mt-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Type *</label>
+                    <select
+                      value={formData.vehicleType}
+                      onChange={(e) => setFormData({...formData, vehicleType: e.target.value})}
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                      required
+                    >
+                      <option value="sedan">Berline</option>
+                      <option value="luxury">Luxe</option>
+                      <option value="suv">SUV</option>
+                      <option value="van">Van</option>
+                      <option value="bus">Bus</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Capacité *</label>
+                    <select
+                      value={formData.capacity}
+                      onChange={(e) => setFormData({...formData, capacity: parseInt(e.target.value)})}
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                    >
+                      <option value={2}>2 places</option>
+                      <option value={4}>4 places</option>
+                      <option value={6}>6 places</option>
+                      <option value={8}>8+ places</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">👨‍💼 Chauffeur</label>
+                    <select
+                      value={formData.driverId}
+                      onChange={(e) => setFormData({...formData, driverId: e.target.value})}
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                    >
+                      <option value="">Aucun</option>
+                      {drivers.map((driver) => (
+                        <option key={driver.id} value={driver.id}>
+                          {driver.name} - {driver.email}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Plaque d'immatriculation *</label>
                   <input
                     type="text"
-                    value={formData.make}
-                    onChange={(e) => setFormData({...formData, make: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                    value={formData.plateNumber}
+                    onChange={(e) => setFormData({...formData, plateNumber: e.target.value})}
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                    placeholder="AB-123-CD"
                     required
                   />
                 </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Modèle *
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.model}
-                    onChange={(e) => setFormData({...formData, model: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Année *
-                  </label>
-                  <input
-                    type="number"
-                    value={formData.year}
-                    onChange={(e) => setFormData({...formData, year: parseInt(e.target.value)})}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Capacité *
-                  </label>
-                  <select
-                    value={formData.capacity}
-                    onChange={(e) => setFormData({...formData, capacity: parseInt(e.target.value)})}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                  >
-                    <option value={2}>2 places</option>
-                    <option value={4}>4 places</option>
-                    <option value={6}>6 places</option>
-                    <option value={8}>8+ places</option>
-                  </select>
-                </div>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Plaque d&apos;immatriculation *
-                </label>
-                <input
-                  type="text"
-                  value={formData.plateNumber}
-                  onChange={(e) => setFormData({...formData, plateNumber: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                  required
-                />
               </div>
 
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
-                  📸 Photo du véhicule *
-                </label>
+              {/* 📸 Photo */}
+              <div>
+                <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">📸 Photo du véhicule *</h4>
                 <ImageUploader 
                   onUploadComplete={handleImageUpload}
                   currentImage={formData.photo}
-                  className="mb-4"
+                  className="mb-2"
                 />
-                
-                {/* Option URL manuelle */}
-                <details className="mt-2">
-                  <summary className="text-xs text-gray-500 dark:text-gray-400 cursor-pointer hover:text-gray-700 dark:hover:text-gray-300">
-                    ⚙️ Saisir une URL manuellement (optionnel)
-                  </summary>
-                  <div className="mt-2 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                    <input
-                      type="url"
-                      value={formData.photo}
-                      onChange={(e) => setFormData({...formData, photo: e.target.value})}
-                      placeholder="https://exemple.com/photo-vehicule.jpg"
-                      className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    />
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      ⚠️ Utilisez de préférence l'upload Cloudinary ci-dessus
-                    </p>
-                  </div>
+                <details className="mt-1">
+                  <summary className="text-xs text-slate-500 cursor-pointer">URL manuelle</summary>
+                  <input
+                    type="url"
+                    value={formData.photo}
+                    onChange={(e) => setFormData({...formData, photo: e.target.value})}
+                    placeholder="https://..."
+                    className="w-full px-2 py-1 mt-1 text-xs border rounded dark:bg-gray-700 dark:text-white"
+                  />
                 </details>
-                
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                  ✓ Upload automatique vers Cloudinary avec optimisation et CDN
-                </p>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Type de véhicule *
-                </label>
-                <select
-                  value={formData.vehicleType}
-                  onChange={(e) => setFormData({...formData, vehicleType: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                  required
-                >
-                  <option value="sedan">Berline</option>
-                  <option value="luxury">Berline de Luxe</option>
-                  <option value="suv">SUV</option>
-                  <option value="van">Van</option>
-                  <option value="bus">Bus</option>
-                </select>
-              </div>
+              {/* 🎨 Informations optionnelles (pliable) */}
+              <details className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
+                <summary className="text-sm font-medium text-blue-700 dark:text-blue-300 cursor-pointer">
+                  🎨 Personnalisation page Flotte (optionnel)
+                </summary>
+                <div className="mt-3 space-y-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                      Catégorie personnalisée 🏷️
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.category}
+                      onChange={(e) => setFormData({...formData, category: e.target.value})}
+                      placeholder="Ex: Berline Executive, SUV Premium..."
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                      Description 📝
+                    </label>
+                    <textarea
+                      value={formData.description}
+                      onChange={(e) => setFormData({...formData, description: e.target.value})}
+                      placeholder="Description pour la page publique..."
+                      rows={2}
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                    />
+                  </div>
+                </div>
+              </details>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Catégorie personnalisée 🏷️
-                </label>
-                <input
-                  type="text"
-                  value={formData.category}
-                  onChange={(e) => setFormData({...formData, category: e.target.value})}
-                  placeholder="Ex: Berline Executive, SUV Premium..."
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                />
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  Ce badge sera affiché sur la carte du véhicule (ex: &quot;Berline&quot;, &quot;SUV&quot;)
-                </p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Description pour la page Flotte 📝
-                </label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({...formData, description: e.target.value})}
-                  placeholder="Description du véhicule pour la page publique..."
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Équipements (affichés sur la page Flotte) ⚙️
-                </label>
-                <div className="space-y-2">
+              {/* ⚙️ Équipements (dans section optionnelle) */}
+              <details className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
+                <summary className="text-sm font-medium text-green-700 dark:text-green-300 cursor-pointer">
+                  ⚙️ Équipements et services (optionnel)
+                </summary>
+                <div className="mt-3 space-y-2">
                   <div className="flex gap-2">
                     <input
                       type="text"
                       value={newFeature}
                       onChange={(e) => setNewFeature(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddFeature())}
-                      placeholder="Ex: Wi-Fi gratuit, Climatisation..."
-                      className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                      placeholder="Ex: Wi-Fi, Climatisation..."
+                      className="flex-1 px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-green-500 dark:bg-gray-700 dark:text-white"
                     />
                     <button
                       type="button"
                       onClick={handleAddFeature}
-                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium"
+                      className="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded text-sm font-medium"
                     >
                       + Ajouter
                     </button>
                   </div>
                   
                   {featuresList.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-2 p-2 bg-gray-50 dark:bg-gray-700 rounded-md">
+                    <div className="flex flex-wrap gap-1 mt-2">
                       {featuresList.map((feature, index) => (
-                        <div
+                        <span
                           key={index}
-                          className="bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm flex items-center gap-2"
+                          className="bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200 px-2 py-1 rounded text-xs flex items-center gap-1"
                         >
-                          <span>{feature}</span>
+                          {feature}
                           <button
                             type="button"
                             onClick={() => handleRemoveFeature(index)}
-                            className="text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-100 font-bold"
+                            className="text-green-600 dark:text-green-300 hover:text-green-800 text-sm font-bold"
                           >
                             ×
                           </button>
-                        </div>
+                        </span>
                       ))}
                     </div>
                   )}
                 </div>
-              </div>
+              </details>
               
               <div className="flex items-center pt-2 border-t border-gray-200 dark:border-gray-700">
                 <input

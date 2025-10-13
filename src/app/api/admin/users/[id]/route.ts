@@ -107,8 +107,8 @@ export async function PUT(
         name,
         email,
         role,
-        phone,
-        licenseNumber,
+        phone: phone || null,
+        licenseNumber: licenseNumber || null,
         isActive,
         updatedAt: new Date()
       })

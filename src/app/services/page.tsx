@@ -6,103 +6,29 @@ import {
   SafetyFirstIcon,
   BookNowIcon
 } from "@/components/icons/custom-icons";
+import { serviceTypes } from "@/lib/services";
 import Link from "next/link";
 
 export default function ServicesPage() {
   // Function to get icon component for each service
-  const getServiceIcon = (serviceId: number) => {
+  const getServiceIcon = (serviceId: string) => {
     switch (serviceId) {
-      case 1:
+      case "transfert-aibd-dakar":
         return <AirportIcon size={48} color="primary" />;
-      case 2:
+      case "transfert-thies-mbour":
         return <LuxuryCarIcon size={48} color="secondary" />;
-      case 3:
+      case "chauffeur-prive-dakar":
         return <PrivateDriverIcon size={48} color="primary" />;
-      case 4:
+      case "tours-excursions":
         return <SafetyFirstIcon size={48} color="secondary" />;
-      case 5:
+      case "services-vip":
         return <LuxuryCarIcon size={48} color="primary" />;
-      case 6:
+      case "mise-a-disposition":
         return <PrivateDriverIcon size={48} color="neutral" />;
       default:
         return <AirportIcon size={48} color="primary" />;
     }
   };
-
-  const services = [
-    {
-      id: 1,
-      title: "Transfert Aéroport AIBD Dakar",
-      description: "Service de transfert vers et depuis l&apos;aéroport AIBD de Dakar. Chauffeurs professionnels, véhicules de luxe, prix compétitifs.",
-      features: [
-        "Suivi des vols en temps réel",
-        "Accueil personnalisé avec panneau",
-        "Véhicules de luxe climatisés",
-        "Service 24h/24, 7j/7",
-        "Prix compétitifs au Sénégal"
-      ]
-    },
-    {
-      id: 2,
-      title: "Transfert Aéroport Thies & Mbour",
-      description: "Service de transfert vers les aéroports de Thies et Mbour. Déplacements confortables et sécurisés au Sénégal.",
-      features: [
-        "Véhicules modernes et climatisés",
-        "Chauffeurs expérimentés",
-        "Réservation facile et rapide",
-        "Tarifs attractifs",
-        "Service 24h/24"
-      ]
-    },
-    {
-      id: 3,
-      title: "Chauffeur Privé Dakar",
-      description: "Service de chauffeur privé pour tous vos déplacements dans Dakar et ses environs. Confort et sécurité garantis.",
-      features: [
-        "Véhicules de luxe modernes",
-        "Chauffeurs professionnels certifiés",
-        "Service 24h/24, 7j/7",
-        "Réservation instantanée",
-        "Prix compétitifs"
-      ]
-    },
-    {
-      id: 4,
-      title: "Tours & Excursions",
-      description: "Découvrez Dakar et ses environs avec nos guides-chauffeurs expérimentés pour une expérience unique.",
-      features: [
-        "Guides-chauffeurs multilingues",
-        "Itinéraires personnalisables",
-        "Arrêts photos inclus",
-        "Commentaires historiques",
-        "Entrées monuments sur demande"
-      ]
-    },
-    {
-      id: 5,
-      title: "Services VIP",
-      description: "Service ultra-premium avec véhicules d&apos;exception et prestations sur-mesure pour une clientèle exigeante.",
-      features: [
-        "Véhicules de collection",
-        "Butler personnel disponible",
-        "Service conciergerie inclus",
-        "Sécurité renforcée possible",
-        "Prestations 100% personnalisables"
-      ]
-    },
-    {
-      id: 6,
-      title: "Mise à Disposition",
-      description: "Véhicule et chauffeur à votre disposition pour une durée déterminée avec flexibilité maximale.",
-      features: [
-        "Chauffeur dédié exclusivement",
-        "Planification flexible en temps réel",
-        "Aucun frais de détour",
-        "Temps d&apos;attente inclus",
-        "Service multi-destinations"
-      ]
-    }
-  ];
 
   return (
     <div className="min-h-screen">
@@ -125,7 +51,7 @@ export default function ServicesPage() {
       <section className="py-20 px-8 bg-slate-50 dark:bg-slate-900">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-8">
-            {services.map((service) => (
+            {serviceTypes.map((service) => (
               <div 
                 key={service.id}
                 className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
@@ -138,7 +64,7 @@ export default function ServicesPage() {
                     </div>
                     <div>
                       <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
-                        {service.title}
+                        {service.name}
                       </h3>
                       <p className="text-slate-600 dark:text-slate-300 mt-2">
                         {service.description}
@@ -152,7 +78,7 @@ export default function ServicesPage() {
                       Prestations incluses :
                     </h4>
                     <ul className="space-y-2">
-                      {service.features.map((feature, index) => (
+                      {service.features?.map((feature, index) => (
                         <li key={index} className="flex items-start gap-2 text-slate-600 dark:text-slate-300">
                           <span className="text-blue-600 dark:text-blue-400 mt-1">✓</span>
                           <span className="text-sm">{feature}</span>
@@ -161,11 +87,10 @@ export default function ServicesPage() {
                     </ul>
                   </div>
 
-
                   {/* CTA */}
                   <div className="flex gap-3">
                     <Link
-                      href="/reservation"
+                      href={`/reservation?service=${service.id}`}
                       className="flex-1 bg-blue-600 hover:bg-blue-700 hover:scale-105 text-white px-6 py-3 rounded-lg font-semibold text-center transition-all duration-200 flex items-center justify-center gap-2"
                     >
                       <BookNowIcon size={16} color="white" />

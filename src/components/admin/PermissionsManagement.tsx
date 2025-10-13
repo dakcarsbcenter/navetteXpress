@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 
 interface Permission {
   id: number
-  role: 'admin' | 'chauffeur'
+  role: 'admin' | 'driver' | 'customer'
   resource: string
   action: string
   createdAt: string
@@ -18,7 +18,7 @@ export function PermissionsManagement() {
   const [permissionToDelete, setPermissionToDelete] = useState<number | null>(null)
   const [editingPermission, setEditingPermission] = useState<Permission | null>(null)
   const [formData, setFormData] = useState({
-    role: 'chauffeur' as 'admin' | 'chauffeur',
+    role: 'customer' as 'admin' | 'driver' | 'customer',
     resource: '',
     action: ''
   })
@@ -116,7 +116,7 @@ export function PermissionsManagement() {
 
   const resetForm = () => {
     setFormData({
-      role: 'chauffeur',
+      role: 'customer',
       resource: '',
       action: ''
     })
@@ -221,9 +221,11 @@ export function PermissionsManagement() {
                     <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${
                       permission.role === 'admin' 
                         ? 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200'
+                        : permission.role === 'customer'
+                        ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-200'
                         : 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200'
                     }`}>
-                      {permission.role === 'admin' ? '👑 Admin' : '🚗 Chauffeur'}
+                      {permission.role === 'admin' ? '👑 Admin' : permission.role === 'customer' ? '👤 Client' : '🚗 Chauffeur'}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -283,10 +285,11 @@ export function PermissionsManagement() {
                 </label>
                 <select
                   value={formData.role}
-                  onChange={(e) => setFormData({...formData, role: e.target.value as 'admin' | 'chauffeur'})}
+                  onChange={(e) => setFormData({...formData, role: e.target.value as 'admin' | 'driver' | 'customer'})}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                 >
-                  <option value="chauffeur">🚗 Chauffeur</option>
+                  <option value="customer">👤 Client</option>
+                  <option value="driver">🚗 Chauffeur</option>
                   <option value="admin">👑 Admin</option>
                 </select>
               </div>

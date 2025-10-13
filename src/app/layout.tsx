@@ -182,7 +182,7 @@ export default function RootLayout({
         <AuthSessionProvider>
           <ThemeProvider
             attribute="class"
-            defaultTheme="dark"
+            defaultTheme="light"
             enableSystem
             disableTransitionOnChange
           >

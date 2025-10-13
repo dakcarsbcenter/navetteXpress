@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ImageUploader } from '@/components/ImageUploader';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -23,9 +23,34 @@ export default function AddVehiclePage() {
     vehicleType: 'sedan',
     description: '',
     features: [] as string[],
+    driverId: '',
   });
 
+  const [drivers, setDrivers] = useState<{id: string; name: string; email: string}[]>([]);
   const [newFeature, setNewFeature] = useState('');
+
+  useEffect(() => {
+    fetchDrivers();
+  }, []);
+
+  const fetchDrivers = async () => {
+    try {
+      const response = await fetch('/api/admin/users?role=driver');
+      if (response.ok) {
+        const result = await response.json();
+        if (result?.success) {
+          console.log('🚗 Chauffeurs chargés dans page ajout:', result.data?.length || 0);
+          setDrivers(result.data ?? []);
+        } else {
+          console.error('❌ Erreur chargement chauffeurs:', result?.error);
+        }
+      } else {
+        console.error('❌ Réponse HTTP:', response.status);
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors du chargement des chauffeurs:', error);
+    }
+  };
 
   const handleImageUpload = (url: string) => {
     console.log('✅ Image uploadée:', url);
@@ -74,7 +99,7 @@ export default function AddVehiclePage() {
       };
 
       // Envoyer à l'API
-      const response = await fetch('/api/vehicles', {
+      const response = await fetch('/api/admin/vehicles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToSend),
@@ -232,6 +257,31 @@ export default function AddVehiclePage() {
                   max="50"
                   required
                 />
+              </div>
+
+              {/* Chauffeur assigné */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  👨‍💼 Chauffeur assigné (optionnel)
+                </label>
+                <select
+                  value={vehicleData.driverId}
+                  onChange={(e) => setVehicleData(prev => ({ ...prev, driverId: e.target.value }))}
+                  className="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 
+                    bg-white dark:bg-slate-700 text-slate-900 dark:text-white
+                    focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                    transition-colors"
+                >
+                  <option value="">Aucun chauffeur assigné</option>
+                  {drivers.map((driver) => (
+                    <option key={driver.id} value={driver.id}>
+                      {driver.name} - {driver.email}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                  Assignez ce véhicule à un chauffeur spécifique pour une gestion optimisée
+                </p>
               </div>
 
               {/* Description */}

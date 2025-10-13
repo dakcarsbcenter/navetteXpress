@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { DriversManager } from './DriversManager';
 import { VehiclesManager } from './VehiclesManager';
 import { BookingsManager } from './BookingsManager';
-import { AdminStats } from './AdminStats';
+import AdminStats from './AdminStats';
 import { UsersRoleManager } from './UsersRoleManager';
 import { QuotesManagement } from './QuotesManagement';
 
@@ -46,7 +46,7 @@ export function AdminDashboard() {
 
       {/* Tab Content */}
       <div className="min-h-[600px]">
-        {activeTab === 'overview' && <AdminStats />}
+        {activeTab === 'overview' && <AdminStats onBack={() => setActiveTab('overview')} />}
         {activeTab === 'drivers' && <DriversManager />}
         {activeTab === 'vehicles' && <VehiclesManager />}
         {activeTab === 'bookings' && <BookingsManager />}

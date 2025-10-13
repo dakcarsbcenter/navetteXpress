@@ -1,14 +1,14 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
-import { vehicles } from '@/schema';
+import { vehiclesTable } from '@/schema';
 import { isNull, not } from 'drizzle-orm';
 
 export async function GET() {
   try {
     const allVehicles = await db
-      .select({ photo: vehicles.photo, make: vehicles.make, model: vehicles.model })
-      .from(vehicles)
-      .where(not(isNull(vehicles.photo)));
+      .select({ photo: vehiclesTable.photo, make: vehiclesTable.make, model: vehiclesTable.model })
+      .from(vehiclesTable)
+      .where(not(isNull(vehiclesTable.photo)));
 
     const domains = new Set<string>();
     const vehicleList: Array<{ vehicle: string; url: string; hostname: string }> = [];

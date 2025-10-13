@@ -7,9 +7,10 @@ import { DriverPlanning } from "@/components/driver/DriverPlanning"
 import { VehicleReport } from "@/components/driver/VehicleReport"
 import { DriverStats } from "@/components/driver/DriverStats"
 import Link from "next/link"
+import { DriverProfile } from "@/components/driver/DriverProfile"
 // import { SimpleDriverTest } from "@/components/driver/SimpleDriverTest"
 
-type ViewType = 'home' | 'planning' | 'vehicle-report' | 'stats'
+type ViewType = 'home' | 'planning' | 'vehicle-report' | 'stats' | 'profile'
 
 export default function DriverDashboard() {
   const [currentView, setCurrentView] = useState<ViewType>('home')
@@ -36,6 +37,11 @@ export default function DriverDashboard() {
       case 'stats':
         return <DriverStats onBack={() => {
           console.log('Retour vers home depuis stats')
+          setCurrentView('home')
+        }} />
+      case 'profile':
+        return <DriverProfile onBack={() => {
+          console.log('Retour vers home depuis profile')
           setCurrentView('home')
         }} />
       default:

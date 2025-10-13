@@ -10,25 +10,24 @@ export default withAuth(
     if (pathname === '/dashboard') {
       if (token?.role === 'admin') {
         return NextResponse.redirect(new URL('/admin/dashboard', req.url))
+      } else if (token?.role === 'driver') {
+        return NextResponse.redirect(new URL('/driver/dashboard', req.url))
       } else if (token?.role === 'customer') {
         return NextResponse.redirect(new URL('/client/dashboard', req.url))
       }
     }
     
-    if (pathname === '/admin/dashboard' && token?.role !== 'admin') {
-      return NextResponse.redirect(new URL('/dashboard', req.url))
-    }
-
-    if (pathname === '/client/dashboard' && token?.role !== 'customer') {
-      return NextResponse.redirect(new URL('/dashboard', req.url))
-    }
-
-    // Protection des routes admin
+    // Protection des routes admin - seuls les admins peuvent y accéder
     if (pathname.startsWith('/admin') && token?.role !== 'admin') {
       return NextResponse.redirect(new URL('/dashboard', req.url))
     }
 
-    // Protection des routes client
+    // Protection des routes driver - seuls les chauffeurs peuvent y accéder
+    if (pathname.startsWith('/driver') && token?.role !== 'driver') {
+      return NextResponse.redirect(new URL('/dashboard', req.url))
+    }
+
+    // Protection des routes client - seuls les clients peuvent y accéder
     if (pathname.startsWith('/client') && token?.role !== 'customer') {
       return NextResponse.redirect(new URL('/dashboard', req.url))
     }
@@ -36,9 +35,10 @@ export default withAuth(
   {
     callbacks: {
       authorized: ({ token, req }) => {
-        // Protect dashboard, admin and client routes
+        // Protect dashboard, admin, driver and client routes
         if (req.nextUrl.pathname.startsWith('/dashboard') || 
             req.nextUrl.pathname.startsWith('/admin') ||
+            req.nextUrl.pathname.startsWith('/driver') ||
             req.nextUrl.pathname.startsWith('/client')) {
           return !!token
         }
@@ -52,6 +52,7 @@ export const config = {
   matcher: [
     '/dashboard/:path*',
     '/admin/:path*',
+    '/driver/:path*',
     '/client/:path*',
   ]
 }

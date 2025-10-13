@@ -50,6 +50,13 @@
       "when": 1759963380906,
       "tag": "0006_loose_micromacro",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1760281287822,
+      "tag": "0007_add_review_response_columns",
+      "breakpoints": true
     }
   ]
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 
 interface DriverStatsProps {
@@ -13,59 +13,64 @@ interface StatsData {
   completedRides: number
   cancelledRides: number
   totalEarnings: number
-  totalHours: number
-  totalDistance: number
   averageRating: number
   totalRatings: number
+  statusBreakdown: { status: string; count: number; earnings: number; percentage: number }[]
   peakHours: { hour: number; rides: number }[]
-  monthlyData: { month: string; rides: number; earnings: number }[]
-  ratingDistribution: { stars: number; count: number }[]
+  monthlyData: { month: string; year?: string; rides: number; earnings: number }[]
+  ratingDistribution: { stars: number; count: number; percentage: number }[]
   topRoutes: { from: string; to: string; count: number; avgPrice: number }[]
 }
 
 export function DriverStats({ onBack }: DriverStatsProps) {
-  useSession()
+  const { data: session } = useSession()
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'year'>('month')
-  const [stats] = useState<StatsData>({
+  const [stats, setStats] = useState<StatsData>({
     period: 'month',
-    totalRides: 156,
-    completedRides: 148,
-    cancelledRides: 8,
-    totalEarnings: 12840,
-    totalHours: 420,
-    totalDistance: 8750,
-    averageRating: 4.8,
-    totalRatings: 142,
-    peakHours: [
-      { hour: 7, rides: 12 },
-      { hour: 8, rides: 18 },
-      { hour: 9, rides: 15 },
-      { hour: 17, rides: 20 },
-      { hour: 18, rides: 25 },
-      { hour: 19, rides: 16 }
-    ],
-    monthlyData: [
-      { month: 'Jan', rides: 45, earnings: 3200 },
-      { month: 'Fév', rides: 52, earnings: 3680 },
-      { month: 'Mar', rides: 48, earnings: 3420 },
-      { month: 'Avr', rides: 56, earnings: 4180 },
-      { month: 'Mai', rides: 61, earnings: 4590 },
-      { month: 'Jui', rides: 58, earnings: 4320 }
-    ],
-    ratingDistribution: [
-      { stars: 5, count: 89 },
-      { stars: 4, count: 35 },
-      { stars: 3, count: 12 },
-      { stars: 2, count: 4 },
-      { stars: 1, count: 2 }
-    ],
-    topRoutes: [
-      { from: 'Aéroport AIBD', to: 'Dakar Centre', count: 28, avgPrice: 165 },
-      { from: 'Gare du Nord', to: 'La Défense', count: 22, avgPrice: 85 },
-      { from: 'Aéroport AIBD', to: 'Dakar Sud', count: 18, avgPrice: 140 },
-      { from: 'Châtelet', to: 'Aéroport CDG', count: 15, avgPrice: 170 }
-    ]
+    totalRides: 0,
+    completedRides: 0,
+    cancelledRides: 0,
+    totalEarnings: 0,
+    averageRating: 0,
+    totalRatings: 0,
+    statusBreakdown: [],
+    peakHours: [],
+    monthlyData: [],
+    ratingDistribution: [],
+    topRoutes: []
   })
+  const [isLoading, setIsLoading] = useState(false)
+
+  // Récupérer les statistiques du chauffeur
+  useEffect(() => {
+    if (session?.user && 'role' in session.user && session.user.role === 'driver') {
+      fetchDriverStats()
+    }
+  }, [session, selectedPeriod])
+
+  const fetchDriverStats = async () => {
+    try {
+      setIsLoading(true)
+      console.log(`🔄 Récupération des statistiques pour la période: ${selectedPeriod}`)
+      
+      const response = await fetch(`/api/driver/stats?period=${selectedPeriod}`)
+      
+      if (!response.ok) {
+        throw new Error('Erreur lors de la récupération des statistiques')
+      }
+
+      const data = await response.json()
+      console.log(`📊 Statistiques reçues pour ${selectedPeriod}:`, data.data)
+      
+      if (data.success && data.data) {
+        setStats(data.data)
+      }
+    } catch (error) {
+      console.error('Erreur lors de la récupération des statistiques:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const periods = [
     { key: 'week' as const, label: 'Cette semaine' },
@@ -95,12 +100,23 @@ export function DriverStats({ onBack }: DriverStatsProps) {
     return ((stats.completedRides / stats.totalRides) * 100).toFixed(1)
   }
 
+  const getEarningsPerRide = () => {
+    if (stats.totalRides === 0) return '0'
+    return (stats.totalEarnings / stats.totalRides).toFixed(0)
+  }
+
   const getEarningsPerHour = () => {
-    return (stats.totalEarnings / stats.totalHours).toFixed(0)
+    // Estimation basée sur une moyenne de 1.5h par course
+    const estimatedHours = stats.totalRides * 1.5
+    if (estimatedHours === 0) return '0'
+    return (stats.totalEarnings / estimatedHours).toFixed(0)
   }
 
   const getEarningsPerKm = () => {
-    return (stats.totalEarnings / stats.totalDistance).toFixed(2)
+    // Estimation basée sur une moyenne de 15km par course
+    const estimatedDistance = stats.totalRides * 15
+    if (estimatedDistance === 0) return '0'
+    return (stats.totalEarnings / estimatedDistance).toFixed(0)
   }
 
   return (
@@ -123,7 +139,7 @@ export function DriverStats({ onBack }: DriverStatsProps) {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  Statistiques
+                  Statistiques - {periods.find(p => p.key === selectedPeriod)?.label}
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400">
                   Analysez vos performances détaillées
@@ -136,13 +152,21 @@ export function DriverStats({ onBack }: DriverStatsProps) {
               <button
                 key={period.key}
                 onClick={() => setSelectedPeriod(period.key)}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                disabled={isLoading}
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors disabled:opacity-50 ${
                   selectedPeriod === period.key
                     ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                 }`}
               >
-                {period.label}
+                {isLoading && selectedPeriod === period.key ? (
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 border border-current border-t-transparent rounded-full animate-spin"></div>
+                    <span>{period.label}</span>
+                  </div>
+                ) : (
+                  period.label
+                )}
               </button>
             ))}
           </div>
@@ -150,17 +174,26 @@ export function DriverStats({ onBack }: DriverStatsProps) {
       </div>
 
       {/* Main Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-xl flex items-center justify-center">
-              <span className="text-blue-600 dark:text-blue-400 text-xl">🚗</span>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Total Courses</p>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.totalRides}</p>
+      <div className="relative">
+        {isLoading && (
+          <div className="absolute inset-0 bg-white/80 dark:bg-gray-900/80 rounded-2xl z-10 flex items-center justify-center">
+            <div className="flex items-center space-x-3">
+              <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+              <span className="text-gray-700 dark:text-gray-300 font-medium">Chargement des statistiques...</span>
             </div>
           </div>
+        )}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-xl flex items-center justify-center">
+                <span className="text-blue-600 dark:text-blue-400 text-xl">🚗</span>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Total Courses</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.totalRides}</p>
+              </div>
+            </div>
           <div className="flex items-center justify-between text-sm">
             <span className="text-green-600 dark:text-green-400">✅ {stats.completedRides} terminées</span>
             <span className="text-red-500 dark:text-red-400">❌ {stats.cancelledRides} annulées</span>
@@ -186,15 +219,15 @@ export function DriverStats({ onBack }: DriverStatsProps) {
         <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">
           <div className="flex items-center space-x-3 mb-4">
             <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/20 rounded-xl flex items-center justify-center">
-              <span className="text-orange-600 dark:text-orange-400 text-xl">⏱️</span>
+              <span className="text-orange-600 dark:text-orange-400 text-xl">💳</span>
             </div>
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Heures Travaillées</p>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.totalHours}h</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Revenus par Course</p>
+              <p className="text-3xl font-bold text-gray-900 dark:text-white">{getEarningsPerRide()} FCFA</p>
             </div>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600 dark:text-gray-400">{(stats.totalHours / stats.totalRides).toFixed(1)}h/course</span>
+            <span className="text-gray-600 dark:text-gray-400">Estimation: {getEarningsPerHour()} FCFA/h</span>
             <span className="text-green-600 dark:text-green-400">Taux: {getCompletionRate()}%</span>
           </div>
         </div>
@@ -213,6 +246,7 @@ export function DriverStats({ onBack }: DriverStatsProps) {
             {getRatingStars(stats.averageRating)}
             <span className="text-sm text-gray-600 dark:text-gray-400">{stats.totalRatings} avis</span>
           </div>
+        </div>
         </div>
       </div>
 

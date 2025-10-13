@@ -5,6 +5,7 @@ import Image from "next/image"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { FilterBar } from "@/components/ui/FilterBar"
 import { useNotification } from "@/hooks/useNotification"
+import UniversalProfilePhotoUpload from "@/components/ui/UniversalProfilePhotoUpload"
 
 interface User {
   id: string
@@ -37,7 +38,8 @@ export function UsersManagement() {
     phone: '',
     licenseNumber: '',
     isActive: true,
-    password: ''
+    password: '',
+    image: ''
   })
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
@@ -185,10 +187,13 @@ export function UsersManagement() {
     if (!editingUser) return
     
     try {
+      // Exclure le champ image du formData car il est géré séparément
+      const { image, ...updateData } = formData
+      
       const response = await fetch(`/api/admin/users/${editingUser.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(updateData)
       })
       
       if (response.ok) {
@@ -196,9 +201,14 @@ export function UsersManagement() {
         setIsModalOpen(false)
         setEditingUser(null)
         resetForm()
+        showSuccess('Utilisateur mis à jour avec succès', 'Modification réussie')
+      } else {
+        const error = await response.json()
+        showError(`Erreur: ${error.error}`, 'Échec de la modification')
       }
     } catch (error) {
       console.error('Erreur lors de la mise à jour:', error)
+      showError('Une erreur est survenue lors de la modification', 'Erreur technique')
     }
   }
 
@@ -226,7 +236,8 @@ export function UsersManagement() {
       phone: '',
       licenseNumber: '',
       isActive: true,
-      password: ''
+      password: '',
+      image: ''
     })
   }
 
@@ -245,7 +256,8 @@ export function UsersManagement() {
       phone: user.phone || '',
       licenseNumber: user.licenseNumber || '',
       isActive: user.isActive,
-      password: '' // Ajouter le champ password manquant
+      password: '', // Ajouter le champ password manquant
+      image: user.image || ''
     })
     setIsModalOpen(true)
   }
@@ -362,10 +374,11 @@ export function UsersManagement() {
                             sizes="40px"
                           />
                         </div>
-                      ) : null}
-                      <div className={`h-10 w-10 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-gray-600 dark:text-gray-300 text-sm font-medium ${user.image ? 'hidden' : ''}`}>
-                        {user.name.charAt(0).toUpperCase()}
-                      </div>
+                      ) : (
+                        <div className="h-10 w-10 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-gray-600 dark:text-gray-300 text-sm font-medium">
+                          {user.name.charAt(0).toUpperCase()}
+                        </div>
+                      )}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -457,6 +470,28 @@ export function UsersManagement() {
                   required
                 />
               </div>
+              
+              {/* Photo de profil - seulement pour les utilisateurs existants */}
+              {editingUser && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                    Photo de profil
+                  </label>
+                  <UniversalProfilePhotoUpload
+                    userId={editingUser.id}
+                    currentImage={formData.image}
+                    onImageUpdate={(imageUrl) => {
+                      setFormData({...formData, image: imageUrl || ''})
+                    }}
+                    onSuccess={(message) => {
+                      showSuccess(message)
+                      // Rafraîchir la liste des utilisateurs pour mettre à jour l'image
+                      fetchUsers()
+                    }}
+                    onError={showError}
+                  />
+                </div>
+              )}
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">

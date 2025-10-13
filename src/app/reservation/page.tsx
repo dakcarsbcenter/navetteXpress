@@ -2,56 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Navigation } from "@/components/navigation";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { BookNowIcon } from "@/components/icons/custom-icons";
+import { serviceTypes, additionalServices, getServiceById } from "@/lib/services";
 import Link from "next/link";
-
-// Types de services disponibles
-const serviceTypes = [
-  {
-    id: "airport",
-    name: "Transfert Aéroport",
-    description: "Service ponctuel vers/depuis les aéroports",
-    icon: "✈️"
-  },
-  {
-    id: "event",
-    name: "Événement Spécial",
-    description: "Mariages, galas, soirées prestigieuses",
-    icon: "🎭"
-  },
-  {
-    id: "business",
-    name: "Voyage d'Affaires",
-    description: "Déplacements professionnels",
-    icon: "💼"
-  },
-  {
-    id: "city",
-    name: "Transport en Ville",
-    description: "Déplacements urbains premium",
-    icon: "🏙️"
-  },
-  {
-    id: "other",
-    name: "Autres",
-    description: "Spécifiez votre besoin particulier",
-    icon: "📝"
-  }
-];
-
-
-// Services additionnels
-const additionalServices = [
-  { id: "wifi", name: "Wi-Fi Premium" },
-  { id: "refreshments", name: "Boissons & Collations" },
-  { id: "newspaper", name: "Presse du jour" },
-  { id: "child_seat", name: "Siège enfant" },
-  { id: "flowers", name: "Bouquet de fleurs" },
-  { id: "champagne", name: "Champagne" },
-];
 
 interface FormData {
   serviceType: string;
@@ -75,6 +31,7 @@ interface FormData {
 export default function ReservationPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const isSignedIn = !!session;
   const isLoaded = status !== "loading";
   const user = session?.user as unknown as { id?: string; name?: string; email?: string; role?: string } | undefined;
@@ -102,6 +59,17 @@ export default function ReservationPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
+  // Gérer la pré-sélection du service depuis l'URL
+  useEffect(() => {
+    const serviceParam = searchParams.get('service');
+    if (serviceParam && getServiceById(serviceParam)) {
+      setFormData(prev => ({
+        ...prev,
+        serviceType: serviceParam
+      }));
+    }
+  }, [searchParams]);
+
   // Mettre à jour automatiquement l'email de contact quand l'utilisateur est chargé
   useEffect(() => {
     if (user?.email && !formData.contactEmail) {
@@ -115,7 +83,7 @@ export default function ReservationPage() {
   const handleInputChange = (field: keyof FormData, value: string | number | boolean | string[]) => {
     setFormData(prev => {
       // Si on change le type de service, réinitialiser le service personnalisé
-      if (field === 'serviceType' && value !== 'other') {
+      if (field === 'serviceType' && value !== 'autres') {
         return { ...prev, [field]: value as string, customServiceType: '' };
       }
       return { ...prev, [field]: value as string | number | boolean | string[] };
@@ -284,7 +252,7 @@ export default function ReservationPage() {
               </div>
 
               {/* Champ de saisie personnalisé pour "Autres" */}
-              {formData.serviceType === "other" && (
+              {formData.serviceType === "autres" && (
                 <div className="mt-6">
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                     Décrivez votre service souhaité *

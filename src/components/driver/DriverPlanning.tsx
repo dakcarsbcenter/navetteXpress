@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 
 interface PlanningProps {
@@ -15,92 +15,99 @@ interface Booking {
   destination: string
   date: string
   time: string
-  status: 'confirmed' | 'pending' | 'in_progress' | 'completed' | 'cancelled'
+  status: 'confirmed' | 'pending' | 'in_progress' | 'completed' | 'cancelled' | 'assigned'
   vehicle: string
   price: number
   duration: string
   notes?: string
 }
 
+interface BookingData {
+  id: number
+  customerName: string
+  customerPhone: string
+  pickupAddress: string
+  dropoffAddress: string
+  scheduledDateTime: string
+  status: string
+  price: string | number
+  vehicle?: {
+    make: string
+    model: string
+    licensePlate: string
+    color: string
+  }
+}
+
+interface APIResponse {
+  success: boolean
+  data: Array<{
+    booking: BookingData
+    vehicle: any
+  }>
+}
+
 export function DriverPlanning({ onBack }: PlanningProps) {
-  useSession()
+  const { data: session } = useSession()
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [weekView, setWeekView] = useState(true)
-  const [bookings] = useState<Booking[]>([
-    {
-      id: 1,
-      client: "M. Dubois",
-      phone: "+33 6 12 34 56 78",
-      pickup: "Aéroport Charles de Gaulle",
-      destination: "Hotel Plaza Athénée, Dakar",
-      date: "2024-09-25",
-      time: "14:30",
-      status: "confirmed",
-      vehicle: "Mercedes Classe S",
-      price: 180,
-      duration: "45 min"
-    },
-    {
-      id: 2,
-      client: "Mme. Martin",
-      phone: "+33 6 98 76 54 32",
-      pickup: "16 Rue de la Paix, Dakar", 
-      destination: "Gare du Nord",
-      date: "2024-09-25",
-      time: "16:00",
-      status: "pending",
-      vehicle: "BMW Série 7",
-      price: 120,
-      duration: "25 min"
-    },
-    {
-      id: 3,
-      client: "Dr. Rousseau",
-      phone: "+33 6 45 67 89 12",
-      pickup: "Hôpital Pitié-Salpêtrière",
-      destination: "Aéroport Orly",
-      date: "2024-09-26",
-      time: "09:15",
-      status: "confirmed",
-      vehicle: "Audi A8",
-      price: 150,
-      duration: "40 min"
-    },
-    {
-      id: 4,
-      client: "Mme. Leroy",
-      phone: "+33 6 11 22 33 44",
-      pickup: "Gare de Lyon",
-      destination: "La Défense",
-      date: "2024-09-26",
-      time: "11:30",
-      status: "confirmed",
-      vehicle: "Mercedes Classe S",
-      price: 85,
-      duration: "30 min"
-    },
-    {
-      id: 5,
-      client: "M. Bernard",
-      phone: "+33 6 55 66 77 88",
-      pickup: "Place Vendôme",
-      destination: "Aéroport Charles de Gaulle",
-      date: "2024-09-27",
-      time: "07:45",
-      status: "confirmed",
-      vehicle: "BMW Série 7",
-      price: 195,
-      duration: "50 min"
+  const [bookings, setBookings] = useState<Booking[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+
+  // Récupérer les réservations du chauffeur
+  useEffect(() => {
+    if (session?.user && 'role' in session.user && session.user.role === 'driver') {
+      fetchDriverBookings()
     }
-  ])
+  }, [session])
+
+  const fetchDriverBookings = async () => {
+    try {
+      setIsLoading(true)
+      const response = await fetch('/api/driver/bookings')
+      
+      if (!response.ok) {
+        throw new Error('Erreur lors de la récupération des réservations')
+      }
+
+      const data: APIResponse = await response.json()
+      
+      if (data.success && data.data) {
+        // Transformer les données pour l'affichage dans le planning
+        const transformedBookings: Booking[] = data.data.map(item => {
+          const scheduledDate = new Date(item.booking.scheduledDateTime)
+          return {
+            id: item.booking.id,
+            client: item.booking.customerName,
+            phone: item.booking.customerPhone,
+            pickup: item.booking.pickupAddress,
+            destination: item.booking.dropoffAddress,
+            date: scheduledDate.toISOString().split('T')[0], // Format YYYY-MM-DD
+            time: scheduledDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+            status: item.booking.status as 'confirmed' | 'pending' | 'in_progress' | 'completed' | 'cancelled' | 'assigned',
+            vehicle: item.vehicle ? `${item.vehicle.make} ${item.vehicle.model}` : 'Véhicule non assigné',
+            price: typeof item.booking.price === 'string' ? parseFloat(item.booking.price) : item.booking.price,
+            duration: "30 min" // Durée estimée par défaut, peut être calculée selon la distance
+          }
+        })
+        
+        setBookings(transformedBookings)
+      }
+    } catch (error) {
+      console.error('Erreur lors de la récupération des réservations:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'confirmed': return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
-      case 'pending': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
+      case 'assigned': return 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400'
       case 'in_progress': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
       case 'completed': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400'
       case 'cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
+      // 'pending' est exclu car c'est un statut réservé aux administrateurs
       default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400'
     }
   }
@@ -108,10 +115,11 @@ export function DriverPlanning({ onBack }: PlanningProps) {
   const getStatusLabel = (status: string) => {
     switch (status) {
       case 'confirmed': return '✅ Confirmé'
-      case 'pending': return '⏳ En attente'
+      case 'assigned': return '📋 Assigné'
       case 'in_progress': return '🚗 En cours'
       case 'completed': return '✅ Terminé'
       case 'cancelled': return '❌ Annulé'
+      // 'pending' est exclu car c'est un statut réservé aux administrateurs
       default: return '❓ Inconnu'
     }
   }
@@ -145,6 +153,38 @@ export function DriverPlanning({ onBack }: PlanningProps) {
   const isToday = (date: Date) => {
     const today = new Date()
     return date.toDateString() === today.toDateString()
+  }
+
+  // Fonction pour mettre à jour le statut d'une réservation
+  const updateBookingStatus = async (bookingId: number, newStatus: string) => {
+    try {
+      const response = await fetch(`/api/driver/bookings/${bookingId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Erreur lors de la mise à jour')
+      }
+
+      // Mettre à jour l'état local
+      setBookings(prevBookings => 
+        prevBookings.map(booking => 
+          booking.id === bookingId 
+            ? { ...booking, status: newStatus as 'confirmed' | 'pending' | 'in_progress' | 'completed' | 'cancelled' | 'assigned' }
+            : booking
+        )
+      )
+
+      return { success: true }
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du statut:', error)
+      return { success: false, error: error instanceof Error ? error.message : 'Erreur inconnue' }
+    }
   }
 
   return (
@@ -196,6 +236,13 @@ export function DriverPlanning({ onBack }: PlanningProps) {
           </div>
         </div>
       </div>
+
+      {/* Message de chargement */}
+      {isLoading && (
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+          <p className="text-blue-700 dark:text-blue-300">Chargement de votre planning...</p>
+        </div>
+      )}
 
       {weekView ? (
         /* Week View */
@@ -376,10 +423,57 @@ export function DriverPlanning({ onBack }: PlanningProps) {
                       {booking.phone}
                     </div>
                     <div className="flex flex-col space-y-2">
-                      <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
-                        Voir détails
-                      </button>
-                      <button className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors">
+                      {/* Boutons d'action selon le statut */}
+                      {booking.status === 'assigned' && (
+                        <button 
+                          onClick={async () => {
+                            const result = await updateBookingStatus(booking.id, 'confirmed')
+                            if (!result.success) {
+                              alert('Erreur: ' + result.error)
+                            }
+                          }}
+                          className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+                        >
+                          <span>✅</span>
+                          Confirmer
+                        </button>
+                      )}
+                      
+                      {booking.status === 'confirmed' && (
+                        <button 
+                          onClick={async () => {
+                            const result = await updateBookingStatus(booking.id, 'in_progress')
+                            if (!result.success) {
+                              alert('Erreur: ' + result.error)
+                            }
+                          }}
+                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+                        >
+                          <span>🚗</span>
+                          Démarrer
+                        </button>
+                      )}
+                      
+                      {booking.status === 'in_progress' && (
+                        <button 
+                          onClick={async () => {
+                            const result = await updateBookingStatus(booking.id, 'completed')
+                            if (!result.success) {
+                              alert('Erreur: ' + result.error)
+                            }
+                          }}
+                          className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+                        >
+                          <span>✅</span>
+                          Terminer
+                        </button>
+                      )}
+
+                      <button 
+                        onClick={() => window.location.href = `tel:${booking.phone}`}
+                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+                      >
+                        <span>📞</span>
                         Appeler client
                       </button>
                     </div>

@@ -112,7 +112,13 @@ export const reviewsTable = pgTable('reviews', {
   driverId: text('driver_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   rating: integer('rating').notNull(),
   comment: text('comment'),
+  response: text('response'),
+  respondedBy: text('responded_by'),
+  respondedAt: timestamp('responded_at'),
+  isPublic: boolean('is_public').notNull().default(true),
+  isApproved: boolean('is_approved').notNull().default(false),
   createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
 }, (table) => ({
   ratingCheck: check('rating_check', sql`${table.rating} >= 1 AND ${table.rating} <= 5`),
 }));
@@ -138,6 +144,7 @@ export const quotesTable = pgTable('quotes', {
   message: text('message').notNull(),
   status: quoteStatusEnum('status').notNull().default('pending'),
   adminNotes: text('admin_notes'),
+  clientNotes: text('client_notes'),
   estimatedPrice: decimal('estimated_price', { precision: 10, scale: 2 }),
   assignedTo: text('assigned_to').references(() => users.id, { onDelete: 'set null' }),
   createdAt: timestamp('created_at').notNull().defaultNow(),
@@ -177,6 +184,9 @@ export type VehicleReport = {
     plateNumber: string;
   };
 };
+
+// Alias pour les exports
+export const quotes = quotesTable;
 
 // Types pour les réponses API
 export type ApiResponse<T = unknown> = {

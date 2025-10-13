@@ -7,6 +7,8 @@ interface ImageUploaderProps {
   onUploadComplete: (url: string) => void;
   currentImage?: string | null;
   className?: string;
+  label?: string;
+  required?: boolean;
 }
 
 /**
@@ -16,7 +18,9 @@ interface ImageUploaderProps {
 export function ImageUploader({ 
   onUploadComplete, 
   currentImage, 
-  className = '' 
+  className = '',
+  label = 'Photo du véhicule',
+  required = false
 }: ImageUploaderProps) {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(currentImage || null);
@@ -62,7 +66,7 @@ export function ImageUploader({
       const formData = new FormData();
       formData.append('file', file);
       formData.append('upload_preset', uploadPreset);
-      formData.append('folder', 'navette-xpress/vehicles');
+      formData.append('folder', label.includes('utilisateur') || label.includes('profil') ? 'navette-xpress/users' : 'navette-xpress/vehicles');
       
       setProgress(50);
 
@@ -116,7 +120,7 @@ export function ImageUploader({
       {/* Label et input */}
       <div>
         <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-          Photo du véhicule
+          {label} {required && <span className="text-red-500">*</span>}
         </label>
         <input
           type="file"
@@ -127,12 +131,13 @@ export function ImageUploader({
             file:mr-4 file:py-2.5 file:px-4
             file:rounded-lg file:border-0
             file:text-sm file:font-semibold
-            file:bg-blue-50 file:text-blue-700
-            hover:file:bg-blue-100
+            file:bg-blue-600 file:text-white
+            hover:file:bg-blue-700
             file:cursor-pointer file:transition-colors
             disabled:opacity-50 disabled:cursor-not-allowed
-            dark:file:bg-blue-900/50 dark:file:text-blue-300
-            dark:hover:file:bg-blue-900/70"
+            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+            border border-gray-300 dark:border-gray-600 rounded-lg
+            bg-white dark:bg-gray-800 p-2"
         />
       </div>
 

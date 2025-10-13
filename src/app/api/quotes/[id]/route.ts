@@ -64,21 +64,42 @@ export async function PUT(
 
     const body = await request.json();
     const { 
+      customerName,
+      customerEmail,
+      customerPhone,
+      service,
+      preferredDate,
+      message,
       status,
       adminNotes,
       estimatedPrice,
       assignedTo
     } = body;
 
+    console.log('📝 Modification du devis ID:', (await params).id, body);
+
+    // Préparer les champs à mettre à jour
+    const updateData: any = {
+      updatedAt: new Date()
+    };
+
+    // Mise à jour des informations client si fournies
+    if (customerName !== undefined) updateData.customerName = customerName;
+    if (customerEmail !== undefined) updateData.customerEmail = customerEmail;
+    if (customerPhone !== undefined) updateData.customerPhone = customerPhone || null;
+    if (service !== undefined) updateData.service = service;
+    if (preferredDate !== undefined) updateData.preferredDate = preferredDate ? new Date(preferredDate) : null;
+    if (message !== undefined) updateData.message = message;
+
+    // Mise à jour des champs admin
+    if (status !== undefined) updateData.status = status;
+    if (adminNotes !== undefined) updateData.adminNotes = adminNotes;
+    if (estimatedPrice !== undefined) updateData.estimatedPrice = estimatedPrice;
+    if (assignedTo !== undefined) updateData.assignedTo = assignedTo;
+
     const updatedQuote = await db
       .update(quotesTable)
-      .set({
-        status: status || undefined,
-        adminNotes: adminNotes || undefined,
-        estimatedPrice: estimatedPrice || undefined,
-        assignedTo: assignedTo || undefined,
-        updatedAt: new Date()
-      })
+      .set(updateData)
       .where(eq(quotesTable.id, parseInt((await params).id)))
       .returning();
 
@@ -89,6 +110,8 @@ export async function PUT(
       }, { status: 404 });
     }
 
+    console.log('✅ Devis modifié avec succès:', updatedQuote[0]);
+
     return NextResponse.json({ 
       success: true, 
       data: updatedQuote[0],
@@ -96,7 +119,7 @@ export async function PUT(
     });
 
   } catch (error) {
-    console.error('Erreur lors de la mise à jour de la demande de devis:', error);
+    console.error('❌ Erreur lors de la mise à jour de la demande de devis:', error);
     return NextResponse.json({ 
       success: false, 
       error: 'Erreur interne du serveur' 

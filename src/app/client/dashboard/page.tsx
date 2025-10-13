@@ -7,6 +7,8 @@ import { Navigation } from "@/components/navigation"
 import Link from "next/link"
 import { CreateReviewModal } from "@/components/client/CreateReviewModal"
 import { EditProfileModal } from "@/components/client/EditProfileModal"
+import { ClientQuotesView } from "@/components/client/ClientQuotesView"
+import UniversalProfilePhotoUpload from "@/components/ui/UniversalProfilePhotoUpload"
 
 interface Booking {
   id: number
@@ -47,6 +49,22 @@ interface ReviewableBooking {
   }
 }
 
+interface Quote {
+  id: number
+  customerName: string
+  customerEmail: string
+  customerPhone: string | null
+  service: string
+  preferredDate: string | null
+  message: string
+  status: 'pending' | 'in_progress' | 'sent' | 'accepted' | 'rejected' | 'expired'
+  adminNotes: string | null
+  estimatedPrice: string | null
+  assignedTo: string | null
+  createdAt: string
+  updatedAt: string
+}
+
 interface UserProfile {
   id: string
   name: string
@@ -56,7 +74,7 @@ interface UserProfile {
   createdAt: string
 }
 
-type TabType = 'overview' | 'bookings' | 'reviews' | 'create-reviews' | 'profile'
+type TabType = 'overview' | 'bookings' | 'quotes' | 'reviews' | 'create-reviews' | 'profile'
 
 function ClientDashboardContent() {
   const { data: session, status } = useSession()
@@ -65,6 +83,7 @@ function ClientDashboardContent() {
   const [activeTab, setActiveTab] = useState<TabType>('overview')
   const [isLoading, setIsLoading] = useState(true)
   const [bookings, setBookings] = useState<Booking[]>([])
+  const [quotes, setQuotes] = useState<Quote[]>([])
   const [reviews, setReviews] = useState<Review[]>([])
   const [reviewableBookings, setReviewableBookings] = useState<ReviewableBooking[]>([])
   const [selectedBookingForReview, setSelectedBookingForReview] = useState<ReviewableBooking | null>(null)
@@ -75,6 +94,9 @@ function ClientDashboardContent() {
     totalBookings: 0,
     completedBookings: 0,
     pendingBookings: 0,
+    totalQuotes: 0,
+    pendingQuotes: 0,
+    acceptedQuotes: 0,
     totalReviews: 0,
     averageRating: 0,
     reviewableBookings: 0
@@ -107,7 +129,7 @@ function ClientDashboardContent() {
   // Gérer les paramètres d'URL pour l'onglet actif
   useEffect(() => {
     const tabFromUrl = searchParams.get('tab')
-    if (tabFromUrl && ['overview', 'bookings', 'create-reviews', 'reviews', 'profile'].includes(tabFromUrl)) {
+    if (tabFromUrl && ['overview', 'bookings', 'quotes', 'create-reviews', 'reviews', 'profile'].includes(tabFromUrl)) {
       setActiveTab(tabFromUrl as TabType)
     }
   }, [searchParams])
@@ -135,10 +157,22 @@ function ClientDashboardContent() {
         setReviewableBookings(reviewableData.bookings || [])
       }
 
+      // Charger les devis
+      const quotesResponse = await fetch(`/api/quotes/client?email=${encodeURIComponent(session?.user?.email || '')}`)
+      if (quotesResponse.ok) {
+        const quotesData = await quotesResponse.json()
+        if (quotesData.success) {
+          setQuotes(quotesData.data || [])
+        }
+      }
+
       // Calculer les statistiques
       const totalBookings = bookings.length
       const completedBookings = bookings.filter(b => b.status === 'completed').length
       const pendingBookings = bookings.filter(b => ['pending', 'confirmed', 'in_progress'].includes(b.status)).length
+      const totalQuotes = quotes.length
+      const pendingQuotes = quotes.filter(q => ['pending', 'in_progress'].includes(q.status)).length
+      const acceptedQuotes = quotes.filter(q => q.status === 'accepted').length
       const totalReviews = reviews.length
       const averageRating = reviews.length > 0 
         ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
@@ -148,6 +182,9 @@ function ClientDashboardContent() {
         totalBookings,
         completedBookings,
         pendingBookings,
+        totalQuotes,
+        pendingQuotes,
+        acceptedQuotes,
         totalReviews,
         averageRating,
         reviewableBookings: reviewableBookings.length
@@ -176,6 +213,7 @@ function ClientDashboardContent() {
   const tabs = [
     { id: 'overview' as TabType, label: 'Vue d\'ensemble', icon: '📊' },
     { id: 'bookings' as TabType, label: 'Mes réservations', icon: '📅' },
+    { id: 'quotes' as TabType, label: 'Mes devis', icon: '📋' },
     { id: 'create-reviews' as TabType, label: 'Évaluer trajets', icon: '⭐', badge: stats.reviewableBookings > 0 ? stats.reviewableBookings : null },
     { id: 'reviews' as TabType, label: 'Mes avis', icon: '✅' },
     { id: 'profile' as TabType, label: 'Mon profil', icon: '👤' },
@@ -213,7 +251,7 @@ function ClientDashboardContent() {
       case 'overview':
         return (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-6">
               <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
                 <div className="flex items-center justify-between">
                   <div>
@@ -241,6 +279,36 @@ function ClientDashboardContent() {
                     <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.pendingBookings}</p>
                   </div>
                   <div className="text-3xl">⏳</div>
+                </div>
+              </div>
+
+              <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Total devis</p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.totalQuotes}</p>
+                  </div>
+                  <div className="text-3xl">📋</div>
+                </div>
+              </div>
+
+              <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Devis en attente</p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.pendingQuotes}</p>
+                  </div>
+                  <div className="text-3xl">⏱️</div>
+                </div>
+              </div>
+
+              <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Devis acceptés</p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.acceptedQuotes}</p>
+                  </div>
+                  <div className="text-3xl">✅</div>
                 </div>
               </div>
 
@@ -334,12 +402,20 @@ function ClientDashboardContent() {
             <div className="p-6 border-b border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Toutes mes réservations</h3>
-                <Link 
-                  href="/reservation"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
-                >
-                  Nouvelle réservation
-                </Link>
+                <div className="flex gap-2">
+                  <Link 
+                    href="/quote-request"
+                    className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+                  >
+                    Demander un devis
+                  </Link>
+                  <Link 
+                    href="/reservation"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+                  >
+                    Nouvelle réservation
+                  </Link>
+                </div>
               </div>
             </div>
             <div className="p-6">
@@ -504,6 +580,9 @@ function ClientDashboardContent() {
           </div>
         )
 
+      case 'quotes':
+        return <ClientQuotesView />
+
       case 'reviews':
         return (
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
@@ -626,6 +705,28 @@ function ClientDashboardContent() {
                   </div>
                   
                   <div className="space-y-4">
+                    {/* Section Photo de Profil */}
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        Photo de profil
+                      </label>
+                      <UniversalProfilePhotoUpload
+                        currentImage={session?.user?.image || undefined}
+                        onImageUpdate={(imageUrl) => {
+                          // La photo sera automatiquement mise à jour dans la session
+                          console.log('✅ Photo mise à jour:', imageUrl)
+                        }}
+                        onSuccess={(message) => {
+                          // Vous pouvez ajouter une notification de succès ici
+                          console.log('✅ Photo mise à jour:', message)
+                        }}
+                        onError={(error) => {
+                          // Vous pouvez ajouter une notification d'erreur ici
+                          console.error('❌ Erreur upload:', error)
+                        }}
+                      />
+                    </div>
+                    
                     <div>
                       <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                         Rôle

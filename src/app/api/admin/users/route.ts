@@ -46,6 +46,7 @@ export async function GET(request: NextRequest) {
       phone: users.phone,
       licenseNumber: users.licenseNumber,
       isActive: users.isActive,
+      image: users.image,
       createdAt: users.createdAt
     }).from(users)
 
