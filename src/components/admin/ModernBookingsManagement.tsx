@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react"
 import Image from "next/image"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { useNotification } from "@/hooks/useNotification"
+import { BookingDetailsModal } from "./BookingDetailsModal"
 
 interface Booking {
   id: number
@@ -18,6 +19,9 @@ interface Booking {
   vehicleId: number | null
   price?: string | null
   notes?: string
+  cancellationReason?: string | null
+  cancelledBy?: string | null
+  cancelledAt?: string | null
   createdAt: string
   driver?: {
     name: string
@@ -29,6 +33,10 @@ interface Booking {
     model: string
     plateNumber: string
     photo?: string
+  }
+  cancelledByUser?: {
+    name: string
+    role: string
   }
 }
 
@@ -54,6 +62,10 @@ export function ModernBookingsManagement() {
   const [selectedBookings, setSelectedBookings] = useState<number[]>([])
   const { notifications, showSuccess, showError, removeNotification } = useNotification()
   
+  // État pour la modal des détails
+  const [selectedBookingForDetails, setSelectedBookingForDetails] = useState<Booking | null>(null)
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false)
+  
   const [filters, setFilters] = useState({
     status: '',
     dateRange: '',
@@ -66,6 +78,23 @@ export function ModernBookingsManagement() {
 
   const [drivers, setDrivers] = useState<Driver[]>([])
   const [vehicles, setVehicles] = useState<Vehicle[]>([])
+
+  // Fonctions pour la modal des détails
+  const openBookingDetails = (booking: Booking) => {
+    setSelectedBookingForDetails(booking)
+    setIsDetailsModalOpen(true)
+  }
+
+  const closeBookingDetails = () => {
+    setIsDetailsModalOpen(false)
+    setSelectedBookingForDetails(null)
+  }
+
+  const handleBookingUpdate = () => {
+    // Recharger les données après mise à jour
+    fetchBookings()
+    showSuccess('Réservation mise à jour avec succès', 'Succès')
+  }
 
   useEffect(() => {
     fetchBookings()
@@ -99,9 +128,13 @@ export function ModernBookingsManagement() {
                   vehicleId: b.vehicleId,
                   price: b.price,
                   notes: b.notes,
+                  cancellationReason: b.cancellationReason,
+                  cancelledBy: b.cancelledBy,
+                  cancelledAt: b.cancelledAt,
                   createdAt: b.createdAt,
                   driver: row.driver,
-                  vehicle: row.vehicle
+                  vehicle: row.vehicle,
+                  cancelledByUser: row.cancelledByUser
                 }
               })
             : []
@@ -575,7 +608,11 @@ export function ModernBookingsManagement() {
                   
                   <div className="p-4 space-y-3 max-h-96 overflow-y-auto">
                     {statusBookings.map((booking) => (
-                      <div key={booking.id} className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-3 border border-slate-200 dark:border-slate-600 hover:shadow-sm transition-shadow cursor-pointer">
+                      <div 
+                        key={booking.id} 
+                        onClick={() => openBookingDetails(booking)}
+                        className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-3 border border-slate-200 dark:border-slate-600 hover:shadow-sm transition-shadow cursor-pointer"
+                      >
                         <div className="flex items-start justify-between mb-2">
                           <div className="font-medium text-slate-900 dark:text-white text-sm">
                             {booking.customerName}
@@ -590,6 +627,7 @@ export function ModernBookingsManagement() {
                                 setSelectedBookings(prev => prev.filter(id => id !== booking.id))
                               }
                             }}
+                            onClick={(e) => e.stopPropagation()}
                             className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                           />
                         </div>
@@ -761,7 +799,10 @@ export function ModernBookingsManagement() {
                             Confirmer
                           </button>
                         )}
-                        <button className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white px-3 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                        <button 
+                          onClick={() => openBookingDetails(booking)}
+                          className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white px-3 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                        >
                           Détails
                         </button>
                       </div>
@@ -873,7 +914,11 @@ export function ModernBookingsManagement() {
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end gap-2">
-                            <button className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors">
+                            <button 
+                              onClick={() => openBookingDetails(booking)}
+                              className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                              title="Voir les détails"
+                            >
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -921,6 +966,16 @@ export function ModernBookingsManagement() {
       <NotificationCenter
         notifications={notifications}
         onRemove={removeNotification}
+      />
+
+      {/* Modal des détails de réservation */}
+      <BookingDetailsModal
+        booking={selectedBookingForDetails}
+        isOpen={isDetailsModalOpen}
+        onClose={closeBookingDetails}
+        onUpdate={handleBookingUpdate}
+        drivers={drivers}
+        vehicles={vehicles}
       />
     </div>
   )

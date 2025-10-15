@@ -100,6 +100,9 @@ export const bookingsTable = pgTable('bookings', {
   vehicleId: integer('vehicle_id').references(() => vehiclesTable.id, { onDelete: 'set null' }),
   price: decimal('price', { precision: 10, scale: 2 }),
   notes: text('notes'),
+  cancellationReason: text('cancellation_reason'),
+  cancelledBy: text('cancelled_by').references(() => users.id, { onDelete: 'set null' }),
+  cancelledAt: timestamp('cancelled_at'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().$onUpdate(() => new Date()),
 });
@@ -184,6 +187,37 @@ export type VehicleReport = {
     plateNumber: string;
   };
 };
+
+// Rôles personnalisés
+export const customRolesTable = pgTable('custom_roles', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull().unique(),
+  displayName: text('display_name').notNull(),
+  description: text('description'),
+  color: text('color').notNull().default('#6366f1'),
+  level: integer('level').notNull().default(1),
+  isSystem: boolean('is_system').notNull().default(false),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().$onUpdate(() => new Date()),
+});
+
+// Permissions des rôles
+export const rolePermissionsTable = pgTable('role_permissions', {
+  id: serial('id').primaryKey(),
+  roleName: text('role_name').notNull().references(() => customRolesTable.name, { onDelete: 'cascade' }),
+  resource: text('resource').notNull(),
+  action: text('action').notNull(),
+  allowed: boolean('allowed').notNull().default(true),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+}, (table) => ({
+  uniqueRolePermission: check('unique_role_permission', sql`(${table.roleName}, ${table.resource}, ${table.action}) IS NOT NULL`),
+}));
+
+// Types pour les nouveaux schémas
+export type InsertCustomRole = typeof customRolesTable.$inferInsert;
+export type SelectCustomRole = typeof customRolesTable.$inferSelect;
+export type InsertRolePermission = typeof rolePermissionsTable.$inferInsert;
+export type SelectRolePermission = typeof rolePermissionsTable.$inferSelect;
 
 // Alias pour les exports
 export const quotes = quotesTable;

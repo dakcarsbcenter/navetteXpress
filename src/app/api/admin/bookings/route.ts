@@ -2,7 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { bookingsTable, users, vehiclesTable } from '@/schema';
 import { eq } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/pg-core';
 import { requireAdminRole } from '@/utils/admin-permissions';
+
+// Créer des alias pour les jointures multiples
+const driverUsers = alias(users, 'driver_users');
+const cancelledByUsers = alias(users, 'cancelled_by_users');
 
 // GET - Récupérer toutes les réservations avec leurs détails
 export async function GET() {
@@ -12,12 +17,17 @@ export async function GET() {
     const bookings = await db
       .select({
         booking: bookingsTable,
-        driver: users,
+        driver: driverUsers,
         vehicle: vehiclesTable,
+        cancelledByUser: {
+          name: cancelledByUsers.name,
+          role: cancelledByUsers.role
+        },
       })
       .from(bookingsTable)
-      .leftJoin(users, eq(bookingsTable.driverId, users.id))
-      .leftJoin(vehiclesTable, eq(bookingsTable.vehicleId, vehiclesTable.id));
+      .leftJoin(driverUsers, eq(bookingsTable.driverId, driverUsers.id))
+      .leftJoin(vehiclesTable, eq(bookingsTable.vehicleId, vehiclesTable.id))
+      .leftJoin(cancelledByUsers, eq(bookingsTable.cancelledBy, cancelledByUsers.id));
     
     return NextResponse.json({ 
       success: true, 

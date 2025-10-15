@@ -368,7 +368,7 @@ export function ModernQuotesManagement() {
     const cabinBaggageMatch = message.match(/Bagages cabine: (\d+)/)
     const checkedBaggageMatch = message.match(/Bagages soute: (\d+)/)
     const paymentModeMatch = message.match(/Mode de paiement souhaité: ([^\n]+)/)
-    const descriptionMatch = message.match(/Description: (.+)$/s)
+    const descriptionMatch = message.match(/Description: ([\s\S]+)$/)
 
     setEditQuoteForm({
       customerName: quote.customerName || '',
@@ -623,6 +623,30 @@ Description: ${editQuoteForm.description}`,
       }
     } catch (error) {
       showError('Une erreur est survenue lors de l\'envoi du devis', 'Erreur technique')
+    }
+  }
+
+  // Handle quote action for details modal (approve/reject)
+  const handleQuoteAction = async (quoteId: number, newStatus: string) => {
+    setIsSubmitting(true)
+    try {
+      const response = await fetch(`/api/quotes/${quoteId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus, adminNotes: selectedQuote.adminNotes })
+      })
+      if (response.ok) {
+        await fetchQuotes()
+        showSuccess(`Statut mis à jour vers "${getStatusLabel(newStatus)}"`, 'Mise à jour réussie')
+        setShowQuoteDetailsModal(false)
+        setSelectedQuote(null)
+      } else {
+        showError('Erreur lors de la mise à jour du devis', 'Erreur')
+      }
+    } catch (error) {
+      showError('Erreur lors de la mise à jour du devis', 'Erreur')
+    } finally {
+      setIsSubmitting(false)
     }
   }
 

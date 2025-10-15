@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { Session } from 'next-auth'
+import { CancelBookingModal } from './CancelBookingModal'
 
 interface Stats {
   weeklyRides: number
@@ -23,6 +24,9 @@ interface BookingData {
   scheduledDateTime: string
   status: string
   price: string | number
+  cancellationReason?: string
+  cancelledBy?: string
+  cancelledAt?: string
   vehicle?: {
     make: string
     model: string
@@ -49,6 +53,11 @@ export function DriverDashboardHome({ onNavigate }: DriverDashboardHomeProps) {
   const [bookings, setBookings] = useState<BookingData[]>([])
   const [selectedBooking, setSelectedBooking] = useState<BookingData | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  
+  // États pour la modal d'annulation
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false)
+  const [bookingToCancel, setBookingToCancel] = useState<BookingData | null>(null)
+  const [isCancelling, setIsCancelling] = useState(false)
   
   // États pour le filtrage
   const [dateFilter, setDateFilter] = useState<'today' | 'week' | 'month' | 'all'>('all')
@@ -231,6 +240,46 @@ export function DriverDashboardHome({ onNavigate }: DriverDashboardHomeProps) {
     }
   }
 
+  // Fonction pour mettre à jour le statut avec motif d'annulation
+  const updateBookingStatusWithReason = async (bookingId: number, newStatus: string, cancellationReason?: string) => {
+    try {
+      const response = await fetch(`/api/driver/bookings/${bookingId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          status: newStatus,
+          cancellationReason: cancellationReason 
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Erreur lors de la mise à jour')
+      }
+
+      // Mettre à jour l'état local
+      setBookings(prevBookings => 
+        prevBookings.map(booking => 
+          booking.id === bookingId 
+            ? { ...booking, status: newStatus, cancellationReason }
+            : booking
+        )
+      )
+
+      // Fermer la modal si elle est ouverte
+      if (selectedBooking && selectedBooking.id === bookingId) {
+        setSelectedBooking({ ...selectedBooking, status: newStatus, cancellationReason })
+      }
+
+      return { success: true }
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du statut:', error)
+      return { success: false, error: error instanceof Error ? error.message : 'Erreur inconnue' }
+    }
+  }
+
   const handleViewDetails = (ride: BookingData) => {
     console.log("handleViewDetails called with:", ride)
     setSelectedBooking(ride)
@@ -240,6 +289,41 @@ export function DriverDashboardHome({ onNavigate }: DriverDashboardHomeProps) {
   const handleCallClient = (phone: string) => {
     console.log("handleCallClient called with phone:", phone)
     window.location.href = `tel:${phone}`
+  }
+
+  // Fonctions pour la modal d'annulation
+  const openCancelModal = (booking: BookingData) => {
+    setBookingToCancel(booking)
+    setIsCancelModalOpen(true)
+  }
+
+  const closeCancelModal = () => {
+    setIsCancelModalOpen(false)
+    setBookingToCancel(null)
+  }
+
+  const handleCancelConfirm = async (reason: string) => {
+    if (!bookingToCancel) return
+
+    setIsCancelling(true)
+    try {
+      const result = await updateBookingStatusWithReason(bookingToCancel.id, 'cancelled', reason)
+      if (result.success) {
+        // Fermer les modals et réinitialiser les états
+        closeCancelModal()
+        if (selectedBooking && selectedBooking.id === bookingToCancel.id) {
+          setIsModalOpen(false)
+          setSelectedBooking(null)
+        }
+      } else {
+        alert('Erreur: ' + result.error)
+      }
+    } catch (error) {
+      console.error('Erreur lors de l\'annulation:', error)
+      alert('Erreur lors de l\'annulation de la réservation')
+    } finally {
+      setIsCancelling(false)
+    }
   }
 
   return (
@@ -774,6 +858,27 @@ export function DriverDashboardHome({ onNavigate }: DriverDashboardHomeProps) {
               </div>
             </div>
 
+            {/* Informations d'annulation (si applicable) */}
+            {selectedBooking.status === 'cancelled' && selectedBooking.cancellationReason && (
+              <div className="p-6 pt-0">
+                <div className="bg-red-50 dark:bg-red-900/20 rounded-xl p-4 border border-red-200 dark:border-red-800">
+                  <h4 className="text-lg font-semibold text-red-800 dark:text-red-200 mb-3 flex items-center gap-2">
+                    🚫 Réservation Annulée
+                  </h4>
+                  <div className="space-y-2">
+                    <div>
+                      <p className="text-sm font-medium text-red-700 dark:text-red-300 mb-1">
+                        Motif d'annulation :
+                      </p>
+                      <p className="text-red-900 dark:text-red-100 bg-white dark:bg-red-800/20 p-3 rounded-lg border">
+                        {selectedBooking.cancellationReason}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Actions de statut */}
             {selectedBooking.status !== 'completed' && selectedBooking.status !== 'cancelled' && (
               <div className="p-6 pt-0">
@@ -796,14 +901,7 @@ export function DriverDashboardHome({ onNavigate }: DriverDashboardHomeProps) {
                         Confirmer
                       </button>
                       <button
-                        onClick={async () => {
-                          if (confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) {
-                            const result = await updateBookingStatus(selectedBooking.id, 'cancelled')
-                            if (!result.success) {
-                              alert('Erreur: ' + result.error)
-                            }
-                          }
-                        }}
+                        onClick={() => openCancelModal(selectedBooking)}
                         className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
                       >
                         <span>❌</span>
@@ -827,14 +925,7 @@ export function DriverDashboardHome({ onNavigate }: DriverDashboardHomeProps) {
                         Démarrer
                       </button>
                       <button
-                        onClick={async () => {
-                          if (confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) {
-                            const result = await updateBookingStatus(selectedBooking.id, 'cancelled')
-                            if (!result.success) {
-                              alert('Erreur: ' + result.error)
-                            }
-                          }
-                        }}
+                        onClick={() => openCancelModal(selectedBooking)}
                         className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
                       >
                         <span>❌</span>
@@ -880,6 +971,16 @@ export function DriverDashboardHome({ onNavigate }: DriverDashboardHomeProps) {
           </div>
         </div>
       )}
+
+      {/* Modal d'annulation améliorée */}
+      <CancelBookingModal
+        isOpen={isCancelModalOpen}
+        onClose={closeCancelModal}
+        onConfirm={handleCancelConfirm}
+        bookingId={bookingToCancel?.id}
+        customerName={bookingToCancel?.customerName}
+        isLoading={isCancelling}
+      />
       </div>
     </div>
   )

@@ -28,7 +28,7 @@ export async function PATCH(
     }
 
     const body = await request.json()
-    const { status } = body
+    const { status, cancellationReason } = body
 
     // Valider le nouveau statut (excluding 'pending' which is admin-only)
     const validStatuses = ['assigned', 'confirmed', 'in_progress', 'completed', 'cancelled']
@@ -72,11 +72,20 @@ export async function PATCH(
     }
 
     // Mettre à jour le statut
+    const updateData: any = { 
+      status,
+      updatedAt: new Date()
+    }
+
+    // Si c'est une annulation, enregistrer le motif et les détails
+    if (status === 'cancelled') {
+      updateData.cancellationReason = cancellationReason || 'Aucune raison spécifiée'
+      updateData.cancelledBy = session.user.id
+      updateData.cancelledAt = new Date()
+    }
+
     await db.update(bookingsTable)
-      .set({ 
-        status,
-        updatedAt: new Date()
-      })
+      .set(updateData)
       .where(eq(bookingsTable.id, bookingId))
 
     return NextResponse.json({ 

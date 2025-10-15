@@ -49,6 +49,7 @@ export function ModernPermissionsManagement() {
   const [showCreateUserModal, setShowCreateUserModal] = useState(false)
   const [showEditUserModal, setShowEditUserModal] = useState(false)
   const [showDeleteUserModal, setShowDeleteUserModal] = useState(false)
+  const [showCreateRoleModal, setShowCreateRoleModal] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [newUserForm, setNewUserForm] = useState({
     name: '',
@@ -65,6 +66,11 @@ export function ModernPermissionsManagement() {
     photo: '',
     role: 'customer',
     licenseNumber: ''
+  })
+  const [newRoleForm, setNewRoleForm] = useState({
+    name: '',
+    description: '',
+    permissions: [] as string[]
   })
   const { notifications, showSuccess, showError, removeNotification } = useNotification()
   
@@ -245,12 +251,37 @@ export function ModernPermissionsManagement() {
     }
   }
 
+  const handleCreateRole = async () => {
+    try {
+      // Validation
+      if (!newRoleForm.name.trim()) {
+        showError('Le nom du rôle est obligatoire', 'Validation')
+        return
+      }
+
+      await createRole({
+        name: newRoleForm.name.toLowerCase().replace(/\s+/g, '_'),
+        description: newRoleForm.description,
+        permissions: []
+      } as Partial<Role>)
+      
+      setShowCreateRoleModal(false)
+      setNewRoleForm({
+        name: '',
+        description: '',
+        permissions: []
+      })
+    } catch (error) {
+      showError('Erreur lors de la création du rôle', 'Erreur')
+    }
+  }
+
   const openEditModal = (user: User) => {
     setSelectedUser(user)
     setEditUserForm({
       name: user.name,
       email: user.email,
-      phone: user.phone || '',
+      phone: '',
       photo: user.photo || '',
       role: user.role.name,
       licenseNumber: ''
@@ -463,7 +494,10 @@ export function ModernPermissionsManagement() {
                   </button>
                 )}
                 
-                <button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2">
+                <button 
+                  onClick={() => setShowCreateRoleModal(true)}
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
+                >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   </svg>
@@ -1032,6 +1066,94 @@ export function ModernPermissionsManagement() {
                   Créer l'utilisateur
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de création de rôle */}
+      {showCreateRoleModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full mx-4 shadow-2xl border border-slate-200 dark:border-slate-700">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+                  Nouveau rôle
+                </h3>
+                <button
+                  onClick={() => setShowCreateRoleModal(false)}
+                  className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <form className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Nom du rôle
+                  </label>
+                  <input
+                    type="text"
+                    value={newRoleForm.name}
+                    onChange={(e) => setNewRoleForm(prev => ({ ...prev, name: e.target.value }))}
+                    className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-slate-700 dark:text-white"
+                    placeholder="Ex: Gestionnaire, Support..."
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Description
+                  </label>
+                  <textarea
+                    value={newRoleForm.description}
+                    onChange={(e) => setNewRoleForm(prev => ({ ...prev, description: e.target.value }))}
+                    rows={3}
+                    className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-slate-700 dark:text-white resize-none"
+                    placeholder="Description du rôle et de ses responsabilités..."
+                  />
+                </div>
+
+                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="text-amber-600 dark:text-amber-400 mt-0.5">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                        Fonctionnalité en développement
+                      </p>
+                      <p className="text-sm text-amber-700 dark:text-amber-300">
+                        La création de nouveaux rôles personnalisés n'est pas encore supportée. Cette fonctionnalité sera disponible dans une prochaine version.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowCreateRoleModal(false)}
+                    className="flex-1 px-4 py-3 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCreateRole}
+                    disabled={!newRoleForm.name.trim()}
+                    className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:from-slate-400 disabled:to-slate-500 text-white px-4 py-3 rounded-lg font-medium shadow-lg hover:shadow-xl disabled:shadow-none transition-all duration-300 disabled:cursor-not-allowed"
+                  >
+                    Créer le rôle
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
