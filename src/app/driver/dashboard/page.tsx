@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useSession, signOut } from 'next-auth/react'
+import { usePermissions } from '@/hooks/usePermissions'
 import { DriverDashboardHome } from "@/components/driver/DriverDashboardHome"
 import { DriverPlanning } from "@/components/driver/DriverPlanning"
 import { VehicleReport } from "@/components/driver/VehicleReport"
@@ -15,6 +16,7 @@ type ViewType = 'home' | 'planning' | 'vehicle-report' | 'stats' | 'profile'
 export default function DriverDashboard() {
   const [currentView, setCurrentView] = useState<ViewType>('home')
   const { data: session } = useSession()
+  const { hasPermission, loading: permissionsLoading } = usePermissions()
 
   const handleNavigation = (view: ViewType) => {
     console.log('Navigation reçue:', view)
@@ -45,7 +47,11 @@ export default function DriverDashboard() {
           setCurrentView('home')
         }} />
       default:
-        return <DriverDashboardHome onNavigate={handleNavigation} />
+        return <DriverDashboardHome 
+          onNavigate={handleNavigation} 
+          hasPermission={hasPermission}
+          permissionsLoading={permissionsLoading}
+        />
     }
   }
 

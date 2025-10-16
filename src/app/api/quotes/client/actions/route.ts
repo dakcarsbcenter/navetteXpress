@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { authOptions } from '@/lib/auth'
 import { db } from '@/db'
 import { quotes } from '@/schema'
 import { eq, and } from 'drizzle-orm'
@@ -84,25 +84,32 @@ export async function POST(request: NextRequest) {
     }
 
     // Mettre à jour le devis
+    console.log('Mise à jour du devis avec:', { status: newStatus, clientNotes, quoteId })
+    
     await db.update(quotes)
       .set({
         status: newStatus as any,
         clientNotes,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date()
       })
       .where(eq(quotes.id, quoteId))
+      
+    console.log('Devis mis à jour avec succès')
 
     return NextResponse.json({ 
       success: true, 
       message: 'Action effectuée avec succès',
-      newStatus 
+      newStatus,
+      timestamp: new Date().toISOString()
     })
 
   } catch (error) {
     console.error('Erreur lors de l\'action sur le devis:', error)
+    console.error('Stack trace:', error instanceof Error ? error.stack : 'No stack trace')
     return NextResponse.json({ 
       success: false, 
-      error: 'Erreur interne du serveur' 
+      error: 'Erreur interne du serveur',
+      details: error instanceof Error ? error.message : 'Erreur inconnue'
     }, { status: 500 })
   }
 }

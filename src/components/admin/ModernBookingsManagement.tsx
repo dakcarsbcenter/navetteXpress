@@ -66,6 +66,38 @@ export function ModernBookingsManagement() {
   const [selectedBookingForDetails, setSelectedBookingForDetails] = useState<Booking | null>(null)
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false)
   
+  // État pour la modal de création de réservation
+  const [showCreateBookingModal, setShowCreateBookingModal] = useState(false)
+  const [newBookingForm, setNewBookingForm] = useState({
+    // Détails du trajet
+    reservationDate: '',
+    departureTime: '',
+    pickupAddress: '',
+    dropoffAddress: '',
+    passengers: 1,
+    luggage: 1,
+    estimatedDuration: 2,
+    // Contact
+    customerPhone: '',
+    customerEmail: '',
+    // Services additionnels
+    wifiPremium: false,
+    presseDuJour: false,
+    bouquetFleurs: false,
+    boissonsCollations: false,
+    siegeEnfant: false,
+    champagne: false,
+    // Demandes spéciales
+    specialRequests: '',
+    // Champs techniques
+    customerName: '',
+    scheduledDateTime: '',
+    driverId: '',
+    vehicleId: '',
+    price: '',
+    notes: ''
+  })
+  
   const [filters, setFilters] = useState({
     status: '',
     dateRange: '',
@@ -212,6 +244,96 @@ export function ModernBookingsManagement() {
     })
 
     setFilteredBookings(filtered)
+  }
+
+  const createBooking = async () => {
+    if (!newBookingForm.customerEmail || !newBookingForm.customerPhone || 
+        !newBookingForm.pickupAddress || !newBookingForm.dropoffAddress || 
+        !newBookingForm.reservationDate || !newBookingForm.departureTime) {
+      return
+    }
+
+    try {
+      // Construire le nom du client à partir de l'email si pas fourni
+      const customerName = newBookingForm.customerName || newBookingForm.customerEmail.split('@')[0]
+      
+      // Construire les notes avec toutes les informations
+      const servicesSelected = []
+      if (newBookingForm.wifiPremium) servicesSelected.push('Wi-Fi Premium')
+      if (newBookingForm.boissonsCollations) servicesSelected.push('Boissons & Collations')
+      if (newBookingForm.presseDuJour) servicesSelected.push('Presse du jour')
+      if (newBookingForm.siegeEnfant) servicesSelected.push('Siège enfant')
+      if (newBookingForm.bouquetFleurs) servicesSelected.push('Bouquet de fleurs')
+      if (newBookingForm.champagne) servicesSelected.push('Champagne')
+      
+      let notes = `Passagers: ${newBookingForm.passengers}, Valises: ${newBookingForm.luggage}, Durée estimée: ${newBookingForm.estimatedDuration}h`
+      if (servicesSelected.length > 0) {
+        notes += `\nServices: ${servicesSelected.join(', ')}`
+      }
+      if (newBookingForm.specialRequests) {
+        notes += `\nDemandes spéciales: ${newBookingForm.specialRequests}`
+      }
+
+      const bookingData = {
+        customerName,
+        customerEmail: newBookingForm.customerEmail,
+        customerPhone: newBookingForm.customerPhone,
+        pickupAddress: newBookingForm.pickupAddress,
+        dropoffAddress: newBookingForm.dropoffAddress,
+        scheduledDateTime: newBookingForm.scheduledDateTime,
+        status: 'pending',
+        notes
+      }
+
+      const response = await fetch('/api/admin/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bookingData),
+      })
+
+      if (response.ok) {
+        const result = await response.json()
+        setShowCreateBookingModal(false)
+        setNewBookingForm({
+          // Détails du trajet
+          reservationDate: '',
+          departureTime: '',
+          pickupAddress: '',
+          dropoffAddress: '',
+          passengers: 1,
+          luggage: 1,
+          estimatedDuration: 2,
+          // Contact
+          customerPhone: '',
+          customerEmail: '',
+          // Services additionnels
+          wifiPremium: false,
+          presseDuJour: false,
+          bouquetFleurs: false,
+          boissonsCollations: false,
+          siegeEnfant: false,
+          champagne: false,
+          // Demandes spéciales
+          specialRequests: '',
+          // Champs techniques
+          customerName: '',
+          scheduledDateTime: '',
+          driverId: '',
+          vehicleId: '',
+          price: '',
+          notes: ''
+        })
+        // Recharger les réservations
+        fetchBookings()
+      } else {
+        const error = await response.json()
+        console.error('Erreur lors de la création de la réservation:', error)
+      }
+    } catch (error) {
+      console.error('Erreur lors de la création de la réservation:', error)
+    }
   }
 
   const getStatusConfig = (status: string) => {
@@ -395,7 +517,10 @@ export function ModernBookingsManagement() {
               </div>
               
               {/* Bouton Nouvelle réservation */}
-              <button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2">
+              <button 
+                onClick={() => setShowCreateBookingModal(true)}
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
+              >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
@@ -977,6 +1102,335 @@ export function ModernBookingsManagement() {
         drivers={drivers}
         vehicles={vehicles}
       />
+
+      {/* Modal de création de réservation */}
+      {showCreateBookingModal && (
+        <div className="fixed inset-0 z-50 overflow-y-auto backdrop-blur-sm">
+          <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:p-0">
+            <div 
+              className="fixed inset-0 transition-opacity bg-gray-900 bg-opacity-50" 
+              aria-hidden="true"
+              onClick={() => setShowCreateBookingModal(false)}
+            ></div>
+
+            <div className="relative inline-block align-bottom bg-white dark:bg-slate-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full mx-4 z-10">
+              <div className="bg-white dark:bg-slate-800 px-6 pt-6 pb-6 sm:p-8">
+                <div className="flex items-center justify-between mb-8">
+                  <h3 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                    <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center shadow-lg">
+                      <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                    </div>
+                    Nouvelle réservation
+                  </h3>
+                  <button
+                    onClick={() => setShowCreateBookingModal(false)}
+                    className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-all duration-200"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+
+                {/* Détails de votre trajet */}
+                <div className="mb-8">
+                  <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+                    Détails de votre trajet
+                  </h4>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    {/* Date de réservation */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Date de réservation
+                      </label>
+                      <input
+                        type="date"
+                        value={newBookingForm.reservationDate}
+                        onChange={(e) => {
+                          setNewBookingForm({...newBookingForm, reservationDate: e.target.value})
+                          // Combiner date et heure pour scheduledDateTime
+                          const dateTime = newBookingForm.departureTime ? 
+                            `${e.target.value}T${newBookingForm.departureTime}` : e.target.value
+                          setNewBookingForm(prev => ({...prev, scheduledDateTime: dateTime}))
+                        }}
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
+
+                    {/* Heure de départ */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Heure de départ
+                      </label>
+                      <input
+                        type="time"
+                        value={newBookingForm.departureTime}
+                        onChange={(e) => {
+                          setNewBookingForm({...newBookingForm, departureTime: e.target.value})
+                          // Combiner date et heure pour scheduledDateTime
+                          const dateTime = newBookingForm.reservationDate ? 
+                            `${newBookingForm.reservationDate}T${e.target.value}` : e.target.value
+                          setNewBookingForm(prev => ({...prev, scheduledDateTime: dateTime}))
+                        }}
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    {/* Adresse de départ */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Adresse de départ
+                      </label>
+                      <input
+                        type="text"
+                        value={newBookingForm.pickupAddress}
+                        onChange={(e) => setNewBookingForm({...newBookingForm, pickupAddress: e.target.value})}
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+                        placeholder="Saisissez l'adresse de départ"
+                      />
+                    </div>
+
+                    {/* Adresse de destination */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Adresse de destination
+                      </label>
+                      <input
+                        type="text"
+                        value={newBookingForm.dropoffAddress}
+                        onChange={(e) => setNewBookingForm({...newBookingForm, dropoffAddress: e.target.value})}
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+                        placeholder="Saisissez l'adresse de destination"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    {/* Nombre de passagers */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Nombre de passagers
+                      </label>
+                      <select
+                        value={newBookingForm.passengers}
+                        onChange={(e) => setNewBookingForm({...newBookingForm, passengers: parseInt(e.target.value)})}
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+                      >
+                        {[1,2,3,4,5,6,7,8].map(num => (
+                          <option key={num} value={num}>{num} passager{num > 1 ? 's' : ''}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Nombre de valise(s) */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Nombre de valise(s)
+                      </label>
+                      <select
+                        value={newBookingForm.luggage}
+                        onChange={(e) => setNewBookingForm({...newBookingForm, luggage: parseInt(e.target.value)})}
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+                      >
+                        {[1,2,3,4,5,6].map(num => (
+                          <option key={num} value={num}>{num} valise{num > 1 ? 's' : ''}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Durée estimée */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Durée estimée (heures)
+                      </label>
+                      <input
+                        type="number"
+                        min="0.5"
+                        max="24"
+                        step="0.5"
+                        value={newBookingForm.estimatedDuration}
+                        onChange={(e) => setNewBookingForm({...newBookingForm, estimatedDuration: parseFloat(e.target.value)})}
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Téléphone de contact */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Téléphone de contact
+                      </label>
+                      <input
+                        type="tel"
+                        value={newBookingForm.customerPhone}
+                        onChange={(e) => setNewBookingForm({...newBookingForm, customerPhone: e.target.value})}
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+                        placeholder="77 650 01 02"
+                      />
+                    </div>
+
+                    {/* Email de contact */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Email de contact
+                      </label>
+                      <input
+                        type="email"
+                        value={newBookingForm.customerEmail}
+                        onChange={(e) => setNewBookingForm({...newBookingForm, customerEmail: e.target.value})}
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+                        placeholder="clientnavette@gmail.com"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Services additionnels */}
+                <div className="mb-8">
+                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                    Services additionnels (optionnel)
+                  </h4>
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {/* Wi-Fi Premium */}
+                    <div 
+                      onClick={() => setNewBookingForm({...newBookingForm, wifiPremium: !newBookingForm.wifiPremium})}
+                      className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                        newBookingForm.wifiPremium 
+                          ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20' 
+                          : 'border-gray-200 dark:border-slate-600 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Wi-Fi Premium</span>
+                        {newBookingForm.wifiPremium && <span className="text-orange-500">✓</span>}
+                      </div>
+                    </div>
+
+                    {/* Boissons & Collations */}
+                    <div 
+                      onClick={() => setNewBookingForm({...newBookingForm, boissonsCollations: !newBookingForm.boissonsCollations})}
+                      className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                        newBookingForm.boissonsCollations 
+                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+                          : 'border-gray-200 dark:border-slate-600 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Boissons & Collations</span>
+                        {newBookingForm.boissonsCollations && <span className="text-blue-500">✓</span>}
+                      </div>
+                    </div>
+
+                    {/* Presse du jour */}
+                    <div 
+                      onClick={() => setNewBookingForm({...newBookingForm, presseDuJour: !newBookingForm.presseDuJour})}
+                      className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                        newBookingForm.presseDuJour 
+                          ? 'border-gray-500 bg-gray-50 dark:bg-gray-900/20' 
+                          : 'border-gray-200 dark:border-slate-600 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Presse du jour</span>
+                        {newBookingForm.presseDuJour && <span className="text-gray-500">✓</span>}
+                      </div>
+                    </div>
+
+                    {/* Siège enfant */}
+                    <div 
+                      onClick={() => setNewBookingForm({...newBookingForm, siegeEnfant: !newBookingForm.siegeEnfant})}
+                      className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                        newBookingForm.siegeEnfant 
+                          ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20' 
+                          : 'border-gray-200 dark:border-slate-600 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Siège enfant</span>
+                        {newBookingForm.siegeEnfant && <span className="text-orange-500">✓</span>}
+                      </div>
+                    </div>
+
+                    {/* Bouquet de fleurs */}
+                    <div 
+                      onClick={() => setNewBookingForm({...newBookingForm, bouquetFleurs: !newBookingForm.bouquetFleurs})}
+                      className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                        newBookingForm.bouquetFleurs 
+                          ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20' 
+                          : 'border-gray-200 dark:border-slate-600 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Bouquet de fleurs</span>
+                        {newBookingForm.bouquetFleurs && <span className="text-orange-500">✓</span>}
+                      </div>
+                    </div>
+
+                    {/* Champagne */}
+                    <div 
+                      onClick={() => setNewBookingForm({...newBookingForm, champagne: !newBookingForm.champagne})}
+                      className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                        newBookingForm.champagne 
+                          ? 'border-gray-500 bg-gray-50 dark:bg-gray-900/20' 
+                          : 'border-gray-200 dark:border-slate-600 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Champagne</span>
+                        {newBookingForm.champagne && <span className="text-gray-500">✓</span>}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Demandes spéciales */}
+                <div className="mb-6">
+                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                    Demandes spéciales (optionnel)
+                  </h4>
+                  <textarea
+                    value={newBookingForm.specialRequests}
+                    onChange={(e) => setNewBookingForm({...newBookingForm, specialRequests: e.target.value})}
+                    rows={4}
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none"
+                    placeholder="Décrivez vos demandes particulières..."
+                  />
+                </div>
+              </div>
+
+              <div className="bg-gray-50 dark:bg-slate-700 px-6 py-6 sm:px-8 sm:flex sm:flex-row-reverse gap-4 border-t border-gray-200 dark:border-slate-600">
+                <button
+                  type="button"
+                  onClick={createBooking}
+                  disabled={!newBookingForm.customerEmail || !newBookingForm.customerPhone || 
+                           !newBookingForm.pickupAddress || !newBookingForm.dropoffAddress || 
+                           !newBookingForm.reservationDate || !newBookingForm.departureTime}
+                  className="w-full inline-flex justify-center items-center rounded-xl border border-transparent shadow-lg px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-lg font-semibold text-white hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 sm:ml-3 sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-blue-600 disabled:hover:to-indigo-600 transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100"
+                >
+                  <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  Créer la réservation
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowCreateBookingModal(false)}
+                  className="mt-3 w-full inline-flex justify-center items-center rounded-xl border-2 border-gray-300 dark:border-slate-500 shadow-sm px-8 py-4 bg-white dark:bg-slate-600 text-lg font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-slate-500 hover:border-gray-400 dark:hover:border-slate-400 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:focus:ring-slate-800 sm:mt-0 sm:w-auto transition-all duration-300 transform hover:scale-105"
+                >
+                  Annuler
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

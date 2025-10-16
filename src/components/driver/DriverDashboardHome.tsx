@@ -45,11 +45,62 @@ interface APIResponse {
 
 interface DriverDashboardHomeProps {
   onNavigate: (view: 'planning' | 'vehicle-report' | 'stats' | 'profile') => void
+  hasPermission?: (resource: string, action: string) => boolean
+  permissionsLoading?: boolean
 }
 
-export function DriverDashboardHome({ onNavigate }: DriverDashboardHomeProps) {
+export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoading }: DriverDashboardHomeProps) {
   const { data: session } = useSession()
   const [isLoading, setIsLoading] = useState(false)
+
+  // Configuration des actions avec permissions
+  const allActions = [
+    {
+      key: 'planning',
+      title: 'Planning',
+      description: 'Consultez votre planning de la semaine',
+      icon: '📅',
+      color: 'from-blue-500 to-blue-600',
+      resource: 'bookings',
+      action: 'read'
+    },
+    {
+      key: 'vehicle-report',
+      title: 'Véhicule',
+      description: 'Signaler un problème véhicule',
+      icon: '🔧',
+      color: 'from-orange-500 to-orange-600',
+      resource: 'vehicles',
+      action: 'manage'
+    },
+    {
+      key: 'stats',
+      title: 'Statistiques',
+      description: 'Analysez vos performances',
+      icon: '📊',
+      color: 'from-purple-500 to-purple-600',
+      resource: 'reports',
+      action: 'read'
+    },
+    {
+      key: 'profile',
+      title: 'Mon Profil',
+      description: 'Gérez vos informations personnelles',
+      icon: '👤',
+      color: 'from-green-500 to-green-600',
+      resource: 'profile',
+      action: 'manage'
+    }
+  ]
+
+  // Filtrer les actions selon les permissions
+  const availableActions = allActions.filter(actionItem => {
+    // Si pas de fonction hasPermission, afficher toutes les actions (fallback)
+    if (!hasPermission) return true
+    
+    // Vérifier la permission pour cette action
+    return hasPermission(actionItem.resource, actionItem.action)
+  })
   const [bookings, setBookings] = useState<BookingData[]>([])
   const [selectedBooking, setSelectedBooking] = useState<BookingData | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -676,59 +727,55 @@ export function DriverDashboardHome({ onNavigate }: DriverDashboardHomeProps) {
       </div>
 
       {/* Actions rapides */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <button
-          onClick={() => onNavigate('planning')}
-          className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all duration-300"
-        >
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-white text-2xl">📅</span>
+      {permissionsLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map((item) => (
+            <div key={item} className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 animate-pulse">
+              <div className="w-16 h-16 bg-slate-200 dark:bg-slate-700 rounded-2xl mx-auto mb-4"></div>
+              <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded mb-2"></div>
+              <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded"></div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className={`grid gap-6 ${
+          availableActions.length === 1 ? 'grid-cols-1 max-w-sm mx-auto' :
+          availableActions.length === 2 ? 'grid-cols-1 md:grid-cols-2' :
+          availableActions.length === 3 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' :
+          'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'
+        }`}>
+          {availableActions.map((actionItem) => (
+            <button
+              key={actionItem.key}
+              onClick={() => onNavigate(actionItem.key as 'planning' | 'vehicle-report' | 'stats' | 'profile')}
+              className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all duration-300"
+            >
+              <div className={`w-16 h-16 bg-gradient-to-br ${actionItem.color} rounded-2xl flex items-center justify-center mx-auto mb-4`}>
+                <span className="text-white text-2xl">{actionItem.icon}</span>
+              </div>
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">{actionItem.title}</h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                {actionItem.description}
+              </p>
+            </button>
+          ))}
+        </div>
+      )}
+      
+      {/* Message si aucune action disponible */}
+      {!permissionsLoading && availableActions.length === 0 && (
+        <div className="text-center py-12">
+          <div className="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-4xl text-slate-400">�</span>
           </div>
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">Planning</h3>
-          <p className="text-sm text-slate-600 dark:text-slate-400">
-            Consultez votre planning de la semaine
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+            Aucune action disponible
+          </h3>
+          <p className="text-slate-600 dark:text-slate-400">
+            Contactez votre administrateur pour obtenir les permissions nécessaires.
           </p>
-        </button>
-
-        <button
-          onClick={() => onNavigate('vehicle-report')}
-          className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all duration-300"
-        >
-          <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-white text-2xl">🔧</span>
-          </div>
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">Véhicule</h3>
-          <p className="text-sm text-slate-600 dark:text-slate-400">
-            Signaler un problème véhicule
-          </p>
-        </button>
-
-        <button
-          onClick={() => onNavigate('stats')}
-          className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all duration-300"
-        >
-          <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-white text-2xl">📊</span>
-          </div>
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">Statistiques</h3>
-          <p className="text-sm text-slate-600 dark:text-slate-400">
-            Analysez vos performances
-          </p>
-        </button>
-
-        <button
-          onClick={() => onNavigate('profile')}
-          className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all duration-300"
-        >
-          <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-white text-2xl">👤</span>
-          </div>
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">Mon Profil</h3>
-          <p className="text-sm text-slate-600 dark:text-slate-400">
-            Gérez vos informations personnelles
-          </p>
-        </button>
-      </div>
+        </div>
+      )}
 
       {/* Modal de détails */}
       {isModalOpen && selectedBooking && (

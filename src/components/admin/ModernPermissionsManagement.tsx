@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
+import { useSession } from "next-auth/react"
 import { Edit, Trash2, MoreVertical } from "lucide-react"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { useNotification } from "@/hooks/useNotification"
@@ -40,6 +41,7 @@ interface User {
 }
 
 export function ModernPermissionsManagement() {
+  const { data: session, status } = useSession()
   const [roles, setRoles] = useState<Role[]>([])
   const [permissions, setPermissions] = useState<Permission[]>([])
   const [users, setUsers] = useState<User[]>([])
@@ -83,22 +85,67 @@ export function ModernPermissionsManagement() {
   })
 
   useEffect(() => {
-    fetchData()
-  }, [])
+    if (status === 'loading') return // Attendre que la session se charge
+    if (status === 'unauthenticated') {
+      showError('Vous devez être connecté pour accéder à cette page')
+      return
+    }
+    if (session?.user && 'role' in session.user && session.user.role === 'admin') {
+      fetchData()
+    } else {
+      showError('Accès refusé. Vous devez être administrateur.')
+    }
+  }, [session, status])
 
   const fetchData = async () => {
     try {
+      console.log('🔄 Chargement des données...')
+
       const [rolesRes, permissionsRes, usersRes] = await Promise.all([
-        fetch('/api/admin/roles'),
-        fetch('/api/admin/permissions'),
-        fetch('/api/admin/users')
+        fetch('/api/admin/roles', {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }),
+        fetch('/api/admin/permissions', {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }),
+        fetch('/api/admin/users', {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
       ])
+
+      console.log('📡 Réponses API:', {
+        roles: rolesRes.status,
+        permissions: permissionsRes.status, 
+        users: usersRes.status
+      })
+
+      // Gérer les erreurs individuelles
+      if (!rolesRes.ok) {
+        console.error('❌ Erreur API roles:', rolesRes.status, rolesRes.statusText)
+        const errorText = await rolesRes.text()
+        console.error('Détails erreur roles:', errorText)
+      }
+      if (!permissionsRes.ok) {
+        console.error('❌ Erreur API permissions:', permissionsRes.status, permissionsRes.statusText)
+        const errorText = await permissionsRes.text()
+        console.error('Détails erreur permissions:', errorText)
+      }
+      if (!usersRes.ok) {
+        console.error('❌ Erreur API users:', usersRes.status, usersRes.statusText)
+        const errorText = await usersRes.text()
+        console.error('Détails erreur users:', errorText)
+      }
       
-      const [rolesData, permissionsData, usersData] = await Promise.all([
-        rolesRes.json(),
-        permissionsRes.json(),
-        usersRes.json()
-      ])
+      // Ne traiter que les réponses OK
+      const rolesData = rolesRes.ok ? await rolesRes.json() : { success: false, data: [] }
+      const permissionsData = permissionsRes.ok ? await permissionsRes.json() : { success: false, data: [] }
+      const usersData = usersRes.ok ? await usersRes.json() : { success: false, data: [] }
       
       if (rolesData.success) setRoles(rolesData.data)
       if (permissionsData.success) setPermissions(permissionsData.data)
@@ -129,9 +176,10 @@ export function ModernPermissionsManagement() {
         setUsers(transformedUsers)
       }
       
+      console.log('✅ Données chargées avec succès')
     } catch (error) {
-      console.error('Erreur lors du chargement:', error)
-      showError('Erreur lors du chargement des données', 'Erreur de chargement')
+      console.error('❌ Erreur lors du chargement des données:', error)
+      showError('Erreur lors du chargement des données')
     } finally {
       setIsLoading(false)
     }
@@ -412,6 +460,40 @@ export function ModernPermissionsManagement() {
               <div key={i} className="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
             ))}
           </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Vérification d'authentification
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-slate-50 dark:from-slate-900 dark:via-indigo-900/10 dark:to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <p className="text-slate-600 dark:text-slate-400">Chargement...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (status === 'unauthenticated') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-slate-50 dark:from-slate-900 dark:via-indigo-900/10 dark:to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">Accès refusé</h2>
+          <p className="text-slate-600 dark:text-slate-400">Vous devez être connecté pour accéder à cette page.</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!session?.user || !('role' in session.user) || session.user.role !== 'admin') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-slate-50 dark:from-slate-900 dark:via-indigo-900/10 dark:to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">Accès refusé</h2>
+          <p className="text-slate-600 dark:text-slate-400">Vous devez être administrateur pour accéder à cette page.</p>
         </div>
       </div>
     )

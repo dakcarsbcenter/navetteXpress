@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useSession, signOut } from "next-auth/react"
 import { redirect } from "next/navigation"
 import Link from "next/link"
+import { usePermissions } from "@/hooks/usePermissions"
 
 // Composants pour chaque section
 import { VehiclesManagement } from "@/components/admin/VehiclesManagement"
@@ -18,6 +19,7 @@ type TabType = 'modern' | 'vehicles' | 'bookings' | 'quotes' | 'permissions' | '
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession()
+  const { permissions, loading: permissionsLoading, canRead, canManage } = usePermissions()
   const [activeTab, setActiveTab] = useState<TabType>('modern')
   const [isLoading, setIsLoading] = useState(true)
 
@@ -51,15 +53,38 @@ export default function AdminDashboard() {
     )
   }
 
-  const tabs = [
-    { id: 'modern' as TabType, label: 'Dashboard', icon: '🏠' },
-    { id: 'stats' as TabType, label: 'Statistiques Globales', icon: '📈' },
-    { id: 'vehicles' as TabType, label: 'Véhicules', icon: '🚗' },
-    { id: 'bookings' as TabType, label: 'Réservations', icon: '📅' },
-    { id: 'quotes' as TabType, label: 'Devis', icon: '💰' },
-    { id: 'permissions' as TabType, label: 'Permissions', icon: '🔐' },
-    { id: 'reviews' as TabType, label: 'Avis', icon: '⭐' },
+  const allTabs = [
+    { id: 'modern' as TabType, label: 'Dashboard', icon: '🏠', resource: '', always: true },
+    { id: 'stats' as TabType, label: 'Statistiques Globales', icon: '📈', resource: '', always: true },
+    { id: 'vehicles' as TabType, label: 'Véhicules', icon: '🚗', resource: 'vehicles' },
+    { id: 'bookings' as TabType, label: 'Réservations', icon: '📅', resource: 'bookings' },
+    { id: 'quotes' as TabType, label: 'Devis', icon: '💰', resource: 'quotes' },
+    { id: 'permissions' as TabType, label: 'Permissions', icon: '🔐', resource: 'users', requireManage: true },
+    { id: 'reviews' as TabType, label: 'Avis', icon: '⭐', resource: 'reviews' },
   ]
+
+  // Filtrer les onglets selon les permissions
+  const tabs = allTabs.filter(tab => {
+    // Les onglets toujours visibles (Dashboard, Stats)
+    if (tab.always) return true
+    
+    // Si on charge encore les permissions, montrer tous les onglets pour éviter le flicker
+    if (permissionsLoading) return true
+    
+    // Pour les administrateurs, montrer tous les onglets
+    if ((session?.user as any)?.role === 'admin') return true
+    
+    // Pour les autres rôles, vérifier les permissions
+    if (tab.resource) {
+      if (tab.requireManage) {
+        return canManage(tab.resource)
+      } else {
+        return canRead(tab.resource) || canManage(tab.resource)
+      }
+    }
+    
+    return false
+  })
 
   const renderContent = () => {
     switch (activeTab) {
