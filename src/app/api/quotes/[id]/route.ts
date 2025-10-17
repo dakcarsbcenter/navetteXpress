@@ -20,6 +20,7 @@ async function hasQuotesPermission(userRole: string, action: 'read' | 'create' |
       .where(and(
         eq(rolePermissionsTable.roleName, userRole),
         eq(rolePermissionsTable.resource, 'quotes'),
+        eq(rolePermissionsTable.action, action),
         eq(rolePermissionsTable.allowed, true)
       ));
 

@@ -21,6 +21,7 @@ async function hasVehiclePermission(userRole: string, action: 'update' | 'delete
       .where(and(
         eq(rolePermissionsTable.roleName, userRole),
         eq(rolePermissionsTable.resource, 'vehicles'),
+        eq(rolePermissionsTable.action, action),
         eq(rolePermissionsTable.allowed, true)
       ))
 

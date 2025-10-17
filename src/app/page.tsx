@@ -212,7 +212,7 @@ export default function Home() {
                 Planifiez votre voyage
               </h3>
               <p className="text-slate-600 dark:text-slate-300">
-                Réservez facilement jusqu'à un mois avant votre voyage avec vos détails de vol
+                Réservez facilement jusqu'à un mois avant votre voyage
               </p>
             </div>
             

@@ -21,11 +21,12 @@ async function hasBookingsPermission(userRole: string, action: 'read' | 'create'
       .where(and(
         eq(rolePermissionsTable.roleName, userRole),
         eq(rolePermissionsTable.resource, 'bookings'),
+        eq(rolePermissionsTable.action, action),
         eq(rolePermissionsTable.allowed, true)
       ));
 
-    // Vérifier si l'utilisateur a 'manage' ou l'action spécifique
-    return permissions.some(p => p.action === 'manage' || p.action === action);
+    // Retourner true si la permission existe
+    return permissions.length > 0;
   } catch (error) {
     console.error('Erreur lors de la vérification des permissions bookings:', error);
     return false;
