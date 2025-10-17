@@ -9,6 +9,8 @@ import { CreateReviewModal } from "@/components/client/CreateReviewModal"
 import { EditProfileModal } from "@/components/client/EditProfileModal"
 import { ClientQuotesView } from "@/components/client/ClientQuotesView"
 import UniversalProfilePhotoUpload from "@/components/ui/UniversalProfilePhotoUpload"
+import { VehiclesManagement } from "@/components/client/VehiclesManagement"
+import { ClientUsersManagement } from "@/components/client/ClientUsersManagement"
 
 interface Booking {
   id: number
@@ -74,7 +76,7 @@ interface UserProfile {
   createdAt: string
 }
 
-type TabType = 'overview' | 'bookings' | 'quotes' | 'reviews' | 'create-reviews' | 'profile'
+type TabType = 'overview' | 'bookings' | 'quotes' | 'reviews' | 'create-reviews' | 'profile' | 'vehicles' | 'users'
 
 function ClientDashboardContent() {
   const { data: session, status } = useSession()
@@ -90,6 +92,7 @@ function ClientDashboardContent() {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false)
   const [userProfile] = useState<UserProfile | null>(null)
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false)
+  const [userPermissions, setUserPermissions] = useState<Record<string, string[]>>({})
   const [stats, setStats] = useState({
     totalBookings: 0,
     completedBookings: 0,
@@ -122,14 +125,30 @@ function ClientDashboardContent() {
   useEffect(() => {
     if (session?.user && (session.user as unknown as { id?: string }).id) {
       loadClientData()
+      loadUserPermissions()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session])
 
+  const loadUserPermissions = async () => {
+    try {
+      const response = await fetch('/api/auth/permissions')
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success) {
+          console.log('📋 Permissions utilisateur:', data.permissions)
+          setUserPermissions(data.permissions || {})
+        }
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des permissions:', error)
+    }
+  }
+
   // Gérer les paramètres d'URL pour l'onglet actif
   useEffect(() => {
-    const tabFromUrl = searchParams.get('tab')
-    if (tabFromUrl && ['overview', 'bookings', 'quotes', 'create-reviews', 'reviews', 'profile'].includes(tabFromUrl)) {
+    const tabFromUrl = searchParams?.get('tab')
+    if (tabFromUrl && ['overview', 'bookings', 'quotes', 'create-reviews', 'reviews', 'profile', 'vehicles', 'users'].includes(tabFromUrl)) {
       setActiveTab(tabFromUrl as TabType)
     }
   }, [searchParams])
@@ -165,34 +184,36 @@ function ClientDashboardContent() {
           setQuotes(quotesData.data || [])
         }
       }
-
-      // Calculer les statistiques
-      const totalBookings = bookings.length
-      const completedBookings = bookings.filter(b => b.status === 'completed').length
-      const pendingBookings = bookings.filter(b => ['pending', 'confirmed', 'in_progress'].includes(b.status)).length
-      const totalQuotes = quotes.length
-      const pendingQuotes = quotes.filter(q => ['pending', 'in_progress'].includes(q.status)).length
-      const acceptedQuotes = quotes.filter(q => q.status === 'accepted').length
-      const totalReviews = reviews.length
-      const averageRating = reviews.length > 0 
-        ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
-        : 0
-
-      setStats({
-        totalBookings,
-        completedBookings,
-        pendingBookings,
-        totalQuotes,
-        pendingQuotes,
-        acceptedQuotes,
-        totalReviews,
-        averageRating,
-        reviewableBookings: reviewableBookings.length
-      })
     } catch (error) {
       console.error('Erreur lors du chargement des données:', error)
     }
   }
+
+  // Recalculer les statistiques chaque fois que les données changent
+  useEffect(() => {
+    const totalBookings = bookings.length
+    const completedBookings = bookings.filter(b => b.status === 'completed').length
+    const pendingBookings = bookings.filter(b => ['pending', 'confirmed', 'in_progress', 'assigned'].includes(b.status)).length
+    const totalQuotes = quotes.length
+    const pendingQuotes = quotes.filter(q => ['pending', 'in_progress'].includes(q.status)).length
+    const acceptedQuotes = quotes.filter(q => q.status === 'accepted').length
+    const totalReviews = reviews.length
+    const averageRating = reviews.length > 0 
+      ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
+      : 0
+
+    setStats({
+      totalBookings,
+      completedBookings,
+      pendingBookings,
+      totalQuotes,
+      pendingQuotes,
+      acceptedQuotes,
+      totalReviews,
+      averageRating,
+      reviewableBookings: reviewableBookings.length
+    })
+  }, [bookings, quotes, reviews, reviewableBookings])
 
   if (isLoading) {
     return (
@@ -210,12 +231,68 @@ function ClientDashboardContent() {
     )
   }
 
+  // Fonctions pour vérifier les permissions de manière précise
+  const isAdmin = (session?.user as any)?.role === 'admin'
+  
+  // Bookings permissions - Chaque permission est indépendante
+  const hasBookingsManagePermission = userPermissions.bookings?.includes('manage')
+  const hasBookingsReadPermission = userPermissions.bookings?.includes('read') || hasBookingsManagePermission
+  const hasBookingsCreatePermission = userPermissions.bookings?.includes('create') || hasBookingsManagePermission
+  const hasBookingsUpdatePermission = userPermissions.bookings?.includes('update') || hasBookingsManagePermission
+  const hasBookingsDeletePermission = userPermissions.bookings?.includes('delete') || hasBookingsManagePermission
+  const canViewBookings = hasBookingsReadPermission || hasBookingsCreatePermission || hasBookingsUpdatePermission || hasBookingsDeletePermission
+
+  // Debug permissions
+  console.log('🔍 Bookings Permissions Debug:', {
+    raw: userPermissions.bookings,
+    manage: hasBookingsManagePermission,
+    read: hasBookingsReadPermission,
+    create: hasBookingsCreatePermission,
+    update: hasBookingsUpdatePermission,
+    delete: hasBookingsDeletePermission,
+    canView: canViewBookings
+  })
+
+  // Quotes permissions - Chaque permission est indépendante
+  const hasQuotesManagePermission = userPermissions.quotes?.includes('manage')
+  const hasQuotesReadPermission = userPermissions.quotes?.includes('read') || hasQuotesManagePermission
+  const hasQuotesCreatePermission = userPermissions.quotes?.includes('create') || hasQuotesManagePermission
+  const hasQuotesUpdatePermission = userPermissions.quotes?.includes('update') || hasQuotesManagePermission
+  const hasQuotesDeletePermission = userPermissions.quotes?.includes('delete') || hasQuotesManagePermission
+  const canManageQuotes = hasQuotesReadPermission || hasQuotesCreatePermission || hasQuotesUpdatePermission || hasQuotesDeletePermission
+
+  // Reviews permissions - Chaque permission est indépendante
+  const hasReviewsManagePermission = userPermissions.reviews?.includes('manage')
+  const hasReviewsReadPermission = userPermissions.reviews?.includes('read') || hasReviewsManagePermission
+  const hasReviewsCreatePermission = userPermissions.reviews?.includes('create') || hasReviewsManagePermission
+  const hasReviewsUpdatePermission = userPermissions.reviews?.includes('update') || hasReviewsManagePermission
+  const hasReviewsDeletePermission = userPermissions.reviews?.includes('delete') || hasReviewsManagePermission
+  const canManageReviews = hasReviewsReadPermission || hasReviewsCreatePermission || hasReviewsUpdatePermission || hasReviewsDeletePermission
+
+  // Vérifier si l'utilisateur peut gérer les véhicules
+  const canManageVehicles = userPermissions.vehicles?.includes('manage') || 
+                           userPermissions.vehicles?.includes('read') ||
+                           userPermissions.vehicles?.includes('create') ||
+                           userPermissions.vehicles?.includes('update')
+
+  // Vérifier si l'utilisateur peut gérer les utilisateurs
+  const canManageUsers = userPermissions.users?.includes('manage') || 
+                        userPermissions.users?.includes('read') ||
+                        userPermissions.users?.includes('create') ||
+                        userPermissions.users?.includes('update')
+
   const tabs = [
     { id: 'overview' as TabType, label: 'Vue d\'ensemble', icon: '📊' },
-    { id: 'bookings' as TabType, label: 'Mes réservations', icon: '📅' },
-    { id: 'quotes' as TabType, label: 'Mes devis', icon: '📋' },
+    ...(canViewBookings ? [{ id: 'bookings' as TabType, label: 'Mes réservations', icon: '📅' }] : []),
+    // Ajouter l'onglet devis si l'utilisateur a les permissions
+    ...(canManageQuotes ? [{ id: 'quotes' as TabType, label: 'Mes devis', icon: '📋' }] : []),
     { id: 'create-reviews' as TabType, label: 'Évaluer trajets', icon: '⭐', badge: stats.reviewableBookings > 0 ? stats.reviewableBookings : null },
-    { id: 'reviews' as TabType, label: 'Mes avis', icon: '✅' },
+    // Ajouter l'onglet avis si l'utilisateur a les permissions
+    ...(canManageReviews ? [{ id: 'reviews' as TabType, label: 'Mes avis', icon: '✅' }] : []),
+    // Ajouter l'onglet véhicules si l'utilisateur a les permissions
+    ...(canManageVehicles ? [{ id: 'vehicles' as TabType, label: 'Véhicules', icon: '🚗' }] : []),
+    // Ajouter l'onglet utilisateurs si l'utilisateur a les permissions
+    ...(canManageUsers ? [{ id: 'users' as TabType, label: 'Utilisateurs', icon: '👥' }] : []),
     { id: 'profile' as TabType, label: 'Mon profil', icon: '👤' },
   ]
 
@@ -403,18 +480,22 @@ function ClientDashboardContent() {
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Toutes mes réservations</h3>
                 <div className="flex gap-2">
-                  <Link 
-                    href="/quote-request"
-                    className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
-                  >
-                    Demander un devis
-                  </Link>
-                  <Link 
-                    href="/reservation"
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
-                  >
-                    Nouvelle réservation
-                  </Link>
+                  {hasQuotesCreatePermission && (
+                    <Link 
+                      href="/quote-request"
+                      className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+                    >
+                      Demander un devis
+                    </Link>
+                  )}
+                  {hasBookingsCreatePermission && (
+                    <Link 
+                      href="/reservation"
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+                    >
+                      Nouvelle réservation
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>
@@ -432,7 +513,25 @@ function ClientDashboardContent() {
                             {booking.pickupAddress} → {booking.dropoffAddress}
                           </p>
                         </div>
-                        {getStatusBadge(booking.status)}
+                        <div className="flex items-center gap-2">
+                          {getStatusBadge(booking.status)}
+                          {hasBookingsUpdatePermission && (
+                            <button
+                              className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium"
+                              title="Modifier la réservation"
+                            >
+                              ✏️
+                            </button>
+                          )}
+                          {hasBookingsDeletePermission && (
+                            <button
+                              className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium"
+                              title="Supprimer la réservation"
+                            >
+                              🗑️
+                            </button>
+                          )}
+                        </div>
                       </div>
                       
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
@@ -476,12 +575,14 @@ function ClientDashboardContent() {
               ) : (
                 <div className="text-center py-8">
                   <p className="text-slate-500 dark:text-slate-400">Aucune réservation trouvée</p>
-                  <Link 
-                    href="/reservation"
-                    className="inline-block mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
-                  >
-                    Faire ma première réservation
-                  </Link>
+                  {hasBookingsCreatePermission && (
+                    <Link 
+                      href="/reservation"
+                      className="inline-block mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+                    >
+                      Faire ma première réservation
+                    </Link>
+                  )}
                 </div>
               )}
             </div>
@@ -551,6 +652,8 @@ function ClientDashboardContent() {
                             setIsReviewModalOpen(true)
                           }}
                           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+                          disabled={!hasReviewsCreatePermission}
+                          title={hasReviewsCreatePermission ? "Évaluer ce trajet" : "Vous n'avez pas la permission de créer des avis"}
                         >
                           <span className="text-lg">⭐</span>
                           Évaluer
@@ -568,12 +671,14 @@ function ClientDashboardContent() {
                   <p className="text-slate-500 dark:text-slate-400 mb-4">
                     Vous avez évalué tous vos trajets terminés !
                   </p>
-                  <Link 
-                    href="/reservation"
-                    className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
-                  >
-                    Faire une nouvelle réservation
-                  </Link>
+                  {hasBookingsCreatePermission && (
+                    <Link 
+                      href="/reservation"
+                      className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+                    >
+                      Faire une nouvelle réservation
+                    </Link>
+                  )}
                 </div>
               )}
             </div>
@@ -860,6 +965,12 @@ function ClientDashboardContent() {
             </div>
           </div>
         )
+
+      case 'vehicles':
+        return <VehiclesManagement />
+
+      case 'users':
+        return <ClientUsersManagement />
 
       default:
         return <div>Contenu non trouvé</div>

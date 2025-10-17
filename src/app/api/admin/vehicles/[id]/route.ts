@@ -2,14 +2,14 @@ import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/db"
 import { vehiclesTable } from "@/schema"
 import { eq } from "drizzle-orm"
-import { requireAdminRole } from "@/utils/admin-permissions"
+import { requireVehiclesUpdate, requireVehiclesDelete } from "@/utils/admin-permissions"
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdminRole()
+    await requireVehiclesUpdate()
 
     const vehicleId = parseInt((await params).id)
     if (isNaN(vehicleId)) {
@@ -84,7 +84,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdminRole()
+    await requireVehiclesDelete()
 
     const vehicleId = parseInt((await params).id)
     if (isNaN(vehicleId)) {

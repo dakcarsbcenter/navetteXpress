@@ -199,7 +199,7 @@ export default function Home() {
               Comment Réserver ?
             </h2>
             <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-              Processus simple et rapide en 3 étapes
+              Processus simple et rapide en 3 étapes - Réservation possible jusqu'à un mois à l'avance
             </p>
           </div>
           
@@ -209,10 +209,10 @@ export default function Home() {
                 <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">1</span>
               </div>
               <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
-                Réservez en ligne
+                Planifiez votre voyage
               </h3>
               <p className="text-slate-600 dark:text-slate-300">
-                Remplissez le formulaire de réservation avec vos détails de vol
+                Réservez facilement jusqu'à un mois avant votre voyage avec vos détails de vol
               </p>
             </div>
             

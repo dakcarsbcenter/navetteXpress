@@ -2,7 +2,7 @@ import { integer, pgTable, serial, text, timestamp, decimal, boolean, check, pgE
 import { sql } from 'drizzle-orm';
 
 // Enums (unifiés)
-export const userRoleEnum = pgEnum('user_role', ['admin', 'driver', 'customer']);
+export const userRoleEnum = pgEnum('user_role', ['admin', 'manager', 'driver', 'customer']);
 export const bookingStatusEnum = pgEnum('booking_status', ['pending', 'assigned', 'approved', 'rejected', 'confirmed', 'in_progress', 'completed', 'cancelled']);
 export const vehicleTypeEnum = pgEnum('vehicle_type', ['sedan', 'suv', 'van', 'luxury', 'bus']);
 export const quoteStatusEnum = pgEnum('quote_status', ['pending', 'in_progress', 'sent', 'accepted', 'rejected', 'expired']);

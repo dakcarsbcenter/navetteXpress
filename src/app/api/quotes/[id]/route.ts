@@ -1,9 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { quotesTable } from '@/schema';
+import { quotesTable, rolePermissionsTable } from '@/schema';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
+
+// Fonction pour vérifier les permissions dynamiques des quotes
+async function hasQuotesPermission(userRole: string, action: 'read' | 'create' | 'update' | 'delete'): Promise<boolean> {
+  try {
+    // Les admins ont toujours accès
+    if (userRole === 'admin') {
+      return true;
+    }
+
+    // Vérifier les permissions dynamiques
+    const permissions = await db
+      .select()
+      .from(rolePermissionsTable)
+      .where(and(
+        eq(rolePermissionsTable.roleName, userRole),
+        eq(rolePermissionsTable.resource, 'quotes'),
+        eq(rolePermissionsTable.allowed, true)
+      ));
+
+    // Vérifier si l'utilisateur a 'manage' ou l'action spécifique
+    return permissions.some(p => p.action === 'manage' || p.action === action);
+  } catch (error) {
+    console.error('Erreur lors de la vérification des permissions quotes:', error);
+    return false;
+  }
+}
 
 // GET - Récupérer une demande de devis spécifique
 export async function GET(
@@ -11,13 +37,23 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions) as { user?: { id?: string } } | null;
+    const session = await getServerSession(authOptions) as { user?: { id?: string; role?: string } } | null;
 
     if (!session?.user?.id) {
       return NextResponse.json({ 
         success: false, 
         error: 'Non authentifié' 
       }, { status: 401 });
+    }
+
+    const userRole = session.user.role || 'customer';
+    const hasReadPermission = await hasQuotesPermission(userRole, 'read');
+
+    if (!hasReadPermission) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Vous n\'avez pas la permission de voir ce devis' 
+      }, { status: 403 });
     }
 
     const quote = await db
@@ -53,13 +89,23 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions) as { user?: { id?: string } } | null;
+    const session = await getServerSession(authOptions) as { user?: { id?: string; role?: string } } | null;
 
     if (!session?.user?.id) {
       return NextResponse.json({ 
         success: false, 
         error: 'Non authentifié' 
       }, { status: 401 });
+    }
+
+    const userRole = session.user.role || 'customer';
+    const hasUpdatePermission = await hasQuotesPermission(userRole, 'update');
+
+    if (!hasUpdatePermission) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Vous n\'avez pas la permission de modifier ce devis' 
+      }, { status: 403 });
     }
 
     const body = await request.json();
@@ -133,13 +179,23 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions) as { user?: { id?: string } } | null;
+    const session = await getServerSession(authOptions) as { user?: { id?: string; role?: string } } | null;
 
     if (!session?.user?.id) {
       return NextResponse.json({ 
         success: false, 
         error: 'Non authentifié' 
       }, { status: 401 });
+    }
+
+    const userRole = session.user.role || 'customer';
+    const hasDeletePermission = await hasQuotesPermission(userRole, 'delete');
+
+    if (!hasDeletePermission) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Vous n\'avez pas la permission de supprimer ce devis' 
+      }, { status: 403 });
     }
 
     const deletedQuote = await db

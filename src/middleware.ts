@@ -8,7 +8,7 @@ export default withAuth(
 
     // Redirection basée sur le rôle après connexion
     if (pathname === '/dashboard') {
-      if (token?.role === 'admin') {
+      if (token?.role === 'admin' || token?.role === 'manager') {
         return NextResponse.redirect(new URL('/admin/dashboard', req.url))
       } else if (token?.role === 'driver') {
         return NextResponse.redirect(new URL('/driver/dashboard', req.url))
@@ -17,8 +17,8 @@ export default withAuth(
       }
     }
     
-    // Protection des routes admin - seuls les admins peuvent y accéder
-    if (pathname.startsWith('/admin') && token?.role !== 'admin') {
+    // Protection des routes admin - admins et managers peuvent y accéder
+    if (pathname.startsWith('/admin') && token?.role !== 'admin' && token?.role !== 'manager') {
       return NextResponse.redirect(new URL('/dashboard', req.url))
     }
 

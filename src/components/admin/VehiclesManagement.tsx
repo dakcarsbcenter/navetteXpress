@@ -6,6 +6,7 @@ import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { FilterBar } from "@/components/ui/FilterBar"
 import { useNotification } from "@/hooks/useNotification"
 import { ImageUploader } from "@/components/ImageUploader"
+import { usePermissions } from "@/hooks/usePermissions"
 
 interface Vehicle {
   id: number
@@ -40,6 +41,7 @@ export function VehiclesManagement() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null)
   const { notifications, showSuccess, showError, removeNotification } = useNotification()
+  const { canDelete } = usePermissions()
   const [filters, setFilters] = useState({
     capacity: '',
     status: '',
@@ -511,7 +513,9 @@ export function VehiclesManagement() {
                       >
                         <option value="">Actions...</option>
                         <option value="edit">Modifier</option>
-                        <option value="delete" className="text-red-600">Supprimer</option>
+                        {canDelete('vehicles') && (
+                          <option value="delete" className="text-red-600">Supprimer</option>
+                        )}
                       </select>
                       <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                         <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

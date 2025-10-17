@@ -10,12 +10,14 @@ import { usePermissions } from "@/hooks/usePermissions"
 import { VehiclesManagement } from "@/components/admin/VehiclesManagement"
 import { ModernBookingsManagement } from "@/components/admin/ModernBookingsManagement"
 import { ModernPermissionsManagement } from "@/components/admin/ModernPermissionsManagement"
+import { ComposedPermissionsMatrix } from "@/components/admin/ComposedPermissionsMatrix"
 import { ModernReviewsManagement } from "@/components/admin/ModernReviewsManagement"
 import { ModernQuotesManagement } from "@/components/admin/ModernQuotesManagement"
+import { ModernUsersManagement } from "@/components/admin/ModernUsersManagement"
 import AdminGlobalStats from "@/components/admin/AdminGlobalStats"
 import { ModernAdminDashboard } from "@/components/admin/ModernAdminDashboard"
 
-type TabType = 'modern' | 'vehicles' | 'bookings' | 'quotes' | 'permissions' | 'reviews' | 'stats'
+type TabType = 'modern' | 'users' | 'vehicles' | 'bookings' | 'quotes' | 'permissions' | 'reviews' | 'stats'
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession()
@@ -30,7 +32,8 @@ export default function AdminDashboard() {
       redirect("/auth/signin")
     }
     
-    if (session?.user && (session.user as { role?: string }).role !== 'admin') {
+    const userRole = (session?.user as { role?: string })?.role
+    if (session?.user && userRole !== 'admin' && userRole !== 'manager') {
       redirect("/dashboard")
     }
     
@@ -45,36 +48,43 @@ export default function AdminDashboard() {
     )
   }
 
-  if (!session?.user || (session.user as { role?: string }).role !== 'admin') {
+  const userRole = (session?.user as { role?: string })?.role
+  if (!session?.user || (userRole !== 'admin' && userRole !== 'manager')) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl text-red-600">Accès refusé. Seuls les administrateurs peuvent accéder à cette page.</div>
+        <div className="text-xl text-red-600">Accès refusé. Seuls les administrateurs et managers peuvent accéder à cette page.</div>
       </div>
     )
   }
 
   const allTabs = [
     { id: 'modern' as TabType, label: 'Dashboard', icon: '🏠', resource: '', always: true },
-    { id: 'stats' as TabType, label: 'Statistiques Globales', icon: '📈', resource: '', always: true },
+    { id: 'stats' as TabType, label: 'Statistiques Globales', icon: '📈', resource: '', adminOnly: true },
+    { id: 'users' as TabType, label: 'Utilisateurs', icon: '👥', resource: 'users' },
     { id: 'vehicles' as TabType, label: 'Véhicules', icon: '🚗', resource: 'vehicles' },
     { id: 'bookings' as TabType, label: 'Réservations', icon: '📅', resource: 'bookings' },
     { id: 'quotes' as TabType, label: 'Devis', icon: '💰', resource: 'quotes' },
-    { id: 'permissions' as TabType, label: 'Permissions', icon: '🔐', resource: 'users', requireManage: true },
+    { id: 'permissions' as TabType, label: 'Permissions', icon: '🔐', resource: 'users', requireManage: true, adminOnly: true },
     { id: 'reviews' as TabType, label: 'Avis', icon: '⭐', resource: 'reviews' },
   ]
 
   // Filtrer les onglets selon les permissions
   const tabs = allTabs.filter(tab => {
-    // Les onglets toujours visibles (Dashboard, Stats)
+    // Les onglets toujours visibles (Dashboard)
     if (tab.always) return true
     
     // Si on charge encore les permissions, montrer tous les onglets pour éviter le flicker
     if (permissionsLoading) return true
     
-    // Pour les administrateurs, montrer tous les onglets
-    if ((session?.user as any)?.role === 'admin') return true
+    const userRole = (session?.user as any)?.role
     
-    // Pour les autres rôles, vérifier les permissions
+    // Les onglets adminOnly sont uniquement pour les admins
+    if (tab.adminOnly && userRole !== 'admin') return false
+    
+    // Pour les administrateurs, montrer tous les onglets
+    if (userRole === 'admin') return true
+    
+    // Pour les managers et autres rôles, vérifier les permissions dynamiques
     if (tab.resource) {
       if (tab.requireManage) {
         return canManage(tab.resource)
@@ -92,6 +102,8 @@ export default function AdminDashboard() {
         return <ModernAdminDashboard onNavigate={(section: string) => setActiveTab(section as TabType)} />
       case 'stats':
         return <AdminGlobalStats />
+      case 'users':
+        return <ModernUsersManagement userPermissions={permissions} />
       case 'vehicles':
         return <VehiclesManagement />
       case 'bookings':
@@ -99,7 +111,7 @@ export default function AdminDashboard() {
       case 'quotes':
         return <ModernQuotesManagement />
       case 'permissions':
-        return <ModernPermissionsManagement />
+        return <ComposedPermissionsMatrix />
       case 'reviews':
         return <ModernReviewsManagement />
       default:

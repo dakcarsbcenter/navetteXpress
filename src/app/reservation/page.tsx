@@ -61,7 +61,7 @@ export default function ReservationPage() {
 
   // Gérer la pré-sélection du service depuis l'URL
   useEffect(() => {
-    const serviceParam = searchParams.get('service');
+    const serviceParam = searchParams?.get('service');
     if (serviceParam && getServiceById(serviceParam)) {
       setFormData(prev => ({
         ...prev,
@@ -609,13 +609,23 @@ export default function ReservationPage() {
 
           {/* Navigation buttons */}
           <div className="flex justify-between mt-8">
-            <button
-              onClick={prevStep}
-              disabled={currentStep === 1}
-              className="px-6 py-3 text-slate-600 dark:text-slate-300 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:text-slate-900 dark:hover:text-white transition-colors"
-            >
-              ← Précédent
-            </button>
+            <div className="flex gap-4">
+              {currentStep === 1 && (
+                <button
+                  onClick={() => router.push('/client/dashboard?tab=bookings')}
+                  className="px-6 py-3 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors font-medium"
+                >
+                  Annuler
+                </button>
+              )}
+              <button
+                onClick={prevStep}
+                disabled={currentStep === 1}
+                className="px-6 py-3 text-slate-600 dark:text-slate-300 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:text-slate-900 dark:hover:text-white transition-colors"
+              >
+                ← Précédent
+              </button>
+            </div>
 
             <div className="flex gap-4">
               {currentStep < 3 ? (

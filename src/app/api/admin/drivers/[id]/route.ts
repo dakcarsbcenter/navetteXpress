@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { users } from '@/schema';
 import { eq } from 'drizzle-orm';
-import { requireAdminRole } from '@/utils/admin-permissions';
+import { requireUsersRead, requireUsersUpdate, requireUsersDelete } from '@/utils/admin-permissions';
 
 // GET - Récupérer un chauffeur par ID
 export async function GET(
@@ -10,7 +10,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdminRole(); // Vérification du rôle admin
+    await requireUsersRead(); // Vérification de la permission de lecture
 
     const resolvedParams = await params;
     const id = resolvedParams.id;
@@ -53,7 +53,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdminRole(); // Vérification du rôle admin
+    await requireUsersUpdate(); // Vérification de la permission de mise à jour
 
     const resolvedParams = await params;
     const id = resolvedParams.id;
@@ -107,7 +107,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdminRole(); // Vérification du rôle admin
+    await requireUsersDelete(); // Vérification de la permission de suppression
 
     const resolvedParams = await params;
     const id = resolvedParams.id;

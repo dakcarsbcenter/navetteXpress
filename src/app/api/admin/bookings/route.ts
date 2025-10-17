@@ -3,7 +3,7 @@ import { db } from '@/db';
 import { bookingsTable, users, vehiclesTable } from '@/schema';
 import { eq } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
-import { requireAdminRole } from '@/utils/admin-permissions';
+import { requireBookingsRead, requireBookingsCreate } from '@/utils/admin-permissions';
 
 // Créer des alias pour les jointures multiples
 const driverUsers = alias(users, 'driver_users');
@@ -12,7 +12,7 @@ const cancelledByUsers = alias(users, 'cancelled_by_users');
 // GET - Récupérer toutes les réservations avec leurs détails
 export async function GET() {
   try {
-    await requireAdminRole(); // Vérification du rôle admin
+    await requireBookingsRead(); // Vérification de la permission de lecture
 
     const bookings = await db
       .select({
@@ -45,7 +45,7 @@ export async function GET() {
 // POST - Créer une nouvelle réservation
 export async function POST(request: NextRequest) {
   try {
-    await requireAdminRole(); // Vérification du rôle admin
+    await requireBookingsCreate(); // Vérification de la permission de création
 
     const body = await request.json();
     const { 

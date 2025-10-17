@@ -20,7 +20,7 @@ export async function hasPermission(
       .from(permissionsTable)
       .where(
         and(
-          eq(permissionsTable.role, userRole as 'admin' | 'driver' | 'customer'),
+          eq(permissionsTable.role, userRole as 'admin' | 'manager' | 'driver' | 'customer'),
           eq(permissionsTable.resource, resource),
           eq(permissionsTable.action, action)
         )

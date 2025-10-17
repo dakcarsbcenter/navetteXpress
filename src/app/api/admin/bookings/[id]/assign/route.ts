@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { bookingsTable, users } from '@/schema';
 import { eq, and } from 'drizzle-orm';
-import { requireAdminRole } from '@/utils/admin-permissions';
+import { requireBookingsUpdate } from '@/utils/admin-permissions';
 import { sendDriverAssignmentNotification } from '@/lib/brevo-email';
 
 // PUT - Assigner une réservation à un chauffeur
@@ -11,7 +11,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdminRole(); // Vérification du rôle admin
+    await requireBookingsUpdate(); // Vérification de la permission de mise à jour
 
     const { id } = await params;
     const bookingId = parseInt(id);

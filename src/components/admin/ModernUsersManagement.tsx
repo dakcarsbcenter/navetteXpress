@@ -10,7 +10,7 @@ interface User {
   id: string
   name: string
   email: string
-  role: 'admin' | 'driver' | 'customer'
+  role: 'admin' | 'manager' | 'driver' | 'customer'
   phone?: string
   licenseNumber?: string
   isActive: boolean
@@ -18,13 +18,21 @@ interface User {
   createdAt: string
 }
 
-export function ModernUsersManagement() {
+interface ModernUsersManagementProps {
+  userPermissions?: {
+    [resource: string]: string[]
+  }
+}
+
+export function ModernUsersManagement({ userPermissions }: ModernUsersManagementProps = {}) {
   const [users, setUsers] = useState<User[]>([])
   const [filteredUsers, setFilteredUsers] = useState<User[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingUser, setEditingUser] = useState<User | null>(null)
+  const [deletingUser, setDeletingUser] = useState<User | null>(null)
+  const [currentUserRole, setCurrentUserRole] = useState<string>('')
   const { notifications, showSuccess, showError, removeNotification } = useNotification()
   
   const [filters, setFilters] = useState({
@@ -38,7 +46,7 @@ export function ModernUsersManagement() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    role: 'customer' as 'admin' | 'driver' | 'customer',
+    role: 'customer' as 'admin' | 'manager' | 'driver' | 'customer',
     phone: '',
     licenseNumber: '',
     isActive: true,
@@ -50,7 +58,192 @@ export function ModernUsersManagement() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [newPassword, setNewPassword] = useState('')
 
+  // Vérifier si l'utilisateur actuel est admin ou manager
+  const isCurrentUserAdmin = () => {
+    return !userPermissions || currentUserRole === 'admin' || currentUserRole === 'manager'
+  }
+
+  // Vérifier si l'utilisateur actuel est strictement admin (pas manager)
+  const isStrictAdmin = () => {
+    return currentUserRole === 'admin'
+  }
+
+  // Fonctions de vérification des permissions
+  const canCreate = () => {
+    if (!userPermissions) return true // Admin par défaut
+    const usersPerms = userPermissions.users || []
+    console.log('🔍 canCreate - userPermissions:', userPermissions)
+    console.log('🔍 canCreate - usersPerms:', usersPerms)
+    console.log('🔍 canCreate - result:', usersPerms.includes('create'))
+    return usersPerms.includes('create')
+  }
+
+  const canUpdate = () => {
+    if (!userPermissions) return true // Admin par défaut
+    const usersPerms = userPermissions.users || []
+    console.log('🔍 canUpdate - userPermissions:', userPermissions)
+    console.log('🔍 canUpdate - usersPerms:', usersPerms)
+    console.log('🔍 canUpdate - result:', usersPerms.includes('update'))
+    return usersPerms.includes('update')
+  }
+
+  const canDelete = () => {
+    if (!userPermissions) {
+      console.log('⚠️ canDelete - NO userPermissions, returning TRUE (default admin)')
+      return true // Admin par défaut
+    }
+    const usersPerms = userPermissions.users || []
+    console.log('🔍 canDelete - userPermissions:', userPermissions)
+    console.log('🔍 canDelete - usersPerms:', usersPerms)
+    console.log('🔍 canDelete - includes delete?:', usersPerms.includes('delete'))
+    const result = usersPerms.includes('delete')
+    console.log('🔍 canDelete - FINAL RESULT:', result)
+    return result
+  }
+
+  // Filtrer les admins si l'utilisateur actuel n'est pas admin
+  const filterAdminUsers = (usersList: User[]) => {
+    if (isCurrentUserAdmin()) {
+      return usersList // Les admins voient tout
+    }
+    return usersList.filter(user => user.role !== 'admin') // Les autres ne voient pas les admins
+  }
+
+  // Handlers pour les actions CRUD
+  const handleCreateUser = async (e: React.FormEvent) => {
+    e.preventDefault()
+    try {
+      const response = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      
+      if (response.ok) {
+        await fetchUsers()
+        setIsModalOpen(false)
+        resetForm()
+        showSuccess('Utilisateur créé avec succès', 'Création réussie')
+      } else {
+        const error = await response.json()
+        showError(`Erreur: ${error.error}`, 'Échec de la création')
+      }
+    } catch (error) {
+      console.error('Erreur lors de la création:', error)
+      showError('Une erreur est survenue lors de la création', 'Erreur technique')
+    }
+  }
+
+  const handleUpdateUser = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingUser) return
+    
+    try {
+      // Exclure le champ image du formData car il est géré séparément
+      const { image, ...updateData } = formData
+      
+      const response = await fetch(`/api/admin/users/${editingUser.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updateData)
+      })
+      
+      if (response.ok) {
+        await fetchUsers()
+        setIsModalOpen(false)
+        setEditingUser(null)
+        resetForm()
+        showSuccess('Utilisateur mis à jour avec succès', 'Modification réussie')
+      } else {
+        const error = await response.json()
+        showError(`Erreur: ${error.error}`, 'Échec de la modification')
+      }
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour:', error)
+      showError('Une erreur est survenue lors de la modification', 'Erreur technique')
+    }
+  }
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!selectedUser || !newPassword) return
+    
+    try {
+      const response = await fetch(`/api/admin/users/${selectedUser.id}/password`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: newPassword })
+      })
+      
+      if (response.ok) {
+        setIsPasswordModalOpen(false)
+        setNewPassword('')
+        setSelectedUser(null)
+        showSuccess('Le mot de passe a été mis à jour avec succès', 'Mot de passe modifié')
+      } else {
+        const error = await response.json()
+        showError(`Erreur: ${error.error}`, 'Échec de la modification')
+      }
+    } catch (error) {
+      console.error('Erreur lors de la réinitialisation:', error)
+      showError('Une erreur est survenue lors de la modification du mot de passe', 'Erreur technique')
+    }
+  }
+
+  const handleDeleteUser = async () => {
+    if (!deletingUser) return
+    
+    try {
+      const response = await fetch(`/api/admin/users/${deletingUser.id}`, {
+        method: 'DELETE'
+      })
+      
+      if (response.ok) {
+        await fetchUsers()
+        setDeletingUser(null)
+        showSuccess('Utilisateur supprimé avec succès', 'Suppression réussie')
+      } else {
+        const error = await response.json()
+        showError(`Erreur: ${error.error}`, 'Échec de la suppression')
+      }
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error)
+      showError('Une erreur est survenue lors de la suppression', 'Erreur technique')
+    }
+  }
+
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      email: '',
+      role: 'customer',
+      phone: '',
+      licenseNumber: '',
+      isActive: true,
+      password: '',
+      image: ''
+    })
+  }
+
+  const handleProfilePhotoUpdate = (url: string | null) => {
+    setFormData(prev => ({ ...prev, image: url || '' }))
+  }
+
+  // Charger le rôle de l'utilisateur actuel
+  const fetchCurrentUserRole = async () => {
+    try {
+      const response = await fetch('/api/auth/session')
+      if (response.ok) {
+        const session = await response.json()
+        setCurrentUserRole(session?.user?.role || '')
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement du rôle:', error)
+    }
+  }
+
   useEffect(() => {
+    fetchCurrentUserRole()
     fetchUsers()
   }, [])
 
@@ -64,7 +257,9 @@ export function ModernUsersManagement() {
       if (response.ok) {
         const result = await response.json()
         if (result?.success) {
-          setUsers(result.data ?? [])
+          // Filtrer les admins si l'utilisateur n'est pas admin
+          const allUsers = result.data ?? []
+          setUsers(filterAdminUsers(allUsers))
         } else {
           console.error('Erreur lors du chargement des utilisateurs:', result?.error)
           setUsers([])
@@ -82,6 +277,7 @@ export function ModernUsersManagement() {
   }
 
   const applyFiltersAndSort = () => {
+    // Commencer avec les utilisateurs déjà filtrés (sans les admins si nécessaire)
     let filtered = [...users]
 
     // Filtres
@@ -136,6 +332,7 @@ export function ModernUsersManagement() {
   const getRoleIcon = (role: string) => {
     switch(role) {
       case 'admin': return '👑'
+      case 'manager': return '👨‍💼'
       case 'driver': return '🚗'
       case 'customer': return '👤'
       default: return '👤'
@@ -145,6 +342,7 @@ export function ModernUsersManagement() {
   const getRoleLabel = (role: string) => {
     switch(role) {
       case 'admin': return 'Administrateur'
+      case 'manager': return 'Manager'
       case 'driver': return 'Chauffeur'
       case 'customer': return 'Client'
       default: return 'Client'
@@ -154,6 +352,7 @@ export function ModernUsersManagement() {
   const getRoleBadgeColor = (role: string) => {
     switch(role) {
       case 'admin': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
+      case 'manager': return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'
       case 'driver': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
       case 'customer': return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
       default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
@@ -164,10 +363,11 @@ export function ModernUsersManagement() {
     const total = users.length
     const active = users.filter(u => u.isActive).length
     const admins = users.filter(u => u.role === 'admin').length
+    const managers = users.filter(u => u.role === 'manager').length
     const drivers = users.filter(u => u.role === 'driver').length
     const customers = users.filter(u => u.role === 'customer').length
     
-    return { total, active, admins, drivers, customers }
+    return { total, active, admins, managers, drivers, customers }
   }
 
   if (isLoading) {
@@ -235,20 +435,22 @@ export function ModernUsersManagement() {
               </div>
               
               {/* Bouton Nouvel utilisateur */}
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                Nouvel utilisateur
-              </button>
+              {canCreate() && (
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  Nouvel utilisateur
+                </button>
+              )}
             </div>
           </div>
 
           {/* Statistiques */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+          <div className={`grid grid-cols-2 ${isCurrentUserAdmin() ? 'md:grid-cols-5' : 'md:grid-cols-4'} gap-4 mb-6`}>
             <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
@@ -269,15 +471,29 @@ export function ModernUsersManagement() {
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{stats.admins}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Admins</p>
+            {isStrictAdmin() && (
+              <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{stats.admins}</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">Admins</p>
+                  </div>
+                  <div className="text-2xl">👑</div>
                 </div>
-                <div className="text-2xl">👑</div>
               </div>
-            </div>
+            )}
+            
+            {isCurrentUserAdmin() && (
+              <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">{stats.managers}</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">Managers</p>
+                  </div>
+                  <div className="text-2xl">👨‍💼</div>
+                </div>
+              </div>
+            )}
             
             <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
@@ -327,7 +543,8 @@ export function ModernUsersManagement() {
               className="px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
             >
               <option value="">Tous les rôles</option>
-              <option value="admin">👑 Administrateurs</option>
+              {isStrictAdmin() && <option value="admin">👑 Administrateurs</option>}
+              {isCurrentUserAdmin() && <option value="manager">👨‍💼 Managers</option>}
               <option value="driver">🚗 Chauffeurs</option>
               <option value="customer">👤 Clients</option>
             </select>
@@ -452,56 +669,58 @@ export function ModernUsersManagement() {
                 <div className="border-t border-slate-200 dark:border-slate-700 px-6 py-4">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => {
-                          setEditingUser(user)
-                          setFormData({
-                            name: user.name,
-                            email: user.email,
-                            role: user.role,
-                            phone: user.phone || '',
-                            licenseNumber: user.licenseNumber || '',
-                            isActive: user.isActive,
-                            password: '',
-                            image: user.image || ''
-                          })
-                          setIsModalOpen(true)
-                        }}
-                        className="flex items-center gap-1 px-3 py-1.5 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
-                        Modifier
-                      </button>
+                      {canUpdate() && (
+                        <button
+                          onClick={() => {
+                            setEditingUser(user)
+                            setFormData({
+                              name: user.name,
+                              email: user.email,
+                              role: user.role,
+                              phone: user.phone || '',
+                              licenseNumber: user.licenseNumber || '',
+                              isActive: user.isActive,
+                              password: '',
+                              image: user.image || ''
+                            })
+                            setIsModalOpen(true)
+                          }}
+                          className="flex items-center gap-1 px-3 py-1.5 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                          Modifier
+                        </button>
+                      )}
                       
-                      <button
-                        onClick={() => {
-                          setSelectedUser(user)
-                          setIsPasswordModalOpen(true)
-                        }}
-                        className="flex items-center gap-1 px-3 py-1.5 text-sm text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition-colors"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v-2L4.257 9.257A6 6 0 0112 5h3.001z" />
-                        </svg>
-                        Mot de passe
-                      </button>
+                      {canUpdate() && (
+                        <button
+                          onClick={() => {
+                            setSelectedUser(user)
+                            setIsPasswordModalOpen(true)
+                          }}
+                          className="flex items-center gap-1 px-3 py-1.5 text-sm text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition-colors"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v-2L4.257 9.257A6 6 0 0112 5h3.001z" />
+                          </svg>
+                          Mot de passe
+                        </button>
+                      )}
                     </div>
                     
-                    <button
-                      onClick={() => {
-                        if (confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
-                          // handleDeleteUser(user.id)
-                        }
-                      }}
-                      className="flex items-center gap-1 px-3 py-1.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                      Supprimer
-                    </button>
+                    {canDelete() && (
+                      <button
+                        onClick={() => setDeletingUser(user)}
+                        className="flex items-center gap-1 px-3 py-1.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Supprimer
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -610,55 +829,57 @@ export function ModernUsersManagement() {
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
-                          <button
-                            onClick={() => {
-                              setEditingUser(user)
-                              setFormData({
-                                name: user.name,
-                                email: user.email,
-                                role: user.role,
-                                phone: user.phone || '',
-                                licenseNumber: user.licenseNumber || '',
-                                isActive: user.isActive,
-                                password: '',
-                                image: user.image || ''
-                              })
-                              setIsModalOpen(true)
-                            }}
-                            className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
-                            title="Modifier"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                          </button>
+                          {canUpdate() && (
+                            <button
+                              onClick={() => {
+                                setEditingUser(user)
+                                setFormData({
+                                  name: user.name,
+                                  email: user.email,
+                                  role: user.role,
+                                  phone: user.phone || '',
+                                  licenseNumber: user.licenseNumber || '',
+                                  isActive: user.isActive,
+                                  password: '',
+                                  image: user.image || ''
+                                })
+                                setIsModalOpen(true)
+                              }}
+                              className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                              title="Modifier"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              </svg>
+                            </button>
+                          )}
                           
-                          <button
-                            onClick={() => {
-                              setSelectedUser(user)
-                              setIsPasswordModalOpen(true)
-                            }}
-                            className="p-2 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition-colors"
-                            title="Modifier le mot de passe"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v-2L4.257 9.257A6 6 0 0112 5h3.001z" />
-                            </svg>
-                          </button>
+                          {canUpdate() && (
+                            <button
+                              onClick={() => {
+                                setSelectedUser(user)
+                                setIsPasswordModalOpen(true)
+                              }}
+                              className="p-2 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition-colors"
+                              title="Modifier le mot de passe"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v-2L4.257 9.257A6 6 0 0112 5h3.001z" />
+                              </svg>
+                            </button>
+                          )}
                           
-                          <button
-                            onClick={() => {
-                              if (confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
-                                // handleDeleteUser(user.id)
-                              }
-                            }}
-                            className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                            title="Supprimer"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                          </button>
+                          {canDelete() && (
+                            <button
+                              onClick={() => setDeletingUser(user)}
+                              className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                              title="Supprimer"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -682,7 +903,7 @@ export function ModernUsersManagement() {
                 : 'Commencez par créer votre premier utilisateur'
               }
             </p>
-            {!filters.search && !filters.role && !filters.status && (
+            {!filters.search && !filters.role && !filters.status && canCreate() && (
               <button
                 onClick={() => setIsModalOpen(true)}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium"
@@ -693,6 +914,351 @@ export function ModernUsersManagement() {
           </div>
         )}
       </div>
+
+      {/* Modal de création/modification d'utilisateur */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fadeIn">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 w-full max-w-md shadow-2xl animate-scaleIn">
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6">
+              {editingUser ? 'Modifier l\'utilisateur' : 'Nouvel utilisateur'}
+            </h3>
+            
+            <form onSubmit={editingUser ? handleUpdateUser : handleCreateUser} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  Nom complet
+                </label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
+                  required
+                />
+              </div>
+              
+              {/* Photo de profil - seulement pour les utilisateurs existants */}
+              {editingUser && (
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                    Photo de profil
+                  </label>
+                  <UniversalProfilePhotoUpload
+                    userId={editingUser.id}
+                    currentImage={formData.image}
+                    onImageUpdate={handleProfilePhotoUpdate}
+                    onSuccess={(message) => {
+                      showSuccess(message, 'Photo mise à jour')
+                      fetchUsers()
+                    }}
+                    onError={showError}
+                  />
+                </div>
+              )}
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  Rôle
+                </label>
+                <select
+                  value={formData.role}
+                  onChange={(e) => setFormData({...formData, role: e.target.value as 'admin' | 'manager' | 'driver' | 'customer'})}
+                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
+                >
+                  <option value="customer">👤 Client</option>
+                  <option value="driver">🚗 Chauffeur</option>
+                  {isCurrentUserAdmin() && <option value="manager">👨‍💼 Manager</option>}
+                  {isStrictAdmin() && <option value="admin">👑 Admin</option>}
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  Téléphone
+                </label>
+                <input
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
+                  placeholder="+33 6 12 34 56 78"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  Numéro de permis
+                </label>
+                <input
+                  type="text"
+                  value={formData.licenseNumber}
+                  onChange={(e) => setFormData({...formData, licenseNumber: e.target.value})}
+                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
+                  placeholder="Optionnel"
+                />
+              </div>
+              
+              {!editingUser && (
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    Mot de passe
+                  </label>
+                  <input
+                    type="password"
+                    value={formData.password}
+                    onChange={(e) => setFormData({...formData, password: e.target.value})}
+                    className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
+                    placeholder="Laissez vide pour mot de passe par défaut"
+                  />
+                </div>
+              )}
+              
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="isActive"
+                  checked={formData.isActive}
+                  onChange={(e) => setFormData({...formData, isActive: e.target.checked})}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded"
+                />
+                <label htmlFor="isActive" className="ml-2 block text-sm text-slate-700 dark:text-slate-300">
+                  Utilisateur actif
+                </label>
+              </div>
+              
+              <div className="flex justify-end gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsModalOpen(false)
+                    setEditingUser(null)
+                    resetForm()
+                  }}
+                  className="px-6 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg font-medium transition-colors"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all"
+                >
+                  {editingUser ? 'Mettre à jour' : 'Créer'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de réinitialisation de mot de passe */}
+      {isPasswordModalOpen && selectedUser && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fadeIn">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 w-full max-w-md shadow-2xl animate-scaleIn">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="flex-shrink-0 w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center">
+                <svg className="w-6 h-6 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v-2L4.257 9.257A6 6 0 0112 5h3.001z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+                  Réinitialiser le mot de passe
+                </h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  {selectedUser.name}
+                </p>
+              </div>
+            </div>
+            
+            <form onSubmit={handleResetPassword} className="space-y-4">
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                <p className="text-sm text-blue-800 dark:text-blue-200">
+                  <strong>Email:</strong> {selectedUser.email}
+                </p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  Nouveau mot de passe
+                </label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
+                  placeholder="Minimum 6 caractères"
+                  required
+                  minLength={6}
+                />
+                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                  Le mot de passe doit contenir au moins 6 caractères
+                </p>
+              </div>
+              
+              <div className="flex justify-end gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsPasswordModalOpen(false)
+                    setSelectedUser(null)
+                    setNewPassword('')
+                  }}
+                  className="px-6 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg font-medium transition-colors"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all"
+                >
+                  Mettre à jour
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de confirmation de suppression */}
+      {deletingUser && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-lg w-full animate-scaleIn">
+            {/* Header avec image de profil */}
+            <div className="relative h-32 bg-gradient-to-br from-red-500 via-red-600 to-rose-700 rounded-t-2xl overflow-hidden">
+              <div className="absolute inset-0 bg-black/20"></div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-4 border-white/30">
+                  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* Contenu */}
+            <div className="p-8">
+              <div className="text-center mb-6">
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
+                  Supprimer l'utilisateur ?
+                </h3>
+                <p className="text-slate-600 dark:text-slate-400">
+                  Cette action est irréversible et supprimera définitivement cet utilisateur.
+                </p>
+              </div>
+
+              {/* Informations de l'utilisateur */}
+              <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-700 dark:to-slate-800 rounded-xl p-6 mb-6 border border-slate-200 dark:border-slate-600">
+                <div className="flex items-center gap-4 mb-4">
+                  {deletingUser.image ? (
+                    <Image
+                      src={deletingUser.image}
+                      alt={deletingUser.name}
+                      width={64}
+                      height={64}
+                      className="rounded-full object-cover border-2 border-slate-300 dark:border-slate-600"
+                    />
+                  ) : (
+                    <div className="w-16 h-16 bg-gradient-to-br from-slate-300 to-slate-400 dark:from-slate-600 dark:to-slate-700 rounded-full flex items-center justify-center border-2 border-slate-300 dark:border-slate-600">
+                      <svg className="w-8 h-8 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </div>
+                  )}
+                  
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-lg font-bold text-slate-900 dark:text-white truncate">
+                      {deletingUser.name}
+                    </h4>
+                    <p className="text-sm text-slate-600 dark:text-slate-400 truncate">
+                      {deletingUser.email}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Badges d'informations */}
+                <div className="flex flex-wrap gap-2">
+                  <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${
+                    deletingUser.role === 'admin' 
+                      ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
+                      : deletingUser.role === 'driver'
+                      ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+                      : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
+                  }`}>
+                    {deletingUser.role === 'admin' && '👑'}
+                    {deletingUser.role === 'driver' && '🚗'}
+                    {deletingUser.role === 'customer' && '👤'}
+                    <span className="capitalize">{
+                      deletingUser.role === 'admin' ? 'Administrateur' :
+                      deletingUser.role === 'driver' ? 'Chauffeur' : 'Client'
+                    }</span>
+                  </span>
+                  
+                  <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${
+                    deletingUser.isActive 
+                      ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                      : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                  }`}>
+                    <span className={`w-2 h-2 rounded-full ${deletingUser.isActive ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                    {deletingUser.isActive ? 'Actif' : 'Inactif'}
+                  </span>
+
+                  {deletingUser.phone && (
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-300">
+                      📱 {deletingUser.phone}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Message d'avertissement */}
+              <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4 rounded-lg mb-6">
+                <div className="flex items-start gap-3">
+                  <svg className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  <div>
+                    <p className="text-sm font-semibold text-red-900 dark:text-red-200 mb-1">
+                      Attention : Action définitive
+                    </p>
+                    <p className="text-xs text-red-800 dark:text-red-300">
+                      Toutes les données associées à cet utilisateur seront supprimées. Cette action ne peut pas être annulée.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Boutons d'action */}
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setDeletingUser(null)}
+                  className="flex-1 px-6 py-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-900 dark:text-white rounded-xl font-semibold transition-all duration-200 shadow-sm hover:shadow"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={handleDeleteUser}
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                >
+                  Supprimer définitivement
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Notifications */}
       <NotificationCenter

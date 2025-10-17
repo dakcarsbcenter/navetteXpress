@@ -21,15 +21,18 @@ export async function PUT(
     const { id } = await params
     
     // Mapper roleId vers le nom du rôle
-    let roleName: 'admin' | 'driver' | 'customer'
+    let roleName: 'admin' | 'manager' | 'driver' | 'customer'
     switch (roleId) {
       case 1:
         roleName = 'admin'
         break
       case 2:
-        roleName = 'driver'
+        roleName = 'manager'
         break
       case 3:
+        roleName = 'driver'
+        break
+      case 4:
         roleName = 'customer'
         break
       default:

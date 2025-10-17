@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useNotification } from '@/hooks/useNotification'
 import { NotificationCenter } from '@/components/ui/NotificationCenter'
 
@@ -14,6 +15,7 @@ const availableServices = [
 ]
 
 export function QuoteRequestForm() {
+  const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { notifications, showSuccess, showError, removeNotification } = useNotification()
   
@@ -65,6 +67,10 @@ export function QuoteRequestForm() {
       paymentMode: '',
       description: ''
     })
+  }
+
+  const handleCancel = () => {
+    router.push('/client/dashboard?tab=quotes')
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -410,10 +416,10 @@ Description: ${formData.description}`,
             <div className="flex flex-col sm:flex-row gap-4 pt-6">
               <button
                 type="button"
-                onClick={resetForm}
-                className="flex-1 px-6 py-3 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                onClick={handleCancel}
+                className="flex-1 px-6 py-3 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors font-medium"
               >
-                Réinitialiser
+                Annuler
               </button>
               <button
                 type="submit"

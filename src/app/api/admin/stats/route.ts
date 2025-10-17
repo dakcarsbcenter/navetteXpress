@@ -8,8 +8,18 @@ import { eq, and, ne, gte, count, sum, avg, sql, desc } from 'drizzle-orm'
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
+    const userRole = (session?.user as { role?: string })?.role
 
-    if (!session?.user || !('role' in session.user) || session.user.role !== 'admin') {
+    // Les admins ont toujours accès
+    if (!session?.user || !userRole) {
+      return NextResponse.json({ 
+        success: false, 
+        message: 'Non authentifié' 
+      }, { status: 401 })
+    }
+
+    // Les managers doivent avoir la permission, seuls les admins ont accès direct
+    if (userRole !== 'admin') {
       return NextResponse.json({ 
         success: false, 
         message: 'Accès non autorisé. Seuls les administrateurs peuvent accéder aux statistiques globales.' 

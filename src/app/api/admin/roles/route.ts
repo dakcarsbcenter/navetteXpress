@@ -8,8 +8,10 @@ import { eq, sql, count } from 'drizzle-orm'
 export async function GET() {
   try {
     const session = await getServerSession(authOptions)
+    const userRole = (session?.user as any)?.role
     
-    if (!session?.user || (session.user as any).role !== 'admin') {
+    // Seuls les admins peuvent gérer les rôles (matrice de permissions)
+    if (!session?.user || userRole !== 'admin') {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
     }
 
@@ -185,6 +187,7 @@ async function getLegacyRoles() {
       {
         id: 1,
         name: 'admin',
+        displayName: 'Admin',
         description: 'Administrateur de la plateforme',
         color: '#7c3aed',
         level: 4,
@@ -194,7 +197,19 @@ async function getLegacyRoles() {
       },
       {
         id: 2,
+        name: 'manager',
+        displayName: 'Manager',
+        description: 'Gestionnaire de la plateforme',
+        color: '#f59e0b',
+        level: 3,
+        isSystem: true,
+        userCount: getUserCount('manager'),
+        permissions: formatPermissions('manager')
+      },
+      {
+        id: 3,
         name: 'driver',
+        displayName: 'Chauffeur',
         description: 'Chauffeur de la flotte',
         color: '#2563eb',
         level: 2,
@@ -203,8 +218,9 @@ async function getLegacyRoles() {
         permissions: formatPermissions('driver')
       },
       {
-        id: 3,
+        id: 4,
         name: 'customer',
+        displayName: 'Client',
         description: 'Client de la plateforme',
         color: '#059669',
         level: 1,
@@ -231,8 +247,10 @@ async function getLegacyRoles() {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
+    const userRole = (session?.user as any)?.role
     
-    if (!session?.user || (session.user as any).role !== 'admin') {
+    // Seuls les admins peuvent gérer les rôles (matrice de permissions)
+    if (!session?.user || userRole !== 'admin') {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
     }
 

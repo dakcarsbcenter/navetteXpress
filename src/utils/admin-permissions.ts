@@ -1,8 +1,8 @@
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { db } from '@/db';
-import { users } from '@/schema';
-import { eq } from 'drizzle-orm';
+import { users, rolePermissionsTable } from '@/schema';
+import { eq, and } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 
 /**
@@ -28,7 +28,49 @@ export async function checkAdminRole(userId?: string): Promise<boolean> {
 }
 
 /**
- * Middleware pour protéger les routes admin
+ * Vérifie si l'utilisateur a une permission spécifique sur une ressource
+ */
+export async function hasResourcePermission(
+  userId: string,
+  resource: string,
+  action: 'read' | 'create' | 'update' | 'delete'
+): Promise<boolean> {
+  try {
+    // Récupérer l'utilisateur
+    const user = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    if (user.length === 0) return false;
+
+    const userRole = user[0].role;
+
+    // Les admins ont toujours accès
+    if (userRole === 'admin') return true;
+
+    // Vérifier les permissions dynamiques pour l'action spécifique
+    const permissions = await db
+      .select()
+      .from(rolePermissionsTable)
+      .where(and(
+        eq(rolePermissionsTable.roleName, userRole),
+        eq(rolePermissionsTable.resource, resource),
+        eq(rolePermissionsTable.action, action),
+        eq(rolePermissionsTable.allowed, true)
+      ));
+
+    // Retourner true si la permission existe
+    return permissions.length > 0;
+  } catch (error) {
+    console.error('Erreur lors de la vérification des permissions:', error);
+    return false;
+  }
+}
+
+/**
+ * Middleware pour protéger les routes admin (admin uniquement)
  */
 export async function requireAdminRole(): Promise<string> {
   try {
@@ -42,13 +84,42 @@ export async function requireAdminRole(): Promise<string> {
     const isAdmin = await checkAdminRole(session.user.id);
     if (!isAdmin) {
       console.error('Utilisateur non autorisé - rôle admin requis');
-      redirect('/dashboard'); // Redirection vers le dashboard normal
+      redirect('/dashboard');
     }
 
     return session.user.id;
   } catch (error) {
     console.error('Erreur lors de la vérification des permissions admin:', error);
-    redirect('/auth/signin');
+    throw error;
+  }
+}
+
+/**
+ * Middleware pour protéger les routes avec permissions dynamiques
+ * Les admins ont toujours accès, les autres doivent avoir la permission
+ */
+export async function requireResourcePermission(
+  resource: string,
+  action: 'read' | 'create' | 'update' | 'delete'
+): Promise<string> {
+  try {
+    const session = await getServerSession(authOptions);
+    
+    if (!session?.user?.id) {
+      console.error('Aucune session utilisateur trouvée');
+      redirect('/auth/signin');
+    }
+
+    const hasPermission = await hasResourcePermission(session.user.id, resource, action);
+    if (!hasPermission) {
+      console.error(`Utilisateur non autorisé - permission '${action}' sur '${resource}' requise`);
+      redirect('/dashboard');
+    }
+
+    return session.user.id;
+  } catch (error) {
+    console.error('Erreur lors de la vérification des permissions:', error);
+    throw error;
   }
 }
 
@@ -85,4 +156,32 @@ export async function assignUserRole(userId: string, role: 'driver' | 'admin'): 
     throw error;
   }
 }
+
+/**
+ * Helpers spécifiques pour chaque ressource
+ */
+export const requireVehiclesRead = () => requireResourcePermission('vehicles', 'read');
+export const requireVehiclesCreate = () => requireResourcePermission('vehicles', 'create');
+export const requireVehiclesUpdate = () => requireResourcePermission('vehicles', 'update');
+export const requireVehiclesDelete = () => requireResourcePermission('vehicles', 'delete');
+
+export const requireBookingsRead = () => requireResourcePermission('bookings', 'read');
+export const requireBookingsCreate = () => requireResourcePermission('bookings', 'create');
+export const requireBookingsUpdate = () => requireResourcePermission('bookings', 'update');
+export const requireBookingsDelete = () => requireResourcePermission('bookings', 'delete');
+
+export const requireQuotesRead = () => requireResourcePermission('quotes', 'read');
+export const requireQuotesCreate = () => requireResourcePermission('quotes', 'create');
+export const requireQuotesUpdate = () => requireResourcePermission('quotes', 'update');
+export const requireQuotesDelete = () => requireResourcePermission('quotes', 'delete');
+
+export const requireReviewsRead = () => requireResourcePermission('reviews', 'read');
+export const requireReviewsCreate = () => requireResourcePermission('reviews', 'create');
+export const requireReviewsUpdate = () => requireResourcePermission('reviews', 'update');
+export const requireReviewsDelete = () => requireResourcePermission('reviews', 'delete');
+
+export const requireUsersRead = () => requireResourcePermission('users', 'read');
+export const requireUsersCreate = () => requireResourcePermission('users', 'create');
+export const requireUsersUpdate = () => requireResourcePermission('users', 'update');
+export const requireUsersDelete = () => requireResourcePermission('users', 'delete');
 

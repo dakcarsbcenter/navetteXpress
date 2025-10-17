@@ -11,6 +11,9 @@ interface UsePermissionsReturn {
   hasPermission: (resource: string, action: string) => boolean
   canManage: (resource: string) => boolean
   canRead: (resource: string) => boolean
+  canCreate: (resource: string) => boolean
+  canUpdate: (resource: string) => boolean
+  canDelete: (resource: string) => boolean
 }
 
 export function usePermissions(): UsePermissionsReturn {
@@ -60,11 +63,26 @@ export function usePermissions(): UsePermissionsReturn {
     return hasPermission(resource, 'read')
   }
 
+  const canCreate = (resource: string): boolean => {
+    return hasPermission(resource, 'create') || canManage(resource)
+  }
+
+  const canUpdate = (resource: string): boolean => {
+    return hasPermission(resource, 'update') || canManage(resource)
+  }
+
+  const canDelete = (resource: string): boolean => {
+    return hasPermission(resource, 'delete') || canManage(resource)
+  }
+
   return {
     permissions,
     loading,
     hasPermission,
     canManage,
-    canRead
+    canRead,
+    canCreate,
+    canUpdate,
+    canDelete
   }
 }

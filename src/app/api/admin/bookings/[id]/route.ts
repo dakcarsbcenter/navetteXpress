@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { bookingsTable } from '@/schema';
 import { eq } from 'drizzle-orm';
-import { requireAdminRole } from '@/utils/admin-permissions';
+import { requireBookingsRead, requireBookingsUpdate, requireBookingsDelete } from '@/utils/admin-permissions';
 
 // GET - Récupérer une réservation par ID
 export async function GET(
@@ -10,7 +10,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdminRole(); // Vérification du rôle admin
+    await requireBookingsRead(); // Vérification de la permission de lecture
 
     const resolvedParams = await params;
     const id = parseInt(resolvedParams.id);
@@ -53,7 +53,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdminRole(); // Vérification du rôle admin
+    await requireBookingsUpdate(); // Vérification de la permission de mise à jour
 
     const resolvedParams = await params;
     const id = parseInt(resolvedParams.id);
@@ -110,7 +110,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdminRole(); // Vérification du rôle admin
+    await requireBookingsUpdate(); // Vérification de la permission de mise à jour
 
     const resolvedParams = await params;
     const id = parseInt(resolvedParams.id);
@@ -181,7 +181,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdminRole(); // Vérification du rôle admin
+    await requireBookingsDelete(); // Vérification de la permission de suppression
 
     const resolvedParams = await params;
     const id = parseInt(resolvedParams.id);

@@ -2,8 +2,38 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/db"
-import { reviewsTable, bookingsTable } from "@/schema"
+import { reviewsTable, bookingsTable, rolePermissionsTable } from "@/schema"
 import { eq, desc, and } from "drizzle-orm"
+
+// Vérifier si l'utilisateur a la permission de gérer les avis
+async function hasReviewPermission(userRole: string): Promise<boolean> {
+  try {
+    // Les admins ont toujours accès
+    if (userRole === 'admin') {
+      return true
+    }
+
+    // Les customers ont accès par défaut (comportement legacy)
+    if (userRole === 'customer') {
+      return true
+    }
+
+    // Vérifier les permissions dynamiques pour autres rôles
+    const permissions = await db
+      .select()
+      .from(rolePermissionsTable)
+      .where(and(
+        eq(rolePermissionsTable.roleName, userRole),
+        eq(rolePermissionsTable.resource, 'reviews'),
+        eq(rolePermissionsTable.allowed, true)
+      ))
+
+    return permissions.length > 0
+  } catch (error) {
+    console.error('Erreur lors de la vérification des permissions reviews:', error)
+    return false
+  }
+}
 
 // GET - Récupérer les avis du client
 export async function GET() {
@@ -14,9 +44,15 @@ export async function GET() {
       return NextResponse.json({ error: "Non autorisé" }, { status: 401 })
     }
 
-    // Vérifier que l'utilisateur est un client
-    if ((session.user as { role?: string }).role !== 'customer') {
-      return NextResponse.json({ error: "Accès refusé" }, { status: 403 })
+    const userRole = (session.user as { role?: string }).role || 'customer'
+
+    // Vérifier les permissions
+    const hasPermission = await hasReviewPermission(userRole)
+    if (!hasPermission) {
+      return NextResponse.json(
+        { error: 'Vous n\'avez pas les permissions nécessaires pour accéder aux avis' },
+        { status: 403 }
+      )
     }
 
     // Récupérer les avis du client avec les informations de réservation
@@ -61,9 +97,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Non autorisé" }, { status: 401 })
     }
 
-    // Vérifier que l'utilisateur est un client
-    if ((session.user as { role?: string }).role !== 'customer') {
-      return NextResponse.json({ error: "Accès refusé" }, { status: 403 })
+    const userRole = (session.user as { role?: string }).role || 'customer'
+
+    // Vérifier les permissions
+    const hasPermission = await hasReviewPermission(userRole)
+    if (!hasPermission) {
+      return NextResponse.json(
+        { error: 'Vous n\'avez pas les permissions nécessaires pour créer des avis' },
+        { status: 403 }
+      )
     }
 
     const { bookingId, rating, comment } = await request.json()

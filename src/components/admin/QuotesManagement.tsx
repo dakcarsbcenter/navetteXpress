@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { NotificationCenter } from "@/components/ui/NotificationCenter";
 import { FilterBar } from "@/components/ui/FilterBar";
 import { useNotification } from "@/hooks/useNotification";
+import { usePermissions } from "@/hooks/usePermissions";
 
 interface Quote {
   id: number;
@@ -28,6 +29,7 @@ export function QuotesManagement() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingQuote, setEditingQuote] = useState<Quote | null>(null);
   const { notifications, showSuccess, showError, removeNotification } = useNotification();
+  const { canDelete } = usePermissions();
   
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -426,17 +428,21 @@ export function QuotesManagement() {
                               </button>
                             )}
 
-                            {/* Option Supprimer */}
-                            <div className="border-t border-gray-200 dark:border-gray-600"></div>
-                            <button
-                              onClick={() => {
-                                handleDeleteQuote(quote.id);
-                                setOpenDropdownId(null);
-                              }}
-                              className="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 w-full text-left transition-colors duration-200"
-                            >
-                              Supprimer
-                            </button>
+                            {/* Option Supprimer - Seulement si autorisé */}
+                            {canDelete('quotes') && (
+                              <>
+                                <div className="border-t border-gray-200 dark:border-gray-600"></div>
+                                <button
+                                  onClick={() => {
+                                    handleDeleteQuote(quote.id);
+                                    setOpenDropdownId(null);
+                                  }}
+                                  className="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 w-full text-left transition-colors duration-200"
+                                >
+                                  Supprimer
+                                </button>
+                              </>
+                            )}
                           </div>
                         </div>
                       )}

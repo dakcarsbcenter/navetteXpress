@@ -2,8 +2,34 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { db } from '@/db'
-import { reviewsTable } from '@/schema'
-import { eq } from 'drizzle-orm'
+import { reviewsTable, rolePermissionsTable } from '@/schema'
+import { eq, and } from 'drizzle-orm'
+
+// Fonction pour vérifier les permissions dynamiques des reviews
+async function hasReviewsPermission(userRole: string, action: 'read' | 'create' | 'update' | 'delete'): Promise<boolean> {
+  try {
+    // Les admins ont toujours accès
+    if (userRole === 'admin') {
+      return true;
+    }
+
+    // Vérifier les permissions dynamiques
+    const permissions = await db
+      .select()
+      .from(rolePermissionsTable)
+      .where(and(
+        eq(rolePermissionsTable.roleName, userRole),
+        eq(rolePermissionsTable.resource, 'reviews'),
+        eq(rolePermissionsTable.allowed, true)
+      ));
+
+    // Vérifier si l'utilisateur a 'manage' ou l'action spécifique
+    return permissions.some(p => p.action === 'manage' || p.action === action);
+  } catch (error) {
+    console.error('Erreur lors de la vérification des permissions reviews:', error);
+    return false;
+  }
+}
 
 export async function PUT(
   request: NextRequest,
@@ -12,8 +38,17 @@ export async function PUT(
   try {
     const session = await getServerSession(authOptions)
     
-    if (!session?.user || (session.user as any).role !== 'admin') {
+    if (!session?.user) {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
+    }
+
+    const userRole = (session.user as any).role || 'customer';
+    const hasUpdatePermission = await hasReviewsPermission(userRole, 'update');
+
+    if (!hasUpdatePermission) {
+      return NextResponse.json({ 
+        error: 'Vous n\'avez pas la permission de modifier cet avis' 
+      }, { status: 403 });
     }
 
     const body = await request.json()
@@ -49,8 +84,17 @@ export async function DELETE(
   try {
     const session = await getServerSession(authOptions)
     
-    if (!session?.user || (session.user as any).role !== 'admin') {
+    if (!session?.user) {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
+    }
+
+    const userRole = (session.user as any).role || 'customer';
+    const hasDeletePermission = await hasReviewsPermission(userRole, 'delete');
+
+    if (!hasDeletePermission) {
+      return NextResponse.json({ 
+        error: 'Vous n\'avez pas la permission de supprimer cet avis' 
+      }, { status: 403 });
     }
 
     const reviewId = parseInt(params.id)

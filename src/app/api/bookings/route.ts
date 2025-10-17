@@ -1,14 +1,56 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { bookingsTable } from '@/schema';
+import { bookingsTable, rolePermissionsTable } from '@/schema';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, and } from 'drizzle-orm';
 import { sendNewBookingNotificationToAdmin } from '@/lib/brevo-email';
+
+// Fonction pour vérifier les permissions dynamiques des bookings
+async function hasBookingsPermission(userRole: string, action: 'read' | 'create' | 'update' | 'delete'): Promise<boolean> {
+  try {
+    // Les admins ont toujours accès
+    if (userRole === 'admin') {
+      return true;
+    }
+
+    // Vérifier les permissions dynamiques
+    const permissions = await db
+      .select()
+      .from(rolePermissionsTable)
+      .where(and(
+        eq(rolePermissionsTable.roleName, userRole),
+        eq(rolePermissionsTable.resource, 'bookings'),
+        eq(rolePermissionsTable.allowed, true)
+      ));
+
+    // Vérifier si l'utilisateur a 'manage' ou l'action spécifique
+    return permissions.some(p => p.action === 'manage' || p.action === action);
+  } catch (error) {
+    console.error('Erreur lors de la vérification des permissions bookings:', error);
+    return false;
+  }
+}
 
 // POST - Créer une nouvelle réservation (accessible aux utilisateurs connectés et non connectés)
 export async function POST(request: NextRequest) {
   try {
+    // Récupérer la session pour vérifier les permissions
+    const session = await getServerSession(authOptions) as { user?: { id?: string; name?: string; email?: string; role?: string } } | null;
+    
+    // Si l'utilisateur est connecté, vérifier les permissions
+    if (session?.user?.id) {
+      const userRole = session.user.role || 'customer';
+      const hasPermission = await hasBookingsPermission(userRole, 'create');
+      
+      if (!hasPermission) {
+        return NextResponse.json({ 
+          success: false, 
+          error: 'Vous n\'avez pas la permission de créer des réservations' 
+        }, { status: 403 });
+      }
+    }
+    
     const body = await request.json();
     const { 
       serviceType,
@@ -45,8 +87,7 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    // Récupérer la session pour les utilisateurs connectés
-    const session = await getServerSession(authOptions) as { user?: { id?: string; name?: string; email?: string } } | null;
+    // Utiliser la session déjà récupérée
     const finalUserId = userId || session?.user?.id || null;
     const finalClientName = clientName || session?.user?.name || '';
     const finalClientEmail = fallbackClientEmail || session?.user?.email || '';
@@ -151,7 +192,7 @@ export async function POST(request: NextRequest) {
 // GET - Récupérer les réservations de l'utilisateur connecté
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions) as { user?: { id?: string } } | null;
+    const session = await getServerSession(authOptions) as { user?: { id?: string; role?: string } } | null;
 
     if (!session?.user?.id) {
       return NextResponse.json({
@@ -160,14 +201,46 @@ export async function GET(request: NextRequest) {
       }, { status: 401 });
     }
 
-    const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId') || session.user.id;
+    const userRole = session.user.role || 'customer';
+    const hasReadPermission = await hasBookingsPermission(userRole, 'read');
 
-    const userBookings = await db
-      .select()
-      .from(bookingsTable)
-      .where(eq(bookingsTable.userId, userId))
-      .orderBy(desc(bookingsTable.createdAt));
+    if (!hasReadPermission) {
+      return NextResponse.json({
+        success: false,
+        error: 'Vous n\'avez pas la permission de voir les réservations'
+      }, { status: 403 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get('userId');
+
+    // Si l'utilisateur a la permission 'manage', il peut voir toutes les réservations
+    const hasManagePermission = await hasBookingsPermission(userRole, 'update') || 
+                                await hasBookingsPermission(userRole, 'delete');
+
+    let userBookings;
+
+    if (hasManagePermission && userId) {
+      // Permission manage: peut voir les réservations d'autres utilisateurs
+      userBookings = await db
+        .select()
+        .from(bookingsTable)
+        .where(eq(bookingsTable.userId, userId))
+        .orderBy(desc(bookingsTable.createdAt));
+    } else if (hasManagePermission && !userId) {
+      // Permission manage sans userId: voir toutes les réservations
+      userBookings = await db
+        .select()
+        .from(bookingsTable)
+        .orderBy(desc(bookingsTable.createdAt));
+    } else {
+      // Permission read only: voir uniquement ses propres réservations
+      userBookings = await db
+        .select()
+        .from(bookingsTable)
+        .where(eq(bookingsTable.userId, session.user.id))
+        .orderBy(desc(bookingsTable.createdAt));
+    }
 
     return NextResponse.json({ 
       success: true, 

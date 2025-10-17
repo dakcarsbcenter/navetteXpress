@@ -33,12 +33,18 @@ export const authOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
+        console.log("🔐 [NextAuth] Tentative d'authentification...")
+        console.log("📧 Email:", credentials?.email)
+        console.log("🔑 Mot de passe fourni:", credentials?.password ? "✅" : "❌")
+        
         if (!credentials?.email || !credentials?.password) {
-          console.log("Credentials manquantes")
+          console.log("❌ [NextAuth] Credentials manquantes")
           throw new Error("CredentialsMissing")
         }
 
         try {
+          console.log("🔍 [NextAuth] Recherche utilisateur:", credentials.email)
+          
           // Rechercher l'utilisateur dans la base de données
           const userResult = await db
             .select()
@@ -47,26 +53,29 @@ export const authOptions = {
             .limit(1)
 
           if (userResult.length === 0) {
-            console.log("Utilisateur non trouvé:", credentials.email)
+            console.log("❌ [NextAuth] Utilisateur non trouvé:", credentials.email)
             throw new Error("UserNotFound")
           }
 
           const user = userResult[0]
+          console.log("✅ [NextAuth] Utilisateur trouvé:", user.email, "- Rôle:", user.role)
 
           // Vérifier le mot de passe
           if (!user.password) {
-            console.log("Aucun mot de passe défini pour l'utilisateur")
+            console.log("❌ [NextAuth] Aucun mot de passe défini pour l'utilisateur")
             throw new Error("NoPassword")
           }
 
+          console.log("🔐 [NextAuth] Vérification du mot de passe...")
           const isPasswordValid = await bcrypt.compare(credentials.password, user.password)
+          console.log("🔐 [NextAuth] Résultat validation:", isPasswordValid ? "✅ Valide" : "❌ Invalide")
           
           if (!isPasswordValid) {
-            console.log("Mot de passe incorrect")
+            console.log("❌ [NextAuth] Mot de passe incorrect pour:", user.email)
             throw new Error("InvalidPassword")
           }
 
-          console.log("Authentification réussie pour:", user.email)
+          console.log("🎉 [NextAuth] Authentification réussie pour:", user.email)
           
           return {
             id: user.id,

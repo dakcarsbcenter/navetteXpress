@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/db"
 import { vehiclesTable } from "@/schema"
-import { requireAdminRole } from "@/utils/admin-permissions"
+import { requireResourcePermission } from "@/utils/admin-permissions"
 
 export async function GET() {
   try {
-    await requireAdminRole()
+    await requireResourcePermission('vehicles', 'read')
 
     const vehicles = await db.select().from(vehiclesTable)
 
@@ -21,7 +21,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    await requireAdminRole()
+    await requireResourcePermission('vehicles', 'create')
 
     const data = await request.json()
     const { 

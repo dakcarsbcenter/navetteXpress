@@ -28,6 +28,7 @@ interface QuickAction {
   color: string
   bgColor: string
   onClick: () => void
+  adminOnly?: boolean
 }
 
 interface ModernAdminDashboardProps {
@@ -106,13 +107,20 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
       }
     }
 
-    if (session?.user && (session.user as { role?: string }).role === 'admin') {
+    const userRole = (session?.user as { role?: string })?.role
+    // Seuls les admins peuvent charger les statistiques
+    if (session?.user && userRole === 'admin') {
       fetchStats()
+    } else {
+      setIsLoading(false)
     }
   }, [session])
 
+  const userRole = (session?.user as { role?: string })?.role
+  const isAdmin = userRole === 'admin'
+
   // Actions rapides avec style moderne
-  const quickActions: QuickAction[] = [
+  const allQuickActions: QuickAction[] = [
     {
       id: 'users',
       title: 'Gestion Utilisateurs',
@@ -120,7 +128,7 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
       icon: '👥',
       color: 'text-blue-600',
       bgColor: 'bg-blue-100 dark:bg-blue-900/50',
-      onClick: () => onNavigate('permissions')
+      onClick: () => onNavigate('users')
     },
     {
       id: 'vehicles',
@@ -147,7 +155,8 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
       icon: '📊',
       color: 'text-purple-600',
       bgColor: 'bg-purple-100 dark:bg-purple-900/50',
-      onClick: () => onNavigate('stats')
+      onClick: () => onNavigate('stats'),
+      adminOnly: true
     },
     {
       id: 'permissions',
@@ -156,7 +165,8 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
       icon: '🔐',
       color: 'text-red-600',
       bgColor: 'bg-red-100 dark:bg-red-900/50',
-      onClick: () => onNavigate('permissions')
+      onClick: () => onNavigate('permissions'),
+      adminOnly: true
     },
     {
       id: 'reviews',
@@ -168,6 +178,9 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
       onClick: () => onNavigate('reviews')
     }
   ]
+
+  // Filtrer les actions selon le rôle
+  const quickActions = allQuickActions.filter(action => !action.adminOnly || isAdmin)
 
   const formatGrowth = (value: number | undefined) => {
     if (value === undefined || value === null) return '0%'

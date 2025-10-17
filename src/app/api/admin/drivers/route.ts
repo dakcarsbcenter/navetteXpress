@@ -2,15 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { users } from '@/schema';
 import { eq } from 'drizzle-orm';
-import { requireAdminRole } from '@/utils/admin-permissions';
+import { requireUsersRead, requireUsersCreate } from '@/utils/admin-permissions';
 
 // GET - Récupérer tous les chauffeurs
 export async function GET() {
   try {
     console.log('Début de la récupération des chauffeurs...');
     
-    await requireAdminRole(); // Vérification du rôle admin
-    console.log('Permissions admin vérifiées');
+    await requireUsersRead(); // Vérification de la permission de lecture des utilisateurs
+    console.log('Permissions de lecture vérifiées');
 
     const drivers = await db
       .select()
@@ -42,7 +42,7 @@ export async function GET() {
 // POST - Créer un nouveau chauffeur
 export async function POST(request: NextRequest) {
   try {
-    await requireAdminRole(); // Vérification du rôle admin
+    await requireUsersCreate(); // Vérification de la permission de création d'utilisateurs
 
     const body = await request.json();
     const { id, name, email, phone, licenseNumber, image, isActive } = body;

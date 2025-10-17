@@ -1,9 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { quotesTable } from '@/schema';
+import { quotesTable, rolePermissionsTable } from '@/schema';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-import { desc } from 'drizzle-orm';
+import { desc, and, eq } from 'drizzle-orm';
+
+// Fonction pour vérifier les permissions dynamiques des quotes
+async function hasQuotesPermission(userRole: string, action: 'read' | 'create' | 'update' | 'delete'): Promise<boolean> {
+  try {
+    // Les admins ont toujours accès
+    if (userRole === 'admin') {
+      return true;
+    }
+
+    // Vérifier les permissions dynamiques
+    const permissions = await db
+      .select()
+      .from(rolePermissionsTable)
+      .where(and(
+        eq(rolePermissionsTable.roleName, userRole),
+        eq(rolePermissionsTable.resource, 'quotes'),
+        eq(rolePermissionsTable.allowed, true)
+      ));
+
+    // Vérifier si l'utilisateur a 'manage' ou l'action spécifique
+    return permissions.some(p => p.action === 'manage' || p.action === action);
+  } catch (error) {
+    console.error('Erreur lors de la vérification des permissions quotes:', error);
+    return false;
+  }
+}
 
 // POST - Créer une nouvelle demande de devis
 export async function POST(request: NextRequest) {
@@ -55,10 +81,10 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// GET - Récupérer les demandes de devis (admin seulement)
+// GET - Récupérer les demandes de devis
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions) as { user?: { id?: string } } | null;
+    const session = await getServerSession(authOptions) as { user?: { id?: string; role?: string; email?: string } } | null;
 
     if (!session?.user?.id) {
       return NextResponse.json({ 
@@ -67,13 +93,43 @@ export async function GET() {
       }, { status: 401 });
     }
 
-    // Vérifier si l'utilisateur est admin
-    // Note: Vous pouvez ajouter une vérification de rôle ici si nécessaire
+    const userRole = session.user.role || 'customer';
+    const hasReadPermission = await hasQuotesPermission(userRole, 'read');
 
-    const quotes = await db
-      .select()
-      .from(quotesTable)
-      .orderBy(desc(quotesTable.createdAt));
+    if (!hasReadPermission) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Vous n\'avez pas la permission de voir les devis' 
+      }, { status: 403 });
+    }
+
+    // Si l'utilisateur a la permission 'manage', il peut voir tous les devis
+    const hasManagePermission = await hasQuotesPermission(userRole, 'update') || 
+                                await hasQuotesPermission(userRole, 'delete');
+
+    let quotes;
+
+    if (hasManagePermission) {
+      // Permission manage: voir tous les devis
+      quotes = await db
+        .select()
+        .from(quotesTable)
+        .orderBy(desc(quotesTable.createdAt));
+    } else {
+      // Permission read only: voir uniquement ses propres devis
+      const userEmail = session.user.email;
+      if (!userEmail) {
+        return NextResponse.json({ 
+          success: false, 
+          error: 'Email utilisateur non trouvé' 
+        }, { status: 400 });
+      }
+      quotes = await db
+        .select()
+        .from(quotesTable)
+        .where(eq(quotesTable.customerEmail, userEmail))
+        .orderBy(desc(quotesTable.createdAt));
+    }
 
     return NextResponse.json({ 
       success: true, 

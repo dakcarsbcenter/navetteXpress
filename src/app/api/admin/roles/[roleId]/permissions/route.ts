@@ -88,27 +88,36 @@ async function updateCustomRolePermission(roleId: string, permissionId: number, 
   const { resource, action: permAction } = permissionInfo
 
   if (action === 'add') {
-    // Ajouter une nouvelle permission pour ce rôle
-    try {
+    // Vérifier si la permission existe déjà
+    const existingPermission = await db
+      .select()
+      .from(rolePermissionsTable)
+      .where(and(
+        eq(rolePermissionsTable.roleName, roleName),
+        eq(rolePermissionsTable.resource, resource),
+        eq(rolePermissionsTable.action, permAction)
+      ))
+      .limit(1)
+
+    if (existingPermission.length > 0) {
+      // Mettre à jour la permission existante
+      await db.update(rolePermissionsTable)
+        .set({ 
+          allowed: true
+        })
+        .where(and(
+          eq(rolePermissionsTable.roleName, roleName),
+          eq(rolePermissionsTable.resource, resource),
+          eq(rolePermissionsTable.action, permAction)
+        ))
+    } else {
+      // Créer une nouvelle permission
       await db.insert(rolePermissionsTable).values({
         roleName: roleName,
         resource: resource,
         action: permAction,
         allowed: true
       })
-    } catch (error: any) {
-      // Si la permission existe déjà, la mettre à jour
-      if (error.code === '23505' || error.constraint) {
-        await db.update(rolePermissionsTable)
-          .set({ allowed: true })
-          .where(and(
-            eq(rolePermissionsTable.roleName, roleName),
-            eq(rolePermissionsTable.resource, resource),
-            eq(rolePermissionsTable.action, permAction)
-          ))
-      } else {
-        throw error
-      }
     }
   } else if (action === 'remove') {
     // Supprimer ou désactiver la permission

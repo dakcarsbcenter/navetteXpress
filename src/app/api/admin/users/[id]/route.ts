@@ -2,8 +2,35 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/db"
-import { users } from "@/schema"
-import { eq } from "drizzle-orm"
+import { users, rolePermissionsTable } from "@/schema"
+import { eq, and } from "drizzle-orm"
+
+// Fonction pour vérifier les permissions dynamiques
+async function hasUsersPermission(userRole: string, action: 'read' | 'create' | 'update' | 'delete'): Promise<boolean> {
+  try {
+    // Les admins ont toujours accès
+    if (userRole === 'admin') {
+      return true
+    }
+
+    // Vérifier les permissions dynamiques pour l'action spécifique
+    const permissions = await db
+      .select()
+      .from(rolePermissionsTable)
+      .where(and(
+        eq(rolePermissionsTable.roleName, userRole),
+        eq(rolePermissionsTable.resource, 'users'),
+        eq(rolePermissionsTable.action, action),
+        eq(rolePermissionsTable.allowed, true)
+      ))
+
+    // Retourner true si la permission existe
+    return permissions.length > 0
+  } catch (error) {
+    console.error('Erreur lors de la vérification des permissions users:', error)
+    return false
+  }
+}
 
 // GET - Récupérer un utilisateur spécifique
 export async function GET(
@@ -11,11 +38,22 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Vérifier l'authentification et le rôle admin
+    // Vérifier l'authentification
     const session = await getServerSession(authOptions) as { user?: { role?: string } } | null
-    if (!session?.user || (session.user as { role?: string }).role !== 'admin') {
+    if (!session?.user) {
+      return NextResponse.json({ error: "Non authentifié" }, { status: 401 })
+    }
+
+    const userRole = (session.user as { role?: string }).role
+    if (!userRole) {
+      return NextResponse.json({ error: "Rôle utilisateur non défini" }, { status: 403 })
+    }
+
+    // Vérifier les permissions
+    const hasPermission = await hasUsersPermission(userRole, 'read')
+    if (!hasPermission) {
       return NextResponse.json(
-        { error: "Accès refusé. Seuls les administrateurs peuvent accéder à cette ressource." },
+        { error: "Vous n'avez pas la permission de consulter les utilisateurs" },
         { status: 403 }
       )
     }
@@ -42,6 +80,14 @@ export async function GET(
       )
     }
 
+    // Seuls les admins peuvent voir d'autres admins
+    if (user[0].role === 'admin' && userRole !== 'admin') {
+      return NextResponse.json(
+        { error: "Accès refusé" },
+        { status: 403 }
+      )
+    }
+
     return NextResponse.json(user[0])
 
   } catch (error) {
@@ -59,11 +105,22 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Vérifier l'authentification et le rôle admin
+    // Vérifier l'authentification
     const session = await getServerSession(authOptions) as { user?: { role?: string } } | null
-    if (!session?.user || (session.user as { role?: string }).role !== 'admin') {
+    if (!session?.user) {
+      return NextResponse.json({ error: "Non authentifié" }, { status: 401 })
+    }
+
+    const userRole = (session.user as { role?: string }).role
+    if (!userRole) {
+      return NextResponse.json({ error: "Rôle utilisateur non défini" }, { status: 403 })
+    }
+
+    // Vérifier les permissions
+    const hasPermission = await hasUsersPermission(userRole, 'update')
+    if (!hasPermission) {
       return NextResponse.json(
-        { error: "Accès refusé. Seuls les administrateurs peuvent accéder à cette ressource." },
+        { error: "Vous n'avez pas la permission de modifier les utilisateurs" },
         { status: 403 }
       )
     }
@@ -81,6 +138,22 @@ export async function PUT(
       return NextResponse.json(
         { error: "Utilisateur non trouvé" },
         { status: 404 }
+      )
+    }
+
+    // Seuls les admins peuvent modifier d'autres admins
+    if (existingUser[0].role === 'admin' && userRole !== 'admin') {
+      return NextResponse.json(
+        { error: "Vous ne pouvez pas modifier un administrateur" },
+        { status: 403 }
+      )
+    }
+
+    // Seuls les admins peuvent attribuer le rôle admin à quelqu'un
+    if (role === 'admin' && userRole !== 'admin') {
+      return NextResponse.json(
+        { error: "Seuls les administrateurs peuvent créer d'autres administrateurs" },
+        { status: 403 }
       )
     }
 
@@ -134,11 +207,22 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Vérifier l'authentification et le rôle admin
+    // Vérifier l'authentification
     const session = await getServerSession(authOptions) as { user?: { role?: string } } | null
-    if (!session?.user || (session.user as { role?: string }).role !== 'admin') {
+    if (!session?.user) {
+      return NextResponse.json({ error: "Non authentifié" }, { status: 401 })
+    }
+
+    const userRole = (session.user as { role?: string }).role
+    if (!userRole) {
+      return NextResponse.json({ error: "Rôle utilisateur non défini" }, { status: 403 })
+    }
+
+    // Vérifier les permissions
+    const hasPermission = await hasUsersPermission(userRole, 'delete')
+    if (!hasPermission) {
       return NextResponse.json(
-        { error: "Accès refusé. Seuls les administrateurs peuvent accéder à cette ressource." },
+        { error: "Vous n'avez pas la permission de supprimer des utilisateurs" },
         { status: 403 }
       )
     }
@@ -154,6 +238,14 @@ export async function DELETE(
       return NextResponse.json(
         { error: "Utilisateur non trouvé" },
         { status: 404 }
+      )
+    }
+
+    // Seuls les admins peuvent supprimer d'autres admins
+    if (existingUser[0].role === 'admin' && userRole !== 'admin') {
+      return NextResponse.json(
+        { error: "Vous ne pouvez pas supprimer un administrateur" },
+        { status: 403 }
       )
     }
 

@@ -2,36 +2,102 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { db } from '@/db'
-import { reviewsTable, users, bookingsTable } from '@/schema'
-import { eq, desc, sql, inArray } from 'drizzle-orm'
+import { reviewsTable, users, bookingsTable, rolePermissionsTable } from '@/schema'
+import { eq, desc, sql, inArray, and } from 'drizzle-orm'
+
+// Fonction pour vérifier les permissions dynamiques des reviews
+async function hasReviewsPermission(userRole: string, action: 'read' | 'create' | 'update' | 'delete'): Promise<boolean> {
+  try {
+    // Les admins ont toujours accès
+    if (userRole === 'admin') {
+      return true;
+    }
+
+    // Vérifier les permissions dynamiques
+    const permissions = await db
+      .select()
+      .from(rolePermissionsTable)
+      .where(and(
+        eq(rolePermissionsTable.roleName, userRole),
+        eq(rolePermissionsTable.resource, 'reviews'),
+        eq(rolePermissionsTable.allowed, true)
+      ));
+
+    // Vérifier si l'utilisateur a 'manage' ou l'action spécifique
+    return permissions.some(p => p.action === 'manage' || p.action === action);
+  } catch (error) {
+    console.error('Erreur lors de la vérification des permissions reviews:', error);
+    return false;
+  }
+}
 
 export async function GET() {
   try {
     const session = await getServerSession(authOptions)
     
-    if (!session?.user || (session.user as any).role !== 'admin') {
+    if (!session?.user) {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
     }
 
-    // Récupérer tous les avis avec les informations du client et du chauffeur
-    const reviewsData = await db
-      .select({
-        id: reviewsTable.id,
-        bookingId: reviewsTable.bookingId,
-        rating: reviewsTable.rating,
-        comment: reviewsTable.comment,
-        response: reviewsTable.response,
-        respondedBy: reviewsTable.respondedBy,
-        respondedAt: reviewsTable.respondedAt,
-        isPublic: reviewsTable.isPublic,
-        isApproved: reviewsTable.isApproved,
-        createdAt: reviewsTable.createdAt,
-        updatedAt: reviewsTable.updatedAt,
-        customerId: reviewsTable.customerId,
-        driverId: reviewsTable.driverId
-      })
-      .from(reviewsTable)
-      .orderBy(desc(reviewsTable.createdAt))
+    const userRole = (session.user as any).role || 'customer';
+    const userId = (session.user as any).id;
+    
+    const hasReadPermission = await hasReviewsPermission(userRole, 'read');
+
+    if (!hasReadPermission) {
+      return NextResponse.json({ 
+        error: 'Vous n\'avez pas la permission de voir les avis' 
+      }, { status: 403 });
+    }
+
+    // Si l'utilisateur a la permission 'manage', il peut voir tous les avis
+    const hasManagePermission = await hasReviewsPermission(userRole, 'update') || 
+                                await hasReviewsPermission(userRole, 'delete');
+
+    let reviewsData;
+
+    if (hasManagePermission) {
+      // Permission manage: voir tous les avis
+      reviewsData = await db
+        .select({
+          id: reviewsTable.id,
+          bookingId: reviewsTable.bookingId,
+          rating: reviewsTable.rating,
+          comment: reviewsTable.comment,
+          response: reviewsTable.response,
+          respondedBy: reviewsTable.respondedBy,
+          respondedAt: reviewsTable.respondedAt,
+          isPublic: reviewsTable.isPublic,
+          isApproved: reviewsTable.isApproved,
+          createdAt: reviewsTable.createdAt,
+          updatedAt: reviewsTable.updatedAt,
+          customerId: reviewsTable.customerId,
+          driverId: reviewsTable.driverId
+        })
+        .from(reviewsTable)
+        .orderBy(desc(reviewsTable.createdAt));
+    } else {
+      // Permission read only: voir uniquement ses propres avis
+      reviewsData = await db
+        .select({
+          id: reviewsTable.id,
+          bookingId: reviewsTable.bookingId,
+          rating: reviewsTable.rating,
+          comment: reviewsTable.comment,
+          response: reviewsTable.response,
+          respondedBy: reviewsTable.respondedBy,
+          respondedAt: reviewsTable.respondedAt,
+          isPublic: reviewsTable.isPublic,
+          isApproved: reviewsTable.isApproved,
+          createdAt: reviewsTable.createdAt,
+          updatedAt: reviewsTable.updatedAt,
+          customerId: reviewsTable.customerId,
+          driverId: reviewsTable.driverId
+        })
+        .from(reviewsTable)
+        .where(eq(reviewsTable.customerId, userId))
+        .orderBy(desc(reviewsTable.createdAt));
+    }
 
     // Récupérer les informations des utilisateurs séparément
     const customerIds = [...new Set(reviewsData.map(r => r.customerId))]
@@ -91,6 +157,15 @@ export async function POST(request: NextRequest) {
     
     if (!session?.user) {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
+    }
+
+    const userRole = (session.user as any).role || 'customer';
+    const hasCreatePermission = await hasReviewsPermission(userRole, 'create');
+
+    if (!hasCreatePermission) {
+      return NextResponse.json({ 
+        error: 'Vous n\'avez pas la permission de créer des avis' 
+      }, { status: 403 });
     }
 
     const body = await request.json()
