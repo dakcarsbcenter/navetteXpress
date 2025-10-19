@@ -1,0 +1,302 @@
+2025-Oct-19 18:02:56.869675
+--------------------
+2025-Oct-19 18:02:56.869675
+22 |     # build phase
+2025-Oct-19 18:02:56.869675
+23 |     COPY . /app/.
+2025-Oct-19 18:02:56.869675
+24 | >>> RUN --mount=type=cache,id=mc0s4s8g480kgwogkg4c4scg-next/cache,target=/app/.next/cache --mount=type=cache,id=mc0s4s8g480kgwogkg4c4scg-node_modules/cache,target=/app/node_modules/.cache npm run build
+2025-Oct-19 18:02:56.869675
+25 |
+2025-Oct-19 18:02:56.869675
+26 |
+2025-Oct-19 18:02:56.869675
+--------------------
+2025-Oct-19 18:02:56.869675
+ERROR: failed to build: failed to solve: process "/bin/bash -ol pipefail -c npm run build" did not complete successfully: exit code: 1
+2025-Oct-19 18:02:56.876572
+exit status 1
+2025-Oct-19 18:02:56.949044
+Oops something is not okay, are you okay? 😢
+2025-Oct-19 18:02:56.965495
+#0 building with "default" instance using docker driver
+2025-Oct-19 18:02:56.965495
+2025-Oct-19 18:02:56.965495
+#1 [internal] load build definition from Dockerfile
+2025-Oct-19 18:02:56.965495
+#1 transferring dockerfile: 2.10kB done
+2025-Oct-19 18:02:56.965495
+#1 DONE 0.0s
+2025-Oct-19 18:02:56.965495
+2025-Oct-19 18:02:56.965495
+#2 [internal] load metadata for ghcr.io/railwayapp/nixpacks:ubuntu-1745885067
+2025-Oct-19 18:02:56.965495
+#2 DONE 0.4s
+2025-Oct-19 18:02:56.965495
+2025-Oct-19 18:02:56.965495
+#3 [internal] load .dockerignore
+2025-Oct-19 18:02:56.965495
+#3 transferring context: 717B done
+2025-Oct-19 18:02:56.965495
+#3 DONE 0.1s
+2025-Oct-19 18:02:56.965495
+2025-Oct-19 18:02:56.965495
+#4 [stage-0  1/11] FROM ghcr.io/railwayapp/nixpacks:ubuntu-1745885067@sha256:d45c89d80e13d7ad0fd555b5130f22a866d9dd10e861f589932303ef2314c7de
+2025-Oct-19 18:02:56.965495
+#4 DONE 0.0s
+2025-Oct-19 18:02:56.965495
+2025-Oct-19 18:02:56.965495
+#5 [internal] load build context
+2025-Oct-19 18:02:56.965495
+#5 transferring context: 3.08MB 0.2s done
+2025-Oct-19 18:02:56.965495
+#5 DONE 0.2s
+2025-Oct-19 18:02:56.965495
+2025-Oct-19 18:02:56.965495
+#6 [stage-0  2/11] WORKDIR /app/
+2025-Oct-19 18:02:56.965495
+#6 CACHED
+2025-Oct-19 18:02:56.965495
+2025-Oct-19 18:02:56.965495
+#7 [stage-0  3/11] COPY .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix
+2025-Oct-19 18:02:56.965495
+#7 CACHED
+2025-Oct-19 18:02:56.965495
+2025-Oct-19 18:02:56.965495
+#8 [stage-0  4/11] RUN nix-env -if .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix && nix-collect-garbage -d
+2025-Oct-19 18:02:56.965495
+#8 CACHED
+2025-Oct-19 18:02:56.965495
+2025-Oct-19 18:02:56.965495
+#9 [stage-0  5/11] RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends curl wget
+2025-Oct-19 18:02:56.965495
+#9 CACHED
+2025-Oct-19 18:02:56.965495
+2025-Oct-19 18:02:56.965495
+#10 [stage-0  6/11] COPY . /app/.
+2025-Oct-19 18:02:56.965495
+#10 DONE 0.2s
+2025-Oct-19 18:02:56.965495
+2025-Oct-19 18:02:56.965495
+#11 [stage-0  7/11] RUN --mount=type=cache,id=mc0s4s8g480kgwogkg4c4scg-/root/npm,target=/root/.npm npm ci
+2025-Oct-19 18:02:56.965495
+#11 0.591 npm warn config production Use `--omit=dev` instead.
+2025-Oct-19 18:02:56.965495
+#11 2.912 npm warn EBADENGINE Unsupported engine {
+2025-Oct-19 18:02:56.965495
+#11 2.912 npm warn EBADENGINE   package: '@neondatabase/serverless@1.0.2',
+2025-Oct-19 18:02:56.965495
+#11 2.912 npm warn EBADENGINE   required: { node: '>=19.0.0' },
+2025-Oct-19 18:02:56.965495
+#11 2.912 npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
+2025-Oct-19 18:02:56.965495
+#11 2.912 npm warn EBADENGINE }
+2025-Oct-19 18:02:56.965495
+#11 17.53 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+2025-Oct-19 18:02:56.965495
+#11 17.75 npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+2025-Oct-19 18:02:56.965495
+#11 18.07 npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+2025-Oct-19 18:02:56.965495
+#11 18.16 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+2025-Oct-19 18:02:56.965495
+#11 18.44 npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+2025-Oct-19 18:02:56.965495
+#11 18.52 npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+2025-Oct-19 18:02:56.965495
+#11 18.52 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2025-Oct-19 18:02:56.965495
+#11 18.53 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2025-Oct-19 18:02:56.965495
+#11 24.76 npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+2025-Oct-19 18:02:56.965495
+#11 46.56
+2025-Oct-19 18:02:56.965495
+#11 46.56 added 822 packages, and audited 823 packages in 46s
+2025-Oct-19 18:02:56.965495
+#11 46.56
+2025-Oct-19 18:02:56.965495
+#11 46.56 214 packages are looking for funding
+2025-Oct-19 18:02:56.965495
+#11 46.56   run `npm fund` for details
+2025-Oct-19 18:02:56.965495
+#11 46.64
+2025-Oct-19 18:02:56.965495
+#11 46.64 4 moderate severity vulnerabilities
+2025-Oct-19 18:02:56.965495
+#11 46.64
+2025-Oct-19 18:02:56.965495
+#11 46.64 To address all issues (including breaking changes), run:
+2025-Oct-19 18:02:56.965495
+#11 46.64   npm audit fix --force
+2025-Oct-19 18:02:56.965495
+#11 46.64
+2025-Oct-19 18:02:56.965495
+#11 46.64 Run `npm audit` for details.
+2025-Oct-19 18:02:56.965495
+#11 DONE 48.3s
+2025-Oct-19 18:02:56.965495
+2025-Oct-19 18:02:56.965495
+#12 [stage-0  8/11] COPY . /app/.
+2025-Oct-19 18:02:56.965495
+#12 DONE 0.8s
+2025-Oct-19 18:02:56.965495
+2025-Oct-19 18:02:56.965495
+#13 [stage-0  9/11] RUN --mount=type=cache,id=mc0s4s8g480kgwogkg4c4scg-next/cache,target=/app/.next/cache --mount=type=cache,id=mc0s4s8g480kgwogkg4c4scg-node_modules/cache,target=/app/node_modules/.cache npm run build
+2025-Oct-19 18:02:56.965495
+#13 0.761 npm warn config production Use `--omit=dev` instead.
+2025-Oct-19 18:02:56.965495
+#13 0.842
+2025-Oct-19 18:02:56.965495
+#13 0.842 > my-nextjs-app@0.1.0 build
+2025-Oct-19 18:02:56.965495
+#13 0.842 > next build --turbopack
+2025-Oct-19 18:02:56.965495
+#13 0.842
+2025-Oct-19 18:02:56.965495
+#13 3.895    ▲ Next.js 15.5.4 (Turbopack)
+2025-Oct-19 18:02:56.965495
+#13 3.897
+2025-Oct-19 18:02:56.965495
+#13 4.332    Creating an optimized production build ...
+2025-Oct-19 18:02:56.965495
+#13 40.47  ✓ Finished writing to disk in 201ms
+2025-Oct-19 18:02:56.965495
+#13 40.63  ✓ Compiled successfully in 34.3s
+2025-Oct-19 18:02:56.965495
+#13 40.65    Skipping validation of types
+2025-Oct-19 18:02:56.965495
+#13 40.65    Skipping linting
+2025-Oct-19 18:02:56.965495
+#13 41.52    Collecting page data ...
+2025-Oct-19 18:02:56.965495
+#13 44.76    Generating static pages (0/84) ...
+2025-Oct-19 18:02:56.965495
+#13 47.00    Generating static pages (21/84)
+2025-Oct-19 18:02:56.965495
+#13 47.26    Generating static pages (42/84)
+2025-Oct-19 18:02:56.965495
+#13 49.09 Erreur lors de la vérification des permissions admin: Error: Dynamic server usage: Route /admin couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+2025-Oct-19 18:02:56.965495
+#13 49.09     at s (.next/server/chunks/ssr/_c82ef4ca._.js:34:33187)
+2025-Oct-19 18:02:56.965495
+#13 49.09     at m (.next/server/chunks/ssr/_c82ef4ca._.js:37:14149)
+2025-Oct-19 18:02:56.965495
+#13 49.09     at h (.next/server/chunks/ssr/_c82ef4ca._.js:37:21837)
+2025-Oct-19 18:02:56.965495
+#13 49.09     at j (.next/server/chunks/ssr/[root-of-the-server]__71f6ed34._.js:1:4773)
+2025-Oct-19 18:02:56.965495
+#13 49.09     at m (.next/server/chunks/ssr/[root-of-the-server]__71f6ed34._.js:1:5163)
+2025-Oct-19 18:02:56.965495
+#13 49.09     at stringify (<anonymous>) {
+2025-Oct-19 18:02:56.965495
+#13 49.09   description: "Route /admin couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+2025-Oct-19 18:02:56.965495
+#13 49.09   digest: 'DYNAMIC_SERVER_USAGE'
+2025-Oct-19 18:02:56.965495
+#13 49.09 }
+2025-Oct-19 18:02:56.965495
+#13 49.42    Generating static pages (63/84)
+2025-Oct-19 18:02:56.965495
+#13 49.48 Rendering view: home
+2025-Oct-19 18:02:56.965495
+#13 49.51 Erreur: [Error: Dynamic server usage: Route /flotte couldn't be rendered statically because it used revalidate: 0 fetch http://localhost:3000/api/vehicles /flotte. See more info here: https://nextjs.org/docs/messages/dynamic-server-error] {
+2025-Oct-19 18:02:56.965495
+#13 49.51   description: "Route /flotte couldn't be rendered statically because it used revalidate: 0 fetch http://localhost:3000/api/vehicles /flotte. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+2025-Oct-19 18:02:56.965495
+#13 49.51   digest: 'DYNAMIC_SERVER_USAGE'
+2025-Oct-19 18:02:56.965495
+#13 49.51 }
+2025-Oct-19 18:02:56.965495
+#13 50.13  ⨯ useSearchParams() should be wrapped in a suspense boundary at page "/reservation". Read more: https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout
+2025-Oct-19 18:02:56.965495
+#13 50.13     at g (/app/.next/server/chunks/ssr/node_modules_next_dist_042de4b7._.js:4:5016)
+2025-Oct-19 18:02:56.965495
+#13 50.13     at m (/app/.next/server/chunks/ssr/node_modules_next_dist_042de4b7._.js:4:6650)
+2025-Oct-19 18:02:56.965495
+#13 50.13     at l (/app/.next/server/chunks/ssr/src_app_reservation_page_tsx_9ff3d5e6._.js:1:2739)
+2025-Oct-19 18:02:56.965495
+#13 50.13     at n3 (/app/node_modules/next/dist/compiled/next-server/app-page-turbo.runtime.prod.js:2:82831)
+2025-Oct-19 18:02:56.965495
+#13 50.13     at n6 (/app/node_modules/next/dist/compiled/next-server/app-page-turbo.runtime.prod.js:2:84601)
+2025-Oct-19 18:02:56.965495
+#13 50.13     at n5 (/app/node_modules/next/dist/compiled/next-server/app-page-turbo.runtime.prod.js:2:104801)
+2025-Oct-19 18:02:56.965495
+#13 50.13     at n7 (/app/node_modules/next/dist/compiled/next-server/app-page-turbo.runtime.prod.js:2:102219)
+2025-Oct-19 18:02:56.965495
+#13 50.13     at n8 (/app/node_modules/next/dist/compiled/next-server/app-page-turbo.runtime.prod.js:2:83183)
+2025-Oct-19 18:02:56.965495
+#13 50.13     at n6 (/app/node_modules/next/dist/compiled/next-server/app-page-turbo.runtime.prod.js:2:84647)
+2025-Oct-19 18:02:56.965495
+#13 50.13     at n6 (/app/node_modules/next/dist/compiled/next-server/app-page-turbo.runtime.prod.js:2:101560)
+2025-Oct-19 18:02:56.965495
+#13 50.13 Error occurred prerendering page "/reservation". Read more: https://nextjs.org/docs/messages/prerender-error
+2025-Oct-19 18:02:56.965495
+#13 50.13 Export encountered an error on /reservation/page: /reservation, exiting the build.
+2025-Oct-19 18:02:56.965495
+#13 50.15  ⨯ Next.js build worker exited with code: 1 and signal: null
+2025-Oct-19 18:02:56.965495
+#13 ERROR: process "/bin/bash -ol pipefail -c npm run build" did not complete successfully: exit code: 1
+2025-Oct-19 18:02:56.965495
+------
+2025-Oct-19 18:02:56.965495
+> [stage-0  9/11] RUN --mount=type=cache,id=mc0s4s8g480kgwogkg4c4scg-next/cache,target=/app/.next/cache --mount=type=cache,id=mc0s4s8g480kgwogkg4c4scg-node_modules/cache,target=/app/node_modules/.cache npm run build:
+2025-Oct-19 18:02:56.965495
+50.13     at n3 (/app/node_modules/next/dist/compiled/next-server/app-page-turbo.runtime.prod.js:2:82831)
+2025-Oct-19 18:02:56.965495
+50.13     at n6 (/app/node_modules/next/dist/compiled/next-server/app-page-turbo.runtime.prod.js:2:84601)
+2025-Oct-19 18:02:56.965495
+50.13     at n5 (/app/node_modules/next/dist/compiled/next-server/app-page-turbo.runtime.prod.js:2:104801)
+2025-Oct-19 18:02:56.965495
+50.13     at n7 (/app/node_modules/next/dist/compiled/next-server/app-page-turbo.runtime.prod.js:2:102219)
+2025-Oct-19 18:02:56.965495
+50.13     at n8 (/app/node_modules/next/dist/compiled/next-server/app-page-turbo.runtime.prod.js:2:83183)
+2025-Oct-19 18:02:56.965495
+50.13     at n6 (/app/node_modules/next/dist/compiled/next-server/app-page-turbo.runtime.prod.js:2:84647)
+2025-Oct-19 18:02:56.965495
+50.13     at n6 (/app/node_modules/next/dist/compiled/next-server/app-page-turbo.runtime.prod.js:2:101560)
+2025-Oct-19 18:02:56.965495
+50.13 Error occurred prerendering page "/reservation". Read more: https://nextjs.org/docs/messages/prerender-error
+2025-Oct-19 18:02:56.965495
+50.13 Export encountered an error on /reservation/page: /reservation, exiting the build.
+2025-Oct-19 18:02:56.965495
+50.15  ⨯ Next.js build worker exited with code: 1 and signal: null
+2025-Oct-19 18:02:56.965495
+------
+2025-Oct-19 18:02:56.965495
+2025-Oct-19 18:02:56.965495
+1 warning found (use docker --debug to expand):
+2025-Oct-19 18:02:56.965495
+- UndefinedVar: Usage of undefined variable '$NIXPACKS_PATH' (line 18)
+2025-Oct-19 18:02:56.965495
+Dockerfile:24
+2025-Oct-19 18:02:56.965495
+--------------------
+2025-Oct-19 18:02:56.965495
+22 |     # build phase
+2025-Oct-19 18:02:56.965495
+23 |     COPY . /app/.
+2025-Oct-19 18:02:56.965495
+24 | >>> RUN --mount=type=cache,id=mc0s4s8g480kgwogkg4c4scg-next/cache,target=/app/.next/cache --mount=type=cache,id=mc0s4s8g480kgwogkg4c4scg-node_modules/cache,target=/app/node_modules/.cache npm run build
+2025-Oct-19 18:02:56.965495
+25 |
+2025-Oct-19 18:02:56.965495
+26 |
+2025-Oct-19 18:02:56.965495
+--------------------
+2025-Oct-19 18:02:56.965495
+ERROR: failed to build: failed to solve: process "/bin/bash -ol pipefail -c npm run build" did not complete successfully: exit code: 1
+2025-Oct-19 18:02:56.965495
+exit status 1
+2025-Oct-19 18:02:56.981257
+Deployment failed. Removing the new version of your application.
+2025-Oct-19 18:02:57.680958
+Gracefully shutting down build container: iogwgo4ckgc80woc000g0o4k
+2025-Oct-19 18:02:58.051368
+[CMD]: docker stop --time=30 iogwgo4ckgc80woc000g0o4k
+2025-Oct-19 18:02:58.051368
+iogwgo4ckgc80woc000g0o4k
+2025-Oct-19 18:02:58.260438
+[CMD]: docker rm -f iogwgo4ckgc80woc000g0o4k
+2025-Oct-19 18:02:58.260438
+Error response from daemon: No such container: iogwgo4ckgc80woc000g0o4k

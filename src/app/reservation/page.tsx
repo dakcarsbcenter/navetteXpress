@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Navigation } from "@/components/navigation";
@@ -28,7 +28,8 @@ interface FormData {
   clientEmail: string;
 }
 
-export default function ReservationPage() {
+// Composant interne qui utilise useSearchParams
+function ReservationForm() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -715,5 +716,21 @@ export default function ReservationPage() {
         }}
       />
     </div>
+  );
+}
+
+// Composant principal avec Suspense boundary
+export default function ReservationPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-slate-600 dark:text-slate-400">Chargement...</p>
+        </div>
+      </div>
+    }>
+      <ReservationForm />
+    </Suspense>
   );
 }

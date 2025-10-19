@@ -21,7 +21,7 @@ function getVehicleIcon(category: string, size: number = 24) {
 async function getVehicles() {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/vehicles`, {
-      cache: 'no-store', // Toujours récupérer les données les plus récentes
+      next: { revalidate: 3600 }, // Cache pendant 1 heure pour le build statique
     });
     
     if (!res.ok) {
