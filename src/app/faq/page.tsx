@@ -118,42 +118,42 @@ export default function FAQPage() {
       <Navigation variant="solid" />
       
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-20 px-8 mt-20">
+      <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8 mt-16 sm:mt-20">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 leading-tight">
             Questions Fréquentes
           </h1>
-          <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
             Trouvez rapidement les réponses à vos questions sur nos services de transport au Sénégal
           </p>
         </div>
       </section>
 
       {/* FAQ Content */}
-      <section className="py-20 px-8 bg-white">
+      <section className="py-10 sm:py-12 md:py-16 lg:py-20 px-4 sm:px-6 md:px-8 bg-white">
         <div className="max-w-6xl mx-auto">
           {faqCategories.map((category, categoryIndex) => (
-            <div key={categoryIndex} className="mb-16">
-              <h2 className="text-3xl font-bold text-slate-900 mb-8 text-center">
+            <div key={categoryIndex} className="mb-10 sm:mb-12 md:mb-16">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-6 sm:mb-8 text-center">
                 {category.title}
               </h2>
               
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {category.questions.map((faq, faqIndex) => {
                   const isOpen = openItems[`${categoryIndex}-${faqIndex}`];
                   return (
-                    <div key={faqIndex} className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <div key={faqIndex} className="bg-white rounded-xl sm:rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200">
                       <button
                         onClick={() => toggleItem(categoryIndex, faqIndex)}
-                        className="w-full text-left p-6 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset rounded-2xl"
+                        className="w-full text-left p-4 sm:p-5 md:p-6 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset rounded-xl sm:rounded-2xl"
                       >
-                        <div className="flex items-center justify-between">
-                          <h3 className="text-lg font-semibold text-slate-900 pr-4">
+                        <div className="flex items-center justify-between gap-3 sm:gap-4">
+                          <h3 className="text-base sm:text-lg font-semibold text-slate-900 flex-1 leading-snug">
                             {faq.question}
                           </h3>
                           <div className="flex-shrink-0">
                             <svg
-                              className={`w-6 h-6 text-slate-500 transition-transform duration-200 ${
+                              className={`w-5 h-5 sm:w-6 sm:h-6 text-slate-500 transition-transform duration-200 ${
                                 isOpen ? 'rotate-180' : ''
                               }`}
                               fill="none"
@@ -176,9 +176,9 @@ export default function FAQPage() {
                           isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                         }`}
                       >
-                        <div className="px-6 pb-6">
-                          <div className="border-t border-slate-200 pt-4">
-                            <p className="text-slate-600 leading-relaxed">
+                        <div className="px-4 sm:px-5 md:px-6 pb-4 sm:pb-5 md:pb-6">
+                          <div className="border-t border-slate-200 pt-3 sm:pt-4">
+                            <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
                               {faq.answer}
                             </p>
                           </div>
@@ -194,24 +194,24 @@ export default function FAQPage() {
       </section>
 
       {/* Contact CTA */}
-      <section className="py-20 px-8 bg-slate-50">
+      <section className="py-10 sm:py-12 md:py-16 lg:py-20 px-4 sm:px-6 md:px-8 bg-slate-50">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-slate-900 mb-6">
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4 sm:mb-6 leading-tight">
             Vous ne trouvez pas votre réponse ?
           </h2>
-          <p className="text-lg text-slate-600 mb-8">
+          <p className="text-base sm:text-lg text-slate-600 mb-6 sm:mb-8 leading-relaxed">
             Notre équipe est là pour vous aider. Contactez-nous directement !
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center max-w-2xl mx-auto">
             <a
               href="tel:+221781319191"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-colors"
+              className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-colors text-center"
             >
               📞 +221 78 131 91 91
             </a>
             <a
               href="mailto:contact@navettexpress.sn"
-              className="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-8 py-4 rounded-xl font-semibold text-lg transition-colors"
+              className="w-full sm:w-auto border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-colors text-center"
             >
               ✉️ Nous écrire
             </a>

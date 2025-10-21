@@ -155,32 +155,32 @@ function ReservationForm() {
   }
 
   return (
-    <div className="font-sans min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="font-sans bg-slate-50 dark:bg-slate-900 pb-8 sm:pb-12">
       <Navigation variant="solid" />
 
-      <div className="max-w-4xl mx-auto px-8 py-12 mt-20">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 mt-16 sm:mt-20">
         {/* Message pour les utilisateurs non connectés */}
         {!isSignedIn && (
-          <div className="mb-8 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-6 rounded-xl border border-blue-200 dark:border-blue-800">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
+          <div className="mb-6 sm:mb-8 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-4 sm:p-6 rounded-xl border border-blue-200 dark:border-blue-800">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex-1">
+                <h3 className="font-semibold text-slate-900 dark:text-white mb-2 text-sm sm:text-base">
                   🚀 Réservation rapide disponible
                 </h3>
-                <p className="text-slate-600 dark:text-slate-300 text-sm">
+                <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm">
                   Connectez-vous pour un processus de réservation plus rapide avec vos informations pré-remplies.
                 </p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 w-full sm:w-auto">
                 <Link
                   href="/auth/signin"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap flex-1 sm:flex-none text-center"
                 >
                   Se Connecter
                 </Link>
                 <Link
                   href="/auth/signup"
-                  className="border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap"
+                  className="border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap flex-1 sm:flex-none text-center"
                 >
                   Créer un compte
                 </Link>
@@ -190,11 +190,11 @@ function ReservationForm() {
         )}
 
         {/* Progress Bar - 3 Steps */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex items-center justify-center gap-2 sm:gap-4 mb-4 sm:mb-6 max-w-md mx-auto">
             {[1, 2, 3].map((step) => (
               <div key={step} className="flex items-center">
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm ${
+                <div className={`w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center font-bold text-sm sm:text-base ${
                   currentStep >= step 
                     ? 'bg-gradient-to-r from-[#FF7E38] to-[#E6682F] text-white shadow-lg' 
                     : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
@@ -202,7 +202,7 @@ function ReservationForm() {
                   {step}
                 </div>
                 {step < 3 && (
-                  <div className={`h-1 w-32 mx-4 ${
+                  <div className={`h-0.5 sm:h-1 w-16 sm:w-20 md:w-24 mx-2 sm:mx-3 ${
                     currentStep > step ? 'bg-gradient-to-r from-[#FF7E38] to-[#E6682F]' : 'bg-gray-200 dark:bg-gray-700'
                   }`} />
                 )}
@@ -210,41 +210,41 @@ function ReservationForm() {
             ))}
           </div>
           <div className="text-center">
-            <span className="text-xl font-semibold text-slate-900 dark:text-white">
+            <span className="text-base sm:text-lg md:text-xl font-semibold text-slate-900 dark:text-white">
               {currentStep === 1 && "Type de Service"}
               {currentStep === 2 && "Détails du Trajet"}  
               {currentStep === 3 && "Confirmation"}
             </span>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2">
               Étape {currentStep} sur 3
             </p>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-4 sm:p-6 md:p-8">
           {/* Étape 1: Type de service et véhicule */}
           {currentStep === 1 && (
-            <div className="space-y-8">
+            <div className="space-y-6 sm:space-y-8">
               <div>
-                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-4 sm:mb-6">
                   Choisissez votre service
                 </h2>
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   {serviceTypes.map((service) => (
                     <div
                       key={service.id}
                       onClick={() => handleInputChange('serviceType', service.id)}
-                      className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                      className={`p-3 sm:p-4 border-2 rounded-lg cursor-pointer transition-all ${
                         formData.serviceType === service.id
                           ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20'
                           : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                       }`}
                     >
                       <div className="flex items-center space-x-3">
-                        <span className="text-2xl">{service.icon}</span>
-                        <div>
-                          <h3 className="font-semibold text-slate-900 dark:text-white">{service.name}</h3>
-                          <p className="text-sm text-slate-600 dark:text-slate-300">{service.description}</p>
+                        <span className="text-xl sm:text-2xl flex-shrink-0">{service.icon}</span>
+                        <div className="min-w-0">
+                          <h3 className="font-semibold text-slate-900 dark:text-white text-sm sm:text-base">{service.name}</h3>
+                          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 truncate">{service.description}</p>
                         </div>
                       </div>
                     </div>
@@ -254,7 +254,7 @@ function ReservationForm() {
 
               {/* Champ de saisie personnalisé pour "Autres" */}
               {formData.serviceType === "autres" && (
-                <div className="mt-6">
+                <div className="mt-4 sm:mt-6">
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                     Décrivez votre service souhaité *
                   </label>
@@ -263,7 +263,7 @@ function ReservationForm() {
                     value={formData.customServiceType}
                     onChange={(e) => handleInputChange('customServiceType', e.target.value)}
                     placeholder="Ex: Transport pour tournage, livraison urgente, etc."
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-[#FF7E38] focus:border-[#FF7E38]"
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-[#FF7E38] focus:border-[#FF7E38] text-sm sm:text-base"
                   />
                 </div>
               )}
@@ -273,18 +273,18 @@ function ReservationForm() {
 
           {/* Étape 2: Détails du trajet + Services additionnels */}
           {currentStep === 2 && (
-            <div className="space-y-8">
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
+            <div className="space-y-6 sm:space-y-8">
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-4 sm:mb-6">
                 Détails de votre trajet
               </h2>
               
               {/* Informations client pour les utilisateurs non connectés */}
               {!isSignedIn && (
-                <div className="bg-[#FFB885]/10 dark:bg-[#FF7E38]/10 p-6 rounded-xl border border-[#FFB885]/30 dark:border-[#FF7E38]/30">
-                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
+                <div className="bg-[#FFB885]/10 dark:bg-[#FF7E38]/10 p-4 sm:p-6 rounded-xl border border-[#FFB885]/30 dark:border-[#FF7E38]/30">
+                  <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white mb-3 sm:mb-4">
                     Vos informations
                   </h3>
-                  <div className="grid md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div>
                       <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                         Nom complet *
@@ -294,7 +294,7 @@ function ReservationForm() {
                         value={formData.clientName}
                         onChange={(e) => handleInputChange('clientName', e.target.value)}
                         placeholder="Votre nom et prénom"
-                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm sm:text-base"
                       />
                     </div>
                     <div>
@@ -306,14 +306,14 @@ function ReservationForm() {
                         value={formData.clientEmail}
                         onChange={(e) => handleInputChange('clientEmail', e.target.value)}
                         placeholder="votre.email@exemple.com"
-                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm sm:text-base"
                       />
                     </div>
                   </div>
                 </div>
               )}
               
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                     Date de réservation
@@ -322,7 +322,7 @@ function ReservationForm() {
                     type="date"
                     value={formData.date}
                     onChange={(e) => handleInputChange('date', e.target.value)}
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm sm:text-base"
                     min={new Date().toISOString().split('T')[0]}
                   />
                 </div>
@@ -335,12 +335,12 @@ function ReservationForm() {
                     type="time"
                     value={formData.time}
                     onChange={(e) => handleInputChange('time', e.target.value)}
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm sm:text-base"
                   />
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                     Adresse de départ
@@ -350,7 +350,7 @@ function ReservationForm() {
                     value={formData.pickupAddress}
                     onChange={(e) => handleInputChange('pickupAddress', e.target.value)}
                     placeholder="Saisissez l'adresse de départ"
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm sm:text-base"
                   />
                 </div>
 
@@ -363,12 +363,12 @@ function ReservationForm() {
                     value={formData.destinationAddress}
                     onChange={(e) => handleInputChange('destinationAddress', e.target.value)}
                     placeholder="Saisissez l'adresse de destination"
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm sm:text-base"
                   />
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                     Nombre de passagers
@@ -376,7 +376,7 @@ function ReservationForm() {
                   <select
                     value={formData.passengers}
                     onChange={(e) => handleInputChange('passengers', Number(e.target.value))}
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm sm:text-base"
                   >
                     {[...Array(10)].map((_, i) => (
                       <option key={i+1} value={i+1}>{i+1} passager{i > 0 ? 's' : ''}</option>
@@ -391,7 +391,7 @@ function ReservationForm() {
                   <select
                     value={formData.luggage}
                     onChange={(e) => handleInputChange('luggage', Number(e.target.value))}
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm sm:text-base"
                   >
                     <option value={1}>1 valise</option>
                     <option value={2}>2 valises</option>
@@ -417,12 +417,12 @@ function ReservationForm() {
                     step="0.5"
                     value={formData.duration}
                     onChange={(e) => handleInputChange('duration', Number(e.target.value))}
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm sm:text-base"
                   />
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                     Téléphone de contact
@@ -432,7 +432,7 @@ function ReservationForm() {
                     value={formData.contactPhone}
                     onChange={(e) => handleInputChange('contactPhone', e.target.value)}
                     placeholder="77 650 01 02"
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm sm:text-base"
                   />
                 </div>
                 
@@ -445,32 +445,32 @@ function ReservationForm() {
                     value={formData.contactEmail}
                     onChange={(e) => handleInputChange('contactEmail', e.target.value)}
                     placeholder="votre.email@exemple.com"
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm sm:text-base"
                   />
                 </div>
               </div>
 
               {/* Services additionnels intégrés */}
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-8">
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-6 sm:pt-8">
+                <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white mb-3 sm:mb-4">
                   Services additionnels (optionnel)
                 </h3>
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   {additionalServices.map((service) => (
                     <div
                       key={service.id}
                       onClick={() => handleAdditionalServiceToggle(service.id)}
-                      className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                      className={`p-3 sm:p-4 border-2 rounded-lg cursor-pointer transition-all ${
                         formData.additionalServices.includes(service.id)
                           ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20'
                           : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                       }`}
                     >
                       <div className="flex justify-between items-center">
-                        <span className="font-medium text-slate-900 dark:text-white">{service.name}</span>
+                        <span className="font-medium text-slate-900 dark:text-white text-sm sm:text-base">{service.name}</span>
                         <div className="flex items-center gap-2">
                           {formData.additionalServices.includes(service.id) && (
-                            <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5 text-orange-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
                           )}
@@ -490,7 +490,7 @@ function ReservationForm() {
                   onChange={(e) => handleInputChange('specialRequests', e.target.value)}
                   placeholder="Décrivez vos demandes particulières..."
                   rows={4}
-                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm sm:text-base"
                 />
               </div>
             </div>
@@ -498,35 +498,35 @@ function ReservationForm() {
 
           {/* Étape 3: Confirmation */}
           {currentStep === 3 && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
+            <div className="space-y-4 sm:space-y-6">
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-4 sm:mb-6">
                 Confirmation de votre réservation
               </h2>
               
-              <div className="bg-slate-50 dark:bg-slate-700 p-6 rounded-lg">
-                <h3 className="font-semibold text-slate-900 dark:text-white mb-4">Récapitulatif</h3>
+              <div className="bg-slate-50 dark:bg-slate-700 p-4 sm:p-6 rounded-lg">
+                <h3 className="font-semibold text-slate-900 dark:text-white mb-3 sm:mb-4 text-sm sm:text-base">Récapitulatif</h3>
                 
-                <div className="space-y-3 text-sm">
+                <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
                   {/* Informations client */}
-                  <div className="flex justify-between">
+                  <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
                     <span className="text-slate-600 dark:text-slate-300">Client:</span>
-                    <span className="text-slate-900 dark:text-white">
+                    <span className="text-slate-900 dark:text-white font-medium">
                       {isSignedIn ? user?.name : formData.clientName}
                     </span>
                   </div>
                   
-                  <div className="flex justify-between">
+                  <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
                     <span className="text-slate-600 dark:text-slate-300">Email:</span>
-                    <span className="text-slate-900 dark:text-white">
+                    <span className="text-slate-900 dark:text-white font-medium break-all">
                       {isSignedIn ? user?.email : formData.clientEmail}
                     </span>
                   </div>
                   
-                  <div className="border-b pb-3 mb-3"></div>
+                  <div className="border-b pb-2 sm:pb-3 mb-2 sm:mb-3"></div>
                   
-                  <div className="flex justify-between">
+                  <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
                     <span className="text-slate-600 dark:text-slate-300">Service:</span>
-                    <span className="text-slate-900 dark:text-white">
+                    <span className="text-slate-900 dark:text-white font-medium">
                       {formData.serviceType === "other" 
                         ? formData.customServiceType 
                         : serviceTypes.find(s => s.id === formData.serviceType)?.name
@@ -535,61 +535,61 @@ function ReservationForm() {
                   </div>
                   
                   
-                  <div className="flex justify-between">
+                  <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
                     <span className="text-slate-600 dark:text-slate-300">Date & Heure:</span>
-                    <span className="text-slate-900 dark:text-white">
+                    <span className="text-slate-900 dark:text-white font-medium">
                       {formData.date} à {formData.time}
                     </span>
                   </div>
                   
-                  <div className="flex justify-between">
-                    <span className="text-slate-600 dark:text-slate-300">Trajet:</span>
-                    <span className="text-slate-900 dark:text-white text-right">
+                  <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-2">
+                    <span className="text-slate-600 dark:text-slate-300 flex-shrink-0">Trajet:</span>
+                    <span className="text-slate-900 dark:text-white font-medium text-left sm:text-right break-words">
                       {formData.pickupAddress} → {formData.destinationAddress}
                     </span>
                   </div>
                   
-                  <div className="flex justify-between">
+                  <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
                     <span className="text-slate-600 dark:text-slate-300">Passagers:</span>
-                    <span className="text-slate-900 dark:text-white">{formData.passengers}</span>
+                    <span className="text-slate-900 dark:text-white font-medium">{formData.passengers}</span>
                   </div>
                   
-                  <div className="flex justify-between">
+                  <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
                     <span className="text-slate-600 dark:text-slate-300">Valise(s):</span>
-                    <span className="text-slate-900 dark:text-white">
+                    <span className="text-slate-900 dark:text-white font-medium">
                       {formData.luggage === 10 ? '+10' : formData.luggage}
                     </span>
                   </div>
                   
-                  <div className="flex justify-between">
+                  <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
                     <span className="text-slate-600 dark:text-slate-300">Durée:</span>
-                    <span className="text-slate-900 dark:text-white">{formData.duration}h</span>
+                    <span className="text-slate-900 dark:text-white font-medium">{formData.duration}h</span>
                   </div>
                   
                   {formData.additionalServices.length > 0 && (
-                    <div className="flex justify-between">
+                    <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
                       <span className="text-slate-600 dark:text-slate-300">Services additionnels:</span>
-                      <span className="text-slate-900 dark:text-white">
+                      <span className="text-slate-900 dark:text-white font-medium">
                         {formData.additionalServices.length} service(s)
                       </span>
                     </div>
                   )}
                   
-                  <div className="border-t border-gray-200 dark:border-gray-600 pt-3 mt-3">
-                    <div className="flex justify-between">
+                  <div className="border-t border-gray-200 dark:border-gray-600 pt-2 sm:pt-3 mt-2 sm:mt-3">
+                    <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
                       <span className="text-slate-600 dark:text-slate-300">Téléphone:</span>
-                      <span className="text-slate-900 dark:text-white">{formData.contactPhone}</span>
+                      <span className="text-slate-900 dark:text-white font-medium">{formData.contactPhone}</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0 mt-2">
                       <span className="text-slate-600 dark:text-slate-300">Email:</span>
-                      <span className="text-slate-900 dark:text-white">{formData.contactEmail}</span>
+                      <span className="text-slate-900 dark:text-white font-medium break-all">{formData.contactEmail}</span>
                     </div>
                   </div>
                 </div>
                 
-                <div className="border-t mt-4 pt-4">
-                  <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-                    <p className="text-sm text-blue-800 dark:text-blue-200 font-medium">
+                <div className="border-t mt-3 sm:mt-4 pt-3 sm:pt-4">
+                  <div className="bg-blue-50 dark:bg-blue-900/20 p-3 sm:p-4 rounded-lg">
+                    <p className="text-xs sm:text-sm text-blue-800 dark:text-blue-200 font-medium">
                       💰 Prix personnalisé
                     </p>
                     <p className="text-xs text-blue-700 dark:text-blue-300 mt-1">
@@ -599,8 +599,8 @@ function ReservationForm() {
                 </div>
               </div>
               
-              <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-                <p className="text-sm text-blue-800 dark:text-blue-200">
+              <div className="bg-blue-50 dark:bg-blue-900/20 p-3 sm:p-4 rounded-lg">
+                <p className="text-xs sm:text-sm text-blue-800 dark:text-blue-200">
                   ℹ️ Votre réservation sera confirmée sous 30 minutes. 
                   Vous recevrez un SMS avec les détails de votre chauffeur.
                 </p>
@@ -609,12 +609,12 @@ function ReservationForm() {
           )}
 
           {/* Navigation buttons */}
-          <div className="flex justify-between mt-8">
-            <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-0 mt-6 sm:mt-8">
+            <div className="flex gap-2 sm:gap-4 order-2 sm:order-1">
               {currentStep === 1 && (
                 <button
                   onClick={() => router.push('/client/dashboard?tab=bookings')}
-                  className="px-6 py-3 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors font-medium"
+                  className="flex-1 sm:flex-none px-4 sm:px-6 py-2 sm:py-3 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors font-medium text-sm sm:text-base"
                 >
                   Annuler
                 </button>
@@ -622,13 +622,13 @@ function ReservationForm() {
               <button
                 onClick={prevStep}
                 disabled={currentStep === 1}
-                className="px-6 py-3 text-slate-600 dark:text-slate-300 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:text-slate-900 dark:hover:text-white transition-colors"
+                className="flex-1 sm:flex-none px-4 sm:px-6 py-2 sm:py-3 text-slate-600 dark:text-slate-300 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:text-slate-900 dark:hover:text-white transition-colors text-sm sm:text-base"
               >
                 ← Précédent
               </button>
             </div>
 
-            <div className="flex gap-4">
+            <div className="flex gap-2 sm:gap-4 order-1 sm:order-2">
               {currentStep < 3 ? (
                 <button
                   onClick={nextStep}
@@ -643,7 +643,7 @@ function ReservationForm() {
                       (!isSignedIn && (!formData.clientName || !formData.clientEmail))
                     ))
                   }
-                  className="px-8 py-3 bg-orange-500 hover:bg-orange-600 hover:scale-105 text-white font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2"
+                  className="flex-1 sm:flex-none px-6 sm:px-8 py-2 sm:py-3 bg-orange-500 hover:bg-orange-600 hover:scale-105 text-white font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2 text-sm sm:text-base"
                 >
                   Suivant
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -654,7 +654,7 @@ function ReservationForm() {
                 <button
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="px-8 py-3 bg-green-600 hover:bg-green-700 hover:scale-105 text-white font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2"
+                  className="flex-1 sm:flex-none px-6 sm:px-8 py-2 sm:py-3 bg-green-600 hover:bg-green-700 hover:scale-105 text-white font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2 text-sm sm:text-base"
                 >
                   {isSubmitting ? (
                     <>
@@ -662,12 +662,14 @@ function ReservationForm() {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      Envoi en cours...
+                      <span className="hidden sm:inline">Envoi en cours...</span>
+                      <span className="sm:hidden">Envoi...</span>
                     </>
                   ) : (
                     <>
                       <BookNowIcon size={16} color="white" />
-                      Confirmer la Réservation
+                      <span className="hidden sm:inline">Confirmer la Réservation</span>
+                      <span className="sm:hidden">Confirmer</span>
                     </>
                   )}
                 </button>
