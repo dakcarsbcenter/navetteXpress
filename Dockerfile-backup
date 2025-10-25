@@ -27,11 +27,18 @@ COPY . .
 # Variables d'environnement pour le build
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
+# Variables d'environnement factices pour le build (on n'a pas besoin de vraies valeurs pendant le build)
+# Les vraies valeurs seront fournies au runtime via docker run -e ou docker-compose
+ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
+ENV NEXTAUTH_URL="http://localhost:3000"
+ENV NEXTAUTH_SECRET="dummy-secret-for-build"
+ENV GOOGLE_CLIENT_ID="dummy-google-client-id"
+ENV GOOGLE_CLIENT_SECRET="dummy-google-client-secret"
+ENV BREVO_API_KEY="dummy-brevo-api-key"
+ENV BREVO_SENDER_EMAIL="noreply@example.com"
+ENV BREVO_SENDER_NAME="NavetteExpress"
 
-# ⚠️ SUPPRIMER ces variables factices - Coolify les injectera automatiquement
-# Les vraies valeurs seront fournies par Coolify au moment du build et du runtime
-
-# Build de l'application Next.js en mode standalone
+# Build de l'application
 RUN npm run build
 
 # Étape de production
@@ -45,7 +52,7 @@ RUN adduser --system --uid 1001 nextjs
 # Copier les fichiers publics
 COPY --from=builder /app/public ./public
 
-# Copier les fichiers de build Next.js standalone
+# Copier les fichiers de build
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
@@ -53,12 +60,12 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --chown=nextjs:nodejs start.sh ./
 RUN chmod +x start.sh
 
-# Copier les fichiers de migration pour Drizzle
+# Copier les fichiers de migration
 COPY --chown=nextjs:nodejs migrations ./migrations
 COPY --chown=nextjs:nodejs drizzle.config.ts ./
 COPY --chown=nextjs:nodejs package.json ./
 
-# Installer drizzle-kit pour les migrations
+# Installer les dépendances de développement pour les migrations
 RUN npm install drizzle-kit
 
 # Changer vers l'utilisateur non-root
