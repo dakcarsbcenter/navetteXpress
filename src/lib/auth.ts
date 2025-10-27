@@ -6,25 +6,36 @@ import { users } from "@/schema"
 import { eq } from "drizzle-orm"
 import bcrypt from "bcryptjs"
 
-// Exige une configuration via les variables d'environnement
-const { NEXTAUTH_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = process.env
-if (!NEXTAUTH_SECRET) {
-  throw new Error("NEXTAUTH_SECRET n'est pas défini. Veuillez le configurer dans votre environnement.")
-}
-if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
-  console.warn("Google OAuth credentials manquantes. L'authentification Google ne sera pas disponible.")
+// Lazy getter pour les variables d'environnement
+function getEnvConfig() {
+  const { NEXTAUTH_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = process.env
+  
+  if (!NEXTAUTH_SECRET) {
+    throw new Error("NEXTAUTH_SECRET n'est pas défini. Veuillez le configurer dans votre environnement.")
+  }
+  
+  if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
+    console.warn("Google OAuth credentials manquantes. L'authentification Google ne sera pas disponible.")
+  }
+  
+  return { NEXTAUTH_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET }
 }
 
 export const authOptions = {
-  secret: NEXTAUTH_SECRET,
-  providers: [
-    // Google Provider (conditionnel)
-    ...(GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET ? [
-      GoogleProvider({
-        clientId: GOOGLE_CLIENT_ID,
-        clientSecret: GOOGLE_CLIENT_SECRET,
-      })
-    ] : []),
+  get secret() {
+    return getEnvConfig().NEXTAUTH_SECRET
+  },
+  get providers() {
+    const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = getEnvConfig()
+    
+    return [
+      // Google Provider (conditionnel)
+      ...(GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET ? [
+        GoogleProvider({
+          clientId: GOOGLE_CLIENT_ID,
+          clientSecret: GOOGLE_CLIENT_SECRET,
+        })
+      ] : []),
     // Credentials Provider
     CredentialsProvider({
       name: "credentials",
@@ -93,7 +104,8 @@ export const authOptions = {
         }
       }
     })
-  ],
+    ]
+  },
   session: {
     strategy: "jwt" as const,
   },
