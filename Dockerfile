@@ -28,8 +28,20 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
-# ⚠️ SUPPRIMER ces variables factices - Coolify les injectera automatiquement
-# Les vraies valeurs seront fournies par Coolify au moment du build et du runtime
+# Variables dummy pour le build (seront remplacées au runtime par Coolify)
+# Ces valeurs ne sont utilisées QUE pendant la phase de build
+# Les vraies valeurs sécurisées seront injectées par Coolify au runtime
+ARG NEXTAUTH_SECRET="build-time-dummy-secret-will-be-replaced-at-runtime"
+ARG NEXTAUTH_URL="http://localhost:3000"
+ARG DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
+ARG GOOGLE_CLIENT_ID="dummy"
+ARG GOOGLE_CLIENT_SECRET="dummy"
+
+ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET
+ENV NEXTAUTH_URL=$NEXTAUTH_URL
+ENV DATABASE_URL=$DATABASE_URL
+ENV GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
+ENV GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
 
 # Build de l'application Next.js en mode standalone
 RUN npm run build
