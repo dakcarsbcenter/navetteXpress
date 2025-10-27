@@ -1,3 +1,7 @@
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+export const revalidate = 0;
+
 import { db } from '@/db'
 import { bookingsTable } from '@/schema'
 import { eq } from 'drizzle-orm'
