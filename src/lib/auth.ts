@@ -157,6 +157,12 @@ export const authOptions = {
             .where(eq(users.email, user.email!))
             .limit(1)
 
+          // Si l'utilisateur existe et a un mot de passe, refuser la connexion Google
+          if (existingUser.length > 0 && existingUser[0].password) {
+            console.warn("Connexion Google refusée: email déjà créé par mot de passe.", user.email)
+            return false
+          }
+
           if (existingUser.length === 0) {
             // Créer un nouvel utilisateur pour Google
             const newUser = {

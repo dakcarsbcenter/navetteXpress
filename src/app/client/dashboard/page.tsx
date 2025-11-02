@@ -330,93 +330,109 @@ function ClientDashboardContent() {
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-6">
               <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Total réservations</p>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.totalBookings}</p>
+                <div className="flex flex-col h-full">
+                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Total réservations</p>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">{stats.totalBookings}</p>
+                  <div className="mt-auto pt-4 flex justify-center">
+                    <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-900/20">
+                      <span className="text-2xl text-blue-600 dark:text-blue-300">📅</span>
+                    </span>
                   </div>
-                  <div className="text-3xl">📅</div>
                 </div>
               </div>
 
               <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Réservations terminées</p>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.completedBookings}</p>
+                <div className="flex flex-col h-full">
+                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Réservations terminées</p>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">{stats.completedBookings}</p>
+                  <div className="mt-auto pt-4 flex justify-center">
+                    <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-50 dark:bg-green-900/20">
+                      <span className="text-2xl text-green-600 dark:text-green-300">✅</span>
+                    </span>
                   </div>
-                  <div className="text-3xl">✅</div>
                 </div>
               </div>
 
               <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">En cours/En attente</p>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.pendingBookings}</p>
+                <div className="flex flex-col h-full">
+                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">En cours/En attente</p>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">{stats.pendingBookings}</p>
+                  <div className="mt-auto pt-4 flex justify-center">
+                    <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-yellow-50 dark:bg-yellow-900/20">
+                      <span className="text-2xl text-yellow-600 dark:text-yellow-300">⏳</span>
+                    </span>
                   </div>
-                  <div className="text-3xl">⏳</div>
                 </div>
               </div>
 
               <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Total devis</p>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.totalQuotes}</p>
+                <div className="flex flex-col h-full">
+                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Total devis</p>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">{stats.totalQuotes}</p>
+                  <div className="mt-auto pt-4 flex justify-center">
+                    <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-purple-50 dark:bg-purple-900/20">
+                      <span className="text-2xl text-purple-600 dark:text-purple-300">📋</span>
+                    </span>
                   </div>
-                  <div className="text-3xl">📋</div>
                 </div>
               </div>
 
               <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Devis en attente</p>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.pendingQuotes}</p>
+                <div className="flex flex-col h-full">
+                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Devis en attente</p>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">{stats.pendingQuotes}</p>
+                  <div className="mt-auto pt-4 flex justify-center">
+                    <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-pink-50 dark:bg-pink-900/20">
+                      <span className="text-2xl text-pink-600 dark:text-pink-300">⏱️</span>
+                    </span>
                   </div>
-                  <div className="text-3xl">⏱️</div>
                 </div>
               </div>
 
               <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Devis acceptés</p>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.acceptedQuotes}</p>
+                <div className="flex flex-col h-full">
+                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Devis acceptés</p>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">{stats.acceptedQuotes}</p>
+                  <div className="mt-auto pt-4 flex justify-center">
+                    <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-50 dark:bg-green-900/20">
+                      <span className="text-2xl text-green-600 dark:text-green-300">✅</span>
+                    </span>
                   </div>
-                  <div className="text-3xl">✅</div>
                 </div>
               </div>
 
               <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Note moyenne</p>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                      {stats.averageRating.toFixed(1)} ⭐
-                    </p>
+                <div className="flex flex-col h-full">
+                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Note moyenne</p>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">
+                    {stats.averageRating.toFixed(1)} <span className="text-yellow-400">⭐</span>
+                  </p>
+                  <div className="mt-auto pt-4 flex justify-center">
+                    <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-yellow-50 dark:bg-yellow-900/20">
+                      <span className="text-2xl text-yellow-400">⭐</span>
+                    </span>
                   </div>
-                  <div className="text-3xl">⭐</div>
                 </div>
               </div>
 
               <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">À évaluer</p>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.reviewableBookings}</p>
+                <div className="flex flex-col h-full">
+                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">À évaluer</p>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">{stats.reviewableBookings}</p>
+                  <div className="mt-auto pt-4 flex justify-center">
+                    <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-50 dark:bg-red-900/20">
+                      <span className="text-2xl text-red-600 dark:text-red-300">🚗</span>
+                    </span>
                   </div>
-                  <div className="text-3xl">🚗</div>
+                  {stats.reviewableBookings > 0 && (
+                    <button
+                      onClick={() => setActiveTab('create-reviews')}
+                      className="mt-2 text-sm text-blue-600 hover:text-blue-700 font-medium"
+                    >
+                      Évaluer maintenant →
+                    </button>
+                  )}
                 </div>
-                {stats.reviewableBookings > 0 && (
-                  <button
-                    onClick={() => setActiveTab('create-reviews')}
-                    className="mt-2 text-sm text-blue-600 hover:text-blue-700 font-medium"
-                  >
-                    Évaluer maintenant →
-                  </button>
-                )}
               </div>
             </div>
 

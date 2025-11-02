@@ -80,7 +80,11 @@ export function QuickSignupModal({ isOpen, onClose, onSuccess, prefillData }: Qu
           if (registerData.details.password) errorMessages.push("Mot de passe: " + registerData.details.password.join(", "))
           setError(errorMessages.length > 0 ? errorMessages.join(" • ") : registerData.error)
         } else {
-          setError(registerData.error || "Erreur lors de la création du compte")
+            if (registerData.error === "Un compte avec cet email existe déjà") {
+              setError("Vous avez déjà un compte, veuillez vous connecter.")
+            } else {
+              setError(registerData.error || "Erreur lors de la création du compte")
+            }
         }
         return
       }

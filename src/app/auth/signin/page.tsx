@@ -10,6 +10,8 @@ function SignInForm() {
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const [failedAttempts, setFailedAttempts] = useState(0)
+  const [showResetOption, setShowResetOption] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -71,12 +73,29 @@ function SignInForm() {
       if (result?.error) {
         console.error("Erreur NextAuth:", result.error)
         setError(getErrorMessage(result.error))
+        
+        // Incrémenter le compteur de tentatives échouées
+        const newAttempts = failedAttempts + 1
+        setFailedAttempts(newAttempts)
+        
+        // Afficher l'option de réinitialisation après 2 tentatives
+        if (newAttempts >= 2) {
+          setShowResetOption(true)
+        }
       } else if (result?.ok) {
+        // Réinitialiser le compteur en cas de succès
+        setFailedAttempts(0)
+        setShowResetOption(false)
         // Redirection automatique basée sur le rôle
         // Le middleware s'occupera de la redirection
         router.push("/dashboard")
       } else {
         setError("Une erreur de connexion s'est produite")
+        const newAttempts = failedAttempts + 1
+        setFailedAttempts(newAttempts)
+        if (newAttempts >= 2) {
+          setShowResetOption(true)
+        }
       }
     } catch (error) {
       console.error("Erreur:", error)
@@ -130,6 +149,19 @@ function SignInForm() {
           {error && (
             <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200 rounded-lg text-sm">
               {error}
+              {showResetOption && (
+                <div className="mt-3 pt-3 border-t border-red-200 dark:border-red-800">
+                  <p className="text-sm font-medium mb-2">
+                    Vous avez oublié votre mot de passe ?
+                  </p>
+                  <Link 
+                    href="/auth/reset-password"
+                    className="inline-block text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold underline"
+                  >
+                    Réinitialiser mon mot de passe →
+                  </Link>
+                </div>
+              )}
             </div>
           )}
 

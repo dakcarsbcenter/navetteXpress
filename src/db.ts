@@ -1,8 +1,8 @@
-import { drizzle } from "drizzle-orm/neon-http";
-import { neon } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import * as schema from "@/schema";
 
-// Lazy init du client Drizzle/Neon pour éviter l'accès ENV au chargement du module
+// Lazy init du client Drizzle/Postgres pour éviter l'accès ENV au chargement du module
 declare global {
   // eslint-disable-next-line no-var
   var __drizzleDb: ReturnType<typeof drizzle> | undefined;
@@ -18,7 +18,7 @@ export function getDb() {
     throw new Error("DATABASE_URL n'est pas défini. Veuillez le configurer dans votre environnement.");
   }
 
-  const sql = neon(DATABASE_URL);
+  const sql = postgres(DATABASE_URL);
   _db = drizzle(sql, { schema });
   (globalThis as any).__drizzleDb = _db;
   return _db;

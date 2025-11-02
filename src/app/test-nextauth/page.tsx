@@ -65,7 +65,7 @@ export default function TestNextAuthPage() {
               <p><strong>Nom:</strong> {session.user?.name}</p>
             </div>
             <button
-              onClick={() => signOut()}
+              onClick={() => signOut({ callbackUrl: '/' })}
               className="mt-4 w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700"
             >
               Se déconnecter

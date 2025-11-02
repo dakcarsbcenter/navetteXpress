@@ -19,6 +19,8 @@ export const users = pgTable('users', {
   phone: text('phone'),
   licenseNumber: text('license_number').unique(),
   isActive: boolean('is_active').notNull().default(true),
+  resetToken: text('reset_token'),
+  resetTokenExpiry: timestamp('reset_token_expiry'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().$onUpdate(() => new Date()),
 }, (table) => ({
