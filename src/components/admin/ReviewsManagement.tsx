@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { usePermissions } from "@/hooks/usePermissions"
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal"
 
 interface Review {
   id: number
@@ -25,6 +26,8 @@ export function ReviewsManagement() {
   const [editingReview, setEditingReview] = useState<Review | null>(null)
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null)
   const { canDelete } = usePermissions()
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
+  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null)
   const [formData, setFormData] = useState({
     bookingId: '',
     rating: 5,
@@ -109,19 +112,25 @@ export function ReviewsManagement() {
     }
   }
 
-  const handleDeleteReview = async (reviewId: number) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cet avis ?')) return
-    
+  const openDeleteConfirm = (reviewId: number) => {
+    setDeleteTargetId(reviewId)
+    setDeleteConfirmOpen(true)
+  }
+
+  const handleDeleteReview = async () => {
+    if (deleteTargetId == null) return
     try {
-      const response = await fetch(`/api/admin/reviews/${reviewId}`, {
+      const response = await fetch(`/api/admin/reviews/${deleteTargetId}`, {
         method: 'DELETE'
       })
-      
       if (response.ok) {
         await fetchReviews()
       }
     } catch (error) {
       console.error('Erreur lors de la suppression:', error)
+    } finally {
+      setDeleteConfirmOpen(false)
+      setDeleteTargetId(null)
     }
   }
 
@@ -303,7 +312,7 @@ export function ReviewsManagement() {
 
                                 <button
                                   onClick={() => {
-                                    handleDeleteReview(review.id);
+                                    openDeleteConfirm(review.id);
                                     setOpenDropdownId(null);
                                   }}
                                   className="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-700 dark:hover:text-red-300 w-full text-left transition-colors duration-200"
@@ -318,6 +327,18 @@ export function ReviewsManagement() {
                               </>
                             )}
                           </div>
+                          {/* Modal de confirmation de suppression */}
+                          <ConfirmationModal
+                            isOpen={deleteConfirmOpen}
+                            onClose={() => { setDeleteConfirmOpen(false); setDeleteTargetId(null) }}
+                            title="Supprimer l’avis"
+                            message="Cette action est irréversible. L’avis sera définitivement supprimé. Voulez-vous continuer ?"
+                            type="error"
+                            confirmText="Supprimer définitivement"
+                            onConfirm={handleDeleteReview}
+                            showCancel={true}
+                            cancelText="Annuler"
+                          />
                         </div>
                       )}
                     </div>

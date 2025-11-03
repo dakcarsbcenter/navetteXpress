@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { SelectDriver, InsertDriver } from '@/schema';
+import { ConfirmationModal } from '@/components/ui/ConfirmationModal';
 
 type DriverWithDetails = SelectDriver;
 
@@ -14,6 +15,8 @@ export function DriversManager() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingDriver, setEditingDriver] = useState<DriverWithDetails | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
 
   // Formulaire état
   const [formData, setFormData] = useState<Partial<InsertDriver>>({
@@ -90,18 +93,18 @@ export function DriversManager() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce chauffeur ?')) {
-      return;
-    }
-    
+  const openDeleteConfirm = (id: number) => {
+    setDeleteTargetId(id);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (deleteTargetId == null) return;
     try {
-      const response = await fetch(`/api/admin/drivers/${id}`, {
+      const response = await fetch(`/api/admin/drivers/${deleteTargetId}`, {
         method: 'DELETE',
       });
-      
       const result = await response.json();
-      
       if (result.success) {
         await fetchDrivers();
         alert('Chauffeur supprimé avec succès!');
@@ -111,6 +114,9 @@ export function DriversManager() {
     } catch (error) {
       console.error('Erreur:', error);
       alert('Erreur lors de la suppression');
+    } finally {
+      setDeleteConfirmOpen(false);
+      setDeleteTargetId(null);
     }
   };
 
@@ -409,7 +415,7 @@ export function DriversManager() {
                         Modifier
                       </button>
                       <button
-                        onClick={() => handleDelete(parseInt(driver.id))}
+                        onClick={() => openDeleteConfirm(parseInt(driver.id))}
                         className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
                       >
                         Supprimer
@@ -428,7 +434,21 @@ export function DriversManager() {
           )}
         </div>
       </div>
+
+      {/* Modal de confirmation de suppression */}
+      <ConfirmationModal
+        isOpen={deleteConfirmOpen}
+        onClose={() => { setDeleteConfirmOpen(false); setDeleteTargetId(null); }}
+        title="Supprimer le chauffeur"
+        message="Cette action est irréversible. Le chauffeur sera définitivement supprimé du système. Voulez-vous continuer ?"
+        type="error"
+        confirmText="Supprimer définitivement"
+        onConfirm={handleDelete}
+        showCancel={true}
+        cancelText="Annuler"
+      />
     </div>
   );
 }
+
 

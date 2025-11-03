@@ -4,9 +4,10 @@ export const revalidate = 0;
 
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { bookingsTable } from '@/schema';
+import { bookingsTable, users } from '@/schema';
 import { eq } from 'drizzle-orm';
 import { requireBookingsRead, requireBookingsUpdate, requireBookingsDelete } from '@/utils/admin-permissions';
+import { sendBookingConfirmedToClient, sendBookingAssignedToDriver } from '@/lib/resend-email';
 
 // GET - Récupérer une réservation par ID
 export async function GET(
@@ -76,6 +77,7 @@ export async function PATCH(
     };
 
     // Ajout conditionnel des champs à mettre à jour
+    const oldStatus = body.oldStatus; // Pour détecter les changements
     if (body.status !== undefined) updateData.status = body.status;
     if (body.driverId !== undefined) updateData.driverId = body.driverId;
     if (body.vehicleId !== undefined) updateData.vehicleId = body.vehicleId;
@@ -95,9 +97,96 @@ export async function PATCH(
       }, { status: 404 });
     }
 
+    const booking = updatedBooking[0];
+
+    // Envoyer notification au client si la réservation est confirmée
+    if (body.status === 'confirmed' && oldStatus !== 'confirmed') {
+      try {
+        console.log(`📧 Envoi notification confirmation au client pour réservation #${booking.id}...`);
+        
+        // Récupérer les infos du chauffeur si assigné
+        let driver = undefined;
+        if (booking.driverId) {
+          const driverData = await db
+            .select()
+            .from(users)
+            .where(eq(users.id, booking.driverId))
+            .limit(1);
+          if (driverData.length > 0) {
+            driver = {
+              name: driverData[0].name,
+              email: driverData[0].email
+            };
+          }
+        }
+
+        const emailResult = await sendBookingConfirmedToClient({
+          id: booking.id,
+          customerName: booking.customerName,
+          customerEmail: booking.customerEmail,
+          customerPhone: booking.customerPhone || undefined,
+          pickupAddress: booking.pickupAddress,
+          dropoffAddress: booking.dropoffAddress,
+          scheduledDateTime: booking.scheduledDateTime.toISOString(),
+          passengers: 1, // À ajuster si disponible
+          price: booking.price || undefined,
+          notes: booking.notes || undefined
+        }, driver);
+
+        if (emailResult.success) {
+          console.log(`✅ Notification client envoyée via Resend`);
+        } else {
+          console.error(`❌ Erreur notification client:`, emailResult.error);
+        }
+      } catch (emailError) {
+        console.error('❌ Erreur lors de l\'envoi de la notification client:', emailError);
+      }
+    }
+
+    // Envoyer notification au chauffeur si un chauffeur est assigné
+    if (body.driverId && body.driverId !== oldStatus) {
+      try {
+        console.log(`📧 Envoi notification assignation au chauffeur pour réservation #${booking.id}...`);
+        
+        const driverData = await db
+          .select()
+          .from(users)
+          .where(eq(users.id, body.driverId))
+          .limit(1);
+
+        if (driverData.length > 0) {
+          const driver = {
+            name: driverData[0].name,
+            email: driverData[0].email
+          };
+
+          const emailResult = await sendBookingAssignedToDriver({
+            id: booking.id,
+            customerName: booking.customerName,
+            customerEmail: booking.customerEmail,
+            customerPhone: booking.customerPhone || undefined,
+            pickupAddress: booking.pickupAddress,
+            dropoffAddress: booking.dropoffAddress,
+            scheduledDateTime: booking.scheduledDateTime.toISOString(),
+            passengers: 1, // À ajuster si disponible
+            price: booking.price || undefined,
+            notes: booking.notes || undefined
+          }, driver);
+
+          if (emailResult.success) {
+            console.log(`✅ Notification chauffeur envoyée via Resend`);
+          } else {
+            console.error(`❌ Erreur notification chauffeur:`, emailResult.error);
+          }
+        }
+      } catch (emailError) {
+        console.error('❌ Erreur lors de l\'envoi de la notification chauffeur:', emailError);
+      }
+    }
+
     return NextResponse.json({ 
       success: true, 
-      data: updatedBooking[0] 
+      data: booking 
     });
   } catch (error) {
     console.error('Erreur lors de la mise à jour de la réservation:', error);

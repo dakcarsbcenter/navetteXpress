@@ -7,7 +7,7 @@ import { db } from '@/db';
 import { bookingsTable, users } from '@/schema';
 import { eq, and } from 'drizzle-orm';
 import { requireBookingsUpdate } from '@/utils/admin-permissions';
-import { sendDriverAssignmentNotification } from '@/lib/brevo-email';
+import { sendBookingAssignedToDriver } from '@/lib/resend-email';
 
 // PUT - Assigner une réservation à un chauffeur
 export async function PUT(
@@ -79,29 +79,30 @@ export async function PUT(
     
     console.log(`✅ Réservation #${assignedBooking.id} assignée au chauffeur ${assignedDriver.name}`);
 
-    // Envoyer notification au chauffeur assigné
+    // Envoyer notification au chauffeur assigné via Resend
     try {
       console.log(`📧 Envoi notification chauffeur pour assignation #${assignedBooking.id}...`);
       
-      const emailResult = await sendDriverAssignmentNotification(
-        assignedDriver.email,
-        assignedDriver.name || 'Chauffeur',
-        {
-          id: assignedBooking.id,
-          customerName: assignedBooking.customerName,
-          customerPhone: assignedBooking.customerPhone,
-          pickupAddress: assignedBooking.pickupAddress,
-          dropoffAddress: assignedBooking.dropoffAddress,
-          scheduledDateTime: assignedBooking.scheduledDateTime.toISOString(),
-          price: assignedBooking.price || "0",
-          notes: assignedBooking.notes || undefined
-        }
-      );
+      const emailResult = await sendBookingAssignedToDriver({
+        id: assignedBooking.id,
+        customerName: assignedBooking.customerName,
+        customerEmail: assignedBooking.customerEmail,
+        customerPhone: assignedBooking.customerPhone || undefined,
+        pickupAddress: assignedBooking.pickupAddress,
+        dropoffAddress: assignedBooking.dropoffAddress,
+        scheduledDateTime: assignedBooking.scheduledDateTime.toISOString(),
+        passengers: 1, // À ajuster si disponible
+        price: assignedBooking.price || undefined,
+        notes: assignedBooking.notes || undefined
+      }, {
+        name: assignedDriver.name,
+        email: assignedDriver.email
+      });
 
       if (emailResult.success) {
-        console.log(`✅ Notification chauffeur envoyée - Message ID: ${emailResult.messageId}`);
+        console.log(`✅ Notification chauffeur envoyée via Resend`);
       } else {
-        console.error(`❌ Erreur notification chauffeur: ${emailResult.error}`);
+        console.error(`❌ Erreur notification chauffeur:`, emailResult.error);
         // On continue même si l'email échoue
       }
     } catch (emailError) {

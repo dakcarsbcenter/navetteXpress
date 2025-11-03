@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { SelectBooking, SelectUser, SelectVehicle, InsertBooking } from '@/schema';
+import { ConfirmationModal } from '@/components/ui/ConfirmationModal';
 
 interface BookingWithDetails {
   booking: SelectBooking;
@@ -18,6 +19,8 @@ export function BookingsManager() {
   const [editingBooking, setEditingBooking] = useState<SelectBooking | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
 
   // Formulaire état
   const [formData, setFormData] = useState<Partial<InsertBooking>>({
@@ -120,18 +123,18 @@ export function BookingsManager() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cette réservation ?')) {
-      return;
-    }
-    
+  const openDeleteConfirm = (id: number) => {
+    setDeleteTargetId(id);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (deleteTargetId == null) return;
     try {
-      const response = await fetch(`/api/admin/bookings/${id}`, {
+      const response = await fetch(`/api/admin/bookings/${deleteTargetId}`, {
         method: 'DELETE',
       });
-      
       const result = await response.json();
-      
       if (result.success) {
         await fetchBookings();
         alert('Réservation supprimée avec succès!');
@@ -141,6 +144,9 @@ export function BookingsManager() {
     } catch (error) {
       console.error('Erreur:', error);
       alert('Erreur lors de la suppression');
+    } finally {
+      setDeleteConfirmOpen(false);
+      setDeleteTargetId(null);
     }
   };
 
@@ -576,7 +582,7 @@ export function BookingsManager() {
                         Modifier
                       </button>
                       <button
-                        onClick={() => handleDelete(item.booking.id)}
+                        onClick={() => openDeleteConfirm(item.booking.id)}
                         className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
                       >
                         Supprimer
@@ -594,6 +600,18 @@ export function BookingsManager() {
             </div>
           )}
         </div>
+        {/* Modal de confirmation de suppression */}
+        <ConfirmationModal
+          isOpen={deleteConfirmOpen}
+          onClose={() => { setDeleteConfirmOpen(false); setDeleteTargetId(null); }}
+          title="Supprimer la réservation"
+          message="Cette action est irréversible. La réservation sera définitivement supprimée. Voulez-vous continuer ?"
+          type="error"
+          confirmText="Supprimer définitivement"
+          onConfirm={handleDelete}
+          showCancel={true}
+          cancelText="Annuler"
+        />
       </div>
     </div>
   );

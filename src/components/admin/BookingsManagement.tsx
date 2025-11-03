@@ -7,6 +7,7 @@ import { FilterBar } from "@/components/ui/FilterBar"
 import { useNotification } from "@/hooks/useNotification"
 import { formatPrice } from "@/lib/utils"
 import { usePermissions } from "@/hooks/usePermissions"
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal"
 
 interface Booking {
   id: number
@@ -66,6 +67,8 @@ export function BookingsManagement() {
   
   // Dropdown state
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null)
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
+  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null)
   
   const [filters, setFilters] = useState({
     status: '',
@@ -334,19 +337,30 @@ export function BookingsManagement() {
     }
   }
 
-  const handleDeleteBooking = async (bookingId: number) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cette réservation ?')) return
-    
+  const openDeleteConfirm = (bookingId: number) => {
+    setDeleteTargetId(bookingId)
+    setDeleteConfirmOpen(true)
+  }
+
+  const handleDeleteBooking = async () => {
+    if (deleteTargetId == null) return
     try {
-      const response = await fetch(`/api/admin/bookings/${bookingId}`, {
+      const response = await fetch(`/api/admin/bookings/${deleteTargetId}`, {
         method: 'DELETE'
       })
-      
       if (response.ok) {
         await fetchBookings()
+        showSuccess('Réservation supprimée avec succès', 'Suppression réussie')
+      } else {
+        const err = await response.json().catch(() => null)
+        showError(err?.error || 'Échec de la suppression de la réservation')
       }
     } catch (error) {
       console.error('Erreur lors de la suppression:', error)
+      showError('Une erreur est survenue lors de la suppression')
+    } finally {
+      setDeleteConfirmOpen(false)
+      setDeleteTargetId(null)
     }
   }
 
@@ -755,7 +769,7 @@ export function BookingsManagement() {
                                 <button
                                   onClick={() => {
                                     console.log('Delete clicked for booking:', booking.id)
-                                    handleDeleteBooking(booking.id)
+                                    openDeleteConfirm(booking.id)
                                     setOpenDropdownId(null)
                                   }}
                                   className="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 w-full text-left transition-colors duration-200"
@@ -1299,6 +1313,19 @@ export function BookingsManagement() {
       <NotificationCenter
         notifications={notifications}
         onRemove={removeNotification}
+      />
+
+      {/* Modal de confirmation de suppression */}
+      <ConfirmationModal
+        isOpen={deleteConfirmOpen}
+        onClose={() => { setDeleteConfirmOpen(false); setDeleteTargetId(null) }}
+        title="Supprimer la réservation"
+        message="Cette action est irréversible. La réservation sera définitivement supprimée. Voulez-vous continuer ?"
+        type="error"
+        confirmText="Supprimer définitivement"
+        onConfirm={handleDeleteBooking}
+        showCancel={true}
+        cancelText="Annuler"
       />
     </div>
   )

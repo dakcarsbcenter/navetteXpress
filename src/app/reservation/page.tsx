@@ -59,6 +59,7 @@ function ReservationForm() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [errorModal, setErrorModal] = useState<{ open: boolean; title: string; message: string }>({ open: false, title: '', message: '' });
 
   // Gérer la pré-sélection du service depuis l'URL
   useEffect(() => {
@@ -135,13 +136,25 @@ function ReservationForm() {
         setIsSubmitting(false);
         setShowSuccessModal(true);
       } else {
-        throw new Error(result.error || 'Erreur lors de la création de la réservation');
+        // Ouvre une jolie modale d'erreur au lieu d'un alert natif
+        const msg = result.error || 'Erreur lors de la création de la réservation';
+        const isForbidden = response.status === 403 || /permission/i.test(msg);
+        setErrorModal({
+          open: true,
+          title: isForbidden ? "Action non autorisée" : "Échec de la réservation",
+          message: msg
+        });
+        throw new Error(msg);
       }
     } catch (error) {
       console.error('Erreur lors de la soumission:', error);
       setIsSubmitting(false);
-      // Afficher une erreur à l'utilisateur
-      alert('Erreur lors de la création de la réservation. Veuillez réessayer.');
+      // Si aucune modale n'a été ouverte (erreur réseau, etc.)
+      setErrorModal(prev => prev.open ? prev : ({
+        open: true,
+        title: 'Échec de la réservation',
+        message: 'Une erreur est survenue lors de la création de la réservation. Veuillez réessayer.'
+      }));
     }
   };
 
@@ -716,6 +729,17 @@ function ReservationForm() {
             });
           }
         }}
+      />
+
+      {/* Modal d'erreur stylée */}
+      <ConfirmationModal
+        isOpen={errorModal.open}
+        onClose={() => setErrorModal({ open: false, title: '', message: '' })}
+        title={errorModal.title || 'Erreur'}
+        message={errorModal.message}
+        type="error"
+        confirmText="Fermer"
+        onConfirm={() => setErrorModal({ open: false, title: '', message: '' })}
       />
     </div>
   );

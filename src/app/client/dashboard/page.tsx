@@ -7,6 +7,7 @@ import { Navigation } from "@/components/navigation"
 import Link from "next/link"
 import { CreateReviewModal } from "@/components/client/CreateReviewModal"
 import { EditProfileModal } from "@/components/client/EditProfileModal"
+import { EditBookingModal } from "@/components/client/EditBookingModal"
 import { ClientQuotesView } from "@/components/client/ClientQuotesView"
 import UniversalProfilePhotoUpload from "@/components/ui/UniversalProfilePhotoUpload"
 import { VehiclesManagement } from "@/components/client/VehiclesManagement"
@@ -93,6 +94,8 @@ function ClientDashboardContent() {
   const [userProfile] = useState<UserProfile | null>(null)
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false)
   const [userPermissions, setUserPermissions] = useState<Record<string, string[]>>({})
+  const [editingBooking, setEditingBooking] = useState<Booking | null>(null)
+  const [isEditBookingModalOpen, setIsEditBookingModalOpen] = useState(false)
   const [stats, setStats] = useState({
     totalBookings: 0,
     completedBookings: 0,
@@ -531,12 +534,17 @@ function ClientDashboardContent() {
                         </div>
                         <div className="flex items-center gap-2">
                           {getStatusBadge(booking.status)}
-                          {hasBookingsUpdatePermission && (
+                          {/* Bouton éditer visible seulement si la réservation n'est pas confirmée/terminée/annulée */}
+                          {hasBookingsUpdatePermission && !['confirmed', 'in_progress', 'completed', 'cancelled'].includes(booking.status) && (
                             <button
-                              className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium"
+                              onClick={() => {
+                                setEditingBooking(booking)
+                                setIsEditBookingModalOpen(true)
+                              }}
+                              className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium px-2 py-1 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
                               title="Modifier la réservation"
                             >
-                              ✏️
+                              ✏️ Modifier
                             </button>
                           )}
                           {hasBookingsDeletePermission && (
@@ -1072,6 +1080,20 @@ function ClientDashboardContent() {
         onClose={() => setIsEditProfileModalOpen(false)}
         onSuccess={() => {
           // Recharger les données après mise à jour du profil
+          loadClientData()
+        }}
+      />
+
+      {/* Modal d'édition de réservation */}
+      <EditBookingModal
+        isOpen={isEditBookingModalOpen}
+        onClose={() => {
+          setIsEditBookingModalOpen(false)
+          setEditingBooking(null)
+        }}
+        booking={editingBooking}
+        onSuccess={() => {
+          // Recharger les réservations après modification
           loadClientData()
         }}
       />

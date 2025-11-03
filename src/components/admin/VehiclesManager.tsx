@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { SelectVehicle, SelectDriver, InsertVehicle } from '@/schema';
 import { ImageUploader } from '@/components/ImageUploader';
+import DeleteVehicleModal from '@/components/admin/DeleteVehicleModal';
 
 interface VehicleWithDriver {
   vehicle: SelectVehicle;
@@ -17,6 +18,7 @@ export function VehiclesManager() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingVehicle, setEditingVehicle] = useState<SelectVehicle | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [deleteConfirm, setDeleteConfirm] = useState<{ open: boolean; vehicle: SelectVehicle | null }>({ open: false, vehicle: null });
 
   // Formulaire état
   const [formData, setFormData] = useState<Partial<InsertVehicle>>({
@@ -129,10 +131,6 @@ export function VehiclesManager() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce véhicule ?')) {
-      return;
-    }
-    
     try {
       const response = await fetch(`/api/admin/vehicles/${id}`, {
         method: 'DELETE',
@@ -142,13 +140,14 @@ export function VehiclesManager() {
       
       if (result.success) {
         await fetchVehicles();
-        alert('Véhicule supprimé avec succès!');
+        // suppression réussie
       } else {
-        alert('Erreur: ' + result.error);
+        console.error('Erreur: ', result.error);
       }
     } catch (error) {
       console.error('Erreur:', error);
-      alert('Erreur lors de la suppression');
+    } finally {
+      setDeleteConfirm({ open: false, vehicle: null });
     }
   };
 
@@ -243,6 +242,7 @@ export function VehiclesManager() {
   }
 
   return (
+    <>
     <div className="space-y-6">
       {/* Header */}
       <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-6">
@@ -631,7 +631,7 @@ export function VehiclesManager() {
                         Modifier
                       </button>
                       <button
-                        onClick={() => handleDelete(item.vehicle.id)}
+                        onClick={() => setDeleteConfirm({ open: true, vehicle: item.vehicle })}
                         className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
                       >
                         Supprimer
@@ -651,6 +651,14 @@ export function VehiclesManager() {
         </div>
       </div>
     </div>
+
+    <DeleteVehicleModal
+      isOpen={deleteConfirm.open}
+      vehicle={deleteConfirm.vehicle as any}
+      onCancel={() => setDeleteConfirm({ open: false, vehicle: null })}
+      onConfirm={() => handleDelete(deleteConfirm.vehicle!.id)}
+    />
+  </>
   );
 }
 

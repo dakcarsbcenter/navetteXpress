@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal"
 import { FilterBar } from "@/components/ui/FilterBar"
 import { useNotification } from "@/hooks/useNotification"
 import UniversalProfilePhotoUpload from "@/components/ui/UniversalProfilePhotoUpload"
@@ -44,6 +45,8 @@ export function UsersManagement() {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [newPassword, setNewPassword] = useState('')
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
+  const [deleteTargetUserId, setDeleteTargetUserId] = useState<string | null>(null)
 
   useEffect(() => {
     fetchUsers()
@@ -212,19 +215,30 @@ export function UsersManagement() {
     }
   }
 
-  const handleDeleteUser = async (userId: string) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) return
-    
+  const openDeleteUserConfirm = (userId: string) => {
+    setDeleteTargetUserId(userId)
+    setDeleteConfirmOpen(true)
+  }
+
+  const handleDeleteUser = async () => {
+    if (!deleteTargetUserId) return
     try {
-      const response = await fetch(`/api/admin/users/${userId}`, {
+      const response = await fetch(`/api/admin/users/${deleteTargetUserId}`, {
         method: 'DELETE'
       })
-      
       if (response.ok) {
         await fetchUsers()
+        showSuccess('Utilisateur supprimé avec succès', 'Suppression réussie')
+      } else {
+        const err = await response.json().catch(() => null)
+        showError(err?.error || 'Échec de la suppression de l’utilisateur')
       }
     } catch (error) {
       console.error('Erreur lors de la suppression:', error)
+      showError('Une erreur est survenue lors de la suppression')
+    } finally {
+      setDeleteConfirmOpen(false)
+      setDeleteTargetUserId(null)
     }
   }
 
@@ -424,7 +438,7 @@ export function UsersManagement() {
                           } else if (action === 'password') {
                             openPasswordModal(user)
                           } else if (action === 'delete') {
-                            handleDeleteUser(user.id)
+                            openDeleteUserConfirm(user.id)
                           }
                           e.target.value = ''
                         }}
@@ -644,6 +658,19 @@ export function UsersManagement() {
       <NotificationCenter
         notifications={notifications}
         onRemove={removeNotification}
+      />
+
+      {/* Modal de confirmation de suppression */}
+      <ConfirmationModal
+        isOpen={deleteConfirmOpen}
+        onClose={() => { setDeleteConfirmOpen(false); setDeleteTargetUserId(null) }}
+        title="Supprimer l’utilisateur"
+        message="Cette action est irréversible. L’utilisateur sera définitivement supprimé du système. Voulez-vous continuer ?"
+        type="error"
+        confirmText="Supprimer définitivement"
+        onConfirm={handleDeleteUser}
+        showCancel={true}
+        cancelText="Annuler"
       />
     </div>
   )

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import DeleteVehicleModal from "@/components/admin/DeleteVehicleModal"
 import Image from "next/image"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { FilterBar } from "@/components/ui/FilterBar"
@@ -61,6 +62,8 @@ export function VehiclesManagement() {
     driverId: '',
     isActive: true
   })
+  // Suppression: état de confirmation
+  const [deleteConfirm, setDeleteConfirm] = useState<{ open: boolean; vehicle: Vehicle | null }>({ open: false, vehicle: null })
   
   // État pour gérer les features comme tableau
   const [featuresList, setFeaturesList] = useState<string[]>([])
@@ -265,7 +268,7 @@ export function VehiclesManagement() {
   }
 
   const handleDeleteVehicle = async (vehicleId: number) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce véhicule ?')) return
+    // La confirmation est gérée via une modale stylée
     
     try {
       const response = await fetch(`/api/admin/vehicles/${vehicleId}`, {
@@ -282,6 +285,8 @@ export function VehiclesManagement() {
     } catch (error) {
       console.error('Erreur lors de la suppression:', error)
       showError('Une erreur est survenue lors de la suppression du véhicule', 'Erreur technique')
+    } finally {
+      setDeleteConfirm({ open: false, vehicle: null })
     }
   }
 
@@ -505,7 +510,7 @@ export function VehiclesManagement() {
                           if (action === 'edit') {
                             openEditModal(vehicle)
                           } else if (action === 'delete') {
-                            handleDeleteVehicle(vehicle.id)
+                            setDeleteConfirm({ open: true, vehicle })
                           }
                           e.target.value = ''
                         }}
@@ -769,6 +774,13 @@ export function VehiclesManagement() {
           </div>
         </div>
       )}
+
+      <DeleteVehicleModal
+        isOpen={deleteConfirm.open}
+        vehicle={deleteConfirm.vehicle as any}
+        onCancel={() => setDeleteConfirm({ open: false, vehicle: null })}
+        onConfirm={() => handleDeleteVehicle(deleteConfirm.vehicle!.id)}
+      />
 
       {/* Centre de notifications */}
       <NotificationCenter

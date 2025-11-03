@@ -8,7 +8,7 @@ import { bookingsTable, rolePermissionsTable } from '@/schema';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { eq, desc, and } from 'drizzle-orm';
-import { sendNewBookingNotificationToAdmin } from '@/lib/brevo-email';
+import { sendBookingNotificationToAdmin } from '@/lib/resend-email';
 
 // Fonction pour vérifier les permissions dynamiques des bookings
 async function hasBookingsPermission(userRole: string, action: 'read' | 'create' | 'update' | 'delete'): Promise<boolean> {
@@ -46,13 +46,19 @@ export async function POST(request: NextRequest) {
     // Si l'utilisateur est connecté, vérifier les permissions
     if (session?.user?.id) {
       const userRole = session.user.role || 'customer';
-      const hasPermission = await hasBookingsPermission(userRole, 'create');
-      
-      if (!hasPermission) {
-        return NextResponse.json({ 
-          success: false, 
-          error: 'Vous n\'avez pas la permission de créer des réservations' 
-        }, { status: 403 });
+
+      // Politique métier: la création d'une demande de réservation est toujours
+      // autorisée pour les clients (customer), qu'ils soient connectés ou non.
+      // On ne bloque donc pas les clients sur l'action "create" même si la
+      // matrice n'accorde pas explicitement cette action.
+      if (userRole !== 'customer') {
+        const hasPermission = await hasBookingsPermission(userRole, 'create');
+        if (!hasPermission) {
+          return NextResponse.json({ 
+            success: false, 
+            error: 'Vous n\'avez pas la permission de créer des réservations' 
+          }, { status: 403 });
+        }
       }
     }
     
@@ -150,28 +156,27 @@ export async function POST(request: NextRequest) {
     const createdBooking = newBooking[0];
     console.log(`✅ Réservation #${createdBooking.id} créée pour ${finalClientName}`);
 
-    // Envoyer notification à l'admin
+    // Envoyer notification à l'admin via Resend
     try {
-      const adminEmail = process.env.ADMIN_EMAIL || 'admin@navette-xpress.sn';
-      
       console.log(`📧 Envoi notification admin pour nouvelle réservation #${createdBooking.id}...`);
       
-      const emailResult = await sendNewBookingNotificationToAdmin(adminEmail, {
+      const emailResult = await sendBookingNotificationToAdmin({
         id: createdBooking.id,
         customerName: createdBooking.customerName,
         customerEmail: createdBooking.customerEmail,
-        customerPhone: createdBooking.customerPhone,
+        customerPhone: createdBooking.customerPhone || undefined,
         pickupAddress: createdBooking.pickupAddress,
         dropoffAddress: createdBooking.dropoffAddress,
         scheduledDateTime: createdBooking.scheduledDateTime.toISOString(),
-        price: createdBooking.price || "0",
+        passengers: passengers || 1,
+        price: createdBooking.price || undefined,
         notes: createdBooking.notes || undefined
       });
 
       if (emailResult.success) {
-        console.log(`✅ Notification admin envoyée - Message ID: ${emailResult.messageId}`);
+        console.log(`✅ Notification admin envoyée via Resend`);
       } else {
-        console.error(`❌ Erreur notification admin: ${emailResult.error}`);
+        console.error(`❌ Erreur notification admin:`, emailResult.error);
         // On continue même si l'email échoue
       }
     } catch (emailError) {
