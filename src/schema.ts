@@ -78,11 +78,6 @@ export const vehiclesTable = pgTable('vehicles', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().$onUpdate(() => new Date()),
 }, (table) => ({
-  photoImageCheck: check('vehicle_photo_image_check', sql`
-    ${table.photo} IS NULL OR 
-    ${table.photo} ~ '^https?://.*\\.(jpg|jpeg|png|gif|webp|bmp|svg)$' OR
-    ${table.photo} ~ '^data:image/(jpeg|jpg|png|gif|webp|bmp|svg\\+xml);base64,'
-  `),
   yearCheck: check('year_check', sql`${table.year} >= 1900 AND ${table.year} <= EXTRACT(YEAR FROM NOW()) + 2`),
   capacityCheck: check('capacity_check', sql`${table.capacity} > 0 AND ${table.capacity} <= 50`),
 }));
