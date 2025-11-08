@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur d'icônes Navette Xpress</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #3b82f6;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        .preview-item {
+            text-align: center;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+        }
+        .preview-item canvas {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: white;
+        }
+        .preview-item p {
+            margin-top: 15px;
+            font-weight: 600;
+            color: #64748b;
+        }
+        button {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+        .buttons {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .info {
+            background: #dbeafe;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #3b82f6;
+        }
+        .success {
+            background: #dcfce7;
+            border-left-color: #22c55e;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Générateur d'icônes Navette Xpress</h1>
+        
+        <div class="info">
+            <strong>Instructions :</strong>
+            <ol>
+                <li>Visualisez les différentes tailles de l'icône ci-dessous</li>
+                <li>Cliquez sur "Télécharger favicon.ico" pour obtenir le fichier</li>
+                <li>Remplacez le fichier dans <code>src/app/favicon.ico</code></li>
+                <li>Téléchargez également les autres formats si nécessaire</li>
+            </ol>
+        </div>
+
+        <div class="preview-grid">
+            <div class="preview-item">
+                <canvas id="canvas16" width="16" height="16"></canvas>
+                <p>16×16 px</p>
+            </div>
+            <div class="preview-item">
+                <canvas id="canvas32" width="32" height="32"></canvas>
+                <p>32×32 px</p>
+            </div>
+            <div class="preview-item">
+                <canvas id="canvas48" width="48" height="48"></canvas>
+                <p>48×48 px</p>
+            </div>
+            <div class="preview-item">
+                <canvas id="canvas64" width="64" height="64"></canvas>
+                <p>64×64 px</p>
+            </div>
+            <div class="preview-item">
+                <canvas id="canvas128" width="128" height="128"></canvas>
+                <p>128×128 px</p>
+            </div>
+            <div class="preview-item">
+                <canvas id="canvas256" width="256" height="256"></canvas>
+                <p>256×256 px</p>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button onclick="downloadFavicon()">📥 Télécharger favicon.ico</button>
+            <button onclick="downloadPNG(512)">📥 Télécharger PNG (512×512)</button>
+            <button onclick="downloadPNG(192)">📥 Télécharger PNG (192×192)</button>
+            <button onclick="downloadSVG()">📥 Télécharger SVG</button>
+        </div>
+
+        <div class="info success" id="success">
+            ✅ Fichier téléchargé avec succès !
+        </div>
+    </div>
+
+    <script>
+        const svgString = `
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <circle cx="256" cy="256" r="240" fill="url(#gradient)"/>
+  <line x1="80" y1="180" x2="140" y2="180" stroke="white" stroke-width="12" stroke-linecap="round" opacity="0.4"/>
+  <line x1="60" y1="220" x2="130" y2="220" stroke="white" stroke-width="12" stroke-linecap="round" opacity="0.5"/>
+  <line x1="70" y1="260" x2="150" y2="260" stroke="white" stroke-width="12" stroke-linecap="round" opacity="0.6"/>
+  <line x1="80" y1="300" x2="140" y2="300" stroke="white" stroke-width="12" stroke-linecap="round" opacity="0.4"/>
+  <line x1="60" y1="340" x2="120" y2="340" stroke="white" stroke-width="12" stroke-linecap="round" opacity="0.3"/>
+  <path d="M 180 160 L 180 360 L 210 360 L 210 220 L 290 360 L 320 360 L 320 160 L 290 160 L 290 300 L 210 160 Z" fill="white" stroke="white" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M 350 160 L 410 260 L 350 360 L 385 360 L 430 280 L 475 360 L 510 360 L 450 260 L 510 160 L 475 160 L 430 240 L 385 160 Z" fill="white" stroke="white" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M 470 240 L 490 260 L 470 280" stroke="white" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.8"/>
+</svg>
+        `;
+
+        function drawIcon(canvas, size) {
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            const blob = new Blob([svgString], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            
+            img.onload = function() {
+                ctx.clearRect(0, 0, size, size);
+                ctx.drawImage(img, 0, 0, size, size);
+                URL.revokeObjectURL(url);
+            };
+            
+            img.src = url;
+        }
+
+        // Dessiner toutes les tailles au chargement
+        window.onload = function() {
+            [16, 32, 48, 64, 128, 256].forEach(size => {
+                const canvas = document.getElementById(`canvas${size}`);
+                drawIcon(canvas, size);
+            });
+        };
+
+        function showSuccess() {
+            const successDiv = document.getElementById('success');
+            successDiv.style.display = 'block';
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        async function downloadFavicon() {
+            // Créer un canvas temporaire pour générer le ICO
+            const canvas = document.createElement('canvas');
+            canvas.width = 32;
+            canvas.height = 32;
+            const ctx = canvas.getContext('2d');
+            
+            const img = new Image();
+            const blob = new Blob([svgString], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0, 32, 32);
+                canvas.toBlob(function(blob) {
+                    const link = document.createElement('a');
+                    link.download = 'favicon.ico';
+                    link.href = URL.createObjectURL(blob);
+                    link.click();
+                    URL.revokeObjectURL(url);
+                    showSuccess();
+                });
+            };
+            
+            img.src = url;
+        }
+
+        function downloadPNG(size) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            
+            const img = new Image();
+            const blob = new Blob([svgString], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0, size, size);
+                canvas.toBlob(function(blob) {
+                    const link = document.createElement('a');
+                    link.download = `icon-${size}x${size}.png`;
+                    link.href = URL.createObjectURL(blob);
+                    link.click();
+                    URL.revokeObjectURL(url);
+                    showSuccess();
+                });
+            };
+            
+            img.src = url;
+        }
+
+        function downloadSVG() {
+            const blob = new Blob([svgString], { type: 'image/svg+xml' });
+            const link = document.createElement('a');
+            link.download = 'logo.svg';
+            link.href = URL.createObjectURL(blob);
+            link.click();
+            showSuccess();
+        }
+    </script>
+</body>
+</html>

@@ -18,6 +18,13 @@ export const metadata: Metadata = {
   authors: [{ name: "Navette Xpress Sénégal" }],
   creator: "Navette Xpress",
   publisher: "Navette Xpress Sénégal",
+  icons: {
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: '32x32' },
+    ],
+    apple: '/apple-touch-icon.png',
+  },
   formatDetection: {
     email: false,
     address: false,
