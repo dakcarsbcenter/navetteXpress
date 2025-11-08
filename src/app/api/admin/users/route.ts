@@ -70,19 +70,20 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const roleParam = searchParams.get('role')
 
-    // Normaliser les rôles acceptés côté DB (FR: 'chauffeur', 'admin', 'manager')
+    // Normaliser les rôles acceptés côté DB (FR: 'chauffeur', 'admin', 'manager', 'customer')
     const normalizedRole = (() => {
       if (!roleParam) return null
       const lower = roleParam.toLowerCase()
       if (lower === 'driver' || lower === 'chauffeur') return 'driver'
       if (lower === 'admin') return 'admin'
       if (lower === 'manager') return 'manager'
+      if (lower === 'customer' || lower === 'client') return 'customer'
       return undefined
     })()
 
     if (normalizedRole === undefined) {
       return NextResponse.json(
-        { success: false, error: "Rôle invalide. Utilisez 'admin', 'manager' ou 'driver'." },
+        { success: false, error: "Rôle invalide. Utilisez 'admin', 'manager', 'driver' ou 'customer'." },
         { status: 400 }
       )
     }
@@ -145,24 +146,31 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { name, email, role, phone, licenseNumber, isActive, password } = await request.json()
+    const body = await request.json()
+    const { name, email, role, phone, licenseNumber, isActive, password } = body
+    
+    console.log('📝 [CREATE USER] Données reçues:', { name, email, role, phone, licenseNumber, isActive, hasPassword: !!password })
 
     // Normaliser le rôle en entrée
     const normalizedRole = (() => {
-      if (!role) return null
+      if (!role) return 'customer' // Par défaut customer si pas de rôle spécifié
       const lower = String(role).toLowerCase()
       if (lower === 'driver' || lower === 'chauffeur') return 'driver'
       if (lower === 'admin') return 'admin'
       if (lower === 'manager') return 'manager'
+      if (lower === 'customer' || lower === 'client') return 'customer'
       return undefined
     })()
 
     if (normalizedRole === undefined) {
+      console.error('❌ [CREATE USER] Rôle invalide:', role)
       return NextResponse.json(
-        { error: "Rôle invalide. Utilisez 'admin', 'manager' ou 'driver'." },
+        { error: "Rôle invalide. Utilisez 'admin', 'manager', 'driver' ou 'customer'." },
         { status: 400 }
       )
     }
+
+    console.log('✅ [CREATE USER] Rôle normalisé:', normalizedRole)
 
     // Seuls les admins peuvent créer d'autres admins
     if (normalizedRole === 'admin' && userRole !== 'admin') {
@@ -191,32 +199,34 @@ export async function POST(request: NextRequest) {
     const finalPassword = password || "password123" // Utiliser le mot de passe fourni ou le défaut
     const hashedPassword = await bcrypt.hash(finalPassword, 12)
 
+    console.log('🔨 [CREATE USER] Préparation insertion:', { userId, name, email, role: normalizedRole, isActive })
+
     const insertValues: {
       id: string;
       name: string;
       email: string;
-      phone?: string;
-      licenseNumber?: string;
+      phone?: string | null;
+      licenseNumber?: string | null;
       isActive: boolean;
       password: string;
-      emailVerified: Date;
-        role?: 'admin' | 'manager' | 'driver' | 'customer';
+      role: 'admin' | 'manager' | 'driver' | 'customer';
     } = {
       id: userId,
       name,
       email,
-      phone,
-      licenseNumber,
+      phone: phone || null,
+      licenseNumber: licenseNumber || null,
       isActive,
       password: hashedPassword,
-      emailVerified: new Date(),
+      role: normalizedRole,
     }
-    if (normalizedRole) insertValues.role = normalizedRole
 
     const newUser = await db
       .insert(users)
       .values(insertValues)
       .returning()
+
+    console.log('✅ [CREATE USER] Utilisateur créé avec succès:', newUser[0].id)
 
     return NextResponse.json(
       { message: "Utilisateur créé avec succès", user: newUser[0] },
@@ -224,9 +234,9 @@ export async function POST(request: NextRequest) {
     )
 
   } catch (error) {
-    console.error("Erreur lors de la création de l'utilisateur:", error)
+    console.error("❌ [CREATE USER] Erreur lors de la création de l'utilisateur:", error)
     return NextResponse.json(
-      { error: "Erreur interne du serveur" },
+      { error: error instanceof Error ? error.message : "Erreur interne du serveur" },
       { status: 500 }
     )
   }
