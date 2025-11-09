@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -120,14 +121,19 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
       <header className={baseClasses}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-          {/* Logo - Style épuré comme dans l'exemple */}
+          {/* Logo */}
           <Link 
             href="/" 
-            className={`text-2xl font-bold transition-all duration-300 hover:scale-105 ${textClasses}`}
+            className="transition-all duration-300 hover:scale-105 flex items-center"
           >
-            <span className="font-bold">
-              Navette Xpress
-            </span>
+            <Image
+              src="/logo.svg"
+              alt="Navette Xpress"
+              width={48}
+              height={48}
+              className="w-10 h-10 sm:w-12 sm:h-12"
+              priority
+            />
           </Link>
 
           {/* Desktop Navigation - Style minimaliste */}
