@@ -269,83 +269,84 @@ export function ModernReviewsManagement() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-pink-50/30 to-slate-50 dark:from-slate-900 dark:via-pink-900/10 dark:to-slate-900">
-      <div className="p-6 max-w-7xl mx-auto">
+      <div className="p-3 sm:p-6 max-w-7xl mx-auto">
         
         {/* Header avec statistiques */}
-        <div className="mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+        <div className="mb-4 sm:mb-8">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
-                Gestion des avis clients
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-1 sm:mb-2">
+                Gestion avis clients
               </h1>
-              <p className="text-slate-600 dark:text-slate-400">
+              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">
                 Suivez la satisfaction de vos clients et gérez les retours
               </p>
             </div>
             
-            <div className="flex items-center gap-3">
-              {/* Boutons de vue */}
-              <div className="flex bg-white dark:bg-slate-800 rounded-lg p-1 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full lg:w-auto">
+              {/* Boutons de vue - Mode grille sur mobile */}
+              <div className="grid grid-cols-3 sm:flex bg-white dark:bg-slate-800 rounded-lg p-1 shadow-sm border border-slate-200 dark:border-slate-700 gap-1 sm:gap-0">
                 <button
                   onClick={() => setViewMode('analytics')}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  className={`px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors ${
                     viewMode === 'analytics'
                       ? 'bg-pink-600 text-white shadow-sm'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
-                  <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 sm:mr-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                   </svg>
-                  Analytics
+                  <span className="hidden sm:inline">Analytics</span>
                 </button>
                 <button
                   onClick={() => setViewMode('reviews')}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  className={`px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors ${
                     viewMode === 'reviews'
                       ? 'bg-pink-600 text-white shadow-sm'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
-                  <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 sm:mr-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                   </svg>
-                  Avis
+                  <span className="hidden sm:inline">Avis</span>
                 </button>
                 <button
                   onClick={() => setViewMode('responses')}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  className={`px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors ${
                     viewMode === 'responses'
                       ? 'bg-pink-600 text-white shadow-sm'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
-                  <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 sm:mr-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                   </svg>
-                  Réponses
+                  <span className="hidden sm:inline">Réponses</span>
                 </button>
               </div>
               
               {/* Export */}
-              <button className="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <button className="w-full sm:w-auto bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl text-sm sm:text-base font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                Exporter
+                <span className="hidden sm:inline">Exporter</span>
+                <span className="sm:hidden">Export</span>
               </button>
             </div>
           </div>
 
           {/* Statistiques détaillées */}
-          <div className="grid grid-cols-2 md:grid-cols-7 gap-4 mb-6">
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.total}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Total avis</p>
+                  <p className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">{stats.total}</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Total avis</p>
                 </div>
-                <div className="text-2xl">💬</div>
+                <div className="text-xl sm:text-2xl">💬</div>
               </div>
             </div>
             
@@ -359,53 +360,53 @@ export function ModernReviewsManagement() {
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.satisfactionRate}%</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Satisfaction</p>
+                  <p className="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400">{stats.satisfactionRate}%</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Satisfaction</p>
                 </div>
-                <div className="text-2xl">😊</div>
+                <div className="text-xl sm:text-2xl">😊</div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.approved}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Approuvés</p>
+                  <p className="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.approved}</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Approuvés</p>
                 </div>
-                <div className="text-2xl">✅</div>
+                <div className="text-xl sm:text-2xl">✅</div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.pending}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">En attente</p>
+                  <p className="text-xl sm:text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.pending}</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">En attente</p>
                 </div>
-                <div className="text-2xl">⏳</div>
+                <div className="text-xl sm:text-2xl">⏳</div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{stats.responded}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Répondus</p>
+                  <p className="text-xl sm:text-2xl font-bold text-purple-600 dark:text-purple-400">{stats.responded}</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Répondus</p>
                 </div>
-                <div className="text-2xl">💬</div>
+                <div className="text-xl sm:text-2xl">💬</div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{stats.publicReviews}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Publics</p>
+                  <p className="text-xl sm:text-2xl font-bold text-indigo-600 dark:text-indigo-400">{stats.publicReviews}</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Publics</p>
                 </div>
-                <div className="text-2xl">🌐</div>
+                <div className="text-xl sm:text-2xl">🌐</div>
               </div>
             </div>
           </div>
