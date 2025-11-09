@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react"
 import { signIn } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 
 function SignInForm() {
   const [email, setEmail] = useState("")
@@ -17,7 +18,7 @@ function SignInForm() {
 
   // Gestion des erreurs depuis les paramètres URL
   useEffect(() => {
-    const urlError = searchParams.get('error')
+    const urlError = searchParams?.get('error')
     if (urlError) {
       setError(getErrorMessage(urlError))
     }
@@ -129,34 +130,42 @@ function SignInForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800">
-      <div className="max-w-md w-full space-y-8 p-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 py-4 px-4">
+      <div className="max-w-md w-full space-y-3 sm:space-y-6">
         <div className="text-center">
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <div className="flex items-center justify-center gap-2 mb-2 sm:mb-4">
+            <Image
+              src="/logo.svg"
+              alt="Navette Xpress"
+              width={40}
+              height={40}
+              className="w-10 h-10 sm:w-12 sm:h-12"
+              priority
+            />
+            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Navette Xpress
             </h1>
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
             Connexion
           </h2>
-          <p className="text-slate-600 dark:text-slate-400 mt-2">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-1 sm:mt-2">
             Connectez-vous à votre compte
           </p>
         </div>
 
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700">
+        <div className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700">
           {error && (
-            <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200 rounded-lg text-sm">
+            <div className="mb-3 p-2 sm:p-3 bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200 rounded-lg text-xs sm:text-sm">
               {error}
               {showResetOption && (
-                <div className="mt-3 pt-3 border-t border-red-200 dark:border-red-800">
-                  <p className="text-sm font-medium mb-2">
+                <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-red-200 dark:border-red-800">
+                  <p className="text-xs sm:text-sm font-medium mb-1.5 sm:mb-2">
                     Vous avez oublié votre mot de passe ?
                   </p>
                   <Link 
                     href="/auth/reset-password"
-                    className="inline-block text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold underline"
+                    className="inline-block text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold underline"
                   >
                     Réinitialiser mon mot de passe →
                   </Link>
@@ -165,9 +174,9 @@ function SignInForm() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              <label htmlFor="email" className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 sm:mb-1.5">
                 Email
               </label>
               <input
@@ -176,13 +185,13 @@ function SignInForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
+                className="w-full px-3 py-2 sm:px-4 sm:py-2.5 text-sm sm:text-base border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
                 placeholder="votre@email.com"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              <label htmlFor="password" className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 sm:mb-1.5">
                 Mot de passe
               </label>
               <input
@@ -191,7 +200,7 @@ function SignInForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
+                className="w-full px-3 py-2 sm:px-4 sm:py-2.5 text-sm sm:text-base border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
                 placeholder="••••••••"
               />
             </div>
@@ -199,18 +208,18 @@ function SignInForm() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3 px-4 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-2.5 sm:py-3 px-4 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? "Connexion..." : "Se connecter"}
             </button>
           </form>
 
-          <div className="mt-6">
+          <div className="mt-3 sm:mt-4">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-slate-300 dark:border-slate-600" />
               </div>
-              <div className="relative flex justify-center text-sm">
+              <div className="relative flex justify-center text-xs sm:text-sm">
                 <span className="px-2 bg-white dark:bg-slate-800 text-slate-500">Ou</span>
               </div>
             </div>
@@ -218,7 +227,7 @@ function SignInForm() {
             <button
               onClick={handleGoogleSignIn}
               disabled={isLoading}
-              className="mt-4 w-full bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 py-3 px-4 rounded-lg font-semibold transition-all duration-300 hover:bg-slate-50 dark:hover:bg-slate-600 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="mt-3 sm:mt-4 w-full bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 py-2.5 sm:py-3 px-4 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 hover:bg-slate-50 dark:hover:bg-slate-600 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -230,8 +239,8 @@ function SignInForm() {
             </button>
           </div>
 
-          <div className="mt-6 text-center">
-            <p className="text-slate-600 dark:text-slate-400">
+          <div className="mt-3 sm:mt-4 text-center">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
               Pas encore de compte ?{" "}
               <Link href="/auth/signup" className="text-blue-600 hover:text-blue-500 font-semibold">
                 Créer un compte

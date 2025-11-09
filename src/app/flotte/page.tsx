@@ -93,13 +93,13 @@ export default async function FlottePage() {
       <Navigation variant="solid" />
 
       {/* Hero Section - Focus on Benefits */}
-      <section className="relative py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-slate-900 dark:bg-slate-950 mt-16 sm:mt-20">
+      <section className="relative pt-8 pb-8 sm:pt-32 sm:pb-12 md:pt-36 md:pb-16 px-4 sm:px-6 lg:px-8 bg-slate-900 dark:bg-slate-950">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 sm:mb-6 leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3 sm:mb-4 leading-tight">
             Flotte Premium
           </h1>
-          <p className="text-base sm:text-lg text-slate-300 max-w-3xl mx-auto mb-6 sm:mb-8 leading-relaxed">
-            Des véhicules de luxe soigneusement sélectionnés pour votre confort et sécurité
+          <p className="text-sm sm:text-base md:text-lg text-slate-300 max-w-3xl mx-auto mb-4 sm:mb-6 leading-relaxed">
+            Des véhicules soigneusement sélectionnés pour votre confort et sécurité
           </p>
           
           {/* Key Benefits */}
@@ -111,7 +111,7 @@ export default async function FlottePage() {
                 </svg>
               </div>
               <h3 className="text-base sm:text-lg font-semibold text-white mb-1.5 sm:mb-2">Véhicules Récents</h3>
-              <p className="text-xs sm:text-sm text-slate-300">Tous nos véhicules sont récents et parfaitement entretenus</p>
+              <p className="text-xs sm:text-sm text-slate-300">Tous nos véhicules sont parfaitement entretenus</p>
             </div>
             
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-white/20">

@@ -100,12 +100,12 @@ export default function TemoignagesPage() {
       <Navigation variant="solid" />
       
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-8 sm:py-10 md:py-12 px-4 sm:px-6 md:px-8 mt-16 sm:mt-20">
+      <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white pt-20 pb-6 sm:pt-32 sm:pb-8 md:pt-36 md:pb-10 px-6 sm:px-8 md:px-8">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2 sm:mb-3 leading-tight px-2">
             Témoignages Clients
           </h1>
-          <p className="text-base sm:text-lg md:text-xl text-slate-300 max-w-4xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base md:text-lg text-slate-300 max-w-4xl mx-auto leading-relaxed px-4">
             Découvrez pourquoi plus de 1000 clients nous font confiance pour leurs transferts aéroport au Sénégal
           </p>
         </div>
