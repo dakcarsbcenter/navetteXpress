@@ -99,8 +99,8 @@ export default function ContactPage() {
     {
       type: "email",
       title: "Email",
-      details: ["contact@navettexpress.sn", "Réponse sous 2h en journée"],
-      link: "mailto:contact@navettexpress.sn"
+      details: ["contact@navettexpress.com", "Réponse sous 2h en journée"],
+      link: "mailto:contact@navettexpress.com"
     },
     {
       type: "location",

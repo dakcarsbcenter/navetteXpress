@@ -88,7 +88,7 @@ export default function RootLayout({
     "description": "Service de transfert aéroport AIBD Dakar, Thies, Mbour. Chauffeurs privés professionnels 24h/24 pour tous vos déplacements au Sénégal.",
     "url": "https://navettexpress.sn",
     "telephone": "+221781319191",
-    "email": "contact@navettexpress.sn",
+    "email": "contact@navettexpress.com",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "Avenue Léopold Sédar Senghor",

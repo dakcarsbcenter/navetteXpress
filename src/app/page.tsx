@@ -469,16 +469,6 @@ export default function Home() {
             </div>
             
             <div>
-              <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Services</h3>
-              <ul className="space-y-2 sm:space-y-3 text-sm sm:text-base">
-                <li><a href="/services" className="text-slate-400 hover:text-white transition-colors duration-300">Transferts Aéroport</a></li>
-                <li><a href="/services" className="text-slate-400 hover:text-white transition-colors duration-300">Événements Spéciaux</a></li>
-                <li><a href="/services" className="text-slate-400 hover:text-white transition-colors duration-300">Voyages d&apos;Affaires</a></li>
-                <li><a href="/flotte" className="text-slate-400 hover:text-white transition-colors duration-300">Notre Flotte</a></li>
-              </ul>
-            </div>
-            
-            <div>
               <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Contact</h3>
               <ul className="space-y-2 sm:space-y-3 text-sm sm:text-base">
                 <li className="flex items-start gap-2">
@@ -489,14 +479,24 @@ export default function Home() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-base sm:text-lg flex-shrink-0">✉️</span>
-                  <a href="mailto:contact@navettexpress.sn" className="text-slate-400 hover:text-white transition-colors duration-300 break-all">
-                    contact@navettexpress.sn
+                  <a href="mailto:contact@navettexpress.com" className="text-slate-400 hover:text-white transition-colors duration-300 break-all">
+                    contact@navettexpress.com
                   </a>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-base sm:text-lg flex-shrink-0">📍</span>
+                  <span className="text-base sm:text-lg flex-shrink-0">�</span>
                   <span className="text-slate-400">Dakar, Sénégal</span>
                 </li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Services</h3>
+              <ul className="space-y-2 sm:space-y-3 text-sm sm:text-base">
+                <li><a href="/services" className="text-slate-400 hover:text-white transition-colors duration-300">Transferts Aéroport</a></li>
+                <li><a href="/services" className="text-slate-400 hover:text-white transition-colors duration-300">Événements Spéciaux</a></li>
+                <li><a href="/services" className="text-slate-400 hover:text-white transition-colors duration-300">Voyages d&apos;Affaires</a></li>
+                <li><a href="/flotte" className="text-slate-400 hover:text-white transition-colors duration-300">Notre Flotte</a></li>
               </ul>
             </div>
           </div>

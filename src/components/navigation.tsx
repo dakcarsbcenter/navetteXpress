@@ -68,28 +68,27 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
     <>
       {/* Menu supérieur - Informations de contact - Toujours visible */}
       <div className="bg-[#1E293B] text-white text-sm py-2 fixed top-0 left-0 right-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-6">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center gap-2">
+            <div className="flex items-center space-x-3 sm:space-x-6 flex-shrink-0">
               <a 
                 href="tel:+221781319191" 
-                className="flex items-center space-x-2 hover:text-white/80 transition-colors"
+                className="flex items-center space-x-1 sm:space-x-2 hover:text-white/80 transition-colors whitespace-nowrap"
                 onClick={() => trackPhoneCall('header')}
               >
-                <Phone className="w-4 h-4" />
-                <span className="hidden sm:inline">+221 78 131 91 91</span>
-                <span className="sm:hidden">+221 78 131 91 91</span>
+                <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+                <span className="text-xs sm:text-sm">+221 78 131 91 91</span>
               </a>
               <a 
-                href="mailto:contact@navettexpress.sn" 
+                href="mailto:contact@navettexpress.com" 
                 className="hidden md:flex items-center space-x-2 hover:text-white/80 transition-colors"
                 onClick={() => trackEmailClick('header')}
               >
                 <Mail className="w-4 h-4" />
-                <span>contact@navettexpress.sn</span>
+                <span>contact@navettexpress.com</span>
               </a>
             </div>
-            <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-3 sm:space-x-6 flex-shrink-0">
               <div className="hidden sm:flex items-center space-x-4">
                 <span>Service 24h/24</span>
                 <div className="w-2 h-2 bg-green-400 rounded-full"></div>
@@ -97,16 +96,16 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
               
               {/* Boutons d'authentification */}
               {!session && (
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2 sm:space-x-3">
                   <Link
                     href="/auth/signin"
-                    className="text-white/90 hover:text-white px-3 py-1 rounded text-sm font-medium transition-colors duration-200"
+                    className="text-white/90 hover:text-white px-2 sm:px-3 py-1 rounded text-xs sm:text-sm font-medium transition-colors duration-200 whitespace-nowrap"
                   >
                     Se connecter
                   </Link>
                   <Link
                     href="/auth/signup"
-                    className="border border-white/30 text-white hover:bg-white/10 px-3 py-1 rounded text-sm font-medium transition-colors duration-200"
+                    className="border border-white/30 text-white hover:bg-white/10 px-2 sm:px-3 py-1 rounded text-xs sm:text-sm font-medium transition-colors duration-200 whitespace-nowrap"
                   >
                     S&apos;inscrire
                   </Link>

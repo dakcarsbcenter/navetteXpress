@@ -91,7 +91,7 @@ export default function InteractiveMap({
                 </p>
                 <div className="space-y-1 text-sm text-slate-500">
                   <p>📞 +221 78 131 91 91</p>
-                  <p>📧 contact@navettexpress.sn</p>
+                  <p>📧 contact@navettexpress.com</p>
                   <p>🕒 Service 24h/24, 7j/7</p>
                 </div>
                 <div className="mt-3">

@@ -24,7 +24,7 @@ export const serviceTypes: ServiceType[] = [
   },
   {
     id: "transfert-thies-mbour",
-    name: "Transfert Aéroport Thies & Mbour", 
+    name: "Transfert AIBD - DAKAR", 
     description: "Service de transfert vers les aéroports de Thies et Mbour. Déplacements confortables et sécurisés au Sénégal.",
     icon: "🚁",
     features: [

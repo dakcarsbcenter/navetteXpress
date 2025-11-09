@@ -15,7 +15,7 @@ export default function ServicesPage() {
     switch (serviceId) {
       case "transfert-aibd-dakar":
         return <AirportIcon size={40} color="primary" />;
-      case "transfert-thies-mbour":
+      case "transfert-Dakar-AIBD":
         return <LuxuryCarIcon size={40} color="secondary" />;
       case "chauffeur-prive-dakar":
         return <PrivateDriverIcon size={40} color="primary" />;
@@ -35,13 +35,13 @@ export default function ServicesPage() {
       <Navigation variant="solid" />
       
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-white py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8 mt-16 sm:mt-20">
+      <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-white pt-18 pb-12 sm:pt-32 sm:pb-16 md:pt-36 md:pb-20 px-4 sm:px-6 md:px-8">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent leading-tight">
             Services de Transfert Aéroport Sénégal
           </h1>
           <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 sm:mb-8 text-slate-300 max-w-4xl mx-auto leading-relaxed px-2">
-            Transferts AIBD Dakar, Thies, Mbour. Chauffeurs privés professionnels 24h/24 pour tous vos déplacements aéroportuaires au Sénégal. 
+            Transferts AIBD-Dakar, Dakar-AIBD, Dakar-Mbour. Petite Côte, Chauffeurs privés professionnels 24h/24. 
             Service de qualité, prix compétitifs, réservation instantanée.
           </p>
         </div>
