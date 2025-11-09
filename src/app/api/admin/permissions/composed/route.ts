@@ -47,22 +47,29 @@ const COMPOSED_PERMISSIONS: Record<string, ComposedPermission> = {
 // GET - Obtenir les permissions composées pour la matrice
 export async function GET(request: NextRequest) {
   try {
+    console.log('🔐 GET /api/admin/permissions/composed - Début de la requête')
+    
     const session = await getServerSession(authOptions)
     const userRole = (session?.user as any)?.role
+    console.log('👤 Session:', session ? `User: ${(session.user as any)?.email}, Role: ${userRole}` : 'Non authentifié')
     
     // Seuls les admins peuvent voir la matrice de permissions
     if (!session?.user || userRole !== 'admin') {
+      console.log('❌ Accès refusé - Role:', userRole)
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
     }
 
     const { searchParams } = new URL(request.url)
     const roleName = searchParams.get('role')
+    console.log('🎯 Rôle demandé:', roleName)
 
     if (!roleName) {
+      console.log('❌ Paramètre role manquant')
       return NextResponse.json({ error: 'Rôle requis' }, { status: 400 })
     }
 
     // Récupérer toutes les permissions atomiques du rôle
+    console.log(`🔍 Récupération des permissions pour ${roleName}...`)
     const permissions = await db
       .select()
       .from(rolePermissionsTable)
@@ -95,7 +102,11 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Erreur lors de la récupération des permissions:', error)
+    console.error('❌ Erreur lors de la récupération des permissions:', error)
+    if (error instanceof Error) {
+      console.error('Message d\'erreur:', error.message)
+      console.error('Stack trace:', error.stack)
+    }
     return NextResponse.json(
       { error: 'Erreur lors de la récupération des permissions' },
       { status: 500 }

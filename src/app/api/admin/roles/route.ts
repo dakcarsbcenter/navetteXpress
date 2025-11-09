@@ -11,11 +11,15 @@ import { eq, sql, count } from 'drizzle-orm'
 
 export async function GET() {
   try {
+    console.log('👑 GET /api/admin/roles - Début de la requête')
+    
     const session = await getServerSession(authOptions)
     const userRole = (session?.user as any)?.role
+    console.log('🔐 Session:', session ? `User: ${(session.user as any)?.email}, Role: ${userRole}` : 'Non authentifié')
     
     // Seuls les admins peuvent gérer les rôles (matrice de permissions)
     if (!session?.user || userRole !== 'admin') {
+      console.log('❌ Accès refusé - Role:', userRole)
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
     }
 
@@ -24,20 +28,27 @@ export async function GET() {
     try {
       await db.execute(sql`SELECT 1 FROM custom_roles LIMIT 1`)
       useCustomRoles = true
+      console.log('✅ Tables custom_roles disponibles')
     } catch (error) {
-      console.log('Tables custom_roles non disponibles, utilisation du système legacy')
+      console.log('⚠️ Tables custom_roles non disponibles, utilisation du système legacy')
     }
 
     if (useCustomRoles) {
+      console.log('🔄 Utilisation du système de rôles personnalisés')
       // Utiliser le nouveau système de rôles
       return await getCustomRoles()
     } else {
+      console.log('🔄 Utilisation du système de rôles legacy')
       // Utiliser l'ancien système statique
       return await getLegacyRoles()
     }
 
   } catch (error) {
-    console.error('Erreur lors de la récupération des rôles:', error)
+    console.error('❌ Erreur lors de la récupération des rôles:', error)
+    if (error instanceof Error) {
+      console.error('Message d\'erreur:', error.message)
+      console.error('Stack trace:', error.stack)
+    }
     return NextResponse.json(
       { error: 'Erreur lors de la récupération des rôles' },
       { status: 500 }
