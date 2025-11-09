@@ -66,59 +66,70 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
 
   return (
     <>
-      {/* Menu supérieur - Informations de contact - Toujours visible */}
-      <div className="bg-[#1E293B] text-white text-sm py-2 fixed top-0 left-0 right-0 z-50">
+      {/* Menu supérieur - Informations de contact - Optimisé */}
+      <div className="bg-gradient-to-r from-slate-800 to-slate-900 text-white text-xs sm:text-sm py-2 fixed top-0 left-0 right-0 z-50 shadow-md">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center gap-2">
-            <div className="flex items-center space-x-3 sm:space-x-6 flex-shrink-0">
+            <div className="flex items-center gap-3 lg:gap-5 flex-shrink-0">
               <a 
                 href="tel:+221781319191" 
-                className="flex items-center space-x-1 sm:space-x-2 hover:text-white/80 transition-colors whitespace-nowrap"
+                className="flex items-center gap-1.5 hover:text-white/80 transition-colors whitespace-nowrap group"
                 onClick={() => trackPhoneCall('header')}
               >
-                <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                <span className="text-xs sm:text-sm">+221 78 131 91 91</span>
+                <Phone className="w-3.5 h-3.5 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                <span className="text-xs sm:text-sm font-medium">+221 78 131 91 91</span>
               </a>
               <a 
                 href="mailto:contact@navettexpress.com" 
-                className="hidden md:flex items-center space-x-2 hover:text-white/80 transition-colors"
+                className="hidden lg:flex items-center gap-1.5 hover:text-white/80 transition-colors group"
                 onClick={() => trackEmailClick('header')}
               >
-                <Mail className="w-4 h-4" />
-                <span>contact@navettexpress.com</span>
+                <Mail className="w-3.5 h-3.5 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                <span className="text-xs sm:text-sm font-medium">contact@navettexpress.com</span>
               </a>
             </div>
-            <div className="flex items-center space-x-3 sm:space-x-6 flex-shrink-0">
-              <div className="hidden sm:flex items-center space-x-4">
-                <span>Service 24h/24</span>
-                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+            <div className="flex items-center gap-3 lg:gap-5 flex-shrink-0">
+              <div className="hidden md:flex items-center gap-2">
+                <span className="text-xs sm:text-sm font-medium">Service 24h/24</span>
+                <div className="relative">
+                  <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                  <div className="absolute inset-0 w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
+                </div>
               </div>
               
-              {/* Boutons d'authentification ou lien dashboard */}
+              {/* Boutons d'authentification compacts */}
               {isMounted && !session && (
-                <div className="flex items-center space-x-2 sm:space-x-3">
+                <div className="flex items-center gap-2">
                   <Link
                     href="/auth/signin"
-                    className="text-white/90 hover:text-white px-2 sm:px-3 py-1 rounded text-xs sm:text-sm font-medium transition-colors duration-200 whitespace-nowrap"
+                    className="text-white/90 hover:text-white hover:bg-white/10 px-2.5 py-1 rounded-md text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap"
                   >
-                    Se connecter
+                    Connexion
                   </Link>
                   <Link
                     href="/auth/signup"
-                    className="border border-white/30 text-white hover:bg-white/10 px-2 sm:px-3 py-1 rounded text-xs sm:text-sm font-medium transition-colors duration-200 whitespace-nowrap"
+                    className="border border-white/30 text-white hover:bg-white/10 px-2.5 py-1 rounded-md text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap"
                   >
-                    S&apos;inscrire
+                    Inscription
                   </Link>
                 </div>
               )}
               
-              {/* Lien Dashboard pour utilisateur connecté */}
+              {/* Badge Dashboard pour utilisateur connecté */}
               {isMounted && session?.user && (
                 <Link
-                  href={(session.user as unknown as { role?: string })?.role === 'admin' ? '/admin/dashboard' : '/client/dashboard'}
-                  className="text-white/90 hover:text-white px-2 sm:px-3 py-1 rounded text-xs sm:text-sm font-medium transition-colors duration-200 whitespace-nowrap"
+                  href={(session.user as unknown as { role?: string })?.role === 'admin' ? '/admin/dashboard' : 
+                        (session.user as unknown as { role?: string })?.role === 'driver' ? '/driver/dashboard' : '/client/dashboard'}
+                  className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm px-2.5 py-1 rounded-md text-xs sm:text-sm font-semibold transition-all duration-200 whitespace-nowrap border border-white/20"
                 >
-                  {(session.user as unknown as { role?: string })?.role === 'admin' ? 'Dashboard Admin' : 'Mon Espace'}
+                  <span className="text-sm">
+                    {(session.user as unknown as { role?: string })?.role === 'admin' ? '👑' : 
+                     (session.user as unknown as { role?: string })?.role === 'driver' ? '🚗' : '👤'}
+                  </span>
+                  <span className="hidden sm:inline">
+                    {(session.user as unknown as { role?: string })?.role === 'admin' ? 'Admin' : 
+                     (session.user as unknown as { role?: string })?.role === 'driver' ? 'Chauffeur' : 'Espace'}
+                  </span>
                 </Link>
               )}
             </div>
@@ -126,102 +137,102 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
         </div>
       </div>
 
-      {/* Menu principal */}
+      {/* Menu principal - Optimisé */}
       <header className={baseClasses}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-          {/* Logo */}
+          <div className="flex justify-between items-center h-14 lg:h-16">
+          {/* Logo - Compact */}
           <Link 
             href="/" 
-            className="transition-all duration-300 hover:scale-105 flex items-center"
+            className="transition-transform duration-300 hover:scale-105 flex items-center flex-shrink-0"
           >
             <Image
               src="/logo.svg"
-              alt="Navette Xpress"
-              width={48}
-              height={48}
-              className="w-10 h-10 sm:w-12 sm:h-12"
+              alt="NavetteXpress"
+              width={40}
+              height={40}
+              className="w-9 h-9 lg:w-10 lg:h-10"
               priority
             />
           </Link>
 
-          {/* Desktop Navigation - Style minimaliste */}
-          <nav className="hidden lg:flex items-center gap-6">
+          {/* Desktop Navigation - Optimisé */}
+          <nav className="hidden lg:flex items-center gap-1 xl:gap-3">
             {/* Menu principal */}
             {mainNavLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`${linkClasses} font-medium transition-all duration-200 hover:scale-105 whitespace-nowrap`}
+                className={`${linkClasses} font-medium transition-colors duration-200 px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-sm xl:text-base whitespace-nowrap`}
               >
                 {link.label}
               </Link>
             ))}
             
-            {/* Menu secondaire avec séparateur */}
-            <div className="flex items-center gap-4 pl-4 border-l border-slate-300 dark:border-slate-600">
+            {/* Menu secondaire compact */}
+            <div className="flex items-center gap-1 xl:gap-2 pl-2 xl:pl-4 ml-2 xl:ml-4 border-l border-slate-300 dark:border-slate-600">
               {secondaryNavLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`${linkClasses} font-medium transition-all duration-200 hover:scale-105 text-sm whitespace-nowrap`}
+                  className={`${linkClasses} font-medium transition-colors duration-200 px-2 xl:px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-xs xl:text-sm whitespace-nowrap`}
                 >
                   {link.label}
                 </Link>
               ))}
             </div>
             
-            {/* Bouton CTA - Style professionnel */}
+            {/* Bouton CTA - Compact */}
             <Link
               href="/reservation"
-              className={`px-6 py-2.5 rounded-lg font-semibold transition-all duration-300 ${
+              className={`ml-2 xl:ml-4 px-4 xl:px-5 py-2 rounded-lg font-semibold text-sm xl:text-base transition-all duration-300 whitespace-nowrap ${
                 variant === "transparent" && isMounted && isScrolled
-                  ? "bg-gradient-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white shadow-lg"
+                  ? "bg-gradient-to-r from-[#3b82f6] to-[#8b5cf6] hover:from-[#2563eb] hover:to-[#7c3aed] text-white shadow-md"
                   : variant === "transparent"
                   ? "bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
-                  : "bg-gradient-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white shadow-lg"
+                  : "bg-gradient-to-r from-[#3b82f6] to-[#8b5cf6] hover:from-[#2563eb] hover:to-[#7c3aed] text-white shadow-md"
               }`}
             >
               Réserver
             </Link>
 
-            {/* Tableau de bord adaptatif selon le rôle */}
+            {/* Profil utilisateur - Simplifié */}
             {isMounted && session?.user && (
-              <Link
-                href={(session.user as unknown as { role?: string })?.role === 'admin' ? '/admin/dashboard' : '/client/dashboard'}
-                className={`${linkClasses} font-medium transition-all duration-200 hover:scale-105`}
-              >
-                {(session.user as unknown as { role?: string })?.role === 'admin' ? 'Dashboard Admin' : 'Mon Espace'}
-              </Link>
-            )}
-
-
-            {isMounted && session?.user && (
-              <div className="ml-2 relative group">
+              <div className="ml-2 xl:ml-3 relative group">
                 <button
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer ${linkClasses} hover:bg-slate-100 dark:hover:bg-slate-800`}
+                  className={`flex items-center gap-2 px-2 xl:px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 cursor-pointer ${linkClasses} hover:bg-slate-100 dark:hover:bg-slate-800`}
                 >
-                  <span className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">
+                  <span className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full flex items-center justify-center text-sm font-semibold flex-shrink-0">
                     {session.user.name?.charAt(0).toUpperCase() || 'U'}
                   </span>
-                  <span className="hidden md:block">{session.user.name}</span>
-                  <ChevronDown className="w-4 h-4" />
+                  <span className="hidden xl:block max-w-[100px] truncate">{session.user.name}</span>
+                  <ChevronDown className="w-4 h-4 flex-shrink-0" />
                 </button>
                 
                 {/* Dropdown menu */}
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  <div className="p-3 border-b border-slate-200 dark:border-slate-700">
-                    <p className="text-sm font-medium text-slate-900 dark:text-white">{session.user.name}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{session.user.email}</p>
-                    <span className="inline-block mt-1 px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
-                      {(session.user as unknown as { role?: string })?.role === 'admin' ? 'Admin' : 'Client'}
+                <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div className="p-4 border-b border-slate-200 dark:border-slate-700">
+                    <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">{session.user.name}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">{session.user.email}</p>
+                    <span className="inline-block mt-2 px-2.5 py-1 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-800 dark:text-blue-300 text-xs font-semibold rounded-full">
+                      {(session.user as unknown as { role?: string })?.role === 'admin' ? '👑 Admin' : 
+                       (session.user as unknown as { role?: string })?.role === 'driver' ? '🚗 Chauffeur' : '👤 Client'}
                     </span>
                   </div>
                   <div className="p-2">
+                    <Link
+                      href={(session.user as unknown as { role?: string })?.role === 'admin' ? '/admin/dashboard' : 
+                            (session.user as unknown as { role?: string })?.role === 'driver' ? '/driver/dashboard' : '/client/dashboard'}
+                      className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                    >
+                      <span className="text-base">📊</span>
+                      Mon Dashboard
+                    </Link>
                     <button
                       onClick={() => signOut({ callbackUrl: '/' })}
-                      className="w-full text-left px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                      className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                     >
+                      <span className="text-base">🚪</span>
                       Se déconnecter
                     </button>
                   </div>
@@ -229,7 +240,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
               </div>
             )}
 
-            <div className="ml-4">
+            <div className="ml-2 xl:ml-3 flex-shrink-0">
               <ThemeToggle />
             </div>
           </nav>

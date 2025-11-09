@@ -96,6 +96,7 @@ function ClientDashboardContent() {
   const [userPermissions, setUserPermissions] = useState<Record<string, string[]>>({})
   const [editingBooking, setEditingBooking] = useState<Booking | null>(null)
   const [isEditBookingModalOpen, setIsEditBookingModalOpen] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [stats, setStats] = useState({
     totalBookings: 0,
     completedBookings: 0,
@@ -330,112 +331,134 @@ function ClientDashboardContent() {
     switch (activeTab) {
       case 'overview':
         return (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-6">
-              <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                <div className="flex flex-col h-full">
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Total réservations</p>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">{stats.totalBookings}</p>
-                  <div className="mt-auto pt-4 flex justify-center">
-                    <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-900/20">
-                      <span className="text-2xl text-blue-600 dark:text-blue-300">📅</span>
-                    </span>
+          <div className="space-y-8">
+            {/* Section titre avec message de bienvenue */}
+            <div className="bg-gradient-to-r from-purple-600 to-purple-800 rounded-2xl p-6 sm:p-8 text-white shadow-lg">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-2">
+                Bonjour, {session?.user?.name || 'Client'} 👋
+              </h2>
+              <p className="text-purple-100 text-sm sm:text-base">
+                Bienvenue dans votre espace client. Gérez vos réservations et consultez vos statistiques.
+              </p>
+            </div>
+
+            {/* Grille de statistiques optimisée */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+              {/* Total réservations */}
+              <div className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Total réservations</p>
+                    <p className="text-3xl font-bold text-slate-900 dark:text-white mt-2">{stats.totalBookings}</p>
                   </div>
+                  <span className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20">
+                    <span className="text-2xl">📅</span>
+                  </span>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                <div className="flex flex-col h-full">
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Réservations terminées</p>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">{stats.completedBookings}</p>
-                  <div className="mt-auto pt-4 flex justify-center">
-                    <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-50 dark:bg-green-900/20">
-                      <span className="text-2xl text-green-600 dark:text-green-300">✅</span>
-                    </span>
+              {/* Réservations terminées */}
+              <div className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Terminées</p>
+                    <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-2">{stats.completedBookings}</p>
                   </div>
+                  <span className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-green-50 dark:bg-green-900/20">
+                    <span className="text-2xl">✅</span>
+                  </span>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                <div className="flex flex-col h-full">
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">En cours/En attente</p>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">{stats.pendingBookings}</p>
-                  <div className="mt-auto pt-4 flex justify-center">
-                    <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-yellow-50 dark:bg-yellow-900/20">
-                      <span className="text-2xl text-yellow-600 dark:text-yellow-300">⏳</span>
-                    </span>
+              {/* En cours/En attente */}
+              <div className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">En attente</p>
+                    <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-400 mt-2">{stats.pendingBookings}</p>
                   </div>
+                  <span className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-yellow-50 dark:bg-yellow-900/20">
+                    <span className="text-2xl">⏳</span>
+                  </span>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                <div className="flex flex-col h-full">
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Total devis</p>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">{stats.totalQuotes}</p>
-                  <div className="mt-auto pt-4 flex justify-center">
-                    <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-purple-50 dark:bg-purple-900/20">
-                      <span className="text-2xl text-purple-600 dark:text-purple-300">📋</span>
-                    </span>
+              {/* Total devis */}
+              <div className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Total devis</p>
+                    <p className="text-3xl font-bold text-slate-900 dark:text-white mt-2">{stats.totalQuotes}</p>
                   </div>
+                  <span className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-900/20">
+                    <span className="text-2xl">📋</span>
+                  </span>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                <div className="flex flex-col h-full">
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Devis en attente</p>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">{stats.pendingQuotes}</p>
-                  <div className="mt-auto pt-4 flex justify-center">
-                    <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-pink-50 dark:bg-pink-900/20">
-                      <span className="text-2xl text-pink-600 dark:text-pink-300">⏱️</span>
-                    </span>
+              {/* Devis en attente */}
+              <div className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Devis en attente</p>
+                    <p className="text-3xl font-bold text-pink-600 dark:text-pink-400 mt-2">{stats.pendingQuotes}</p>
                   </div>
+                  <span className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-pink-50 dark:bg-pink-900/20">
+                    <span className="text-2xl">⏱️</span>
+                  </span>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                <div className="flex flex-col h-full">
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Devis acceptés</p>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">{stats.acceptedQuotes}</p>
-                  <div className="mt-auto pt-4 flex justify-center">
-                    <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-50 dark:bg-green-900/20">
-                      <span className="text-2xl text-green-600 dark:text-green-300">✅</span>
-                    </span>
+              {/* Devis acceptés */}
+              <div className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Devis acceptés</p>
+                    <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-2">{stats.acceptedQuotes}</p>
                   </div>
+                  <span className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-green-50 dark:bg-green-900/20">
+                    <span className="text-2xl">✅</span>
+                  </span>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                <div className="flex flex-col h-full">
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Note moyenne</p>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">
-                    {stats.averageRating.toFixed(1)} <span className="text-yellow-400">⭐</span>
-                  </p>
-                  <div className="mt-auto pt-4 flex justify-center">
-                    <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-yellow-50 dark:bg-yellow-900/20">
-                      <span className="text-2xl text-yellow-400">⭐</span>
-                    </span>
+              {/* Note moyenne */}
+              <div className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Note moyenne</p>
+                    <p className="text-3xl font-bold text-yellow-500 dark:text-yellow-400 mt-2">
+                      {stats.averageRating.toFixed(1)} ⭐
+                    </p>
                   </div>
+                  <span className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-yellow-50 dark:bg-yellow-900/20">
+                    <span className="text-2xl">⭐</span>
+                  </span>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                <div className="flex flex-col h-full">
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">À évaluer</p>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">{stats.reviewableBookings}</p>
-                  <div className="mt-auto pt-4 flex justify-center">
-                    <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-50 dark:bg-red-900/20">
-                      <span className="text-2xl text-red-600 dark:text-red-300">🚗</span>
-                    </span>
+              {/* À évaluer - avec CTA */}
+              <div className="bg-gradient-to-br from-red-500 to-red-600 p-5 rounded-xl shadow-md hover:shadow-lg transition-all border-2 border-red-400">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <p className="text-xs font-bold text-red-100 uppercase tracking-wide">À évaluer</p>
+                    <p className="text-3xl font-bold text-white mt-2">{stats.reviewableBookings}</p>
                   </div>
-                  {stats.reviewableBookings > 0 && (
-                    <button
-                      onClick={() => setActiveTab('create-reviews')}
-                      className="mt-2 text-sm text-blue-600 hover:text-blue-700 font-medium"
-                    >
-                      Évaluer maintenant →
-                    </button>
-                  )}
+                  <span className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white/20">
+                    <span className="text-2xl">🚗</span>
+                  </span>
                 </div>
+                {stats.reviewableBookings > 0 && (
+                  <button
+                    onClick={() => setActiveTab('create-reviews')}
+                    className="mt-2 w-full bg-white text-red-600 px-4 py-2 rounded-lg text-sm font-bold hover:bg-red-50 transition-colors flex items-center justify-center gap-2"
+                  >
+                    Évaluer maintenant
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                  </button>
+                )}
               </div>
             </div>
 
@@ -1002,63 +1025,147 @@ function ClientDashboardContent() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
-      <Navigation variant="solid" />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-20">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
-                Bonjour, {session.user.name} 👋
-              </h1>
-              <p className="text-slate-600 dark:text-slate-400 mt-2">
-                Bienvenue dans votre espace client. Gérez vos réservations et consultez vos avis.
-              </p>
-            </div>
+    <div className="min-h-screen flex bg-slate-50 dark:bg-slate-900">
+      {/* Sidebar gauche - Navigation épurée */}
+      <aside className="hidden lg:flex flex-col fixed left-0 top-0 h-screen w-20 xl:w-64 bg-gradient-to-b from-purple-900 to-purple-950 dark:from-purple-950 dark:to-black border-r border-purple-700 shadow-2xl z-50 transition-all duration-300">
+        {/* Logo */}
+        <Link href="/" className="flex items-center justify-center xl:justify-start gap-3 p-6 border-b border-purple-700">
+          <img 
+            src="/logo.svg" 
+            alt="NavetteXpress" 
+            className="h-10 w-10 flex-shrink-0"
+          />
+          <span className="hidden xl:block text-white font-bold text-lg">NavetteXpress</span>
+        </Link>
+
+        {/* Navigation */}
+        <nav className="flex-1 py-6 px-3 space-y-2 overflow-y-auto">
+          {tabs.map((tab) => (
             <button
-              onClick={() => signOut({ callbackUrl: '/' })}
-              className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors"
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`group w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 relative ${
+                activeTab === tab.id
+                  ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-500/50'
+                  : 'text-purple-300 hover:text-white hover:bg-purple-800'
+              }`}
+              title={tab.label}
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-              Déconnexion
+              <span className="text-2xl flex-shrink-0">{tab.icon}</span>
+              <span className="hidden xl:block font-semibold text-sm">{tab.label}</span>
+              {tab.badge && (
+                <span className="hidden xl:flex ml-auto bg-red-500 text-white text-xs rounded-full w-5 h-5 items-center justify-center font-bold">
+                  {tab.badge}
+                </span>
+              )}
+              {activeTab === tab.id && (
+                <div className="hidden xl:block ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
+              )}
             </button>
+          ))}
+        </nav>
+
+        {/* User section */}
+        <div className="p-4 border-t border-purple-700">
+          <div className="hidden xl:block mb-3">
+            <div className="px-4 py-3 bg-purple-800 rounded-xl">
+              <p className="text-white font-semibold text-sm truncate">{session.user.name || 'Client'}</p>
+              <p className="text-purple-300 text-xs truncate">{session.user.email}</p>
+            </div>
+          </div>
+          <button
+            onClick={() => signOut({ callbackUrl: '/' })}
+            className="w-full flex items-center justify-center xl:justify-start gap-3 px-4 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl"
+          >
+            <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            <span className="hidden xl:inline">Déconnexion</span>
+          </button>
+        </div>
+      </aside>
+
+      {/* Header mobile */}
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-b-2 border-slate-200 dark:border-slate-700 shadow-md">
+        <div className="px-4 sm:px-6">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center gap-3">
+              <Link href="/" className="flex items-center">
+                <img 
+                  src="/logo.svg" 
+                  alt="NavetteXpress" 
+                  className="h-9 w-auto"
+                />
+              </Link>
+              <span className="px-3 py-1.5 bg-gradient-to-r from-purple-100 to-purple-200 dark:from-purple-900/50 dark:to-purple-800/50 text-purple-800 dark:text-purple-200 rounded-full text-xs font-bold whitespace-nowrap shadow-sm border border-purple-300 dark:border-purple-700">
+                👤 CLIENT
+              </span>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {mobileMenuOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
+              
+              <button
+                onClick={() => signOut({ callbackUrl: '/' })}
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg text-sm font-semibold transition-all duration-200 shadow-md"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="mb-8">
-          <div className="border-b border-slate-200 dark:border-slate-700">
-            <nav className="-mb-px flex space-x-8">
+        {/* Menu mobile dropdown */}
+        {mobileMenuOpen && (
+          <div className="bg-gradient-to-b from-white to-slate-50 dark:from-slate-900 dark:to-slate-950 border-t border-slate-200 dark:border-slate-700 shadow-lg">
+            <div className="px-4 py-3 space-y-2 max-h-[70vh] overflow-y-auto">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`py-2 px-1 border-b-2 font-medium text-sm flex items-center gap-2 relative ${
+                  onClick={() => {
+                    setActiveTab(tab.id)
+                    setMobileMenuOpen(false)
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 relative ${
                     activeTab === tab.id
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'
+                      ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg'
+                      : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'
                   }`}
                 >
-                  <span>{tab.icon}</span>
-                  {tab.label}
+                  <span className="text-xl">{tab.icon}</span>
+                  <span className="flex-1 text-left">{tab.label}</span>
                   {tab.badge && (
-                    <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold">
+                    <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
                       {tab.badge}
                     </span>
                   )}
                 </button>
               ))}
-            </nav>
+            </div>
           </div>
-        </div>
+        )}
+      </header>
 
-        {/* Content */}
-        {renderContent()}
-      </div>
+      {/* Main content */}
+      <main className="flex-1 lg:ml-20 xl:ml-64 lg:pt-0 pt-16 transition-all duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Content */}
+          {renderContent()}
+        </div>
+      </main>
 
       {/* Modal de création d'avis */}
       <CreateReviewModal
