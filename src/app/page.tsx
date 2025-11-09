@@ -10,7 +10,7 @@ export default function Home() {
       <Navigation variant="transparent" />
 
       {/* Hero Section - Nouvelle Palette */}
-      <section className="relative flex items-center justify-center bg-gradient-to-br from-[#1E293B] via-[#0F5B8A] to-[#334155] dark:from-[#0F172A] dark:via-[#083A5C] dark:to-[#1E293B] pt-28 sm:pt-32 md:pt-36 px-4 sm:px-6 pb-8 sm:pb-12">
+      <section className="relative flex items-center justify-center bg-gradient-to-br from-[#1E293B] via-[#0F5B8A] to-[#334155] dark:from-[#0F172A] dark:via-[#083A5C] dark:to-[#1E293B] pt-32 sm:pt-40 md:pt-44 px-4 sm:px-6 pb-12 sm:pb-16 md:pb-20">
         {/* Subtle background pattern avec accent orange */}
         <div className="absolute inset-0 opacity-5" style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23FF7E38' fill-opacity='0.1'%3E%3Ccircle cx='20' cy='20' r='1'/%3E%3C/g%3E%3C/svg%3E")`
@@ -357,7 +357,7 @@ export default function Home() {
       </section>
 
       {/* Contact Section - Simplified */}
-      <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-slate-900 dark:bg-slate-950">
+      <section className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 lg:px-8 bg-slate-900 dark:bg-slate-950 mb-8 sm:mb-12 md:mb-16">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-6 px-2">
             Prêt à Réserver ?
@@ -427,7 +427,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-slate-950 text-slate-400">
+      <footer className="pt-16 sm:pt-20 md:pt-24 pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8 bg-slate-950 text-slate-400">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-8 sm:mb-12">
             <div className="sm:col-span-2 md:col-span-2">
