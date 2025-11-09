@@ -474,44 +474,44 @@ export function ModernBookingsManagement() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-      <div className="p-6 max-w-7xl mx-auto">
+      <div className="p-3 sm:p-6 max-w-7xl mx-auto">
         
         {/* Header avec statistiques */}
-        <div className="mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-1 sm:mb-2">
                 Gestion des réservations
               </h1>
-              <p className="text-slate-600 dark:text-slate-400">
+              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">
                 Gérez toutes vos réservations avec workflow intuitif
               </p>
             </div>
             
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
               {/* Actions en masse */}
               {selectedBookings.length > 0 && (
-                <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 px-4 py-2 rounded-lg border border-blue-200 dark:border-blue-800">
-                  <span className="text-sm text-blue-800 dark:text-blue-200 font-medium">
-                    {selectedBookings.length} sélectionnée(s)
+                <div className="flex items-center gap-1.5 sm:gap-2 bg-blue-50 dark:bg-blue-900/20 px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <span className="text-xs sm:text-sm text-blue-800 dark:text-blue-200 font-medium">
+                    {selectedBookings.length} sél.
                   </span>
                   <button
                     onClick={() => handleBulkAction('assign')}
-                    className="text-sm bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700"
+                    className="text-xs sm:text-sm bg-blue-600 text-white px-2 sm:px-3 py-1 rounded-md hover:bg-blue-700"
                   >
                     Assigner
                   </button>
                   <button
                     onClick={() => handleBulkAction('cancel')}
-                    className="text-sm bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700"
+                    className="text-xs sm:text-sm bg-red-600 text-white px-2 sm:px-3 py-1 rounded-md hover:bg-red-700"
                   >
                     Annuler
                   </button>
                 </div>
               )}
 
-              {/* Boutons de vue */}
-              <div className="flex bg-white dark:bg-slate-800 rounded-lg p-1 shadow-sm border border-slate-200 dark:border-slate-700">
+              {/* Boutons de vue - Cachés sur mobile */}
+              <div className="hidden sm:flex bg-white dark:bg-slate-800 rounded-lg p-1 shadow-sm border border-slate-200 dark:border-slate-700">
                 <button
                   onClick={() => setViewMode('cards')}
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -556,103 +556,104 @@ export function ModernBookingsManagement() {
               {/* Bouton Nouvelle réservation */}
               <button 
                 onClick={() => setShowCreateBookingModal(true)}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
+                className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
-                Nouvelle réservation
+                <span className="hidden sm:inline">Nouvelle réservation</span>
+                <span className="sm:hidden">Nouvelle rés.</span>
               </button>
             </div>
           </div>
 
           {/* Statistiques détaillées */}
-          <div className="grid grid-cols-2 md:grid-cols-8 gap-4 mb-6">
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.total}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Total</p>
+                  <p className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">{stats.total}</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Total</p>
                 </div>
-                <div className="text-2xl">📊</div>
+                <div className="text-xl sm:text-2xl">📊</div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.pending}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">En attente</p>
+                  <p className="text-xl sm:text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.pending}</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">En attente</p>
                 </div>
-                <div className="text-2xl">⏳</div>
+                <div className="text-xl sm:text-2xl">⏳</div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.assigned}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Assignées</p>
+                  <p className="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.assigned}</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Assignées</p>
                 </div>
-                <div className="text-2xl">👤</div>
+                <div className="text-xl sm:text-2xl">👤</div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{stats.confirmed}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Confirmées</p>
+                  <p className="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400">{stats.confirmed}</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Confirmées</p>
                 </div>
-                <div className="text-2xl">✅</div>
+                <div className="text-xl sm:text-2xl">✅</div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{stats.inProgress}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">En cours</p>
+                  <p className="text-xl sm:text-2xl font-bold text-purple-600 dark:text-purple-400">{stats.inProgress}</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">En cours</p>
                 </div>
-                <div className="text-2xl">🚗</div>
+                <div className="text-xl sm:text-2xl">🚗</div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.completed}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Terminées</p>
+                  <p className="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400">{stats.completed}</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Terminées</p>
                 </div>
-                <div className="text-2xl">✅</div>
+                <div className="text-xl sm:text-2xl">✅</div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.cancelled}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Annulées</p>
+                  <p className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400">{stats.cancelled}</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Annulées</p>
                 </div>
-                <div className="text-2xl">❌</div>
+                <div className="text-xl sm:text-2xl">❌</div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700 col-span-2 md:col-span-1">
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{stats.totalRevenue.toFixed(0)} FCFA</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Revenus</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-lg sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400 truncate">{stats.totalRevenue.toFixed(0)} F</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Revenus</p>
                 </div>
-                <div className="text-2xl">💰</div>
+                <div className="text-xl sm:text-2xl">💰</div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Filtres et recherche */}
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-3 sm:p-6 mb-4 sm:mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
             {/* Recherche */}
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -665,7 +666,7 @@ export function ModernBookingsManagement() {
                 placeholder="Rechercher..."
                 value={filters.search}
                 onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-                className="pl-10 w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
+                className="pl-10 w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
               />
             </div>
 
@@ -673,7 +674,7 @@ export function ModernBookingsManagement() {
             <select
               value={filters.status}
               onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
-              className="px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
+              className="px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
             >
               <option value="">Tous les statuts</option>
               <option value="pending">⏳ En attente</option>
@@ -688,7 +689,7 @@ export function ModernBookingsManagement() {
             <select
               value={filters.driver}
               onChange={(e) => setFilters(prev => ({ ...prev, driver: e.target.value }))}
-              className="px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
+              className="px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
             >
               <option value="">Tous les chauffeurs</option>
               {drivers.map((driver) => (
@@ -702,7 +703,7 @@ export function ModernBookingsManagement() {
             <select
               value={filters.dateRange}
               onChange={(e) => setFilters(prev => ({ ...prev, dateRange: e.target.value }))}
-              className="px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
+              className="px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
             >
               <option value="">Toutes les dates</option>
               <option value="today">📅 Aujourd'hui</option>
@@ -717,7 +718,7 @@ export function ModernBookingsManagement() {
                 const [sortBy, sortOrder] = e.target.value.split('-')
                 setFilters(prev => ({ ...prev, sortBy, sortOrder: sortOrder as 'asc' | 'desc' }))
               }}
-              className="px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
+              className="px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white sm:col-span-2 lg:col-span-1"
             >
               <option value="createdAt-desc">Plus récentes</option>
               <option value="createdAt-asc">Plus anciennes</option>
@@ -747,28 +748,28 @@ export function ModernBookingsManagement() {
 
         {/* Vue Kanban */}
         {viewMode === 'kanban' && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-6">
             {['pending', 'assigned', 'confirmed', 'in_progress', 'completed', 'cancelled'].map((status) => {
               const statusBookings = filteredBookings.filter(b => b.status === status)
               const statusConfig = getStatusConfig(status)
               
               return (
                 <div key={status} className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                  <div className="p-4 border-b border-slate-200 dark:border-slate-700">
+                  <div className="p-3 sm:p-4 border-b border-slate-200 dark:border-slate-700">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <div className={`w-3 h-3 rounded-full ${statusConfig.dot}`}></div>
-                        <h3 className="font-semibold text-slate-900 dark:text-white">
+                        <div className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${statusConfig.dot}`}></div>
+                        <h3 className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white">
                           {statusConfig.label}
                         </h3>
                       </div>
-                      <span className="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 text-sm px-2 py-1 rounded-full">
+                      <span className="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs sm:text-sm px-2 py-1 rounded-full">
                         {statusBookings.length}
                       </span>
                     </div>
                   </div>
                   
-                  <div className="p-4 space-y-3 max-h-96 overflow-y-auto">
+                  <div className="p-3 sm:p-4 space-y-2 sm:space-y-3 max-h-80 sm:max-h-96 overflow-y-auto">
                     {statusBookings.map((booking) => (
                       <div 
                         key={booking.id} 
@@ -836,14 +837,14 @@ export function ModernBookingsManagement() {
 
         {/* Vue en cartes */}
         {viewMode === 'cards' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
             {filteredBookings.map((booking) => {
               const statusConfig = getStatusConfig(booking.status)
               
               return (
                 <div key={booking.id} className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-all duration-300 overflow-hidden">
                   {/* Header avec statut */}
-                  <div className="p-6 pb-4">
+                  <div className="p-4 sm:p-6 pb-3 sm:pb-4">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <input
@@ -858,44 +859,44 @@ export function ModernBookingsManagement() {
                           }}
                           className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                         />
-                        <div>
-                          <h3 className="font-semibold text-slate-900 dark:text-white">
+                        <div className="min-w-0 flex-1">
+                          <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white truncate">
                             {booking.customerName}
                           </h3>
-                          <p className="text-sm text-slate-600 dark:text-slate-400">
+                          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">
                             #{booking.id} • {booking.customerEmail}
                           </p>
                         </div>
                       </div>
                       
-                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${statusConfig.color}`}>
-                        {statusConfig.icon} {statusConfig.label}
+                      <span className={`inline-flex items-center px-2 sm:px-2.5 py-1 rounded-full text-xs font-medium ${statusConfig.color} whitespace-nowrap`}>
+                        {statusConfig.icon} <span className="hidden sm:inline ml-1">{statusConfig.label}</span>
                       </span>
                     </div>
 
                     {/* Informations de trajet */}
-                    <div className="space-y-3">
-                      <div className="flex items-start gap-3">
-                        <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-slate-900 dark:text-white">Départ</p>
-                          <p className="text-sm text-slate-600 dark:text-slate-400">{booking.pickupAddress}</p>
+                    <div className="space-y-2 sm:space-y-3">
+                      <div className="flex items-start gap-2 sm:gap-3">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mt-1.5 sm:mt-2 flex-shrink-0"></div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs sm:text-sm font-medium text-slate-900 dark:text-white">Départ</p>
+                          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 line-clamp-2">{booking.pickupAddress}</p>
                         </div>
                       </div>
                       
-                      <div className="flex items-start gap-3">
-                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-slate-900 dark:text-white">Arrivée</p>
-                          <p className="text-sm text-slate-600 dark:text-slate-400">{booking.dropoffAddress}</p>
+                      <div className="flex items-start gap-2 sm:gap-3">
+                        <div className="w-2 h-2 bg-red-500 rounded-full mt-1.5 sm:mt-2 flex-shrink-0"></div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs sm:text-sm font-medium text-slate-900 dark:text-white">Arrivée</p>
+                          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 line-clamp-2">{booking.dropoffAddress}</p>
                         </div>
                       </div>
                       
-                      <div className="flex items-center gap-3 pt-2">
-                        <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="flex items-center gap-2 sm:gap-3 pt-2">
+                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <span className="text-sm text-slate-600 dark:text-slate-400">
+                        <span className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">
                           {new Date(booking.scheduledDateTime).toLocaleString('fr-FR')}
                         </span>
                       </div>
@@ -903,16 +904,16 @@ export function ModernBookingsManagement() {
                   </div>
 
                   {/* Assignation et véhicule */}
-                  <div className="px-6 pb-4">
+                  <div className="px-4 sm:px-6 pb-3 sm:pb-4">
                     {booking.driver && (
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-                          <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                      <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                        <div className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center flex-shrink-0">
+                          <span className="text-xs sm:text-sm font-medium text-blue-600 dark:text-blue-400">
                             {booking.driver.name.charAt(0)}
                           </span>
                         </div>
-                        <div>
-                          <p className="text-sm font-medium text-slate-900 dark:text-white">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs sm:text-sm font-medium text-slate-900 dark:text-white truncate">
                             {booking.driver.name}
                           </p>
                           <p className="text-xs text-slate-600 dark:text-slate-400">
@@ -923,17 +924,17 @@ export function ModernBookingsManagement() {
                     )}
                     
                     {booking.vehicle && (
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
-                          <svg className="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                        <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center flex-shrink-0">
+                          <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                           </svg>
                         </div>
-                        <div>
-                          <p className="text-sm font-medium text-slate-900 dark:text-white">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs sm:text-sm font-medium text-slate-900 dark:text-white truncate">
                             {booking.vehicle.make} {booking.vehicle.model}
                           </p>
-                          <p className="text-xs text-slate-600 dark:text-slate-400">
+                          <p className="text-xs text-slate-600 dark:text-slate-400 truncate">
                             {booking.vehicle.plateNumber}
                           </p>
                         </div>
@@ -942,13 +943,13 @@ export function ModernBookingsManagement() {
                   </div>
 
                   {/* Actions et prix */}
-                  <div className="border-t border-slate-200 dark:border-slate-700 px-6 py-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                  <div className="border-t border-slate-200 dark:border-slate-700 px-4 sm:px-6 py-3 sm:py-4">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                      <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                         {booking.status === 'pending' && (
                           <button
                             onClick={() => handleStatusChange(booking.id, 'assigned')}
-                            className="text-sm bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors"
+                            className="text-xs sm:text-sm bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors flex-1 sm:flex-initial"
                           >
                             Assigner
                           </button>
@@ -956,22 +957,22 @@ export function ModernBookingsManagement() {
                         {booking.status === 'assigned' && (
                           <button
                             onClick={() => handleStatusChange(booking.id, 'confirmed')}
-                            className="text-sm bg-green-600 text-white px-3 py-1.5 rounded-lg hover:bg-green-700 transition-colors"
+                            className="text-xs sm:text-sm bg-green-600 text-white px-3 py-1.5 rounded-lg hover:bg-green-700 transition-colors flex-1 sm:flex-initial"
                           >
                             Confirmer
                           </button>
                         )}
                         <button 
                           onClick={() => openBookingDetails(booking)}
-                          className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white px-3 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                          className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white px-3 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex-1 sm:flex-initial"
                         >
                           Détails
                         </button>
                       </div>
                       
                       {booking.price && (
-                        <div className="text-right">
-                          <p className="text-lg font-bold text-slate-900 dark:text-white">
+                        <div className="text-right w-full sm:w-auto">
+                          <p className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
                             {booking.price} FCFA
                           </p>
                         </div>
@@ -987,11 +988,11 @@ export function ModernBookingsManagement() {
         {/* Vue tableau (simplifiée pour l'espace) */}
         {viewMode === 'table' && (
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
+            <div className="overflow-x-auto -mx-3 sm:mx-0">
+              <table className="w-full min-w-[800px]">
                 <thead className="bg-slate-50 dark:bg-slate-700">
                   <tr>
-                    <th className="px-6 py-4 text-left text-sm font-medium text-slate-600 dark:text-slate-300">
+                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300">
                       <input
                         type="checkbox"
                         className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
@@ -1004,13 +1005,13 @@ export function ModernBookingsManagement() {
                         }}
                       />
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-medium text-slate-600 dark:text-slate-300">Client</th>
-                    <th className="px-6 py-4 text-left text-sm font-medium text-slate-600 dark:text-slate-300">Trajet</th>
-                    <th className="px-6 py-4 text-left text-sm font-medium text-slate-600 dark:text-slate-300">Date</th>
-                    <th className="px-6 py-4 text-left text-sm font-medium text-slate-600 dark:text-slate-300">Statut</th>
-                    <th className="px-6 py-4 text-left text-sm font-medium text-slate-600 dark:text-slate-300">Chauffeur</th>
-                    <th className="px-6 py-4 text-left text-sm font-medium text-slate-600 dark:text-slate-300">Prix</th>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-slate-600 dark:text-slate-300">Actions</th>
+                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300">Client</th>
+                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300">Trajet</th>
+                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300">Date</th>
+                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300">Statut</th>
+                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300">Chauffeur</th>
+                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300">Prix</th>
+                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-right text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
@@ -1019,7 +1020,7 @@ export function ModernBookingsManagement() {
                     
                     return (
                       <tr key={booking.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                        <td className="px-6 py-4">
+                        <td className="px-3 sm:px-6 py-3 sm:py-4">
                           <input
                             type="checkbox"
                             checked={selectedBookings.includes(booking.id)}
@@ -1033,61 +1034,61 @@ export function ModernBookingsManagement() {
                             className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                           />
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-3 sm:px-6 py-3 sm:py-4">
                           <div>
-                            <p className="font-medium text-slate-900 dark:text-white">{booking.customerName}</p>
-                            <p className="text-sm text-slate-600 dark:text-slate-400">{booking.customerEmail}</p>
+                            <p className="text-sm sm:text-base font-medium text-slate-900 dark:text-white">{booking.customerName}</p>
+                            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">{booking.customerEmail}</p>
                           </div>
                         </td>
-                        <td className="px-6 py-4">
-                          <div className="max-w-xs">
-                            <p className="text-sm text-slate-900 dark:text-white truncate">📍 {booking.pickupAddress}</p>
-                            <p className="text-sm text-slate-600 dark:text-slate-400 truncate">🎯 {booking.dropoffAddress}</p>
+                        <td className="px-3 sm:px-6 py-3 sm:py-4">
+                          <div className="max-w-[200px]">
+                            <p className="text-xs sm:text-sm text-slate-900 dark:text-white truncate">📍 {booking.pickupAddress}</p>
+                            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">🎯 {booking.dropoffAddress}</p>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
+                        <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-slate-600 dark:text-slate-400 whitespace-nowrap">
                           {new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR')}
                         </td>
-                        <td className="px-6 py-4">
-                          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${statusConfig.color}`}>
-                            {statusConfig.icon} {statusConfig.label}
+                        <td className="px-3 sm:px-6 py-3 sm:py-4">
+                          <span className={`inline-flex items-center px-2 sm:px-2.5 py-1 rounded-full text-xs font-medium ${statusConfig.color} whitespace-nowrap`}>
+                            {statusConfig.icon} <span className="hidden sm:inline ml-1">{statusConfig.label}</span>
                           </span>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-3 sm:px-6 py-3 sm:py-4">
                           {booking.driver ? (
                             <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                              <div className="w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center flex-shrink-0">
                                 <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
                                   {booking.driver.name.charAt(0)}
                                 </span>
                               </div>
-                              <span className="text-sm text-slate-900 dark:text-white">{booking.driver.name}</span>
+                              <span className="text-xs sm:text-sm text-slate-900 dark:text-white truncate max-w-[100px]">{booking.driver.name}</span>
                             </div>
                           ) : (
-                            <span className="text-sm text-slate-400 dark:text-slate-500">Non assigné</span>
+                            <span className="text-xs sm:text-sm text-slate-400 dark:text-slate-500">Non assigné</span>
                           )}
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                           {booking.price ? (
-                            <span className="font-medium text-slate-900 dark:text-white">{booking.price} FCFA</span>
+                            <span className="text-xs sm:text-sm font-medium text-slate-900 dark:text-white">{booking.price} F</span>
                           ) : (
                             <span className="text-slate-400 dark:text-slate-500">-</span>
                           )}
                         </td>
-                        <td className="px-6 py-4 text-right">
-                          <div className="flex items-center justify-end gap-2">
+                        <td className="px-3 sm:px-6 py-3 sm:py-4 text-right">
+                          <div className="flex items-center justify-end gap-1 sm:gap-2">
                             <button 
                               onClick={() => openBookingDetails(booking)}
-                              className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                              className="p-1.5 sm:p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
                               title="Voir les détails"
                             >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                               </svg>
                             </button>
-                            <button className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900/20 rounded-lg transition-colors">
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <button className="p-1.5 sm:p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900/20 rounded-lg transition-colors">
+                              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                               </svg>
                             </button>
