@@ -389,23 +389,23 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-      <div className="p-6 max-w-7xl mx-auto">
+      <div className="p-3 sm:p-6 max-w-7xl mx-auto">
         
         {/* Header avec statistiques */}
-        <div className="mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-1 sm:mb-2">
                 Gestion des utilisateurs
               </h1>
-              <p className="text-slate-600 dark:text-slate-400">
+              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">
                 Gérez tous vos utilisateurs, rôles et permissions
               </p>
             </div>
             
-            <div className="flex items-center gap-3">
-              {/* Boutons de vue */}
-              <div className="flex bg-white dark:bg-slate-800 rounded-lg p-1 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="flex items-center gap-2 sm:gap-3">
+              {/* Boutons de vue - Cachés sur mobile */}
+              <div className="hidden sm:flex bg-white dark:bg-slate-800 rounded-lg p-1 shadow-sm border border-slate-200 dark:border-slate-700">
                 <button
                   onClick={() => setViewMode('cards')}
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -438,101 +438,102 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
               {canCreate() && (
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
+                  className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   </svg>
-                  Nouvel utilisateur
+                  <span className="hidden sm:inline">Nouvel utilisateur</span>
+                  <span className="sm:hidden">Nouveau</span>
                 </button>
               )}
             </div>
           </div>
 
           {/* Statistiques */}
-          <div className={`grid grid-cols-2 ${isCurrentUserAdmin() ? 'md:grid-cols-5' : 'md:grid-cols-4'} gap-4 mb-6`}>
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+          <div className={`grid grid-cols-2 ${isCurrentUserAdmin() ? 'md:grid-cols-5' : 'md:grid-cols-4'} gap-3 sm:gap-4 mb-4 sm:mb-6`}>
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.total}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Total</p>
+                  <p className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">{stats.total}</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Total</p>
                 </div>
-                <div className="text-2xl">👥</div>
+                <div className="text-xl sm:text-2xl">👥</div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.active}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Actifs</p>
+                  <p className="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400">{stats.active}</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Actifs</p>
                 </div>
-                <div className="text-2xl">✅</div>
+                <div className="text-xl sm:text-2xl">✅</div>
               </div>
             </div>
             
             {isStrictAdmin() && (
-              <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+              <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{stats.admins}</p>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">Admins</p>
+                    <p className="text-xl sm:text-2xl font-bold text-purple-600 dark:text-purple-400">{stats.admins}</p>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Admins</p>
                   </div>
-                  <div className="text-2xl">👑</div>
+                  <div className="text-xl sm:text-2xl">👑</div>
                 </div>
               </div>
             )}
             
             {isCurrentUserAdmin() && (
-              <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+              <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">{stats.managers}</p>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">Managers</p>
+                    <p className="text-xl sm:text-2xl font-bold text-orange-600 dark:text-orange-400">{stats.managers}</p>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Managers</p>
                   </div>
-                  <div className="text-2xl">👨‍💼</div>
+                  <div className="text-xl sm:text-2xl">👨‍💼</div>
                 </div>
               </div>
             )}
             
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.drivers}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Chauffeurs</p>
+                  <p className="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.drivers}</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Chauffeurs</p>
                 </div>
-                <div className="text-2xl">🚗</div>
+                <div className="text-xl sm:text-2xl">🚗</div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-gray-600 dark:text-gray-400">{stats.customers}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Clients</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-600 dark:text-gray-400">{stats.customers}</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Clients</p>
                 </div>
-                <div className="text-2xl">👤</div>
+                <div className="text-xl sm:text-2xl">👤</div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Filtres et recherche */}
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4 sm:p-6 mb-4 sm:mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3 sm:gap-4">
             {/* Recherche */}
-            <div className="relative">
+            <div className="relative md:col-span-1">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg className="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="h-4 w-4 sm:h-5 sm:w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
               <input
                 type="text"
-                placeholder="Rechercher un utilisateur..."
+                placeholder="Rechercher..."
                 value={filters.search}
                 onChange={(e) => handleFilterChange('search', e.target.value)}
-                className="pl-10 w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
+                className="pl-9 sm:pl-10 w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
               />
             </div>
 
@@ -540,7 +541,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
             <select
               value={filters.role}
               onChange={(e) => handleFilterChange('role', e.target.value)}
-              className="px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
+              className="px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
             >
               <option value="">Tous les rôles</option>
               {isStrictAdmin() && <option value="admin">👑 Administrateurs</option>}
@@ -553,7 +554,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
             <select
               value={filters.status}
               onChange={(e) => handleFilterChange('status', e.target.value)}
-              className="px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
+              className="px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
             >
               <option value="">Tous les statuts</option>
               <option value="active">✅ Actifs</option>
@@ -567,7 +568,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                 const [sortBy, sortOrder] = e.target.value.split('-')
                 setFilters(prev => ({ ...prev, sortBy, sortOrder: sortOrder as 'asc' | 'desc' }))
               }}
-              className="px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
+              className="px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
             >
               <option value="name-asc">Nom A-Z</option>
               <option value="name-desc">Nom Z-A</option>
@@ -579,15 +580,15 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
           </div>
 
           {/* Résultats et actions rapides */}
-          <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-            <p className="text-sm text-slate-600 dark:text-slate-400">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-slate-200 dark:border-slate-700">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
               {filteredUsers.length} utilisateur{filteredUsers.length > 1 ? 's' : ''} trouvé{filteredUsers.length > 1 ? 's' : ''}
             </p>
             
             {(filters.search || filters.role || filters.status) && (
               <button
                 onClick={() => setFilters({ role: '', status: '', search: '', sortBy: 'name', sortOrder: 'asc' })}
-                className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
+                className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
               >
                 Effacer les filtres
               </button>
@@ -597,42 +598,42 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
 
         {/* Vue en cartes */}
         {viewMode === 'cards' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredUsers.map((user) => (
               <div key={user.id} className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-all duration-300 overflow-hidden">
                 {/* Header avec photo et statut */}
-                <div className="relative p-6 pb-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="relative">
+                <div className="relative p-4 sm:p-6 pb-3 sm:pb-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                      <div className="relative flex-shrink-0">
                         {user.image ? (
                           <Image
                             src={user.image}
                             alt={user.name}
-                            width={56}
-                            height={56}
-                            className="rounded-full object-cover"
+                            width={48}
+                            height={48}
+                            className="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover"
                           />
                         ) : (
-                          <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold text-lg">
+                          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold text-base sm:text-lg">
                             {user.name?.charAt(0)?.toUpperCase() || '?'}
                           </div>
                         )}
                         {/* Indicateur de statut */}
-                        <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white dark:border-slate-800 ${
+                        <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 sm:w-4 sm:h-4 rounded-full border-2 border-white dark:border-slate-800 ${
                           user.isActive ? 'bg-green-500' : 'bg-red-500'
                         }`}></div>
                       </div>
                       
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-slate-900 dark:text-white truncate">
+                        <h3 className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white truncate">
                           {user.name}
                         </h3>
-                        <p className="text-sm text-slate-600 dark:text-slate-400 truncate">
+                        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">
                           {user.email}
                         </p>
                         {user.phone && (
-                          <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">
+                          <p className="text-xs text-slate-500 dark:text-slate-500 mt-0.5 sm:mt-1 truncate">
                             📞 {user.phone}
                           </p>
                         )}
@@ -640,25 +641,26 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                     </div>
                     
                     {/* Badge de rôle */}
-                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(user.role)}`}>
-                      {getRoleIcon(user.role)} {getRoleLabel(user.role)}
+                    <span className={`inline-flex items-center px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0 ${getRoleBadgeColor(user.role)}`}>
+                      <span className="hidden sm:inline">{getRoleIcon(user.role)} {getRoleLabel(user.role)}</span>
+                      <span className="sm:hidden">{getRoleIcon(user.role)}</span>
                     </span>
                   </div>
                 </div>
 
                 {/* Informations supplémentaires */}
-                <div className="px-6 pb-4">
+                <div className="px-4 sm:px-6 pb-3 sm:pb-4">
                   {user.licenseNumber && (
-                    <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 mb-2">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-1.5 sm:mb-2">
+                      <svg className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
-                      Permis : {user.licenseNumber}
+                      <span className="truncate">Permis : {user.licenseNumber}</span>
                     </div>
                   )}
                   
                   <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-500">
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     Créé le {new Date(user.createdAt).toLocaleDateString('fr-FR')}
@@ -666,9 +668,10 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                 </div>
 
                 {/* Actions */}
-                <div className="border-t border-slate-200 dark:border-slate-700 px-6 py-4">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2">
+                <div className="border-t border-slate-200 dark:border-slate-700 px-4 sm:px-6 py-3 sm:py-4">
+                  <div className="flex flex-col gap-2">
+                    {/* Ligne 1: Modifier + Mot de passe */}
+                    <div className="flex gap-2">
                       {canUpdate() && (
                         <button
                           onClick={() => {
@@ -685,7 +688,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                             })
                             setIsModalOpen(true)
                           }}
-                          className="flex items-center gap-1 px-3 py-1.5 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-colors border border-blue-200 dark:border-blue-800"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -700,20 +703,22 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                             setSelectedUser(user)
                             setIsPasswordModalOpen(true)
                           }}
-                          className="flex items-center gap-1 px-3 py-1.5 text-sm text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition-colors"
+                          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-medium text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 hover:bg-amber-100 dark:hover:bg-amber-900/30 rounded-lg transition-colors border border-amber-200 dark:border-amber-800 whitespace-nowrap"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v-2L4.257 9.257A6 6 0 0112 5h3.001z" />
                           </svg>
-                          Mot de passe
+                          <span className="hidden sm:inline">Mot de passe</span>
+                          <span className="sm:hidden">MDP</span>
                         </button>
                       )}
                     </div>
                     
+                    {/* Ligne 2: Supprimer */}
                     {canDelete() && (
                       <button
                         onClick={() => setDeletingUser(user)}
-                        className="flex items-center gap-1 px-3 py-1.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                        className="w-full flex items-center justify-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors border border-red-200 dark:border-red-800"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
