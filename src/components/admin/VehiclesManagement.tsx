@@ -377,16 +377,19 @@ export function VehiclesManagement() {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+    <div className="p-3 sm:p-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-4 sm:mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
           Gestion des véhicules
         </h2>
         <button
           onClick={openCreateModal}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+          className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
         >
-          + Nouveau véhicule
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+          Nouveau véhicule
         </button>
       </div>
 
@@ -427,8 +430,8 @@ export function VehiclesManagement() {
         activeFiltersCount={Object.values(filters).filter(v => v !== '').length}
       />
 
-      {/* Tableau des véhicules */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+      {/* Tableau des véhicules - Desktop */}
+      <div className="hidden lg:block bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-700">
@@ -536,15 +539,94 @@ export function VehiclesManagement() {
         </div>
       </div>
 
+      {/* Vue Mobile - Cartes */}
+      <div className="lg:hidden space-y-4">
+        {filteredVehicles.map((vehicle) => (
+          <div key={vehicle.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+            <div className="flex items-start gap-4">
+              {/* Photo */}
+              <div className="flex-shrink-0">
+                {vehicle.photo ? (
+                  <div className="relative h-16 w-16 rounded-lg overflow-hidden">
+                    <Image
+                      fill
+                      className="object-cover"
+                      src={vehicle.photo}
+                      alt={`Photo de ${vehicle.make} ${vehicle.model}`}
+                      sizes="64px"
+                    />
+                  </div>
+                ) : (
+                  <div className="h-16 w-16 rounded-lg bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-2xl">
+                    🚗
+                  </div>
+                )}
+              </div>
+
+              {/* Informations */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <div>
+                    <h3 className="text-base font-semibold text-gray-900 dark:text-white">
+                      {vehicle.make} {vehicle.model}
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{vehicle.year}</p>
+                  </div>
+                  <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full whitespace-nowrap ${
+                    vehicle.isActive 
+                      ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200'
+                      : 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200'
+                  }`}>
+                    {vehicle.isActive ? 'Actif' : 'Inactif'}
+                  </span>
+                </div>
+
+                <div className="space-y-1 mb-3">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <span className="font-medium">Plaque:</span> {vehicle.plateNumber}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <span className="font-medium">Capacité:</span> {vehicle.capacity} places
+                  </p>
+                </div>
+
+                {/* Boutons d'actions */}
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => openEditModal(vehicle)}
+                    className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    Modifier
+                  </button>
+                  {canDelete('vehicles') && (
+                    <button
+                      onClick={() => setDeleteConfirm({ open: true, vehicle })}
+                      className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
       {/* Modal de création/édition */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-2xl">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4 overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 w-full max-w-2xl my-4 sm:my-8">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-4">
               {editingVehicle ? 'Modifier le véhicule' : 'Nouveau véhicule'}
             </h3>
             
-            <form onSubmit={editingVehicle ? handleUpdateVehicle : handleCreateVehicle} className="space-y-4 max-h-[80vh] overflow-y-auto">
+            <form onSubmit={editingVehicle ? handleUpdateVehicle : handleCreateVehicle} className="space-y-4 max-h-[70vh] sm:max-h-[75vh] overflow-y-auto pr-1">
               
               {/* 📋 Informations de base */}
               <div className="bg-slate-50 dark:bg-slate-700/50 p-3 rounded-lg">
@@ -755,17 +837,17 @@ export function VehiclesManagement() {
                 </label>
               </div>
               
-              <div className="flex justify-end space-x-3 pt-4">
+              <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3 pt-4">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                  className="w-full sm:w-auto px-4 py-2.5 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white border border-gray-300 dark:border-gray-600 rounded-lg font-medium"
                 >
                   Annuler
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium"
+                  className="w-full sm:w-auto px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
                 >
                   {editingVehicle ? 'Mettre à jour' : 'Créer'}
                 </button>

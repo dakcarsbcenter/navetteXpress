@@ -24,6 +24,7 @@ export default function AdminDashboard() {
   const { permissions, loading: permissionsLoading, canRead, canManage } = usePermissions()
   const [activeTab, setActiveTab] = useState<TabType>('modern')
   const [isLoading, setIsLoading] = useState(true)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     if (status === "loading") return
@@ -125,20 +126,21 @@ export default function AdminDashboard() {
       <div className="min-h-screen">
         {/* Header simple pour le dashboard moderne */}
         <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center gap-4">
-                <Link href="/" className="text-xl font-bold text-slate-900 dark:text-white">
-                  🚗 Navette Xpress
+          <div className="max-w-7xl mx-auto px-3 sm:px-6">
+            <div className="flex justify-between items-center h-14 sm:h-16">
+              <div className="flex items-center gap-2 sm:gap-4">
+                <Link href="/" className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white truncate">
+                  <span className="hidden sm:inline">🚗 Navette Xpress</span>
+                  <span className="sm:hidden">🚗 NX</span>
                 </Link>
-                <span className="px-3 py-1 bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200 rounded-full text-sm font-medium">
+                <span className="px-2 py-0.5 sm:px-3 sm:py-1 bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200 rounded-full text-xs sm:text-sm font-medium">
                   ADMIN
                 </span>
               </div>
               
               <div className="flex items-center gap-2">
-                {/* Navigation pills compacte */}
-                <div className="flex bg-slate-100 dark:bg-slate-800 rounded-lg p-1 mr-4">
+                {/* Navigation pills - Desktop */}
+                <div className="hidden lg:flex bg-slate-100 dark:bg-slate-800 rounded-lg p-1 mr-4">
                   {tabs.slice(0, 6).map((tab) => (
                     <button
                       key={tab.id}
@@ -151,17 +153,31 @@ export default function AdminDashboard() {
                       title={tab.label}
                     >
                       <span className="text-base">{tab.icon}</span>
-                      <span className="ml-1 hidden lg:inline">{tab.label.split(' ')[0]}</span>
+                      <span className="ml-1">{tab.label.split(' ')[0]}</span>
                     </button>
                   ))}
                 </div>
+
+                {/* Menu mobile button */}
+                <button
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  className="lg:hidden p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    {mobileMenuOpen ? (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    ) : (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                    )}
+                  </svg>
+                </button>
                 
-                <span className="text-sm text-slate-600 dark:text-slate-400">
+                <span className="hidden sm:inline text-sm text-slate-600 dark:text-slate-400 truncate max-w-[100px]">
                   {session.user.name}
                 </span>
                 <button
                   onClick={() => signOut({ callbackUrl: '/' })}
-                  className="flex items-center gap-1 px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors"
+                  className="flex items-center gap-1 px-2 sm:px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -171,10 +187,35 @@ export default function AdminDashboard() {
               </div>
             </div>
           </div>
+
+          {/* Menu mobile dropdown */}
+          {mobileMenuOpen && (
+            <div className="lg:hidden bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700">
+              <div className="px-3 py-2 space-y-1">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => {
+                      setActiveTab(tab.id)
+                      setMobileMenuOpen(false)
+                    }}
+                    className={`w-full flex items-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                      activeTab === tab.id
+                        ? 'bg-blue-600 text-white'
+                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    }`}
+                  >
+                    <span className="text-lg mr-3">{tab.icon}</span>
+                    <span>{tab.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </header>
 
         {/* Dashboard moderne en plein écran */}
-        <div className="pt-16">
+        <div className="pt-14 sm:pt-16">
           {renderContent()}
         </div>
       </div>
@@ -186,64 +227,81 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <Link href="/" className="text-2xl font-bold text-gray-900 dark:text-white">
-                🚗 Navette Xpress
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-14 sm:h-16">
+            <div className="flex items-center gap-2 sm:gap-4">
+              <Link href="/" className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">
+                <span className="hidden sm:inline">🚗 Navette Xpress</span>
+                <span className="sm:hidden">🚗 NX</span>
               </Link>
-              <span className="ml-4 px-3 py-1 bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200 rounded-full text-sm font-medium">
+              <span className="px-2 py-0.5 sm:px-3 sm:py-1 bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200 rounded-full text-xs sm:text-sm font-medium">
                 ADMIN
               </span>
             </div>
             
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                Connecté en tant que: <strong>{session.user.name || session.user.email}</strong>
+            <div className="flex items-center gap-2 sm:gap-4">
+              <span className="hidden md:block text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                <span className="hidden lg:inline">Connecté: </span>
+                <strong className="truncate max-w-[120px] inline-block">{session.user.name || session.user.email}</strong>
               </span>
               <Link
                 href="/dashboard"
-                className="text-blue-600 hover:text-blue-500 font-medium"
+                className="hidden sm:inline text-blue-600 hover:text-blue-500 font-medium text-sm"
               >
-                Retour au dashboard
+                Retour
               </Link>
               <button
                 onClick={() => signOut({ callbackUrl: '/' })}
-                className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors"
+                className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                 </svg>
-                Déconnexion
+                <span className="hidden sm:inline">Déconnexion</span>
               </button>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Navigation Tabs */}
-        <div className="mb-8">
-          <nav className="flex space-x-1 bg-white dark:bg-gray-800 rounded-lg p-1 shadow-sm">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
+        {/* Navigation Tabs - Desktop */}
+        <div className="mb-4 sm:mb-8 hidden sm:block">
+          <nav className="flex flex-wrap gap-1 bg-white dark:bg-gray-800 rounded-lg p-1 shadow-sm">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                className={`flex items-center px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-medium transition-all duration-200 ${
                   activeTab === tab.id
                     ? 'bg-blue-600 text-white shadow-sm'
                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
                 <span className="mr-2">{tab.icon}</span>
-                {tab.label}
+                <span className="whitespace-nowrap">{tab.label}</span>
               </button>
             ))}
           </nav>
         </div>
 
+        {/* Navigation Tabs - Mobile (Select) */}
+        <div className="mb-4 sm:hidden">
+          <select
+            value={activeTab}
+            onChange={(e) => setActiveTab(e.target.value as TabType)}
+            className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            {tabs.map((tab) => (
+              <option key={tab.id} value={tab.id}>
+                {tab.icon} {tab.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {/* Content */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
           {renderContent()}
         </div>
       </div>
