@@ -94,8 +94,8 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
                 <div className="w-2 h-2 bg-green-400 rounded-full"></div>
               </div>
               
-              {/* Boutons d'authentification */}
-              {!session && (
+              {/* Boutons d'authentification ou lien dashboard */}
+              {isMounted && !session && (
                 <div className="flex items-center space-x-2 sm:space-x-3">
                   <Link
                     href="/auth/signin"
@@ -110,6 +110,16 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
                     S&apos;inscrire
                   </Link>
                 </div>
+              )}
+              
+              {/* Lien Dashboard pour utilisateur connecté */}
+              {isMounted && session?.user && (
+                <Link
+                  href={(session.user as unknown as { role?: string })?.role === 'admin' ? '/admin/dashboard' : '/client/dashboard'}
+                  className="text-white/90 hover:text-white px-2 sm:px-3 py-1 rounded text-xs sm:text-sm font-medium transition-colors duration-200 whitespace-nowrap"
+                >
+                  {(session.user as unknown as { role?: string })?.role === 'admin' ? 'Dashboard Admin' : 'Mon Espace'}
+                </Link>
               )}
             </div>
           </div>
@@ -176,7 +186,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
             </Link>
 
             {/* Tableau de bord adaptatif selon le rôle */}
-            {session?.user && (
+            {isMounted && session?.user && (
               <Link
                 href={(session.user as unknown as { role?: string })?.role === 'admin' ? '/admin/dashboard' : '/client/dashboard'}
                 className={`${linkClasses} font-medium transition-all duration-200 hover:scale-105`}
@@ -186,7 +196,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
             )}
 
 
-            {session?.user && (
+            {isMounted && session?.user && (
               <div className="ml-2 relative group">
                 <button
                   className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer ${linkClasses} hover:bg-slate-100 dark:hover:bg-slate-800`}
@@ -288,7 +298,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
               Réserver
             </Link>
 
-            {session?.user && (
+            {isMounted && session?.user && (
               <Link
                 href={(session.user as unknown as { role?: string })?.role === 'admin' ? '/admin/dashboard' : '/client/dashboard'}
                 className={`${linkClasses} block px-4 py-3 rounded-lg font-medium transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-800`}
@@ -298,7 +308,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
               </Link>
             )}
 
-            {!session && (
+            {isMounted && !session && (
               <div className="pt-4 border-t border-slate-200 dark:border-slate-700 px-4">
                 <div className="flex flex-col gap-2">
                   <Link
