@@ -132,9 +132,23 @@ export function ModernQuotesManagement() {
   const fetchQuotes = async () => {
     try {
       console.log('🔍 Chargement des devis...')
-      const response = await fetch('/api/quotes')
-      const result = await response.json()
       
+      const response = await fetch('/api/quotes', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-store'
+      })
+      
+      console.log('📡 Response status:', response.status)
+      
+      if (!response.ok) {
+        console.error('❌ HTTP Error:', response.status, response.statusText)
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const result = await response.json()
       console.log('📊 API Response:', result)
       
       if (result.success) {
@@ -142,11 +156,13 @@ export function ModernQuotesManagement() {
         setQuotes(result.data)
       } else {
         console.error('❌ Erreur API:', result.error)
-        showError('Erreur lors du chargement des devis', 'Erreur de chargement')
+        showError(result.error || 'Erreur lors du chargement des devis', 'Erreur de chargement')
       }
     } catch (error) {
-      console.error('❌ Erreur lors du chargement:', error)
-      showError('Erreur lors du chargement des devis', 'Erreur de chargement')
+      console.error('❌ Erreur lors du chargement des devis:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue'
+      console.error('Type d\'erreur:', typeof error, errorMessage)
+      showError('Impossible de charger les devis. Vérifiez votre connexion.', 'Erreur de chargement')
     } finally {
       setIsLoading(false)
     }
@@ -669,35 +685,35 @@ Description: ${editQuoteForm.description}`,
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/30 to-slate-50 dark:from-slate-900 dark:via-purple-900/10 dark:to-slate-900">
-      <div className="p-6 max-w-7xl mx-auto">
+      <div className="p-3 sm:p-6 max-w-7xl mx-auto">
         
         {/* Header avec statistiques */}
-        <div className="mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+        <div className="mb-4 sm:mb-8">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-1 sm:mb-2">
                 Gestion des devis
               </h1>
-              <p className="text-slate-600 dark:text-slate-400">
+              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">
                 Suivez le workflow complet de vos demandes de devis
               </p>
             </div>
             
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full lg:w-auto">
               {/* Actions en masse */}
               {selectedQuotes.length > 0 && (
-                <div className="flex items-center gap-2 bg-purple-50 dark:bg-purple-900/20 px-4 py-2 rounded-lg border border-purple-200 dark:border-purple-800">
-                  <span className="text-sm text-purple-800 dark:text-purple-200 font-medium">
+                <div className="flex items-center gap-2 bg-purple-50 dark:bg-purple-900/20 px-3 sm:px-4 py-2 rounded-lg border border-purple-200 dark:border-purple-800">
+                  <span className="text-xs sm:text-sm text-purple-800 dark:text-purple-200 font-medium">
                     {selectedQuotes.length} sélectionné(s)
                   </span>
-                  <button className="text-sm bg-purple-600 text-white px-3 py-1 rounded-md hover:bg-purple-700">
-                    Actions groupées
+                  <button className="text-xs sm:text-sm bg-purple-600 text-white px-2 sm:px-3 py-1 rounded-md hover:bg-purple-700">
+                    Actions
                   </button>
                 </div>
               )}
 
-              {/* Boutons de vue */}
-              <div className="flex bg-white dark:bg-slate-800 rounded-lg p-1 shadow-sm border border-slate-200 dark:border-slate-700">
+              {/* Boutons de vue - cachés sur mobile */}
+              <div className="hidden sm:flex bg-white dark:bg-slate-800 rounded-lg p-1 shadow-sm border border-slate-200 dark:border-slate-700">
                 <button
                   onClick={() => setViewMode('workflow')}
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -742,93 +758,94 @@ Description: ${editQuoteForm.description}`,
               {/* Bouton Nouveau devis */}
               <button 
                 onClick={() => setShowNewQuoteModal(true)}
-                className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
+                className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl text-sm sm:text-base font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
-                Nouveau devis
+                <span className="hidden sm:inline">Nouveau devis</span>
+                <span className="sm:hidden">Nouveau</span>
               </button>
             </div>
           </div>
 
           {/* Statistiques détaillées */}
-          <div className="grid grid-cols-2 md:grid-cols-7 gap-4 mb-6">
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.total}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Total</p>
+                  <p className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">{stats.total}</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Total</p>
                 </div>
-                <div className="text-2xl">📊</div>
+                <div className="text-xl sm:text-2xl">📊</div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.pending}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">En attente</p>
+                  <p className="text-xl sm:text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.pending}</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">En attente</p>
                 </div>
-                <div className="text-2xl">⏳</div>
+                <div className="text-xl sm:text-2xl">⏳</div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.inProgress}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">En cours</p>
+                  <p className="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.inProgress}</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">En cours</p>
                 </div>
-                <div className="text-2xl">🔄</div>
+                <div className="text-xl sm:text-2xl">🔄</div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{stats.sent}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Envoyés</p>
+                  <p className="text-xl sm:text-2xl font-bold text-purple-600 dark:text-purple-400">{stats.sent}</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Envoyés</p>
                 </div>
-                <div className="text-2xl">📤</div>
+                <div className="text-xl sm:text-2xl">📤</div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.accepted}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Acceptés</p>
+                  <p className="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400">{stats.accepted}</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Acceptés</p>
                 </div>
-                <div className="text-2xl">✅</div>
+                <div className="text-xl sm:text-2xl">✅</div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{stats.conversionRate}%</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Conversion</p>
+                  <p className="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400">{stats.conversionRate}%</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Conversion</p>
                 </div>
-                <div className="text-2xl">📈</div>
+                <div className="text-xl sm:text-2xl">📈</div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700 col-span-2 md:col-span-1">
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{stats.totalValue.toFixed(0)} FCFA</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Valeur totale</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-lg sm:text-2xl font-bold text-indigo-600 dark:text-indigo-400 truncate">{stats.totalValue.toFixed(0)} F</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Valeur totale</p>
                 </div>
-                <div className="text-2xl">💰</div>
+                <div className="text-xl sm:text-2xl">💰</div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Filtres et recherche */}
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-3 sm:p-6 mb-4 sm:mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
             {/* Recherche */}
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

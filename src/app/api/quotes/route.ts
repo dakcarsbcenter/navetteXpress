@@ -89,9 +89,13 @@ export async function POST(request: NextRequest) {
 // GET - Récupérer les demandes de devis
 export async function GET() {
   try {
+    console.log('📋 GET /api/quotes - Début de la requête')
+    
     const session = await getServerSession(authOptions) as { user?: { id?: string; role?: string; email?: string } } | null;
+    console.log('🔐 Session:', session ? `User ID: ${session.user?.id}, Role: ${session.user?.role}` : 'Non authentifié')
 
     if (!session?.user?.id) {
+      console.log('❌ Utilisateur non authentifié')
       return NextResponse.json({ 
         success: false, 
         error: 'Non authentifié' 
@@ -99,9 +103,13 @@ export async function GET() {
     }
 
     const userRole = session.user.role || 'customer';
+    console.log('👤 Vérification des permissions pour le rôle:', userRole)
+    
     const hasReadPermission = await hasQuotesPermission(userRole, 'read');
+    console.log('✓ Permission de lecture:', hasReadPermission)
 
     if (!hasReadPermission) {
+      console.log('❌ Permission refusée pour le rôle:', userRole)
       return NextResponse.json({ 
         success: false, 
         error: 'Vous n\'avez pas la permission de voir les devis' 
@@ -111,19 +119,24 @@ export async function GET() {
     // Si l'utilisateur a la permission 'manage', il peut voir tous les devis
     const hasManagePermission = await hasQuotesPermission(userRole, 'update') || 
                                 await hasQuotesPermission(userRole, 'delete');
+    console.log('🔧 Permission de gestion:', hasManagePermission)
 
     let quotes;
 
     if (hasManagePermission) {
+      console.log('📊 Récupération de tous les devis...')
       // Permission manage: voir tous les devis
       quotes = await db
         .select()
         .from(quotesTable)
         .orderBy(desc(quotesTable.createdAt));
+      console.log('✅ Nombre de devis récupérés:', quotes.length)
     } else {
       // Permission read only: voir uniquement ses propres devis
       const userEmail = session.user.email;
+      console.log('📧 Récupération des devis pour:', userEmail)
       if (!userEmail) {
+        console.log('❌ Email utilisateur manquant')
         return NextResponse.json({ 
           success: false, 
           error: 'Email utilisateur non trouvé' 
@@ -134,15 +147,22 @@ export async function GET() {
         .from(quotesTable)
         .where(eq(quotesTable.customerEmail, userEmail))
         .orderBy(desc(quotesTable.createdAt));
+      console.log('✅ Nombre de devis personnels récupérés:', quotes.length)
     }
 
+    console.log('✅ Envoi de la réponse avec', quotes.length, 'devis')
     return NextResponse.json({ 
       success: true, 
       data: quotes 
     });
 
   } catch (error) {
-    console.error('Erreur lors de la récupération des demandes de devis:', error);
+    console.error('❌ Erreur lors de la récupération des demandes de devis:', error);
+    console.error('Type d\'erreur:', typeof error);
+    if (error instanceof Error) {
+      console.error('Message d\'erreur:', error.message);
+      console.error('Stack trace:', error.stack);
+    }
     return NextResponse.json({ 
       success: false, 
       error: 'Erreur interne du serveur' 
