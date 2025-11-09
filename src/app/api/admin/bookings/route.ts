@@ -16,8 +16,21 @@ const cancelledByUsers = alias(users, 'cancelled_by_users');
 // GET - Récupérer toutes les réservations avec leurs détails
 export async function GET() {
   try {
-    await requireBookingsRead(); // Vérification de la permission de lecture
+    console.log('📋 [API Bookings] Début de la requête GET')
+    
+    // Vérification de la permission de lecture
+    try {
+      await requireBookingsRead();
+      console.log('✅ [API Bookings] Permission de lecture validée')
+    } catch (permError) {
+      console.error('❌ [API Bookings] Erreur de permission:', permError)
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Permission refusée' 
+      }, { status: 403 });
+    }
 
+    console.log('🔍 [API Bookings] Requête à la base de données...')
     const bookings = await db
       .select({
         booking: bookingsTable,
@@ -33,15 +46,16 @@ export async function GET() {
       .leftJoin(vehiclesTable, eq(bookingsTable.vehicleId, vehiclesTable.id))
       .leftJoin(cancelledByUsers, eq(bookingsTable.cancelledBy, cancelledByUsers.id));
     
+    console.log(`✅ [API Bookings] ${bookings.length} réservations récupérées`)
     return NextResponse.json({ 
       success: true, 
       data: bookings 
     });
   } catch (error) {
-    console.error('Erreur lors de la récupération des réservations:', error);
+    console.error('❌ [API Bookings] Erreur lors de la récupération:', error);
     return NextResponse.json({ 
       success: false, 
-      error: 'Erreur interne du serveur' 
+      error: error instanceof Error ? error.message : 'Erreur interne du serveur' 
     }, { status: 500 });
   }
 }

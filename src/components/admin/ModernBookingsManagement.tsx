@@ -140,42 +140,67 @@ export function ModernBookingsManagement() {
 
   const fetchBookings = async () => {
     try {
-      const response = await fetch('/api/admin/bookings')
-      if (response.ok) {
-        const result = await response.json()
-        if (result.success) {
-          const normalized: Booking[] = Array.isArray(result.data)
-            ? result.data.map((row: any) => {
-                const b = row.booking ?? row
-                return {
-                  id: b.id,
-                  customerName: b.customerName,
-                  customerEmail: b.customerEmail,
-                  customerPhone: b.customerPhone,
-                  pickupAddress: b.pickupAddress,
-                  dropoffAddress: b.dropoffAddress,
-                  scheduledDateTime: b.scheduledDateTime,
-                  status: b.status,
-                  driverId: b.driverId,
-                  vehicleId: b.vehicleId,
-                  price: b.price,
-                  notes: b.notes,
-                  cancellationReason: b.cancellationReason,
-                  cancelledBy: b.cancelledBy,
-                  cancelledAt: b.cancelledAt,
-                  createdAt: b.createdAt,
-                  driver: row.driver,
-                  vehicle: row.vehicle,
-                  cancelledByUser: row.cancelledByUser
-                }
-              })
-            : []
-          setBookings(normalized)
-        }
+      console.log('🔄 Chargement des réservations...')
+      const response = await fetch('/api/admin/bookings', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-store'
+      })
+      
+      console.log('📡 Réponse API:', response.status, response.statusText)
+      
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('❌ Erreur HTTP:', response.status, errorText)
+        throw new Error(`Erreur HTTP ${response.status}: ${errorText}`)
+      }
+      
+      const result = await response.json()
+      console.log('📦 Données reçues:', result)
+      
+      if (result.success) {
+        const normalized: Booking[] = Array.isArray(result.data)
+          ? result.data.map((row: any) => {
+              const b = row.booking ?? row
+              return {
+                id: b.id,
+                customerName: b.customerName,
+                customerEmail: b.customerEmail,
+                customerPhone: b.customerPhone,
+                pickupAddress: b.pickupAddress,
+                dropoffAddress: b.dropoffAddress,
+                scheduledDateTime: b.scheduledDateTime,
+                status: b.status,
+                driverId: b.driverId,
+                vehicleId: b.vehicleId,
+                price: b.price,
+                notes: b.notes,
+                cancellationReason: b.cancellationReason,
+                cancelledBy: b.cancelledBy,
+                cancelledAt: b.cancelledAt,
+                createdAt: b.createdAt,
+                driver: row.driver,
+                vehicle: row.vehicle,
+                cancelledByUser: row.cancelledByUser
+              }
+            })
+          : []
+        console.log('✅ Réservations normalisées:', normalized.length)
+        setBookings(normalized)
+      } else {
+        console.error('❌ Réponse API non réussie:', result)
+        showError(result.error || 'Erreur inconnue', 'Erreur')
       }
     } catch (error) {
-      console.error('Erreur lors du chargement:', error)
-      showError('Erreur lors du chargement des réservations', 'Erreur')
+      console.error('❌ Erreur lors du chargement des réservations:', error)
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        showError('Impossible de se connecter au serveur. Vérifiez votre connexion.', 'Erreur de connexion')
+      } else {
+        showError(`Erreur: ${error instanceof Error ? error.message : 'Erreur inconnue'}`, 'Erreur')
+      }
+      setBookings([]) // Définir un tableau vide en cas d'erreur
     } finally {
       setIsLoading(false)
     }
@@ -183,29 +208,41 @@ export function ModernBookingsManagement() {
 
   const fetchDrivers = async () => {
     try {
-      const response = await fetch('/api/admin/users?role=driver')
+      const response = await fetch('/api/admin/users?role=driver', {
+        cache: 'no-store'
+      })
       if (response.ok) {
         const result = await response.json()
         if (result.success) {
-          setDrivers(result.data)
+          setDrivers(result.data || [])
         }
+      } else {
+        console.error('Erreur chargement chauffeurs:', response.status)
+        setDrivers([])
       }
     } catch (error) {
       console.error('Erreur lors du chargement des chauffeurs:', error)
+      setDrivers([])
     }
   }
 
   const fetchVehicles = async () => {
     try {
-      const response = await fetch('/api/vehicles')
+      const response = await fetch('/api/vehicles', {
+        cache: 'no-store'
+      })
       if (response.ok) {
         const result = await response.json()
         if (result.success) {
-          setVehicles(result.data)
+          setVehicles(result.data || [])
         }
+      } else {
+        console.error('Erreur chargement véhicules:', response.status)
+        setVehicles([])
       }
     } catch (error) {
       console.error('Erreur lors du chargement des véhicules:', error)
+      setVehicles([])
     }
   }
 
