@@ -91,7 +91,7 @@ function ClientDashboardContent() {
   const [reviewableBookings, setReviewableBookings] = useState<ReviewableBooking[]>([])
   const [selectedBookingForReview, setSelectedBookingForReview] = useState<ReviewableBooking | null>(null)
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false)
-  const [userProfile] = useState<UserProfile | null>(null)
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false)
   const [userPermissions, setUserPermissions] = useState<Record<string, string[]>>({})
   const [editingBooking, setEditingBooking] = useState<Booking | null>(null)
@@ -159,6 +159,15 @@ function ClientDashboardContent() {
 
   const loadClientData = async () => {
     try {
+      // Charger le profil utilisateur
+      const profileResponse = await fetch('/api/client/profile')
+      if (profileResponse.ok) {
+        const profileData = await profileResponse.json()
+        if (profileData.success) {
+          setUserProfile(profileData.user)
+        }
+      }
+
       // Charger les réservations
       const bookingsResponse = await fetch('/api/client/bookings')
       if (bookingsResponse.ok) {

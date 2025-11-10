@@ -27,6 +27,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess }: EditProfileModa
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState("")
+  const [successMessage, setSuccessMessage] = useState("")
   const [hasUpdatePermission, setHasUpdatePermission] = useState(true)
 
   // Check permissions on mount
@@ -119,14 +120,16 @@ export function EditProfileModal({ isOpen, onClose, onSuccess }: EditProfileModa
       const data = await response.json()
 
       if (response.ok && data.success) {
-        // Rafraîchir la session pour mettre à jour les données affichées
-        await fetch('/api/auth/session?update')
+        // Afficher le message de succès
+        setSuccessMessage("✅ Votre profil a été mis à jour avec succès !")
+        setError("")
         
-        // Recharger la page pour mettre à jour toutes les données
-        window.location.reload()
-        
-        onSuccess()
-        onClose()
+        // Fermer le modal et recharger après 2 secondes
+        setTimeout(() => {
+          onSuccess()
+          onClose()
+          window.location.reload()
+        }, 2000)
       } else {
         setError(data.error || "Erreur lors de la mise à jour du profil")
       }
@@ -264,19 +267,36 @@ export function EditProfileModal({ isOpen, onClose, onSuccess }: EditProfileModa
               </div>
             )}
 
+            {/* Success Message */}
+            {successMessage && (
+              <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg animate-fadeIn">
+                <div className="flex items-center gap-3">
+                  <div className="flex-shrink-0">
+                    <svg className="w-6 h-6 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-green-800 dark:text-green-200">{successMessage}</p>
+                    <p className="text-xs text-green-700 dark:text-green-300 mt-1">La page va se recharger automatiquement...</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Actions */}
             <div className="flex gap-3 pt-4">
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 px-4 py-2 text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg font-medium transition-colors"
-                disabled={isSubmitting}
+                className="flex-1 px-4 py-2 text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isSubmitting || !!successMessage}
               >
                 Annuler
               </button>
               <button
                 type="submit"
-                disabled={isSubmitting || !hasUpdatePermission}
+                disabled={isSubmitting || !hasUpdatePermission || !!successMessage}
                 className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (

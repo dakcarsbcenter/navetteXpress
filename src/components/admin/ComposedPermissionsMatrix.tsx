@@ -39,7 +39,8 @@ const RESOURCES = [
   { name: 'vehicles', label: 'Véhicules', icon: '🚗' },
   { name: 'bookings', label: 'Réservations', icon: '📅' },
   { name: 'quotes', label: 'Devis', icon: '📋' },
-  { name: 'reviews', label: 'Avis', icon: '⭐' }
+  { name: 'reviews', label: 'Avis', icon: '⭐' },
+  { name: 'profile', label: 'Profil', icon: '👤' }
 ]
 
 interface RolePermissions {
@@ -59,6 +60,7 @@ export function ComposedPermissionsMatrix() {
   const [permissions, setPermissions] = useState<Record<string, RolePermissions>>({})
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [isInitializing, setIsInitializing] = useState(false)
   const { notifications, showSuccess, showError, removeNotification } = useNotification()
 
   useEffect(() => {
@@ -198,6 +200,36 @@ export function ComposedPermissionsMatrix() {
     }
   }
 
+  const initializeProfilePermissions = async () => {
+    setIsInitializing(true)
+    try {
+      const response = await fetch('/api/admin/init-profile-permissions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        showSuccess(
+          `✅ ${data.message}. ${data.results.length} permissions initialisées.`,
+          'Succès'
+        )
+        // Recharger les données pour voir les nouvelles permissions
+        await fetchData()
+      } else {
+        showError(data.error || 'Erreur lors de l\'initialisation', 'Erreur')
+      }
+    } catch (error) {
+      console.error('Erreur:', error)
+      showError('Erreur lors de l\'initialisation des permissions', 'Erreur')
+    } finally {
+      setIsInitializing(false)
+    }
+  }
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -218,10 +250,32 @@ export function ComposedPermissionsMatrix() {
 
       {/* En-tête */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-4 sm:p-6 text-white">
-        <h1 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2">Matrice des Permissions</h1>
-        <p className="text-sm sm:text-base text-blue-100">
-          Contrôlez l'accès et les droits de vos utilisateurs
-        </p>
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1">
+            <h1 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2">Matrice des Permissions</h1>
+            <p className="text-sm sm:text-base text-blue-100">
+              Contrôlez l'accès et les droits de vos utilisateurs
+            </p>
+          </div>
+          <button
+            onClick={initializeProfilePermissions}
+            disabled={isInitializing}
+            className="flex-shrink-0 px-4 py-2 bg-white/20 hover:bg-white/30 disabled:bg-white/10 disabled:cursor-not-allowed rounded-lg font-medium text-sm transition-all duration-200 flex items-center gap-2 border border-white/20"
+          >
+            {isInitializing ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                <span>Initialisation...</span>
+              </>
+            ) : (
+              <>
+                <span>👤</span>
+                <span className="hidden sm:inline">Initialiser permissions profil</span>
+                <span className="sm:hidden">Init profil</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Statistiques */}
