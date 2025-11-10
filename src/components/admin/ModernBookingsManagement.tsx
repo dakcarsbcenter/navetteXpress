@@ -943,37 +943,53 @@ export function ModernBookingsManagement() {
                   </div>
 
                   {/* Actions et prix */}
-                  <div className="border-t border-slate-200 dark:border-slate-700 px-4 sm:px-6 py-3 sm:py-4">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                      <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                  <div className="border-t border-slate-200 dark:border-slate-700 px-4 sm:px-6 py-3 sm:py-4 bg-slate-50 dark:bg-slate-700/50">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                      {/* Boutons d'action */}
+                      <div className="flex flex-col xs:flex-row items-stretch gap-2 w-full sm:w-auto">
+                        {/* Actions de changement de statut */}
                         {booking.status === 'pending' && (
                           <button
                             onClick={() => handleStatusChange(booking.id, 'assigned')}
-                            className="text-xs sm:text-sm bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors flex-1 sm:flex-initial"
+                            className="inline-flex items-center justify-center gap-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
                           >
-                            Assigner
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            <span>Assigner chauffeur</span>
                           </button>
                         )}
                         {booking.status === 'assigned' && (
                           <button
                             onClick={() => handleStatusChange(booking.id, 'confirmed')}
-                            className="text-xs sm:text-sm bg-green-600 text-white px-3 py-1.5 rounded-lg hover:bg-green-700 transition-colors flex-1 sm:flex-initial"
+                            className="inline-flex items-center justify-center gap-2 text-sm font-medium bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
                           >
-                            Confirmer
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>Confirmer</span>
                           </button>
                         )}
+                        
+                        {/* Bouton Détails */}
                         <button 
                           onClick={() => openBookingDetails(booking)}
-                          className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white px-3 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex-1 sm:flex-initial"
+                          className="inline-flex items-center justify-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-600 hover:bg-slate-50 dark:hover:bg-slate-500 px-4 py-2.5 rounded-lg transition-all duration-200 border border-slate-300 dark:border-slate-500 shadow-sm hover:shadow-md"
                         >
-                          Détails
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                          <span>Voir détails</span>
                         </button>
                       </div>
                       
+                      {/* Prix */}
                       {booking.price && (
-                        <div className="text-right w-full sm:w-auto">
-                          <p className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
-                            {booking.price} FCFA
+                        <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 rounded-lg border border-emerald-200 dark:border-emerald-800">
+                          <span className="text-xs sm:text-sm font-medium text-emerald-700 dark:text-emerald-300 sm:hidden">Prix total :</span>
+                          <p className="text-lg sm:text-xl font-bold text-emerald-700 dark:text-emerald-300">
+                            {booking.price.toLocaleString()} FCFA
                           </p>
                         </div>
                       )}
@@ -985,35 +1001,35 @@ export function ModernBookingsManagement() {
           </div>
         )}
 
-        {/* Vue tableau (simplifiée pour l'espace) */}
+        {/* Vue tableau (optimisée responsive) */}
         {viewMode === 'table' && (
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-            <div className="overflow-x-auto -mx-3 sm:mx-0">
-              <table className="w-full min-w-[800px]">
-                <thead className="bg-slate-50 dark:bg-slate-700">
-                  <tr>
-                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300">
-                      <input
-                        type="checkbox"
-                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSelectedBookings(filteredBookings.map(b => b.id))
-                          } else {
-                            setSelectedBookings([])
-                          }
-                        }}
-                      />
-                    </th>
-                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300">Client</th>
-                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300">Trajet</th>
-                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300">Date</th>
-                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300">Statut</th>
-                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300">Chauffeur</th>
-                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300">Prix</th>
-                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-right text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300">Actions</th>
-                  </tr>
-                </thead>
+            <div className="overflow-x-auto">
+              <div className="inline-block min-w-full align-middle">
+                <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+                  <thead className="bg-slate-50 dark:bg-slate-700">
+                    <tr>
+                      <th className="w-10 px-3 sm:px-4 py-3 sm:py-4 text-left">
+                        <input
+                          type="checkbox"
+                          className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 focus:ring-2"
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedBookings(filteredBookings.map(b => b.id))
+                            } else {
+                              setSelectedBookings([])
+                            }
+                          }}
+                        />
+                      </th>
+                      <th className="px-3 sm:px-4 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 whitespace-nowrap">Client</th>
+                      <th className="px-3 sm:px-4 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 min-w-[200px]">Trajet</th>
+                      <th className="px-3 sm:px-4 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 whitespace-nowrap">Date</th>
+                      <th className="px-3 sm:px-4 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 whitespace-nowrap">Statut</th>
+                      <th className="px-3 sm:px-4 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 whitespace-nowrap">Prix</th>
+                      <th className="px-3 sm:px-4 py-3 sm:py-4 text-right text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 whitespace-nowrap min-w-[180px]">Actions</th>
+                    </tr>
+                  </thead>
                 <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
                   {filteredBookings.map((booking) => {
                     const statusConfig = getStatusConfig(booking.status)
@@ -1054,20 +1070,6 @@ export function ModernBookingsManagement() {
                             {statusConfig.icon} <span className="hidden sm:inline ml-1">{statusConfig.label}</span>
                           </span>
                         </td>
-                        <td className="px-3 sm:px-6 py-3 sm:py-4">
-                          {booking.driver ? (
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center flex-shrink-0">
-                                <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
-                                  {booking.driver.name.charAt(0)}
-                                </span>
-                              </div>
-                              <span className="text-xs sm:text-sm text-slate-900 dark:text-white truncate max-w-[100px]">{booking.driver.name}</span>
-                            </div>
-                          ) : (
-                            <span className="text-xs sm:text-sm text-slate-400 dark:text-slate-500">Non assigné</span>
-                          )}
-                        </td>
                         <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                           {booking.price ? (
                             <span className="text-xs sm:text-sm font-medium text-slate-900 dark:text-white">{booking.price} F</span>
@@ -1075,23 +1077,34 @@ export function ModernBookingsManagement() {
                             <span className="text-slate-400 dark:text-slate-500">-</span>
                           )}
                         </td>
-                        <td className="px-3 sm:px-6 py-3 sm:py-4 text-right">
-                          <div className="flex items-center justify-end gap-1 sm:gap-2">
+                        <td className="px-3 sm:px-4 py-3 sm:py-4 whitespace-nowrap">
+                          <div className="flex items-center justify-end gap-1.5 sm:gap-2 min-w-[180px]">
+                            {/* Bouton Voir détails */}
                             <button 
                               onClick={() => openBookingDetails(booking)}
-                              className="p-1.5 sm:p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                              className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-all duration-200 border border-blue-200 dark:border-blue-800 hover:shadow-md"
                               title="Voir les détails"
                             >
-                              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                               </svg>
+                              <span className="hidden lg:inline whitespace-nowrap">Détails</span>
                             </button>
-                            <button className="p-1.5 sm:p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900/20 rounded-lg transition-colors">
-                              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                              </svg>
-                            </button>
+                            
+                            {/* Bouton Modifier - conditionnel selon le statut */}
+                            {booking.status !== 'completed' && booking.status !== 'cancelled' && (
+                              <button 
+                                onClick={() => openBookingDetails(booking)}
+                                className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 rounded-lg transition-all duration-200 border border-emerald-200 dark:border-emerald-800 hover:shadow-md"
+                                title="Modifier la réservation"
+                              >
+                                <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                <span className="hidden lg:inline whitespace-nowrap">Modifier</span>
+                              </button>
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -1099,6 +1112,7 @@ export function ModernBookingsManagement() {
                   })}
                 </tbody>
               </table>
+            </div>
             </div>
           </div>
         )}

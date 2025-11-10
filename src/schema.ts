@@ -95,6 +95,9 @@ export const bookingsTable = pgTable('bookings', {
   status: bookingStatusEnum('status').notNull().default('pending'),
   driverId: text('driver_id').references(() => users.id, { onDelete: 'set null' }),
   vehicleId: integer('vehicle_id').references(() => vehiclesTable.id, { onDelete: 'set null' }),
+  passengers: integer('passengers').notNull().default(1),
+  luggage: integer('luggage').notNull().default(1),
+  duration: decimal('duration', { precision: 4, scale: 2 }).default('2'),
   price: decimal('price', { precision: 10, scale: 2 }),
   notes: text('notes'),
   cancellationReason: text('cancellation_reason'),
@@ -102,7 +105,10 @@ export const bookingsTable = pgTable('bookings', {
   cancelledAt: timestamp('cancelled_at'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().$onUpdate(() => new Date()),
-});
+}, (table) => ({
+  passengersCheck: check('passengers_check', sql`${table.passengers} > 0`),
+  luggageCheck: check('luggage_check', sql`${table.luggage} >= 0`),
+}));
 
 // Avis
 export const reviewsTable = pgTable('reviews', {

@@ -12,17 +12,17 @@ import Link from "next/link";
 interface FormData {
   serviceType: string;
   customServiceType: string;
-  date: string;
-  time: string;
+  datetime: string;
   pickupAddress: string;
   destinationAddress: string;
   passengers: number;
+  customPassengers: string;
   luggage: number;
+  customLuggage: string;
   duration: number;
   additionalServices: string[];
   specialRequests: string;
   contactPhone: string;
-  contactEmail: string;
   // Champs pour les utilisateurs non connectés
   clientName: string;
   clientEmail: string;
@@ -41,17 +41,17 @@ function ReservationForm() {
   const [formData, setFormData] = useState<FormData>({
     serviceType: "",
     customServiceType: "",
-    date: "",
-    time: "",
+    datetime: "",
     pickupAddress: "",
     destinationAddress: "",
     passengers: 1,
+    customPassengers: "",
     luggage: 1,
+    customLuggage: "",
     duration: 2,
     additionalServices: [],
     specialRequests: "",
     contactPhone: "",
-    contactEmail: user?.email || "",
     clientName: "",
     clientEmail: ""
   });
@@ -71,16 +71,6 @@ function ReservationForm() {
       }));
     }
   }, [searchParams]);
-
-  // Mettre à jour automatiquement l'email de contact quand l'utilisateur est chargé
-  useEffect(() => {
-    if (user?.email && !formData.contactEmail) {
-      setFormData(prev => ({
-        ...prev,
-        contactEmail: user.email || ''
-      }));
-    }
-  }, [user?.email, formData.contactEmail]);
 
   const handleInputChange = (field: keyof FormData, value: string | number | boolean | string[]) => {
     setFormData(prev => {
@@ -105,6 +95,9 @@ function ReservationForm() {
     setIsSubmitting(true);
     
     try {
+      // Extraire date et time du datetime
+      const [date, time] = formData.datetime ? formData.datetime.split('T') : ['', ''];
+      
       const response = await fetch('/api/bookings', {
         method: 'POST',
         headers: {
@@ -113,17 +106,17 @@ function ReservationForm() {
         body: JSON.stringify({
           serviceType: formData.serviceType,
           customServiceType: formData.customServiceType,
-          date: formData.date,
-          time: formData.time,
+          date: date,
+          time: time,
           pickupAddress: formData.pickupAddress,
           destinationAddress: formData.destinationAddress,
-          passengers: formData.passengers,
-          luggage: formData.luggage,
+          passengers: formData.passengers === 11 ? parseInt(formData.customPassengers) || 11 : formData.passengers,
+          luggage: formData.luggage === 11 ? parseInt(formData.customLuggage) || 11 : formData.luggage,
           duration: formData.duration,
           additionalServices: formData.additionalServices,
           specialRequests: formData.specialRequests,
           contactPhone: formData.contactPhone,
-          contactEmail: formData.contactEmail,
+          contactEmail: formData.clientEmail || user?.email || "",
           clientName: formData.clientName,
           clientEmail: formData.clientEmail,
           userId: user?.id
@@ -326,31 +319,17 @@ function ReservationForm() {
                 </div>
               )}
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                    Date de réservation
-                  </label>
-                  <input
-                    type="date"
-                    value={formData.date}
-                    onChange={(e) => handleInputChange('date', e.target.value)}
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm sm:text-base"
-                    min={new Date().toISOString().split('T')[0]}
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                    Heure de départ
-                  </label>
-                  <input
-                    type="time"
-                    value={formData.time}
-                    onChange={(e) => handleInputChange('time', e.target.value)}
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm sm:text-base"
-                  />
-                </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  Date et heure de départ
+                </label>
+                <input
+                  type="datetime-local"
+                  value={formData.datetime}
+                  onChange={(e) => handleInputChange('datetime', e.target.value)}
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm sm:text-base"
+                  min={new Date().toISOString().slice(0, 16)}
+                />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
@@ -381,7 +360,7 @@ function ReservationForm() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                     Nombre de passagers
@@ -394,7 +373,24 @@ function ReservationForm() {
                     {[...Array(10)].map((_, i) => (
                       <option key={i+1} value={i+1}>{i+1} passager{i > 0 ? 's' : ''}</option>
                     ))}
+                    <option value={11}>+10 passagers</option>
                   </select>
+                  
+                  {formData.passengers === 11 && (
+                    <div className="mt-3">
+                      <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">
+                        Précisez le nombre de passagers
+                      </label>
+                      <input
+                        type="number"
+                        min="11"
+                        value={formData.customPassengers}
+                        onChange={(e) => handleInputChange('customPassengers', e.target.value)}
+                        placeholder="Ex: 15"
+                        className="w-full p-2.5 border border-orange-300 dark:border-orange-600 rounded-lg bg-orange-50 dark:bg-orange-900/10 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm"
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <div>
@@ -415,52 +411,39 @@ function ReservationForm() {
                     <option value={7}>7 valises</option>
                     <option value={8}>8 valises</option>
                     <option value={9}>9 valises</option>
-                    <option value={10}>+10 valises</option>
+                    <option value={10}>10 valises</option>
+                    <option value={11}>+10 valises</option>
                   </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                    Durée estimée (heures)
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="12"
-                    step="0.5"
-                    value={formData.duration}
-                    onChange={(e) => handleInputChange('duration', Number(e.target.value))}
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm sm:text-base"
-                  />
+                  
+                  {formData.luggage === 11 && (
+                    <div className="mt-3">
+                      <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">
+                        Précisez le nombre de valises
+                      </label>
+                      <input
+                        type="number"
+                        min="11"
+                        value={formData.customLuggage}
+                        onChange={(e) => handleInputChange('customLuggage', e.target.value)}
+                        placeholder="Ex: 15"
+                        className="w-full p-2.5 border border-orange-300 dark:border-orange-600 rounded-lg bg-orange-50 dark:bg-orange-900/10 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                    Téléphone de contact
-                  </label>
-                  <input
-                    type="tel"
-                    value={formData.contactPhone}
-                    onChange={(e) => handleInputChange('contactPhone', e.target.value)}
-                    placeholder="77 650 01 02"
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm sm:text-base"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                    Email de contact
-                  </label>
-                  <input
-                    type="email"
-                    value={formData.contactEmail}
-                    onChange={(e) => handleInputChange('contactEmail', e.target.value)}
-                    placeholder="votre.email@exemple.com"
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm sm:text-base"
-                  />
-                </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  Téléphone de contact
+                </label>
+                <input
+                  type="tel"
+                  value={formData.contactPhone}
+                  onChange={(e) => handleInputChange('contactPhone', e.target.value)}
+                  placeholder="77 650 01 02"
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm sm:text-base"
+                />
               </div>
 
               {/* Services additionnels intégrés */}
@@ -551,7 +534,13 @@ function ReservationForm() {
                   <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
                     <span className="text-slate-600 dark:text-slate-300">Date & Heure:</span>
                     <span className="text-slate-900 dark:text-white font-medium">
-                      {formData.date} à {formData.time}
+                      {formData.datetime ? new Date(formData.datetime).toLocaleString('fr-FR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      }) : ''}
                     </span>
                   </div>
                   
@@ -564,19 +553,20 @@ function ReservationForm() {
                   
                   <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
                     <span className="text-slate-600 dark:text-slate-300">Passagers:</span>
-                    <span className="text-slate-900 dark:text-white font-medium">{formData.passengers}</span>
+                    <span className="text-slate-900 dark:text-white font-medium">
+                      {formData.passengers === 11 
+                        ? (formData.customPassengers || '11+') 
+                        : formData.passengers}
+                    </span>
                   </div>
                   
                   <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
                     <span className="text-slate-600 dark:text-slate-300">Valise(s):</span>
                     <span className="text-slate-900 dark:text-white font-medium">
-                      {formData.luggage === 10 ? '+10' : formData.luggage}
+                      {formData.luggage === 11 
+                        ? (formData.customLuggage || '11+') 
+                        : formData.luggage}
                     </span>
-                  </div>
-                  
-                  <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
-                    <span className="text-slate-600 dark:text-slate-300">Durée:</span>
-                    <span className="text-slate-900 dark:text-white font-medium">{formData.duration}h</span>
                   </div>
                   
                   {formData.additionalServices.length > 0 && (
@@ -592,10 +582,6 @@ function ReservationForm() {
                     <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
                       <span className="text-slate-600 dark:text-slate-300">Téléphone:</span>
                       <span className="text-slate-900 dark:text-white font-medium">{formData.contactPhone}</span>
-                    </div>
-                    <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0 mt-2">
-                      <span className="text-slate-600 dark:text-slate-300">Email:</span>
-                      <span className="text-slate-900 dark:text-white font-medium break-all">{formData.contactEmail}</span>
                     </div>
                   </div>
                 </div>
@@ -648,11 +634,12 @@ function ReservationForm() {
                   disabled={
                     (currentStep === 1 && (!formData.serviceType || (formData.serviceType === "other" && !formData.customServiceType))) ||
                     (currentStep === 2 && (
-                      !formData.date || 
-                      !formData.time || 
+                      !formData.datetime || 
                       !formData.pickupAddress || 
                       !formData.destinationAddress || 
                       !formData.contactPhone ||
+                      (formData.passengers === 11 && !formData.customPassengers) ||
+                      (formData.luggage === 11 && !formData.customLuggage) ||
                       (!isSignedIn && (!formData.clientName || !formData.clientEmail))
                     ))
                   }
@@ -713,17 +700,17 @@ function ReservationForm() {
             setFormData({
               serviceType: "",
               customServiceType: "",
-              date: "",
-              time: "",
+              datetime: "",
               pickupAddress: "",
               destinationAddress: "",
               passengers: 1,
+              customPassengers: "",
               luggage: 1,
+              customLuggage: "",
               duration: 2,
               additionalServices: [],
               specialRequests: "",
               contactPhone: "",
-              contactEmail: user?.email || "",
               clientName: "",
               clientEmail: ""
             });

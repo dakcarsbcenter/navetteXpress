@@ -146,10 +146,13 @@ export async function POST(request: NextRequest) {
         dropoffAddress: destinationAddress,
         scheduledDateTime,
         status: 'pending',
+        passengers: passengers || 1,
+        luggage: body.luggage || 1,
+        duration: duration ? duration.toString() : '2',
         driverId: null, // Sera assigné plus tard par l'admin
         vehicleId: null, // Sera assigné plus tard par l'admin
         price: estimatedPrice.toString(),
-        notes: `Service: ${serviceType}\nPassagers: ${passengers}\nValises: ${body.luggage || 1}\nDurée: ${duration}h\nContact: ${contactPhone}${contactEmail ? ` - ${contactEmail}` : ''}\nServices additionnels: ${additionalServices?.join(', ') || 'Aucun'}\nDemandes spéciales: ${specialRequests || 'Aucune'}`
+        notes: `Service: ${serviceType}\nContact: ${contactPhone}${contactEmail ? ` - ${contactEmail}` : ''}\nServices additionnels: ${additionalServices?.join(', ') || 'Aucun'}\nDemandes spéciales: ${specialRequests || 'Aucune'}`
       })
       .returning();
 
