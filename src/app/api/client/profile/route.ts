@@ -6,8 +6,8 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/db"
-import { users } from "@/schema"
-import { eq } from "drizzle-orm"
+import { users, rolePermissionsTable } from "@/schema"
+import { eq, and } from "drizzle-orm"
 
 // PUT - Mettre à jour le profil du client
 export async function PUT(request: NextRequest) {
@@ -18,12 +18,30 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Non autorisé" }, { status: 401 })
     }
 
-    // Vérifier que l'utilisateur est un client
-    if ((session.user as { role?: string }).role !== 'customer') {
-      return NextResponse.json({ error: "Accès refusé" }, { status: 403 })
+    const userRole = (session.user as { role?: string }).role || 'customer'
+
+    // Vérifier la permission de modification du profil
+    // Les admins ont toujours accès
+    if (userRole !== 'admin') {
+      const profilePermission = await db
+        .select()
+        .from(rolePermissionsTable)
+        .where(and(
+          eq(rolePermissionsTable.roleName, userRole),
+          eq(rolePermissionsTable.resource, 'profile'),
+          eq(rolePermissionsTable.action, 'update'),
+          eq(rolePermissionsTable.allowed, true)
+        ))
+        .limit(1)
+
+      if (profilePermission.length === 0) {
+        return NextResponse.json({ 
+          error: "Vous n'avez pas la permission de modifier votre profil. Contactez un administrateur." 
+        }, { status: 403 })
+      }
     }
 
-    const { name, email, phone } = await request.json()
+    const { name, email, phone, image } = await request.json()
 
     // Validation des données
     if (!name?.trim() || !email?.trim()) {
@@ -64,7 +82,8 @@ export async function PUT(request: NextRequest) {
       .set({
         name: name.trim(),
         email: email.trim(),
-        phone: phone?.trim() || null
+        phone: phone?.trim() || null,
+        image: image?.trim() || null
       })
       .where(eq(users.id, (session as unknown as { user: { id: string } }).user.id))
       .returning()
@@ -84,6 +103,7 @@ export async function PUT(request: NextRequest) {
         name: updatedUser[0].name,
         email: updatedUser[0].email,
         phone: updatedUser[0].phone,
+        image: updatedUser[0].image,
         role: updatedUser[0].role
       }
     })
@@ -106,9 +126,26 @@ export async function GET() {
       return NextResponse.json({ error: "Non autorisé" }, { status: 401 })
     }
 
-    // Vérifier que l'utilisateur est un client
-    if ((session.user as { role?: string }).role !== 'customer') {
-      return NextResponse.json({ error: "Accès refusé" }, { status: 403 })
+    const userRole = (session.user as { role?: string }).role || 'customer'
+
+    // Vérifier la permission de lecture du profil
+    if (userRole !== 'admin') {
+      const profilePermission = await db
+        .select()
+        .from(rolePermissionsTable)
+        .where(and(
+          eq(rolePermissionsTable.roleName, userRole),
+          eq(rolePermissionsTable.resource, 'profile'),
+          eq(rolePermissionsTable.action, 'read'),
+          eq(rolePermissionsTable.allowed, true)
+        ))
+        .limit(1)
+
+      if (profilePermission.length === 0) {
+        return NextResponse.json({ 
+          error: "Vous n'avez pas la permission de consulter votre profil." 
+        }, { status: 403 })
+      }
     }
 
     // Récupérer les informations utilisateur
@@ -118,6 +155,7 @@ export async function GET() {
         name: users.name,
         email: users.email,
         phone: users.phone,
+        image: users.image,
         role: users.role,
         createdAt: users.createdAt
       })

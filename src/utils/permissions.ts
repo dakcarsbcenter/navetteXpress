@@ -3,7 +3,7 @@ import { permissionsTable } from '@/schema';
 import { eq, and } from 'drizzle-orm';
 
 export type UserRole = 'admin' | 'chauffeur';
-export type Resource = 'bookings' | 'vehicles' | 'users' | 'planning';
+export type Resource = 'bookings' | 'vehicles' | 'users' | 'planning' | 'profile';
 export type Action = 'create' | 'read' | 'update' | 'delete';
 
 /**

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
+import { ImageUploader } from "@/components/ImageUploader"
 
 interface EditProfileModalProps {
   isOpen: boolean
@@ -13,6 +14,7 @@ interface ProfileData {
   name: string
   email: string
   phone?: string
+  image?: string
 }
 
 export function EditProfileModal({ isOpen, onClose, onSuccess }: EditProfileModalProps) {
@@ -20,10 +22,31 @@ export function EditProfileModal({ isOpen, onClose, onSuccess }: EditProfileModa
   const [formData, setFormData] = useState<ProfileData>({
     name: "",
     email: "",
-    phone: ""
+    phone: "",
+    image: ""
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState("")
+  const [hasUpdatePermission, setHasUpdatePermission] = useState(true)
+
+  // Check permissions on mount
+  useEffect(() => {
+    const checkPermissions = async () => {
+      try {
+        const response = await fetch('/api/client/profile')
+        if (response.status === 403) {
+          setHasUpdatePermission(false)
+          setError("Vous n'avez pas la permission de modifier votre profil.")
+        }
+      } catch (error) {
+        console.error('Erreur lors de la vérification des permissions:', error)
+      }
+    }
+    
+    if (isOpen) {
+      checkPermissions()
+    }
+  }, [isOpen])
 
   // Reset form when modal opens/closes
   useEffect(() => {
@@ -31,7 +54,8 @@ export function EditProfileModal({ isOpen, onClose, onSuccess }: EditProfileModa
       setFormData({
         name: session.user.name || "",
         email: session.user.email || "",
-        phone: (session.user as { phone?: string }).phone || ""
+        phone: (session.user as { phone?: string }).phone || "",
+        image: (session.user as { image?: string }).image || ""
       })
       setError("")
     }
@@ -87,13 +111,20 @@ export function EditProfileModal({ isOpen, onClose, onSuccess }: EditProfileModa
         body: JSON.stringify({
           name: formData.name.trim(),
           email: formData.email.trim(),
-          phone: formData.phone?.trim() || null
+          phone: formData.phone?.trim() || null,
+          image: formData.image?.trim() || null
         }),
       })
 
       const data = await response.json()
 
       if (response.ok && data.success) {
+        // Rafraîchir la session pour mettre à jour les données affichées
+        await fetch('/api/auth/session?update')
+        
+        // Recharger la page pour mettre à jour toutes les données
+        window.location.reload()
+        
         onSuccess()
         onClose()
       } else {
@@ -179,10 +210,29 @@ export function EditProfileModal({ isOpen, onClose, onSuccess }: EditProfileModa
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                disabled={!hasUpdatePermission}
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-slate-100 disabled:dark:bg-slate-600 disabled:cursor-not-allowed"
                 placeholder="+33 X XX XX XX XX"
               />
             </div>
+
+            {/* Photo Field */}
+            {hasUpdatePermission && (
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  Photo de profil
+                </label>
+                <ImageUploader
+                  currentImage={formData.image || null}
+                  onUploadComplete={(url: string) => setFormData(prev => ({ ...prev, image: url }))}
+                  label="Photo de profil"
+                  className="w-full"
+                />
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                  📷 Format recommandé : JPEG ou PNG, max 10 Mo
+                </p>
+              </div>
+            )}
 
             {/* Role Field (locked) */}
             <div>
@@ -226,7 +276,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess }: EditProfileModa
               </button>
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !hasUpdatePermission}
                 className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
@@ -245,12 +295,21 @@ export function EditProfileModal({ isOpen, onClose, onSuccess }: EditProfileModa
           </form>
 
           {/* Info note */}
-          <div className="mt-6 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-            <p className="text-sm text-blue-800 dark:text-blue-200 flex items-center gap-2">
-              <span className="text-lg">ℹ️</span>
-              Les modifications prendront effet après enregistrement et reconnexion
-            </p>
-          </div>
+          {hasUpdatePermission ? (
+            <div className="mt-6 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <p className="text-sm text-blue-800 dark:text-blue-200 flex items-center gap-2">
+                <span className="text-lg">ℹ️</span>
+                Les modifications seront enregistrées dans la base de données et prendront effet immédiatement
+              </p>
+            </div>
+          ) : (
+            <div className="mt-6 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+              <p className="text-sm text-yellow-800 dark:text-yellow-200 flex items-center gap-2">
+                <span className="text-lg">⚠️</span>
+                Vous n'avez pas la permission de modifier votre profil. Contactez un administrateur pour activer cette fonctionnalité.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

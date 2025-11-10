@@ -90,7 +90,9 @@ async function getCustomRoles() {
       { id: 7, resource: 'quotes', action: 'manage' },
       { id: 8, resource: 'quotes', action: 'read' },
       { id: 9, resource: 'reviews', action: 'manage' },
-      { id: 10, resource: 'reviews', action: 'read' }
+      { id: 10, resource: 'reviews', action: 'read' },
+      { id: 11, resource: 'profile', action: 'read' },
+      { id: 12, resource: 'profile', action: 'update' }
     ]
 
     const formatPermissions = (roleName: string) => {
@@ -170,7 +172,9 @@ async function getLegacyRoles() {
       { id: 7, resource: 'quotes', action: 'manage' },
       { id: 8, resource: 'quotes', action: 'read' },
       { id: 9, resource: 'reviews', action: 'manage' },
-      { id: 10, resource: 'reviews', action: 'read' }
+      { id: 10, resource: 'reviews', action: 'read' },
+      { id: 11, resource: 'profile', action: 'read' },
+      { id: 12, resource: 'profile', action: 'update' }
     ]
     
     const formatPermissions = (roleName: string) => {

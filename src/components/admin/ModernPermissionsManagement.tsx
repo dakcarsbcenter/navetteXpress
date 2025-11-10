@@ -232,7 +232,14 @@ export function ModernPermissionsManagement() {
       'Système': '⚙️',
       'Rapports': '📊',
       'Finances': '💳',
-      'Support': '🎧'
+      'Support': '🎧',
+      'Profil': '👤',
+      'users': '👥',
+      'bookings': '📅',
+      'quotes': '💰',
+      'vehicles': '🚗',
+      'profile': '👤',
+      'reviews': '⭐'
     }
     return icons[category as keyof typeof icons] || '🔧'
   }

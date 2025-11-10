@@ -185,3 +185,6 @@ export const requireUsersCreate = () => requireResourcePermission('users', 'crea
 export const requireUsersUpdate = () => requireResourcePermission('users', 'update');
 export const requireUsersDelete = () => requireResourcePermission('users', 'delete');
 
+export const requireProfileRead = () => requireResourcePermission('profile', 'read');
+export const requireProfileUpdate = () => requireResourcePermission('profile', 'update');
+

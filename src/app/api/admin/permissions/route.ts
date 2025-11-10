@@ -32,7 +32,9 @@ export async function GET() {
       { resource: 'quotes', action: 'manage', category: 'quotes' },
       { resource: 'quotes', action: 'read', category: 'quotes' },
       { resource: 'reviews', action: 'manage', category: 'reviews' },
-      { resource: 'reviews', action: 'read', category: 'reviews' }
+      { resource: 'reviews', action: 'read', category: 'reviews' },
+      { resource: 'profile', action: 'read', category: 'profile' },
+      { resource: 'profile', action: 'update', category: 'profile' }
     ]
 
     // Transformer les données avec des IDs basés sur resource+action

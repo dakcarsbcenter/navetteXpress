@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import { useNotification } from '@/hooks/useNotification'
 import { NotificationCenter } from '@/components/ui/NotificationCenter'
 
@@ -16,8 +17,11 @@ const availableServices = [
 
 export function QuoteRequestForm() {
   const router = useRouter()
+  const { data: session } = useSession()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { notifications, showSuccess, showError, removeNotification } = useNotification()
+  
+  const user = session?.user as unknown as { id?: string; name?: string; email?: string; phone?: string } | undefined
   
   const [formData, setFormData] = useState({
     customerName: '',
@@ -34,6 +38,18 @@ export function QuoteRequestForm() {
     paymentMode: '',
     description: ''
   })
+
+  // Pré-remplir les champs avec les informations de l'utilisateur connecté
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        customerName: user.name || prev.customerName,
+        customerEmail: user.email || prev.customerEmail,
+        customerPhone: user.phone || prev.customerPhone
+      }))
+    }
+  }, [user])
 
   const handleFormChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -87,6 +103,27 @@ export function QuoteRequestForm() {
     setIsSubmitting(true)
     
     try {
+      // Si l'utilisateur est connecté et a modifié son téléphone, le mettre à jour
+      if (user && formData.customerPhone && formData.customerPhone !== user.phone) {
+        console.log('📞 Mise à jour du téléphone utilisateur:', formData.customerPhone)
+        try {
+          const updateResponse = await fetch('/api/user/profile', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone: formData.customerPhone })
+          })
+          
+          if (updateResponse.ok) {
+            console.log('✅ Téléphone mis à jour avec succès')
+          } else {
+            console.warn('⚠️ Impossible de mettre à jour le téléphone')
+          }
+        } catch (updateError) {
+          console.warn('⚠️ Erreur lors de la mise à jour du téléphone:', updateError)
+          // On continue même si la mise à jour échoue
+        }
+      }
+      
       const quoteData = {
         customerName: formData.customerName,
         customerEmail: formData.customerEmail,
@@ -158,6 +195,15 @@ Description: ${formData.description}`,
                 Vos informations
               </h2>
               
+              {user && (
+                <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg flex items-center gap-2 text-sm text-blue-700 dark:text-blue-300">
+                  <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>Vos informations sont automatiquement pré-remplies depuis votre compte</span>
+                </div>
+              )}
+              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
@@ -168,7 +214,10 @@ Description: ${formData.description}`,
                     required
                     value={formData.customerName}
                     onChange={(e) => handleFormChange('customerName', e.target.value)}
-                    className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
+                    readOnly={!!user}
+                    className={`w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white ${
+                      user ? 'bg-slate-100 dark:bg-slate-600 cursor-not-allowed' : ''
+                    }`}
                     placeholder="Votre nom et prénom"
                   />
                 </div>
@@ -181,7 +230,10 @@ Description: ${formData.description}`,
                     required
                     value={formData.customerEmail}
                     onChange={(e) => handleFormChange('customerEmail', e.target.value)}
-                    className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
+                    readOnly={!!user}
+                    className={`w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white ${
+                      user ? 'bg-slate-100 dark:bg-slate-600 cursor-not-allowed' : ''
+                    }`}
                     placeholder="votre@email.com"
                   />
                 </div>
@@ -189,11 +241,17 @@ Description: ${formData.description}`,
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                    Téléphone
+                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Téléphone *
+                    {user && user.phone && formData.customerPhone !== user.phone && (
+                      <span className="text-xs text-orange-600 dark:text-orange-400 font-normal">
+                        (modifié)
+                      </span>
+                    )}
                   </label>
                   <input
                     type="tel"
+                    required
                     value={formData.customerPhone}
                     onChange={(e) => handleFormChange('customerPhone', e.target.value)}
                     className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
