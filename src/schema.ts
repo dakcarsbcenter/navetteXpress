@@ -157,6 +157,35 @@ export const quotesTable = pgTable('quotes', {
   updatedAt: timestamp('updated_at').notNull().$onUpdate(() => new Date()),
 });
 
+// Enum pour le statut des factures
+export const invoiceStatusEnum = pgEnum('invoice_status', ['draft', 'pending', 'paid', 'cancelled', 'overdue']);
+
+// Factures
+export const invoicesTable = pgTable('invoices', {
+  id: serial('id').primaryKey(),
+  invoiceNumber: text('invoice_number').notNull().unique(), // Format: INV-YYYY-XXXXX
+  quoteId: integer('quote_id').notNull().references(() => quotesTable.id, { onDelete: 'restrict' }),
+  customerName: text('customer_name').notNull(),
+  customerEmail: text('customer_email').notNull(),
+  customerPhone: text('customer_phone'),
+  service: text('service').notNull(),
+  amount: decimal('amount', { precision: 10, scale: 2 }).notNull(),
+  taxRate: decimal('tax_rate', { precision: 5, scale: 2 }).notNull().default('20.00'), // TVA en %
+  taxAmount: decimal('tax_amount', { precision: 10, scale: 2 }).notNull(),
+  totalAmount: decimal('total_amount', { precision: 10, scale: 2 }).notNull(),
+  status: invoiceStatusEnum('status').notNull().default('pending'),
+  issueDate: timestamp('issue_date').notNull().defaultNow(),
+  dueDate: timestamp('due_date').notNull(), // Date d'échéance
+  paidDate: timestamp('paid_date'),
+  paymentMethod: text('payment_method'), // 'card', 'bank_transfer', 'cash', etc.
+  notes: text('notes'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().$onUpdate(() => new Date()),
+}, (table) => ({
+  amountCheck: check('amount_check', sql`${table.amount} > 0`),
+  totalCheck: check('total_check', sql`${table.totalAmount} > 0`),
+}));
+
 // Types TS
 export type InsertUser = typeof users.$inferInsert;
 export type SelectUser = typeof users.$inferSelect;
@@ -170,6 +199,8 @@ export type InsertPermission = typeof permissionsTable.$inferInsert;
 export type SelectPermission = typeof permissionsTable.$inferSelect;
 export type InsertQuote = typeof quotesTable.$inferInsert;
 export type SelectQuote = typeof quotesTable.$inferSelect;
+export type InsertInvoice = typeof invoicesTable.$inferInsert;
+export type SelectInvoice = typeof invoicesTable.$inferSelect;
 
 // Types pour les drivers (alias pour les utilisateurs avec le rôle driver)
 export type InsertDriver = InsertUser;

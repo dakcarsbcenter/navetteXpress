@@ -18,7 +18,12 @@ export function getDb() {
     throw new Error("DATABASE_URL n'est pas défini. Veuillez le configurer dans votre environnement.");
   }
 
-  const sql = postgres(DATABASE_URL);
+  const sql = postgres(DATABASE_URL, {
+    ssl: DATABASE_URL.includes('neon.tech') ? 'require' : false,
+    max: 10,
+    idle_timeout: 20,
+    connect_timeout: 10,
+  });
   _db = drizzle(sql, { schema });
   (globalThis as any).__drizzleDb = _db;
   return _db;

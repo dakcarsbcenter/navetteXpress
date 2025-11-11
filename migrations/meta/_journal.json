@@ -64,6 +64,13 @@
       "when": 1762124430170,
       "tag": "0008_youthful_devos",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1762903251532,
+      "tag": "0009_last_spot",
+      "breakpoints": true
     }
   ]
 }

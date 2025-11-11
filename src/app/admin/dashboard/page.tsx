@@ -16,8 +16,9 @@ import { ModernQuotesManagement } from "@/components/admin/ModernQuotesManagemen
 import { ModernUsersManagement } from "@/components/admin/ModernUsersManagement"
 import AdminGlobalStats from "@/components/admin/AdminGlobalStats"
 import { ModernAdminDashboard } from "@/components/admin/ModernAdminDashboard"
+import AdminInvoicesView from "@/components/admin/AdminInvoicesView"
 
-type TabType = 'modern' | 'users' | 'vehicles' | 'bookings' | 'quotes' | 'permissions' | 'reviews' | 'stats'
+type TabType = 'modern' | 'users' | 'vehicles' | 'bookings' | 'quotes' | 'invoices' | 'permissions' | 'reviews' | 'stats'
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession()
@@ -65,6 +66,7 @@ export default function AdminDashboard() {
     { id: 'vehicles' as TabType, label: 'Véhicules', shortLabel: 'Véhicules', icon: '🚗', resource: 'vehicles' },
     { id: 'bookings' as TabType, label: 'Réservations', shortLabel: 'Réserv.', icon: '📅', resource: 'bookings' },
     { id: 'quotes' as TabType, label: 'Devis', shortLabel: 'Devis', icon: '💰', resource: 'quotes' },
+    { id: 'invoices' as TabType, label: 'Factures', shortLabel: 'Factures', icon: '🧾', resource: '', always: true },
     { id: 'permissions' as TabType, label: 'Permissions', shortLabel: 'Perms', icon: '🔐', resource: 'users', requireManage: true, adminOnly: true },
     { id: 'reviews' as TabType, label: 'Avis', shortLabel: 'Avis', icon: '⭐', resource: 'reviews' },
   ]
@@ -111,6 +113,8 @@ export default function AdminDashboard() {
         return <ModernBookingsManagement />
       case 'quotes':
         return <ModernQuotesManagement />
+      case 'invoices':
+        return <AdminInvoicesView />
       case 'permissions':
         return <ComposedPermissionsMatrix />
       case 'reviews':
