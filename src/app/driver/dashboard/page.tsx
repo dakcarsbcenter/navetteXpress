@@ -9,9 +9,10 @@ import { VehicleReport } from "@/components/driver/VehicleReport"
 import { DriverStats } from "@/components/driver/DriverStats"
 import Link from "next/link"
 import { DriverProfile } from "@/components/driver/DriverProfile"
+import { DriverAvailabilityManager } from "@/components/driver/DriverAvailabilityManager"
 // import { SimpleDriverTest } from "@/components/driver/SimpleDriverTest"
 
-type ViewType = 'home' | 'planning' | 'vehicle-report' | 'stats' | 'profile'
+type ViewType = 'home' | 'planning' | 'availability' | 'vehicle-report' | 'stats' | 'profile'
 
 export default function DriverDashboard() {
   const [currentView, setCurrentView] = useState<ViewType>('home')
@@ -27,6 +28,7 @@ export default function DriverDashboard() {
   const menuItems = [
     { id: 'home' as ViewType, label: 'Dashboard', icon: '🏠' },
     { id: 'planning' as ViewType, label: 'Planning', icon: '📅' },
+    { id: 'availability' as ViewType, label: 'Disponibilités', icon: '🕐' },
     { id: 'vehicle-report' as ViewType, label: 'Véhicule', icon: '🔧' },
     { id: 'stats' as ViewType, label: 'Statistiques', icon: '📊' },
     { id: 'profile' as ViewType, label: 'Profil', icon: '👤' },
@@ -37,6 +39,23 @@ export default function DriverDashboard() {
     switch (currentView) {
       case 'planning':
         return <DriverPlanning onBack={() => setCurrentView('home')} />
+      case 'availability':
+        return (
+          <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 p-4 sm:p-6 lg:p-8">
+            <div className="max-w-6xl mx-auto">
+              <button
+                onClick={() => setCurrentView('home')}
+                className="mb-6 flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all duration-200 shadow-sm"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Retour
+              </button>
+              <DriverAvailabilityManager />
+            </div>
+          </div>
+        )
       case 'vehicle-report':
         return <VehicleReport onBack={() => setCurrentView('home')} />
       case 'stats':

@@ -46,7 +46,8 @@ export async function POST(request: NextRequest) {
       customerPhone,
       service,
       preferredDate,
-      message
+      message,
+      estimatedPrice
     } = body;
 
     // Validation des champs obligatoires
@@ -67,7 +68,9 @@ export async function POST(request: NextRequest) {
         service,
         preferredDate: preferredDate ? new Date(preferredDate) : null,
         message,
-        status: 'pending'
+        estimatedPrice: estimatedPrice || null,
+        status: 'pending',
+        updatedAt: new Date()
       })
       .returning();
 
@@ -78,10 +81,13 @@ export async function POST(request: NextRequest) {
     }, { status: 201 });
 
   } catch (error) {
-    console.error('Erreur lors de la création de la demande de devis:', error);
+    console.error('❌ Erreur lors de la création de la demande de devis:', error);
+    console.error('❌ Stack trace:', error instanceof Error ? error.stack : 'Pas de stack trace');
+    console.error('❌ Détails de l\'erreur:', error instanceof Error ? error.message : String(error));
     return NextResponse.json({ 
       success: false, 
-      error: 'Erreur interne du serveur' 
+      error: 'Erreur interne du serveur',
+      details: error instanceof Error ? error.message : String(error)
     }, { status: 500 });
   }
 }

@@ -8,6 +8,7 @@ import { bookingsTable, users } from '@/schema';
 import { eq, and } from 'drizzle-orm';
 import { requireBookingsUpdate } from '@/utils/admin-permissions';
 import { sendBookingAssignedToDriver } from '@/lib/resend-email';
+import { checkDriverAvailability } from '@/lib/driver-availability';
 
 // PUT - Assigner une réservation à un chauffeur
 export async function PUT(
@@ -62,6 +63,26 @@ export async function PUT(
         error: 'Réservation non trouvée' 
       }, { status: 404 });
     }
+
+    const booking = existingBooking[0];
+
+    // Vérifier la disponibilité du chauffeur à la date/heure de la réservation
+    console.log(`🔍 Vérification de la disponibilité du chauffeur ${driver[0].name}...`);
+    const availabilityCheck = await checkDriverAvailability(
+      driverId, 
+      booking.scheduledDateTime
+    );
+
+    if (!availabilityCheck.available) {
+      console.log(`❌ Chauffeur non disponible: ${availabilityCheck.message}`);
+      return NextResponse.json({ 
+        success: false, 
+        error: availabilityCheck.message || 'Le chauffeur n\'est pas disponible à cette date et heure',
+        code: 'DRIVER_NOT_AVAILABLE'
+      }, { status: 409 });
+    }
+
+    console.log(`✅ Chauffeur disponible`);
 
     // Assigner la réservation au chauffeur
     const updatedBooking = await db

@@ -22,7 +22,7 @@ export const users = pgTable('users', {
   resetToken: text('reset_token'),
   resetTokenExpiry: timestamp('reset_token_expiry'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().$onUpdate(() => new Date()),
+  updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
 }, (table) => ({
   driverLicenseCheck: check('driver_license_check', sql`(${table.role} != 'driver') OR (${table.licenseNumber} IS NOT NULL)`),
 }));
@@ -76,7 +76,7 @@ export const vehiclesTable = pgTable('vehicles', {
   driverId: text('driver_id').references(() => users.id, { onDelete: 'set null' }),
   isActive: boolean('is_active').notNull().default(true),
   createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().$onUpdate(() => new Date()),
+  updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
 }, (table) => ({
   yearCheck: check('year_check', sql`${table.year} >= 1900 AND ${table.year} <= EXTRACT(YEAR FROM NOW()) + 2`),
   capacityCheck: check('capacity_check', sql`${table.capacity} > 0 AND ${table.capacity} <= 50`),
@@ -104,7 +104,7 @@ export const bookingsTable = pgTable('bookings', {
   cancelledBy: text('cancelled_by').references(() => users.id, { onDelete: 'set null' }),
   cancelledAt: timestamp('cancelled_at'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().$onUpdate(() => new Date()),
+  updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
 }, (table) => ({
   passengersCheck: check('passengers_check', sql`${table.passengers} > 0`),
   luggageCheck: check('luggage_check', sql`${table.luggage} >= 0`),
@@ -154,7 +154,7 @@ export const quotesTable = pgTable('quotes', {
   estimatedPrice: decimal('estimated_price', { precision: 10, scale: 2 }),
   assignedTo: text('assigned_to').references(() => users.id, { onDelete: 'set null' }),
   createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().$onUpdate(() => new Date()),
+  updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
 });
 
 // Enum pour le statut des factures
@@ -180,7 +180,7 @@ export const invoicesTable = pgTable('invoices', {
   paymentMethod: text('payment_method'), // 'card', 'bank_transfer', 'cash', etc.
   notes: text('notes'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().$onUpdate(() => new Date()),
+  updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
 }, (table) => ({
   amountCheck: check('amount_check', sql`${table.amount} > 0`),
   totalCheck: check('total_check', sql`${table.totalAmount} > 0`),
@@ -232,7 +232,7 @@ export const customRolesTable = pgTable('custom_roles', {
   level: integer('level').notNull().default(1),
   isSystem: boolean('is_system').notNull().default(false),
   createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().$onUpdate(() => new Date()),
+  updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
 });
 
 // Permissions des rôles
@@ -253,8 +253,28 @@ export type SelectCustomRole = typeof customRolesTable.$inferSelect;
 export type InsertRolePermission = typeof rolePermissionsTable.$inferInsert;
 export type SelectRolePermission = typeof rolePermissionsTable.$inferSelect;
 
+// Disponibilités des chauffeurs
+export const driverAvailabilityTable = pgTable('driver_availability', {
+  id: serial('id').primaryKey(),
+  driverId: text('driver_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  dayOfWeek: integer('day_of_week').notNull(), // 0 = Dimanche, 1 = Lundi, ..., 6 = Samedi
+  startTime: text('start_time').notNull(), // Format: "HH:mm" (ex: "08:00")
+  endTime: text('end_time').notNull(), // Format: "HH:mm" (ex: "18:00")
+  isAvailable: boolean('is_available').notNull().default(true),
+  specificDate: timestamp('specific_date'), // Pour les disponibilités/indisponibilités spécifiques à une date
+  notes: text('notes'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
+}, (table) => ({
+  dayOfWeekCheck: check('day_of_week_check', sql`${table.dayOfWeek} >= 0 AND ${table.dayOfWeek} <= 6`),
+}));
+
 // Alias pour les exports
 export const quotes = quotesTable;
+
+// Types pour les nouveaux schémas
+export type InsertDriverAvailability = typeof driverAvailabilityTable.$inferInsert;
+export type SelectDriverAvailability = typeof driverAvailabilityTable.$inferSelect;
 
 // Types pour les réponses API
 export type ApiResponse<T = unknown> = {

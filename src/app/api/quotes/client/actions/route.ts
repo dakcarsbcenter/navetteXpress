@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { db } from '@/db'
-import { quotes, invoicesTable } from '@/schema'
+import { quotes, invoicesTable, bookingsTable } from '@/schema'
 import { eq, and } from 'drizzle-orm'
 import { generateInvoiceNumber, calculateInvoiceAmounts, calculateDueDate } from '@/lib/invoice-utils'
 
@@ -101,18 +101,26 @@ export async function POST(request: NextRequest) {
       
     console.log('Devis mis à jour avec succès')
 
-    // Si le devis est accepté, générer automatiquement une facture
+    // Si le devis est accepté, générer automatiquement une facture et une réservation
     let invoiceData = null
+    let bookingData = null
+    
     if (action === 'accept') {
-      console.log('📄 Génération automatique de la facture...')
+      console.log('📄 Génération automatique de la facture et réservation...')
+      console.log(`   📋 Devis #${currentQuote.id}:`, {
+        customerName: currentQuote.customerName,
+        estimatedPrice: currentQuote.estimatedPrice,
+        preferredDate: currentQuote.preferredDate,
+        service: currentQuote.service
+      })
       
       try {
         // Vérifier que le devis a un prix estimé
         if (!currentQuote.estimatedPrice) {
-          console.error('❌ Le devis n\'a pas de prix estimé')
+          console.error('❌ Le devis n\'a pas de prix estimé - BLOQUÉ')
           return NextResponse.json({
             success: false,
-            error: 'Le devis doit avoir un prix estimé pour générer une facture'
+            error: 'Le devis doit avoir un prix estimé pour générer une facture et une réservation'
           }, { status: 400 })
         }
 
@@ -159,9 +167,111 @@ export async function POST(request: NextRequest) {
 
       } catch (invoiceError) {
         console.error('❌ Erreur lors de la génération de la facture:', invoiceError)
+        console.error('   Stack trace:', invoiceError instanceof Error ? invoiceError.stack : 'No stack trace')
+        console.error('   Message:', invoiceError instanceof Error ? invoiceError.message : String(invoiceError))
         // On ne bloque pas l'acceptation du devis même si la facture échoue
-        // Mais on log l'erreur pour investigation
-        console.error('Stack trace:', invoiceError instanceof Error ? invoiceError.stack : 'No stack trace')
+      }
+
+      // Créer automatiquement une réservation confirmée
+      // Cette section s'exécute INDÉPENDAMMENT du succès de la facture
+      console.log('\n📅 Création automatique de la réservation confirmée...')
+      
+      try {
+        // Extraire les informations de la demande de devis pour créer la réservation
+        // Le message du devis contient normalement les détails (pickup, dropoff, date, etc.)
+        const quoteMessage = currentQuote.message || ''
+        
+        // Extraire le point de départ et la destination depuis le message
+        let pickupAddress = 'À définir'
+        let dropoffAddress = 'À définir'
+        let passengers = 1
+        let luggage = 1
+        
+        // Regex pour extraire les informations du message
+        const departMatch = quoteMessage.match(/Départ:\s*(.+?)(?:\n|$)/i)
+        const destinationMatch = quoteMessage.match(/Destination:\s*(.+?)(?:\n|$)/i)
+        const passengersMatch = quoteMessage.match(/(\d+)\s*personne/i)
+        const cabinBaggageMatch = quoteMessage.match(/Bagages cabine:\s*(\d+)/i)
+        const checkedBaggageMatch = quoteMessage.match(/Bagages soute:\s*(\d+)/i)
+        
+        if (departMatch && departMatch[1]) {
+          pickupAddress = departMatch[1].trim()
+          console.log(`   ✓ Point de départ extrait: ${pickupAddress}`)
+        }
+        
+        if (destinationMatch && destinationMatch[1]) {
+          dropoffAddress = destinationMatch[1].trim()
+          console.log(`   ✓ Destination extraite: ${dropoffAddress}`)
+        }
+        
+        if (passengersMatch && passengersMatch[1]) {
+          passengers = parseInt(passengersMatch[1])
+          console.log(`   ✓ Nombre de passagers: ${passengers}`)
+        }
+        
+        // Calculer le total des bagages
+        const cabinBaggage = cabinBaggageMatch ? parseInt(cabinBaggageMatch[1]) : 0
+        const checkedBaggage = checkedBaggageMatch ? parseInt(checkedBaggageMatch[1]) : 0
+        luggage = cabinBaggage + checkedBaggage
+        console.log(`   ✓ Nombre de bagages: ${luggage} (cabine: ${cabinBaggage}, soute: ${checkedBaggage})`)
+        
+        // Utiliser la date préférée si disponible, sinon une date par défaut
+        const scheduledDateTime = currentQuote.preferredDate 
+          ? new Date(currentQuote.preferredDate)
+          : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 jours à partir de maintenant si pas de date
+
+        // Préparer les données de la réservation
+        const bookingValues = {
+          customerName: currentQuote.customerName,
+          customerEmail: currentQuote.customerEmail,
+          customerPhone: currentQuote.customerPhone || '',
+          pickupAddress,
+          dropoffAddress,
+          scheduledDateTime,
+          status: 'confirmed' as const, // Statut confirmé directement
+          price: currentQuote.estimatedPrice,
+          notes: `Réservation créée automatiquement suite à l'acceptation du devis #${currentQuote.id}\n\nService: ${currentQuote.service}\n\nDétails du devis:\n${quoteMessage}\n\n${message ? `Message du client: ${message}` : ''}`,
+          passengers,
+          luggage,
+          updatedAt: new Date()
+        }
+        
+        console.log('   📝 Données de réservation à insérer:', {
+          customerName: bookingValues.customerName,
+          customerEmail: bookingValues.customerEmail,
+          pickupAddress: bookingValues.pickupAddress,
+          dropoffAddress: bookingValues.dropoffAddress,
+          scheduledDateTime: bookingValues.scheduledDateTime,
+          status: bookingValues.status,
+          passengers: bookingValues.passengers,
+          luggage: bookingValues.luggage,
+          price: bookingValues.price
+        })
+
+        // Créer la réservation avec le statut "confirmed"
+        const [newBooking] = await db.insert(bookingsTable).values(bookingValues).returning()
+
+        console.log(`\n✅ Réservation créée avec succès!`)
+        console.log(`   ID: ${newBooking.id}`)
+        console.log(`   Statut: ${newBooking.status}`)
+        console.log(`   Date: ${newBooking.scheduledDateTime}`)
+        console.log(`   De: ${newBooking.pickupAddress}`)
+        console.log(`   À: ${newBooking.dropoffAddress}`)
+        
+        bookingData = {
+          id: newBooking.id,
+          status: newBooking.status,
+          scheduledDateTime: newBooking.scheduledDateTime,
+          pickupAddress: newBooking.pickupAddress,
+          dropoffAddress: newBooking.dropoffAddress
+        }
+
+      } catch (bookingError) {
+        console.error('\n❌ ERREUR lors de la création de la réservation!')
+        console.error('   Type:', bookingError instanceof Error ? bookingError.name : typeof bookingError)
+        console.error('   Message:', bookingError instanceof Error ? bookingError.message : String(bookingError))
+        console.error('   Stack trace:', bookingError instanceof Error ? bookingError.stack : 'No stack trace')
+        // On ne bloque pas l'acceptation du devis même si la création de réservation échoue
       }
     }
 
@@ -170,7 +280,8 @@ export async function POST(request: NextRequest) {
       message: 'Action effectuée avec succès',
       newStatus,
       timestamp: new Date().toISOString(),
-      invoice: invoiceData // Inclure les données de la facture si générée
+      invoice: invoiceData, // Inclure les données de la facture si générée
+      booking: bookingData // Inclure les données de la réservation si créée
     })
 
   } catch (error) {
