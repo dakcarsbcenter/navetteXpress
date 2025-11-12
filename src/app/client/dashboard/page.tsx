@@ -9,6 +9,7 @@ import { CreateReviewModal } from "@/components/client/CreateReviewModal"
 import { EditProfileModal } from "@/components/client/EditProfileModal"
 import { EditBookingModal } from "@/components/client/EditBookingModal"
 import { ClientQuotesView } from "@/components/client/ClientQuotesView"
+import { ClientInvoicesView } from "@/components/client/ClientInvoicesView"
 import UniversalProfilePhotoUpload from "@/components/ui/UniversalProfilePhotoUpload"
 import { VehiclesManagement } from "@/components/client/VehiclesManagement"
 import { ClientUsersManagement } from "@/components/client/ClientUsersManagement"
@@ -77,7 +78,7 @@ interface UserProfile {
   createdAt: string
 }
 
-type TabType = 'overview' | 'bookings' | 'quotes' | 'reviews' | 'create-reviews' | 'profile' | 'vehicles' | 'users'
+type TabType = 'overview' | 'bookings' | 'quotes' | 'invoices' | 'reviews' | 'create-reviews' | 'profile' | 'vehicles' | 'users'
 
 function ClientDashboardContent() {
   const { data: session, status } = useSession()
@@ -91,7 +92,7 @@ function ClientDashboardContent() {
   const [reviewableBookings, setReviewableBookings] = useState<ReviewableBooking[]>([])
   const [selectedBookingForReview, setSelectedBookingForReview] = useState<ReviewableBooking | null>(null)
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false)
-  const [userProfile] = useState<UserProfile | null>(null)
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false)
   const [userPermissions, setUserPermissions] = useState<Record<string, string[]>>({})
   const [editingBooking, setEditingBooking] = useState<Booking | null>(null)
@@ -152,13 +153,22 @@ function ClientDashboardContent() {
   // Gérer les paramètres d'URL pour l'onglet actif
   useEffect(() => {
     const tabFromUrl = searchParams?.get('tab')
-    if (tabFromUrl && ['overview', 'bookings', 'quotes', 'create-reviews', 'reviews', 'profile', 'vehicles', 'users'].includes(tabFromUrl)) {
+    if (tabFromUrl && ['overview', 'bookings', 'quotes', 'invoices', 'create-reviews', 'reviews', 'profile', 'vehicles', 'users'].includes(tabFromUrl)) {
       setActiveTab(tabFromUrl as TabType)
     }
   }, [searchParams])
 
   const loadClientData = async () => {
     try {
+      // Charger le profil utilisateur
+      const profileResponse = await fetch('/api/client/profile')
+      if (profileResponse.ok) {
+        const profileData = await profileResponse.json()
+        if (profileData.success) {
+          setUserProfile(profileData.user)
+        }
+      }
+
       // Charger les réservations
       const bookingsResponse = await fetch('/api/client/bookings')
       if (bookingsResponse.ok) {
@@ -290,6 +300,8 @@ function ClientDashboardContent() {
     ...(canViewBookings ? [{ id: 'bookings' as TabType, label: 'Mes réservations', icon: '📅' }] : []),
     // Ajouter l'onglet devis si l'utilisateur a les permissions
     ...(canManageQuotes ? [{ id: 'quotes' as TabType, label: 'Mes devis', icon: '📋' }] : []),
+    // Ajouter l'onglet factures
+    { id: 'invoices' as TabType, label: 'Mes factures', icon: '🧾' },
     { id: 'create-reviews' as TabType, label: 'Évaluer trajets', icon: '⭐', badge: stats.reviewableBookings > 0 ? stats.reviewableBookings : null },
     // Ajouter l'onglet avis si l'utilisateur a les permissions
     ...(canManageReviews ? [{ id: 'reviews' as TabType, label: 'Mes avis', icon: '✅' }] : []),
@@ -734,6 +746,9 @@ function ClientDashboardContent() {
 
       case 'quotes':
         return <ClientQuotesView />
+
+      case 'invoices':
+        return <ClientInvoicesView />
 
       case 'reviews':
         return (

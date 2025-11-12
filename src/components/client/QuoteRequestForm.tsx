@@ -159,6 +159,11 @@ Description: ${formData.description}`,
         
         showSuccess('Votre demande de devis a été envoyée avec succès ! Nous vous répondrons dans les plus brefs délais.', 'Demande envoyée')
         resetForm()
+        
+        // Rediriger vers la page "Mes devis" après 1.5 secondes
+        setTimeout(() => {
+          router.push('/client/dashboard?tab=quotes')
+        }, 1500)
       } else {
         const errorData = await response.text()
         console.error('❌ Erreur API response:', errorData)
