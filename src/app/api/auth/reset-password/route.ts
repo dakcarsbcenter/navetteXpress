@@ -7,6 +7,7 @@ import { db } from "@/db"
 import { users } from "@/schema"
 import { eq } from "drizzle-orm"
 import { randomBytes } from "crypto"
+import { sendPasswordResetEmail } from "@/lib/email"
 
 export async function POST(request: NextRequest) {
   try {
@@ -53,17 +54,20 @@ export async function POST(request: NextRequest) {
       })
       .where(eq(users.id, existingUser[0].id))
 
-    // TODO: Envoyer un email avec le lien de réinitialisation
-    // Pour l'instant, on log le token (à remplacer par un vrai service d'email)
-    console.log("Token de réinitialisation généré pour", email, ":", resetToken)
-    console.log("Lien de réinitialisation:", `${process.env.NEXTAUTH_URL}/auth/reset-password/confirm?token=${resetToken}`)
+    // Envoyer l'email de réinitialisation via Resend
+    const emailResult = await sendPasswordResetEmail(
+      email,
+      resetToken,
+      existingUser[0].name || 'Utilisateur'
+    )
 
-    // En production, vous devriez utiliser un service d'email comme:
-    // - Brevo (SendinBlue)
-    // - SendGrid
-    // - AWS SES
-    // - Mailgun
-    // etc.
+    if (!emailResult.success) {
+      console.error("❌ Erreur lors de l'envoi de l'email:", emailResult.error)
+      // On continue quand même pour ne pas révéler si l'email existe
+      // En production, vous pourriez logger cette erreur pour monitoring
+    } else {
+      console.log("✅ Email de réinitialisation envoyé avec succès à:", email)
+    }
 
     return NextResponse.json(
       { 

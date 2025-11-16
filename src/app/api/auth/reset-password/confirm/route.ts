@@ -7,6 +7,7 @@ import { db } from '@/db'
 import { users } from '@/schema'
 import { and, eq, gt } from 'drizzle-orm'
 import bcrypt from 'bcryptjs'
+import { sendPasswordChangedEmail } from '@/lib/email'
 
 export async function POST(request: NextRequest) {
   try {
@@ -38,15 +39,30 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await bcrypt.hash(password, 12)
 
     // Mettre à jour le mot de passe et invalider le token
+    // Réinitialiser également les tentatives de connexion et débloquer le compte
     await db
       .update(users)
       .set({
         password: hashedPassword,
         resetToken: null,
         resetTokenExpiry: null,
+        loginAttempts: 0,
+        accountLockedUntil: null,
+        lastFailedLogin: null,
         updatedAt: new Date(),
       })
       .where(eq(users.id, user.id))
+
+    // Envoyer un email de confirmation
+    const emailResult = await sendPasswordChangedEmail(
+      user.email,
+      user.name || 'Utilisateur'
+    )
+
+    if (!emailResult.success) {
+      console.error("❌ Erreur lors de l'envoi de l'email de confirmation:", emailResult.error)
+      // On continue quand même, le mot de passe a été changé
+    }
 
     return NextResponse.json({ success: true, message: 'Mot de passe réinitialisé avec succès' })
   } catch (error) {

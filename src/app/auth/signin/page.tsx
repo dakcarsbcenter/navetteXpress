@@ -25,7 +25,23 @@ function SignInForm() {
   }, [searchParams])
 
   const getErrorMessage = (errorType: string): string => {
+    // Gérer les erreurs avec informations supplémentaires
+    if (errorType.startsWith('InvalidPassword:')) {
+      const attemptsRemaining = errorType.split(':')[1]
+      setShowResetOption(true)
+      return `Mot de passe incorrect. Il vous reste ${attemptsRemaining} tentative(s) avant le blocage du compte.`
+    }
+    
+    if (errorType.startsWith('AccountLocked:')) {
+      const minutesRemaining = errorType.split(':')[1]
+      setShowResetOption(true)
+      return `Compte temporairement bloqué après 3 tentatives échouées. Réessayez dans ${minutesRemaining} minute(s) ou réinitialisez votre mot de passe.`
+    }
+    
     switch (errorType) {
+      case 'AccountLockedAfter3Attempts':
+        setShowResetOption(true)
+        return "Compte bloqué après 3 tentatives échouées. Veuillez réinitialiser votre mot de passe ou réessayer dans 15 minutes."
       case 'CredentialsSignin':
       case 'UserNotFound':
       case 'InvalidPassword':
@@ -191,9 +207,17 @@ function SignInForm() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 sm:mb-1.5">
-                Mot de passe
-              </label>
+              <div className="flex items-center justify-between mb-1 sm:mb-1.5">
+                <label htmlFor="password" className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">
+                  Mot de passe
+                </label>
+                <Link
+                  href="/auth/reset-password"
+                  className="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                >
+                  Mot de passe oublié ?
+                </Link>
+              </div>
               <input
                 id="password"
                 type="password"

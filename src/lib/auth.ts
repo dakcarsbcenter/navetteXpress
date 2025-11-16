@@ -5,6 +5,7 @@ import { db } from "@/db"
 import { users } from "@/schema"
 import { eq } from "drizzle-orm"
 import bcrypt from "bcryptjs"
+import { sendAccountLockedEmail } from "./email"
 
 // Lazy getter pour les variables d'environnement
 function getEnvConfig() {
@@ -71,6 +72,30 @@ export const authOptions = {
           const user = userResult[0]
           console.log("✅ [NextAuth] Utilisateur trouvé:", user.email, "- Rôle:", user.role)
 
+          // Vérifier si le compte est bloqué
+          if (user.accountLockedUntil) {
+            const now = new Date()
+            const lockedUntil = new Date(user.accountLockedUntil)
+            
+            if (now < lockedUntil) {
+              const minutesRemaining = Math.ceil((lockedUntil.getTime() - now.getTime()) / (1000 * 60))
+              console.log("🔒 [NextAuth] Compte bloqué jusqu'à:", lockedUntil)
+              throw new Error(`AccountLocked:${minutesRemaining}`)
+            } else {
+              // Le blocage est expiré, réinitialiser les tentatives
+              await db
+                .update(users)
+                .set({
+                  loginAttempts: 0,
+                  accountLockedUntil: null,
+                  lastFailedLogin: null,
+                  updatedAt: new Date()
+                })
+                .where(eq(users.id, user.id))
+              console.log("✅ [NextAuth] Blocage expiré, compte débloqué")
+            }
+          }
+
           // Vérifier le mot de passe
           if (!user.password) {
             console.log("❌ [NextAuth] Aucun mot de passe défini pour l'utilisateur")
@@ -82,8 +107,64 @@ export const authOptions = {
           console.log("🔐 [NextAuth] Résultat validation:", isPasswordValid ? "✅ Valide" : "❌ Invalide")
           
           if (!isPasswordValid) {
-            console.log("❌ [NextAuth] Mot de passe incorrect pour:", user.email)
-            throw new Error("InvalidPassword")
+            // Incrémenter le compteur de tentatives échouées
+            const currentAttempts = (user.loginAttempts || 0) + 1
+            console.log(`❌ [NextAuth] Mot de passe incorrect (tentative ${currentAttempts}/3)`)
+            
+            if (currentAttempts >= 3) {
+              // Bloquer le compte pour 15 minutes après 3 tentatives
+              const lockedUntil = new Date(Date.now() + 15 * 60 * 1000) // 15 minutes
+              await db
+                .update(users)
+                .set({
+                  loginAttempts: currentAttempts,
+                  accountLockedUntil: lockedUntil,
+                  lastFailedLogin: new Date(),
+                  updatedAt: new Date()
+                })
+                .where(eq(users.id, user.id))
+              
+              console.log("🔒 [NextAuth] Compte bloqué pour 15 minutes après 3 tentatives")
+              
+              // Envoyer un email de notification de blocage
+              try {
+                await sendAccountLockedEmail(
+                  user.email,
+                  user.name || 'Utilisateur',
+                  lockedUntil
+                )
+              } catch (emailError) {
+                console.error("❌ [NextAuth] Erreur lors de l'envoi de l'email de blocage:", emailError)
+                // On continue quand même, le compte est bloqué
+              }
+              
+              throw new Error("AccountLockedAfter3Attempts")
+            } else {
+              // Mettre à jour le compteur
+              await db
+                .update(users)
+                .set({
+                  loginAttempts: currentAttempts,
+                  lastFailedLogin: new Date(),
+                  updatedAt: new Date()
+                })
+                .where(eq(users.id, user.id))
+              
+              throw new Error(`InvalidPassword:${3 - currentAttempts}`)
+            }
+          }
+
+          // Connexion réussie : réinitialiser les tentatives
+          if (user.loginAttempts && user.loginAttempts > 0) {
+            await db
+              .update(users)
+              .set({
+                loginAttempts: 0,
+                accountLockedUntil: null,
+                lastFailedLogin: null,
+                updatedAt: new Date()
+              })
+              .where(eq(users.id, user.id))
           }
 
           console.log("🎉 [NextAuth] Authentification réussie pour:", user.email)
