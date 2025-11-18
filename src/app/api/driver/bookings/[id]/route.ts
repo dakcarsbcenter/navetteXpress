@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { db } from '@/db'
-import { bookingsTable, usersTable } from '@/schema'
+import { bookingsTable, users } from '@/schema'
 import { eq, and } from 'drizzle-orm'
 import { sendBookingConfirmedByDriverEmail } from '@/lib/resend-mailer'
 
@@ -100,11 +100,11 @@ export async function PATCH(
         
         // Récupérer les informations du chauffeur
         const driverInfo = await db.select({
-          name: usersTable.name,
-          phone: usersTable.phone
+          name: users.name,
+          phone: users.phone
         })
-          .from(usersTable)
-          .where(eq(usersTable.id, session.user.id))
+          .from(users)
+          .where(eq(users.id, session.user.id))
           .limit(1);
 
         const booking = existingBooking[0];
