@@ -8,6 +8,7 @@ import Link from "next/link"
 import { CreateReviewModal } from "@/components/client/CreateReviewModal"
 import { EditProfileModal } from "@/components/client/EditProfileModal"
 import { EditBookingModal } from "@/components/client/EditBookingModal"
+import { PriceApprovalModal } from "@/components/client/PriceApprovalModal"
 import { ClientQuotesView } from "@/components/client/ClientQuotesView"
 import { ClientInvoicesView } from "@/components/client/ClientInvoicesView"
 import UniversalProfilePhotoUpload from "@/components/ui/UniversalProfilePhotoUpload"
@@ -25,6 +26,10 @@ interface Booking {
   price?: string
   notes?: string
   createdAt: string
+  priceProposedAt?: string
+  clientResponse?: string
+  clientResponseAt?: string
+  clientResponseMessage?: string
 }
 
 interface Review {
@@ -97,6 +102,8 @@ function ClientDashboardContent() {
   const [userPermissions, setUserPermissions] = useState<Record<string, string[]>>({})
   const [editingBooking, setEditingBooking] = useState<Booking | null>(null)
   const [isEditBookingModalOpen, setIsEditBookingModalOpen] = useState(false)
+  const [bookingForPriceApproval, setBookingForPriceApproval] = useState<Booking | null>(null)
+  const [isPriceApprovalModalOpen, setIsPriceApprovalModalOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [stats, setStats] = useState({
     totalBookings: 0,
@@ -566,9 +573,44 @@ function ClientDashboardContent() {
                           <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
                             {booking.pickupAddress} → {booking.dropoffAddress}
                           </p>
+                          {/* Badge pour prix en attente d'approbation */}
+                          {booking.clientResponse === 'pending' && booking.price && parseFloat(booking.price) > 0 && (
+                            <div className="mt-2">
+                              <span className="inline-flex items-center gap-1 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 px-2 py-1 rounded-full text-xs font-medium border border-yellow-200 dark:border-yellow-700">
+                                💰 En attente de votre réponse
+                              </span>
+                            </div>
+                          )}
+                          {booking.clientResponse === 'accepted' && (
+                            <div className="mt-2">
+                              <span className="inline-flex items-center gap-1 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 px-2 py-1 rounded-full text-xs font-medium border border-green-200 dark:border-green-700">
+                                ✅ Prix accepté
+                              </span>
+                            </div>
+                          )}
+                          {booking.clientResponse === 'rejected' && (
+                            <div className="mt-2">
+                              <span className="inline-flex items-center gap-1 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 px-2 py-1 rounded-full text-xs font-medium border border-red-200 dark:border-red-700">
+                                ❌ Prix refusé
+                              </span>
+                            </div>
+                          )}
                         </div>
                         <div className="flex items-center gap-2">
                           {getStatusBadge(booking.status)}
+                          {/* Bouton pour répondre à la proposition de prix */}
+                          {booking.clientResponse === 'pending' && booking.price && parseFloat(booking.price) > 0 && (
+                            <button
+                              onClick={() => {
+                                setBookingForPriceApproval(booking)
+                                setIsPriceApprovalModalOpen(true)
+                              }}
+                              className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-all shadow-sm hover:shadow-md flex items-center gap-1.5"
+                              title="Répondre à la proposition de prix"
+                            >
+                              💰 Répondre
+                            </button>
+                          )}
                           {/* Bouton éditer visible seulement si la réservation n'est pas confirmée/terminée/annulée */}
                           {hasBookingsUpdatePermission && !['confirmed', 'in_progress', 'completed', 'cancelled'].includes(booking.status) && (
                             <button
@@ -1219,6 +1261,29 @@ function ClientDashboardContent() {
           loadClientData()
         }}
       />
+
+      {/* Modal d'approbation de prix */}
+      {bookingForPriceApproval && (
+        <PriceApprovalModal
+          bookingId={bookingForPriceApproval.id}
+          price={bookingForPriceApproval.price || '0'}
+          customerName={bookingForPriceApproval.customerName}
+          pickupAddress={bookingForPriceApproval.pickupAddress}
+          dropoffAddress={bookingForPriceApproval.dropoffAddress}
+          scheduledDateTime={bookingForPriceApproval.scheduledDateTime}
+          isOpen={isPriceApprovalModalOpen}
+          onClose={() => {
+            setIsPriceApprovalModalOpen(false)
+            setBookingForPriceApproval(null)
+          }}
+          onSuccess={() => {
+            // Recharger les réservations après réponse
+            loadClientData()
+            setIsPriceApprovalModalOpen(false)
+            setBookingForPriceApproval(null)
+          }}
+        />
+      )}
     </div>
   )
 }

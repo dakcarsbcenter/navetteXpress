@@ -415,44 +415,92 @@ export async function sendNewBookingRequestEmail(
     pickupDate: string;
     pickupTime: string;
     passengers?: number;
+    luggage?: number;
   }
 ) {
   try {
     const { data, error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: [to],
-      subject: `🚗 Nouvelle demande de réservation - ${bookingData.bookingId}`,
+      subject: `📋 Nouvelle demande de réservation`,
       html: `
         <!DOCTYPE html>
         <html>
           <body style="font-family: Arial, sans-serif; background: #e8f0f8; padding: 20px;">
-            <div style="max-width: 600px; margin: 0 auto; background: white; border: 2px solid #93374d; border-radius: 8px; overflow: hidden;">
+            <div style="max-width: 600px; margin: 0 auto; background: white; border: 2px solid #2563eb; border-radius: 8px; overflow: hidden;">
               <div style="background: #93374d; padding: 32px 20px; text-align: center;">
-                <h1 style="color: white; margin: 0;">Navette Express</h1>
+                <h1 style="color: white; margin: 0; font-size: 28px;">Navette Express</h1>
               </div>
               <div style="padding: 32px 24px;">
-                <h2 style="color: #2c3e50; text-align: center;">🚗 Nouvelle Demande de Réservation</h2>
-                <p>Bonjour <strong>${bookingData.customerName}</strong>,</p>
-                <p>Nous avons bien reçu votre demande de réservation :</p>
-                <div style="background: #f8f9fa; border: 2px solid #93374d; border-radius: 8px; padding: 20px; margin: 20px 0;">
-                  <h3 style="color: #93374d; margin-top: 0;">📋 Réservation ${bookingData.bookingId}</h3>
-                  <p><strong>📍 Départ :</strong> ${bookingData.pickupLocation}</p>
-                  <p><strong>📍 Arrivée :</strong> ${bookingData.dropoffLocation}</p>
-                  <p><strong>📅 Date :</strong> ${bookingData.pickupDate}</p>
-                  <p><strong>🕐 Heure :</strong> ${bookingData.pickupTime}</p>
-                  ${bookingData.passengers ? `<p><strong>👥 Passagers :</strong> ${bookingData.passengers}</p>` : ''}
+                <div style="text-align: left; margin-bottom: 30px;">
+                  <div style="display: inline-block; background: white; padding: 8px 16px; border-radius: 4px;">
+                    <span style="font-size: 40px; vertical-align: middle;">📋</span>
+                    <span style="color: #1e40af; font-size: 24px; font-weight: bold; margin-left: 10px; vertical-align: middle;">Nouvelle demande de réservation</span>
+                  </div>
                 </div>
-                <div style="background: #dbeafe; border: 2px solid #3b82f6; border-radius: 8px; padding: 15px; margin: 20px 0;">
-                  <p style="color: #1e3a8a; margin: 0;">ℹ️ Nous traçons votre demande et vous contacterons rapidement.</p>
+                
+                <p style="color: #374151; font-size: 16px; line-height: 1.6;">Bonjour,</p>
+                <p style="color: #374151; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">
+                  Une nouvelle demande de réservation vient d'être créée et nécessite votre attention.
+                </p>
+                
+                <div style="background: #fce7f3; border: 2px solid #be123c; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
+                  <p style="color: #be123c; font-size: 14px; font-weight: bold; margin: 0 0 8px 0; text-transform: uppercase;">RÉFÉRENCE</p>
+                  <p style="color: #be123c; font-size: 24px; font-weight: bold; margin: 0;">${bookingData.bookingId}</p>
                 </div>
+
+                <div style="background: #f3f4f6; padding: 24px; border-radius: 8px; margin: 24px 0;">
+                  <h3 style="color: #1f2937; margin: 0 0 20px 0; padding-bottom: 12px; border-bottom: 2px solid #d1d5db; font-size: 18px;">Détails de la réservation :</h3>
+                  <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                      <td style="padding: 8px 0; color: #374151; font-weight: bold; width: 140px;">Client :</td>
+                      <td style="padding: 8px 0; color: #1f2937;">${bookingData.customerName}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 8px 0; color: #374151; font-weight: bold;">Départ :</td>
+                      <td style="padding: 8px 0; color: #1f2937;">${bookingData.pickupLocation}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 8px 0; color: #374151; font-weight: bold;">Arrivée :</td>
+                      <td style="padding: 8px 0; color: #1f2937;">${bookingData.dropoffLocation}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 8px 0; color: #374151; font-weight: bold;">Date :</td>
+                      <td style="padding: 8px 0; color: #1f2937;">${bookingData.pickupDate}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 8px 0; color: #374151; font-weight: bold;">Heure :</td>
+                      <td style="padding: 8px 0; color: #1f2937;">${bookingData.pickupTime}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 8px 0; color: #374151; font-weight: bold;">Passagers :</td>
+                      <td style="padding: 8px 0; color: #1f2937;">${bookingData.passengers || 1}</td>
+                    </tr>
+                    ${bookingData.luggage ? `<tr>
+                      <td style="padding: 8px 0; color: #374151; font-weight: bold;">Bagages :</td>
+                      <td style="padding: 8px 0; color: #1f2937;">${bookingData.luggage}</td>
+                    </tr>` : ''}
+                  </table>
+                </div>
+
                 <div style="text-align: center; margin: 30px 0;">
-                  <a href="${process.env.NEXT_PUBLIC_APP_URL}/client/reservations" 
-                     style="background: #93374d; color: white; padding: 14px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
-                    📱 Suivre ma demande
+                  <a href="${process.env.NEXT_PUBLIC_APP_URL}/admin/reservations" 
+                     style="background: #93374d; color: white; padding: 16px 48px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 16px;">
+                    Voir la demande
                   </a>
                 </div>
+                
                 <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;">
-                <p style="text-align: center; color: #6b7280;">Cordialement,<br><strong>L'équipe NavetteXpress</strong></p>
+                
+                <p style="text-align: center; color: #6b7280; font-size: 14px; margin: 8px 0;">Cordialement,</p>
+                <p style="text-align: center; color: #1f2937; font-weight: bold; font-size: 16px; margin: 8px 0;">Système NavetteXpress</p>
+                <p style="text-align: center; color: #9ca3af; font-size: 12px; margin: 16px 0;">Cet email a été envoyé automatiquement.</p>
+                
+                <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;">
+                
+                <p style="text-align: center; color: #9ca3af; font-size: 12px; margin: 4px 0;">© 2025 NavetteXpress. Tous droits réservés.</p>
+                <p style="text-align: center; color: #9ca3af; font-size: 12px; margin: 4px 0;">[NavetteXpress, Cité Magistrats, Dakar, Sénégal]</p>
+                <p style="text-align: center; color: #9ca3af; font-size: 11px; margin: 16px 0;">Vous recevez cet email en tant qu'administrateur.</p>
               </div>
             </div>
           </body>
@@ -692,6 +740,171 @@ export async function sendQuoteAcceptedEmail(
     }
 
     console.log('✅ Email devis accepté envoyé:', data?.id);
+    return data;
+  } catch (error) {
+    console.error('❌ Erreur:', error);
+    throw error;
+  }
+}
+
+// Email à l'admin : Client a accepté le prix de la réservation
+export async function sendBookingPriceAcceptedEmail(
+  bookingData: {
+    bookingId: number;
+    customerName: string;
+    customerEmail: string;
+    pickupAddress: string;
+    dropoffAddress: string;
+    scheduledDateTime: string;
+    price: string;
+  }
+) {
+  try {
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@navettexpress.com';
+    
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: [adminEmail],
+      subject: `✅ Prix accepté - Réservation #${bookingData.bookingId}`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+          <body style="font-family: Arial, sans-serif; background: #e8f0f8; padding: 20px;">
+            <div style="max-width: 600px; margin: 0 auto; background: white; border: 2px solid #10b981; border-radius: 8px; overflow: hidden;">
+              <div style="background: #10b981; padding: 32px 20px; text-align: center;">
+                <h1 style="color: white; margin: 0;">Navette Express</h1>
+              </div>
+              <div style="padding: 32px 24px;">
+                <h2 style="color: #2c3e50; text-align: center;">✅ Prix Accepté</h2>
+                <p>Excellente nouvelle ! Le client a accepté votre proposition de prix :</p>
+                <div style="background: #d1fae5; border: 2px solid #10b981; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                  <h3 style="color: #10b981; margin-top: 0;">📋 Réservation #${bookingData.bookingId}</h3>
+                  <p><strong>👤 Client :</strong> ${bookingData.customerName}</p>
+                  <p><strong>📧 Email :</strong> ${bookingData.customerEmail}</p>
+                  <p><strong>📍 Départ :</strong> ${bookingData.pickupAddress}</p>
+                  <p><strong>📍 Arrivée :</strong> ${bookingData.dropoffAddress}</p>
+                  <p><strong>📅 Date :</strong> ${new Date(bookingData.scheduledDateTime).toLocaleDateString('fr-FR', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}</p>
+                  <div style="background: white; border: 2px solid #10b981; border-radius: 8px; padding: 16px; margin-top: 16px; text-align: center;">
+                    <p style="margin: 0; font-size: 14px; color: #059669;">💰 Prix accepté</p>
+                    <p style="margin: 8px 0 0 0; font-size: 32px; font-weight: bold; color: #10b981;">${bookingData.price} FCFA</p>
+                  </div>
+                </div>
+                <div style="background: #dbeafe; border: 2px solid #3b82f6; border-radius: 8px; padding: 15px; margin: 20px 0;">
+                  <p style="color: #1e3a8a; margin: 0;">ℹ️ La réservation a été automatiquement confirmée. Vous pouvez maintenant assigner un chauffeur.</p>
+                </div>
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard?tab=bookings" 
+                     style="background: #93374d; color: white; padding: 14px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+                    📊 Gérer les réservations
+                  </a>
+                </div>
+                <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;">
+                <p style="text-align: center; color: #6b7280;">Système de notification automatique<br><strong>NavetteXpress</strong></p>
+              </div>
+            </div>
+          </body>
+        </html>
+      `,
+    });
+
+    if (error) {
+      console.error('❌ Erreur envoi email prix accepté:', error);
+      throw error;
+    }
+
+    console.log('✅ Email prix accepté envoyé:', data?.id);
+    return data;
+  } catch (error) {
+    console.error('❌ Erreur:', error);
+    throw error;
+  }
+}
+
+// Email à l'admin : Client a refusé le prix de la réservation
+export async function sendBookingPriceRejectedEmail(
+  bookingData: {
+    bookingId: number;
+    customerName: string;
+    customerEmail: string;
+    pickupAddress: string;
+    dropoffAddress: string;
+    scheduledDateTime: string;
+    price: string;
+    rejectionMessage?: string;
+  }
+) {
+  try {
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@navettexpress.com';
+    
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: [adminEmail],
+      subject: `❌ Prix refusé - Réservation #${bookingData.bookingId}`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+          <body style="font-family: Arial, sans-serif; background: #e8f0f8; padding: 20px;">
+            <div style="max-width: 600px; margin: 0 auto; background: white; border: 2px solid #ef4444; border-radius: 8px; overflow: hidden;">
+              <div style="background: #ef4444; padding: 32px 20px; text-align: center;">
+                <h1 style="color: white; margin: 0;">Navette Express</h1>
+              </div>
+              <div style="padding: 32px 24px;">
+                <h2 style="color: #2c3e50; text-align: center;">❌ Prix Refusé</h2>
+                <p>Le client a refusé votre proposition de prix :</p>
+                <div style="background: #fee2e2; border: 2px solid #ef4444; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                  <h3 style="color: #ef4444; margin-top: 0;">📋 Réservation #${bookingData.bookingId}</h3>
+                  <p><strong>👤 Client :</strong> ${bookingData.customerName}</p>
+                  <p><strong>📧 Email :</strong> ${bookingData.customerEmail}</p>
+                  <p><strong>📍 Départ :</strong> ${bookingData.pickupAddress}</p>
+                  <p><strong>📍 Arrivée :</strong> ${bookingData.dropoffAddress}</p>
+                  <p><strong>📅 Date :</strong> ${new Date(bookingData.scheduledDateTime).toLocaleDateString('fr-FR', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}</p>
+                  <div style="background: white; border: 2px solid #ef4444; border-radius: 8px; padding: 16px; margin-top: 16px; text-align: center;">
+                    <p style="margin: 0; font-size: 14px; color: #dc2626;">💰 Prix refusé</p>
+                    <p style="margin: 8px 0 0 0; font-size: 32px; font-weight: bold; color: #ef4444;">${bookingData.price} FCFA</p>
+                  </div>
+                </div>
+                ${bookingData.rejectionMessage ? `
+                  <div style="background: #fef3c7; border: 2px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+                    <p style="color: #92400e; margin: 0;"><strong>💬 Raison du refus :</strong></p>
+                    <p style="color: #92400e; margin: 10px 0 0 0;">${bookingData.rejectionMessage}</p>
+                  </div>
+                ` : ''}
+                <div style="background: #dbeafe; border: 2px solid #3b82f6; border-radius: 8px; padding: 15px; margin: 20px 0;">
+                  <p style="color: #1e3a8a; margin: 0;">💡 Vous pouvez modifier le prix pour envoyer une nouvelle proposition au client.</p>
+                </div>
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard?tab=bookings" 
+                     style="background: #93374d; color: white; padding: 14px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+                    📊 Modifier le prix
+                  </a>
+                </div>
+                <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;">
+                <p style="text-align: center; color: #6b7280;">Système de notification automatique<br><strong>NavetteXpress</strong></p>
+              </div>
+            </div>
+          </body>
+        </html>
+      `,
+    });
+
+    if (error) {
+      console.error('❌ Erreur envoi email prix refusé:', error);
+      throw error;
+    }
+
+    console.log('✅ Email prix refusé envoyé:', data?.id);
     return data;
   } catch (error) {
     console.error('❌ Erreur:', error);

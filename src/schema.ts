@@ -103,6 +103,10 @@ export const bookingsTable = pgTable('bookings', {
   luggage: integer('luggage').notNull().default(1),
   duration: decimal('duration', { precision: 4, scale: 2 }).default('2'),
   price: decimal('price', { precision: 10, scale: 2 }),
+  priceProposedAt: timestamp('price_proposed_at'), // Date où l'admin a proposé le prix
+  clientResponse: text('client_response'), // 'pending' | 'accepted' | 'rejected'
+  clientResponseAt: timestamp('client_response_at'), // Date de réponse du client
+  clientResponseMessage: text('client_response_message'), // Message optionnel du client
   notes: text('notes'),
   cancellationReason: text('cancellation_reason'),
   cancelledBy: text('cancelled_by').references(() => users.id, { onDelete: 'set null' }),

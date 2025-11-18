@@ -13,6 +13,8 @@ interface Booking {
   status: 'pending' | 'assigned' | 'approved' | 'rejected' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled'
   driverId: string | null
   vehicleId: number | null
+  passengers?: number | null
+  luggage?: number | null
   price?: string | null
   notes?: string
   cancellationReason?: string | null
@@ -288,6 +290,26 @@ export function BookingDetailsModal({
                       })}
                     </p>
                   </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
+                        👥 Passagers
+                      </label>
+                      <p className="text-slate-900 dark:text-white font-medium">
+                        {booking.passengers || 1} {(booking.passengers || 1) > 1 ? 'personnes' : 'personne'}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
+                        🧳 Bagages
+                      </label>
+                      <p className="text-slate-900 dark:text-white font-medium">
+                        {booking.luggage || 1} {(booking.luggage || 1) > 1 ? 'valises' : 'valise'}
+                      </p>
+                    </div>
+                  </div>
+                  
                   <div>
                     <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
                       🕒 Créée le

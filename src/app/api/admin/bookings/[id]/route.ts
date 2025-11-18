@@ -71,6 +71,22 @@ export async function PATCH(
 
     const body = await request.json();
     
+    // Récupérer la réservation actuelle pour comparer
+    const currentBooking = await db
+      .select()
+      .from(bookingsTable)
+      .where(eq(bookingsTable.id, id))
+      .limit(1);
+
+    if (currentBooking.length === 0) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Réservation non trouvée' 
+      }, { status: 404 });
+    }
+
+    const oldBooking = currentBooking[0];
+
     // Construction dynamique de l'objet de mise à jour
     const updateData: any = {
       updatedAt: new Date(),
@@ -81,8 +97,19 @@ export async function PATCH(
     if (body.status !== undefined) updateData.status = body.status;
     if (body.driverId !== undefined) updateData.driverId = body.driverId;
     if (body.vehicleId !== undefined) updateData.vehicleId = body.vehicleId;
-    if (body.price !== undefined) updateData.price = body.price;
     if (body.notes !== undefined) updateData.notes = body.notes;
+    
+    // Si l'admin définit ou modifie le prix
+    if (body.price !== undefined) {
+      updateData.price = body.price;
+      // Si c'est la première fois qu'un prix est défini OU si le prix change
+      if (!oldBooking.price || oldBooking.price !== body.price) {
+        updateData.priceProposedAt = new Date();
+        updateData.clientResponse = 'pending'; // En attente de réponse du client
+        updateData.clientResponseAt = null;
+        updateData.clientResponseMessage = null;
+      }
+    }
 
     const updatedBooking = await db
       .update(bookingsTable)

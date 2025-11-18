@@ -131,9 +131,9 @@ export async function POST(request: NextRequest) {
       return total + (servicePrices[serviceId] || 0);
     }, 0) || 0;
 
-    const estimatedPrice = Math.round(
-      (basePrice * vehicleMultiplier * serviceMultiplier * duration) + additionalServicesPrice
-    );
+    // Le prix est toujours à 0 pour une nouvelle demande
+    // C'est l'admin qui fixera le prix après validation
+    const estimatedPrice = 0;
 
     // Créer la réservation
     const newBooking = await db
@@ -152,7 +152,7 @@ export async function POST(request: NextRequest) {
         duration: duration ? duration.toString() : '2',
         driverId: null, // Sera assigné plus tard par l'admin
         vehicleId: null, // Sera assigné plus tard par l'admin
-        price: estimatedPrice.toString(),
+        price: '0', // Prix initial à 0, sera fixé par l'admin
         notes: `Service: ${serviceType}\nContact: ${contactPhone}${contactEmail ? ` - ${contactEmail}` : ''}\nServices additionnels: ${additionalServices?.join(', ') || 'Aucun'}\nDemandes spéciales: ${specialRequests || 'Aucune'}`,
         updatedAt: new Date()
       })
@@ -161,49 +161,24 @@ export async function POST(request: NextRequest) {
     const createdBooking = newBooking[0];
     console.log(`✅ Réservation #${createdBooking.id} créée pour ${finalClientName}`);
 
-    // Envoyer notification au client
+    // Envoyer notification uniquement à l'admin (pas au client)
     try {
-      console.log(`📧 Envoi email de confirmation au client pour réservation #${createdBooking.id}...`);
+      console.log(`📧 Envoi notification admin pour nouvelle réservation #${createdBooking.id}...`);
       
-      await sendNewBookingRequestEmail(createdBooking.customerEmail, {
+      const adminEmail = process.env.ADMIN_EMAIL || 'onboarding@resend.dev';
+      
+      await sendNewBookingRequestEmail(adminEmail, {
         bookingId: `BOOK-${createdBooking.id}`,
         customerName: createdBooking.customerName,
         pickupLocation: createdBooking.pickupAddress,
         dropoffLocation: createdBooking.dropoffAddress,
         pickupDate: new Date(createdBooking.scheduledDateTime).toLocaleDateString('fr-FR'),
         pickupTime: new Date(createdBooking.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-        passengers: passengers || 1
-      });
-
-      console.log(`✅ Email client envoyé avec succès`);
-    } catch (emailError) {
-      console.error('❌ Erreur lors de l\'envoi de l\'email client:', emailError);
-      // On continue même si l'email échoue
-    }
-
-    // Envoyer notification à l'admin via Resend
-    try {
-      console.log(`📧 Envoi notification admin pour nouvelle réservation #${createdBooking.id}...`);
-      
-      const emailResult = await sendBookingNotificationToAdmin({
-        id: createdBooking.id,
-        customerName: createdBooking.customerName,
-        customerEmail: createdBooking.customerEmail,
-        customerPhone: createdBooking.customerPhone || undefined,
-        pickupAddress: createdBooking.pickupAddress,
-        dropoffAddress: createdBooking.dropoffAddress,
-        scheduledDateTime: createdBooking.scheduledDateTime.toISOString(),
         passengers: passengers || 1,
-        price: createdBooking.price || undefined,
-        notes: createdBooking.notes || undefined
+        luggage: createdBooking.luggage || 1
       });
 
-      if (emailResult.success) {
-        console.log(`✅ Notification admin envoyée via Resend`);
-      } else {
-        console.error(`❌ Erreur notification admin:`, emailResult.error);
-        // On continue même si l'email échoue
-      }
+      console.log(`✅ Notification admin envoyée avec succès`);
     } catch (emailError) {
       console.error('❌ Erreur lors de l\'envoi de la notification admin:', emailError);
       // On continue même si l'email échoue
