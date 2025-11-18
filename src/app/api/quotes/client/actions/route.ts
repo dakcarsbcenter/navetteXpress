@@ -9,6 +9,7 @@ import { db } from '@/db'
 import { quotes, invoicesTable, bookingsTable } from '@/schema'
 import { eq, and } from 'drizzle-orm'
 import { generateInvoiceNumber, calculateInvoiceAmounts, calculateDueDate } from '@/lib/invoice-utils'
+import { sendInvoiceEmail, sendQuoteAcceptedEmail, sendQuoteRejectedEmail } from '@/lib/resend-mailer'
 
 export async function POST(request: NextRequest) {
   try {
@@ -165,6 +166,28 @@ export async function POST(request: NextRequest) {
           dueDate: newInvoice.dueDate
         }
 
+        // Envoyer l'email de notification de facture au client
+        try {
+          console.log('📧 Envoi de l\'email de facture à:', newInvoice.customerEmail)
+          
+          await sendInvoiceEmail(newInvoice.customerEmail, {
+            invoiceNumber: newInvoice.invoiceNumber,
+            customerName: newInvoice.customerName,
+            service: newInvoice.service,
+            amountHT: `${parseFloat(newInvoice.amount).toLocaleString('fr-FR')} FCFA`,
+            vatAmount: `${parseFloat(newInvoice.taxAmount).toLocaleString('fr-FR')} FCFA`,
+            amountTTC: `${parseFloat(newInvoice.totalAmount).toLocaleString('fr-FR')} FCFA`,
+            issueDate: new Date(newInvoice.issueDate).toLocaleDateString('fr-FR'),
+            dueDate: new Date(newInvoice.dueDate).toLocaleDateString('fr-FR'),
+            invoiceUrl: `${process.env.NEXT_PUBLIC_APP_URL}/client/factures/${newInvoice.id}`
+          })
+          
+          console.log('✅ Email de facture envoyé avec succès')
+        } catch (emailError) {
+          console.error('❌ Erreur lors de l\'envoi de l\'email de facture:', emailError)
+          // Ne pas bloquer si l'email échoue
+        }
+
       } catch (invoiceError) {
         console.error('❌ Erreur lors de la génération de la facture:', invoiceError)
         console.error('   Stack trace:', invoiceError instanceof Error ? invoiceError.stack : 'No stack trace')
@@ -272,6 +295,42 @@ export async function POST(request: NextRequest) {
         console.error('   Message:', bookingError instanceof Error ? bookingError.message : String(bookingError))
         console.error('   Stack trace:', bookingError instanceof Error ? bookingError.stack : 'No stack trace')
         // On ne bloque pas l'acceptation du devis même si la création de réservation échoue
+      }
+
+      // Envoyer email à l'admin pour notifier l'acceptation du devis
+      try {
+        console.log(`📧 Envoi notification admin pour devis accepté #${currentQuote.id}...`);
+        
+        await sendQuoteAcceptedEmail({
+          quoteId: `QUOTE-${currentQuote.id}`,
+          customerName: currentQuote.customerName,
+          customerEmail: currentQuote.customerEmail,
+          service: currentQuote.service,
+          price: parseFloat(currentQuote.estimatedPrice || '0')
+        });
+
+        console.log(`✅ Notification admin devis accepté envoyée`);
+      } catch (emailError) {
+        console.error('❌ Erreur lors de l\'envoi de la notification admin:', emailError);
+      }
+    }
+
+    // Si le devis est rejeté, envoyer email à l'admin
+    if (action === 'reject') {
+      try {
+        console.log(`📧 Envoi notification admin pour devis rejeté #${currentQuote.id}...`);
+        
+        await sendQuoteRejectedEmail({
+          quoteId: `QUOTE-${currentQuote.id}`,
+          customerName: currentQuote.customerName,
+          customerEmail: currentQuote.customerEmail,
+          service: currentQuote.service,
+          rejectionReason: message
+        });
+
+        console.log(`✅ Notification admin devis rejeté envoyée`);
+      } catch (emailError) {
+        console.error('❌ Erreur lors de l\'envoi de la notification admin:', emailError);
       }
     }
 

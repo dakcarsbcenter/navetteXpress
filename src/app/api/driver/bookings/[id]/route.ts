@@ -6,8 +6,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { db } from '@/db'
-import { bookingsTable } from '@/schema'
+import { bookingsTable, usersTable } from '@/schema'
 import { eq, and } from 'drizzle-orm'
+import { sendBookingConfirmedByDriverEmail } from '@/lib/resend-mailer'
 
 export async function PATCH(
   request: NextRequest,
@@ -91,6 +92,40 @@ export async function PATCH(
     await db.update(bookingsTable)
       .set(updateData)
       .where(eq(bookingsTable.id, bookingId))
+
+    // Envoyer email au client si le chauffeur confirme la réservation
+    if (status === 'confirmed') {
+      try {
+        console.log(`📧 Envoi email de confirmation au client pour réservation #${bookingId}...`);
+        
+        // Récupérer les informations du chauffeur
+        const driverInfo = await db.select({
+          name: usersTable.name,
+          phone: usersTable.phone
+        })
+          .from(usersTable)
+          .where(eq(usersTable.id, session.user.id))
+          .limit(1);
+
+        const booking = existingBooking[0];
+        
+        await sendBookingConfirmedByDriverEmail(booking.customerEmail, {
+          bookingId: `BOOK-${bookingId}`,
+          customerName: booking.customerName,
+          driverName: driverInfo[0]?.name || 'Votre chauffeur',
+          driverPhone: driverInfo[0]?.phone || undefined,
+          pickupLocation: booking.pickupAddress,
+          dropoffLocation: booking.dropoffAddress,
+          pickupDate: new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR'),
+          pickupTime: new Date(booking.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+        });
+
+        console.log(`✅ Email de confirmation envoyé au client`);
+      } catch (emailError) {
+        console.error('❌ Erreur lors de l\'envoi de l\'email au client:', emailError);
+        // On continue même si l'email échoue
+      }
+    }
 
     return NextResponse.json({ 
       success: true, 

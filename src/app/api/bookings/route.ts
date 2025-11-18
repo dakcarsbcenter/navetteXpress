@@ -9,6 +9,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { eq, desc, and } from 'drizzle-orm';
 import { sendBookingNotificationToAdmin } from '@/lib/resend-email';
+import { sendNewBookingRequestEmail } from '@/lib/resend-mailer';
 
 // Fonction pour vérifier les permissions dynamiques des bookings
 async function hasBookingsPermission(userRole: string, action: 'read' | 'create' | 'update' | 'delete'): Promise<boolean> {
@@ -152,12 +153,33 @@ export async function POST(request: NextRequest) {
         driverId: null, // Sera assigné plus tard par l'admin
         vehicleId: null, // Sera assigné plus tard par l'admin
         price: estimatedPrice.toString(),
-        notes: `Service: ${serviceType}\nContact: ${contactPhone}${contactEmail ? ` - ${contactEmail}` : ''}\nServices additionnels: ${additionalServices?.join(', ') || 'Aucun'}\nDemandes spéciales: ${specialRequests || 'Aucune'}`
+        notes: `Service: ${serviceType}\nContact: ${contactPhone}${contactEmail ? ` - ${contactEmail}` : ''}\nServices additionnels: ${additionalServices?.join(', ') || 'Aucun'}\nDemandes spéciales: ${specialRequests || 'Aucune'}`,
+        updatedAt: new Date()
       })
       .returning();
 
     const createdBooking = newBooking[0];
     console.log(`✅ Réservation #${createdBooking.id} créée pour ${finalClientName}`);
+
+    // Envoyer notification au client
+    try {
+      console.log(`📧 Envoi email de confirmation au client pour réservation #${createdBooking.id}...`);
+      
+      await sendNewBookingRequestEmail(createdBooking.customerEmail, {
+        bookingId: `BOOK-${createdBooking.id}`,
+        customerName: createdBooking.customerName,
+        pickupLocation: createdBooking.pickupAddress,
+        dropoffLocation: createdBooking.dropoffAddress,
+        pickupDate: new Date(createdBooking.scheduledDateTime).toLocaleDateString('fr-FR'),
+        pickupTime: new Date(createdBooking.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        passengers: passengers || 1
+      });
+
+      console.log(`✅ Email client envoyé avec succès`);
+    } catch (emailError) {
+      console.error('❌ Erreur lors de l\'envoi de l\'email client:', emailError);
+      // On continue même si l'email échoue
+    }
 
     // Envoyer notification à l'admin via Resend
     try {

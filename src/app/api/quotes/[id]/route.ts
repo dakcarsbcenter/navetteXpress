@@ -8,6 +8,7 @@ import { quotesTable, rolePermissionsTable } from '@/schema';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { eq, and } from 'drizzle-orm';
+import { sendQuoteConfirmedEmail } from '@/lib/resend-mailer';
 
 // Fonction pour vérifier les permissions dynamiques des quotes
 async function hasQuotesPermission(userRole: string, action: 'read' | 'create' | 'update' | 'delete'): Promise<boolean> {
@@ -162,6 +163,26 @@ export async function PUT(
     }
 
     console.log('✅ Devis modifié avec succès:', updatedQuote[0]);
+
+    // Envoyer email au client si le statut passe à 'sent' avec un prix
+    if (status === 'sent' && estimatedPrice !== undefined) {
+      try {
+        console.log(`📧 Envoi email devis confirmé au client pour devis #${updatedQuote[0].id}...`);
+        
+        await sendQuoteConfirmedEmail(updatedQuote[0].customerEmail, {
+          quoteId: `QUOTE-${updatedQuote[0].id}`,
+          customerName: updatedQuote[0].customerName,
+          service: updatedQuote[0].service,
+          price: estimatedPrice,
+          validUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('fr-FR'), // 7 jours
+          adminNotes: adminNotes
+        });
+
+        console.log(`✅ Email devis confirmé envoyé`);
+      } catch (emailError) {
+        console.error('❌ Erreur lors de l\'envoi de l\'email devis confirmé:', emailError);
+      }
+    }
 
     return NextResponse.json({ 
       success: true, 

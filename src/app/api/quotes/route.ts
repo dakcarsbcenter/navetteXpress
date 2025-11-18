@@ -8,6 +8,7 @@ import { quotesTable, rolePermissionsTable } from '@/schema';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { desc, and, eq } from 'drizzle-orm';
+import { sendNewQuoteRequestEmail } from '@/lib/resend-mailer';
 
 // Fonction pour vérifier les permissions dynamiques des quotes
 async function hasQuotesPermission(userRole: string, action: 'read' | 'create' | 'update' | 'delete'): Promise<boolean> {
@@ -73,6 +74,41 @@ export async function POST(request: NextRequest) {
         updatedAt: new Date()
       })
       .returning();
+
+    // Envoyer email de confirmation au client
+    try {
+      console.log(`📧 Envoi email de confirmation au client pour devis #${newQuote[0].id}...`);
+      
+      await sendNewQuoteRequestEmail(customerEmail, {
+        quoteId: `QUOTE-${newQuote[0].id}`,
+        customerName,
+        service,
+        preferredDate: preferredDate ? new Date(preferredDate).toLocaleDateString('fr-FR') : undefined,
+        message
+      }, false);
+
+      console.log(`✅ Email client envoyé`);
+    } catch (emailError) {
+      console.error('❌ Erreur lors de l\'envoi de l\'email client:', emailError);
+    }
+
+    // Envoyer notification à l'admin
+    try {
+      console.log(`📧 Envoi notification admin pour nouvelle demande devis #${newQuote[0].id}...`);
+      
+      const adminEmail = process.env.ADMIN_EMAIL || 'admin@navettexpress.com';
+      await sendNewQuoteRequestEmail(adminEmail, {
+        quoteId: `QUOTE-${newQuote[0].id}`,
+        customerName,
+        service,
+        preferredDate: preferredDate ? new Date(preferredDate).toLocaleDateString('fr-FR') : undefined,
+        message
+      }, true);
+
+      console.log(`✅ Notification admin envoyée`);
+    } catch (emailError) {
+      console.error('❌ Erreur lors de l\'envoi de la notification admin:', emailError);
+    }
 
     return NextResponse.json({ 
       success: true, 
