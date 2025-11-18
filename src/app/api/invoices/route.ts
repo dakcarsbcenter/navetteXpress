@@ -8,7 +8,6 @@ import { authOptions } from '@/lib/auth';
 import { db } from '@/db';
 import { invoicesTable } from '@/schema';
 import { eq, desc, and } from 'drizzle-orm';
-import { sendInvoiceEmail } from '@/lib/resend-mailer';
 
 // GET - Récupérer toutes les factures (avec filtres selon le rôle)
 export async function GET(request: NextRequest) {
@@ -153,32 +152,10 @@ export async function POST(request: NextRequest) {
 
     console.log(`✅ Facture ${newInvoice.invoiceNumber} créée avec succès`);
 
-    // Envoyer l'email de notification au client
-    try {
-      console.log('📧 Envoi de l\'email de facture à:', newInvoice.customerEmail);
-      
-      await sendInvoiceEmail(newInvoice.customerEmail, {
-        invoiceNumber: newInvoice.invoiceNumber,
-        customerName: newInvoice.customerName,
-        service: newInvoice.service,
-        amountHT: `${parseFloat(newInvoice.amount).toLocaleString('fr-FR')} FCFA`,
-        vatAmount: `${parseFloat(newInvoice.taxAmount).toLocaleString('fr-FR')} FCFA`,
-        amountTTC: `${parseFloat(newInvoice.totalAmount).toLocaleString('fr-FR')} FCFA`,
-        issueDate: new Date(newInvoice.issueDate).toLocaleDateString('fr-FR'),
-        dueDate: new Date(newInvoice.dueDate).toLocaleDateString('fr-FR'),
-        invoiceUrl: `${process.env.NEXT_PUBLIC_APP_URL}/client/factures/${newInvoice.id}`
-      });
-      
-      console.log('✅ Email de facture envoyé avec succès');
-    } catch (emailError) {
-      console.error('❌ Erreur lors de l\'envoi de l\'email de facture:', emailError);
-      // Ne pas bloquer la création de la facture si l'email échoue
-    }
-
     return NextResponse.json({
       success: true,
       invoice: newInvoice,
-      message: 'Facture créée avec succès et email envoyé'
+      message: 'Facture créée avec succès'
     });
 
   } catch (error) {

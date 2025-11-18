@@ -8,7 +8,6 @@ import { authOptions } from '@/lib/auth';
 import { db } from '@/db';
 import { invoicesTable, quotesTable } from '@/schema';
 import { eq, and } from 'drizzle-orm';
-import { Resend } from 'resend';
 
 // GET - Récupérer une facture par ID
 export async function GET(
@@ -177,94 +176,6 @@ export async function PATCH(
     }
 
     console.log(`✅ Facture #${invoiceId} mise à jour`);
-
-    // Envoyer un email de confirmation si la facture est marquée comme payée
-    if (body.status === 'paid') {
-      try {
-        console.log('📧 Envoi de l\'email de confirmation de paiement à:', updatedInvoice.customerEmail);
-        
-        const resend = new Resend(process.env.RESEND_API_KEY);
-        const fromEmail = process.env.RESEND_FROM_EMAIL || 'NavetteXpress <onboarding@resend.dev>';
-        
-        await resend.emails.send({
-          from: fromEmail,
-          to: [updatedInvoice.customerEmail],
-          subject: `✅ Paiement confirmé - Facture ${updatedInvoice.invoiceNumber}`,
-          html: `
-            <!DOCTYPE html>
-            <html lang="fr">
-              <head>
-                <meta charset="UTF-8">
-              </head>
-              <body style="font-family: Arial, sans-serif; background-color: #e8f0f8; padding: 20px;">
-                <div style="max-width: 600px; margin: 0 auto; background: white; border: 2px solid #93374d; border-radius: 8px; overflow: hidden;">
-                  <!-- Header -->
-                  <div style="background-color: #93374d; padding: 32px 20px; text-align: center;">
-                    <h1 style="color: white; margin: 0; font-size: 28px;">Navette Express</h1>
-                  </div>
-                  
-                  <!-- Content -->
-                  <div style="padding: 32px 24px;">
-                    <h2 style="color: #2c3e50; text-align: center; margin-bottom: 24px;">✅ Paiement Confirmé</h2>
-                    
-                    <p style="color: #4a5568; font-size: 16px; line-height: 26px;">
-                      Bonjour <strong>${updatedInvoice.customerName}</strong>,
-                    </p>
-                    
-                    <p style="color: #4a5568; font-size: 16px; line-height: 26px;">
-                      Nous avons bien reçu votre paiement pour la facture suivante :
-                    </p>
-                    
-                    <!-- Invoice Info -->
-                    <div style="background: #d1fae5; border: 2px solid #22c55e; border-radius: 8px; padding: 20px; margin: 24px 12px;">
-                      <h3 style="color: #166534; margin-top: 0;">📄 Facture ${updatedInvoice.invoiceNumber}</h3>
-                      <p style="color: #166534; margin: 8px 0;"><strong>Service :</strong> ${updatedInvoice.service}</p>
-                      <p style="color: #166534; margin: 8px 0;"><strong>Montant payé :</strong> <span style="font-size: 20px; font-weight: bold;">${parseFloat(updatedInvoice.totalAmount).toLocaleString('fr-FR')} FCFA</span></p>
-                      <p style="color: #166534; margin: 8px 0;"><strong>Date de paiement :</strong> ${new Date(updatedInvoice.paidDate || new Date()).toLocaleDateString('fr-FR')}</p>
-                      ${updatedInvoice.paymentMethod ? `<p style="color: #166534; margin: 8px 0;"><strong>Méthode de paiement :</strong> ${updatedInvoice.paymentMethod}</p>` : ''}
-                    </div>
-                    
-                    <p style="color: #4a5568; font-size: 16px; line-height: 26px;">
-                      Merci pour votre confiance. Votre reçu de paiement est disponible dans votre espace client.
-                    </p>
-                    
-                    <!-- CTA Button -->
-                    <div style="text-align: center; margin: 32px 0;">
-                      <a href="${process.env.NEXT_PUBLIC_APP_URL}/client/factures/${updatedInvoice.id}" 
-                         style="background: #93374d; color: white; padding: 14px 40px; text-decoration: none; 
-                                border-radius: 5px; font-weight: bold; display: inline-block;">
-                        📄 Voir ma facture
-                      </a>
-                    </div>
-                    
-                    <!-- Footer -->
-                    <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;">
-                    <p style="color: #6b7280; font-size: 14px; text-align: center;">
-                      Cordialement,<br>
-                      <strong>L'équipe NavetteXpress</strong>
-                    </p>
-                    <p style="color: #9ca3af; font-size: 12px; text-align: center;">
-                      Pour toute question, n'hésitez pas à nous contacter.
-                    </p>
-                  </div>
-                  
-                  <!-- Final Footer -->
-                  <div style="background: #f3f4f6; padding: 24px; text-align: center;">
-                    <p style="color: #6b7280; font-size: 13px; margin: 0 0 8px 0;">© 2025 NavetteXpress. Tous droits réservés.</p>
-                    <p style="color: #9ca3af; font-size: 11px; margin: 0;">[NavetteXpress SAS, 123 Rue de la Mobilité, 75001 Paris, France]</p>
-                  </div>
-                </div>
-              </body>
-            </html>
-          `
-        });
-        
-        console.log('✅ Email de confirmation de paiement envoyé');
-      } catch (emailError) {
-        console.error('❌ Erreur lors de l\'envoi de l\'email de confirmation:', emailError);
-        // Ne pas bloquer la mise à jour si l'email échoue
-      }
-    }
 
     return NextResponse.json({
       success: true,
