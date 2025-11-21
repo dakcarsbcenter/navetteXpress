@@ -261,7 +261,7 @@ export default function PermissionsManagementRedesigned() {
       />
 
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-8 py-6">
+      <div className="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-gray-900">Matrice des Permissions</h1>
@@ -296,7 +296,7 @@ export default function PermissionsManagementRedesigned() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <div className="bg-white border border-gray-200 rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -348,7 +348,7 @@ export default function PermissionsManagementRedesigned() {
       </div>
 
       {/* Permissions Matrix */}
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
           {/* Column Headers */}
           <div className="bg-gray-50 border-b border-gray-200 px-6 py-4">

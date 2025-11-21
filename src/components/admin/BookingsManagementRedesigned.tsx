@@ -246,66 +246,76 @@ export function BookingsManagementRedesigned() {
     <div className="min-h-screen bg-gray-50">
       <NotificationCenter
         notifications={notifications}
-        onRemoveNotification={removeNotification}
+        onRemove={removeNotification}
       />
 
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-8 py-6">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Gestion des Réservations</h1>
-            <p className="text-sm text-gray-500 mt-1">Gérez le dispatch et le suivi des courses</p>
+      <div className="bg-white border-b border-gray-200 px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <div className="flex items-center gap-3">
+            <button className="text-gray-600 hover:text-gray-900">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Réservations</h1>
           </div>
-          <button
-            onClick={() => {/* TODO: Open create modal */}}
-            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-          >
-            <Plus className="w-5 h-5" />
-            Nouvelle réservation
-          </button>
+          <div className="flex items-center gap-2">
+            <button className="text-gray-600 hover:text-gray-900 p-2">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+            </button>
+            <button
+              onClick={() => {/* TODO: Open create modal */}}
+              className="bg-red-600 hover:bg-red-700 text-white w-10 h-10 rounded-lg flex items-center justify-center transition-colors"
+            >
+              <Plus className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-5 gap-4 mb-6">
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <div className="text-sm text-gray-500 mb-1">TOTAL</div>
-            <div className="text-3xl font-bold text-gray-900">{stats.total}</div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-4">
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 sm:p-4">
+            <div className="text-xs text-gray-500 mb-1">TOTAL</div>
+            <div className="text-2xl sm:text-3xl font-bold text-gray-900">{stats.total}</div>
           </div>
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-            <div className="text-sm text-amber-700 mb-1">EN ATTENTE</div>
-            <div className="text-3xl font-bold text-amber-600">{stats.pending}</div>
+          <div className="bg-amber-50 border border-gray-200 border-l-4 border-l-amber-500 rounded-lg p-3 sm:p-4">
+            <div className="text-xs text-amber-700 mb-1">EN ATTENTE</div>
+            <div className="text-2xl sm:text-3xl font-bold text-amber-600">{stats.pending}</div>
           </div>
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <div className="text-sm text-blue-700 mb-1">ASSIGNÉES</div>
-            <div className="text-3xl font-bold text-blue-600">{stats.assigned}</div>
+          <div className="bg-blue-50 border border-gray-200 border-l-4 border-l-blue-500 rounded-lg p-3 sm:p-4">
+            <div className="text-xs text-blue-700 mb-1">ASSIGNÉES</div>
+            <div className="text-2xl sm:text-3xl font-bold text-blue-600">{stats.assigned}</div>
           </div>
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <div className="text-sm text-green-700 mb-1">CONFIRMÉES</div>
-            <div className="text-3xl font-bold text-green-600">{stats.confirmed}</div>
+          <div className="bg-green-50 border border-gray-200 border-l-4 border-l-green-500 rounded-lg p-3 sm:p-4">
+            <div className="text-xs text-green-700 mb-1">CONFIRMÉES</div>
+            <div className="text-2xl sm:text-3xl font-bold text-green-600">{stats.confirmed}</div>
           </div>
-          <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-            <div className="text-sm text-purple-700 mb-1">EN COURS</div>
-            <div className="text-3xl font-bold text-purple-600">{stats.inProgress}</div>
+          <div className="bg-purple-50 border border-gray-200 border-l-4 border-l-purple-500 rounded-lg p-3 sm:p-4">
+            <div className="text-xs text-purple-700 mb-1">EN COURS</div>
+            <div className="text-2xl sm:text-3xl font-bold text-purple-600">{stats.inProgress}</div>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="flex items-center gap-3">
-          <div className="relative flex-1 max-w-md">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
               type="text"
-              placeholder="Rechercher par ID, client ou lieu..."
+              placeholder="Rechercher un client, ID..."
               value={filters.search}
               onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm"
             />
           </div>
           
           <select
             value={filters.status}
             onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+            className="px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm bg-white"
           >
             <option value="all">Tous les statuts</option>
             <option value="pending">En attente</option>
@@ -315,149 +325,90 @@ export function BookingsManagementRedesigned() {
             <option value="completed">Terminées</option>
             <option value="cancelled">Annulées</option>
           </select>
-
-          <select
-            value={filters.driver}
-            onChange={(e) => setFilters({ ...filters, driver: e.target.value })}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-          >
-            <option value="all">Tous les chauffeurs</option>
-            {drivers.map(driver => (
-              <option key={driver.id} value={driver.id}>{driver.name}</option>
-            ))}
-          </select>
-
-          <div className="flex items-center gap-2 border border-gray-300 rounded-lg p-1">
-            <button
-              onClick={() => setViewMode('grid')}
-              className={`p-2 rounded ${viewMode === 'grid' ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
-            >
-              <Grid className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={`p-2 rounded ${viewMode === 'list' ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
-            >
-              <List className="w-5 h-5" />
-            </button>
-          </div>
         </div>
       </div>
 
-      {/* Bookings Grid */}
-      <div className="p-8">
+      {/* Bookings List */}
+      <div className="px-3 sm:px-6 lg:px-8 py-4 space-y-3">
         {filteredBookings.length === 0 ? (
           <div className="text-center py-12 text-gray-500">
             Aucune réservation trouvée
           </div>
         ) : (
-          <div className={viewMode === 'grid' ? 'grid grid-cols-3 gap-6' : 'space-y-4'}>
-            {filteredBookings.map((booking) => {
-              const statusConfig = getStatusConfig(booking.status)
-              
-              return (
-                <div
-                  key={booking.id}
-                  className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow cursor-pointer"
-                  onClick={() => openBookingDetails(booking)}
-                >
-                  {/* Header */}
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-semibold">
-                        {getInitials(booking.customerName)}
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-900">{booking.customerName}</h3>
-                        <p className="text-sm text-gray-500">#{booking.id} • {booking.status === 'confirmed' ? 'Confirmée' : 'En route'}</p>
-                      </div>
+          filteredBookings.map((booking) => {
+            const statusConfig = getStatusConfig(booking.status)
+            const borderColor = booking.status === 'confirmed' ? 'border-l-green-500' :
+                              booking.status === 'in_progress' ? 'border-l-purple-500' :
+                              booking.status === 'assigned' ? 'border-l-blue-500' :
+                              booking.status === 'pending' ? 'border-l-amber-500' : 'border-l-gray-300'
+            
+            return (
+              <div
+                key={booking.id}
+                className={`bg-white rounded-lg border-l-4 ${borderColor} border-t border-r border-b border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer`}
+                onClick={() => openBookingDetails(booking)}
+              >
+                {/* Header with avatar and name */}
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-sm shrink-0">
+                      {getInitials(booking.customerName)}
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium border ${statusConfig.bg} ${statusConfig.color}`}>
-                      {booking.status === 'pending' && '⏱️ En attente'}
-                      {booking.status === 'confirmed' && '✓ Confirmée'}
-                      {booking.status === 'in_progress' && '🚗 En cours'}
-                    </span>
-                  </div>
-
-                  {/* Route */}
-                  <div className="space-y-3 mb-4">
-                    <div className="flex items-start gap-2">
-                      <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mt-0.5">
-                        <div className="w-2 h-2 rounded-full bg-blue-600"></div>
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-xs text-gray-500 mb-0.5">Siège Entreprise</p>
-                        <p className="text-sm font-medium text-gray-900">{booking.pickupAddress}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start gap-2">
-                      <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
-                        <div className="w-2 h-2 rounded-full bg-gray-400"></div>
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-xs text-gray-500 mb-0.5">Aéroport AIBD</p>
-                        <p className="text-sm font-medium text-gray-900">{booking.dropoffAddress}</p>
-                      </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 text-base">{booking.customerName}</h3>
+                      <p className="text-xs text-gray-500">#{booking.id} • {statusConfig.label}</p>
                     </div>
                   </div>
-
-                  {/* Details */}
-                  <div className="flex items-center gap-4 text-sm text-gray-600 mb-4 pb-4 border-b border-gray-100">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
-                      <span>{formatDate(booking.scheduledDateTime)}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      <span>{formatTime(booking.scheduledDateTime)}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <User className="w-4 h-4" />
-                      <span>{booking.passengers || 3} Pers.</span>
-                    </div>
-                    {booking.vehicle && (
-                      <div className="flex items-center gap-1">
-                        <span>🚗 {booking.vehicle.make}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Footer */}
-                  <div className="flex items-center justify-between">
-                    {booking.driver ? (
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                          <span className="text-xs font-semibold text-green-700">
-                            {getInitials(booking.driver.name)}
-                          </span>
-                        </div>
-                        <div>
-                          <p className="text-xs text-gray-500">Chauffeur</p>
-                          <p className="text-sm font-medium text-gray-900">{booking.driver.name}</p>
-                        </div>
-                      </div>
-                    ) : (
-                      <button className="text-sm text-red-600 hover:text-red-700 font-medium flex items-center gap-1">
-                        <User className="w-4 h-4" />
-                        Assigner un chauffeur
-                      </button>
-                    )}
-                    
-                    <div className="text-right">
-                      <p className="text-2xl font-bold text-gray-900">
-                        {booking.price ? `${parseFloat(booking.price).toLocaleString('fr-FR')} F` : '—'}
-                      </p>
-                    </div>
-                  </div>
-
-                  <button className="w-full mt-4 text-sm text-gray-600 hover:text-gray-900 font-medium">
-                    Voir détails →
-                  </button>
+                  <span className="text-xs text-gray-400">{formatTime(booking.scheduledDateTime)}</span>
                 </div>
-              )
-            })}
-          </div>
+
+                {/* Route with icons */}
+                <div className="space-y-2 mb-3 ml-13">
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-full border-2 border-blue-500 bg-white flex items-center justify-center shrink-0">
+                      <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                    </div>
+                    <p className="text-sm text-gray-900">{booking.pickupAddress}</p>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-full border-2 border-red-500 bg-white flex items-center justify-center shrink-0">
+                      <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                    </div>
+                    <p className="text-sm text-gray-900">{booking.dropoffAddress}</p>
+                  </div>
+                </div>
+
+                {/* Driver info if assigned */}
+                {booking.driver && (
+                  <div className="flex items-center gap-2 mb-3 ml-13 bg-gray-50 rounded-lg p-2">
+                    <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-700 font-semibold text-xs">
+                      {getInitials(booking.driver.name)}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900">{booking.driver.name}</p>
+                      {booking.vehicle && (
+                        <p className="text-xs text-gray-500">{booking.vehicle.make} {booking.vehicle.model}</p>
+                      )}
+                    </div>
+                    <button className="text-green-600 hover:text-green-700 p-1">
+                      <Phone className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+
+                {/* Footer with price and actions */}
+                <div className="flex items-center justify-between ml-13">
+                  <button className="text-sm text-gray-600 hover:text-gray-900 px-4 py-2 border border-gray-300 rounded-lg font-medium">
+                    Détails
+                  </button>
+                  <div className="text-lg font-bold text-gray-900">
+                    {booking.price ? `${parseFloat(booking.price).toLocaleString('fr-FR', {maximumFractionDigits: 0})} F` : '—'}
+                  </div>
+                </div>
+              </div>
+            )
+          })
         )}
       </div>
 

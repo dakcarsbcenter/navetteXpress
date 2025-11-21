@@ -194,7 +194,7 @@ export default function ReviewsManagementRedesigned() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-8 py-6">
+      <div className="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Avis & Satisfaction</h1>
@@ -207,7 +207,7 @@ export default function ReviewsManagementRedesigned() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <div className="bg-white border border-gray-200 rounded-lg p-6">
             <div className="text-center">
               <div className="text-sm text-gray-500 mb-2 uppercase font-medium">Note Moyenne</div>
@@ -373,7 +373,7 @@ export default function ReviewsManagementRedesigned() {
       </div>
 
       {/* Reviews List */}
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         <div className="space-y-4">
           {filteredReviews.length === 0 ? (
             <div className="bg-white border border-gray-200 rounded-xl p-12 text-center">
@@ -389,7 +389,7 @@ export default function ReviewsManagementRedesigned() {
                   <div className="flex items-start justify-between gap-4">
                     {/* Left: User Info */}
                     <div className="flex items-start gap-4 flex-1">
-                      <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                      <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
                         <span className="text-sm font-bold text-blue-700">
                           {getInitials(review.customerName)}
                         </span>
@@ -425,7 +425,7 @@ export default function ReviewsManagementRedesigned() {
                         {review.response && (
                           <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mt-3">
                             <div className="flex items-start gap-2">
-                              <MessageSquare className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
+                              <MessageSquare className="w-5 h-5 text-gray-400 mt-0.5 shrink-0" />
                               <div className="flex-1">
                                 <div className="text-sm font-semibold text-gray-900 mb-1">Réponse de l'équipe</div>
                                 <p className="text-sm text-gray-700">{review.response}</p>

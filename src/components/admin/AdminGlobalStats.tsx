@@ -152,34 +152,34 @@ const AdminGlobalStats = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
-      <div className="max-w-[1600px] mx-auto px-6 py-8 space-y-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-4 sm:space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 sm:mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white mb-1 sm:mb-2">
               Statistiques Globales
             </h1>
-            <p className="text-slate-600 dark:text-slate-400 text-sm">
+            <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm">
               Analysez les performances de votre flotte en temps réel.
             </p>
           </div>
-          <div className="flex items-center gap-4">
-            <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-              <svg className="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto">
+            <button className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-sm">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
               </svg>
-              <span className="font-medium text-slate-700 dark:text-slate-300">Exporter</span>
+              <span className="font-medium text-slate-700 dark:text-slate-300 hidden sm:inline">Exporter</span>
             </button>
-            <span className="text-slate-600 dark:text-slate-400 font-medium">{getCurrentDate()}</span>
+            <span className="text-slate-600 dark:text-slate-400 font-medium text-xs sm:text-sm hidden md:inline">{getCurrentDate()}</span>
           </div>
         </div>
 
         {/* Filtres */}
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6">
-          <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6">
+          <div className="flex flex-col gap-3 sm:gap-4">
             {/* Période */}
-            <div className="flex items-center gap-3 flex-1">
-              <label className="text-sm font-medium text-slate-700 dark:text-slate-300 min-w-fit">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+              <label className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">
                 Période:
               </label>
               <div className="flex gap-2 flex-wrap">
@@ -188,7 +188,7 @@ const AdminGlobalStats = () => {
                     key={p}
                     onClick={() => handlePeriodChange(p)}
                     disabled={loading}
-                    className={`px-4 py-2 rounded-lg font-medium transition-all text-sm ${
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-medium transition-all text-xs sm:text-sm ${
                       period === p
                         ? 'bg-[#A73B3C] text-white shadow-md'
                         : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600'
@@ -202,12 +202,15 @@ const AdminGlobalStats = () => {
 
 
             {/* Chauffeur */}
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+              <label className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 sm:hidden">
+                Chauffeur:
+              </label>
               <select
                 id="driver-filter"
                 value={selectedDriverId}
                 onChange={(e) => setSelectedDriverId(e.target.value)}
-                className="px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#A73B3C] focus:border-[#A73B3C] bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 min-w-[200px] font-medium"
+                className="w-full sm:w-auto px-3 sm:px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-[#A73B3C] focus:border-[#A73B3C] bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 sm:min-w-[200px] font-medium"
                 disabled={loading}
               >
                 <option value="all">Tous les chauffeurs</option>
@@ -249,18 +252,18 @@ const AdminGlobalStats = () => {
         ) : filteredStats ? (
           <>
             {/* Statistiques principales */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
               {/* Total Courses */}
-              <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 rounded-lg bg-blue-500 flex items-center justify-center">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-xl border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-500 flex items-center justify-center">
+                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                     </svg>
                   </div>
                 </div>
-                <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1 uppercase tracking-wide">Total Courses</p>
-                <p className="text-3xl font-bold text-slate-900 dark:text-white mb-1">
+                <p className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400 mb-1 uppercase tracking-wide">Total Courses</p>
+                <p className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-1">
                   {filteredStats.globalStats.totalRides.toLocaleString()}
                 </p>
                 <p className="text-xs text-green-600 dark:text-green-400 font-medium">
@@ -269,16 +272,16 @@ const AdminGlobalStats = () => {
               </div>
 
               {/* Revenus Totaux */}
-              <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 rounded-lg bg-emerald-500 flex items-center justify-center">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-xl border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-emerald-500 flex items-center justify-center">
+                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                 </div>
-                <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1 uppercase tracking-wide">Revenus Totaux</p>
-                <p className="text-3xl font-bold text-slate-900 dark:text-white mb-1">
+                <p className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400 mb-1 uppercase tracking-wide">Revenus Totaux</p>
+                <p className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-1">
                   {(filteredStats.globalStats.totalEarnings / 1000).toFixed(1)}M FCFA
                 </p>
                 <p className="text-xs text-green-600 dark:text-green-400 font-medium">
@@ -287,16 +290,16 @@ const AdminGlobalStats = () => {
               </div>
 
               {/* Chauffeurs Actifs */}
-              <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 rounded-lg bg-purple-500 flex items-center justify-center">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-xl border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-purple-500 flex items-center justify-center">
+                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                   </div>
                 </div>
-                <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1 uppercase tracking-wide">Chauffeurs Actifs</p>
-                <p className="text-3xl font-bold text-slate-900 dark:text-white mb-1">
+                <p className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400 mb-1 uppercase tracking-wide">Chauffeurs Actifs</p>
+                <p className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-1">
                   {filteredStats.globalStats.activeDrivers || filteredStats.globalStats.totalDrivers}/{filteredStats.globalStats.totalDrivers}
                 </p>
                 <p className="text-xs text-slate-500 dark:text-slate-500">
@@ -305,16 +308,16 @@ const AdminGlobalStats = () => {
               </div>
 
               {/* Taux Complétion */}
-              <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 rounded-lg bg-orange-500 flex items-center justify-center">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-xl border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-orange-500 flex items-center justify-center">
+                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                 </div>
-                <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1 uppercase tracking-wide">Taux Complétion</p>
-                <p className="text-3xl font-bold text-slate-900 dark:text-white mb-1">
+                <p className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400 mb-1 uppercase tracking-wide">Taux Complétion</p>
+                <p className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-1">
                   {filteredStats.globalStats.completionRate.toFixed(1)}%
                 </p>
                 <p className="text-xs text-orange-500 dark:text-orange-400 font-medium">
@@ -324,13 +327,13 @@ const AdminGlobalStats = () => {
             </div>
 
             {/* Graphiques */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
               {/* Evolution des Revenus */}
-              <div className="lg:col-span-2 bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700">
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">
+              <div className="lg:col-span-2 bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-xl border border-slate-200 dark:border-slate-700">
+                <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white mb-4 sm:mb-6">
                   Evolution des Revenus (Semaine)
                 </h3>
-                <div className="relative h-64">
+                <div className="relative h-48 sm:h-64">
                   {/* Graphique simplifié - ligne de tendance */}
                   <svg className="w-full h-full" viewBox="0 0 800 250" preserveAspectRatio="none">
                     {/* Grille horizontale */}
@@ -397,13 +400,13 @@ const AdminGlobalStats = () => {
               </div>
 
               {/* Répartition des Courses */}
-              <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700">
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">
+              <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-xl border border-slate-200 dark:border-slate-700">
+                <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white mb-4 sm:mb-6">
                   Répartition des Courses
                 </h3>
-                <div className="flex items-center justify-center mb-6">
+                <div className="flex items-center justify-center mb-4 sm:mb-6">
                   {/* Graphique Donut simplifié */}
-                  <svg width="180" height="180" viewBox="0 0 180 180">
+                  <svg className="w-36 h-36 sm:w-44 sm:h-44" viewBox="0 0 180 180">
                     <circle
                       cx="90"
                       cy="90"
@@ -441,22 +444,22 @@ const AdminGlobalStats = () => {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-[#A73B3C]"></div>
-                      <span className="text-sm text-slate-700 dark:text-slate-300">Aéroport</span>
+                      <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#A73B3C]"></div>
+                      <span className="text-xs sm:text-sm text-slate-700 dark:text-slate-300">Transfert</span>
                     </div>
                     <span className="font-semibold text-slate-900 dark:text-white">45%</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-[#E5C16C]"></div>
-                      <span className="text-sm text-slate-700 dark:text-slate-300">Privé</span>
+                      <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#E5C16C]"></div>
+                      <span className="text-xs sm:text-sm text-slate-700 dark:text-slate-300">Privé</span>
                     </div>
                     <span className="font-semibold text-slate-900 dark:text-white">35%</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-slate-300 dark:bg-slate-600"></div>
-                      <span className="text-sm text-slate-700 dark:text-slate-300">Mise à dispo</span>
+                      <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-slate-300 dark:bg-slate-600"></div>
+                      <span className="text-xs sm:text-sm text-slate-700 dark:text-slate-300">Mise à dispo</span>
                     </div>
                     <span className="font-semibold text-slate-900 dark:text-white">20%</span>
                   </div>
@@ -466,8 +469,8 @@ const AdminGlobalStats = () => {
 
             {/* Tableau Performance par Chauffeur */}
             <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-              <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+              <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white">
                   Performance par Chauffeur
                 </h3>
                 <div className="flex items-center gap-2">
@@ -488,22 +491,22 @@ const AdminGlobalStats = () => {
                   <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
                     <thead className="bg-slate-50 dark:bg-slate-900">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                           Chauffeur
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                           Courses
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                           Revenus
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                           Note Moy.
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                           Taux Complétion
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                           Actions
                         </th>
                       </tr>
@@ -511,12 +514,12 @@ const AdminGlobalStats = () => {
                     <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
                       {filteredStats.driverStats.map((driver) => (
                         <tr key={driver.driverId} className="hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-[#A73B3C] flex items-center justify-center text-white font-semibold">
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                            <div className="flex items-center gap-2 sm:gap-3">
+                              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#A73B3C] flex items-center justify-center text-white font-semibold text-sm">
                                 {driver.name?.charAt(0).toUpperCase() || 'P'}
                               </div>
-                              <div>
+                              <div className="hidden sm:block">
                                 <div className="text-sm font-medium text-slate-900 dark:text-white">
                                   {driver.name}
                                 </div>
@@ -524,36 +527,41 @@ const AdminGlobalStats = () => {
                                   {driver.email}
                                 </div>
                               </div>
+                              <div className="block sm:hidden">
+                                <div className="text-xs font-medium text-slate-900 dark:text-white">
+                                  {driver.name}
+                                </div>
+                              </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm font-semibold text-slate-900 dark:text-white">
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                            <div className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">
                               {driver.totalRides || 0}
                             </div>
-                            <div className="text-xs text-slate-500 dark:text-slate-400">
+                            <div className="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">
                               {driver.completedRides || 0} terminées
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm font-semibold text-slate-900 dark:text-white">
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                            <div className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">
                               {(driver.totalEarnings || 0).toLocaleString()} F
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                             {(driver.averageRating || 0) > 0 ? (
                               <div className="flex items-center gap-1">
-                                <span className="text-sm font-semibold text-slate-900 dark:text-white">
+                                <span className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">
                                   {(driver.averageRating || 0).toFixed(1)}
                                 </span>
-                                <span className="text-[#E5C16C]">★</span>
+                                <span className="text-[#E5C16C] text-sm">★</span>
                               </div>
                             ) : (
-                              <span className="text-xs text-slate-400">Aucune note</span>
+                              <span className="text-xs text-slate-400">-</span>
                             )}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex items-center gap-2">
-                              <div className="flex-1 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                            <div className="flex items-center gap-1 sm:gap-2">
+                              <div className="flex-1 h-1.5 sm:h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden min-w-[30px] sm:min-w-[60px]">
                                 <div 
                                   className={`h-full rounded-full ${
                                     (driver.completionRate || 0) >= 90 ? 'bg-emerald-500' :
@@ -562,14 +570,14 @@ const AdminGlobalStats = () => {
                                   style={{ width: `${driver.completionRate || 0}%` }}
                                 />
                               </div>
-                              <span className="text-sm font-semibold text-slate-900 dark:text-white min-w-[45px]">
+                              <span className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white min-w-[35px] sm:min-w-[45px]">
                                 {(driver.completionRate || 0).toFixed(0)}%
                               </span>
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                             <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                               </svg>
                             </button>

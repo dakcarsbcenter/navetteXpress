@@ -255,14 +255,14 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
     <div className="min-h-screen bg-gray-50">
       <NotificationCenter
         notifications={notifications}
-        onRemoveNotification={removeNotification}
+        onRemove={removeNotification}
       />
 
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-8 py-6">
-        <div className="flex items-center justify-between mb-6">
+      <div className="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Gestion des Utilisateurs</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Gestion des Utilisateurs</h1>
             <p className="text-sm text-gray-500 mt-1">Gérez les rôles, permissions et comptes clients.</p>
           </div>
           <button
@@ -275,7 +275,7 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
           <div className="bg-white border border-gray-200 rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -365,7 +365,7 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
       </div>
 
       {/* Users Table */}
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
@@ -402,7 +402,7 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
                               className="rounded-full"
                             />
                           ) : (
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center text-white font-semibold">
+                            <div className="w-10 h-10 rounded-full bg-linear-to-br from-red-500 to-orange-500 flex items-center justify-center text-white font-semibold">
                               {getInitials(user.name)}
                             </div>
                           )}
@@ -462,7 +462,7 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4">
-              {editingUser ? 'Modifier l\'utilisateur' : 'Nouvel utilisateur'}
+              {editingUser ? "Modifier l'utilisateur" : "Nouvel utilisateur"}
             </h2>
             
             <form onSubmit={handleSubmit} className="space-y-4">
