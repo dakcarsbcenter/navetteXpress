@@ -2,12 +2,12 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import { sql } from 'drizzle-orm';
 
-const DATABASE_URL = 'postgres://postgres:iNN9kThHnnpcMJKamorJYpIXxjNJpwpALtKD2wq8czsrJH81B24PM49dXzeW2uyY@109.199.101.247:5432/navettexpress';
+const DATABASE_URL = 'postgresql://neondb_owner:npg_4JAmYGR2ENSu@ep-sweet-resonance-ab6ilynd-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require';
 
 async function runMigration() {
   console.log('🔌 Connexion à la base de données...');
   
-  const client = postgres(DATABASE_URL, { ssl: false });
+  const client = postgres(DATABASE_URL, { ssl: 'require' });
   const db = drizzle(client);
 
   try {

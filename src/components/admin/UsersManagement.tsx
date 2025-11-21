@@ -377,7 +377,7 @@ export function UsersManagement() {
               {filteredUsers.map((user) => (
                 <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex-shrink-0 h-10 w-10">
+                    <div className="shrink-0 h-10 w-10">
                       {user.image ? (
                         <div className="relative h-10 w-10 rounded-full overflow-hidden">
                           <Image
@@ -675,3 +675,4 @@ export function UsersManagement() {
     </div>
   )
 }
+

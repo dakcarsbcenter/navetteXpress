@@ -27,9 +27,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const baseClasses = "inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
     
     const variants = {
-      primary: "bg-gradient-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5 focus:ring-[#FF7E38]/50",
-      secondary: "bg-gradient-to-r from-[#0F5B8A] to-[#0A4B73] hover:from-[#0A4B73] hover:to-[#083A5C] text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5 focus:ring-[#0F5B8A]/50",
-      luxury: "bg-gradient-to-r from-[#1E293B] to-[#334155] hover:from-[#334155] hover:to-[#475569] text-white shadow-2xl hover:shadow-3xl hover:-translate-y-1 focus:ring-[#1E293B]/50 uppercase tracking-wide",
+      primary: "bg-linear-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5 focus:ring-[#FF7E38]/50",
+      secondary: "bg-linear-to-r from-[#0F5B8A] to-[#0A4B73] hover:from-[#0A4B73] hover:to-[#083A5C] text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5 focus:ring-[#0F5B8A]/50",
+      luxury: "bg-linear-to-r from-[#1E293B] to-[#334155] hover:from-[#334155] hover:to-[#475569] text-white shadow-2xl hover:shadow-3xl hover:-translate-y-1 focus:ring-[#1E293B]/50 uppercase tracking-wide",
       outline: "border-2 border-[#0F5B8A] text-[#0F5B8A] hover:bg-[#0F5B8A] hover:text-white focus:ring-[#0F5B8A]/50",
       ghost: "text-[#1E293B] hover:bg-[#F1F5F9] hover:text-[#1E293B] focus:ring-[#64748B]/50"
     };
@@ -75,3 +75,4 @@ Button.displayName = 'Button';
 
 export { Button };
 export type { ButtonProps };
+

@@ -387,7 +387,7 @@ export function PermissionsManagement() {
                 </button>
                 <button
                   onClick={handleDeletePermission}
-                  className="flex-1 px-4 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl transition-all duration-200 font-medium shadow-lg hover:shadow-red-500/25"
+                  className="flex-1 px-4 py-3 bg-linear-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl transition-all duration-200 font-medium shadow-lg hover:shadow-red-500/25"
                 >
                   Supprimer
                 </button>
@@ -399,3 +399,4 @@ export function PermissionsManagement() {
     </div>
   )
 }
+

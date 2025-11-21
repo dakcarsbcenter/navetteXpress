@@ -161,7 +161,7 @@ export default function IconographyPage() {
         </div>
 
         {/* Guide d'utilisation */}
-        <div className="bg-gradient-to-br from-[#1E293B] to-[#0F5B8A] rounded-xl p-8 text-white mt-16">
+        <div className="bg-linear-to-br from-[#1E293B] to-[#0F5B8A] rounded-xl p-8 text-white mt-16">
           <h2 className="text-2xl font-bold mb-6 text-center">
             📖 Guide d'Implémentation
           </h2>
@@ -200,7 +200,7 @@ export default function IconographyPage() {
 
         {/* Call to Action */}
         <div className="text-center mt-16">
-          <div className="inline-flex items-center gap-3 bg-gradient-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl">
+          <div className="inline-flex items-center gap-3 bg-linear-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl">
             <BookNowIcon size={24} color="white" />
             Implémenter la Nouvelle Iconographie
           </div>

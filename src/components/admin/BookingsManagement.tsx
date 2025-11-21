@@ -639,7 +639,7 @@ export function BookingsManagement() {
                   </td>
                   <td className="px-3 py-4">
                     <div className="flex items-center space-x-2">
-                      <div className="flex-shrink-0 h-6 w-6">
+                      <div className="shrink-0 h-6 w-6">
                         {booking.driver?.image ? (
                           <div className="relative h-6 w-6 rounded-full overflow-hidden">
                             <Image
@@ -664,7 +664,7 @@ export function BookingsManagement() {
                   </td>
                   <td className="px-3 py-4">
                     <div className="flex items-center space-x-2">
-                      <div className="flex-shrink-0 h-6 w-6">
+                      <div className="shrink-0 h-6 w-6">
                         {booking.vehicle?.photo ? (
                           <div className="relative h-6 w-6 rounded overflow-hidden">
                             <Image
@@ -1330,3 +1330,4 @@ export function BookingsManagement() {
     </div>
   )
 }
+

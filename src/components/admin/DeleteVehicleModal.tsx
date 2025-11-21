@@ -32,7 +32,7 @@ export default function DeleteVehicleModal({ isOpen, vehicle, onCancel, onConfir
       <div className="absolute inset-0 bg-black/60" onClick={onCancel} />
       <div className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-white dark:bg-slate-800 shadow-2xl">
         {/* Header */}
-        <div className="px-6 pt-6 pb-4 border-b border-red-200 dark:border-red-800 bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20">
+        <div className="px-6 pt-6 pb-4 border-b border-red-200 dark:border-red-800 bg-linear-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/50 flex items-center justify-center">
               <svg className="w-6 h-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -90,7 +90,7 @@ export default function DeleteVehicleModal({ isOpen, vehicle, onCancel, onConfir
           <button
             onClick={onConfirm}
             disabled={loading}
-            className="flex-1 px-5 py-3 rounded-xl text-white font-semibold bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 shadow-lg disabled:opacity-60"
+            className="flex-1 px-5 py-3 rounded-xl text-white font-semibold bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 shadow-lg disabled:opacity-60"
           >
             {loading ? 'Suppression…' : '🗑️ Supprimer définitivement'}
           </button>
@@ -99,3 +99,4 @@ export default function DeleteVehicleModal({ isOpen, vehicle, onCancel, onConfir
     </div>
   )
 }
+

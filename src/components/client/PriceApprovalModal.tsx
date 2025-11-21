@@ -104,7 +104,7 @@ export function PriceApprovalModal({
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6 text-white">
+        <div className="bg-linear-to-r from-blue-600 to-blue-700 p-6 text-white">
           <h2 className="text-2xl font-bold">💰 Proposition de Prix</h2>
           <p className="text-blue-100 mt-2">Réservation #{bookingId}</p>
         </div>
@@ -140,7 +140,7 @@ export function PriceApprovalModal({
           </div>
 
           {/* Prix proposé */}
-          <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-300 dark:border-green-700 rounded-lg p-6 text-center">
+          <div className="bg-linear-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-300 dark:border-green-700 rounded-lg p-6 text-center">
             <p className="text-slate-600 dark:text-slate-400 mb-2">Prix proposé par l'administrateur</p>
             <p className="text-5xl font-bold text-green-600 dark:text-green-400">{price} FCFA</p>
           </div>
@@ -238,3 +238,4 @@ export function PriceApprovalModal({
     </div>
   );
 }
+

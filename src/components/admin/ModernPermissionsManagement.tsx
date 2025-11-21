@@ -475,7 +475,7 @@ export function ModernPermissionsManagement() {
   // Vérification d'authentification
   if (status === 'loading') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-slate-50 dark:from-slate-900 dark:via-indigo-900/10 dark:to-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-slate-50 via-indigo-50/30 to-slate-50 dark:from-slate-900 dark:via-indigo-900/10 dark:to-slate-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-4"></div>
           <p className="text-slate-600 dark:text-slate-400">Chargement...</p>
@@ -486,7 +486,7 @@ export function ModernPermissionsManagement() {
 
   if (status === 'unauthenticated') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-slate-50 dark:from-slate-900 dark:via-indigo-900/10 dark:to-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-slate-50 via-indigo-50/30 to-slate-50 dark:from-slate-900 dark:via-indigo-900/10 dark:to-slate-900 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">Accès refusé</h2>
           <p className="text-slate-600 dark:text-slate-400">Vous devez être connecté pour accéder à cette page.</p>
@@ -497,7 +497,7 @@ export function ModernPermissionsManagement() {
 
   if (!session?.user || !('role' in session.user) || session.user.role !== 'admin') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-slate-50 dark:from-slate-900 dark:via-indigo-900/10 dark:to-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-slate-50 via-indigo-50/30 to-slate-50 dark:from-slate-900 dark:via-indigo-900/10 dark:to-slate-900 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">Accès refusé</h2>
           <p className="text-slate-600 dark:text-slate-400">Vous devez être administrateur pour accéder à cette page.</p>
@@ -510,7 +510,7 @@ export function ModernPermissionsManagement() {
   const categories = getPermissionCategories()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-slate-50 dark:from-slate-900 dark:via-indigo-900/10 dark:to-slate-900">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-indigo-50/30 to-slate-50 dark:from-slate-900 dark:via-indigo-900/10 dark:to-slate-900">
       <div className="p-6 max-w-7xl mx-auto">
         
         {/* Header avec statistiques */}
@@ -574,7 +574,7 @@ export function ModernPermissionsManagement() {
                 {viewMode === 'users' && (
                   <button 
                     onClick={() => setShowCreateUserModal(true)}
-                    className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
+                    className="bg-linear-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -585,7 +585,7 @@ export function ModernPermissionsManagement() {
                 
                 <button 
                   onClick={() => setShowCreateRoleModal(true)}
-                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
+                  className="bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -1150,7 +1150,7 @@ export function ModernPermissionsManagement() {
                 <button
                   onClick={createUser}
                   disabled={!newUserForm.name || !newUserForm.email || (newUserForm.role === 'driver' && !newUserForm.licenseNumber)}
-                  className="flex-1 px-4 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-3 bg-linear-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Créer l'utilisateur
                 </button>
@@ -1237,7 +1237,7 @@ export function ModernPermissionsManagement() {
                     type="button"
                     onClick={handleCreateRole}
                     disabled={!newRoleForm.name.trim()}
-                    className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:from-slate-400 disabled:to-slate-500 text-white px-4 py-3 rounded-lg font-medium shadow-lg hover:shadow-xl disabled:shadow-none transition-all duration-300 disabled:cursor-not-allowed"
+                    className="flex-1 bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:from-slate-400 disabled:to-slate-500 text-white px-4 py-3 rounded-lg font-medium shadow-lg hover:shadow-xl disabled:shadow-none transition-all duration-300 disabled:cursor-not-allowed"
                   >
                     Créer le rôle
                   </button>
@@ -1340,7 +1340,7 @@ export function ModernPermissionsManagement() {
               <button
                 onClick={editUser}
                 disabled={!editUserForm.name || !editUserForm.email}
-                className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-3 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Sauvegarder
               </button>
@@ -1407,7 +1407,7 @@ export function ModernPermissionsManagement() {
               </button>
               <button
                 onClick={deleteUser}
-                className="flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg font-medium transition-all duration-200"
+                className="flex-1 px-4 py-3 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg font-medium transition-all duration-200"
               >
                 Supprimer définitivement
               </button>

@@ -54,7 +54,7 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg overflow-hidden">
+            <div className="w-12 h-12 bg-linear-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg overflow-hidden">
               {avatar ? (
                 <div className="relative w-full h-full">
                   <Image 
@@ -125,3 +125,4 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
 
 export { TestimonialCard };
 export type { TestimonialCardProps };
+

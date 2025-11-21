@@ -16,13 +16,13 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
     const variants = {
       default: "bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm",
       service: "bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl",
-      vehicle: "bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border border-slate-200 dark:border-slate-700 shadow-xl hover:shadow-2xl overflow-hidden",
-      testimonial: "bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 border border-blue-200 dark:border-slate-700 shadow-lg",
+      vehicle: "bg-linear-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 border border-slate-200 dark:border-slate-700 shadow-xl hover:shadow-2xl overflow-hidden",
+      testimonial: "bg-linear-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 border border-blue-200 dark:border-slate-700 shadow-lg",
       pricing: "bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 shadow-xl hover:shadow-2xl relative"
     };
 
     const hoverClasses = hover ? "hover:-translate-y-2 hover:shadow-2xl" : "";
-    const gradientClasses = gradient ? "bg-gradient-to-br from-slate-900 to-slate-800 text-white" : "";
+    const gradientClasses = gradient ? "bg-linear-to-br from-slate-900 to-slate-800 text-white" : "";
 
     return (
       <div
@@ -103,3 +103,4 @@ CardFooter.displayName = 'CardFooter';
 
 export { Card, CardHeader, CardContent, CardFooter };
 export type { CardProps, CardHeaderProps, CardContentProps, CardFooterProps };
+

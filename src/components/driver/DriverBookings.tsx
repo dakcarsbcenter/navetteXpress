@@ -282,7 +282,7 @@ export function DriverBookings() {
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex-shrink-0 h-8 w-8">
+                    <div className="shrink-0 h-8 w-8">
                       {booking.vehicle?.photo ? (
                         <div className="relative h-8 w-8 rounded overflow-hidden">
                           <Image
@@ -366,3 +366,4 @@ export function DriverBookings() {
     </div>
   )
 }
+

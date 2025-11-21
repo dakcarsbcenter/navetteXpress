@@ -13,7 +13,13 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireVehiclesUpdate()
+    try {
+      await requireVehiclesUpdate()
+    } catch (permError) {
+      const errorMessage = permError instanceof Error ? permError.message : 'Permission refusée';
+      const statusCode = errorMessage.includes('Unauthorized') ? 401 : 403;
+      return NextResponse.json({ success: false, error: errorMessage }, { status: statusCode });
+    }
 
     const vehicleId = parseInt((await params).id)
     if (isNaN(vehicleId)) {
@@ -88,7 +94,13 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireVehiclesDelete()
+    try {
+      await requireVehiclesDelete()
+    } catch (permError) {
+      const errorMessage = permError instanceof Error ? permError.message : 'Permission refusée';
+      const statusCode = errorMessage.includes('Unauthorized') ? 401 : 403;
+      return NextResponse.json({ success: false, error: errorMessage }, { status: statusCode });
+    }
 
     const vehicleId = parseInt((await params).id)
     if (isNaN(vehicleId)) {

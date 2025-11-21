@@ -14,7 +14,13 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireUsersRead(); // Vérification de la permission de lecture
+    try {
+      await requireUsersRead(); // Vérification de la permission de lecture
+    } catch (permError) {
+      const errorMessage = permError instanceof Error ? permError.message : 'Permission refusée';
+      const statusCode = errorMessage.includes('Unauthorized') ? 401 : 403;
+      return NextResponse.json({ success: false, error: errorMessage }, { status: statusCode });
+    }
 
     const resolvedParams = await params;
     const id = resolvedParams.id;
@@ -57,7 +63,13 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireUsersUpdate(); // Vérification de la permission de mise à jour
+    try {
+      await requireUsersUpdate(); // Vérification de la permission de mise à jour
+    } catch (permError) {
+      const errorMessage = permError instanceof Error ? permError.message : 'Permission refusée';
+      const statusCode = errorMessage.includes('Unauthorized') ? 401 : 403;
+      return NextResponse.json({ success: false, error: errorMessage }, { status: statusCode });
+    }
 
     const resolvedParams = await params;
     const id = resolvedParams.id;
@@ -111,7 +123,13 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireUsersDelete(); // Vérification de la permission de suppression
+    try {
+      await requireUsersDelete(); // Vérification de la permission de suppression
+    } catch (permError) {
+      const errorMessage = permError instanceof Error ? permError.message : 'Permission refusée';
+      const statusCode = errorMessage.includes('Unauthorized') ? 401 : 403;
+      return NextResponse.json({ success: false, error: errorMessage }, { status: statusCode });
+    }
 
     const resolvedParams = await params;
     const id = resolvedParams.id;

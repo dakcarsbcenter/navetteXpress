@@ -42,7 +42,7 @@ export default function DriverDashboard() {
         return <DriverPlanning onBack={() => setCurrentView('home')} />
       case 'availability':
         return (
-          <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 p-4 sm:p-6 lg:p-8">
+          <div className="min-h-screen bg-linear-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 p-4 sm:p-6 lg:p-8">
             <div className="max-w-7xl mx-auto">
               <button
                 onClick={() => setCurrentView('home')}
@@ -75,13 +75,13 @@ export default function DriverDashboard() {
   return (
     <div className="min-h-screen flex">
       {/* Sidebar gauche - Navigation épurée */}
-      <aside className="hidden lg:flex flex-col fixed left-0 top-0 h-screen w-20 xl:w-64 bg-gradient-to-b from-blue-900 to-blue-950 dark:from-blue-950 dark:to-black border-r border-blue-700 shadow-2xl z-50 transition-all duration-300">
+      <aside className="hidden lg:flex flex-col fixed left-0 top-0 h-screen w-20 xl:w-64 bg-linear-to-b from-blue-900 to-blue-950 dark:from-blue-950 dark:to-black border-r border-blue-700 shadow-2xl z-50 transition-all duration-300">
         {/* Logo */}
         <Link href="/" className="flex items-center justify-center xl:justify-start gap-3 p-6 border-b border-blue-700">
           <img 
             src="/logo.svg" 
             alt="NavetteXpress" 
-            className="h-10 w-10 flex-shrink-0"
+            className="h-10 w-10 shrink-0"
           />
           <span className="hidden xl:block text-white font-bold text-lg">NavetteXpress</span>
         </Link>
@@ -94,12 +94,12 @@ export default function DriverDashboard() {
               onClick={() => setCurrentView(item.id)}
               className={`group w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 ${
                 currentView === item.id
-                  ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/50'
+                  ? 'bg-linear-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/50'
                   : 'text-blue-300 hover:text-white hover:bg-blue-800'
               }`}
               title={item.label}
             >
-              <span className="text-2xl flex-shrink-0">{item.icon}</span>
+              <span className="text-2xl shrink-0">{item.icon}</span>
               <span className="hidden xl:block font-semibold text-sm">{item.label}</span>
               {currentView === item.id && (
                 <div className="hidden xl:block ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
@@ -118,9 +118,9 @@ export default function DriverDashboard() {
           </div>
           <button
             onClick={() => signOut({ callbackUrl: '/' })}
-            className="w-full flex items-center justify-center xl:justify-start gap-3 px-4 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl"
+            className="w-full flex items-center justify-center xl:justify-start gap-3 px-4 py-3 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl"
           >
-            <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
             <span className="hidden xl:inline">Déconnexion</span>
@@ -140,7 +140,7 @@ export default function DriverDashboard() {
                   className="h-9 w-auto"
                 />
               </Link>
-              <span className="px-3 py-1.5 bg-gradient-to-r from-blue-100 to-blue-200 dark:from-blue-900/50 dark:to-blue-800/50 text-blue-800 dark:text-blue-200 rounded-full text-xs font-bold whitespace-nowrap shadow-sm border border-blue-300 dark:border-blue-700">
+              <span className="px-3 py-1.5 bg-linear-to-r from-blue-100 to-blue-200 dark:from-blue-900/50 dark:to-blue-800/50 text-blue-800 dark:text-blue-200 rounded-full text-xs font-bold whitespace-nowrap shadow-sm border border-blue-300 dark:border-blue-700">
                 🚗 CHAUFFEUR
               </span>
             </div>
@@ -161,7 +161,7 @@ export default function DriverDashboard() {
               
               <button
                 onClick={() => signOut({ callbackUrl: '/' })}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg text-sm font-semibold transition-all duration-200 shadow-md"
+                className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg text-sm font-semibold transition-all duration-200 shadow-md"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -173,7 +173,7 @@ export default function DriverDashboard() {
 
         {/* Menu mobile dropdown */}
         {mobileMenuOpen && (
-          <div className="bg-gradient-to-b from-white to-slate-50 dark:from-slate-900 dark:to-slate-950 border-t border-slate-200 dark:border-slate-700 shadow-lg">
+          <div className="bg-linear-to-b from-white to-slate-50 dark:from-slate-900 dark:to-slate-950 border-t border-slate-200 dark:border-slate-700 shadow-lg">
             <div className="px-4 py-3 space-y-2 max-h-[70vh] overflow-y-auto">
               {menuItems.map((item) => (
                 <button
@@ -184,7 +184,7 @@ export default function DriverDashboard() {
                   }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
                     currentView === item.id
-                      ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg'
+                      ? 'bg-linear-to-r from-blue-600 to-blue-700 text-white shadow-lg'
                       : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'
                   }`}
                 >
@@ -204,3 +204,5 @@ export default function DriverDashboard() {
     </div>
   )
 }
+
+

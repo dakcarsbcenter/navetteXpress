@@ -193,215 +193,251 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-      <div className="max-w-7xl mx-auto px-6 py-8">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+      <div className="max-w-[1600px] mx-auto px-6 py-8">
         
-        {/* Header moderne avec salutation dynamique */}
+        {/* Header simple */}
         <div className="mb-8">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
-                  Bonjour, {session?.user?.name || 'Administrateur'} 👋
-                </h1>
-                <p className="text-slate-600 dark:text-slate-400 text-lg">
-                  {currentTime.toLocaleDateString('fr-FR', { 
-                    weekday: 'long', 
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric'
-                  })}
-                </p>
-                <p className="text-slate-500 dark:text-slate-500 text-sm mt-1">
-                  Tableau de bord administrateur - Navette Xpress
-                </p>
-              </div>
-              <div className="text-right">
-                <div className="text-2xl font-bold text-slate-900 dark:text-white">
-                  {currentTime.toLocaleTimeString('fr-FR', { 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
-                  })}
-                </div>
-                <div className="text-sm text-slate-500 dark:text-slate-500">
-                  Heure locale
-                </div>
-              </div>
-            </div>
-          </div>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+            Vue d'ensemble
+          </h1>
+          <p className="text-slate-600 dark:text-slate-400">
+            {currentTime.toLocaleDateString('fr-FR', { 
+              weekday: 'long', 
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric'
+            })} - {currentTime.toLocaleTimeString('fr-FR', { 
+              hour: '2-digit', 
+              minute: '2-digit' 
+            })}
+          </p>
         </div>
 
-        {/* Statistiques principales avec design moderne */}
+        {/* Statistiques principales */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {/* Total Utilisateurs */}
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all duration-300">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Total Utilisateurs</p>
-                <p className="text-3xl font-bold text-slate-900 dark:text-white">
-                  {isLoading ? '...' : (stats?.totalUsers || 0).toLocaleString()}
-                </p>
-                <p className={`text-sm font-medium ${getGrowthColor(stats?.monthlyGrowth?.users)}`}>
-                  {formatGrowth(stats?.monthlyGrowth?.users)} ce mois
-                </p>
-              </div>
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center">
-                <span className="text-white text-2xl">👥</span>
+          {/* Revenus Totaux */}
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 rounded-lg bg-[#A73B3C] flex items-center justify-center">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
               </div>
             </div>
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Revenus Totaux</p>
+            <p className="text-2xl font-bold text-slate-900 dark:text-white">
+              {isLoading ? '...' : `${(stats?.totalRevenue || 0).toLocaleString()} F`}
+            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-500 mt-2">
+              {formatGrowth(stats?.monthlyGrowth?.revenue)} ce mois
+            </p>
           </div>
 
           {/* Réservations */}
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all duration-300">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Réservations</p>
-                <p className="text-3xl font-bold text-slate-900 dark:text-white">
-                  {isLoading ? '...' : (stats?.totalBookings || 0).toLocaleString()}
-                </p>
-                <p className={`text-sm font-medium ${getGrowthColor(stats?.monthlyGrowth?.bookings)}`}>
-                  {formatGrowth(stats?.monthlyGrowth?.bookings)} ce mois
-                </p>
-              </div>
-              <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center">
-                <span className="text-white text-2xl">📅</span>
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 rounded-lg bg-[#E5C16C] flex items-center justify-center">
+                <svg className="w-6 h-6 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
               </div>
             </div>
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Réservations</p>
+            <p className="text-2xl font-bold text-slate-900 dark:text-white">
+              {isLoading ? '...' : (stats?.totalBookings || 0).toLocaleString()}
+            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-500 mt-2">
+              {formatGrowth(stats?.monthlyGrowth?.bookings)} ce mois
+            </p>
           </div>
 
-          {/* Revenus */}
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all duration-300">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Revenus Totaux</p>
-                <p className="text-3xl font-bold text-slate-900 dark:text-white">
-                  {isLoading ? '...' : `${(stats?.totalRevenue || 0).toLocaleString()} F`}
-                </p>
-                <p className={`text-sm font-medium ${getGrowthColor(stats?.monthlyGrowth?.revenue)}`}>
-                  {formatGrowth(stats?.monthlyGrowth?.revenue)} ce mois
-                </p>
-              </div>
-              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center">
-                <span className="text-white text-2xl">💰</span>
+          {/* Utilisateurs */}
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 rounded-lg bg-blue-500 flex items-center justify-center">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
               </div>
             </div>
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Utilisateurs</p>
+            <p className="text-2xl font-bold text-slate-900 dark:text-white">
+              {isLoading ? '...' : (stats?.totalUsers || 0).toLocaleString()}
+            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-500 mt-2">
+              {formatGrowth(stats?.monthlyGrowth?.users)} ce mois
+            </p>
           </div>
 
-          {/* Véhicules Actifs */}
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all duration-300">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Véhicules Actifs</p>
-                <p className="text-3xl font-bold text-slate-900 dark:text-white">
-                  {isLoading ? '...' : stats?.activeVehicles || 0}
-                </p>
-                <p className="text-sm font-medium text-green-600">
-                  {stats?.totalDrivers || 0} chauffeurs
-                </p>
-              </div>
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center">
-                <span className="text-white text-2xl">🚗</span>
+          {/* Flotte Active */}
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 rounded-lg bg-emerald-500 flex items-center justify-center">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
               </div>
             </div>
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Flotte Active</p>
+            <p className="text-2xl font-bold text-slate-900 dark:text-white">
+              {isLoading ? '...' : stats?.activeVehicles || 0}
+            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-500 mt-2">
+              {stats?.totalDrivers || 0} chauffeurs actifs
+            </p>
           </div>
         </div>
 
-        {/* Status en temps réel */}
+        {/* Performances et Statut */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-              <span className="text-green-500">🟢</span>
-              Statut Système
-            </h3>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-slate-600 dark:text-slate-400">Réservations en attente</span>
-                <span className="font-semibold text-orange-600">{stats?.pendingBookings || 0}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-slate-600 dark:text-slate-400">Courses terminées</span>
-                <span className="font-semibold text-green-600">{stats?.completedBookings || 0}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-slate-600 dark:text-slate-400">Chauffeurs actifs</span>
-                <span className="font-semibold text-blue-600">{stats?.totalDrivers || 0}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="lg:col-span-2 bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-              <span className="text-blue-500">📈</span>
+          {/* Performances du Mois */}
+          <div className="lg:col-span-2 bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">
               Performances du Mois
             </h3>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 gap-6">
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">
+                <div className="text-3xl font-bold text-emerald-600 mb-2">
                   {(((stats?.completedBookings || 0) / Math.max(stats?.totalBookings || 0, 1)) * 100).toFixed(1)}%
                 </div>
                 <div className="text-sm text-slate-600 dark:text-slate-400">Taux de réussite</div>
+                <div className="mt-3 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-emerald-500 rounded-full"
+                    style={{ width: `${(((stats?.completedBookings || 0) / Math.max(stats?.totalBookings || 0, 1)) * 100)}%` }}
+                  />
+                </div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">
+                <div className="text-3xl font-bold text-[#A73B3C] mb-2">
                   {stats?.totalClients || 0}
                 </div>
                 <div className="text-sm text-slate-600 dark:text-slate-400">Clients actifs</div>
+                <div className="mt-3 flex items-center justify-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <svg key={i} className="w-4 h-4 text-slate-300 dark:text-slate-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-purple-600">4.8/5</div>
+                <div className="text-3xl font-bold text-[#E5C16C] mb-2">4.8</div>
                 <div className="text-sm text-slate-600 dark:text-slate-400">Note moyenne</div>
+                <div className="mt-3 flex items-center justify-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <svg key={i} className={`w-4 h-4 ${i < 4 ? 'text-[#E5C16C]' : 'text-slate-300 dark:text-slate-600'}`} fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Statut Système */}
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="flex items-center gap-2 mb-6">
+              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+                Statut Système
+              </h3>
+            </div>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-slate-700">
+                <span className="text-sm text-slate-600 dark:text-slate-400">Réservations en attente</span>
+                <span className="font-bold text-lg text-[#E5C16C]">{stats?.pendingBookings || 0}</span>
+              </div>
+              <div className="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-slate-700">
+                <span className="text-sm text-slate-600 dark:text-slate-400">Courses terminées</span>
+                <span className="font-bold text-lg text-emerald-600">{stats?.completedBookings || 0}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-slate-600 dark:text-slate-400">Chauffeurs actifs</span>
+                <span className="font-bold text-lg text-[#A73B3C]">{stats?.totalDrivers || 0}</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Actions rapides avec style moderne */}
-        <div className="mb-8">
+        {/* Actions Rapides */}
+        <div>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
             Actions Rapides
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {quickActions.map((action) => (
-              <button
-                key={action.id}
-                onClick={action.onClick}
-                className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-lg hover:scale-105 transition-all duration-300 text-left group"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className={`w-12 h-12 ${action.bgColor} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
-                    <span className="text-xl">{action.icon}</span>
-                  </div>
-                  <svg 
-                    className="w-5 h-5 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-                  {action.title}
-                </h3>
-                <p className="text-sm text-slate-600 dark:text-slate-400">
-                  {action.description}
-                </p>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Message de motivation */}
-        <div className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl p-1">
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6">
-            <div className="text-center">
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
-                🎉 Excellent travail !
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Gestion des Utilisateurs */}
+            <button
+              onClick={() => onNavigate('users')}
+              className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-lg hover:border-[#A73B3C] transition-all text-left group"
+            >
+              <div className="w-12 h-12 rounded-lg bg-[#A73B3C] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+                Gestion des Utilisateurs
               </h3>
-              <p className="text-slate-600 dark:text-slate-400">
-                Votre plateforme fonctionne parfaitement. Continuez à offrir une excellente expérience à vos utilisateurs.
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Gérer les comptes utilisateurs
               </p>
-            </div>
+            </button>
+
+            {/* Flotte & Véhicules */}
+            <button
+              onClick={() => onNavigate('vehicles')}
+              className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-lg hover:border-[#E5C16C] transition-all text-left group"
+            >
+              <div className="w-12 h-12 rounded-lg bg-[#E5C16C] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <svg className="w-6 h-6 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+                Flotte & Véhicules
+              </h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Gérer les véhicules
+              </p>
+            </button>
+
+            {/* Réservations */}
+            <button
+              onClick={() => onNavigate('bookings')}
+              className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-lg hover:border-blue-500 transition-all text-left group"
+            >
+              <div className="w-12 h-12 rounded-lg bg-blue-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+                Réservations
+              </h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Voir toutes les réservations
+              </p>
+            </button>
+
+            {/* Statistiques */}
+            <button
+              onClick={() => onNavigate('stats')}
+              className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-lg hover:border-emerald-500 transition-all text-left group"
+            >
+              <div className="w-12 h-12 rounded-lg bg-emerald-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+                Statistiques
+              </h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Analyses et rapports
+              </p>
+            </button>
           </div>
         </div>
       </div>

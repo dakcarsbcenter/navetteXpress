@@ -463,7 +463,7 @@ export function VehiclesManagement() {
               {filteredVehicles.map((vehicle) => (
                 <tr key={vehicle.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex-shrink-0 h-10 w-10">
+                    <div className="shrink-0 h-10 w-10">
                       {vehicle.photo ? (
                         <div className="relative h-10 w-10 rounded overflow-hidden">
                           <Image
@@ -545,7 +545,7 @@ export function VehiclesManagement() {
           <div key={vehicle.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
             <div className="flex items-start gap-4">
               {/* Photo */}
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 {vehicle.photo ? (
                   <div className="relative h-16 w-16 rounded-lg overflow-hidden">
                     <Image

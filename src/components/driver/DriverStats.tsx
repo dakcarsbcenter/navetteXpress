@@ -273,7 +273,7 @@ export function DriverStats({ onBack }: DriverStatsProps) {
                     </div>
                     <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                       <div
-                        className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-500"
+                        className="bg-linear-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-500"
                         style={{
                           width: `${(month.rides / Math.max(...stats.monthlyData.map(m => m.rides))) * 100}%`
                         }}
@@ -343,7 +343,7 @@ export function DriverStats({ onBack }: DriverStatsProps) {
                   </div>
                   <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
                     <div
-                      className="bg-gradient-to-r from-orange-500 to-red-600 h-3 rounded-full transition-all duration-500"
+                      className="bg-linear-to-r from-orange-500 to-red-600 h-3 rounded-full transition-all duration-500"
                       style={{
                         width: `${(hour.rides / Math.max(...stats.peakHours.map(h => h.rides))) * 100}%`
                       }}
@@ -421,3 +421,4 @@ export function DriverStats({ onBack }: DriverStatsProps) {
     </div>
   )
 }
+

@@ -471,7 +471,7 @@ export function DriverAvailabilityCalendar() {
                   key={time}
                   className={`p-3 rounded-lg font-semibold transition-all duration-200 cursor-default ${
                     isSelected
-                      ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg'
+                      ? 'bg-linear-to-r from-green-500 to-green-600 text-white shadow-lg'
                       : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
                   }`}
                 >
@@ -484,7 +484,7 @@ export function DriverAvailabilityCalendar() {
           <div className="mt-6 flex gap-3">
             <button
               onClick={() => toggleDayAvailability(currentDate, true)}
-              className="flex-1 py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg"
+              className="flex-1 py-3 px-4 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg"
             >
               Toute la journée
             </button>
@@ -495,7 +495,7 @@ export function DriverAvailabilityCalendar() {
                 delete newAvailability[key]
                 setAvailability(newAvailability)
               }}
-              className="flex-1 py-3 px-4 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-semibold hover:from-red-700 hover:to-red-800 transition-all shadow-lg"
+              className="flex-1 py-3 px-4 bg-linear-to-r from-red-600 to-red-700 text-white rounded-xl font-semibold hover:from-red-700 hover:to-red-800 transition-all shadow-lg"
             >
               Indisponible
             </button>
@@ -512,7 +512,7 @@ export function DriverAvailabilityCalendar() {
           {dayAvailability && !dayAvailability.isFullDay ? (
             <div className="space-y-3">
               {dayAvailability.slots.map((slot, idx) => (
-                <div key={idx} className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl">
+                <div key={idx} className="flex items-center gap-3 p-4 bg-linear-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl">
                   <div className="flex-1 grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">
@@ -557,7 +557,7 @@ export function DriverAvailabilityCalendar() {
 
               <button
                 onClick={() => addSlot(dateKey)}
-                className="w-full py-3 px-4 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl font-semibold hover:from-green-700 hover:to-green-800 transition-all shadow-lg flex items-center justify-center gap-2"
+                className="w-full py-3 px-4 bg-linear-to-r from-green-600 to-green-700 text-white rounded-xl font-semibold hover:from-green-700 hover:to-green-800 transition-all shadow-lg flex items-center justify-center gap-2"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -581,7 +581,7 @@ export function DriverAvailabilityCalendar() {
               </p>
               <button
                 onClick={() => toggleDayAvailability(currentDate, false)}
-                className="py-3 px-6 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg"
+                className="py-3 px-6 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg"
               >
                 Ajouter un créneau horaire
               </button>
@@ -741,7 +741,7 @@ export function DriverAvailabilityCalendar() {
             </span>
             <button
               onClick={() => selectAllMonth(true)}
-              className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transition-all shadow-md flex items-center gap-2 text-sm"
+              className="px-4 py-2 bg-linear-to-r from-green-600 to-green-700 text-white rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transition-all shadow-md flex items-center gap-2 text-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -750,7 +750,7 @@ export function DriverAvailabilityCalendar() {
             </button>
             <button
               onClick={() => selectAllMonth(false)}
-              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-md flex items-center gap-2 text-sm"
+              className="px-4 py-2 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-md flex items-center gap-2 text-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -759,7 +759,7 @@ export function DriverAvailabilityCalendar() {
             </button>
             <button
               onClick={() => selectMonthWeekends(true)}
-              className="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-purple-800 transition-all shadow-md flex items-center gap-2 text-sm"
+              className="px-4 py-2 bg-linear-to-r from-purple-600 to-purple-700 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-purple-800 transition-all shadow-md flex items-center gap-2 text-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -768,7 +768,7 @@ export function DriverAvailabilityCalendar() {
             </button>
             <button
               onClick={() => selectMonthWeekends(false)}
-              className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-lg font-semibold hover:from-indigo-700 hover:to-indigo-800 transition-all shadow-md flex items-center gap-2 text-sm"
+              className="px-4 py-2 bg-linear-to-r from-indigo-600 to-indigo-700 text-white rounded-lg font-semibold hover:from-indigo-700 hover:to-indigo-800 transition-all shadow-md flex items-center gap-2 text-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -777,7 +777,7 @@ export function DriverAvailabilityCalendar() {
             </button>
             <button
               onClick={deselectAllMonth}
-              className="px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg font-semibold hover:from-red-700 hover:to-red-800 transition-all shadow-md flex items-center gap-2 text-sm"
+              className="px-4 py-2 bg-linear-to-r from-red-600 to-red-700 text-white rounded-lg font-semibold hover:from-red-700 hover:to-red-800 transition-all shadow-md flex items-center gap-2 text-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -898,7 +898,7 @@ export function DriverAvailabilityCalendar() {
             </span>
             <button
               onClick={() => selectAllYear(true)}
-              className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transition-all shadow-md flex items-center gap-2 text-sm"
+              className="px-4 py-2 bg-linear-to-r from-green-600 to-green-700 text-white rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transition-all shadow-md flex items-center gap-2 text-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -907,7 +907,7 @@ export function DriverAvailabilityCalendar() {
             </button>
             <button
               onClick={() => selectAllYear(false)}
-              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-md flex items-center gap-2 text-sm"
+              className="px-4 py-2 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-md flex items-center gap-2 text-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -916,7 +916,7 @@ export function DriverAvailabilityCalendar() {
             </button>
             <button
               onClick={() => selectYearWeekends(true)}
-              className="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-purple-800 transition-all shadow-md flex items-center gap-2 text-sm"
+              className="px-4 py-2 bg-linear-to-r from-purple-600 to-purple-700 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-purple-800 transition-all shadow-md flex items-center gap-2 text-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -925,7 +925,7 @@ export function DriverAvailabilityCalendar() {
             </button>
             <button
               onClick={() => selectYearWeekends(false)}
-              className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-lg font-semibold hover:from-indigo-700 hover:to-indigo-800 transition-all shadow-md flex items-center gap-2 text-sm"
+              className="px-4 py-2 bg-linear-to-r from-indigo-600 to-indigo-700 text-white rounded-lg font-semibold hover:from-indigo-700 hover:to-indigo-800 transition-all shadow-md flex items-center gap-2 text-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -934,7 +934,7 @@ export function DriverAvailabilityCalendar() {
             </button>
             <button
               onClick={deselectAllYear}
-              className="px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg font-semibold hover:from-red-700 hover:to-red-800 transition-all shadow-md flex items-center gap-2 text-sm"
+              className="px-4 py-2 bg-linear-to-r from-red-600 to-red-700 text-white rounded-lg font-semibold hover:from-red-700 hover:to-red-800 transition-all shadow-md flex items-center gap-2 text-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -984,7 +984,7 @@ export function DriverAvailabilityCalendar() {
                 {availableDaysCount > 0 && (
                   <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
                     <div
-                      className="bg-gradient-to-r from-green-500 to-green-600 h-2 transition-all duration-500"
+                      className="bg-linear-to-r from-green-500 to-green-600 h-2 transition-all duration-500"
                       style={{ width: `${(availableDaysCount / daysInMonth.length) * 100}%` }}
                     />
                   </div>
@@ -1108,7 +1108,7 @@ export function DriverAvailabilityCalendar() {
       )}
 
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 dark:from-blue-900 dark:via-blue-950 dark:to-black rounded-2xl shadow-2xl p-6">
+      <div className="bg-linear-to-r from-blue-600 via-blue-700 to-blue-800 dark:from-blue-900 dark:via-blue-950 dark:to-black rounded-2xl shadow-2xl p-6">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
           <div>
             <h2 className="text-3xl font-bold text-white flex items-center gap-3">
@@ -1165,7 +1165,7 @@ export function DriverAvailabilityCalendar() {
               <button
                 key={preset.id}
                 onClick={() => applyPreset(preset)}
-                className="p-4 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-700 dark:to-slate-800 rounded-xl hover:shadow-lg transition-all duration-200 text-left border-2 border-transparent hover:border-blue-500 dark:hover:border-blue-400 group"
+                className="p-4 bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-700 dark:to-slate-800 rounded-xl hover:shadow-lg transition-all duration-200 text-left border-2 border-transparent hover:border-blue-500 dark:hover:border-blue-400 group"
               >
                 <div className="flex items-start gap-3">
                   <span className="text-3xl group-hover:scale-110 transition-transform">
@@ -1281,7 +1281,7 @@ export function DriverAvailabilityCalendar() {
       <div className="flex gap-4">
         <button
           onClick={saveAvailability}
-          className="flex-1 py-4 px-6 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl font-bold text-lg hover:from-green-700 hover:to-green-800 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3"
+          className="flex-1 py-4 px-6 bg-linear-to-r from-green-600 to-green-700 text-white rounded-xl font-bold text-lg hover:from-green-700 hover:to-green-800 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -1298,17 +1298,17 @@ export function DriverAvailabilityCalendar() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white shadow-lg">
+        <div className="bg-linear-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white shadow-lg">
           <div className="text-3xl font-bold">{Object.keys(availability).length}</div>
           <div className="text-blue-100 mt-1 font-semibold">Jours configurés</div>
         </div>
-        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white shadow-lg">
+        <div className="bg-linear-to-br from-green-500 to-green-600 rounded-xl p-6 text-white shadow-lg">
           <div className="text-3xl font-bold">
             {Object.values(availability).filter(a => a.isFullDay).length}
           </div>
           <div className="text-green-100 mt-1 font-semibold">Journées entières</div>
         </div>
-        <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white shadow-lg">
+        <div className="bg-linear-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white shadow-lg">
           <div className="text-3xl font-bold">
             {Object.values(availability).filter(a => !a.isFullDay).length}
           </div>
@@ -1318,3 +1318,4 @@ export function DriverAvailabilityCalendar() {
     </div>
   )
 }
+

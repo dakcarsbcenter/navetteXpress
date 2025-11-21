@@ -398,7 +398,7 @@ export function LegendaryNotification({
     switch (type) {
       case 'success':
         return {
-          bg: 'bg-gradient-to-br from-emerald-400 via-green-500 to-teal-600',
+          bg: 'bg-linear-to-br from-emerald-400 via-green-500 to-teal-600',
           icon: '🎉',
           iconBg: 'bg-emerald-100',
           iconColor: 'text-emerald-600',
@@ -408,7 +408,7 @@ export function LegendaryNotification({
         }
       case 'error':
         return {
-          bg: 'bg-gradient-to-br from-red-400 via-rose-500 to-pink-600',
+          bg: 'bg-linear-to-br from-red-400 via-rose-500 to-pink-600',
           icon: '💥',
           iconBg: 'bg-red-100',
           iconColor: 'text-red-600',
@@ -418,7 +418,7 @@ export function LegendaryNotification({
         }
       case 'warning':
         return {
-          bg: 'bg-gradient-to-br from-amber-400 via-yellow-500 to-orange-600',
+          bg: 'bg-linear-to-br from-amber-400 via-yellow-500 to-orange-600',
           icon: '⚡',
           iconBg: 'bg-amber-100',
           iconColor: 'text-amber-600',
@@ -428,7 +428,7 @@ export function LegendaryNotification({
         }
       case 'info':
         return {
-          bg: 'bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600',
+          bg: 'bg-linear-to-br from-cyan-400 via-blue-500 to-indigo-600',
           icon: '✨',
           iconBg: 'bg-cyan-100',
           iconColor: 'text-cyan-600',
@@ -438,7 +438,7 @@ export function LegendaryNotification({
         }
       default:
         return {
-          bg: 'bg-gradient-to-br from-gray-400 via-slate-500 to-zinc-600',
+          bg: 'bg-linear-to-br from-gray-400 via-slate-500 to-zinc-600',
           icon: '💫',
           iconBg: 'bg-gray-100',
           iconColor: 'text-gray-600',
@@ -767,12 +767,12 @@ export function LegendaryNotification({
             className="h-full bg-white/95 transition-all duration-100 ease-linear relative"
             style={{ width: `${progress}%` }}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/90 to-transparent animate-pulse" />
-            <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/95 to-white/70 animate-pulse" />
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/95 to-transparent animate-pulse" />
-            <div className="absolute inset-0 bg-gradient-to-r from-white/50 via-white/95 to-white/50 animate-pulse" />
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/80 to-transparent animate-pulse" />
-            <div className="absolute inset-0 bg-gradient-to-r from-white/30 via-white/95 to-white/30 animate-pulse" />
+            <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/90 to-transparent animate-pulse" />
+            <div className="absolute inset-0 bg-linear-to-r from-white/70 via-white/95 to-white/70 animate-pulse" />
+            <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/95 to-transparent animate-pulse" />
+            <div className="absolute inset-0 bg-linear-to-r from-white/50 via-white/95 to-white/50 animate-pulse" />
+            <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/80 to-transparent animate-pulse" />
+            <div className="absolute inset-0 bg-linear-to-r from-white/30 via-white/95 to-white/30 animate-pulse" />
           </div>
         </div>
 
@@ -780,7 +780,7 @@ export function LegendaryNotification({
           <div className="flex items-start space-x-4">
             {/* Icône avec animation spectaculaire */}
             <div className={`
-              flex-shrink-0 w-20 h-20 rounded-full ${styles.iconBg} 
+              shrink-0 w-20 h-20 rounded-full ${styles.iconBg} 
               flex items-center justify-center
               ${isAnimating ? 'animate-bounce' : ''}
               relative overflow-hidden
@@ -806,7 +806,7 @@ export function LegendaryNotification({
             {/* Bouton de fermeture avec animation */}
             <button
               onClick={onClose}
-              className="flex-shrink-0 text-white/70 hover:text-white transition-all duration-300 hover:scale-125 hover:rotate-90"
+              className="shrink-0 text-white/70 hover:text-white transition-all duration-300 hover:scale-125 hover:rotate-90"
             >
               <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -816,7 +816,7 @@ export function LegendaryNotification({
         </div>
 
         {/* Effet de brillance en arrière-plan */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse" />
+        <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent animate-pulse" />
         
         {/* Bordure animée */}
         <div className="absolute inset-0 rounded-3xl border-2 border-white/60 animate-pulse" />
@@ -825,14 +825,16 @@ export function LegendaryNotification({
         <div className="absolute inset-0 rounded-3xl bg-white/20 animate-pulse" />
         
         {/* Effet de scintillement */}
-        <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-transparent via-white/15 to-transparent animate-pulse" />
+        <div className="absolute inset-0 rounded-3xl bg-linear-to-r from-transparent via-white/15 to-transparent animate-pulse" />
         
         {/* Effet de vague */}
-        <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-transparent via-white/10 to-transparent animate-pulse" />
+        <div className="absolute inset-0 rounded-3xl bg-linear-to-br from-transparent via-white/10 to-transparent animate-pulse" />
         
         {/* Effet de spirale */}
-        <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
+        <div className="absolute inset-0 rounded-3xl bg-linear-to-r from-transparent via-white/5 to-transparent animate-pulse" />
       </div>
     </div>
   )
 }
+
+

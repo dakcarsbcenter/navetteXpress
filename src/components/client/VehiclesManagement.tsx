@@ -508,9 +508,9 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 animate-fadeIn">
           <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full transform transition-all animate-scaleIn">
             {/* Header avec icône d'avertissement */}
-            <div className="bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 p-6 rounded-t-2xl border-b border-red-100 dark:border-red-800">
+            <div className="bg-linear-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 p-6 rounded-t-2xl border-b border-red-100 dark:border-red-800">
               <div className="flex items-center gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-red-100 dark:bg-red-900/50 rounded-full flex items-center justify-center">
+                <div className="shrink-0 w-12 h-12 bg-red-100 dark:bg-red-900/50 rounded-full flex items-center justify-center">
                   <svg className="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
@@ -536,7 +536,7 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
               <div className="bg-slate-50 dark:bg-slate-900/50 rounded-xl p-4 border-2 border-red-200 dark:border-red-800">
                 <div className="flex items-center gap-4">
                   {deletingVehicle.photo ? (
-                    <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+                    <div className="relative w-20 h-20 rounded-lg overflow-hidden shrink-0">
                       <Image
                         src={deletingVehicle.photo}
                         alt={`${deletingVehicle.make} ${deletingVehicle.model}`}
@@ -545,7 +545,7 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                       />
                     </div>
                   ) : (
-                    <div className="w-20 h-20 bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <div className="w-20 h-20 bg-linear-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-600 rounded-lg flex items-center justify-center shrink-0">
                       <span className="text-3xl">{getVehicleTypeIcon(deletingVehicle.type)}</span>
                     </div>
                   )}
@@ -568,7 +568,7 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
               </div>
 
               <div className="mt-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3 flex items-start gap-2">
-                <svg className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                 </svg>
                 <p className="text-sm text-amber-800 dark:text-amber-200">
@@ -587,7 +587,7 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
               </button>
               <button
                 onClick={() => handleDeleteVehicle(deletingVehicle.id)}
-                className="flex-1 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                className="flex-1 px-6 py-3 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
               >
                 🗑️ Supprimer définitivement
               </button>
@@ -699,7 +699,7 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
               
               {/* Placeholder si pas d'image */}
               {!vehicle.photo && (
-                <div className="relative w-full h-48 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                <div className="relative w-full h-48 bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
                   <span className="text-6xl">{getVehicleTypeIcon(vehicle.type)}</span>
                 </div>
               )}
@@ -823,3 +823,4 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
     </div>
   )
 }
+

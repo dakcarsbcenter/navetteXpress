@@ -198,28 +198,28 @@ export default function DevenirPartenaire() {
 
   if (isSubmitted) {
     return (
-      <div className="font-sans min-h-screen bg-slate-50 dark:bg-slate-900">
+      <div className="font-sans min-h-screen bg-[#FAFAFA] dark:bg-[#1A1A1A]">
         <Navigation variant="solid" />
         
         <div className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mx-auto text-center">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-20 h-20 bg-[#E5C16C]/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg className="w-10 h-10 text-[#A73B3C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
             
-            <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-6">
+            <h1 className="text-4xl font-bold text-[#1A1A1A] dark:text-white mb-6">
               Candidature Envoyée !
             </h1>
             
-            <p className="text-lg text-slate-600 dark:text-slate-300 mb-8">
+            <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
               Merci pour votre candidature. Notre équipe étudiera votre profil et vous contactera 
               dans les 48h pour la suite du processus de recrutement.
             </p>
             
             <Link href="/" className="inline-block">
-              <button className="bg-gradient-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl">
+              <button className="bg-[#A73B3C] hover:bg-[#8B3032] text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl">
                 Retour à l&apos;accueil
               </button>
             </Link>
@@ -230,16 +230,16 @@ export default function DevenirPartenaire() {
   }
 
   return (
-    <div className="font-sans min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="font-sans min-h-screen bg-[#FAFAFA] dark:bg-[#1A1A1A]">
       <Navigation variant="solid" />
       
       <div className="pt-15 sm:pt-28 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-6 sm:mb-12">
-            <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 dark:text-white mb-6">
-              Devenir Partenaire Chauffeur
+            <h1 className="text-4xl sm:text-5xl font-bold text-[#1A1A1A] dark:text-white mb-6">
+              Devenir <span className="text-[#A73B3C]">Partenaire</span> Chauffeur
             </h1>
-            <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
               Rejoignez notre équipe de chauffeurs professionnels et bénéficiez d&apos;une activité 
               flexible avec des revenus attractifs.
             </p>
@@ -247,38 +247,38 @@ export default function DevenirPartenaire() {
 
           {/* Avantages */}
           <div className="grid md:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-12">
-            <div className="bg-white dark:bg-slate-800 p-4 md:p-6 rounded-xl md:rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
-              <div className="w-10 h-10 md:w-12 md:h-12 bg-green-100 dark:bg-green-900/50 rounded-lg flex items-center justify-center mb-3 md:mb-4">
+            <div className="bg-white dark:bg-[#252525] p-4 md:p-6 rounded-xl md:rounded-2xl shadow-lg border-t-4 border-[#A73B3C]">
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-[#E5C16C]/20 rounded-lg flex items-center justify-center mb-3 md:mb-4">
                 <span className="text-xl md:text-2xl">💰</span>
               </div>
-              <h3 className="text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-1 md:mb-2">Revenus Attractifs</h3>
-              <p className="text-slate-600 dark:text-slate-300 text-xs md:text-sm">Revenus compétitifs avec bonus de performance</p>
+              <h3 className="text-base md:text-lg font-semibold text-[#1A1A1A] dark:text-white mb-1 md:mb-2">Revenus Attractifs</h3>
+              <p className="text-gray-600 dark:text-gray-300 text-xs md:text-sm">Revenus compétitifs avec bonus de performance</p>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 p-4 md:p-6 rounded-xl md:rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
-              <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-100 dark:bg-blue-900/50 rounded-lg flex items-center justify-center mb-3 md:mb-4">
+            <div className="bg-white dark:bg-[#252525] p-4 md:p-6 rounded-xl md:rounded-2xl shadow-lg border-t-4 border-[#A73B3C]">
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-[#E5C16C]/20 rounded-lg flex items-center justify-center mb-3 md:mb-4">
                 <span className="text-xl md:text-2xl">⏰</span>
               </div>
-              <h3 className="text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-1 md:mb-2">Horaires Flexibles</h3>
-              <p className="text-slate-600 dark:text-slate-300 text-xs md:text-sm">Choisissez vos créneaux selon votre disponibilité</p>
+              <h3 className="text-base md:text-lg font-semibold text-[#1A1A1A] dark:text-white mb-1 md:mb-2">Horaires Flexibles</h3>
+              <p className="text-gray-600 dark:text-gray-300 text-xs md:text-sm">Choisissez vos créneaux selon votre disponibilité</p>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 p-4 md:p-6 rounded-xl md:rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
-              <div className="w-10 h-10 md:w-12 md:h-12 bg-purple-100 dark:bg-purple-900/50 rounded-lg flex items-center justify-center mb-3 md:mb-4">
+            <div className="bg-white dark:bg-[#252525] p-4 md:p-6 rounded-xl md:rounded-2xl shadow-lg border-t-4 border-[#A73B3C]">
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-[#E5C16C]/20 rounded-lg flex items-center justify-center mb-3 md:mb-4">
                 <span className="text-xl md:text-2xl">🤝</span>
               </div>
-              <h3 className="text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-1 md:mb-2">Support 24/7</h3>
-              <p className="text-slate-600 dark:text-slate-300 text-xs md:text-sm">Équipe dédiée pour vous accompagner</p>
+              <h3 className="text-base md:text-lg font-semibold text-[#1A1A1A] dark:text-white mb-1 md:mb-2">Support 24/7</h3>
+              <p className="text-gray-600 dark:text-gray-300 text-xs md:text-sm">Équipe dédiée pour vous accompagner</p>
             </div>
           </div>
 
           {/* Formulaire */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl md:rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-4 md:p-8">
+          <div className="bg-white dark:bg-[#252525] rounded-xl md:rounded-2xl shadow-lg border-t-4 border-[#A73B3C] p-4 md:p-8">
             <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
               {/* Informations personnelles */}
               <div className="grid md:grid-cols-2 gap-4 md:gap-6">
                 <div>
-                  <label className="block text-xs md:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 md:mb-2">
+                  <label className="block text-xs md:text-sm font-medium text-[#1A1A1A] dark:text-white mb-1.5 md:mb-2">
                     Prénom *
                   </label>
                   <input
@@ -287,13 +287,13 @@ export default function DevenirPartenaire() {
                     required
                     value={formData.prenom}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm md:text-base text-slate-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FF7E38] focus:border-transparent"
+                    className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-white dark:bg-[#1A1A1A] border border-gray-300 dark:border-gray-600 rounded-lg text-sm md:text-base text-[#1A1A1A] dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#A73B3C] focus:border-transparent"
                     placeholder="Votre prénom"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-xs md:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 md:mb-2">
+                  <label className="block text-xs md:text-sm font-medium text-[#1A1A1A] dark:text-white mb-1.5 md:mb-2">
                     Nom *
                   </label>
                   <input
@@ -302,7 +302,7 @@ export default function DevenirPartenaire() {
                     required
                     value={formData.nom}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm md:text-base text-slate-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FF7E38] focus:border-transparent"
+                    className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-white dark:bg-[#1A1A1A] border border-gray-300 dark:border-gray-600 rounded-lg text-sm md:text-base text-[#1A1A1A] dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#A73B3C] focus:border-transparent"
                     placeholder="Votre nom"
                   />
                 </div>
@@ -310,7 +310,7 @@ export default function DevenirPartenaire() {
 
               <div className="grid md:grid-cols-2 gap-4 md:gap-6">
                 <div>
-                  <label className="block text-xs md:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 md:mb-2">
+                  <label className="block text-xs md:text-sm font-medium text-[#1A1A1A] dark:text-white mb-1.5 md:mb-2">
                     Email *
                   </label>
                   <input
@@ -319,13 +319,13 @@ export default function DevenirPartenaire() {
                     required
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm md:text-base text-slate-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FF7E38] focus:border-transparent"
+                    className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-white dark:bg-[#1A1A1A] border border-gray-300 dark:border-gray-600 rounded-lg text-sm md:text-base text-[#1A1A1A] dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#A73B3C] focus:border-transparent"
                     placeholder="votre.email@exemple.com"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-xs md:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 md:mb-2">
+                  <label className="block text-xs md:text-sm font-medium text-[#1A1A1A] dark:text-white mb-1.5 md:mb-2">
                     Téléphone *
                   </label>
                   <input
@@ -334,14 +334,14 @@ export default function DevenirPartenaire() {
                     required
                     value={formData.telephone}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm md:text-base text-slate-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FF7E38] focus:border-transparent"
+                    className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-white dark:bg-[#1A1A1A] border border-gray-300 dark:border-gray-600 rounded-lg text-sm md:text-base text-[#1A1A1A] dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#A73B3C] focus:border-transparent"
                     placeholder="06 12 34 56 78"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs md:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 md:mb-2">
+                <label className="block text-xs md:text-sm font-medium text-[#1A1A1A] dark:text-white mb-1.5 md:mb-2">
                   Années d&apos;expérience de conduite *
                 </label>
                 <select
@@ -349,7 +349,7 @@ export default function DevenirPartenaire() {
                   required
                   value={formData.experience}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm md:text-base text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FF7E38] focus:border-transparent [&>option]:text-slate-900 [&>option]:bg-white"
+                  className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-white dark:bg-[#1A1A1A] border border-gray-300 dark:border-gray-600 rounded-lg text-sm md:text-base text-[#1A1A1A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#A73B3C] focus:border-transparent [&>option]:text-slate-900 [&>option]:bg-white"
                 >
                   <option value="" className="text-slate-900 bg-white">Sélectionner</option>
                   <option value="1-3" className="text-slate-900 bg-white">1-3 ans</option>
@@ -361,11 +361,11 @@ export default function DevenirPartenaire() {
 
               {/* Informations véhicule */}
               <div className="border-t border-gray-200 dark:border-gray-700 pt-4 md:pt-6">
-                <h3 className="text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-3 md:mb-4">Informations sur votre véhicule</h3>
+                <h3 className="text-base md:text-lg font-semibold text-[#1A1A1A] dark:text-white mb-3 md:mb-4">Informations sur votre véhicule</h3>
                 
                 <div className="grid md:grid-cols-2 gap-4 md:gap-6">
                   <div>
-                    <label className="block text-xs md:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 md:mb-2">
+                    <label className="block text-xs md:text-sm font-medium text-[#1A1A1A] dark:text-white mb-1.5 md:mb-2">
                       Marque *
                     </label>
                     <select
@@ -373,7 +373,7 @@ export default function DevenirPartenaire() {
                       required
                       value={formData.vehicule.marque}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm md:text-base text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FF7E38] focus:border-transparent [&>option]:text-slate-900 [&>option]:bg-white"
+                      className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-white dark:bg-[#1A1A1A] border border-gray-300 dark:border-gray-600 rounded-lg text-sm md:text-base text-[#1A1A1A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#A73B3C] focus:border-transparent [&>option]:text-slate-900 [&>option]:bg-white"
                     >
                       <option value="" className="text-slate-900 bg-white">Sélectionner une marque</option>
                       {Object.keys(vehicleData).map(marque => (
@@ -385,7 +385,7 @@ export default function DevenirPartenaire() {
                   </div>
                   
                   <div>
-                    <label className="block text-xs md:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 md:mb-2">
+                    <label className="block text-xs md:text-sm font-medium text-[#1A1A1A] dark:text-white mb-1.5 md:mb-2">
                       Modèle *
                     </label>
                     <select
@@ -394,7 +394,7 @@ export default function DevenirPartenaire() {
                       value={formData.vehicule.modele}
                       onChange={handleInputChange}
                       disabled={!formData.vehicule.marque}
-                      className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm md:text-base text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FF7E38] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed [&>option]:text-slate-900 [&>option]:bg-white"
+                      className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-white dark:bg-[#1A1A1A] border border-gray-300 dark:border-gray-600 rounded-lg text-sm md:text-base text-[#1A1A1A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#A73B3C] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed [&>option]:text-slate-900 [&>option]:bg-white"
                     >
                       <option value="" className="text-slate-900 bg-white">
                         {formData.vehicule.marque ? 'Sélectionner un modèle' : 'Choisissez d\'abord une marque'}
@@ -410,7 +410,7 @@ export default function DevenirPartenaire() {
 
                 <div className="grid md:grid-cols-2 gap-4 md:gap-6 mt-4 md:mt-6">
                   <div>
-                    <label className="block text-xs md:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 md:mb-2">
+                    <label className="block text-xs md:text-sm font-medium text-[#1A1A1A] dark:text-white mb-1.5 md:mb-2">
                       Année *
                     </label>
                     <select
@@ -418,7 +418,7 @@ export default function DevenirPartenaire() {
                       required
                       value={formData.vehicule.annee}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm md:text-base text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FF7E38] focus:border-transparent [&>option]:text-slate-900 [&>option]:bg-white"
+                      className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-white dark:bg-[#1A1A1A] border border-gray-300 dark:border-gray-600 rounded-lg text-sm md:text-base text-[#1A1A1A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#A73B3C] focus:border-transparent [&>option]:text-slate-900 [&>option]:bg-white"
                     >
                       <option value="" className="text-slate-900 bg-white">Sélectionner l&apos;année</option>
                       {years.map(year => (
@@ -430,7 +430,7 @@ export default function DevenirPartenaire() {
                   </div>
                   
                   <div>
-                    <label className="block text-xs md:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 md:mb-2">
+                    <label className="block text-xs md:text-sm font-medium text-[#1A1A1A] dark:text-white mb-1.5 md:mb-2">
                       Immatriculation *
                     </label>
                     <input
@@ -439,7 +439,7 @@ export default function DevenirPartenaire() {
                       required
                       value={formData.vehicule.immatriculation}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm md:text-base text-slate-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FF7E38] focus:border-transparent"
+                      className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-white dark:bg-[#1A1A1A] border border-gray-300 dark:border-gray-600 rounded-lg text-sm md:text-base text-[#1A1A1A] dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#A73B3C] focus:border-transparent"
                       placeholder="AB-123-CD"
                     />
                   </div>
@@ -452,9 +452,9 @@ export default function DevenirPartenaire() {
                       name="vehicule.assurance"
                       checked={formData.vehicule.assurance}
                       onChange={handleInputChange}
-                      className="w-4 h-4 text-orange-500 bg-white dark:bg-slate-700 border-gray-300 dark:border-gray-600 rounded focus:ring-[#FF7E38] focus:ring-2"
+                      className="w-4 h-4 text-[#A73B3C] bg-white dark:bg-[#1A1A1A] border-gray-300 dark:border-gray-600 rounded focus:ring-[#A73B3C] focus:ring-2"
                     />
-                    <label className="ml-3 text-xs md:text-sm text-slate-700 dark:text-slate-300">
+                    <label className="ml-3 text-xs md:text-sm text-[#1A1A1A] dark:text-white">
                       J&apos;ai une assurance valide
                     </label>
                   </div>
@@ -465,9 +465,9 @@ export default function DevenirPartenaire() {
                       name="vehicule.permis"
                       checked={formData.vehicule.permis}
                       onChange={handleInputChange}
-                      className="w-4 h-4 text-orange-500 bg-white dark:bg-slate-700 border-gray-300 dark:border-gray-600 rounded focus:ring-[#FF7E38] focus:ring-2"
+                      className="w-4 h-4 text-[#A73B3C] bg-white dark:bg-[#1A1A1A] border-gray-300 dark:border-gray-600 rounded focus:ring-[#A73B3C] focus:ring-2"
                     />
-                    <label className="ml-3 text-xs md:text-sm text-slate-700 dark:text-slate-300">
+                    <label className="ml-3 text-xs md:text-sm text-[#1A1A1A] dark:text-white">
                       J&apos;ai un permis de conduire valide depuis plus de 3 ans
                     </label>
                   </div>
@@ -476,7 +476,7 @@ export default function DevenirPartenaire() {
 
               {/* Motivation */}
               <div>
-                <label className="block text-xs md:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 md:mb-2">
+                <label className="block text-xs md:text-sm font-medium text-[#1A1A1A] dark:text-white mb-1.5 md:mb-2">
                   Motivation *
                 </label>
                 <textarea
@@ -485,13 +485,13 @@ export default function DevenirPartenaire() {
                   rows={4}
                   value={formData.motivation}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm md:text-base text-slate-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FF7E38] focus:border-transparent"
+                  className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-white dark:bg-[#1A1A1A] border border-gray-300 dark:border-gray-600 rounded-lg text-sm md:text-base text-[#1A1A1A] dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#A73B3C] focus:border-transparent"
                   placeholder="Pourquoi souhaitez-vous devenir partenaire chauffeur ? Parlez-nous de votre expérience..."
                 />
               </div>
 
               <div>
-                <label className="block text-xs md:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 md:mb-2">
+                <label className="block text-xs md:text-sm font-medium text-[#1A1A1A] dark:text-white mb-1.5 md:mb-2">
                   Disponibilité *
                 </label>
                 <select
@@ -499,7 +499,7 @@ export default function DevenirPartenaire() {
                   required
                   value={formData.disponibilite}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm md:text-base text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FF7E38] focus:border-transparent [&>option]:text-slate-900 [&>option]:bg-white"
+                  className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-white dark:bg-[#1A1A1A] border border-gray-300 dark:border-gray-600 rounded-lg text-sm md:text-base text-[#1A1A1A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#A73B3C] focus:border-transparent [&>option]:text-slate-900 [&>option]:bg-white"
                 >
                   <option value="" className="text-slate-900 bg-white">Sélectionner</option>
                   <option value="temps-plein" className="text-slate-900 bg-white">Temps plein (35h+/semaine)</option>
@@ -514,7 +514,7 @@ export default function DevenirPartenaire() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full md:w-auto bg-orange-500 hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 md:px-8 md:py-4 rounded-xl font-semibold text-base md:text-lg transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 md:gap-3 mx-auto"
+                  className="w-full md:w-auto bg-[#A73B3C] hover:bg-[#8B3032] disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 md:px-8 md:py-4 rounded-xl font-semibold text-base md:text-lg transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 md:gap-3 mx-auto"
                 >
                   {isSubmitting ? (
                     <>

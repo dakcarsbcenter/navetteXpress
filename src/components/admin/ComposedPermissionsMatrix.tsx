@@ -249,7 +249,7 @@ export function ComposedPermissionsMatrix() {
       />
 
       {/* En-tête */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-4 sm:p-6 text-white">
+      <div className="bg-linear-to-r from-blue-600 to-purple-600 rounded-xl p-4 sm:p-6 text-white">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
             <h1 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2">Matrice des Permissions</h1>
@@ -260,7 +260,7 @@ export function ComposedPermissionsMatrix() {
           <button
             onClick={initializeProfilePermissions}
             disabled={isInitializing}
-            className="flex-shrink-0 px-4 py-2 bg-white/20 hover:bg-white/30 disabled:bg-white/10 disabled:cursor-not-allowed rounded-lg font-medium text-sm transition-all duration-200 flex items-center gap-2 border border-white/20"
+            className="shrink-0 px-4 py-2 bg-white/20 hover:bg-white/30 disabled:bg-white/10 disabled:cursor-not-allowed rounded-lg font-medium text-sm transition-all duration-200 flex items-center gap-2 border border-white/20"
           >
             {isInitializing ? (
               <>
@@ -282,7 +282,7 @@ export function ComposedPermissionsMatrix() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 border border-slate-200 dark:border-slate-700">
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-xl sm:text-2xl flex-shrink-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-xl sm:text-2xl shrink-0">
               🔧
             </div>
             <div className="min-w-0">
@@ -294,7 +294,7 @@ export function ComposedPermissionsMatrix() {
 
         <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 border border-slate-200 dark:border-slate-700">
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-xl sm:text-2xl flex-shrink-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-xl sm:text-2xl shrink-0">
               🔐
             </div>
             <div className="min-w-0">
@@ -306,7 +306,7 @@ export function ComposedPermissionsMatrix() {
 
         <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 border border-slate-200 dark:border-slate-700">
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-xl sm:text-2xl flex-shrink-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-xl sm:text-2xl shrink-0">
               👥
             </div>
             <div className="min-w-0">
@@ -320,7 +320,7 @@ export function ComposedPermissionsMatrix() {
 
         <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 border border-slate-200 dark:border-slate-700">
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-xl sm:text-2xl flex-shrink-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-xl sm:text-2xl shrink-0">
               ✅
             </div>
             <div className="min-w-0">
@@ -389,7 +389,7 @@ export function ComposedPermissionsMatrix() {
                     >
                       <td className="px-2 sm:px-4 py-3 sm:py-4 sticky left-0 bg-white dark:bg-slate-800 z-10 shadow-sm border-r border-slate-200 dark:border-slate-700">
                         <div className="flex items-center gap-1.5 sm:gap-2">
-                          <span className="text-sm sm:text-xl flex-shrink-0">{perm.icon}</span>
+                          <span className="text-sm sm:text-xl shrink-0">{perm.icon}</span>
                           <div className="min-w-0">
                             <div className="text-[11px] sm:text-base font-medium text-slate-900 dark:text-white leading-tight">
                               {perm.label} {resource.label.toLowerCase()}
@@ -475,3 +475,5 @@ export function ComposedPermissionsMatrix() {
     </div>
   )
 }
+
+

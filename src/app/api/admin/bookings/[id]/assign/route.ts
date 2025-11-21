@@ -16,7 +16,13 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireBookingsUpdate(); // Vérification de la permission de mise à jour
+    try {
+      await requireBookingsUpdate(); // Vérification de la permission de mise à jour
+    } catch (permError) {
+      const errorMessage = permError instanceof Error ? permError.message : 'Permission refusée';
+      const statusCode = errorMessage.includes('Unauthorized') ? 401 : 403;
+      return NextResponse.json({ success: false, error: errorMessage }, { status: statusCode });
+    }
 
     const { id } = await params;
     const bookingId = parseInt(id);

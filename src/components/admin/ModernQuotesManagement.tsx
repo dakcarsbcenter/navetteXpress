@@ -684,7 +684,7 @@ Description: ${editQuoteForm.description}`,
   const stats = getStats()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/30 to-slate-50 dark:from-slate-900 dark:via-purple-900/10 dark:to-slate-900">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-purple-50/30 to-slate-50 dark:from-slate-900 dark:via-purple-900/10 dark:to-slate-900">
       <div className="p-3 sm:p-6 max-w-7xl mx-auto">
         
         {/* Header avec statistiques */}
@@ -758,7 +758,7 @@ Description: ${editQuoteForm.description}`,
               {/* Bouton Nouveau devis */}
               <button 
                 onClick={() => setShowNewQuoteModal(true)}
-                className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl text-sm sm:text-base font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
+                className="w-full sm:w-auto bg-linear-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl text-sm sm:text-base font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
               >
                 <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -1054,7 +1054,7 @@ Description: ${editQuoteForm.description}`,
                   {/* Header de la carte */}
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center text-white font-semibold">
+                      <div className="w-12 h-12 bg-linear-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center text-white font-semibold">
                         {quote.customerName.charAt(0).toUpperCase()}
                       </div>
                       <div>
@@ -1661,7 +1661,7 @@ Description: ${editQuoteForm.description}`,
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-colors"
+                    className="flex-1 px-4 py-2 bg-linear-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-colors"
                   >
                     Créer le devis
                   </button>
@@ -2038,7 +2038,7 @@ Description: ${editQuoteForm.description}`,
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex-1 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-colors disabled:opacity-50"
+                    className="flex-1 px-4 py-2 bg-linear-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-colors disabled:opacity-50"
                   >
                     {isSubmitting ? 'Modification...' : 'Modifier le devis'}
                   </button>

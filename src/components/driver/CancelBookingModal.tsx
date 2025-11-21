@@ -56,7 +56,7 @@ export function CancelBookingModal({
       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-hidden animate-in fade-in-0 zoom-in-95 duration-300">
         
         {/* Header */}
-        <div className="bg-gradient-to-r from-red-500 to-red-600 px-6 py-5">
+        <div className="bg-linear-to-r from-red-500 to-red-600 px-6 py-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
@@ -178,7 +178,7 @@ export function CancelBookingModal({
               type="button"
               onClick={handleSubmit}
               disabled={isLoading || !selectedReason || (selectedReason === "other" && !reason.trim())}
-              className="w-full sm:w-auto px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-6 py-3 text-sm font-medium text-white bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>

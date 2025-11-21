@@ -15,7 +15,7 @@ const DesignShowcase: React.FC = () => {
         <div className="text-center mb-16">
           <h1 className="text-5xl font-bold text-slate-900 dark:text-white mb-6">
             NavetteXpress
-            <span className="block text-3xl text-gradient bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-transparent">
+            <span className="block text-3xl text-gradient bg-linear-to-r from-blue-600 to-orange-500 bg-clip-text text-transparent">
               Design System Showcase
             </span>
           </h1>
@@ -78,13 +78,13 @@ const DesignShowcase: React.FC = () => {
             <div className="space-y-3">
               <h3 className="font-semibold text-slate-700 dark:text-slate-300">Gradients</h3>
               <div className="space-y-2">
-                <div className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-semibold">
+                <div className="w-full h-12 bg-linear-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-semibold">
                   Bleu-Purple
                 </div>
-                <div className="w-full h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center text-white font-semibold">
+                <div className="w-full h-12 bg-linear-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center text-white font-semibold">
                   Orange-Rouge
                 </div>
-                <div className="w-full h-12 bg-gradient-to-r from-slate-900 to-slate-700 rounded-lg flex items-center justify-center text-white font-semibold">
+                <div className="w-full h-12 bg-linear-to-r from-slate-900 to-slate-700 rounded-lg flex items-center justify-center text-white font-semibold">
                   Luxe
                 </div>
               </div>
@@ -326,7 +326,7 @@ const DesignShowcase: React.FC = () => {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <Card className="p-8 text-center">
-              <div className="w-full h-32 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl mb-4 flex items-center justify-center text-white font-bold text-xl">
+              <div className="w-full h-32 bg-linear-to-r from-blue-600 to-purple-600 rounded-xl mb-4 flex items-center justify-center text-white font-bold text-xl">
                 Gradient Bleu-Purple
               </div>
               <p className="text-slate-600 dark:text-slate-400">
@@ -335,7 +335,7 @@ const DesignShowcase: React.FC = () => {
             </Card>
             
             <Card className="p-8 text-center">
-              <div className="w-full h-32 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl mb-4 flex items-center justify-center text-white font-bold text-xl">
+              <div className="w-full h-32 bg-linear-to-r from-orange-500 to-red-500 rounded-xl mb-4 flex items-center justify-center text-white font-bold text-xl">
                 Gradient Orange-Rouge
               </div>
               <p className="text-slate-600 dark:text-slate-400">
@@ -344,7 +344,7 @@ const DesignShowcase: React.FC = () => {
             </Card>
             
             <Card className="p-8 text-center">
-              <div className="w-full h-32 bg-gradient-to-r from-slate-900 to-slate-700 rounded-xl mb-4 flex items-center justify-center text-white font-bold text-xl">
+              <div className="w-full h-32 bg-linear-to-r from-slate-900 to-slate-700 rounded-xl mb-4 flex items-center justify-center text-white font-bold text-xl">
                 Gradient Luxe
               </div>
               <p className="text-slate-600 dark:text-slate-400">
@@ -359,3 +359,4 @@ const DesignShowcase: React.FC = () => {
 };
 
 export default DesignShowcase;
+

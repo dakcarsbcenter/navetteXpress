@@ -13,8 +13,14 @@ export async function GET() {
   try {
     console.log('Début de la récupération des chauffeurs...');
     
-    await requireUsersRead(); // Vérification de la permission de lecture des utilisateurs
-    console.log('Permissions de lecture vérifiées');
+    try {
+      await requireUsersRead(); // Vérification de la permission de lecture des utilisateurs
+      console.log('Permissions de lecture vérifiées');
+    } catch (permError) {
+      const errorMessage = permError instanceof Error ? permError.message : 'Permission refusée';
+      const statusCode = errorMessage.includes('Unauthorized') ? 401 : 403;
+      return NextResponse.json({ success: false, error: errorMessage }, { status: statusCode });
+    }
 
     const drivers = await db
       .select()
@@ -46,7 +52,13 @@ export async function GET() {
 // POST - Créer un nouveau chauffeur
 export async function POST(request: NextRequest) {
   try {
-    await requireUsersCreate(); // Vérification de la permission de création d'utilisateurs
+    try {
+      await requireUsersCreate(); // Vérification de la permission de création d'utilisateurs
+    } catch (permError) {
+      const errorMessage = permError instanceof Error ? permError.message : 'Permission refusée';
+      const statusCode = errorMessage.includes('Unauthorized') ? 401 : 403;
+      return NextResponse.json({ success: false, error: errorMessage }, { status: statusCode });
+    }
 
     const body = await request.json();
     const { id, name, email, phone, licenseNumber, image, isActive } = body;

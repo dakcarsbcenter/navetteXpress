@@ -57,7 +57,7 @@ export function AdvancedNotification({
     switch (type) {
       case 'success':
         return {
-          bg: 'bg-gradient-to-r from-green-500 to-green-600',
+          bg: 'bg-linear-to-r from-green-500 to-green-600',
           icon: '✅',
           iconBg: 'bg-green-100',
           iconColor: 'text-green-600',
@@ -66,7 +66,7 @@ export function AdvancedNotification({
         }
       case 'error':
         return {
-          bg: 'bg-gradient-to-r from-red-500 to-red-600',
+          bg: 'bg-linear-to-r from-red-500 to-red-600',
           icon: '❌',
           iconBg: 'bg-red-100',
           iconColor: 'text-red-600',
@@ -75,7 +75,7 @@ export function AdvancedNotification({
         }
       case 'warning':
         return {
-          bg: 'bg-gradient-to-r from-yellow-500 to-yellow-600',
+          bg: 'bg-linear-to-r from-yellow-500 to-yellow-600',
           icon: '⚠️',
           iconBg: 'bg-yellow-100',
           iconColor: 'text-yellow-600',
@@ -84,7 +84,7 @@ export function AdvancedNotification({
         }
       case 'info':
         return {
-          bg: 'bg-gradient-to-r from-blue-500 to-blue-600',
+          bg: 'bg-linear-to-r from-blue-500 to-blue-600',
           icon: 'ℹ️',
           iconBg: 'bg-blue-100',
           iconColor: 'text-blue-600',
@@ -93,7 +93,7 @@ export function AdvancedNotification({
         }
       default:
         return {
-          bg: 'bg-gradient-to-r from-gray-500 to-gray-600',
+          bg: 'bg-linear-to-r from-gray-500 to-gray-600',
           icon: 'ℹ️',
           iconBg: 'bg-gray-100',
           iconColor: 'text-gray-600',
@@ -147,7 +147,7 @@ export function AdvancedNotification({
         <div className="p-4">
           <div className="flex items-start space-x-3">
             {/* Icône */}
-            <div className={`flex-shrink-0 w-8 h-8 rounded-full ${styles.iconBg} flex items-center justify-center`}>
+            <div className={`shrink-0 w-8 h-8 rounded-full ${styles.iconBg} flex items-center justify-center`}>
               <span className="text-sm">{styles.icon}</span>
             </div>
 
@@ -164,7 +164,7 @@ export function AdvancedNotification({
             {/* Bouton de fermeture */}
             <button
               onClick={onClose}
-              className="flex-shrink-0 text-white/70 hover:text-white transition-colors duration-200"
+              className="shrink-0 text-white/70 hover:text-white transition-colors duration-200"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -176,3 +176,5 @@ export function AdvancedNotification({
     </div>
   )
 }
+
+

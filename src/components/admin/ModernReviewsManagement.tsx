@@ -268,7 +268,7 @@ export function ModernReviewsManagement() {
   const stats = getStats()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-pink-50/30 to-slate-50 dark:from-slate-900 dark:via-pink-900/10 dark:to-slate-900">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-pink-50/30 to-slate-50 dark:from-slate-900 dark:via-pink-900/10 dark:to-slate-900">
       <div className="p-3 sm:p-6 max-w-7xl mx-auto">
         
         {/* Header avec statistiques */}
@@ -328,7 +328,7 @@ export function ModernReviewsManagement() {
               </div>
               
               {/* Export */}
-              <button className="w-full sm:w-auto bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl text-sm sm:text-base font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2">
+              <button className="w-full sm:w-auto bg-linear-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl text-sm sm:text-base font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2">
                 <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
@@ -433,7 +433,7 @@ export function ModernReviewsManagement() {
                       </div>
                       <div className="flex-1 bg-slate-200 dark:bg-slate-700 rounded-full h-3">
                         <div 
-                          className="bg-gradient-to-r from-pink-500 to-rose-500 h-3 rounded-full transition-all duration-500"
+                          className="bg-linear-to-r from-pink-500 to-rose-500 h-3 rounded-full transition-all duration-500"
                           style={{ width: `${percentage}%` }}
                         ></div>
                       </div>
@@ -588,7 +588,7 @@ export function ModernReviewsManagement() {
                   {/* Header de l'avis */}
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-500 rounded-full flex items-center justify-center text-white font-semibold">
+                      <div className="w-12 h-12 bg-linear-to-br from-pink-500 to-rose-500 rounded-full flex items-center justify-center text-white font-semibold">
                         {review.customerName.charAt(0).toUpperCase()}
                       </div>
                       <div>
@@ -716,7 +716,7 @@ export function ModernReviewsManagement() {
                   {/* Header de l'avis original */}
                   <div className="flex items-start justify-between mb-4 pb-4 border-b border-slate-200 dark:border-slate-700">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-rose-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                      <div className="w-10 h-10 bg-linear-to-br from-pink-500 to-rose-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
                         {review.customerName.charAt(0).toUpperCase()}
                       </div>
                       <div>
@@ -745,7 +745,7 @@ export function ModernReviewsManagement() {
                   </div>
 
                   {/* Réponse */}
-                  <div className="bg-gradient-to-r from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20 rounded-lg p-4 border-l-4 border-pink-500">
+                  <div className="bg-linear-to-r from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20 rounded-lg p-4 border-l-4 border-pink-500">
                     <div className="flex items-center gap-2 mb-3">
                       <div className="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center">
                         <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">

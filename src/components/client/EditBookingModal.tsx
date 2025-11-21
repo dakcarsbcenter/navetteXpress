@@ -223,7 +223,7 @@ export function EditBookingModal({ isOpen, onClose, booking, onSuccess }: EditBo
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-3 text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  className="flex-1 px-4 py-3 text-sm font-bold text-white bg-linear-to-r from-blue-600 to-blue-700 rounded-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
                   {isSubmitting ? (
                     <span className="flex items-center justify-center gap-2">
@@ -275,3 +275,4 @@ export function EditBookingModal({ isOpen, onClose, booking, onSuccess }: EditBo
     </>
   )
 }
+

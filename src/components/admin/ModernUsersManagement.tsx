@@ -388,7 +388,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
   const stats = getStats()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       <div className="p-3 sm:p-6 max-w-7xl mx-auto">
         
         {/* Header avec statistiques */}
@@ -438,7 +438,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
               {canCreate() && (
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base"
+                  className="w-full sm:w-auto bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base"
                 >
                   <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -605,7 +605,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                 <div className="relative p-4 sm:p-6 pb-3 sm:pb-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
-                      <div className="relative flex-shrink-0">
+                      <div className="relative shrink-0">
                         {user.image ? (
                           <Image
                             src={user.image}
@@ -615,7 +615,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                             className="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover"
                           />
                         ) : (
-                          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold text-base sm:text-lg">
+                          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-linear-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold text-base sm:text-lg">
                             {user.name?.charAt(0)?.toUpperCase() || '?'}
                           </div>
                         )}
@@ -641,7 +641,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                     </div>
                     
                     {/* Badge de rôle */}
-                    <span className={`inline-flex items-center px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0 ${getRoleBadgeColor(user.role)}`}>
+                    <span className={`inline-flex items-center px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-xs font-medium whitespace-nowrap shrink-0 ${getRoleBadgeColor(user.role)}`}>
                       <span className="hidden sm:inline">{getRoleIcon(user.role)} {getRoleLabel(user.role)}</span>
                       <span className="sm:hidden">{getRoleIcon(user.role)}</span>
                     </span>
@@ -652,7 +652,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                 <div className="px-4 sm:px-6 pb-3 sm:pb-4">
                   {user.licenseNumber && (
                     <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-1.5 sm:mb-2">
-                      <svg className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-3 h-3 sm:w-4 sm:h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
                       <span className="truncate">Permis : {user.licenseNumber}</span>
@@ -660,7 +660,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                   )}
                   
                   <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-500">
-                    <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     Créé le {new Date(user.createdAt).toLocaleDateString('fr-FR')}
@@ -791,7 +791,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                                 className="rounded-full object-cover"
                               />
                             ) : (
-                              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-medium text-sm">
+                              <div className="w-10 h-10 bg-linear-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-medium text-sm">
                                 {user.name?.charAt(0)?.toUpperCase() || '?'}
                               </div>
                             )}
@@ -1058,7 +1058,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all"
+                  className="px-6 py-2 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all"
                 >
                   {editingUser ? 'Mettre à jour' : 'Créer'}
                 </button>
@@ -1073,7 +1073,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fadeIn">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 w-full max-w-md shadow-2xl animate-scaleIn">
             <div className="flex items-center gap-3 mb-6">
-              <div className="flex-shrink-0 w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center">
+              <div className="shrink-0 w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center">
                 <svg className="w-6 h-6 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v-2L4.257 9.257A6 6 0 0112 5h3.001z" />
                 </svg>
@@ -1127,7 +1127,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all"
+                  className="px-6 py-2 bg-linear-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all"
                 >
                   Mettre à jour
                 </button>
@@ -1142,7 +1142,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
           <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-lg w-full animate-scaleIn">
             {/* Header avec image de profil */}
-            <div className="relative h-32 bg-gradient-to-br from-red-500 via-red-600 to-rose-700 rounded-t-2xl overflow-hidden">
+            <div className="relative h-32 bg-linear-to-br from-red-500 via-red-600 to-rose-700 rounded-t-2xl overflow-hidden">
               <div className="absolute inset-0 bg-black/20"></div>
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-4 border-white/30">
@@ -1165,7 +1165,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
               </div>
 
               {/* Informations de l'utilisateur */}
-              <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-700 dark:to-slate-800 rounded-xl p-6 mb-6 border border-slate-200 dark:border-slate-600">
+              <div className="bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-700 dark:to-slate-800 rounded-xl p-6 mb-6 border border-slate-200 dark:border-slate-600">
                 <div className="flex items-center gap-4 mb-4">
                   {deletingUser.image ? (
                     <Image
@@ -1176,7 +1176,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                       className="rounded-full object-cover border-2 border-slate-300 dark:border-slate-600"
                     />
                   ) : (
-                    <div className="w-16 h-16 bg-gradient-to-br from-slate-300 to-slate-400 dark:from-slate-600 dark:to-slate-700 rounded-full flex items-center justify-center border-2 border-slate-300 dark:border-slate-600">
+                    <div className="w-16 h-16 bg-linear-to-br from-slate-300 to-slate-400 dark:from-slate-600 dark:to-slate-700 rounded-full flex items-center justify-center border-2 border-slate-300 dark:border-slate-600">
                       <svg className="w-8 h-8 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
@@ -1231,7 +1231,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
               {/* Message d'avertissement */}
               <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4 rounded-lg mb-6">
                 <div className="flex items-start gap-3">
-                  <svg className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
                   <div>
@@ -1255,7 +1255,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                 </button>
                 <button
                   onClick={handleDeleteUser}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                  className="flex-1 px-6 py-3 bg-linear-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
                 >
                   Supprimer définitivement
                 </button>
@@ -1273,3 +1273,4 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
     </div>
   )
 }
+

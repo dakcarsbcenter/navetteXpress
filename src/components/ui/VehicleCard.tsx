@@ -45,7 +45,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
       )}
     >
       {/* Image Container */}
-      <div className="relative h-48 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 overflow-hidden">
+      <div className="relative h-48 bg-linear-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 overflow-hidden">
         {image ? (
           <Image 
             src={image} 
@@ -61,7 +61,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
         )}
         
         {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         
         {/* Badges */}
         <div className="absolute top-4 left-4 flex gap-2">
@@ -124,7 +124,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
         <div className="space-y-2 mb-6">
           {features.slice(0, 3).map((feature, index) => (
             <div key={index} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-              <div className="w-1.5 h-1.5 bg-[#FF7E38] rounded-full flex-shrink-0" />
+              <div className="w-1.5 h-1.5 bg-[#FF7E38] rounded-full shrink-0" />
               <span>{feature}</span>
             </div>
           ))}
@@ -171,3 +171,5 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
 
 export { VehicleCard };
 export type { VehicleCardProps };
+
+

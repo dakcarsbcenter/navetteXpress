@@ -56,11 +56,11 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800">
       <div className="max-w-md w-full space-y-8 p-8">
         <div className="text-center">
           <div className="flex items-center justify-center gap-3 mb-6">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Navette Xpress
             </h1>
           </div>
@@ -111,7 +111,7 @@ export default function ResetPasswordPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3 px-4 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3 px-4 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? "Envoi en cours..." : "Envoyer le lien de réinitialisation"}
               </button>
@@ -120,7 +120,7 @@ export default function ResetPasswordPage() {
             <div className="space-y-4">
               <button
                 onClick={() => router.push('/auth/signin')}
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3 px-4 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105"
+                className="w-full bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3 px-4 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105"
               >
                 Retour à la connexion
               </button>
@@ -140,3 +140,4 @@ export default function ResetPasswordPage() {
     </div>
   )
 }
+

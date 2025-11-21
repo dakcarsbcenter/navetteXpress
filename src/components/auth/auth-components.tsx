@@ -128,7 +128,7 @@ export function UserButton({
             />
           </div>
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-semibold">
+          <div className="w-full h-full bg-linear-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-semibold">
             {session.user.name?.charAt(0) || session.user.email?.charAt(0) || "U"}
           </div>
         )}
@@ -167,3 +167,4 @@ export function UserButton({
     </div>
   )
 }
+

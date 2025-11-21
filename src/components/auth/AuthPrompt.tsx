@@ -188,7 +188,7 @@ export function AuthPrompt({ onAuthSuccess, prefillData }: AuthPromptProps) {
 
   return (
     <>
-      <div className="mb-8 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-6 rounded-xl border border-blue-200 dark:border-blue-800">
+      <div className="mb-8 bg-linear-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-6 rounded-xl border border-blue-200 dark:border-blue-800">
         <div className="text-center">
           <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
             🚀 Accélérez votre réservation
@@ -230,3 +230,4 @@ export function AuthPrompt({ onAuthSuccess, prefillData }: AuthPromptProps) {
     </>
   )
 }
+

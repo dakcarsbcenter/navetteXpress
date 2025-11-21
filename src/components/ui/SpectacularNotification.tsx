@@ -108,7 +108,7 @@ export function SpectacularNotification({
     switch (type) {
       case 'success':
         return {
-          bg: 'bg-gradient-to-br from-emerald-400 via-green-500 to-teal-600',
+          bg: 'bg-linear-to-br from-emerald-400 via-green-500 to-teal-600',
           icon: '🎉',
           iconBg: 'bg-emerald-100',
           iconColor: 'text-emerald-600',
@@ -118,7 +118,7 @@ export function SpectacularNotification({
         }
       case 'error':
         return {
-          bg: 'bg-gradient-to-br from-red-400 via-rose-500 to-pink-600',
+          bg: 'bg-linear-to-br from-red-400 via-rose-500 to-pink-600',
           icon: '💥',
           iconBg: 'bg-red-100',
           iconColor: 'text-red-600',
@@ -128,7 +128,7 @@ export function SpectacularNotification({
         }
       case 'warning':
         return {
-          bg: 'bg-gradient-to-br from-amber-400 via-yellow-500 to-orange-600',
+          bg: 'bg-linear-to-br from-amber-400 via-yellow-500 to-orange-600',
           icon: '⚡',
           iconBg: 'bg-amber-100',
           iconColor: 'text-amber-600',
@@ -138,7 +138,7 @@ export function SpectacularNotification({
         }
       case 'info':
         return {
-          bg: 'bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600',
+          bg: 'bg-linear-to-br from-cyan-400 via-blue-500 to-indigo-600',
           icon: '✨',
           iconBg: 'bg-cyan-100',
           iconColor: 'text-cyan-600',
@@ -148,7 +148,7 @@ export function SpectacularNotification({
         }
       default:
         return {
-          bg: 'bg-gradient-to-br from-gray-400 via-slate-500 to-zinc-600',
+          bg: 'bg-linear-to-br from-gray-400 via-slate-500 to-zinc-600',
           icon: '💫',
           iconBg: 'bg-gray-100',
           iconColor: 'text-gray-600',
@@ -209,8 +209,8 @@ export function SpectacularNotification({
             className="h-full bg-white/80 transition-all duration-100 ease-linear relative"
             style={{ width: `${progress}%` }}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent animate-pulse" />
-            <div className="absolute inset-0 bg-gradient-to-r from-white/40 via-white/80 to-white/40 animate-pulse" />
+            <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/60 to-transparent animate-pulse" />
+            <div className="absolute inset-0 bg-linear-to-r from-white/40 via-white/80 to-white/40 animate-pulse" />
           </div>
         </div>
 
@@ -218,7 +218,7 @@ export function SpectacularNotification({
           <div className="flex items-start space-x-4">
             {/* Icône avec animation spectaculaire */}
             <div className={`
-              flex-shrink-0 w-12 h-12 rounded-full ${styles.iconBg} 
+              shrink-0 w-12 h-12 rounded-full ${styles.iconBg} 
               flex items-center justify-center
               ${isAnimating ? 'animate-bounce' : ''}
               relative overflow-hidden
@@ -240,7 +240,7 @@ export function SpectacularNotification({
             {/* Bouton de fermeture avec animation */}
             <button
               onClick={onClose}
-              className="flex-shrink-0 text-white/70 hover:text-white transition-all duration-300 hover:scale-125 hover:rotate-90"
+              className="shrink-0 text-white/70 hover:text-white transition-all duration-300 hover:scale-125 hover:rotate-90"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -250,7 +250,7 @@ export function SpectacularNotification({
         </div>
 
         {/* Effet de brillance en arrière-plan */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse" />
+        <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent animate-pulse" />
         
         {/* Bordure animée */}
         <div className="absolute inset-0 rounded-3xl border-2 border-white/20 animate-pulse" />
@@ -258,3 +258,5 @@ export function SpectacularNotification({
     </div>
   )
 }
+
+

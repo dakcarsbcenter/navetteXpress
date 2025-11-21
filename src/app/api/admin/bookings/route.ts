@@ -24,10 +24,12 @@ export async function GET() {
       console.log('✅ [API Bookings] Permission de lecture validée')
     } catch (permError) {
       console.error('❌ [API Bookings] Erreur de permission:', permError)
+      const errorMessage = permError instanceof Error ? permError.message : 'Permission refusée';
+      const statusCode = errorMessage.includes('Unauthorized') ? 401 : 403;
       return NextResponse.json({ 
         success: false, 
-        error: 'Permission refusée' 
-      }, { status: 403 });
+        error: errorMessage
+      }, { status: statusCode });
     }
 
     console.log('🔍 [API Bookings] Requête à la base de données...')
@@ -63,7 +65,17 @@ export async function GET() {
 // POST - Créer une nouvelle réservation
 export async function POST(request: NextRequest) {
   try {
-    await requireBookingsCreate(); // Vérification de la permission de création
+    try {
+      await requireBookingsCreate(); // Vérification de la permission de création
+    } catch (permError) {
+      console.error('❌ [API Bookings] Erreur de permission:', permError)
+      const errorMessage = permError instanceof Error ? permError.message : 'Permission refusée';
+      const statusCode = errorMessage.includes('Unauthorized') ? 401 : 403;
+      return NextResponse.json({ 
+        success: false, 
+        error: errorMessage
+      }, { status: statusCode });
+    }
 
     const body = await request.json();
     const { 
@@ -112,7 +124,7 @@ export async function POST(request: NextRequest) {
     console.error('Erreur lors de la création de la réservation:', error);
     return NextResponse.json({ 
       success: false, 
-      error: 'Erreur interne du serveur' 
+      error: error instanceof Error ? error.message : 'Erreur interne du serveur' 
     }, { status: 500 });
   }
 }

@@ -9,7 +9,7 @@ const HomePageMockup: React.FC = () => {
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800 dark:from-slate-950 dark:to-slate-900">
+      <section className="relative min-h-screen flex items-center justify-center bg-linear-to-br from-slate-900 to-slate-800 dark:from-slate-950 dark:to-slate-900">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5" style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='20' cy='20' r='1'/%3E%3C/g%3E%3C/svg%3E")`
@@ -336,7 +336,7 @@ const HomePageMockup: React.FC = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-orange-500 to-orange-600">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-linear-to-r from-orange-500 to-orange-600">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
             Prêt à Réserver ?
@@ -377,3 +377,4 @@ const HomePageMockup: React.FC = () => {
 };
 
 export default HomePageMockup;
+

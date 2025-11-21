@@ -49,9 +49,9 @@ export function ConfirmationModal({
       case 'success':
         return {
           icon: '🎉',
-          iconBg: 'bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30',
+          iconBg: 'bg-linear-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30',
           iconColor: 'text-green-600 dark:text-green-400',
-          buttonBg: 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 focus:ring-green-500',
+          buttonBg: 'bg-linear-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 focus:ring-green-500',
           borderColor: 'border-green-200 dark:border-green-800',
           ringColor: 'ring-green-500/20'
         }
@@ -120,7 +120,7 @@ export function ConfirmationModal({
           {/* Header with icon */}
           <div className={`px-8 pt-8 pb-6 border-b ${styles.borderColor}`}>
             <div className="flex items-center justify-center">
-              <div className={`flex-shrink-0 w-20 h-20 rounded-full ${styles.iconBg} flex items-center justify-center shadow-lg ring-4 ${styles.ringColor || 'ring-gray-500/20'} transition-all duration-300 hover:scale-110`}>
+              <div className={`shrink-0 w-20 h-20 rounded-full ${styles.iconBg} flex items-center justify-center shadow-lg ring-4 ${styles.ringColor || 'ring-gray-500/20'} transition-all duration-300 hover:scale-110`}>
                 <span className="text-3xl animate-bounce">{styles.icon}</span>
               </div>
             </div>
@@ -129,7 +129,7 @@ export function ConfirmationModal({
           {/* Content */}
           <div className="px-8 py-6">
             <div className="text-center">
-              <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+              <h3 className="text-2xl font-bold mb-4 bg-linear-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
                 {title}
               </h3>
               <p className="text-base text-gray-600 dark:text-gray-300 leading-relaxed max-w-md mx-auto">
@@ -164,3 +164,5 @@ export function ConfirmationModal({
     </div>
   )
 }
+
+

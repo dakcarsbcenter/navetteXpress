@@ -7,16 +7,16 @@ import Link from "next/link"
 import { usePermissions } from "@/hooks/usePermissions"
 
 // Composants pour chaque section
-import { VehiclesManagement } from "@/components/admin/VehiclesManagement"
-import { ModernBookingsManagement } from "@/components/admin/ModernBookingsManagement"
+import { VehiclesManagementRedesigned } from "@/components/admin/VehiclesManagementRedesigned"
+import { BookingsManagementRedesigned } from "@/components/admin/BookingsManagementRedesigned"
 import { ModernPermissionsManagement } from "@/components/admin/ModernPermissionsManagement"
-import { ComposedPermissionsMatrix } from "@/components/admin/ComposedPermissionsMatrix"
-import { ModernReviewsManagement } from "@/components/admin/ModernReviewsManagement"
-import { ModernQuotesManagement } from "@/components/admin/ModernQuotesManagement"
-import { ModernUsersManagement } from "@/components/admin/ModernUsersManagement"
+import PermissionsManagementRedesigned from "@/components/admin/PermissionsManagementRedesigned"
+import ReviewsManagementRedesigned from "@/components/admin/ReviewsManagementRedesigned"
+import { QuotesManagementRedesigned } from "@/components/admin/QuotesManagementRedesigned"
+import { UsersManagementRedesigned } from "@/components/admin/UsersManagementRedesigned"
 import AdminGlobalStats from "@/components/admin/AdminGlobalStats"
 import { ModernAdminDashboard } from "@/components/admin/ModernAdminDashboard"
-import AdminInvoicesView from "@/components/admin/AdminInvoicesView"
+import InvoicesManagementRedesigned from "@/components/admin/InvoicesManagementRedesigned"
 
 type TabType = 'modern' | 'users' | 'vehicles' | 'bookings' | 'quotes' | 'invoices' | 'permissions' | 'reviews' | 'stats'
 
@@ -106,19 +106,19 @@ export default function AdminDashboard() {
       case 'stats':
         return <AdminGlobalStats />
       case 'users':
-        return <ModernUsersManagement userPermissions={permissions} />
+        return <UsersManagementRedesigned userPermissions={permissions} />
       case 'vehicles':
-        return <VehiclesManagement />
+        return <VehiclesManagementRedesigned />
       case 'bookings':
-        return <ModernBookingsManagement />
+        return <BookingsManagementRedesigned />
       case 'quotes':
-        return <ModernQuotesManagement />
+        return <QuotesManagementRedesigned />
       case 'invoices':
-        return <AdminInvoicesView />
+        return <InvoicesManagementRedesigned />
       case 'permissions':
-        return <ComposedPermissionsMatrix />
+        return <PermissionsManagementRedesigned />
       case 'reviews':
-        return <ModernReviewsManagement />
+        return <ReviewsManagementRedesigned />
       default:
         return <ModernAdminDashboard onNavigate={(section: string) => setActiveTab(section as TabType)} />
     }
@@ -126,57 +126,203 @@ export default function AdminDashboard() {
 
   // Affichage avec sidebar pour toutes les vues
   return (
-    <div className="min-h-screen flex">
-      {/* Sidebar gauche - Navigation épurée */}
-      <aside className="hidden lg:flex flex-col fixed left-0 top-0 h-screen w-20 xl:w-64 bg-gradient-to-b from-slate-900 to-slate-950 dark:from-slate-950 dark:to-black border-r border-slate-700 shadow-2xl z-50 transition-all duration-300">
-        {/* Logo */}
-        <Link href="/" className="flex items-center justify-center xl:justify-start gap-3 p-6 border-b border-slate-700">
-          <img 
-            src="/logo.svg" 
-            alt="NavetteXpress" 
-            className="h-10 w-10 flex-shrink-0"
-          />
-          <span className="hidden xl:block text-white font-bold text-lg">NavetteXpress</span>
-        </Link>
+    <div className="min-h-screen flex bg-slate-50 dark:bg-slate-900">
+      {/* Sidebar gauche - Style NavetteHub */}
+      <aside className="hidden lg:flex flex-col fixed left-0 top-0 h-screen w-64 bg-[#1A1A1A] border-r border-slate-800 shadow-2xl z-50">
+        {/* Logo avec badge rouge */}
+        <div className="p-6 border-b border-slate-800">
+          <Link href="/" className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 bg-[#A73B3C] rounded-lg flex items-center justify-center shrink-0">
+              <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
+                <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"/>
+              </svg>
+            </div>
+            <div>
+              <div className="flex items-center gap-1">
+                <span className="text-white font-bold text-lg">Navette</span>
+                <span className="text-[#A73B3C] font-bold text-lg">Hub</span>
+              </div>
+            </div>
+          </Link>
+          
+          {/* Badge système opérationnel */}
+          <div className="flex items-center gap-2 text-xs text-slate-400">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span>Système opérationnel</span>
+          </div>
+        </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 py-6 px-3 space-y-2 overflow-y-auto">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`group w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 ${
-                activeTab === tab.id
-                  ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/50'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800'
-              }`}
-              title={tab.label}
-            >
-              <span className="text-2xl flex-shrink-0">{tab.icon}</span>
-              <span className="hidden xl:block font-semibold text-sm">{tab.label}</span>
-              {activeTab === tab.id && (
-                <div className="hidden xl:block ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
-              )}
-            </button>
-          ))}
+        {/* Navigation avec sections */}
+        <nav className="flex-1 py-4 px-3 space-y-6 overflow-y-auto">
+          {/* Section PRINCIPAL */}
+          <div>
+            <div className="px-3 mb-2">
+              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">PRINCIPAL</span>
+            </div>
+            <div className="space-y-1">
+              <button
+                onClick={() => setActiveTab('modern')}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
+                  activeTab === 'modern'
+                    ? 'bg-[#A73B3C] text-white'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                <span className="text-sm font-medium">Dashboard</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('stats')}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
+                  activeTab === 'stats'
+                    ? 'bg-[#A73B3C] text-white'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                <span className="text-sm font-medium">Statistiques</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('bookings')}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
+                  activeTab === 'bookings'
+                    ? 'bg-[#A73B3C] text-white'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span className="text-sm font-medium">Réservations</span>
+                {canRead('bookings') && (
+                  <span className="ml-auto w-6 h-6 bg-yellow-500/20 text-yellow-500 rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Section GESTION */}
+          <div>
+            <div className="px-3 mb-2">
+              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">GESTION</span>
+            </div>
+            <div className="space-y-1">
+              <button
+                onClick={() => setActiveTab('users')}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
+                  activeTab === 'users'
+                    ? 'bg-[#A73B3C] text-white'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                <span className="text-sm font-medium">Utilisateurs</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('vehicles')}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
+                  activeTab === 'vehicles'
+                    ? 'bg-[#A73B3C] text-white'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
+                  <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"/>
+                </svg>
+                <span className="text-sm font-medium">Flotte & Véhicules</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Section FINANCE & ADMIN */}
+          <div>
+            <div className="px-3 mb-2">
+              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">FINANCE & ADMIN</span>
+            </div>
+            <div className="space-y-1">
+              <button
+                onClick={() => setActiveTab('quotes')}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
+                  activeTab === 'quotes'
+                    ? 'bg-[#A73B3C] text-white'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span className="text-sm font-medium">Devis</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('invoices')}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
+                  activeTab === 'invoices'
+                    ? 'bg-[#A73B3C] text-white'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
+                </svg>
+                <span className="text-sm font-medium">Factures</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('permissions')}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
+                  activeTab === 'permissions'
+                    ? 'bg-[#A73B3C] text-white'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                <span className="text-sm font-medium">Permissions</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('reviews')}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
+                  activeTab === 'reviews'
+                    ? 'bg-[#A73B3C] text-white'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                </svg>
+                <span className="text-sm font-medium">Avis Clients</span>
+              </button>
+            </div>
+          </div>
         </nav>
 
-        {/* User section */}
-        <div className="p-4 border-t border-slate-700">
-          <div className="hidden xl:block mb-3">
-            <div className="px-4 py-3 bg-slate-800 rounded-xl">
-              <p className="text-white font-semibold text-sm truncate">{session.user.name}</p>
+        {/* User section avec avatar rond */}
+        <div className="p-4 border-t border-slate-800">
+          <div className="flex items-center gap-3 mb-3 px-3 py-2 bg-slate-800 rounded-lg">
+            <div className="w-10 h-10 bg-[#A73B3C] rounded-full flex items-center justify-center text-white font-bold shrink-0">
+              {session.user.name?.charAt(0).toUpperCase() || 'A'}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-white font-semibold text-sm truncate">Admin Hub</p>
               <p className="text-slate-400 text-xs truncate">{session.user.email}</p>
             </div>
           </div>
           <button
             onClick={() => signOut({ callbackUrl: '/' })}
-            className="w-full flex items-center justify-center xl:justify-start gap-3 px-4 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg text-sm font-medium transition-all"
           >
-            <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
-            <span className="hidden xl:inline">Déconnexion</span>
+            <span>Déconnexion</span>
           </button>
         </div>
       </aside>
@@ -193,7 +339,7 @@ export default function AdminDashboard() {
                   className="h-9 w-auto"
                 />
               </Link>
-              <span className="px-3 py-1.5 bg-gradient-to-r from-red-100 to-red-200 dark:from-red-900/50 dark:to-red-800/50 text-red-800 dark:text-red-200 rounded-full text-xs font-bold whitespace-nowrap shadow-sm border border-red-300 dark:border-red-700">
+              <span className="px-3 py-1.5 bg-linear-to-r from-red-100 to-red-200 dark:from-red-900/50 dark:to-red-800/50 text-red-800 dark:text-red-200 rounded-full text-xs font-bold whitespace-nowrap shadow-sm border border-red-300 dark:border-red-700">
                 👑 ADMIN
               </span>
             </div>
@@ -214,7 +360,7 @@ export default function AdminDashboard() {
               
               <button
                 onClick={() => signOut({ callbackUrl: '/' })}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg text-sm font-semibold transition-all duration-200 shadow-md"
+                className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg text-sm font-semibold transition-all duration-200 shadow-md"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -226,7 +372,7 @@ export default function AdminDashboard() {
 
         {/* Menu mobile dropdown */}
         {mobileMenuOpen && (
-          <div className="bg-gradient-to-b from-white to-slate-50 dark:from-slate-900 dark:to-slate-950 border-t border-slate-200 dark:border-slate-700 shadow-lg">
+          <div className="bg-linear-to-b from-white to-slate-50 dark:from-slate-900 dark:to-slate-950 border-t border-slate-200 dark:border-slate-700 shadow-lg">
             <div className="px-4 py-3 space-y-2 max-h-[70vh] overflow-y-auto">
               {tabs.map((tab) => (
                 <button
@@ -237,7 +383,7 @@ export default function AdminDashboard() {
                   }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
                     activeTab === tab.id
-                      ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg'
+                      ? 'bg-linear-to-r from-blue-600 to-blue-700 text-white shadow-lg'
                       : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'
                   }`}
                 >
@@ -251,9 +397,11 @@ export default function AdminDashboard() {
       </header>
 
       {/* Main content */}
-      <main className="flex-1 lg:ml-20 xl:ml-64 lg:pt-0 pt-16 transition-all duration-300">
+      <main className="flex-1 lg:ml-64 lg:pt-0 pt-16 transition-all duration-300 bg-slate-50 dark:bg-slate-900">
         {renderContent()}
       </main>
     </div>
   )
 }
+
+

@@ -109,7 +109,7 @@ export function NotificationWithSound({
     switch (type) {
       case 'success':
         return {
-          bg: 'bg-gradient-to-br from-green-400 via-green-500 to-green-600',
+          bg: 'bg-linear-to-br from-green-400 via-green-500 to-green-600',
           icon: '✅',
           iconBg: 'bg-green-100',
           iconColor: 'text-green-600',
@@ -119,7 +119,7 @@ export function NotificationWithSound({
         }
       case 'error':
         return {
-          bg: 'bg-gradient-to-br from-red-400 via-red-500 to-red-600',
+          bg: 'bg-linear-to-br from-red-400 via-red-500 to-red-600',
           icon: '❌',
           iconBg: 'bg-red-100',
           iconColor: 'text-red-600',
@@ -129,7 +129,7 @@ export function NotificationWithSound({
         }
       case 'warning':
         return {
-          bg: 'bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600',
+          bg: 'bg-linear-to-br from-yellow-400 via-yellow-500 to-yellow-600',
           icon: '⚠️',
           iconBg: 'bg-yellow-100',
           iconColor: 'text-yellow-600',
@@ -139,7 +139,7 @@ export function NotificationWithSound({
         }
       case 'info':
         return {
-          bg: 'bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600',
+          bg: 'bg-linear-to-br from-blue-400 via-blue-500 to-blue-600',
           icon: 'ℹ️',
           iconBg: 'bg-blue-100',
           iconColor: 'text-blue-600',
@@ -149,7 +149,7 @@ export function NotificationWithSound({
         }
       default:
         return {
-          bg: 'bg-gradient-to-br from-gray-400 via-gray-500 to-gray-600',
+          bg: 'bg-linear-to-br from-gray-400 via-gray-500 to-gray-600',
           icon: 'ℹ️',
           iconBg: 'bg-gray-100',
           iconColor: 'text-gray-600',
@@ -180,7 +180,7 @@ export function NotificationWithSound({
             className="h-full bg-white/60 transition-all duration-100 ease-linear relative"
             style={{ width: `${progress}%` }}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-pulse" />
+            <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/40 to-transparent animate-pulse" />
           </div>
         </div>
 
@@ -188,7 +188,7 @@ export function NotificationWithSound({
           <div className="flex items-start space-x-4">
             {/* Icône avec animation */}
             <div className={`
-              flex-shrink-0 w-10 h-10 rounded-full ${styles.iconBg} 
+              shrink-0 w-10 h-10 rounded-full ${styles.iconBg} 
               flex items-center justify-center
               ${isPulsing ? 'animate-bounce' : ''}
             `}>
@@ -208,7 +208,7 @@ export function NotificationWithSound({
             {/* Bouton de fermeture avec animation */}
             <button
               onClick={onClose}
-              className="flex-shrink-0 text-white/70 hover:text-white transition-all duration-200 hover:scale-110"
+              className="shrink-0 text-white/70 hover:text-white transition-all duration-200 hover:scale-110"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -218,8 +218,10 @@ export function NotificationWithSound({
         </div>
 
         {/* Effet de brillance en arrière-plan */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
+        <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/5 to-transparent animate-pulse" />
       </div>
     </div>
   )
 }
+
+

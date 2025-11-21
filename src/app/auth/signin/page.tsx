@@ -146,42 +146,37 @@ function SignInForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 py-4 px-4">
-      <div className="max-w-md w-full space-y-3 sm:space-y-6">
-        <div className="text-center">
-          <div className="flex items-center justify-center gap-2 mb-2 sm:mb-4">
-            <Image
-              src="/logo.svg"
-              alt="Navette Xpress"
-              width={40}
-              height={40}
-              className="w-10 h-10 sm:w-12 sm:h-12"
-              priority
-            />
-            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+    <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#1A1A1A] py-8 px-4">
+      <div className="max-w-md w-full">
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <div className="w-12 h-12 bg-[#1A1A1A] dark:bg-white rounded-lg flex items-center justify-center">
+              <span className="text-white dark:text-[#1A1A1A] font-bold text-xl">NX</span>
+            </div>
+            <h1 className="text-3xl font-bold text-[#A73B3C]">
               Navette Xpress
             </h1>
           </div>
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
-            Connexion
+          <h2 className="text-2xl font-bold text-[#1A1A1A] dark:text-white mb-2">
+            Ravi de vous revoir
           </h2>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-1 sm:mt-2">
-            Connectez-vous à votre compte
+          <p className="text-slate-600 dark:text-slate-400">
+            Entrez vos coordonnées pour accéder à votre compte.
           </p>
         </div>
 
-        <div className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-8 border border-slate-200 dark:border-slate-700">
           {error && (
-            <div className="mb-3 p-2 sm:p-3 bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200 rounded-lg text-xs sm:text-sm">
+            <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-lg text-sm">
               {error}
               {showResetOption && (
-                <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-red-200 dark:border-red-800">
-                  <p className="text-xs sm:text-sm font-medium mb-1.5 sm:mb-2">
+                <div className="mt-3 pt-3 border-t border-red-200 dark:border-red-700">
+                  <p className="text-sm font-medium mb-2">
                     Vous avez oublié votre mot de passe ?
                   </p>
                   <Link 
                     href="/auth/reset-password"
-                    className="inline-block text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold underline"
+                    className="inline-block text-sm text-[#A73B3C] hover:text-[#8B3032] font-semibold underline"
                   >
                     Réinitialiser mon mot de passe →
                   </Link>
@@ -190,68 +185,93 @@ function SignInForm() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 sm:mb-1.5">
-                Email
+              <label htmlFor="email" className="block text-sm font-medium text-[#1A1A1A] dark:text-slate-300 mb-2">
+                Adresse Email
               </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-3 py-2 sm:px-4 sm:py-2.5 text-sm sm:text-base border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
-                placeholder="votre@email.com"
-              />
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full pl-10 pr-4 py-3 text-sm border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-[#A73B3C] focus:border-[#A73B3C] dark:bg-slate-700 dark:text-white transition-all"
+                  placeholder="votre@email.com"
+                />
+              </div>
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-1 sm:mb-1.5">
-                <label htmlFor="password" className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">
+              <div className="flex items-center justify-between mb-2">
+                <label htmlFor="password" className="block text-sm font-medium text-[#1A1A1A] dark:text-slate-300">
                   Mot de passe
                 </label>
                 <Link
                   href="/auth/reset-password"
-                  className="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                  className="text-sm text-[#A73B3C] hover:text-[#8B3032] font-medium"
                 >
                   Mot de passe oublié ?
                 </Link>
               </div>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full pl-10 pr-4 py-3 text-sm border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-[#A73B3C] focus:border-[#A73B3C] dark:bg-slate-700 dark:text-white transition-all"
+                  placeholder="••••••••"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center">
               <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-3 py-2 sm:px-4 sm:py-2.5 text-sm sm:text-base border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
-                placeholder="••••••••"
+                id="remember"
+                type="checkbox"
+                className="w-4 h-4 text-[#A73B3C] border-slate-300 rounded focus:ring-[#A73B3C] focus:ring-2"
               />
+              <label htmlFor="remember" className="ml-2 text-sm text-slate-700 dark:text-slate-300">
+                Se souvenir de moi
+              </label>
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-2.5 sm:py-3 px-4 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-[#A73B3C] hover:bg-[#8B3032] text-white py-3 px-4 rounded-lg font-semibold text-base transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
             >
               {isLoading ? "Connexion..." : "Se connecter"}
             </button>
           </form>
 
-          <div className="mt-3 sm:mt-4">
+          <div className="mt-5">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-slate-300 dark:border-slate-600" />
               </div>
-              <div className="relative flex justify-center text-xs sm:text-sm">
-                <span className="px-2 bg-white dark:bg-slate-800 text-slate-500">Ou</span>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-3 bg-white dark:bg-slate-800 text-slate-500">Ou continuer avec</span>
               </div>
             </div>
 
             <button
               onClick={handleGoogleSignIn}
               disabled={isLoading}
-              className="mt-3 sm:mt-4 w-full bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 py-2.5 sm:py-3 px-4 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 hover:bg-slate-50 dark:hover:bg-slate-600 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="mt-5 w-full bg-white dark:bg-slate-700 border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 py-3 px-4 rounded-lg font-medium text-base transition-all duration-200 hover:bg-slate-50 dark:hover:bg-slate-600 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -259,18 +279,25 @@ function SignInForm() {
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
-              {isLoading ? "Connexion..." : "Continuer avec Google"}
+              <span>Google</span>
             </button>
           </div>
 
-          <div className="mt-3 sm:mt-4 text-center">
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+          <div className="mt-6 text-center">
+            <p className="text-sm text-slate-600 dark:text-slate-400">
               Pas encore de compte ?{" "}
-              <Link href="/auth/signup" className="text-blue-600 hover:text-blue-500 font-semibold">
+              <Link href="/auth/signup" className="text-[#A73B3C] hover:text-[#8B3032] font-semibold">
                 Créer un compte
               </Link>
             </p>
           </div>
+        </div>
+
+        {/* Pied de page */}
+        <div className="mt-8 text-center">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            © 2025 Navette Xpress. Politique de confidentialité
+          </p>
         </div>
       </div>
     </div>
@@ -280,9 +307,9 @@ function SignInForm() {
 export default function SignInPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800">
+      <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#1A1A1A]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A73B3C] mx-auto"></div>
           <p className="mt-4 text-slate-600 dark:text-slate-400">Chargement...</p>
         </div>
       </div>

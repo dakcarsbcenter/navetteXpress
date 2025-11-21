@@ -378,7 +378,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       <div className="space-y-8 p-6">
         {/* Header moderne avec salutation dynamique */}
         <div className="mb-8">
@@ -430,7 +430,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
               <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Courses cette semaine</p>
               <p className="text-3xl font-bold text-slate-900 dark:text-white">{stats.weeklyRides}</p>
             </div>
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center">
+            <div className="w-16 h-16 bg-linear-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center">
               <span className="text-white text-2xl">🚗</span>
             </div>
           </div>
@@ -442,7 +442,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
               <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Heures conduites</p>
               <p className="text-3xl font-bold text-slate-900 dark:text-white">{stats.hoursWorked}h</p>
             </div>
-            <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center">
+            <div className="w-16 h-16 bg-linear-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center">
               <span className="text-white text-2xl">⏱️</span>
             </div>
           </div>
@@ -454,7 +454,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
               <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Revenus</p>
               <p className="text-3xl font-bold text-slate-900 dark:text-white">{stats.earnings} FCFA</p>
             </div>
-            <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center">
+            <div className="w-16 h-16 bg-linear-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center">
               <span className="text-white text-2xl">💰</span>
             </div>
           </div>
@@ -466,7 +466,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
               <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Note moyenne</p>
               <p className="text-3xl font-bold text-slate-900 dark:text-white">{stats.rating}/5</p>
             </div>
-            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center">
+            <div className="w-16 h-16 bg-linear-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center">
               <span className="text-white text-2xl">⭐</span>
             </div>
           </div>
@@ -592,7 +592,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
                 <div key={ride.id} className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
+                      <div className="w-10 h-10 bg-linear-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
                         {ride.customerName.charAt(0).toUpperCase()}
                       </div>
                       <div>
@@ -750,7 +750,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
               onClick={() => onNavigate(actionItem.key as 'planning' | 'vehicle-report' | 'stats' | 'profile')}
               className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all duration-300"
             >
-              <div className={`w-16 h-16 bg-gradient-to-br ${actionItem.color} rounded-2xl flex items-center justify-center mx-auto mb-4`}>
+              <div className={`w-16 h-16 bg-linear-to-br ${actionItem.color} rounded-2xl flex items-center justify-center mx-auto mb-4`}>
                 <span className="text-white text-2xl">{actionItem.icon}</span>
               </div>
               <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">{actionItem.title}</h3>
@@ -791,7 +791,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
               </button>
               
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-white font-bold text-2xl">
+                <div className="w-16 h-16 bg-linear-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-white font-bold text-2xl">
                   {selectedBooking.customerName.charAt(0).toUpperCase()}
                 </div>
                 <div>
@@ -897,7 +897,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
               </div>
 
               {/* Prix */}
-              <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl p-6 text-center border border-green-200 dark:border-green-800">
+              <div className="bg-linear-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl p-6 text-center border border-green-200 dark:border-green-800">
                 <p className="text-sm text-green-600 dark:text-green-400 mb-2">Prix total</p>
                 <p className="text-4xl font-bold text-green-700 dark:text-green-300">
                   {selectedBooking.price} FCFA

@@ -3,7 +3,6 @@ import { authOptions } from '@/lib/auth';
 import { db } from '@/db';
 import { users, rolePermissionsTable } from '@/schema';
 import { eq, and } from 'drizzle-orm';
-import { redirect } from 'next/navigation';
 
 /**
  * Vérifie si l'utilisateur actuel a le rôle admin
@@ -73,25 +72,20 @@ export async function hasResourcePermission(
  * Middleware pour protéger les routes admin (admin uniquement)
  */
 export async function requireAdminRole(): Promise<string> {
-  try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session?.user?.id) {
-      console.error('Aucune session utilisateur trouvée');
-      redirect('/auth/signin');
-    }
-
-    const isAdmin = await checkAdminRole(session.user.id);
-    if (!isAdmin) {
-      console.error('Utilisateur non autorisé - rôle admin requis');
-      redirect('/dashboard');
-    }
-
-    return session.user.id;
-  } catch (error) {
-    console.error('Erreur lors de la vérification des permissions admin:', error);
-    throw error;
+  const session = await getServerSession(authOptions);
+  
+  if (!session?.user?.id) {
+    console.error('Aucune session utilisateur trouvée');
+    throw new Error('Unauthorized: No session found');
   }
+
+  const isAdmin = await checkAdminRole(session.user.id);
+  if (!isAdmin) {
+    console.error('Utilisateur non autorisé - rôle admin requis');
+    throw new Error('Forbidden: Admin role required');
+  }
+
+  return session.user.id;
 }
 
 /**
@@ -102,25 +96,20 @@ export async function requireResourcePermission(
   resource: string,
   action: 'read' | 'create' | 'update' | 'delete'
 ): Promise<string> {
-  try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session?.user?.id) {
-      console.error('Aucune session utilisateur trouvée');
-      redirect('/auth/signin');
-    }
-
-    const hasPermission = await hasResourcePermission(session.user.id, resource, action);
-    if (!hasPermission) {
-      console.error(`Utilisateur non autorisé - permission '${action}' sur '${resource}' requise`);
-      redirect('/dashboard');
-    }
-
-    return session.user.id;
-  } catch (error) {
-    console.error('Erreur lors de la vérification des permissions:', error);
-    throw error;
+  const session = await getServerSession(authOptions);
+  
+  if (!session?.user?.id) {
+    console.error('Aucune session utilisateur trouvée');
+    throw new Error('Unauthorized: No session found');
   }
+
+  const hasPermission = await hasResourcePermission(session.user.id, resource, action);
+  if (!hasPermission) {
+    console.error(`Utilisateur non autorisé - permission '${action}' sur '${resource}' requise`);
+    throw new Error(`Forbidden: Permission '${action}' on '${resource}' required`);
+  }
+
+  return session.user.id;
 }
 
 /**

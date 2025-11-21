@@ -89,119 +89,120 @@ export default async function FlottePage() {
     description: vehicle.description || `${vehicle.make} ${vehicle.model} ${vehicle.year}`,
   }));
   return (
-    <div className="font-sans min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <div className="font-sans min-h-screen bg-[#FAFAFA] dark:bg-[#1A1A1A]">
       <Navigation variant="solid" />
 
       {/* Hero Section - Focus on Benefits */}
-      <section className="relative pt-8 pb-8 sm:pt-32 sm:pb-12 md:pt-36 md:pb-16 px-4 sm:px-6 lg:px-8 bg-slate-900 dark:bg-slate-950">
-        <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3 sm:mb-4 leading-tight">
-            Flotte Premium
+      <section className="relative pt-24 pb-16 sm:pt-32 sm:pb-20 md:pt-40 md:pb-24 px-4 sm:px-6 lg:px-8 bg-[#1A1A1A]">
+        <div className="absolute inset-0 opacity-10" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23E5C16C' fill-opacity='0.1'%3E%3Ccircle cx='20' cy='20' r='1'/%3E%3C/g%3E%3C/svg%3E")`
+        }}></div>
+        <div className="max-w-6xl mx-auto text-center relative z-10">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white mb-4 sm:mb-6 leading-tight">
+            <span className="text-[#E5C16C]">Notre Flotte</span> de Véhicules
           </h1>
-          <p className="text-sm sm:text-base md:text-lg text-slate-300 max-w-3xl mx-auto mb-4 sm:mb-6 leading-relaxed">
-            Des véhicules soigneusement sélectionnés pour votre confort et sécurité
+          <p className="text-lg sm:text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-8 sm:mb-10 leading-relaxed">
+            Nous vous garantissons un voyage en toute élégance et sécurité. Nos véhicules sont récents et équipés du WiFi et de la climatisation.
           </p>
           
           {/* Key Benefits */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto">
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-white/20">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-500/20 rounded-lg flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+              <div className="w-12 h-12 bg-[#E5C16C]/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <svg className="w-6 h-6 text-[#E5C16C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="text-base sm:text-lg font-semibold text-white mb-1.5 sm:mb-2">Véhicules Récents</h3>
-              <p className="text-xs sm:text-sm text-slate-300">Tous nos véhicules sont parfaitement entretenus</p>
+              <h3 className="text-lg font-semibold text-white mb-2">Véhicules Récents</h3>
+              <p className="text-sm text-white/80">Tous nos véhicules sont parfaitement entretenus</p>
             </div>
             
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-white/20">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+              <div className="w-12 h-12 bg-[#E5C16C]/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <svg className="w-6 h-6 text-[#E5C16C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
               </div>
-              <h3 className="text-base sm:text-lg font-semibold text-white mb-1.5 sm:mb-2">Sécurité Maximale</h3>
-              <p className="text-xs sm:text-sm text-slate-300">Assurance complète et chauffeurs certifiés</p>
+              <h3 className="text-lg font-semibold text-white mb-2">Sécurité Maximale</h3>
+              <p className="text-sm text-white/80">Assurance complète et chauffeurs certifiés</p>
             </div>
             
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-white/20">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+              <div className="w-12 h-12 bg-[#E5C16C]/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <svg className="w-6 h-6 text-[#E5C16C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
-              <h3 className="text-base sm:text-lg font-semibold text-white mb-1.5 sm:mb-2">Service 24h/24</h3>
-              <p className="text-xs sm:text-sm text-slate-300">Disponible en permanence pour tous vos besoins</p>
+              <h3 className="text-lg font-semibold text-white mb-2">Service 24h/24</h3>
+              <p className="text-sm text-white/80">Disponible en permanence pour tous vos besoins</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Vehicle Grid - Simplified with Benefits Focus */}
-      <section className="py-10 sm:py-12 md:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-white dark:bg-slate-900">
+      <section className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 lg:px-8 bg-white dark:bg-[#1A1A1A]">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-8 sm:mb-10 md:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-3 sm:mb-4 leading-tight">
-              Nos Véhicules
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#1A1A1A] dark:text-[#FAFAFA] mb-4 leading-tight">
+              Découvrez Nos Véhicules
             </h2>
-            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
               Chaque véhicule est sélectionné pour offrir confort, sécurité et élégance
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {vehicles.map((vehicle: { id: number; name: string; category: string; capacity: string; features: string[]; image: string; description: string }) => (
               <div 
                 key={vehicle.id}
-                className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden hover:shadow-xl transition-shadow duration-200"
+                className="bg-white dark:bg-[#252525] rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
               >
-                {/* Vehicle Header */}
-                <div className="bg-slate-50 dark:bg-slate-700 p-4 sm:p-5 md:p-6 text-center">
-                  <div className="relative w-full h-40 sm:h-48 mb-3 sm:mb-4 rounded-lg sm:rounded-xl overflow-hidden">
-                    <Image 
-                      src={vehicle.image} 
-                      alt={vehicle.name}
-                      fill
-                      className="object-cover transition-transform duration-300 hover:scale-105"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                  </div>
-                  <div className="inline-block bg-[#FFB885]/20 dark:bg-[#FF7E38]/20 text-[#FF7E38] dark:text-[#FFB885] px-2.5 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
-                    Disponible
+                {/* Vehicle Image */}
+                <div className="relative h-48 bg-[#1A1A1A]">
+                  <Image 
+                    src={vehicle.image} 
+                    alt={vehicle.name}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                  <div className="absolute top-4 right-4">
+                    <span className="inline-block bg-[#E5C16C] text-[#1A1A1A] px-3 py-1 rounded-full text-xs font-semibold">
+                      Disponible
+                    </span>
                   </div>
                 </div>
 
                 {/* Vehicle Info */}
-                <div className="p-4 sm:p-5 md:p-6">
-                  <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
-                    <div className="p-1.5 sm:p-2 bg-[#FFB885]/10 rounded-lg flex-shrink-0">
-                      {getVehicleIcon(vehicle.category, 18)}
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-semibold text-[#A73B3C] uppercase tracking-wide">
+                      {vehicle.category}
+                    </span>
+                    <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
+                      <Users className="w-4 h-4" />
+                      <span className="text-xs">{vehicle.capacity}</span>
                     </div>
-                    <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-tight">
-                      {vehicle.name}
-                    </h3>
                   </div>
-                  <p className="text-slate-600 dark:text-slate-300 mb-3 sm:mb-4 text-xs sm:text-sm leading-relaxed">
+                  
+                  <h3 className="text-xl font-bold text-[#1A1A1A] dark:text-[#FAFAFA] mb-3">
+                    {vehicle.name}
+                  </h3>
+                  
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">
                     {vehicle.description}
                   </p>
-                  
-                  <div className="flex items-center text-slate-500 dark:text-slate-400 mb-3 sm:mb-4 text-xs sm:text-sm">
-                    <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 flex-shrink-0" />
-                    <span className="font-medium">{vehicle.capacity}</span>
-                  </div>
 
-                  {/* Key Features - Only 3 most important */}
+                  {/* Key Features */}
                   {vehicle.features && vehicle.features.length > 0 && (
-                    <div className="mb-4 sm:mb-5 md:mb-6">
-                      <h4 className="font-semibold text-slate-900 dark:text-white mb-2 sm:mb-3 text-xs sm:text-sm">Équipements inclus :</h4>
-                      <ul className="space-y-1.5 sm:space-y-2">
+                    <div className="mb-6">
+                      <h4 className="font-semibold text-[#1A1A1A] dark:text-[#FAFAFA] mb-2 text-sm">Équipements inclus :</h4>
+                      <ul className="space-y-2">
                         {vehicle.features.slice(0, 3).map((feature: string, featureIndex: number) => (
-                          <li key={featureIndex} className="flex items-center text-slate-600 dark:text-slate-300 text-xs sm:text-sm">
-                            <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 bg-green-100 dark:bg-green-900/50 rounded-full flex items-center justify-center mr-1.5 sm:mr-2 flex-shrink-0">
-                              <span className="text-green-600 dark:text-green-400 text-[10px] sm:text-xs">✓</span>
-                            </div>
-                            <span className="leading-tight">{feature}</span>
+                          <li key={featureIndex} className="flex items-start text-gray-700 dark:text-gray-300 text-sm">
+                            <span className="text-[#E5C16C] mr-2 text-lg">•</span>
+                            <span>{feature}</span>
                           </li>
                         ))}
                       </ul>
@@ -209,15 +210,12 @@ export default async function FlottePage() {
                   )}
 
                   {/* CTA */}
-                  <div className="border-t border-slate-200 dark:border-slate-700 pt-3 sm:pt-4">
-                    <Link
-                      href="/reservation"
-                      className="w-full bg-gradient-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg font-semibold text-xs sm:text-sm transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-1.5 sm:gap-2"
-                    >
-                      <BookNowIcon size={14} color="white" />
-                      Réserver
-                    </Link>
-                  </div>
+                  <Link
+                    href="/reservation"
+                    className="w-full block text-center py-3 bg-[#A73B3C] hover:bg-[#8B3032] text-white font-semibold rounded-lg transition-all duration-200 shadow-lg"
+                  >
+                    Réserver ce Véhicule
+                  </Link>
                 </div>
               </div>
             ))}
@@ -226,57 +224,56 @@ export default async function FlottePage() {
       </section>
 
       {/* Included Services - Simplified */}
-      <section className="py-10 sm:py-12 md:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-slate-50 dark:bg-slate-800">
+      <section className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 lg:px-8 bg-[#FAFAFA] dark:bg-[#1A1A1A]">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-8 sm:mb-10 md:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-3 sm:mb-4 leading-tight">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#1A1A1A] dark:text-[#FAFAFA] mb-4 leading-tight">
               Services Inclus
             </h2>
-            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
               Chaque réservation inclut automatiquement nos services premium
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            <div className="bg-white dark:bg-slate-700 p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl shadow-lg border border-slate-200 dark:border-slate-600 text-center">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 dark:bg-blue-900/50 rounded-lg flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white dark:bg-[#252525] p-8 rounded-xl shadow-lg text-center">
+              <div className="w-12 h-12 bg-[#E5C16C]/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <svg className="w-6 h-6 text-[#E5C16C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </div>
-              <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white mb-1.5 sm:mb-2">
+              <h3 className="text-lg font-semibold text-[#1A1A1A] dark:text-[#FAFAFA] mb-2">
                 Chauffeurs Professionnels
               </h3>
-              <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 Expérimentés et en tenue pour tous vos déplacements
               </p>
             </div>
             
-            <div className="bg-white dark:bg-slate-700 p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl shadow-lg border border-slate-200 dark:border-slate-600 text-center">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 dark:bg-green-900/50 rounded-lg flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-white dark:bg-[#252525] p-8 rounded-xl shadow-lg text-center">
+              <div className="w-12 h-12 bg-[#E5C16C]/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <svg className="w-6 h-6 text-[#E5C16C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
               </div>
-              <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white mb-1.5 sm:mb-2">
+              <h3 className="text-lg font-semibold text-[#1A1A1A] dark:text-[#FAFAFA] mb-2">
                 Assurance Premium
               </h3>
-              <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 Couverture complète pour votre sécurité
               </p>
             </div>
             
-
-            <div className="bg-white dark:bg-slate-700 p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl shadow-lg border border-slate-200 dark:border-slate-600 text-center">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#FFB885]/20 dark:bg-[#FF7E38]/20 rounded-lg flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-[#FF7E38]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-white dark:bg-[#252525] p-8 rounded-xl shadow-lg text-center">
+              <div className="w-12 h-12 bg-[#E5C16C]/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <svg className="w-6 h-6 text-[#E5C16C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M12 2.25a9.75 9.75 0 100 19.5 9.75 9.75 0 000-19.5z" />
                 </svg>
               </div>
-              <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white mb-1.5 sm:mb-2">
+              <h3 className="text-lg font-semibold text-[#1A1A1A] dark:text-[#FAFAFA] mb-2">
                 Service Conciergerie
               </h3>
-              <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 Assistance personnalisée 24h/24
               </p>
             </div>
@@ -284,71 +281,33 @@ export default async function FlottePage() {
         </div>
       </section>
 
-      {/* CTA Section - Simplified */}
-      <section className="py-10 sm:py-12 md:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-slate-900 dark:bg-slate-950">
+      {/* CTA Section */}
+      <section className="py-16 sm:py-20 px-4 sm:px-6 md:px-8 bg-[#A73B3C] text-white">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-6 leading-tight">
-            Prêt à Réserver ?
-          </h2>
-          <p className="text-base sm:text-lg text-slate-300 mb-8 sm:mb-10 md:mb-12 max-w-2xl mx-auto leading-relaxed">
-            Découvrez l&apos;excellence de nos services de transport de luxe
+          <h2 className="text-3xl sm:text-4xl font-extrabold mb-4">Prêt à Voyager avec Excellence ?</h2>
+          <p className="text-lg sm:text-xl mb-8 text-white/90">
+            Réservez votre véhicule dès maintenant et profitez de notre service premium.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-8 sm:mb-10 md:mb-12 max-w-2xl mx-auto">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
               href="/reservation"
-              className="w-full sm:w-auto bg-gradient-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 sm:gap-3"
+              className="px-8 py-3 bg-[#E5C16C] hover:bg-[#D4B060] text-[#1A1A1A] font-bold rounded-lg shadow-2xl transition-all duration-300 text-lg"
             >
-              <svg className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
               Réserver Maintenant
             </Link>
             <a
               href="tel:+221781319191"
-              className="w-full sm:w-auto border border-white/30 text-white hover:bg-white/10 px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-colors duration-200 flex items-center justify-center gap-2 sm:gap-3"
+              className="px-8 py-3 bg-transparent border-2 border-white text-white hover:bg-white/10 rounded-lg font-bold text-lg transition-all duration-200"
             >
-              <svg className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-              </svg>
-              Appeler
+              Appeler (221 78 131 91 91)
             </a>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 bg-white/5 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 border border-white/10">
-            <div className="text-center">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h3 className="text-base sm:text-lg font-semibold text-white mb-1.5 sm:mb-2">Réservation Instantanée</h3>
-              <p className="text-slate-400 text-xs sm:text-sm">En quelques clics</p>
-            </div>
-            <div className="text-center">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-500/20 rounded-lg flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-              </div>
-              <h3 className="text-base sm:text-lg font-semibold text-white mb-1.5 sm:mb-2">Sécurité Garantie</h3>
-              <p className="text-slate-400 text-xs sm:text-sm">Assurance complète</p>
-            </div>
-            <div className="text-center">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                </svg>
-              </div>
-              <h3 className="text-base sm:text-lg font-semibold text-white mb-1.5 sm:mb-2">Service Premium</h3>
-              <p className="text-slate-400 text-xs sm:text-sm">Excellence garantie</p>
-            </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-16 px-4 sm:px-6 lg:px-8 bg-slate-950 text-slate-400">
+      <footer className="py-16 px-4 sm:px-6 lg:px-8 bg-[#1A1A1A] text-gray-400">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8 mb-12">
             <div className="md:col-span-2">

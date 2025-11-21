@@ -19,7 +19,7 @@ const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
       warning: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300",
       error: "bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300",
       info: "bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300",
-      luxury: "bg-gradient-to-r from-slate-900 to-slate-800 text-white shadow-lg",
+      luxury: "bg-linear-to-r from-slate-900 to-slate-800 text-white shadow-lg",
       outline: "border border-slate-300 text-slate-700 dark:border-slate-600 dark:text-slate-300"
     };
     
@@ -51,3 +51,4 @@ Badge.displayName = 'Badge';
 
 export { Badge };
 export type { BadgeProps };
+

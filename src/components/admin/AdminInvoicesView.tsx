@@ -208,7 +208,7 @@ export default function AdminInvoicesView() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-slate-700"
+          className="bg-linear-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-slate-700"
         >
           <div className="flex items-center justify-between">
             <div>
@@ -223,7 +223,7 @@ export default function AdminInvoicesView() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-gradient-to-br from-blue-900/50 to-slate-900 rounded-xl p-6 border border-blue-500/30"
+          className="bg-linear-to-br from-blue-900/50 to-slate-900 rounded-xl p-6 border border-blue-500/30"
         >
           <div className="flex items-center justify-between">
             <div>
@@ -238,7 +238,7 @@ export default function AdminInvoicesView() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-gradient-to-br from-green-900/50 to-slate-900 rounded-xl p-6 border border-green-500/30"
+          className="bg-linear-to-br from-green-900/50 to-slate-900 rounded-xl p-6 border border-green-500/30"
         >
           <div className="flex items-center justify-between">
             <div>
@@ -256,7 +256,7 @@ export default function AdminInvoicesView() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-gradient-to-br from-red-900/50 to-slate-900 rounded-xl p-6 border border-red-500/30"
+          className="bg-linear-to-br from-red-900/50 to-slate-900 rounded-xl p-6 border border-red-500/30"
         >
           <div className="flex items-center justify-between">
             <div>
@@ -325,7 +325,7 @@ export default function AdminInvoicesView() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-slate-700 hover:border-blue-500/50 transition-all"
+              className="bg-linear-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-slate-700 hover:border-blue-500/50 transition-all"
             >
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div className="flex-1">
@@ -430,7 +430,7 @@ export default function AdminInvoicesView() {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 max-w-md w-full border border-slate-700"
+            className="bg-linear-to-br from-slate-800 to-slate-900 rounded-xl p-6 max-w-md w-full border border-slate-700"
           >
             <h2 className="text-2xl font-bold text-white mb-4">
               Marquer la facture comme payée
@@ -519,8 +519,8 @@ export default function AdminInvoicesView() {
                 onClick={() => setShowModal(false)}
                 className={`px-8 py-3 rounded-xl font-semibold text-white transition-all duration-200 transform hover:scale-105 ${
                   modalType === 'success'
-                    ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-lg shadow-green-500/50'
-                    : 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg shadow-red-500/50'
+                    ? 'bg-linear-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-lg shadow-green-500/50'
+                    : 'bg-linear-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg shadow-red-500/50'
                 }`}
               >
                 OK
@@ -540,3 +540,4 @@ export default function AdminInvoicesView() {
     </div>
   )
 }
+

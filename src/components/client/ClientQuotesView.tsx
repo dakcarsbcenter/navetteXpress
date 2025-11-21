@@ -198,83 +198,37 @@ export function ClientQuotesView() {
 
   return (
     <div className="space-y-6">
-      {/* En-tête avec design amélioré */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-purple-800 rounded-2xl p-8 text-white shadow-2xl">
-        {/* Effet de fond animé */}
-        <div className="absolute inset-0 opacity-20" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='7' cy='7' r='7'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-        }}></div>
-        
-        <div className="relative z-10">
-          <div className="flex items-center justify-between mb-6">
+      {/* Header avec gradient Bordeaux - Style capture */}
+      <div className="relative overflow-hidden bg-linear-to-br from-[#A73B3C] via-[#8B3032] to-[#6B2428] rounded-2xl p-8 text-white shadow-xl">
+        <div className="relative z-10 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
             <div>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                  <span className="text-2xl">📋</span>
-                </div>
-                <h1 className="text-3xl font-bold">
-                  Mes devis
-                </h1>
-              </div>
-              <p className="text-blue-100 text-lg">
-                Gérez vos demandes de devis en toute simplicité
+              <h1 className="text-3xl font-bold mb-2">Mes Devis</h1>
+              <p className="text-white/90 text-base">
+                Gérez vos demandes de devis en toute simplicité.<br />
+                Consultez, acceptez ou refusez vos propositions.
               </p>
             </div>
-            <div className="hidden md:block">
-              <div className="flex items-center gap-6">
-                <div className="text-center p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-                  <div className="text-3xl font-bold mb-1">
-                    {quotes.length}
-                  </div>
-                  <div className="text-sm text-blue-100">
-                    Total
-                  </div>
-                </div>
-                <div className="text-center p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-                  <div className="text-3xl font-bold mb-1 text-green-300">
-                    {quotes.filter(q => q.status === 'accepted').length}
-                  </div>
-                  <div className="text-sm text-blue-100">
-                    Acceptés
-                  </div>
-                </div>
-                <div className="text-center p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-                  <div className="text-3xl font-bold mb-1 text-yellow-300">
-                    {quotes.filter(q => q.status === 'sent').length}
-                  </div>
-                  <div className="text-sm text-blue-100">
-                    En attente
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
-
-          {/* Statistiques mobiles */}
-          <div className="md:hidden grid grid-cols-3 gap-3">
-            <div className="text-center p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-              <div className="text-xl font-bold mb-1">
-                {quotes.length}
-              </div>
-              <div className="text-xs text-blue-100">
-                Total
-              </div>
+          
+          {/* Stats badges - Style capture avec coins arrondis */}
+          <div className="hidden lg:flex items-center gap-4">
+            <div className="text-center px-8 py-4 bg-white/20 backdrop-blur-md rounded-2xl border border-white/30">
+              <div className="text-4xl font-bold mb-1">{quotes.length}</div>
+              <div className="text-xs text-white/80 uppercase tracking-wider">Total</div>
             </div>
-            <div className="text-center p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-              <div className="text-xl font-bold mb-1 text-green-300">
-                {quotes.filter(q => q.status === 'accepted').length}
-              </div>
-              <div className="text-xs text-blue-100">
-                Acceptés
-              </div>
+            <div className="text-center px-8 py-4 bg-white/20 backdrop-blur-md rounded-2xl border border-white/30">
+              <div className="text-4xl font-bold mb-1">{quotes.filter(q => q.status === 'accepted').length}</div>
+              <div className="text-xs text-white/80 uppercase tracking-wider">Acceptés</div>
             </div>
-            <div className="text-center p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-              <div className="text-xl font-bold mb-1 text-yellow-300">
-                {quotes.filter(q => q.status === 'sent').length}
-              </div>
-              <div className="text-xs text-blue-100">
-                En attente
-              </div>
+            <div className="text-center px-8 py-4 bg-white/20 backdrop-blur-md rounded-2xl border border-white/30">
+              <div className="text-4xl font-bold mb-1">{quotes.filter(q => ['pending', 'sent'].includes(q.status)).length}</div>
+              <div className="text-xs text-white/80 uppercase tracking-wider">En attente</div>
             </div>
           </div>
         </div>
@@ -304,118 +258,136 @@ export function ClientQuotesView() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {quotes.map((quote) => (
-            <div key={quote.id} className="group relative bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-              {/* Effet de bordure animé pour les devis "sent" */}
-              {quote.status === 'sent' && (
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute inset-[2px] bg-white dark:bg-slate-800 rounded-2xl"></div>
-                </div>
-              )}
+            <div key={quote.id} className="group relative bg-white dark:bg-slate-800 rounded-2xl shadow-md border border-slate-100 dark:border-slate-700 overflow-hidden hover:shadow-xl transition-all duration-300">
               
-              <div className="relative p-6 z-10">
-                {/* Header de la carte avec design amélioré */}
+              <div className="p-6">
+                {/* Header de la carte - Style capture avec icône service */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl text-white shadow-lg">
-                      <span className="text-lg">📋</span>
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white shadow-md ${
+                      quote.service.toLowerCase().includes('tourisme') || quote.service.toLowerCase().includes('tour') ? 'bg-red-500' :
+                      quote.service.toLowerCase().includes('aéroport') || quote.service.toLowerCase().includes('aibd') || quote.service.toLowerCase().includes('airport') ? 'bg-yellow-600' :
+                      quote.service.toLowerCase().includes('groupe') || quote.service.toLowerCase().includes('van') ? 'bg-purple-600' :
+                      'bg-blue-600'
+                    }`}>
+                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
+                        <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"/>
+                      </svg>
                     </div>
                     <div>
-                      <h3 className="font-bold text-slate-900 dark:text-white mb-1">
+                      <h3 className="font-bold text-slate-900 dark:text-white text-base mb-0.5">
                         Devis #{quote.id}
                       </h3>
-                      <p className="text-sm text-slate-600 dark:text-slate-400 flex items-center gap-1">
-                        <span>🚗</span> {quote.service}
+                      <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                        <svg className="w-3.5 h-3.5 text-[#E5C16C]" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-[#E5C16C] font-medium">{quote.service}</span>
                       </p>
                     </div>
                   </div>
-                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold shadow-sm ${getStatusColor(quote.status)}`}>
-                    {getStatusIcon(quote.status)} {getStatusLabel(quote.status)}
+                  <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ${
+                    quote.status === 'accepted' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
+                    quote.status === 'sent' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
+                    quote.status === 'rejected' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' :
+                    'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
+                  }`}>
+                    <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    {quote.status === 'sent' ? 'Accepté' : getStatusLabel(quote.status)}
                   </span>
                 </div>
 
-                {/* Contenu de la demande */}
+                {/* Demande - texte plus descriptif */}
                 <div className="mb-4">
-                  <p className="text-sm text-slate-700 dark:text-slate-300 line-clamp-3">
-                    {quote.message.split('\n')[0]}
+                  <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                    {quote.message.length > 100 ? quote.message.substring(0, 100) + '...' : quote.message}
                   </p>
                 </div>
 
-                {/* Informations complémentaires avec design amélioré */}
-                <div className="space-y-3 mb-4">
+                {/* Informations - Style capture avec icônes et bordures */}
+                <div className="space-y-2 mb-4">
                   {quote.preferredDate && (
-                    <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg border-l-4 border-blue-500">
-                      <div className="flex items-center gap-2">
-                        <span className="text-blue-500">📅</span>
-                        <span className="text-sm text-slate-600 dark:text-slate-400">Date souhaitée</span>
+                    <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700/30 rounded-lg border-l-4 border-blue-500">
+                      <div className="flex items-center gap-2.5">
+                        <svg className="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">Date souhaitée</span>
                       </div>
-                      <span className="text-sm text-slate-900 dark:text-white font-medium">
-                        {new Date(quote.preferredDate).toLocaleDateString('fr-FR')}
+                      <span className="text-sm text-slate-900 dark:text-white font-semibold">
+                        {new Date(quote.preferredDate).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                       </span>
                     </div>
                   )}
                   {quote.estimatedPrice && (
-                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg border-l-4 border-green-500">
-                      <div className="flex items-center gap-2">
-                        <span className="text-green-500">💰</span>
-                        <span className="text-sm text-slate-600 dark:text-slate-400">Prix estimé</span>
+                    <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border-l-4 border-green-600">
+                      <div className="flex items-center gap-2.5">
+                        <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">Prix estimé</span>
                       </div>
-                      <span className="text-sm text-green-600 dark:text-green-400 font-bold">
-                        {quote.estimatedPrice} FCFA
+                      <span className="text-sm text-green-600 dark:text-green-400 font-bold flex items-center gap-1">
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clipRule="evenodd" />
+                        </svg>
+                        {parseFloat(quote.estimatedPrice).toLocaleString('fr-FR')}.000 FCFA
                       </span>
                     </div>
                   )}
-                  <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg border-l-4 border-purple-500">
-                    <div className="flex items-center gap-2">
-                      <span className="text-purple-500">⏰</span>
-                      <span className="text-sm text-slate-600 dark:text-slate-400">Demandé le</span>
+                  <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700/30 rounded-lg border-l-4 border-[#A73B3C]">
+                    <div className="flex items-center gap-2.5">
+                      <svg className="w-5 h-5 text-[#A73B3C]" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                      </svg>
+                      <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">Demandé le</span>
                     </div>
-                    <span className="text-sm text-slate-900 dark:text-white font-medium">
-                      {new Date(quote.createdAt).toLocaleDateString('fr-FR')}
+                    <span className="text-sm text-slate-900 dark:text-white font-semibold">
+                      {new Date(quote.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                     </span>
                   </div>
                 </div>
 
-                {/* Actions avec design amélioré */}
-                <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
-                  {quote.status === 'sent' ? (
-                    <div className="space-y-3">
-                      <div className="text-center p-2 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-lg border border-yellow-200 dark:border-yellow-700">
-                        <p className="text-xs text-yellow-800 dark:text-yellow-300 font-medium">
-                          ⏰ Devis prêt - Action requise
-                        </p>
-                      </div>
-                      <div className="grid grid-cols-1 gap-2">
-                        <button
-                          onClick={() => openQuoteDetails(quote)}
-                          className="w-full text-sm bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-3 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all transform hover:scale-105 flex items-center justify-center gap-2 shadow-lg"
-                        >
-                          <span>📄</span> Voir détails complets
-                        </button>
-                        <div className="grid grid-cols-2 gap-2">
-                          <button 
-                            onClick={() => openActionModal('accept', quote.id)}
-                            disabled={isProcessing}
-                            className="text-sm bg-gradient-to-r from-green-600 to-green-700 text-white px-3 py-2 rounded-xl hover:from-green-700 hover:to-green-800 transition-all disabled:opacity-50 flex items-center justify-center gap-1 shadow-md"
-                          >
-                            <span>✅</span> Accepter
-                          </button>
-                          <button 
-                            onClick={() => openActionModal('reject', quote.id)}
-                            disabled={isProcessing}
-                            className="text-sm bg-gradient-to-r from-red-600 to-red-700 text-white px-3 py-2 rounded-xl hover:from-red-700 hover:to-red-800 transition-all disabled:opacity-50 flex items-center justify-center gap-1 shadow-md"
-                          >
-                            <span>❌</span> Rejeter
-                          </button>
-                        </div>
-                      </div>
+                {/* Bouton Voir détails - style capture avec coins arrondis */}
+                <div className="pt-4">
+                  <button
+                    onClick={() => openQuoteDetails(quote)}
+                    className="w-full bg-[#2C3E50] hover:bg-[#1C2833] dark:bg-slate-700 dark:hover:bg-slate-600 text-white py-3.5 rounded-lg font-medium transition-all flex items-center justify-center gap-2 text-sm shadow-md"
+                  >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
+                    </svg>
+                    Voir détails
+                  </button>
+                  
+                  {quote.status === 'sent' && (
+                    <div className="mt-3 grid grid-cols-2 gap-3">
+                      <button 
+                        onClick={() => openActionModal('accept', quote.id)}
+                        disabled={isProcessing}
+                        className="text-sm bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-lg font-semibold transition-all disabled:opacity-50 flex items-center justify-center gap-1.5 shadow-sm"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        Accepter
+                      </button>
+                      <button 
+                        onClick={() => openActionModal('reject', quote.id)}
+                        disabled={isProcessing}
+                        className="text-sm bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 rounded-lg font-semibold transition-all disabled:opacity-50 flex items-center justify-center gap-1.5 shadow-sm"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        Refuser
+                      </button>
                     </div>
-                  ) : (
-                    <button
-                      onClick={() => openQuoteDetails(quote)}
-                      className="w-full text-sm bg-gradient-to-r from-slate-600 to-slate-700 text-white px-4 py-3 rounded-xl hover:from-slate-700 hover:to-slate-800 transition-all transform hover:scale-105 flex items-center justify-center gap-2 shadow-lg"
-                    >
-                      <span>📄</span> Voir détails
-                    </button>
                   )}
                 </div>
               </div>
@@ -502,7 +474,7 @@ export function ClientQuotesView() {
 
                 {/* Actions */}
                 {selectedQuote.status === 'sent' && (
-                  <div className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-6 space-y-4">
+                  <div className="bg-linear-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-6 space-y-4">
                     <h4 className="font-semibold text-slate-900 dark:text-white text-center">
                       🎯 Actions disponibles pour ce devis
                     </h4>
@@ -566,7 +538,7 @@ export function ClientQuotesView() {
           <div className="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full mx-4 shadow-2xl border border-slate-200 dark:border-slate-700">
             <div className="p-6">
               <div className="text-center mb-6">
-                <div className="mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mb-4">
+                <div className="mx-auto w-16 h-16 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center mb-4">
                   {pendingAction.action === 'accept' && <span className="text-3xl">✅</span>}
                   {pendingAction.action === 'reject' && <span className="text-3xl">❌</span>}
                   {pendingAction.action === 'negotiate' && <span className="text-3xl">💬</span>}
@@ -623,10 +595,10 @@ export function ClientQuotesView() {
                   disabled={isProcessing}
                   className={`flex-1 px-4 py-3 rounded-xl text-white font-medium transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 ${
                     pendingAction.action === 'accept' 
-                      ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800' 
+                      ? 'bg-linear-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800' 
                       : pendingAction.action === 'reject'
-                      ? 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800'
-                      : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800'
+                      ? 'bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800'
+                      : 'bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800'
                   }`}
                 >
                   {isProcessing ? (

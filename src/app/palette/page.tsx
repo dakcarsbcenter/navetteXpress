@@ -146,10 +146,10 @@ export default function ColorPalettePage() {
         <div className="mb-16">
           <h2 className="text-2xl font-bold text-[#1E293B] mb-8">Exemples de Boutons</h2>
           <div className="flex flex-wrap gap-4">
-            <button className="bg-gradient-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl">
+            <button className="bg-linear-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl">
               Bouton Primaire
             </button>
-            <button className="bg-gradient-to-r from-[#0F5B8A] to-[#0A4B73] hover:from-[#0A4B73] hover:to-[#083A5C] text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl">
+            <button className="bg-linear-to-r from-[#0F5B8A] to-[#0A4B73] hover:from-[#0A4B73] hover:to-[#083A5C] text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl">
               Bouton Secondaire
             </button>
             <button className="border-2 border-[#0F5B8A] text-[#0F5B8A] hover:bg-[#0F5B8A] hover:text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200">
@@ -164,7 +164,7 @@ export default function ColorPalettePage() {
         {/* Gradient Hero Example */}
         <div className="mb-16">
           <h2 className="text-2xl font-bold text-[#1E293B] mb-8">Exemple Hero Section</h2>
-          <div className="relative h-64 bg-gradient-to-br from-[#1E293B] via-[#0F5B8A] to-[#334155] rounded-xl p-8 text-white">
+          <div className="relative h-64 bg-linear-to-br from-[#1E293B] via-[#0F5B8A] to-[#334155] rounded-xl p-8 text-white">
             <div className="absolute inset-0 opacity-5" style={{
               backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23FF7E38' fill-opacity='0.1'%3E%3Ccircle cx='20' cy='20' r='1'/%3E%3C/g%3E%3C/svg%3E")`
             }}></div>
@@ -176,7 +176,7 @@ export default function ColorPalettePage() {
               <p className="text-[#B8D5E8] mb-6">
                 Nouvelle identité visuelle moderne et accessible
               </p>
-              <button className="bg-gradient-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl">
+              <button className="bg-linear-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl">
                 Réserver Maintenant
               </button>
             </div>

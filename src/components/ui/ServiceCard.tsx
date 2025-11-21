@@ -51,7 +51,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       )}
       
       <CardHeader className="text-center pb-4">
-        <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/50 dark:to-blue-800/50 rounded-2xl flex items-center justify-center text-3xl">
+        <div className="w-16 h-16 mx-auto mb-4 bg-linear-to-br from-blue-100 to-blue-200 dark:from-blue-900/50 dark:to-blue-800/50 rounded-2xl flex items-center justify-center text-3xl">
           {icon}
         </div>
         
@@ -81,7 +81,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         <div className="space-y-3 mb-6">
           {features.map((feature, index) => (
             <div key={index} className="flex items-start gap-3">
-              <div className="w-5 h-5 bg-green-100 dark:bg-green-900/50 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+              <div className="w-5 h-5 bg-green-100 dark:bg-green-900/50 rounded-full flex items-center justify-center shrink-0 mt-0.5">
                 <svg className="w-3 h-3 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
@@ -134,3 +134,5 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 
 export { ServiceCard };
 export type { ServiceCardProps };
+
+

@@ -123,7 +123,7 @@ export default function AddVehiclePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       <div className="max-w-4xl mx-auto px-4 py-12">
         {/* Header */}
         <div className="mb-8">
@@ -400,5 +400,6 @@ export default function AddVehiclePage() {
     </div>
   );
 }
+
 
 
