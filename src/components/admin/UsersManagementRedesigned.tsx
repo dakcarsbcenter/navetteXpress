@@ -30,7 +30,10 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
   const [filteredUsers, setFilteredUsers] = useState<User[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false)
   const [editingUser, setEditingUser] = useState<User | null>(null)
+  const [resettingPasswordUser, setResettingPasswordUser] = useState<User | null>(null)
+  const [newPassword, setNewPassword] = useState('')
   const [currentUserRole, setCurrentUserRole] = useState<string>('')
   const { notifications, showSuccess, showError, removeNotification } = useNotification()
   
@@ -178,6 +181,42 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
         fetchUsers()
       } else {
         showError('Erreur lors de la suppression', 'Erreur')
+      }
+    } catch (error) {
+      showError('Erreur technique', 'Erreur')
+    }
+  }
+
+  const openResetPasswordModal = (user: User) => {
+    setResettingPasswordUser(user)
+    setNewPassword('')
+    setIsResetPasswordModalOpen(true)
+  }
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!resettingPasswordUser) return
+    if (newPassword.length < 6) {
+      showError('Le mot de passe doit contenir au moins 6 caractères', 'Erreur')
+      return
+    }
+    
+    try {
+      const response = await fetch(`/api/admin/users/${resettingPasswordUser.id}/password`, { 
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: newPassword })
+      })
+      
+      if (response.ok) {
+        showSuccess(`Mot de passe de ${resettingPasswordUser.name} réinitialisé avec succès`, 'Succès')
+        setIsResetPasswordModalOpen(false)
+        setResettingPasswordUser(null)
+        setNewPassword('')
+      } else {
+        const data = await response.json()
+        showError(data.error || 'Erreur lors de la réinitialisation', 'Erreur')
       }
     } catch (error) {
       showError('Erreur technique', 'Erreur')
@@ -440,6 +479,13 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
                             <Edit className="w-4 h-4" />
                           </button>
                           <button
+                            onClick={() => openResetPasswordModal(user)}
+                            className="p-2 text-gray-600 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                            title="Réinitialiser le mot de passe"
+                          >
+                            <Key className="w-4 h-4" />
+                          </button>
+                          <button
                             onClick={() => handleDelete(user)}
                             className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                             title="Supprimer"
@@ -551,6 +597,64 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
                   className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
                 >
                   {editingUser ? 'Modifier' : 'Créer'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de réinitialisation de mot de passe */}
+      {isResetPasswordModalOpen && resettingPasswordUser && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                <Key className="w-5 h-5 text-orange-600" />
+              </div>
+              <h2 className="text-xl font-bold text-gray-900">
+                Réinitialiser le mot de passe
+              </h2>
+            </div>
+            
+            <p className="text-gray-600 mb-4">
+              Définissez un nouveau mot de passe pour <span className="font-semibold">{resettingPasswordUser.name}</span>
+            </p>
+
+            <form onSubmit={handleResetPassword} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nouveau mot de passe
+                </label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  placeholder="Minimum 6 caractères"
+                  required
+                  minLength={6}
+                  autoFocus
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsResetPasswordModalOpen(false)
+                    setResettingPasswordUser(null)
+                    setNewPassword('')
+                  }}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+                >
+                  Réinitialiser
                 </button>
               </div>
             </form>

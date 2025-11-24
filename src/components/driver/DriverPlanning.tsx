@@ -187,317 +187,183 @@ export function DriverPlanning({ onBack }: PlanningProps) {
     }
   }
 
+  // Générer les heures de 0 à 23
+  const hours = Array.from({ length: 24 }, (_, i) => i)
+
+  // Obtenir la position d'un booking dans la grille
+  const getBookingPosition = (booking: Booking) => {
+    const [hours, minutes] = booking.time.split(':').map(Number)
+    const totalMinutes = hours * 60 + minutes
+    const topPosition = (totalMinutes / 60) * 60 // 60px par heure
+    return topPosition
+  }
+
+  // Obtenir la hauteur d'un booking (on considère 30 min par défaut)
+  const getBookingHeight = (duration: string) => {
+    const minutes = parseInt(duration)
+    return (minutes / 60) * 60 // 60px par heure
+  }
+
+  const navigateWeek = (direction: 'prev' | 'next') => {
+    const newDate = new Date(selectedDate)
+    newDate.setDate(newDate.getDate() + (direction === 'next' ? 7 : -7))
+    setSelectedDate(newDate)
+  }
+
   return (
-    <div className="p-6 space-y-6">
+    <div className="h-screen flex flex-col bg-white">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">
+      <div className="flex-none border-b border-gray-200 p-4">
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-4">
             <button
               onClick={onBack}
-              className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
             >
-              <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
             </button>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Planning
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400">
-                Votre planning de la semaine
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center space-x-4">
-            <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+            <button
+              onClick={() => setSelectedDate(new Date())}
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700"
+            >
+              Today
+            </button>
+            <div className="flex items-center gap-2">
               <button
-                onClick={() => setWeekView(true)}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                  weekView
-                    ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                }`}
+                onClick={() => navigateWeek('prev')}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                Semaine
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
               </button>
               <button
-                onClick={() => setWeekView(false)}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                  !weekView
-                    ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                }`}
+                onClick={() => navigateWeek('next')}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                Jour
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
               </button>
             </div>
+            <h2 className="text-xl font-normal text-gray-900">
+              {new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(selectedDate)}
+            </h2>
           </div>
+          <div className="flex items-center gap-3">
+            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </button>
+            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+              </svg>
+            </button>
+            <select className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+              <option>Week</option>
+              <option>Month</option>
+              <option>Year</option>
+            </select>
+          </div>
+        </div>
+
+        {/* En-têtes des jours */}
+        <div className="grid grid-cols-8 border-b border-gray-200">
+          <div className="p-2 text-right pr-4">
+            <span className="text-xs text-gray-500">GMT+00</span>
+          </div>
+          {getDaysOfWeek().map((day, index) => (
+            <div key={index} className="p-2 text-center border-l border-gray-200">
+              <div className="text-xs text-gray-500 uppercase">
+                {new Intl.DateTimeFormat('fr-FR', { weekday: 'short' }).format(day)}
+              </div>
+              <div className={`text-2xl font-normal mt-1 ${
+                isToday(day) 
+                  ? 'w-10 h-10 bg-blue-600 text-white rounded-full mx-auto flex items-center justify-center' 
+                  : 'text-gray-900'
+              }`}>
+                {day.getDate()}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Message de chargement */}
-      {isLoading && (
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-          <p className="text-blue-700 dark:text-blue-300">Chargement de votre planning...</p>
-        </div>
-      )}
+      {/* Grille du calendrier avec scroll */}
+      <div className="flex-1 overflow-auto">
+        <div className="grid grid-cols-8" style={{ minHeight: '1440px' }}> {/* 24h * 60px */}
+          {/* Colonne des heures */}
+          <div className="relative border-r border-gray-200">
+            {hours.map((hour) => (
+              <div key={hour} className="h-[60px] border-b border-gray-200 relative">
+                <span className="absolute -top-2 right-2 text-xs text-gray-500">
+                  {hour.toString().padStart(2, '0')} AM
+                </span>
+              </div>
+            ))}
+          </div>
 
-      {weekView ? (
-        /* Week View */
-        <div className="space-y-6">
-          {getDaysOfWeek().map((day, index) => {
+          {/* Colonnes des jours */}
+          {getDaysOfWeek().map((day, dayIndex) => {
             const dayBookings = getBookingsForDate(day)
             return (
-              <div key={index} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center space-x-4">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                      isToday(day) 
-                        ? 'bg-blue-600 text-white' 
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
-                    }`}>
-                      <span className="font-bold">{day.getDate()}</span>
+              <div key={dayIndex} className="relative border-l border-gray-200">
+                {/* Lignes horaires */}
+                {hours.map((hour) => (
+                  <div key={hour} className="h-[60px] border-b border-gray-100"></div>
+                ))}
+                
+                {/* Bookings positionnés absolument */}
+                {dayBookings.map((booking) => {
+                  const top = getBookingPosition(booking)
+                  const height = getBookingHeight(booking.duration)
+                  const statusColors = {
+                    confirmed: 'bg-green-500',
+                    assigned: 'bg-orange-500',
+                    in_progress: 'bg-blue-500',
+                    completed: 'bg-purple-500',
+                    cancelled: 'bg-red-500',
+                    pending: 'bg-gray-500'
+                  }
+                  
+                  return (
+                    <div
+                      key={booking.id}
+                      className={`absolute left-1 right-1 ${statusColors[booking.status]} text-white rounded p-1 overflow-hidden cursor-pointer hover:opacity-90 transition-opacity`}
+                      style={{ 
+                        top: `${top}px`, 
+                        height: `${height}px`,
+                        zIndex: 10
+                      }}
+                      title={`${booking.client} - ${booking.pickup} → ${booking.destination}`}
+                    >
+                      <div className="text-xs font-medium truncate">{booking.client}</div>
+                      <div className="text-xs truncate">{booking.time}</div>
+                      <div className="text-xs truncate opacity-90">{booking.pickup}</div>
                     </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                        {formatDate(day)}
-                      </h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {dayBookings.length} course{dayBookings.length !== 1 ? 's' : ''}
-                        {dayBookings.length > 0 && (
-                          <span className="ml-2 font-medium text-green-600 dark:text-green-400">
-                            {dayBookings.reduce((sum, booking) => sum + booking.price, 0)} FCFA
-                          </span>
-                        )}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {dayBookings.length > 0 ? (
-                  <div className="space-y-3">
-                    {dayBookings.map((booking) => (
-                      <div key={booking.id} className="border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:shadow-md transition-shadow">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-4">
-                            <div className="w-2 h-12 bg-blue-600 rounded-full"></div>
-                            <div>
-                              <div className="flex items-center space-x-2 mb-1">
-                                <span className="font-semibold text-gray-900 dark:text-white">{booking.time}</span>
-                                <span className="text-lg font-bold text-gray-900 dark:text-white">{booking.client}</span>
-                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(booking.status)}`}>
-                                  {getStatusLabel(booking.status)}
-                                </span>
-                              </div>
-                              <div className="space-y-1">
-                                <div className="flex items-center space-x-2">
-                                  <span className="text-sm text-gray-600 dark:text-gray-400">📍</span>
-                                  <span className="text-sm text-gray-900 dark:text-white">{booking.pickup}</span>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                  <span className="text-sm text-gray-600 dark:text-gray-400">🎯</span>
-                                  <span className="text-sm text-gray-900 dark:text-white">{booking.destination}</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="text-right space-y-1">
-                            <div className="text-lg font-bold text-green-600 dark:text-green-400">
-                              {booking.price} FCFA
-                            </div>
-                            <div className="text-sm text-gray-500 dark:text-gray-400">
-                              {booking.duration}
-                            </div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">
-                              {booking.vehicle}
-                            </div>
-                            <div className="flex space-x-2 mt-2">
-                              <button className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-md transition-colors">
-                                Détails
-                              </button>
-                              <button className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-md transition-colors">
-                                Appeler
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <span className="text-2xl">📅</span>
-                    </div>
-                    <p className="text-gray-500 dark:text-gray-400">Aucune course programmée ce jour</p>
+                  )
+                })}
+                
+                {/* Ligne d'heure actuelle (si c'est aujourd'hui) */}
+                {isToday(day) && (
+                  <div 
+                    className="absolute left-0 right-0 border-t-2 border-red-500 z-20"
+                    style={{ 
+                      top: `${(new Date().getHours() * 60 + new Date().getMinutes()) / 60 * 60}px` 
+                    }}
+                  >
+                    <div className="absolute -left-1 -top-1 w-2 h-2 bg-red-500 rounded-full"></div>
                   </div>
                 )}
               </div>
             )
           })}
         </div>
-      ) : (
-        /* Day View */
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => {
-                  const newDate = new Date(selectedDate)
-                  newDate.setDate(newDate.getDate() - 1)
-                  setSelectedDate(newDate)
-                }}
-                className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-              >
-                <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  {formatDate(selectedDate)}
-                </h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {getBookingsForDate(selectedDate).length} course{getBookingsForDate(selectedDate).length !== 1 ? 's' : ''}
-                </p>
-              </div>
-              <button
-                onClick={() => {
-                  const newDate = new Date(selectedDate)
-                  newDate.setDate(newDate.getDate() + 1)
-                  setSelectedDate(newDate)
-                }}
-                className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-              >
-                <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            {getBookingsForDate(selectedDate).map((booking) => (
-              <div key={booking.id} className="border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:shadow-md transition-shadow">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-6">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                        {booking.time}
-                      </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
-                        {booking.duration}
-                      </div>
-                    </div>
-                    <div className="w-1 h-16 bg-blue-600 rounded-full"></div>
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <span className="text-xl font-bold text-gray-900 dark:text-white">{booking.client}</span>
-                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(booking.status)}`}>
-                          {getStatusLabel(booking.status)}
-                        </span>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex items-center space-x-3">
-                          <span className="text-gray-600 dark:text-gray-400">📍</span>
-                          <span className="text-gray-900 dark:text-white font-medium">{booking.pickup}</span>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                          <span className="text-gray-600 dark:text-gray-400">🎯</span>
-                          <span className="text-gray-900 dark:text-white font-medium">{booking.destination}</span>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                          <span className="text-gray-600 dark:text-gray-400">🚗</span>
-                          <span className="text-gray-900 dark:text-white">{booking.vehicle}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-right space-y-2">
-                    <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                      {booking.price} FCFA
-                    </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                      {booking.phone}
-                    </div>
-                    <div className="flex flex-col space-y-2">
-                      {/* Boutons d'action selon le statut */}
-                      {booking.status === 'assigned' && (
-                        <button 
-                          onClick={async () => {
-                            const result = await updateBookingStatus(booking.id, 'confirmed')
-                            if (!result.success) {
-                              alert('Erreur: ' + result.error)
-                            }
-                          }}
-                          className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
-                        >
-                          <span>✅</span>
-                          Confirmer
-                        </button>
-                      )}
-                      
-                      {booking.status === 'confirmed' && (
-                        <button 
-                          onClick={async () => {
-                            const result = await updateBookingStatus(booking.id, 'in_progress')
-                            if (!result.success) {
-                              alert('Erreur: ' + result.error)
-                            }
-                          }}
-                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
-                        >
-                          <span>🚗</span>
-                          Démarrer
-                        </button>
-                      )}
-                      
-                      {booking.status === 'in_progress' && (
-                        <button 
-                          onClick={async () => {
-                            const result = await updateBookingStatus(booking.id, 'completed')
-                            if (!result.success) {
-                              alert('Erreur: ' + result.error)
-                            }
-                          }}
-                          className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
-                        >
-                          <span>✅</span>
-                          Terminer
-                        </button>
-                      )}
-
-                      <button 
-                        onClick={() => window.location.href = `tel:${booking.phone}`}
-                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
-                      >
-                        <span>📞</span>
-                        Appeler client
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {getBookingsForDate(selectedDate).length === 0 && (
-            <div className="text-center py-12">
-              <div className="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                <span className="text-4xl">📅</span>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                Aucune course programmée
-              </h3>
-              <p className="text-gray-500 dark:text-gray-400">
-                Profitez de votre journée libre !
-              </p>
-            </div>
-          )}
-        </div>
-      )}
+      </div>
     </div>
   )
 }

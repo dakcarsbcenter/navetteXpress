@@ -11,6 +11,7 @@ import Link from "next/link"
 import { DriverProfile } from "@/components/driver/DriverProfile"
 import { DriverAvailabilityManager } from "@/components/driver/DriverAvailabilityManager"
 import { DriverAvailabilityCalendar } from "@/components/driver/DriverAvailabilityCalendar"
+import DriverSidebar from '@/components/driver/DriverSidebar'
 // import { SimpleDriverTest } from "@/components/driver/SimpleDriverTest"
 
 type ViewType = 'home' | 'planning' | 'availability' | 'vehicle-report' | 'stats' | 'profile'
@@ -52,10 +53,10 @@ export default function DriverDashboard() {
   }
 
   const menuItems = [
-    { id: 'home' as ViewType, label: 'Dashboard', icon: '🏠', badge: pendingBookingsCount > 0 ? pendingBookingsCount : null },
+    { id: 'home' as ViewType, label: 'Tableau de Bord', icon: '🏠', badge: pendingBookingsCount > 0 ? pendingBookingsCount : null },
     { id: 'planning' as ViewType, label: 'Planning', icon: '📅' },
     { id: 'availability' as ViewType, label: 'Disponibilités', icon: '🕐' },
-    { id: 'vehicle-report' as ViewType, label: 'Véhicule', icon: '🔧' },
+    { id: 'vehicle-report' as ViewType, label: 'Profil & Véhicule', icon: '🚗' },
     { id: 'stats' as ViewType, label: 'Statistiques', icon: '📊' },
     { id: 'profile' as ViewType, label: 'Profil', icon: '👤' },
   ]
@@ -98,65 +99,8 @@ export default function DriverDashboard() {
   }
 
   return (
-    <div className="min-h-screen flex">
-      {/* Sidebar gauche - Navigation épurée */}
-      <aside className="hidden lg:flex flex-col fixed left-0 top-0 h-screen w-20 xl:w-64 bg-linear-to-b from-blue-900 to-blue-950 dark:from-blue-950 dark:to-black border-r border-blue-700 shadow-2xl z-50 transition-all duration-300">
-        {/* Logo */}
-        <Link href="/" className="flex items-center justify-center xl:justify-start gap-3 p-6 border-b border-blue-700">
-          <img 
-            src="/logo.svg" 
-            alt="NavetteXpress" 
-            className="h-10 w-10 shrink-0"
-          />
-          <span className="hidden xl:block text-white font-bold text-lg">NavetteXpress</span>
-        </Link>
-
-        {/* Navigation */}
-        <nav className="flex-1 py-6 px-3 space-y-2 overflow-y-auto">
-          {menuItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setCurrentView(item.id)}
-              className={`group w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 ${
-                currentView === item.id
-                  ? 'bg-linear-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/50'
-                  : 'text-blue-300 hover:text-white hover:bg-blue-800'
-              }`}
-              title={item.label}
-            >
-              <span className="text-2xl shrink-0">{item.icon}</span>
-              <span className="hidden xl:block font-semibold text-sm">{item.label}</span>
-              {item.badge && (
-                <span className="ml-auto w-6 h-6 bg-yellow-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
-                  {item.badge}
-                </span>
-              )}
-              {currentView === item.id && !item.badge && (
-                <div className="hidden xl:block ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
-              )}
-            </button>
-          ))}
-        </nav>
-
-        {/* User section */}
-        <div className="p-4 border-t border-blue-700">
-          <div className="hidden xl:block mb-3">
-            <div className="px-4 py-3 bg-blue-800 rounded-xl">
-              <p className="text-white font-semibold text-sm truncate">{session?.user?.name || 'Chauffeur'}</p>
-              <p className="text-blue-300 text-xs truncate">{session?.user?.email}</p>
-            </div>
-          </div>
-          <button
-            onClick={() => signOut({ callbackUrl: '/' })}
-            className="w-full flex items-center justify-center xl:justify-start gap-3 px-4 py-3 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl"
-          >
-            <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-            <span className="hidden xl:inline">Déconnexion</span>
-          </button>
-        </div>
-      </aside>
+    <div className="min-h-screen flex bg-gray-50">
+      <DriverSidebar currentView={currentView} setCurrentView={setCurrentView} pendingBookingsCount={pendingBookingsCount} />
 
       {/* Header mobile */}
       <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-b-2 border-slate-200 dark:border-slate-700 shadow-md">
@@ -190,7 +134,9 @@ export default function DriverDashboard() {
               </button>
               
               <button
-                onClick={() => signOut({ callbackUrl: '/' })}
+                onClick={async () => {
+                  await signOut({ callbackUrl: '/', redirect: true })
+                }}
                 className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg text-sm font-semibold transition-all duration-200 shadow-md"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -233,7 +179,7 @@ export default function DriverDashboard() {
       </header>
 
       {/* Main content */}
-      <main className="flex-1 lg:ml-20 xl:ml-64 lg:pt-0 pt-16 transition-all duration-300">
+      <main className="flex-1 lg:ml-48 lg:pt-0 pt-16 bg-gray-50">
         {renderView()}
       </main>
     </div>

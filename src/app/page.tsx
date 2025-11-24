@@ -116,7 +116,7 @@ export default async function Home() {
                   <Link href="/reservation" className="w-full sm:flex-1">
                     <button className="w-full bg-[#A73B3C] hover:bg-[#8B3032] text-white px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl font-semibold text-base sm:text-lg transition-all duration-200 shadow-xl hover:shadow-2xl flex items-center justify-center gap-2 sm:gap-3 group">
                       <BookNowIcon size={20} color="white" className="group-hover:scale-110 transition-transform shrink-0" />
-                      <span>Calculer mon Prix</span>
+                      <span>Planifier mon voyage</span>
                     </button>
                   </Link>
                   <Link href="/quote-request" className="w-full sm:flex-1">

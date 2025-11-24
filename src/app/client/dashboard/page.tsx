@@ -1361,7 +1361,9 @@ function ClientDashboardContent() {
         {/* Footer Sidebar - Déconnexion */}
         <div className="p-4 border-t border-gray-800">
           <button
-            onClick={() => signOut({ callbackUrl: '/' })}
+            onClick={async () => {
+              await signOut({ callbackUrl: '/', redirect: true })
+            }}
             className="sidebar-link w-full flex items-center px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded-lg transition-all"
           >
             <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

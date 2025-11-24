@@ -49,9 +49,29 @@ interface DriverDashboardHomeProps {
   permissionsLoading?: boolean
 }
 
+// Fonction pour formater la date
+const formatGreeting = () => {
+  const now = new Date()
+  const dayNames = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
+  const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']
+  
+  const dayName = dayNames[now.getDay()]
+  const day = now.getDate()
+  const month = monthNames[now.getMonth()]
+  const year = now.getFullYear()
+  const hours = String(now.getHours()).padStart(2, '0')
+  const minutes = String(now.getMinutes()).padStart(2, '0')
+  
+  return {
+    greeting: `${dayName} ${day} ${month} ${year}`,
+    time: `${hours}:${minutes}`
+  }
+}
+
 export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoading }: DriverDashboardHomeProps) {
   const { data: session } = useSession()
   const [isLoading, setIsLoading] = useState(false)
+  const [currentDateTime, setCurrentDateTime] = useState(formatGreeting())
 
   // Configuration des actions avec permissions
   const allActions = [
@@ -377,280 +397,265 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
     }
   }
 
+  // Mettre à jour l'heure chaque minute
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentDateTime(formatGreeting())
+    }, 60000)
+    return () => clearInterval(interval)
+  }, [])
+
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-      <div className="space-y-8 p-6">
-        {/* Header moderne avec salutation dynamique */}
-        <div className="mb-8">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
-                  Bonjour, {session?.user?.name || "Chauffeur"} 👋
-                </h1>
-                <p className="text-slate-600 dark:text-slate-400 text-lg">
-                  {new Date().toLocaleDateString('fr-FR', { 
-                    weekday: 'long', 
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric'
-                  })}
-                </p>
-                <p className="text-slate-500 dark:text-slate-500 text-sm mt-1">
-                  Tableau de bord chauffeur - Navette Xpress
-                </p>
-              </div>
-              <div className="text-right">
-                <div className="text-2xl font-bold text-slate-900 dark:text-white">
-                  {new Date().toLocaleTimeString('fr-FR', { 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
-                  })}
-                </div>
-                <div className="text-sm text-slate-500 dark:text-slate-500">
-                  Heure locale
-                </div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto p-6 space-y-6">
+        {/* Header avec salutation et heure */}
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-1 flex items-center gap-2">
+              Bonjour, {session?.user?.name || "Pierre Dubois"} 
+              <span className="text-2xl">👋</span>
+            </h1>
+            <p className="text-gray-600">
+              {currentDateTime.greeting} · {currentDateTime.time}
+            </p>
+          </div>
+          <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+            <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Cartes statistiques */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Courses */}
+          <div className="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-start justify-between mb-3">
+              <div className="p-2 bg-blue-50 rounded-lg">
+                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
               </div>
             </div>
+            <p className="text-sm text-gray-600 mb-1">Courses cette semaine</p>
+            <p className="text-3xl font-bold text-gray-900">{stats.weeklyRides}</p>
+            <p className="text-xs text-green-600 mt-2">+20% vs semaine dernière</p>
+          </div>
+
+          {/* Revenus */}
+          <div className="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-start justify-between mb-3">
+              <div className="p-2 bg-green-50 rounded-lg">
+                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+            <p className="text-sm text-gray-600 mb-1">Revenus Cumulés (Aujourd'hui)</p>
+            <p className="text-3xl font-bold text-gray-900">{stats.earnings.toLocaleString()} FCFA</p>
+            <div className="mt-2 flex items-center gap-2">
+              <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
+                <div className="bg-green-500 h-full" style={{ width: '60%' }}></div>
+              </div>
+            </div>
+            <p className="text-xs text-gray-600 mt-1">Objectif 100 000 FCFA</p>
+          </div>
+
+          {/* Heures */}
+          <div className="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-start justify-between mb-3">
+              <div className="p-2 bg-purple-50 rounded-lg">
+                <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+            <p className="text-sm text-gray-600 mb-1">Heures Conduites (Aujourd'hui)</p>
+            <p className="text-3xl font-bold text-gray-900">{stats.hoursWorked}h 30min</p>
+            <p className="text-xs text-blue-600 mt-2">1h 30min avant la pause réglementaire</p>
+          </div>
+
+          {/* Note */}
+          <div className="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-start justify-between mb-3">
+              <div className="p-2 bg-orange-50 rounded-lg">
+                <svg className="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
+              </div>
+            </div>
+            <p className="text-sm text-gray-600 mb-1">Note Moyenne (50 derniers trajets)</p>
+            <p className="text-3xl font-bold text-gray-900">{stats.rating}/5</p>
+            <p className="text-xs text-gray-600 mt-2">Super ! Maintenez ce niveau</p>
           </div>
         </div>
 
-      {/* Message de chargement */}
-      {isLoading && (
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-          <p className="text-blue-700 dark:text-blue-300">Chargement de vos réservations...</p>
-        </div>
-      )}
-
-      {/* Statistiques */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all duration-300">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Courses cette semaine</p>
-              <p className="text-3xl font-bold text-slate-900 dark:text-white">{stats.weeklyRides}</p>
-            </div>
-            <div className="w-16 h-16 bg-linear-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center">
-              <span className="text-white text-2xl">🚗</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all duration-300">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Heures conduites</p>
-              <p className="text-3xl font-bold text-slate-900 dark:text-white">{stats.hoursWorked}h</p>
-            </div>
-            <div className="w-16 h-16 bg-linear-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center">
-              <span className="text-white text-2xl">⏱️</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all duration-300">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Revenus</p>
-              <p className="text-3xl font-bold text-slate-900 dark:text-white">{stats.earnings} FCFA</p>
-            </div>
-            <div className="w-16 h-16 bg-linear-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center">
-              <span className="text-white text-2xl">💰</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all duration-300">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Note moyenne</p>
-              <p className="text-3xl font-bold text-slate-900 dark:text-white">{stats.rating}/5</p>
-            </div>
-            <div className="w-16 h-16 bg-linear-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center">
-              <span className="text-white text-2xl">⭐</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Système de filtrage */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-          <span className="text-blue-500">🔍</span>
-          Filtrer les réservations
-        </h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Filtre par date */}
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              Période
-            </label>
-            <select
-              value={dateFilter}
-              onChange={(e) => setDateFilter(e.target.value as 'today' | 'week' | 'month' | 'all')}
-              className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-            >
-              <option value="all">Toutes les dates</option>
-              <option value="today">Aujourd'hui</option>
-              <option value="week">Cette semaine</option>
-              <option value="month">Ce mois</option>
-            </select>
-          </div>
-
-          {/* Filtre par statut */}
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              Statut
-            </label>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-            >
-              <option value="all">Tous les statuts</option>
-              <option value="assigned">Assigné</option>
-              <option value="confirmed">Confirmé</option>
-              <option value="in_progress">En cours</option>
-              <option value="completed">Terminé</option>
-              <option value="cancelled">Annulé</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Boutons de filtres rapides */}
-        <div className="mt-4 flex flex-wrap gap-2">
-          <button
-            onClick={() => {
-              setDateFilter('today')
-              setStatusFilter('assigned')
-            }}
-            className="px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg text-sm font-medium hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
-          >
-            Courses d'aujourd'hui
-          </button>
-          <button
-            onClick={() => {
-              setDateFilter('all')
-              setStatusFilter('in_progress')
-            }}
-            className="px-3 py-1.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-lg text-sm font-medium hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors"
-          >
-            En cours
-          </button>
-          <button
-            onClick={() => {
-              setDateFilter('week')
-              setStatusFilter('completed')
-            }}
-            className="px-3 py-1.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-lg text-sm font-medium hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors"
-          >
-            Terminées cette semaine
-          </button>
-          <button
-            onClick={() => {
-              setDateFilter('all')
-              setStatusFilter('all')
-            }}
-            className="px-3 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
-          >
-            Réinitialiser
-          </button>
-        </div>
-
-        {/* Compteur de résultats */}
-        <div className="mt-4 text-sm text-slate-600 dark:text-slate-400">
-          <span className="font-medium">{filteredBookings.length}</span> réservation(s) trouvée(s)
-          {filteredBookings.length !== bookings.length && (
-            <span className="text-slate-500 dark:text-slate-500"> sur {bookings.length} au total</span>
-          )}
-        </div>
-      </div>
-
-      {/* Courses assignées */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-        <div className="p-6 border-b border-slate-200 dark:border-slate-700">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                Réservations
+        {/* Section Réservations */}
+        <div className="bg-white rounded-xl shadow-sm">
+          <div className="p-6 border-b border-gray-200">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-gray-900">
+                Réservations <span className="text-sm font-normal text-gray-500">({bookings.length} affichée{bookings.length > 1 ? 's' : ''})</span>
               </h2>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                Résultats filtrés
-              </p>
+              <div className="flex items-center gap-2">
+                <input 
+                  type="text" 
+                  placeholder="Rechercher par client ou lieu..."
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                  <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                </button>
+              </div>
             </div>
-            <div className="text-sm text-slate-500 dark:text-slate-400">
-              {displayedBookings.length} affichée(s)
+            
+            {/* Filtres par statut */}
+            <div className="flex gap-2">
+              <button 
+                onClick={() => setStatusFilter('pending')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  statusFilter === 'pending' 
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Courses d'aujourd'hui
+              </button>
+              <button 
+                onClick={() => setStatusFilter('assigned')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  statusFilter === 'assigned' 
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                À venir
+              </button>
+              <button 
+                onClick={() => setStatusFilter('in_progress')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  statusFilter === 'in_progress' 
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                En cours
+              </button>
+              <button 
+                onClick={() => setStatusFilter('completed')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  statusFilter === 'completed' 
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Terminées
+              </button>
             </div>
           </div>
-        </div>
 
-        <div className="p-6">
-          {displayedBookings && displayedBookings.length > 0 ? (
-            <div className="space-y-4">
-              {displayedBookings.map((ride) => (
-                <div key={ride.id} className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-linear-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
-                        {ride.customerName.charAt(0).toUpperCase()}
+          {/* Liste des réservations */}
+          {/* Liste des réservations */}
+          <div className="">
+            {isLoading ? (
+              <div className="p-8 text-center text-gray-500">
+                Chargement des réservations...
+              </div>
+            ) : filteredBookings.length === 0 ? (
+              <div className="p-8 text-center text-gray-500">
+                Aucune réservation trouvée
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-200">
+                {filteredBookings.map((ride) => (
+                <div key={ride.id} className="p-5 hover:bg-gray-50 transition-colors">
+                  <div className="flex items-start gap-4">
+                    {/* Colonne gauche - Info client */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-2">
+                        {ride.status === 'pending' && (
+                          <div className="px-2 py-1 bg-yellow-50 text-yellow-700 rounded-md flex items-center gap-1 text-xs font-medium">
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>À venir</span>
+                          </div>
+                        )}
+                        {ride.status === 'in_progress' && (
+                          <div className="px-2 py-1 bg-green-50 text-green-700 rounded-md flex items-center gap-1 text-xs font-medium">
+                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <span>EN COURS</span>
+                          </div>
+                        )}
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-slate-900 dark:text-white">
-                          {ride.customerName}
-                        </h3>
-                        <p className="text-sm text-slate-600 dark:text-slate-400">
-                          {formatDateTime(ride.scheduledDateTime)}
-                        </p>
+                      <h3 className="font-semibold text-gray-900 mb-1">{ride.customerName}</h3>
+                      <p className="text-sm text-gray-600">{ride.customerPhone}</p>
+                    </div>
+
+                    {/* Colonne milieu - Trajet */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start gap-2">
+                        <div className="flex flex-col items-center mt-1">
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          <div className="w-0.5 h-8 bg-gray-300"></div>
+                          <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="mb-3">
+                            <p className="text-xs text-gray-500 mb-1">Départ</p>
+                            <p className="text-sm font-medium text-gray-900 truncate">{ride.pickupAddress}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-500 mb-1">Arrivée</p>
+                            <p className="text-sm font-medium text-gray-900 truncate">{ride.dropoffAddress}</p>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(ride.status)}`}>
-                      {getStatusLabel(ride.status)}
-                    </span>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
-                    <div>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Départ</p>
-                      <p className="text-sm font-medium text-slate-900 dark:text-white">
-                        {ride.pickupAddress}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Arrivée</p>
-                      <p className="text-sm font-medium text-slate-900 dark:text-white">
-                        {ride.dropoffAddress}
-                      </p>
-                    </div>
-                  </div>
 
-                  {ride.vehicle && (
-                    <div className="mb-3">
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Véhicule</p>
-                      <p className="text-sm font-medium text-slate-900 dark:text-white">
-                        {ride.vehicle.make} {ride.vehicle.model} - {ride.vehicle.licensePlate}
-                      </p>
+                    {/* Colonne droite - Heure et Prix */}
+                    <div className="text-right">
+                      <div className="flex items-center gap-1 mb-2 justify-end text-sm text-gray-600">
+                        <svg className="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>{formatDateTime(ride.scheduledDateTime)}</span>
+                      </div>
+                      <div className="mb-3">
+                        <p className="text-xs text-gray-500 mb-1">Tarif Estimé</p>
+                        <p className="text-lg font-bold text-green-600">{ride.price} FCFA</p>
+                      </div>
                     </div>
-                  )}
 
-                  <div className="flex items-center justify-between">
-                    <div className="text-lg font-bold text-green-600 dark:text-green-400">
-                      {ride.price} FCFA
-                    </div>
-                    <div className="flex gap-2 flex-wrap">
-                      {/* Bouton d'action principale selon le statut */}
-                      {ride.status === 'assigned' && (
-                        <button
+                    {/* Actions */}
+                    <div className="flex items-center">
+                      {ride.status === 'pending' && (
+                        <button 
                           onClick={async () => {
-                            const result = await updateBookingStatus(ride.id, 'confirmed')
+                            const result = await updateBookingStatus(ride.id, 'in_progress')
                             if (!result.success) {
                               alert('Erreur: ' + result.error)
                             }
                           }}
-                          className="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1"
+                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
                         >
-                          <span>✅</span>
-                          Confirmer
+                          Démarrer la course
+                        </button>
+                      )}
+                      
+                      {ride.status === 'in_progress' && (
+                        <button
+                          onClick={async () => {
+                            const result = await updateBookingStatus(ride.id, 'completed')
+                            if (!result.success) {
+                              alert('Erreur: ' + result.error)
+                            }
+                          }}
+                          className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors"
+                        >
+                          Terminer la course
                         </button>
                       )}
                       
@@ -700,31 +705,11 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8">
-              <p className="text-slate-600 dark:text-slate-400">
-                {bookings.length === 0 ? 
-                  "Aucune réservation assignée pour le moment." : 
-                  "Aucune réservation ne correspond aux filtres sélectionnés."
-                }
-              </p>
-              {bookings.length > 0 && filteredBookings.length === 0 && (
-                <button
-                  onClick={() => {
-                    setDateFilter('all')
-                    setStatusFilter('all')
-                  }}
-                  className="mt-3 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors"
-                >
-                  Réinitialiser les filtres
-                </button>
-              )}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
 
       {/* Actions rapides */}
       {permissionsLoading ? (
