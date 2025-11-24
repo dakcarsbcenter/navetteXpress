@@ -61,7 +61,7 @@ export function BookingsManagementRedesigned() {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false)
   
   const [filters, setFilters] = useState({
-    status: 'all',
+    status: 'pending',
     driver: 'all',
     search: ''
   })

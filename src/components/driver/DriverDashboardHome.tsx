@@ -112,7 +112,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
   
   // États pour le filtrage
   const [dateFilter, setDateFilter] = useState<'today' | 'week' | 'month' | 'all'>('all')
-  const [statusFilter, setStatusFilter] = useState<string>('assigned')
+  const [statusFilter, setStatusFilter] = useState<string>('pending')
   
   const [stats, setStats] = useState<Stats>({
     weeklyRides: 0,

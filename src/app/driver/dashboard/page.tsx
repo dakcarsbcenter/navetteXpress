@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSession, signOut } from 'next-auth/react'
 import { usePermissions } from '@/hooks/usePermissions'
 import { DriverDashboardHome } from "@/components/driver/DriverDashboardHome"
@@ -18,8 +18,33 @@ type ViewType = 'home' | 'planning' | 'availability' | 'vehicle-report' | 'stats
 export default function DriverDashboard() {
   const [currentView, setCurrentView] = useState<ViewType>('home')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [pendingBookingsCount, setPendingBookingsCount] = useState(0)
   const { data: session } = useSession()
   const { hasPermission, loading: permissionsLoading } = usePermissions()
+
+  // Récupérer le nombre de réservations en attente
+  useEffect(() => {
+    const fetchPendingBookingsCount = async () => {
+      try {
+        const response = await fetch('/api/driver/bookings')
+        if (response.ok) {
+          const data = await response.json()
+          if (data.success && Array.isArray(data.data)) {
+            const pendingCount = data.data.filter((item: any) => 
+              item.booking?.status === 'pending'
+            ).length
+            setPendingBookingsCount(pendingCount)
+          }
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des réservations:', error)
+      }
+    }
+
+    if (session?.user) {
+      fetchPendingBookingsCount()
+    }
+  }, [session])
 
   const handleNavigation = (view: ViewType) => {
     console.log('Navigation reçue:', view)
@@ -27,7 +52,7 @@ export default function DriverDashboard() {
   }
 
   const menuItems = [
-    { id: 'home' as ViewType, label: 'Dashboard', icon: '🏠' },
+    { id: 'home' as ViewType, label: 'Dashboard', icon: '🏠', badge: pendingBookingsCount > 0 ? pendingBookingsCount : null },
     { id: 'planning' as ViewType, label: 'Planning', icon: '📅' },
     { id: 'availability' as ViewType, label: 'Disponibilités', icon: '🕐' },
     { id: 'vehicle-report' as ViewType, label: 'Véhicule', icon: '🔧' },
@@ -101,7 +126,12 @@ export default function DriverDashboard() {
             >
               <span className="text-2xl shrink-0">{item.icon}</span>
               <span className="hidden xl:block font-semibold text-sm">{item.label}</span>
-              {currentView === item.id && (
+              {item.badge && (
+                <span className="ml-auto w-6 h-6 bg-yellow-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                  {item.badge}
+                </span>
+              )}
+              {currentView === item.id && !item.badge && (
                 <div className="hidden xl:block ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
               )}
             </button>
@@ -190,6 +220,11 @@ export default function DriverDashboard() {
                 >
                   <span className="text-xl">{item.icon}</span>
                   <span className="flex-1 text-left">{item.label}</span>
+                  {item.badge && (
+                    <span className="w-6 h-6 bg-yellow-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                      {item.badge}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>

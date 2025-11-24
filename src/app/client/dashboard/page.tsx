@@ -105,6 +105,7 @@ function ClientDashboardContent() {
   const [bookingForPriceApproval, setBookingForPriceApproval] = useState<Booking | null>(null)
   const [isPriceApprovalModalOpen, setIsPriceApprovalModalOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [bookingsFilter, setBookingsFilter] = useState('pending')
   const [stats, setStats] = useState({
     totalBookings: 0,
     completedBookings: 0,
@@ -304,7 +305,7 @@ function ClientDashboardContent() {
 
   const tabs = [
     { id: 'overview' as TabType, label: 'Vue d\'ensemble', icon: '📊' },
-    ...(canViewBookings ? [{ id: 'bookings' as TabType, label: 'Mes réservations', icon: '📅' }] : []),
+    ...(canViewBookings ? [{ id: 'bookings' as TabType, label: 'Mes réservations', icon: '📅', badge: stats.pendingBookings > 0 ? stats.pendingBookings : null }] : []),
     // Ajouter l'onglet devis si l'utilisateur a les permissions
     ...(canManageQuotes ? [{ id: 'quotes' as TabType, label: 'Mes devis', icon: '📋' }] : []),
     // Ajouter l'onglet factures
@@ -626,12 +627,28 @@ function ClientDashboardContent() {
         )
 
       case 'bookings':
+        const filteredClientBookings = bookingsFilter === 'all' 
+          ? bookings 
+          : bookings.filter(b => b.status === bookingsFilter)
+        
         return (
           <div className="bg-white dark:bg-[#252525] rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-[#1A1A1A] dark:text-white">Toutes mes réservations</h3>
-                <div className="flex gap-2">
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <h3 className="text-lg font-semibold text-[#1A1A1A] dark:text-white">Mes réservations</h3>
+                <div className="flex gap-2 items-center flex-wrap">
+                  <select
+                    value={bookingsFilter}
+                    onChange={(e) => setBookingsFilter(e.target.value)}
+                    className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-[#1A1A1A] text-gray-900 dark:text-white"
+                  >
+                    <option value="pending">En attente</option>
+                    <option value="confirmed">Confirmées</option>
+                    <option value="in_progress">En cours</option>
+                    <option value="completed">Terminées</option>
+                    <option value="cancelled">Annulées</option>
+                    <option value="all">Toutes</option>
+                  </select>
                   {hasQuotesCreatePermission && (
                     <Link 
                       href="/quote-request"
@@ -652,9 +669,9 @@ function ClientDashboardContent() {
               </div>
             </div>
             <div className="p-6">
-              {bookings.length > 0 ? (
+              {filteredClientBookings.length > 0 ? (
                 <div className="space-y-4">
-                  {bookings.map((booking) => (
+                  {filteredClientBookings.map((booking) => (
                     <div key={booking.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex-1">
@@ -1225,6 +1242,11 @@ function ClientDashboardContent() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
               <span className="flex-1 text-left text-sm">Mes réservations</span>
+              {stats.pendingBookings > 0 && (
+                <span className="ml-2 bg-yellow-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                  {stats.pendingBookings}
+                </span>
+              )}
             </button>
           )}
           

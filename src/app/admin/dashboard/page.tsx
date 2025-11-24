@@ -26,6 +26,32 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<TabType>('modern')
   const [isLoading, setIsLoading] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [pendingBookingsCount, setPendingBookingsCount] = useState(0)
+
+  // Récupérer le nombre de réservations en attente
+  useEffect(() => {
+    const fetchPendingBookingsCount = async () => {
+      try {
+        const response = await fetch('/api/admin/bookings')
+        if (response.ok) {
+          const data = await response.json()
+          if (data.success && Array.isArray(data.data)) {
+            // Compter les réservations avec le statut "pending" (En attente)
+            const pendingCount = data.data.filter((booking: any) => 
+              booking.booking?.status === 'pending'
+            ).length
+            setPendingBookingsCount(pendingCount)
+          }
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des réservations:', error)
+      }
+    }
+
+    if (session?.user) {
+      fetchPendingBookingsCount()
+    }
+  }, [session])
 
   useEffect(() => {
     if (status === "loading") return
@@ -199,8 +225,10 @@ export default function AdminDashboard() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <span className="text-sm font-medium">Réservations</span>
-                {canRead('bookings') && (
-                  <span className="ml-auto w-6 h-6 bg-yellow-500/20 text-yellow-500 rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                {canRead('bookings') && pendingBookingsCount > 0 && (
+                  <span className="ml-auto w-6 h-6 bg-yellow-500/20 text-yellow-500 rounded-full flex items-center justify-center text-xs font-bold">
+                    {pendingBookingsCount}
+                  </span>
                 )}
               </button>
             </div>
@@ -415,6 +443,11 @@ export default function AdminDashboard() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <span>Réservations</span>
+                {pendingBookingsCount > 0 && (
+                  <span className="ml-auto w-5 h-5 bg-yellow-500/20 text-yellow-500 rounded-full flex items-center justify-center text-xs font-bold">
+                    {pendingBookingsCount}
+                  </span>
+                )}
               </button>
 
               {/* Section GESTION */}
