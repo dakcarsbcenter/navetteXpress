@@ -98,17 +98,28 @@ export async function requireResourcePermission(
 ): Promise<string> {
   const session = await getServerSession(authOptions);
   
+  console.log('🔍 [Permissions] Vérification session:', {
+    hasSession: !!session,
+    hasUser: !!session?.user,
+    hasId: !!session?.user?.id,
+    userId: session?.user?.id,
+    userEmail: session?.user?.email,
+    resource,
+    action
+  });
+  
   if (!session?.user?.id) {
-    console.error('Aucune session utilisateur trouvée');
+    console.error('❌ [Permissions] Aucune session utilisateur trouvée');
     throw new Error('Unauthorized: No session found');
   }
 
   const hasPermission = await hasResourcePermission(session.user.id, resource, action);
   if (!hasPermission) {
-    console.error(`Utilisateur non autorisé - permission '${action}' sur '${resource}' requise`);
+    console.error(`❌ [Permissions] Utilisateur non autorisé - permission '${action}' sur '${resource}' requise`);
     throw new Error(`Forbidden: Permission '${action}' on '${resource}' required`);
   }
 
+  console.log(`✅ [Permissions] Accès autorisé pour ${session.user.email} - ${resource}.${action}`);
   return session.user.id;
 }
 

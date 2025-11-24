@@ -8,6 +8,7 @@ import { authOptions } from '@/lib/auth'
 import { db } from '@/db'
 import { users, bookingsTable, vehiclesTable } from '@/schema'
 import { eq, count, sum, sql, desc, gte, ne } from 'drizzle-orm'
+import { alias } from 'drizzle-orm/pg-core'
 
 export async function GET(request: NextRequest) {
   try {
@@ -73,17 +74,21 @@ export async function GET(request: NextRequest) {
     }).from(vehiclesTable).where(eq(vehiclesTable.isActive, true))
 
     // 4. Réservations récentes (5 dernières)
+    // Créer des alias pour les jointures multiples
+    const clientUsers = alias(users, 'client_users')
+    const driverUsers = alias(users, 'driver_users')
+    
     const recentBookings = await db.select({
       id: bookingsTable.id,
-      clientName: sql`client.name`,
-      driverName: sql`driver.name`,
+      clientName: clientUsers.name,
+      driverName: driverUsers.name,
       status: bookingsTable.status,
       amount: bookingsTable.price,
       date: bookingsTable.createdAt,
     })
     .from(bookingsTable)
-    .leftJoin(sql`${users} as client`, sql`client.id = ${bookingsTable.userId}`)
-    .leftJoin(sql`${users} as driver`, sql`driver.id = ${bookingsTable.driverId}`)
+    .leftJoin(clientUsers, eq(bookingsTable.userId, clientUsers.id))
+    .leftJoin(driverUsers, eq(bookingsTable.driverId, driverUsers.id))
     .orderBy(desc(bookingsTable.createdAt))
     .limit(5)
 
