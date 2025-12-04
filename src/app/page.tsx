@@ -432,33 +432,8 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* CTA Section - Prêt à Voyager */}
-      <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-[#A73B3C]">
-        <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4">
-            Prêt à Voyager avec Excellence ?
-          </h2>
-          <p className="text-base sm:text-lg text-white/90 mb-8 sm:mb-10 max-w-3xl mx-auto">
-            Réservez votre transfert AIBD ou votre chauffeur privé en quelques clics.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link href="/reservation">
-              <button className="w-full sm:w-auto bg-[#E5C16C] hover:bg-[#D4B060] text-[#1A1A1A] px-8 sm:px-10 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-200 shadow-lg hover:shadow-xl">
-                Réserver Maintenant
-              </button>
-            </Link>
-            <a href="tel:+221781319191">
-              <button className="w-full sm:w-auto bg-transparent border-2 border-white text-white hover:bg-white/10 px-8 sm:px-10 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-200">
-                Appeler (221 78 131 91 91)
-              </button>
-            </a>
-          </div>
-        </div>
-      </section>
-
       {/* Devenir Partenaire Section */}
-      <section className="py-8 sm:py-10 md:py-12 px-4 sm:px-6 lg:px-8 bg-[#A73B3C]">
+      <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-[#A73B3C]">
         <div className="max-w-6xl mx-auto text-center">
           {/* Ligne de séparation décorative */}
           <div className="flex justify-center mb-6 sm:mb-8">
@@ -486,6 +461,9 @@ export default async function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-8 sm:mb-12">
             <div className="sm:col-span-2 md:col-span-2">
               <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-lg flex items-center justify-center shrink-0">
+                  <span className="text-[#1A1A1A] font-bold text-lg sm:text-xl">NX</span>
+                </div>
                 <span className="text-xl sm:text-2xl font-bold text-white">
                   Navette Xpress
                 </span>

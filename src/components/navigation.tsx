@@ -47,10 +47,10 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
   const baseClasses = variant === "transparent" 
     ? `fixed top-10 left-0 right-0 z-40 transition-all duration-300 ${
         isMounted && isScrolled 
-          ? "bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-lg" 
+          ? "bg-white/98 dark:bg-slate-900/98 backdrop-blur-md shadow-md border-b border-slate-200/50 dark:border-slate-700/50" 
           : "bg-slate-900/95 backdrop-blur-md"
       }`
-    : "bg-white dark:bg-slate-900 shadow-sm border-b border-slate-200/20 dark:border-slate-700/20 mt-10";
+    : "bg-white/98 dark:bg-slate-900/98 backdrop-blur-md shadow-sm border-b border-slate-200/50 dark:border-slate-700/50 mt-10";
 
   const textClasses = variant === "transparent"
     ? isMounted && isScrolled 
@@ -66,14 +66,24 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
 
   return (
     <>
-      {/* Menu supérieur - Informations de contact - Optimisé */}
-      <div className="bg-[#1A1A1A] text-white text-xs sm:text-sm py-2 fixed top-0 left-0 right-0 z-50 shadow-md">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center gap-2">
-            <div className="flex items-center gap-3 lg:gap-5 shrink-0">
+      {/* Menu supérieur - Style moderne avec couleurs */}
+      <div className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 border-b border-slate-200 dark:border-slate-700 text-xs sm:text-sm py-2.5 fixed top-0 left-0 right-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+          <div className="flex justify-between items-center gap-4">
+            <div className="flex items-center gap-4 lg:gap-6 shrink-0">
+              {/* Liens secondaires style moderne */}
+              {secondaryNavLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-slate-700 dark:text-slate-300 hover:text-[#A73B3C] dark:hover:text-[#E5C16C] font-medium transition-colors whitespace-nowrap hidden sm:inline-block"
+                >
+                  {link.label}
+                </Link>
+              ))}
               <a 
                 href="tel:+221781319191" 
-                className="flex items-center gap-1.5 hover:text-[#E5C16C] transition-colors whitespace-nowrap group"
+                className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 hover:text-[#A73B3C] dark:hover:text-[#E5C16C] transition-colors whitespace-nowrap group"
                 onClick={() => trackPhoneCall('header')}
               >
                 <Phone className="w-3.5 h-3.5 shrink-0 group-hover:scale-110 transition-transform" />
@@ -81,46 +91,46 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
               </a>
               <a 
                 href="mailto:contact@navettexpress.com" 
-                className="hidden lg:flex items-center gap-1.5 hover:text-white/80 transition-colors group"
+                className="hidden lg:flex items-center gap-1.5 text-slate-700 dark:text-slate-300 hover:text-[#A73B3C] dark:hover:text-[#E5C16C] transition-colors group"
                 onClick={() => trackEmailClick('header')}
               >
                 <Mail className="w-3.5 h-3.5 shrink-0 group-hover:scale-110 transition-transform" />
                 <span className="text-xs sm:text-sm font-medium">contact@navettexpress.com</span>
               </a>
             </div>
-            <div className="flex items-center gap-3 lg:gap-5 shrink-0">
+            <div className="flex items-center gap-3 lg:gap-4 shrink-0">
               <div className="hidden md:flex items-center gap-2">
-                <span className="text-xs sm:text-sm font-medium">Service 24h/24</span>
+                <span className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">Service 24h/24</span>
                 <div className="relative">
-                  <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                  <div className="absolute inset-0 w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <div className="absolute inset-0 w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
                 </div>
               </div>
               
-              {/* Boutons d'authentification compacts */}
+              {/* Boutons d'authentification style moderne */}
               {isMounted && !session && (
                 <div className="flex items-center gap-2">
                   <Link
                     href="/auth/signin"
-                    className="text-white/90 hover:text-white hover:bg-white/10 px-2.5 py-1 rounded-md text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap"
+                    className="text-slate-700 dark:text-slate-300 hover:text-[#A73B3C] dark:hover:text-[#E5C16C] px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap"
                   >
                     Connexion
                   </Link>
                   <Link
                     href="/auth/signup"
-                    className="border border-white/30 text-white hover:bg-white/10 px-2.5 py-1 rounded-md text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap"
+                    className="bg-[#A73B3C] hover:bg-[#8B3032] text-white px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap shadow-sm"
                   >
                     Inscription
                   </Link>
                 </div>
               )}
               
-              {/* Badge Dashboard pour utilisateur connecté */}
+              {/* Badge Dashboard style moderne */}
               {isMounted && session?.user && (
                 <Link
                   href={(session.user as unknown as { role?: string })?.role === 'admin' ? '/admin/dashboard' : 
                         (session.user as unknown as { role?: string })?.role === 'driver' ? '/driver/dashboard' : '/client/dashboard'}
-                  className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm px-2.5 py-1 rounded-md text-xs sm:text-sm font-semibold transition-all duration-200 whitespace-nowrap border border-white/20"
+                  className="flex items-center gap-1.5 bg-[#A73B3C] hover:bg-[#8B3032] text-white px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition-all duration-200 whitespace-nowrap shadow-sm"
                 >
                   <span className="text-sm">
                     {(session.user as unknown as { role?: string })?.role === 'admin' ? '👑' : 
@@ -139,61 +149,43 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
 
       {/* Menu principal - Optimisé */}
       <header className={baseClasses}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-14 lg:h-16">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+          <div className="flex justify-between items-center h-16 lg:h-18">
           {/* Logo - Compact */}
           <Link 
             href="/" 
-            className="transition-transform duration-300 hover:scale-105 flex items-center shrink-0"
+            className="transition-transform duration-300 hover:scale-105 flex items-center gap-3 shrink-0"
           >
-            <Image
-              src="/logo.svg"
-              alt="NavetteXpress"
-              width={40}
-              height={40}
-              className="w-9 h-9 lg:w-10 lg:h-10"
-              priority
-            />
+            <div className="w-10 h-10 lg:w-11 lg:h-11 bg-[#1A1A1A] dark:bg-white rounded-lg flex items-center justify-center">
+              <span className="text-white dark:text-[#1A1A1A] font-bold text-lg lg:text-xl">NX</span>
+            </div>
+            <span className={`${textClasses} font-bold text-lg lg:text-xl hidden sm:inline`}>
+              Navette Xpress
+            </span>
           </Link>
 
           {/* Desktop Navigation - Optimisé */}
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-3">
+          <nav className="hidden lg:flex items-center gap-2 xl:gap-4">
             {/* Menu principal */}
             {mainNavLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`${linkClasses} font-medium transition-colors duration-200 px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-sm xl:text-base whitespace-nowrap`}
+                className={`${linkClasses} font-medium transition-colors duration-200 px-4 py-2 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800 text-sm xl:text-base whitespace-nowrap`}
               >
                 {link.label}
               </Link>
             ))}
             
-            {/* Menu secondaire compact */}
-            <div className="flex items-center gap-1 xl:gap-2 pl-2 xl:pl-4 ml-2 xl:ml-4 border-l border-slate-300 dark:border-slate-600">
-              {secondaryNavLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`${linkClasses} font-medium transition-colors duration-200 px-2 xl:px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-xs xl:text-sm whitespace-nowrap`}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-            
-            {/* Bouton CTA - Compact */}
+            {/* Bouton CTA - Style moderne avec icône */}
             <Link
               href="/reservation"
-              className={`ml-2 xl:ml-4 px-4 xl:px-5 py-2 rounded-lg font-semibold text-sm xl:text-base transition-all duration-300 whitespace-nowrap ${
-                variant === "transparent" && isMounted && isScrolled
-                  ? "bg-[#E5C16C] hover:bg-[#D4B060] text-[#1A1A1A] shadow-md"
-                  : variant === "transparent"
-                  ? "bg-[#E5C16C] hover:bg-[#D4B060] text-[#1A1A1A] shadow-md"
-                  : "bg-[#E5C16C] hover:bg-[#D4B060] text-[#1A1A1A] shadow-md"
-              }`}
+              className="ml-4 xl:ml-6 px-5 xl:px-6 py-2.5 rounded-lg font-semibold text-sm xl:text-base transition-all duration-300 whitespace-nowrap bg-[#1A1A1A] hover:bg-[#2A2A2A] text-white shadow-sm hover:shadow-md flex items-center gap-2"
             >
-              Réserver
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span>Réserver</span>
             </Link>
 
             {/* Profil utilisateur - Simplifié */}

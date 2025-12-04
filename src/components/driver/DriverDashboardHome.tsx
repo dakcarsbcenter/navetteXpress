@@ -407,360 +407,134 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto p-6 space-y-6">
-        {/* Header avec salutation et heure */}
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-1 flex items-center gap-2">
-              Bonjour, {session?.user?.name || "Pierre Dubois"} 
-              <span className="text-2xl">👋</span>
-            </h1>
-            <p className="text-gray-600">
-              {currentDateTime.greeting} · {currentDateTime.time}
-            </p>
-          </div>
-          <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-            <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
-          </button>
-        </div>
-
-        {/* Cartes statistiques */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Courses */}
-          <div className="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex items-start justify-between mb-3">
-              <div className="p-2 bg-blue-50 rounded-lg">
-                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
+      <div className="max-w-[1700px] mx-auto p-8">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Section principale */}
+          <div className="flex-1 flex flex-col gap-8">
+            <h1 className="text-xl font-bold text-blue-900 mb-4">Vue d'ensemble</h1>
+            
+            {/* Stat cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-2">
+              <div className="bg-white rounded-xl p-6 shadow flex items-center justify-between">
+                <div>
+                  <div className="text-xs text-gray-500 mb-1">Revenus Hebdo</div>
+                  <div className="text-2xl font-bold text-blue-900">{stats.earnings.toLocaleString()} FCFA</div>
+                  <div className="text-xs text-green-600 mt-1">Include +12% cette semaine</div>
+                </div>
+                <div className="bg-blue-50 rounded-lg p-3">
+                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </div>
+              <div className="bg-white rounded-xl p-6 shadow flex items-center justify-between">
+                <div>
+                  <div className="text-xs text-gray-500 mb-1">Courses Réalisées</div>
+                  <div className="text-2xl font-bold text-blue-900">{stats.weeklyRides}</div>
+                  <div className="text-xs text-green-600 mt-1">Include +12% cette semaine</div>
+                </div>
+                <div className="bg-green-50 rounded-lg p-3">
+                  <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                </div>
+              </div>
+              <div className="bg-white rounded-xl p-6 shadow flex items-center justify-between">
+                <div>
+                  <div className="text-xs text-gray-500 mb-1">Note Moyenne</div>
+                  <div className="text-2xl font-bold text-blue-900">{stats.rating}/5</div>
+                </div>
+                <div className="bg-orange-50 rounded-lg p-3">
+                  <svg className="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                </div>
               </div>
             </div>
-            <p className="text-sm text-gray-600 mb-1">Courses cette semaine</p>
-            <p className="text-3xl font-bold text-gray-900">{stats.weeklyRides}</p>
-            <p className="text-xs text-green-600 mt-2">+20% vs semaine dernière</p>
-          </div>
 
-          {/* Revenus */}
-          <div className="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex items-start justify-between mb-3">
-              <div className="p-2 bg-green-50 rounded-lg">
-                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+            {/* Prochaine Mission */}
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-base font-bold text-gray-900">Prochaine Mission</h2>
+              <a href="#" className="text-xs text-blue-700 font-semibold hover:underline">Voir tout</a>
+            </div>
+            <div className="bg-white rounded-xl shadow p-8 flex flex-col gap-4 mb-6">
+              <div className="flex items-center gap-4 mb-2">
+                <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded font-semibold text-xs">NAVETTE ENTREPRISE</span>
+                <span className="text-xl font-bold text-blue-900 ml-auto">15 000 FCFA</span>
+              </div>
+              <div className="flex gap-8">
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-600 font-bold">Départ</span>
+                    <span className="text-xs text-gray-500">07:30</span>
+                  </div>
+                  <div className="text-sm font-semibold text-gray-900">Sacré-Cœur 3, VDN</div>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-red-600 font-bold">Arrivée</span>
+                    <span className="text-xs text-gray-500">08:15 (EST)</span>
+                  </div>
+                  <div className="text-sm font-semibold text-gray-900">Siège Orange, Almadies</div>
+                </div>
+                <div className="flex flex-col gap-2 ml-auto">
+                  <button className="px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg font-semibold flex items-center gap-2">
+                    <span className="text-lg">✈️</span> Démarrer
+                  </button>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="text-xs text-gray-500">Client: Orange Sénégal</div>
+                <div className="text-xs text-gray-500">Contact: 77 000 00 00</div>
               </div>
             </div>
-            <p className="text-sm text-gray-600 mb-1">Revenus Cumulés (Aujourd'hui)</p>
-            <p className="text-3xl font-bold text-gray-900">{stats.earnings.toLocaleString()} FCFA</p>
-            <div className="mt-2 flex items-center gap-2">
-              <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
-                <div className="bg-green-500 h-full" style={{ width: '60%' }}></div>
-              </div>
-            </div>
-            <p className="text-xs text-gray-600 mt-1">Objectif 100 000 FCFA</p>
-          </div>
 
-          {/* Heures */}
-          <div className="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex items-start justify-between mb-3">
-              <div className="p-2 bg-purple-50 rounded-lg">
-                <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {/* Cet après-midi */}
+            <div className="text-xs font-bold text-gray-700 mb-2">CET APRÈS-MIDI</div>
+            <div className="bg-white rounded-xl shadow p-6 flex items-center gap-4 mb-8">
+              <div className="bg-blue-50 rounded-lg p-3">
+                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-            </div>
-            <p className="text-sm text-gray-600 mb-1">Heures Conduites (Aujourd'hui)</p>
-            <p className="text-3xl font-bold text-gray-900">{stats.hoursWorked}h 30min</p>
-            <p className="text-xs text-blue-600 mt-2">1h 30min avant la pause réglementaire</p>
-          </div>
-
-          {/* Note */}
-          <div className="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex items-start justify-between mb-3">
-              <div className="p-2 bg-orange-50 rounded-lg">
-                <svg className="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                </svg>
+              <div>
+                <div className="font-semibold text-gray-900">Transfert AIBD</div>
+                <div className="text-xs text-gray-500">14:00 • Aéroport AIBD</div>
               </div>
-            </div>
-            <p className="text-sm text-gray-600 mb-1">Note Moyenne (50 derniers trajets)</p>
-            <p className="text-3xl font-bold text-gray-900">{stats.rating}/5</p>
-            <p className="text-xs text-gray-600 mt-2">Super ! Maintenez ce niveau</p>
-          </div>
-        </div>
-
-        {/* Section Réservations */}
-        <div className="bg-white rounded-xl shadow-sm">
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-gray-900">
-                Réservations <span className="text-sm font-normal text-gray-500">({bookings.length} affichée{bookings.length > 1 ? 's' : ''})</span>
-              </h2>
-              <div className="flex items-center gap-2">
-                <input 
-                  type="text" 
-                  placeholder="Rechercher par client ou lieu..."
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                  <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-            
-            {/* Filtres par statut */}
-            <div className="flex gap-2">
-              <button 
-                onClick={() => setStatusFilter('pending')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  statusFilter === 'pending' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                Courses d'aujourd'hui
-              </button>
-              <button 
-                onClick={() => setStatusFilter('assigned')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  statusFilter === 'assigned' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                À venir
-              </button>
-              <button 
-                onClick={() => setStatusFilter('in_progress')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  statusFilter === 'in_progress' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                En cours
-              </button>
-              <button 
-                onClick={() => setStatusFilter('completed')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  statusFilter === 'completed' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                Terminées
-              </button>
             </div>
           </div>
 
-          {/* Liste des réservations */}
-          {/* Liste des réservations */}
-          <div className="">
-            {isLoading ? (
-              <div className="p-8 text-center text-gray-500">
-                Chargement des réservations...
+          {/* Panneau latéral droit */}
+          <div className="w-full lg:w-96 flex flex-col gap-6">
+            <div className="bg-orange-50 rounded-xl shadow p-6 mb-2">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-orange-500 text-xl">⚠️</span>
+                <span className="font-bold text-orange-700">Action Requise</span>
               </div>
-            ) : filteredBookings.length === 0 ? (
-              <div className="p-8 text-center text-gray-500">
-                Aucune réservation trouvée
-              </div>
-            ) : (
-              <div className="divide-y divide-gray-200">
-                {filteredBookings.map((ride) => (
-                <div key={ride.id} className="p-5 hover:bg-gray-50 transition-colors">
-                  <div className="flex items-start gap-4">
-                    {/* Colonne gauche - Info client */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-2">
-                        {ride.status === 'pending' && (
-                          <div className="px-2 py-1 bg-yellow-50 text-yellow-700 rounded-md flex items-center gap-1 text-xs font-medium">
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span>À venir</span>
-                          </div>
-                        )}
-                        {ride.status === 'in_progress' && (
-                          <div className="px-2 py-1 bg-green-50 text-green-700 rounded-md flex items-center gap-1 text-xs font-medium">
-                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                            <span>EN COURS</span>
-                          </div>
-                        )}
-                      </div>
-                      <h3 className="font-semibold text-gray-900 mb-1">{ride.customerName}</h3>
-                      <p className="text-sm text-gray-600">{ride.customerPhone}</p>
-                    </div>
-
-                    {/* Colonne milieu - Trajet */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start gap-2">
-                        <div className="flex flex-col items-center mt-1">
-                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                          <div className="w-0.5 h-8 bg-gray-300"></div>
-                          <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="mb-3">
-                            <p className="text-xs text-gray-500 mb-1">Départ</p>
-                            <p className="text-sm font-medium text-gray-900 truncate">{ride.pickupAddress}</p>
-                          </div>
-                          <div>
-                            <p className="text-xs text-gray-500 mb-1">Arrivée</p>
-                            <p className="text-sm font-medium text-gray-900 truncate">{ride.dropoffAddress}</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Colonne droite - Heure et Prix */}
-                    <div className="text-right">
-                      <div className="flex items-center gap-1 mb-2 justify-end text-sm text-gray-600">
-                        <svg className="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span>{formatDateTime(ride.scheduledDateTime)}</span>
-                      </div>
-                      <div className="mb-3">
-                        <p className="text-xs text-gray-500 mb-1">Tarif Estimé</p>
-                        <p className="text-lg font-bold text-green-600">{ride.price} FCFA</p>
-                      </div>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex items-center">
-                      {ride.status === 'pending' && (
-                        <button 
-                          onClick={async () => {
-                            const result = await updateBookingStatus(ride.id, 'in_progress')
-                            if (!result.success) {
-                              alert('Erreur: ' + result.error)
-                            }
-                          }}
-                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
-                        >
-                          Démarrer la course
-                        </button>
-                      )}
-                      
-                      {ride.status === 'in_progress' && (
-                        <button
-                          onClick={async () => {
-                            const result = await updateBookingStatus(ride.id, 'completed')
-                            if (!result.success) {
-                              alert('Erreur: ' + result.error)
-                            }
-                          }}
-                          className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors"
-                        >
-                          Terminer la course
-                        </button>
-                      )}
-                      
-                      {ride.status === 'confirmed' && (
-                        <button
-                          onClick={async () => {
-                            const result = await updateBookingStatus(ride.id, 'in_progress')
-                            if (!result.success) {
-                              alert('Erreur: ' + result.error)
-                            }
-                          }}
-                          className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1"
-                        >
-                          <span>🚗</span>
-                          Démarrer
-                        </button>
-                      )}
-                      
-                      {ride.status === 'in_progress' && (
-                        <button
-                          onClick={async () => {
-                            const result = await updateBookingStatus(ride.id, 'completed')
-                            if (!result.success) {
-                              alert('Erreur: ' + result.error)
-                            }
-                          }}
-                          className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1"
-                        >
-                          <span>✅</span>
-                          Terminer
-                        </button>
-                      )}
-
-                      <button 
-                        onClick={() => handleViewDetails(ride)}
-                        className="bg-slate-600 hover:bg-slate-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
-                      >
-                        Détails
-                      </button>
-                      <button
-                        onClick={() => handleCallClient(ride.customerPhone)}
-                        className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1"
-                      >
-                        <span>📞</span>
-                        Appeler
-                      </button>
-                    </div>
-                  </div>
+              <div className="text-xs text-gray-700 mb-2">Votre assurance expire dans 5 jours. Veuillez mettre à jour le document.</div>
+              <button className="px-4 py-2 bg-orange-100 text-orange-700 rounded-lg font-semibold">METTRE À JOUR</button>
+            </div>
+            <div className="bg-white rounded-xl shadow p-6">
+              <div className="font-bold text-gray-700 mb-2">Aujourd'hui</div>
+              <div className="flex flex-col gap-2 mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-500">08:00</span>
+                  <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded font-semibold text-xs">Réservé - Navette</span>
                 </div>
-                ))}
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-500">08:00</span>
+                  <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded font-semibold text-xs">Réservé - Navette</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-500">08:00</span>
+                  <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded font-semibold text-xs">Réservé - Navette</span>
+                </div>
               </div>
-            )}
-          </div>
-        </div>
-
-      {/* Actions rapides */}
-      {permissionsLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[1, 2, 3, 4].map((item) => (
-            <div key={item} className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 animate-pulse">
-              <div className="w-16 h-16 bg-slate-200 dark:bg-slate-700 rounded-2xl mx-auto mb-4"></div>
-              <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded mb-2"></div>
-              <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded"></div>
+              <button className="w-full mt-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg font-semibold">Voir Planning Complet</button>
             </div>
-          ))}
-        </div>
-      ) : (
-        <div className={`grid gap-6 ${
-          availableActions.length === 1 ? 'grid-cols-1 max-w-sm mx-auto' :
-          availableActions.length === 2 ? 'grid-cols-1 md:grid-cols-2' :
-          availableActions.length === 3 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' :
-          'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'
-        }`}>
-          {availableActions.map((actionItem) => (
-            <button
-              key={actionItem.key}
-              onClick={() => onNavigate(actionItem.key as 'planning' | 'vehicle-report' | 'stats' | 'profile')}
-              className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all duration-300"
-            >
-              <div className={`w-16 h-16 bg-linear-to-br ${actionItem.color} rounded-2xl flex items-center justify-center mx-auto mb-4`}>
-                <span className="text-white text-2xl">{actionItem.icon}</span>
-              </div>
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">{actionItem.title}</h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                {actionItem.description}
-              </p>
-            </button>
-          ))}
-        </div>
-      )}
-      
-      {/* Message si aucune action disponible */}
-      {!permissionsLoading && availableActions.length === 0 && (
-        <div className="text-center py-12">
-          <div className="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-4xl text-slate-400">�</span>
           </div>
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-            Aucune action disponible
-          </h3>
-          <p className="text-slate-600 dark:text-slate-400">
-            Contactez votre administrateur pour obtenir les permissions nécessaires.
-          </p>
         </div>
-      )}
+      </div>
 
       {/* Modal de détails */}
       {isModalOpen && selectedBooking && (
@@ -1013,7 +787,6 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
         customerName={bookingToCancel?.customerName}
         isLoading={isCancelling}
       />
-      </div>
     </div>
   )
 }
