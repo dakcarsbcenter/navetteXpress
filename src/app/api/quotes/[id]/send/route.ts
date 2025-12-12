@@ -5,7 +5,7 @@ export const revalidate = 0;
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-import { sendQuoteEmail } from '@/lib/brevo-email';
+// TODO: Réimplémenter la fonction sendQuoteEmail avec un nouveau service d'email
 import { db } from '@/db';
 import { quotesTable } from '@/schema';
 import { eq } from 'drizzle-orm';
@@ -66,9 +66,16 @@ export async function POST(
       );
     }
 
-    // 2. Envoyer l'email avec Brevo
-    console.log(`📧 Envoi du devis ${quoteId} par email à ${quoteData.customerEmail}`);
+    // 2. TODO: Réimplémenter l'envoi d'email
+    console.log(`⚠️ Service d'email non configuré - Devis ${quoteId} pour ${quoteData.customerEmail}`);
     
+    return NextResponse.json(
+      { success: false, error: 'Service d\'envoi d\'email temporairement indisponible. Veuillez réimplémenter la fonction d\'envoi.' },
+      { status: 503 }
+    );
+
+    /*
+    // Code à réimplémenter avec un nouveau service d'email:
     const emailResult = await sendQuoteEmail(
       quoteData.customerEmail,
       quoteData.customerName,
@@ -98,14 +105,14 @@ export async function POST(
       })
       .where(eq(quotesTable.id, quoteId));
 
-    console.log(`✅ Devis ${quoteId} envoyé avec succès - Message ID: ${emailResult.messageId}`);
+    console.log(`✅ Devis ${quoteId} envoyé avec succès`);
 
     return NextResponse.json({
       success: true,
       message: `Le devis a été envoyé par email avec succès à ${quoteData.customerEmail}`,
-      messageId: emailResult.messageId,
       recipient: quoteData.customerEmail
     });
+    */
 
   } catch (error) {
     console.error('Erreur lors de l\'envoi du devis:', error);

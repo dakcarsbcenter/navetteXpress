@@ -8,7 +8,7 @@ import { authOptions } from '@/lib/auth';
 import { db } from '@/db';
 import { bookingsTable, users } from '@/schema';
 import { eq, and } from 'drizzle-orm';
-import { sendBookingApprovalNotificationToCustomer } from '@/lib/brevo-email';
+// TODO: Réimplémenter sendBookingApprovalNotificationToCustomer avec un nouveau service d'email
 
 // PUT - Approuver ou rejeter une réservation (chauffeur uniquement)
 export async function PUT(
@@ -78,10 +78,12 @@ export async function PUT(
     
     console.log(`✅ Réservation #${responseBooking.id} ${action === 'approve' ? 'approuvée' : 'rejetée'} par le chauffeur`);
 
-    // Si approuvée, envoyer notification de confirmation au client
+    // TODO: Réimplémenter l'envoi de notification au client
     if (action === 'approve') {
+      console.log(`⚠️ Service d'email non configuré - Notification non envoyée pour réservation #${responseBooking.id}`);
+      /*
+      // Code à réimplémenter:
       try {
-        // Récupérer les infos du chauffeur pour l'email
         const driverInfo = await db
           .select()
           .from(users)
@@ -103,7 +105,7 @@ export async function PUT(
             dropoffAddress: originalBooking.dropoffAddress,
             scheduledDateTime: originalBooking.scheduledDateTime.toISOString(),
             price: originalBooking.price || "0",
-            vehicleInfo: undefined, // TODO: À récupérer de la DB des véhicules
+            vehicleInfo: undefined,
             notes: originalBooking.notes || undefined
           }
         );
@@ -112,18 +114,17 @@ export async function PUT(
           console.log(`✅ Notification client envoyée - Message ID: ${emailResult.messageId}`);
         } else {
           console.error(`❌ Erreur notification client: ${emailResult.error}`);
-          // On continue même si l'email échoue
         }
       } catch (emailError) {
         console.error('❌ Erreur lors de l\'envoi de la notification client:', emailError);
-        // On continue même si l'email échoue
       }
+      */
     }
 
     return NextResponse.json({ 
       success: true, 
       data: responseBooking,
-      message: `Réservation ${action === 'approve' ? 'approuvée' : 'rejetée'} avec succès${action === 'approve' ? '. Notification envoyée au client.' : ''}`
+      message: `Réservation ${action === 'approve' ? 'approuvée' : 'rejetée'} avec succès${action === 'approve' ? ' (notification email désactivée)' : ''}`
     });
   } catch (error) {
     console.error('Erreur lors de la réponse à la réservation:', error);

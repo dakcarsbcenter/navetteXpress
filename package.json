@@ -23,7 +23,6 @@
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.10.0",
-    "@getbrevo/brevo": "^3.0.1",
     "@headlessui/react": "^2.2.9",
     "@neondatabase/serverless": "^1.0.1",
     "@react-email/body": "^0.2.0",
@@ -52,7 +51,7 @@
     "jspdf-autotable": "^5.0.2",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.544.0",
-    "next": "^15.5.4",
+    "next": "^15.5.9",
     "next-auth": "^4.24.11",
     "pg": "^8.16.3",
     "postgres": "^3.4.7",
