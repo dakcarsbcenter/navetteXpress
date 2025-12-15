@@ -53,7 +53,7 @@ export function EpicNotification({
       
       // Créer des particules colorées avec rotation et pulsation
       if (showParticles) {
-        const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#a8e6cf', '#ffd3a5', '#dda0dd', '#98d8c8', '#ffb3ba', '#bae1ff']
+        const colors = ['#A73B3C', '#C44D4E', '#8B3032', '#D65A5B', '#FFB3B3', '#FF9A9A', '#FFC8C8', '#FFD8D8', '#E6A0A0', '#F5B5B5', '#FFCACA', '#FFE0E0']
         const newParticles = Array.from({ length: 80 }, (_, i) => ({
           id: i,
           x: Math.random() * 100,
@@ -71,7 +71,7 @@ export function EpicNotification({
 
       // Créer des confettis avec formes différentes et échelle
       if (showConfetti && type === 'success') {
-        const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#a8e6cf', '#ffd3a5']
+        const colors = ['#A73B3C', '#C44D4E', '#8B3032', '#D65A5B', '#FFB3B3', '#FF9A9A', '#FFC8C8', '#FFD8D8']
         const shapes = ['circle', 'square', 'triangle', 'star', 'heart', 'diamond']
         const newConfetti = Array.from({ length: 150 }, (_, i) => ({
           id: i,
@@ -90,7 +90,7 @@ export function EpicNotification({
 
       // Créer des feux d'artifice avec traînées et étincelles
       if (showFireworks && type === 'success') {
-        const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3']
+        const colors = ['#A73B3C', '#C44D4E', '#8B3032', '#D65A5B', '#FFB3B3', '#FF9A9A']
         const newFireworks = Array.from({ length: 25 }, (_, i) => ({
           id: i,
           x: Math.random() * 100,
@@ -139,7 +139,7 @@ export function EpicNotification({
 
       // Créer un arc-en-ciel avec rotation
       if (showRainbow && type === 'success') {
-        const rainbowColors = ['#ff0000', '#ff8000', '#ffff00', '#80ff00', '#00ff80', '#00ffff', '#0080ff', '#8000ff']
+        const rainbowColors = ['#A73B3C', '#C44D4E', '#D65A5B', '#E67677', '#F08889', '#FF9A9A', '#FFB3B3', '#FFC8C8']
         const newRainbow = Array.from({ length: 50 }, (_, i) => ({
           id: i,
           x: Math.random() * 100,
@@ -312,13 +312,13 @@ export function EpicNotification({
     switch (type) {
       case 'success':
         return {
-          bg: 'bg-linear-to-br from-emerald-400 via-green-500 to-teal-600',
+          bg: 'bg-gradient-to-br from-[#A73B3C] via-[#8B3032] to-[#6D2528]',
           icon: '🎉',
-          iconBg: 'bg-emerald-100',
-          iconColor: 'text-emerald-600',
-          border: 'border-emerald-300',
-          shadow: 'shadow-emerald-500/60',
-          glow: 'shadow-emerald-500/90'
+          iconBg: 'bg-[#FFE8E8]',
+          iconColor: 'text-[#A73B3C]',
+          border: 'border-[#A73B3C]/40',
+          shadow: 'shadow-[#A73B3C]/60',
+          glow: 'shadow-[#A73B3C]/90'
         }
       case 'error':
         return {

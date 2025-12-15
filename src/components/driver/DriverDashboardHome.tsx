@@ -455,7 +455,12 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
             {/* Prochaine Mission */}
             <div className="flex items-center justify-between mb-2">
               <h2 className="text-base font-bold text-gray-900">Prochaine Mission</h2>
-              <a href="#" className="text-xs text-blue-700 font-semibold hover:underline">Voir tout</a>
+              <button 
+                onClick={() => onNavigate('planning')} 
+                className="text-xs text-blue-700 font-semibold hover:underline cursor-pointer"
+              >
+                Voir tout
+              </button>
             </div>
             <div className="bg-white rounded-xl shadow p-8 flex flex-col gap-4 mb-6">
               <div className="flex items-center gap-4 mb-2">
@@ -478,7 +483,13 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
                   <div className="text-sm font-semibold text-gray-900">Siège Orange, Almadies</div>
                 </div>
                 <div className="flex flex-col gap-2 ml-auto">
-                  <button className="px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg font-semibold flex items-center gap-2">
+                  <button 
+                    onClick={() => {
+                      // Logique pour démarrer la mission
+                      alert('Fonctionnalité de démarrage de mission en cours de développement');
+                    }}
+                    className="px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg font-semibold flex items-center gap-2 cursor-pointer transition-colors"
+                  >
                     <span className="text-lg">✈️</span> Démarrer
                   </button>
                 </div>
@@ -530,7 +541,12 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
                   <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded font-semibold text-xs">Réservé - Navette</span>
                 </div>
               </div>
-              <button className="w-full mt-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg font-semibold">Voir Planning Complet</button>
+              <button 
+                onClick={() => onNavigate('planning')}
+                className="w-full mt-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg font-semibold hover:bg-blue-100 cursor-pointer transition-colors"
+              >
+                Voir Planning Complet
+              </button>
             </div>
           </div>
         </div>

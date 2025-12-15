@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
-import { ConfirmationModal } from "@/components/ui/ConfirmationModal"
+import { DeleteUserModal } from "@/components/ui/DeleteUserModal"
 import { FilterBar } from "@/components/ui/FilterBar"
 import { useNotification } from "@/hooks/useNotification"
 import UniversalProfilePhotoUpload from "@/components/ui/UniversalProfilePhotoUpload"
@@ -661,16 +661,13 @@ export function UsersManagement() {
       />
 
       {/* Modal de confirmation de suppression */}
-      <ConfirmationModal
+      <DeleteUserModal
         isOpen={deleteConfirmOpen}
         onClose={() => { setDeleteConfirmOpen(false); setDeleteTargetUserId(null) }}
-        title="Supprimer l’utilisateur"
-        message="Cette action est irréversible. L’utilisateur sera définitivement supprimé du système. Voulez-vous continuer ?"
-        type="error"
-        confirmText="Supprimer définitivement"
         onConfirm={handleDeleteUser}
-        showCancel={true}
-        cancelText="Annuler"
+        userName={users.find(u => u.id === deleteTargetUserId)?.name}
+        userEmail={users.find(u => u.id === deleteTargetUserId)?.email}
+        userRole={users.find(u => u.id === deleteTargetUserId)?.role}
       />
     </div>
   )

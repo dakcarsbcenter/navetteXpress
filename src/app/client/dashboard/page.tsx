@@ -215,7 +215,7 @@ function ClientDashboardContent() {
   useEffect(() => {
     const totalBookings = bookings.length
     const completedBookings = bookings.filter(b => b.status === 'completed').length
-    const pendingBookings = bookings.filter(b => ['pending', 'confirmed', 'in_progress', 'assigned'].includes(b.status)).length
+    const pendingBookings = bookings.filter(b => b.status === 'pending').length
     const totalQuotes = quotes.length
     const pendingQuotes = quotes.filter(q => ['pending', 'in_progress'].includes(q.status)).length
     const acceptedQuotes = quotes.filter(q => q.status === 'accepted').length

@@ -211,42 +211,59 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    console.log('🗑️ [DELETE USER] Début de la suppression...')
+    
     // Vérifier l'authentification
-    const session = await getServerSession(authOptions) as { user?: { role?: string } } | null
+    const session = await getServerSession(authOptions) as { user?: { role?: string; id?: string } } | null
     if (!session?.user) {
+      console.log('❌ [DELETE USER] Non authentifié')
       return NextResponse.json({ error: "Non authentifié" }, { status: 401 })
     }
 
-    const userRole = (session.user as { role?: string }).role
+    const userRole = session.user.role
+    const userId = session.user.id
+    console.log('👤 [DELETE USER] Utilisateur connecté:', userId, 'Rôle:', userRole)
+    
     if (!userRole) {
+      console.log('❌ [DELETE USER] Rôle utilisateur non défini')
       return NextResponse.json({ error: "Rôle utilisateur non défini" }, { status: 403 })
     }
 
     // Vérifier les permissions
     const hasPermission = await hasUsersPermission(userRole, 'delete')
+    console.log('🔐 [DELETE USER] Permission de suppression:', hasPermission)
+    
     if (!hasPermission) {
+      console.log('❌ [DELETE USER] Pas de permission')
       return NextResponse.json(
         { error: "Vous n'avez pas la permission de supprimer des utilisateurs" },
         { status: 403 }
       )
     }
 
+    const targetUserId = (await params).id
+    console.log('🎯 [DELETE USER] ID cible:', targetUserId)
+    
     // Vérifier si l'utilisateur existe
     const existingUser = await db
       .select()
       .from(users)
-      .where(eq(users.id, (await params).id))
+      .where(eq(users.id, targetUserId))
       .limit(1)
 
     if (existingUser.length === 0) {
+      console.log('❌ [DELETE USER] Utilisateur non trouvé')
       return NextResponse.json(
         { error: "Utilisateur non trouvé" },
         { status: 404 }
       )
     }
 
+    console.log('📋 [DELETE USER] Utilisateur trouvé:', existingUser[0].email, 'Rôle:', existingUser[0].role)
+
     // Seuls les admins peuvent supprimer d'autres admins
     if (existingUser[0].role === 'admin' && userRole !== 'admin') {
+      console.log('❌ [DELETE USER] Tentative de suppression d\'un admin par un non-admin')
       return NextResponse.json(
         { error: "Vous ne pouvez pas supprimer un administrateur" },
         { status: 403 }
@@ -254,8 +271,9 @@ export async function DELETE(
     }
 
     // Empêcher l'auto-suppression
-    const userSession = session as unknown as { user: { id: string } }
-    if (userSession.user.id === (await params).id) {
+    console.log('🔍 [DELETE USER] Vérification auto-suppression - userId:', userId, 'targetUserId:', targetUserId)
+    if (userId && userId === targetUserId) {
+      console.log('❌ [DELETE USER] Tentative d\'auto-suppression')
       return NextResponse.json(
         { error: "Vous ne pouvez pas supprimer votre propre compte" },
         { status: 400 }
@@ -263,16 +281,18 @@ export async function DELETE(
     }
 
     // Supprimer l'utilisateur
+    console.log('✅ [DELETE USER] Suppression en cours...')
     await db
       .delete(users)
-      .where(eq(users.id, (await params).id))
+      .where(eq(users.id, targetUserId))
 
+    console.log('✅ [DELETE USER] Utilisateur supprimé avec succès')
     return NextResponse.json(
       { message: "Utilisateur supprimé avec succès" }
     )
 
   } catch (error) {
-    console.error("Erreur lors de la suppression de l'utilisateur:", error)
+    console.error("❌ [DELETE USER] Erreur:", error)
     return NextResponse.json(
       { error: "Erreur interne du serveur" },
       { status: 500 }

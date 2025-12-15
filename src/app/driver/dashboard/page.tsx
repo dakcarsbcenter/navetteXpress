@@ -56,7 +56,7 @@ export default function DriverDashboard() {
     { id: 'home' as ViewType, label: 'Tableau de Bord', icon: '🏠', badge: pendingBookingsCount > 0 ? pendingBookingsCount : null },
     { id: 'planning' as ViewType, label: 'Planning', icon: '📅' },
     { id: 'availability' as ViewType, label: 'Disponibilités', icon: '🕐' },
-    { id: 'vehicle-report' as ViewType, label: 'Profil & Véhicule', icon: '🚗' },
+    { id: 'vehicle-report' as ViewType, label: 'Rapport Véhicule', icon: '🚗' },
     { id: 'stats' as ViewType, label: 'Statistiques', icon: '📊' },
     { id: 'profile' as ViewType, label: 'Profil', icon: '👤' },
   ]

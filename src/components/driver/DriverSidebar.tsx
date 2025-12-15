@@ -17,7 +17,7 @@ export default function DriverSidebar({ currentView, setCurrentView, pendingBook
     { id: 'home', label: 'Tableau de Bord', icon: '🏠', badge: pendingBookingsCount > 0 ? pendingBookingsCount : null },
     { id: 'planning', label: 'Planning', icon: '📅' },
     { id: 'availability', label: 'Disponibilités', icon: '🕐' },
-    { id: 'vehicle-report', label: 'Profil & Véhicule', icon: '🚗' },
+    { id: 'vehicle-report', label: 'Rapport Véhicule', icon: '🚗' },
     { id: 'stats', label: 'Statistiques', icon: '📊' },
     { id: 'profile', label: 'Profil', icon: '👤' },
   ]

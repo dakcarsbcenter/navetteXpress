@@ -17,7 +17,6 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
   const { data: session } = useSession();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
 
   // Menu principal - Services principaux
   const mainNavLinks = [
@@ -35,7 +34,6 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
   ];
 
   useEffect(() => {
-    setIsMounted(true);
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
@@ -46,20 +44,20 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
   // Éviter les différences d'hydratation en utilisant des classes fixes pour le premier rendu
   const baseClasses = variant === "transparent" 
     ? `fixed top-10 left-0 right-0 z-40 transition-all duration-300 ${
-        isMounted && isScrolled 
+        isScrolled 
           ? "bg-white/98 dark:bg-slate-900/98 backdrop-blur-md shadow-md border-b border-slate-200/50 dark:border-slate-700/50" 
           : "bg-slate-900/95 backdrop-blur-md"
       }`
     : "bg-white/98 dark:bg-slate-900/98 backdrop-blur-md shadow-sm border-b border-slate-200/50 dark:border-slate-700/50 mt-10";
 
   const textClasses = variant === "transparent"
-    ? isMounted && isScrolled 
+    ? isScrolled 
       ? "text-slate-900 dark:text-white"
       : "text-white"
     : "text-slate-900 dark:text-white";
 
   const linkClasses = variant === "transparent"
-    ? isMounted && isScrolled
+    ? isScrolled
       ? "text-gray-600 dark:text-gray-300 hover:text-[#A73B3C] dark:hover:text-[#E5C16C]"
       : "text-white/90 hover:text-[#E5C16C]"
     : "text-gray-600 dark:text-gray-300 hover:text-[#A73B3C] dark:hover:text-[#E5C16C]";
@@ -108,7 +106,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
               </div>
               
               {/* Boutons d'authentification style moderne */}
-              {isMounted && !session && (
+              {!session && (
                 <div className="flex items-center gap-2">
                   <Link
                     href="/auth/signin"
@@ -126,7 +124,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
               )}
               
               {/* Badge Dashboard style moderne */}
-              {isMounted && session?.user && (
+              {session?.user && (
                 <Link
                   href={(session.user as unknown as { role?: string })?.role === 'admin' ? '/admin/dashboard' : 
                         (session.user as unknown as { role?: string })?.role === 'driver' ? '/driver/dashboard' : '/client/dashboard'}
@@ -189,7 +187,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
             </Link>
 
             {/* Profil utilisateur - Simplifié */}
-            {isMounted && session?.user && (
+            {session?.user && (
               <div className="ml-2 xl:ml-3 relative group">
                 <button
                   className={`flex items-center gap-2 px-2 xl:px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 cursor-pointer ${linkClasses} hover:bg-slate-100 dark:hover:bg-slate-800`}
@@ -301,7 +299,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
               Réserver
             </Link>
 
-            {isMounted && session?.user && (
+            {session?.user && (
               <Link
                 href={(session.user as unknown as { role?: string })?.role === 'admin' ? '/admin/dashboard' : '/client/dashboard'}
                 className={`${linkClasses} block px-4 py-3 rounded-lg font-medium transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-800`}
@@ -311,7 +309,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
               </Link>
             )}
 
-            {isMounted && !session && (
+            {!session && (
               <div className="pt-4 border-t border-slate-200 dark:border-slate-700 px-4">
                 <div className="flex flex-col gap-2">
                   <Link

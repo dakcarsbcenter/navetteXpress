@@ -49,11 +49,11 @@ export function ConfirmationModal({
       case 'success':
         return {
           icon: '🎉',
-          iconBg: 'bg-linear-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30',
-          iconColor: 'text-green-600 dark:text-green-400',
-          buttonBg: 'bg-linear-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 focus:ring-green-500',
-          borderColor: 'border-green-200 dark:border-green-800',
-          ringColor: 'ring-green-500/20'
+          iconBg: 'bg-gradient-to-br from-[#FFE8E8] to-[#FFD8D8] dark:from-[#A73B3C]/30 dark:to-[#8B3032]/30',
+          iconColor: 'text-[#A73B3C] dark:text-[#FF9A9A]',
+          buttonBg: 'bg-gradient-to-r from-[#A73B3C] to-[#8B3032] hover:from-[#8B3032] hover:to-[#6D2528] focus:ring-[#A73B3C]',
+          borderColor: 'border-[#A73B3C]/30 dark:border-[#A73B3C]/50',
+          ringColor: 'ring-[#A73B3C]/20'
         }
       case 'error':
         return {
@@ -82,10 +82,10 @@ export function ConfirmationModal({
       default:
         return {
           icon: '✅',
-          iconBg: 'bg-green-100 dark:bg-green-900/20',
-          iconColor: 'text-green-600 dark:text-green-400',
-          buttonBg: 'bg-green-600 hover:bg-green-700 focus:ring-green-500',
-          borderColor: 'border-green-200 dark:border-green-800'
+          iconBg: 'bg-[#FFE8E8] dark:bg-[#A73B3C]/20',
+          iconColor: 'text-[#A73B3C] dark:text-[#FF9A9A]',
+          buttonBg: 'bg-[#A73B3C] hover:bg-[#8B3032] focus:ring-[#A73B3C]',
+          borderColor: 'border-[#A73B3C]/30 dark:border-[#A73B3C]/50'
         }
     }
   }

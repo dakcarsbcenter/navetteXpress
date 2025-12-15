@@ -37,7 +37,7 @@ const TIME_SLOTS = [
   '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'
 ]
 
-const WEEKDAY_NAMES = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
+const WEEKDAY_NAMES = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
 const MONTH_NAMES = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']
 
 export function DriverAvailabilityCalendar() {
@@ -144,7 +144,8 @@ export function DriverAvailabilityCalendar() {
       description: 'Samedi et Dimanche, toute la journée',
       apply: (date: Date) => {
         const result: AvailabilityData = {}
-        const start = startOfWeek(date, { weekStartsOn: 1 })
+        const start = startOfWeek(date, { weekStartsOn: 1 }) // Lundi
+        // Samedi = Lundi + 5 jours, Dimanche = Lundi + 6 jours
         const saturday = addDays(start, 5)
         const sunday = addDays(start, 6)
         
@@ -168,7 +169,8 @@ export function DriverAvailabilityCalendar() {
       description: 'Samedi et Dimanche avec horaires',
       apply: (date: Date) => {
         const result: AvailabilityData = {}
-        const start = startOfWeek(date, { weekStartsOn: 1 })
+        const start = startOfWeek(date, { weekStartsOn: 1 }) // Lundi
+        // Samedi = Lundi + 5 jours, Dimanche = Lundi + 6 jours
         const saturday = addDays(start, 5)
         const sunday = addDays(start, 6)
         

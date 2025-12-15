@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Search, Plus, Users, UserPlus, Crown, MoreVertical, Eye, Edit, Trash2, Key, Clock } from "lucide-react"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
+import { DeleteUserModal } from "@/components/ui/DeleteUserModal"
 import { useNotification } from "@/hooks/useNotification"
 import Image from "next/image"
 
@@ -31,8 +32,10 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
   const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [resettingPasswordUser, setResettingPasswordUser] = useState<User | null>(null)
+  const [deletingUser, setDeletingUser] = useState<User | null>(null)
   const [newPassword, setNewPassword] = useState('')
   const [currentUserRole, setCurrentUserRole] = useState<string>('')
   const { notifications, showSuccess, showError, removeNotification } = useNotification()
@@ -171,19 +174,32 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
     return formatDate(lastLogin)
   }
 
-  const handleDelete = async (user: User) => {
-    if (!confirm(`Êtes-vous sûr de vouloir supprimer ${user.name} ?`)) return
+  const openDeleteModal = (user: User) => {
+    setDeletingUser(user)
+    setIsDeleteModalOpen(true)
+  }
+
+  const handleDelete = async () => {
+    if (!deletingUser) return
     
     try {
-      const response = await fetch(`/api/admin/users/${user.id}`, { method: 'DELETE' })
+      const response = await fetch(`/api/admin/users/${deletingUser.id}`, { method: 'DELETE' })
+      const data = await response.json()
+      
       if (response.ok) {
         showSuccess('Utilisateur supprimé avec succès', 'Succès')
+        setIsDeleteModalOpen(false)
+        setDeletingUser(null)
         fetchUsers()
       } else {
-        showError('Erreur lors de la suppression', 'Erreur')
+        // Afficher le message d'erreur spécifique retourné par l'API
+        const errorMessage = data.error || 'Erreur lors de la suppression'
+        showError(errorMessage, 'Erreur')
+        console.error('Erreur API:', data)
       }
     } catch (error) {
-      showError('Erreur technique', 'Erreur')
+      console.error('Erreur technique:', error)
+      showError('Erreur technique lors de la suppression', 'Erreur')
     }
   }
 
@@ -486,7 +502,7 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
                             <Key className="w-4 h-4" />
                           </button>
                           <button
-                            onClick={() => handleDelete(user)}
+                            onClick={() => openDeleteModal(user)}
                             className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                             title="Supprimer"
                           >
@@ -661,6 +677,19 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
           </div>
         </div>
       )}
+
+      {/* Modal de suppression d'utilisateur */}
+      <DeleteUserModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false)
+          setDeletingUser(null)
+        }}
+        onConfirm={handleDelete}
+        userName={deletingUser?.name}
+        userEmail={deletingUser?.email}
+        userRole={deletingUser?.role}
+      />
     </div>
   )
 }
