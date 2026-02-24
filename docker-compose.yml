@@ -1,0 +1,40 @@
+services:
+  # Base de données PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: navettexpress_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: navettexpress
+      POSTGRES_USER: navettexpress_user
+      POSTGRES_PASSWORD: navettexpress_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - navettexpress_network
+
+  # Application Next.js
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: navettexpress_app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.docker
+    depends_on:
+      - postgres
+    networks:
+      - navettexpress_network
+
+volumes:
+  postgres_data:
+
+networks:
+  navettexpress_network:
+    driver: bridge

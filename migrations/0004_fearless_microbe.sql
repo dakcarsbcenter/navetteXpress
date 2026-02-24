@@ -1,0 +1,1 @@
+ALTER TABLE "bookings" DROP CONSTRAINT "future_date_check";

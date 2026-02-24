@@ -1,0 +1,46 @@
+---
+alwaysApply: false
+---
+# shadcn/ui Configuration
+
+Ce projet utilise **shadcn/ui** pour tous les éléments d'interface utilisateur.
+
+## Initialisation
+
+Si shadcn/ui n'est pas encore initialisé dans le projet, utilise la commande suivante :
+```bash
+npx shadcn@latest init
+```
+
+## Installation des composants
+
+Si un composant shadcn/ui spécifique n'est pas installé, utilise la commande suivante pour l'ajouter :
+```bash
+npx shadcn@latest add [nom-du-composant]
+```
+
+**Exemples d'installation de composants courants :**
+- Button: `npx shadcn@latest add button`
+- Input: `npx shadcn@latest add input`
+- Card: `npx shadcn@latest add card`
+- Dialog: `npx shadcn@latest add dialog`
+- Form: `npx shadcn@latest add form`
+- Table: `npx shadcn@latest add table`
+
+## Règles d'utilisation
+
+1. **Toujours privilégier shadcn/ui** pour les composants d'interface
+2. **Import des composants** depuis `@/components/ui/[nom-composant]`
+3. **Respecter la structure** et les patterns shadcn/ui
+4. **Utiliser les variants** et props définies par shadcn/ui
+5. **Customisation** via les CSS variables et classes Tailwind
+
+## Structure des composants
+
+Les composants shadcn/ui sont généralement stockés dans :
+- `src/components/ui/` pour les composants de base
+- `src/lib/utils.ts` pour les utilitaires (cn function)
+
+## Documentation
+
+Pour plus d'informations sur les composants disponibles : https://ui.shadcn.com/docs/components

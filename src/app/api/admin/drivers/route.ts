@@ -1,0 +1,99 @@
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+export const revalidate = 0;
+
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/db';
+import { users } from '@/schema';
+import { eq } from 'drizzle-orm';
+import { requireUsersRead, requireUsersCreate } from '@/utils/admin-permissions';
+
+// GET - Récupérer tous les chauffeurs
+export async function GET() {
+  try {
+    console.log('Début de la récupération des chauffeurs...');
+    
+    try {
+      await requireUsersRead(); // Vérification de la permission de lecture des utilisateurs
+      console.log('Permissions de lecture vérifiées');
+    } catch (permError) {
+      const errorMessage = permError instanceof Error ? permError.message : 'Permission refusée';
+      const statusCode = errorMessage.includes('Unauthorized') ? 401 : 403;
+      return NextResponse.json({ success: false, error: errorMessage }, { status: statusCode });
+    }
+
+    const drivers = await db
+      .select()
+      .from(users)
+      .where(eq(users.role, 'driver'));
+    
+    console.log(`Nombre de chauffeurs trouvés: ${drivers.length}`);
+    
+    return NextResponse.json({ 
+      success: true, 
+      data: drivers 
+    });
+  } catch (error) {
+    console.error('Erreur lors de la récupération des chauffeurs:', error);
+    
+    // Provide more specific error messages
+    let errorMessage = 'Erreur interne du serveur';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    
+    return NextResponse.json({ 
+      success: false, 
+      error: errorMessage 
+    }, { status: 500 });
+  }
+}
+
+// POST - Créer un nouveau chauffeur
+export async function POST(request: NextRequest) {
+  try {
+    try {
+      await requireUsersCreate(); // Vérification de la permission de création d'utilisateurs
+    } catch (permError) {
+      const errorMessage = permError instanceof Error ? permError.message : 'Permission refusée';
+      const statusCode = errorMessage.includes('Unauthorized') ? 401 : 403;
+      return NextResponse.json({ success: false, error: errorMessage }, { status: statusCode });
+    }
+
+    const body = await request.json();
+    const { id, name, email, phone, licenseNumber, image, isActive } = body;
+
+    if (!id || !name || !email || !phone || !licenseNumber) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Tous les champs obligatoires doivent être renseignés' 
+      }, { status: 400 });
+    }
+
+    const newDriver = await db
+      .insert(users)
+      .values({
+        id,
+        name,
+        email,
+        phone,
+        licenseNumber,
+        image,
+        role: 'driver',
+        isActive: isActive ?? true,
+      })
+      .returning();
+
+    return NextResponse.json({ 
+      success: true, 
+      data: newDriver[0] 
+    }, { status: 201 });
+  } catch (error) {
+    console.error('Erreur lors de la création du chauffeur:', error);
+    return NextResponse.json({ 
+      success: false, 
+      error: 'Erreur interne du serveur' 
+    }, { status: 500 });
+  }
+}
+

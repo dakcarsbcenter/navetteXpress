@@ -1,0 +1,209 @@
+---
+alwaysApply: false
+---
+# Règles SEO - Roplane Express Agence de Voyage
+
+## 🎯 Objectifs SEO Prioritaires
+
+### Mots-clés principaux à cibler :
+- **Primaires** : "agence de voyage Dakar", "voyage sur mesure Sénégal", "tourisme luxe Afrique"
+- **Secondaires** : "réservation voyage Dakar", "guide touristique Sénégal", "vacances personnalisées"
+- **Long tail** : "meilleure agence voyage Dakar 2025", "voyage organisé Sénégal prix"
+
+## 📋 Checklist SEO Technique
+
+### 1. Structure HTML Sémantique
+```tsx
+// ✅ OBLIGATOIRE : Utiliser les balises sémantiques
+<header>, <nav>, <main>, <section>, <article>, <aside>, <footer>
+
+// ✅ Hiérarchie des titres respectée
+<h1> - Un seul par page (titre principal)
+<h2> - Sections principales  
+<h3> - Sous-sections
+```
+
+### 2. Meta Tags Essentiels
+```tsx
+// ✅ Dans layout.tsx ou page.tsx
+<title>Roplane Express - Agence de Voyage de Luxe à Dakar | Voyages Sur Mesure Sénégal</title>
+<meta name="description" content="Découvrez l'Afrique avec Roplane Express, votre agence de voyage de luxe à Dakar. Voyages sur mesure, expériences VIP et destinations exclusives depuis 2009." />
+<meta name="keywords" content="agence voyage Dakar, tourisme Sénégal, voyage luxe Afrique, réservation voyage" />
+
+// ✅ Open Graph pour réseaux sociaux
+<meta property="og:title" content="Roplane Express - Voyages d'Exception en Afrique" />
+<meta property="og:description" content="Agence de voyage de luxe à Dakar spécialisée dans les voyages sur mesure et expériences VIP" />
+<meta property="og:image" content="/og-image-roplane-express.jpg" />
+<meta property="og:url" content="https://roplaneexpress.com" />
+
+// ✅ Twitter Cards
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Roplane Express - Agence Voyage Luxe Dakar" />
+```
+
+### 3. Optimisation des Images
+```tsx
+// ✅ OBLIGATOIRE : Alt text descriptif
+<Image 
+  src="/voyage-sur-mesure.webp" 
+  alt="Couple profitant d'un voyage sur mesure organisé par Roplane Express au Sénégal"
+  width={600} 
+  height={400}
+/>
+
+// ✅ Format WebP pour performance
+// ✅ Noms de fichiers SEO-friendly : "voyage-sur-mesure-senegal.webp"
+```
+
+### 4. Structure des URLs
+```tsx
+// ✅ URLs SEO-friendly
+/services/voyages-sur-mesure
+/destinations/senegal-tourisme
+/contact/agence-dakar
+/a-propos/roplane-express
+
+// ❌ ÉVITER
+/page1, /service?id=123, /dest_sen
+```
+
+### 5. Schema Markup (JSON-LD)
+```tsx
+// ✅ À ajouter dans layout.tsx
+const schemaOrg = {
+  "@context": "https://schema.org",
+  "@type": "TravelAgency",
+  "name": "Roplane Express",
+  "description": "Agence de voyage de luxe spécialisée dans les voyages sur mesure en Afrique",
+  "url": "https://roplaneexpress.com",
+  "telephone": "+221781319191",
+  "email": "adasarr03@gmail.com",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Nord Foire, Cité BCEAO, Route de Yoff",
+    "addressLocality": "Dakar",
+    "addressCountry": "SN"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": "14.750966932516116",
+    "longitude": "-17.46474820569469"
+  },
+  "priceRange": "€€€",
+  "foundingDate": "2009"
+}
+```
+
+## 📱 SEO Mobile-First
+
+### Performance Web Vitals
+```tsx
+// ✅ Lazy loading obligatoire
+<Image loading="lazy" />
+
+// ✅ Preload des ressources critiques
+<link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossorigin />
+
+// ✅ Optimisation Core Web Vitals
+// LCP < 2.5s, FID < 100ms, CLS < 0.1
+```
+
+## 🔗 Stratégie de Liens Internes
+
+### Maillage interne optimisé
+```tsx
+// ✅ Ancres descriptives
+<Link href="/services/voyages-sur-mesure">
+  Découvrez nos voyages sur mesure au Sénégal
+</Link>
+
+// ❌ ÉVITER : "Cliquez ici", "En savoir plus"
+```
+
+## 📊 Contenu SEO
+
+### Règles de rédaction
+- **Densité mots-clés** : 1-2% maximum
+- **Longueur minimale** : 300 mots par page
+- **Titres accrocheurs** : Inclure localisation + service
+- **Call-to-action** : "Réservez votre voyage à Dakar", "Contactez notre agence"
+
+### Structure de contenu type
+```tsx
+// ✅ Page service exemple
+<h1>Voyages Sur Mesure au Sénégal - Roplane Express Dakar</h1>
+<h2>Pourquoi choisir nos voyages personnalisés ?</h2>
+<h2>Nos destinations phares au Sénégal</h2>
+<h2>Tarifs et réservation</h2>
+```
+
+## 🌍 SEO Local (Dakar/Sénégal)
+
+### Optimisation géographique
+```tsx
+// ✅ Mentions géographiques naturelles
+"Notre agence de voyage située à Dakar"
+"Spécialistes du tourisme au Sénégal depuis 2009"
+"Découvrez les merveilles de l'Afrique de l'Ouest"
+```
+
+### Google My Business
+- Coordonnées exactes : Nord Foire, Dakar
+- Catégorie : Agence de voyage
+- Photos haute qualité du bureau
+- Avis clients encouragés
+
+## 🔍 Monitoring SEO
+
+### Outils à utiliser
+- **Google Search Console** : Suivi indexation
+- **Google Analytics 4** : Trafic organique  
+- **PageSpeed Insights** : Performance
+- **Screaming Frog** : Audit technique
+
+### KPIs à surveiller
+- Position mots-clés cibles
+- Trafic organique mensuel
+- Taux de conversion réservations
+- Core Web Vitals scores
+
+## ⚠️ Points d'Attention Spécifiques
+
+### Contenu dupliqué
+```tsx
+// ✅ Canonical URLs
+<link rel="canonical" href="https://roplaneexpress.com/page-actuelle" />
+```
+
+### Redirections
+```tsx
+// ✅ 301 pour changements permanents
+// Dans next.config.js
+redirects: [
+  {
+    source: '/old-page',
+    destination: '/new-page',
+    permanent: true
+  }
+]
+```
+
+### Sitemap XML
+```tsx
+// ✅ Générer automatiquement
+// public/sitemap.xml avec toutes les pages importantes
+```
+
+## 🎯 Actions Prioritaires Immédiates
+
+1. **Audit technique complet** du site actuel
+2. **Optimisation des meta descriptions** existantes  
+3. **Ajout schema markup** agence de voyage
+4. **Optimisation images** (alt text + compression)
+5. **Création contenu blog** voyage Sénégal
+6. **Inscription Google My Business** si pas fait
+7. **Suivi positions** mots-clés prioritaires
+
+---
+
+**Note** : Cette règle doit être appliquée à chaque modification du site pour maintenir un référencement optimal et améliorer la visibilité de Roplane Express sur les moteurs de recherche.

@@ -1,0 +1,206 @@
+---
+alwaysApply: true
+description: Expert UX Design guidelines for Navette Xpress - Transportation service platform
+---
+
+# Expert UX Design Guidelines for Navette Xpress
+
+## 🎯 Design Philosophy & User-Centric Approach
+
+### Core UX Principles
+- **User-First Design**: Every design decision must prioritize the user's needs, especially for transportation services where clarity and trust are paramount
+- **Accessibility First**: Ensure WCAG 2.1 AA compliance for all users, including those with disabilities
+- **Mobile-First Strategy**: 70%+ of users book transportation services on mobile devices
+- **Trust & Safety**: Design elements that build confidence in the service (professional appearance, clear pricing, safety indicators)
+
+### Target User Personas
+- **Business Travelers**: Need efficiency, reliability, and professional service
+- **Tourists**: Require clear information, multilingual support, and cultural sensitivity
+- **Local Residents**: Want convenience, competitive pricing, and familiar interface patterns
+- **Elderly Users**: Need larger touch targets, clear typography, and simplified flows
+
+## 🎨 Visual Design Standards
+
+### Color Psychology & Brand Alignment
+- **Primary Colors**: Use professional blues (#1e40af, #3b82f6) for trust and reliability
+- **Accent Colors**: Warm oranges (#f97316, #fb923c) for call-to-action elements
+- **Success States**: Green (#10b981) for confirmed bookings and positive feedback
+- **Error States**: Red (#ef4444) for urgent alerts and critical errors
+- **Neutral Palette**: Grays (#6b7280, #9ca3af) for secondary information
+
+### Typography Hierarchy
+- **Headings**: Use Poppins font weights (600-700) for clear hierarchy
+- **Body Text**: Poppins 400-500 for optimal readability
+- **Mobile Text**: Minimum 16px for body text to prevent zoom on iOS
+- **Line Height**: 1.5-1.6 for optimal reading experience
+- **Contrast Ratio**: Minimum 4.5:1 for normal text, 3:1 for large text
+
+### Spacing & Layout
+- **8px Grid System**: Use multiples of 8px for consistent spacing
+- **Touch Targets**: Minimum 44px x 44px for all interactive elements
+- **Content Width**: Max 1200px for desktop, full-width on mobile
+- **White Space**: Generous use of whitespace for breathing room and focus
+
+## 📱 Mobile-First Design Patterns
+
+### Navigation Design
+- **Bottom Navigation**: Primary actions (Book, Dashboard, Profile) for thumb accessibility
+- **Hamburger Menu**: Secondary actions and settings
+- **Breadcrumbs**: Clear navigation path for complex flows
+- **Back Button**: Always visible and functional
+
+### Form Design
+- **Single Column Layout**: Stack form fields vertically on mobile
+- **Floating Labels**: Use floating labels for better space utilization
+- **Input Validation**: Real-time validation with clear error messages
+- **Auto-complete**: Implement smart suggestions for addresses and common inputs
+- **Progress Indicators**: Show booking progress with clear steps
+
+### Card-Based Layout
+- **Service Cards**: Clear pricing, duration, and vehicle information
+- **Booking Cards**: Status indicators, driver info, and action buttons
+- **Review Cards**: Star ratings, user photos, and helpful content
+
+## 🚀 Interaction Design & Micro-interactions
+
+### Loading States
+- **Skeleton Screens**: Show content structure while loading
+- **Progress Bars**: For multi-step processes like booking
+- **Loading Spinners**: For quick actions and API calls
+- **Empty States**: Helpful illustrations and clear next steps
+
+### Feedback & Notifications
+- **Toast Notifications**: Non-intrusive success/error messages
+- **Modal Dialogs**: For important confirmations and critical actions
+- **Haptic Feedback**: Subtle vibrations for touch interactions (where supported)
+- **Sound Cues**: Optional audio feedback for important actions
+
+### Animation Guidelines
+- **Duration**: 200-300ms for micro-interactions, 500ms for page transitions
+- **Easing**: Use ease-out for entrances, ease-in for exits
+- **Purpose**: Every animation should serve a functional purpose
+- **Performance**: Use transform and opacity for smooth 60fps animations
+
+## 🔍 Information Architecture
+
+### Content Hierarchy
+1. **Primary Actions**: Book now, Get quote, Contact
+2. **Secondary Actions**: View services, Check status, Manage account
+3. **Tertiary Actions**: Help, Settings, Legal
+
+### Navigation Structure
+- **Home**: Hero section, featured services, quick booking
+- **Services**: Detailed service listings with filtering
+- **Booking**: Step-by-step booking process
+- **Dashboard**: User's bookings, profile, preferences
+- **Support**: FAQ, contact, help center
+
+### Search & Discovery
+- **Smart Search**: Auto-complete with location suggestions
+- **Filters**: Price range, vehicle type, availability
+- **Sorting**: Price, rating, distance, availability
+- **Recommendations**: Based on user history and preferences
+
+## 🎯 Conversion Optimization
+
+### Booking Flow Optimization
+- **One-Click Booking**: Streamlined process for returning users
+- **Guest Checkout**: Allow booking without account creation
+- **Progress Saving**: Save partial bookings for completion later
+- **Exit Intent**: Capture users before they leave
+
+### Trust Building Elements
+- **Social Proof**: Customer reviews, ratings, testimonials
+- **Security Badges**: SSL certificates, payment security
+- **Contact Information**: Visible phone numbers and support
+- **Professional Imagery**: High-quality photos of vehicles and drivers
+
+### Pricing Transparency
+- **Clear Pricing**: No hidden fees, all costs upfront
+- **Price Breakdown**: Detailed cost explanation
+- **Dynamic Pricing**: Show surge pricing clearly
+- **Price Comparison**: Compare with competitors when relevant
+
+## ♿ Accessibility Standards
+
+### WCAG 2.1 AA Compliance
+- **Keyboard Navigation**: All functionality accessible via keyboard
+- **Screen Reader Support**: Proper ARIA labels and semantic HTML
+- **Color Contrast**: Minimum 4.5:1 ratio for normal text
+- **Focus Indicators**: Clear focus states for all interactive elements
+
+### Inclusive Design
+- **Language Support**: French and English with easy switching
+- **Cultural Sensitivity**: Appropriate imagery and content for Senegalese market
+- **Device Compatibility**: Support for older devices and slower connections
+- **Offline Capability**: Basic functionality when connection is poor
+
+## 📊 Performance & UX Metrics
+
+### Core Web Vitals
+- **LCP (Largest Contentful Paint)**: < 2.5s
+- **FID (First Input Delay)**: < 100ms
+- **CLS (Cumulative Layout Shift)**: < 0.1
+
+### User Experience Metrics
+- **Booking Completion Rate**: Target > 70%
+- **Time to First Booking**: < 3 minutes
+- **User Satisfaction**: > 4.5/5 stars
+- **Mobile Usability**: 100% mobile-friendly score
+
+## 🛠️ Implementation Guidelines
+
+### Component Design System
+- **Consistent Components**: Reusable UI components with clear props
+- **Design Tokens**: Centralized colors, spacing, and typography
+- **Responsive Breakpoints**: Mobile (320px+), Tablet (768px+), Desktop (1024px+)
+- **Dark Mode Support**: Seamless theme switching
+
+### Testing & Validation
+- **User Testing**: Regular testing with real users
+- **A/B Testing**: Test different design variations
+- **Usability Testing**: Task-based testing for key user flows
+- **Accessibility Testing**: Automated and manual accessibility audits
+
+## 🎨 Design Tools & Resources
+
+### Recommended Tools
+- **Figma**: For design mockups and prototypes
+- **Storybook**: For component documentation
+- **Chrome DevTools**: For responsive testing
+- **Lighthouse**: For performance auditing
+
+### Design Assets
+- **Icons**: Use Lucide React for consistent iconography
+- **Images**: High-quality, professional transportation imagery
+- **Illustrations**: Custom illustrations for empty states and onboarding
+- **Brand Assets**: Consistent logo usage and brand guidelines
+
+## 📈 Continuous Improvement
+
+### User Feedback Integration
+- **Feedback Collection**: In-app feedback forms and surveys
+- **Analytics Review**: Regular analysis of user behavior data
+- **Heatmap Analysis**: Understanding user interaction patterns
+- **Iterative Design**: Regular updates based on user feedback
+
+### Design System Evolution
+- **Component Updates**: Regular updates to design system components
+- **Pattern Library**: Maintained library of design patterns
+- **Documentation**: Up-to-date design guidelines and best practices
+- **Team Collaboration**: Regular design reviews and cross-team collaboration
+
+---
+
+## 🚨 Critical UX Red Flags to Avoid
+
+- **Cluttered Interfaces**: Too much information at once
+- **Hidden Costs**: Surprise fees during checkout
+- **Poor Mobile Experience**: Desktop-only design on mobile
+- **Slow Loading**: Images and content that take too long to load
+- **Confusing Navigation**: Users can't find what they need
+- **No Error Handling**: Poor error messages and recovery options
+- **Accessibility Issues**: Excluding users with disabilities
+- **Inconsistent Design**: Different patterns for similar actions
+
+Remember: Every design decision should be validated with real users and data. The goal is to create an intuitive, efficient, and delightful experience that makes booking transportation services effortless.

@@ -1,0 +1,12 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Black rounded square background -->
+  <rect width="64" height="64" rx="12" fill="#1A1A1A"/>
+  
+  <!-- N Letter -->
+  <path d="M 16 16 L 16 48 L 21 48 L 21 26.5 L 33 48 L 38 48 L 38 16 L 33 16 L 33 37.5 L 21 16 Z" 
+        fill="white"/>
+  
+  <!-- X Letter -->
+  <path d="M 40 16 L 47 32 L 40 48 L 45 48 L 51 34 L 57 48 L 62 48 L 55 32 L 62 16 L 57 16 L 51 30 L 45 16 Z" 
+        fill="white"/>
+</svg>
