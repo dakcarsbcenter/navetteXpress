@@ -1,12 +1,24 @@
-import { MetadataRoute } from 'next'
+import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
+  const baseUrl = 'https://navettexpress.com';
+
   return {
-    rules: {
-      userAgent: '*',
-      allow: '/',
-      disallow: ['/admin/', '/api/', '/dashboard/'],
-    },
-    sitemap: 'https://navettexpress.sn/sitemap.xml',
-  }
+    rules: [
+      {
+        userAgent: '*',
+        allow: '/',
+        disallow: [
+          '/admin/',
+          '/driver/',
+          '/client/',
+          '/api/',
+          '/auth/',
+          '/_next/',
+          '/reservation', // Page transactionnelle
+        ],
+      },
+    ],
+    sitemap: `${baseUrl}/sitemap.xml`,
+  };
 }

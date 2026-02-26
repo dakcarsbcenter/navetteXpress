@@ -1,9 +1,11 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, DM_Sans, DM_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
 import { GoogleAnalytics } from "./google-analytics";
+import { JsonLd } from '@/components/seo/JsonLd';
+import { schemaLocalBusiness, schemaWebSite } from '@/lib/schema';
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -26,113 +28,129 @@ const dmMono = DM_Mono({
   display: "swap",
 });
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#C9A84C',
+};
+
 export const metadata: Metadata = {
-  title: "Navette Xpress | Chauffeur Privé Dakar & Transfert Aéroport AIBD",
-  description: "Service de chauffeur privé N°1 à Dakar. Transfert aéroport AIBD, navette Dakar, mise à disposition. Réservation instantanée, prix fixes, disponible 24h/24. +221 78 131 91 91",
-  keywords: "chauffeur privé Dakar, transfert aéroport AIBD, navette Dakar aéroport, VTC Dakar, chauffeur Dakar, transport privé Sénégal, navette AIBD, taxi privé Dakar, chauffeur professionnel Dakar",
-  authors: [{ name: "Navette Xpress" }],
+  // ── Identité de base ──
+  metadataBase: new URL('https://navettexpress.com'),
+  title: {
+    default: 'Navette Xpress | Chauffeur Privé Dakar & Transfert Aéroport AIBD',
+    template: '%s | Navette Xpress — Chauffeur Privé Dakar',
+  },
+  description:
+    'Service de chauffeur privé N°1 à Dakar. Transfert aéroport AIBD 24h/24, navette privée, mise à disposition. Réservation en ligne, prix fixe, chauffeurs certifiés. +221 78 131 91 91',
+
+  // ── Mots-clés ──
+  keywords: [
+    'chauffeur privé Dakar',
+    'transfert aéroport AIBD',
+    'navette Dakar aéroport',
+    'VTC Dakar',
+    'taxi privé Dakar',
+    'transport privé Sénégal',
+    'navette AIBD',
+    'chauffeur professionnel Dakar',
+    'transfert Dakar AIBD',
+    'private driver Dakar',
+    'airport transfer Dakar',
+    'AIBD airport transfer',
+    'chauffeur Dakar 24h',
+    'réservation navette Dakar',
+  ],
+
+  // ── Auteur & Publisher ──
+  authors: [{ name: 'Navette Xpress', url: 'https://navettexpress.com' }],
+  creator: 'Navette Xpress',
+  publisher: 'Navette Xpress',
+
+  // ── Open Graph ──
   openGraph: {
-    title: "Navette Xpress — Chauffeur Privé Premium à Dakar",
-    description: "Transferts AIBD, navettes et mise à disposition avec chauffeurs professionnels certifiés. Disponible 24h/24 à Dakar.",
+    type: 'website',
+    locale: 'fr_SN',
+    alternateLocale: ['fr_FR', 'en_US'],
     url: 'https://navettexpress.com',
     siteName: 'Navette Xpress',
+    title: 'Navette Xpress — Chauffeur Privé Premium à Dakar',
+    description:
+      'Transfert aéroport AIBD, navette privée & chauffeur dédié à Dakar. Disponible 24h/24, prix fixe, confirmation immédiate.',
     images: [
       {
-        url: '/og-image-navette-xpress.jpg',
+        url: '/og/og-default.jpg',   // 1200×630px
         width: 1200,
         height: 630,
-        alt: 'Navette Xpress — Chauffeur Privé Premium à Dakar',
+        alt: 'Navette Xpress — Service de chauffeur privé à Dakar',
       },
     ],
-    locale: 'fr_SN',
-    type: 'website',
   },
+
+  // ── Twitter / X Card ──
   twitter: {
     card: 'summary_large_image',
-    title: "Navette Xpress — Chauffeur Privé Premium à Dakar",
-    description: "Transferts AIBD, navettes et mise à disposition avec chauffeurs professionnels certifiés.",
-    images: ['/og-image-navette-xpress.jpg'],
+    title: 'Navette Xpress — Chauffeur Privé Dakar',
+    description: 'Transfert AIBD, navette privée & chauffeur dédié à Dakar. 24h/24, prix fixe.',
+    images: ['/og/og-default.jpg'],
+    creator: '@navettexpress',
   },
+
+  // ── Robots ──
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+
+  // ── Verification ──
+  // verification: {
+  //   google: 'GOOGLE_SEARCH_CONSOLE_CODE',
+  //   other: { 'msvalidate.01': 'BING_CODE' },
+  // },
+
+  // ── Canonique ──
+  alternates: {
+    canonical: 'https://navettexpress.com',
+    languages: {
+      'fr-SN': 'https://navettexpress.com',
+      'fr-FR': 'https://navettexpress.com',
+      'en-US': 'https://navettexpress.com/en',
+    },
+  },
+
+  // ── Icônes ──
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/icons/icon-16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/icons/icon-32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: [{ url: '/icons/apple-touch-icon.png', sizes: '180x180' }],
+  },
+
+  // ── Manifest PWA ──
+  manifest: '/manifest.json',
 };
+
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const localBusinessSchema = {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "name": "Navette Xpress",
-    "description": "Service de chauffeur privé et transfert aéroport AIBD à Dakar, Sénégal",
-    "@id": "https://navettexpress.com",
-    "url": "https://navettexpress.com",
-    "telephone": "+221781319191",
-    "email": "contact@navettexpress.com",
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "Dakar",
-      "addressLocality": "Dakar",
-      "addressCountry": "SN"
-    },
-    "geo": {
-      "@type": "GeoCoordinates",
-      "latitude": 14.7167,
-      "longitude": -17.4677
-    },
-    "openingHoursSpecification": {
-      "@type": "OpeningHoursSpecification",
-      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-      "opens": "00:00",
-      "closes": "23:59"
-    },
-    "priceRange": "$$",
-    "image": "https://navettexpress.com/og-image-navette-xpress.jpg",
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.9",
-      "reviewCount": "127"
-    },
-    "sameAs": [
-      "https://www.facebook.com/navettexpresssenegal",
-      "https://www.instagram.com/navettexpresssenegal"
-    ]
-  };
-
-  const serviceSchema = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "serviceType": "Chauffeur privé et transfert aéroport",
-    "provider": { "@type": "LocalBusiness", "name": "Navette Xpress" },
-    "areaServed": {
-      "@type": "City",
-      "name": "Dakar",
-      "containedIn": { "@type": "Country", "name": "Sénégal" }
-    },
-    "offers": {
-      "@type": "Offer",
-      "priceCurrency": "XOF",
-      "availability": "https://schema.org/InStock"
-    }
-  };
-
   return (
     <html lang="fr" suppressHydrationWarning className="scroll-smooth">
-      <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(localBusinessSchema),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(serviceSchema),
-          }}
-        />
-      </head>
+      <head />
       <body className={`${cormorant.variable} ${dmSans.variable} ${dmMono.variable} antialiased font-body bg-background text-foreground`}>
+        <JsonLd data={schemaLocalBusiness} />
+        <JsonLd data={schemaWebSite} />
         <AuthSessionProvider>
           <ThemeProvider
             attribute="class"

@@ -70,10 +70,21 @@ export function Footer() {
                     <div>
                         <h3 className="text-white font-display text-lg mb-6 tracking-wide">Zones Desservies</h3>
                         <div className="flex flex-wrap gap-2">
-                            {zones.map((zone, i) => (
-                                <span key={i} className="text-text-secondary text-sm hover:text-gold cursor-default transition-colors">
-                                    {zone}{i < zones.length - 1 ? " • " : ""}
-                                </span>
+                            {[
+                                { name: "Dakar Plateau", slug: "plateau" },
+                                { name: "Almadies", slug: "almadies" },
+                                { name: "Ngor", slug: "ngor" },
+                                { name: "Mermoz", slug: "sacre-coeur" },
+                                { name: "Sacré-Cœur", slug: "sacre-coeur" },
+                                { name: "Yoff", slug: "yoff" }
+                            ].map((zone, i) => (
+                                <Link
+                                    key={i}
+                                    href={`/zones/${zone.slug}`}
+                                    className="text-text-secondary text-sm hover:text-gold transition-colors"
+                                >
+                                    {zone.name}{i < 5 ? " • " : ""}
+                                </Link>
                             ))}
                         </div>
                         <div className="mt-8">
