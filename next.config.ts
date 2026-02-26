@@ -1,10 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  
+
   // Configuration pour Docker
   output: 'standalone',
-  
+
   // Désactiver ESLint et TypeScript checks pendant le build (pour Coolify)
   eslint: {
     ignoreDuringBuilds: true,
@@ -12,11 +12,11 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  
+
   // Optimisations SEO
   compress: true,
   poweredByHeader: false,
-  
+
   // Redirections pour SEO
   async redirects() {
     return [
@@ -32,7 +32,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  
+
   // Headers pour la sécurité et les performances
   async headers() {
     return [
@@ -55,7 +55,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  
+
   // Images optimisées - Configuration minimale (toutes images migrées vers Cloudinary)
   images: {
     formats: ['image/webp', 'image/avif'],
@@ -83,8 +83,12 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'media.autoexpress.co.uk',
       },
+      {
+        protocol: 'https',
+        hostname: '*.unsplash.com',
+      },
     ],
   },
-  
+
 };
 export default nextConfig;
