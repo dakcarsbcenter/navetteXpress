@@ -4,6 +4,21 @@ import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { Session } from 'next-auth'
 import { CancelBookingModal } from './CancelBookingModal'
+import { MissionStatusBadge } from './MissionStatusBadge'
+import {
+  CheckCircle,
+  Money as Banknote,
+  RoadHorizon as Route,
+  Star,
+  NavigationArrow,
+  Clock,
+  Users,
+  Car,
+  Phone,
+  ChatCircle,
+  Play,
+  CaretRight
+} from "@phosphor-icons/react"
 
 interface Stats {
   weeklyRides: number
@@ -54,14 +69,14 @@ const formatGreeting = () => {
   const now = new Date()
   const dayNames = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
   const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']
-  
+
   const dayName = dayNames[now.getDay()]
   const day = now.getDate()
   const month = monthNames[now.getMonth()]
   const year = now.getFullYear()
   const hours = String(now.getHours()).padStart(2, '0')
   const minutes = String(now.getMinutes()).padStart(2, '0')
-  
+
   return {
     greeting: `${dayName} ${day} ${month} ${year}`,
     time: `${hours}:${minutes}`
@@ -73,67 +88,19 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
   const [isLoading, setIsLoading] = useState(false)
   const [currentDateTime, setCurrentDateTime] = useState(formatGreeting())
 
-  // Configuration des actions avec permissions
-  const allActions = [
-    {
-      key: 'planning',
-      title: 'Planning',
-      description: 'Consultez votre planning de la semaine',
-      icon: '📅',
-      color: 'from-blue-500 to-blue-600',
-      resource: 'bookings',
-      action: 'read'
-    },
-    {
-      key: 'vehicle-report',
-      title: 'Véhicule',
-      description: 'Signaler un problème véhicule',
-      icon: '🔧',
-      color: 'from-orange-500 to-orange-600',
-      resource: 'vehicles',
-      action: 'manage'
-    },
-    {
-      key: 'stats',
-      title: 'Statistiques',
-      description: 'Analysez vos performances',
-      icon: '📊',
-      color: 'from-purple-500 to-purple-600',
-      resource: 'reports',
-      action: 'read'
-    },
-    {
-      key: 'profile',
-      title: 'Mon Profil',
-      description: 'Gérez vos informations personnelles',
-      icon: '👤',
-      color: 'from-green-500 to-green-600',
-      resource: 'profile',
-      action: 'manage'
-    }
-  ]
-
-  // Filtrer les actions selon les permissions
-  const availableActions = allActions.filter(actionItem => {
-    // Si pas de fonction hasPermission, afficher toutes les actions (fallback)
-    if (!hasPermission) return true
-    
-    // Vérifier la permission pour cette action
-    return hasPermission(actionItem.resource, actionItem.action)
-  })
   const [bookings, setBookings] = useState<BookingData[]>([])
   const [selectedBooking, setSelectedBooking] = useState<BookingData | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  
+
   // États pour la modal d'annulation
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false)
   const [bookingToCancel, setBookingToCancel] = useState<BookingData | null>(null)
   const [isCancelling, setIsCancelling] = useState(false)
-  
+
   // États pour le filtrage
   const [dateFilter, setDateFilter] = useState<'today' | 'week' | 'month' | 'all'>('all')
   const [statusFilter, setStatusFilter] = useState<string>('pending')
-  
+
   const [stats, setStats] = useState<Stats>({
     weeklyRides: 0,
     hoursWorked: 0,
@@ -155,13 +122,13 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
     try {
       setIsLoading(true)
       const response = await fetch('/api/driver/bookings')
-      
+
       if (!response.ok) {
         throw new Error('Erreur lors de la récupération des réservations')
       }
 
       const data: APIResponse = await response.json()
-      
+
       if (data.success && data.data) {
         // Transformer les données pour l'affichage
         const transformedBookings: BookingData[] = data.data.map(item => ({
@@ -180,14 +147,14 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
             color: item.vehicle.color,
           } : undefined
         }))
-        
+
         setBookings(transformedBookings)
-        
+
         // Calculer les statistiques basées sur les données réelles
         const totalEarnings = transformedBookings
           .filter(b => b.status === 'completed')
           .reduce((sum, b) => sum + (typeof b.price === 'string' ? parseFloat(b.price) : b.price), 0)
-        
+
         setStats(prev => ({
           ...prev,
           weeklyRides: transformedBookings.length,
@@ -201,14 +168,20 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
     }
   }
 
-
-
   // Fonction pour formater la date/heure
   const formatDateTime = (dateTimeString: string) => {
     const date = new Date(dateTimeString)
     return date.toLocaleDateString('fr-FR', {
       day: 'numeric',
       month: 'short',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }
+
+  const formatTimeOnly = (dateTimeString: string) => {
+    const date = new Date(dateTimeString)
+    return date.toLocaleTimeString('fr-FR', {
       hour: '2-digit',
       minute: '2-digit'
     })
@@ -221,7 +194,6 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
       case 'assigned': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
       case 'completed': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
       case 'cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-      // 'pending' est exclu car c'est un statut réservé aux administrateurs
       default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
     }
   }
@@ -233,46 +205,9 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
       case 'assigned': return 'Assigné'
       case 'completed': return 'Terminé'
       case 'cancelled': return 'Annulé'
-      // 'pending' est exclu car c'est un statut réservé aux administrateurs
       default: return status
     }
   }
-
-  // Fonction de filtrage par date
-  const filterByDate = (booking: BookingData) => {
-    const bookingDate = new Date(booking.scheduledDateTime)
-    const today = new Date()
-    const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate())
-    const startOfWeek = new Date(startOfDay)
-    startOfWeek.setDate(startOfDay.getDate() - startOfDay.getDay())
-    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
-
-    switch (dateFilter) {
-      case 'today':
-        return bookingDate >= startOfDay && bookingDate < new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000)
-      case 'week':
-        return bookingDate >= startOfWeek
-      case 'month':
-        return bookingDate >= startOfMonth
-      case 'all':
-      default:
-        return true
-    }
-  }
-
-  // Fonction de filtrage par statut
-  const filterByStatus = (booking: BookingData) => {
-    if (statusFilter === 'all') return true
-    return booking.status === statusFilter
-  }
-
-  // Appliquer les filtres
-  const filteredBookings = bookings.filter(booking => 
-    filterByDate(booking) && filterByStatus(booking)
-  )
-
-  // Utiliser les réservations filtrées pour l'affichage
-  const displayedBookings = filteredBookings.slice(0, 10) // Afficher jusqu'à 10 réservations
 
   // Fonction pour mettre à jour le statut d'une réservation
   const updateBookingStatus = async (bookingId: number, newStatus: string) => {
@@ -291,9 +226,9 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
       }
 
       // Mettre à jour l'état local
-      setBookings(prevBookings => 
-        prevBookings.map(booking => 
-          booking.id === bookingId 
+      setBookings(prevBookings =>
+        prevBookings.map(booking =>
+          booking.id === bookingId
             ? { ...booking, status: newStatus }
             : booking
         )
@@ -319,9 +254,9 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           status: newStatus,
-          cancellationReason: cancellationReason 
+          cancellationReason: cancellationReason
         }),
       })
 
@@ -331,9 +266,9 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
       }
 
       // Mettre à jour l'état local
-      setBookings(prevBookings => 
-        prevBookings.map(booking => 
-          booking.id === bookingId 
+      setBookings(prevBookings =>
+        prevBookings.map(booking =>
+          booking.id === bookingId
             ? { ...booking, status: newStatus, cancellationReason }
             : booking
         )
@@ -352,13 +287,11 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
   }
 
   const handleViewDetails = (ride: BookingData) => {
-    console.log("handleViewDetails called with:", ride)
     setSelectedBooking(ride)
     setIsModalOpen(true)
   }
 
   const handleCallClient = (phone: string) => {
-    console.log("handleCallClient called with phone:", phone)
     window.location.href = `tel:${phone}`
   }
 
@@ -380,7 +313,6 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
     try {
       const result = await updateBookingStatusWithReason(bookingToCancel.id, 'cancelled', reason)
       if (result.success) {
-        // Fermer les modals et réinitialiser les états
         closeCancelModal()
         if (selectedBooking && selectedBooking.id === bookingToCancel.id) {
           setIsModalOpen(false)
@@ -405,391 +337,623 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
     return () => clearInterval(interval)
   }, [])
 
+  // Dériver missionActive et prochaineMission
+  const missionActive = bookings.find(b => b.status === 'in_progress')
+  const prochaineMission = bookings.find(b => b.status === 'assigned' || b.status === 'confirmed')
+  const missionsAVenir = bookings.filter(b => b.status === 'assigned' || b.status === 'confirmed').slice(0, 5)
+  const historique = bookings.filter(b => b.status === 'completed' || b.status === 'cancelled').slice(0, 5)
+
+  // Mock isOnline state (devrait ideally venir de la session ou d'un store)
+  const isOnline = true
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-[1700px] mx-auto p-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Section principale */}
-          <div className="flex-1 flex flex-col gap-8">
-            <h1 className="text-xl font-bold text-blue-900 mb-4">Vue d'ensemble</h1>
-            
-            {/* Stat cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-2">
-              <div className="bg-white rounded-xl p-6 shadow flex items-center justify-between">
-                <div>
-                  <div className="text-xs text-gray-500 mb-1">Revenus Hebdo</div>
-                  <div className="text-2xl font-bold text-blue-900">{stats.earnings.toLocaleString()} FCFA</div>
-                  <div className="text-xs text-green-600 mt-1">Include +12% cette semaine</div>
-                </div>
-                <div className="bg-blue-50 rounded-lg p-3">
-                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-              </div>
-              <div className="bg-white rounded-xl p-6 shadow flex items-center justify-between">
-                <div>
-                  <div className="text-xs text-gray-500 mb-1">Courses Réalisées</div>
-                  <div className="text-2xl font-bold text-blue-900">{stats.weeklyRides}</div>
-                  <div className="text-xs text-green-600 mt-1">Include +12% cette semaine</div>
-                </div>
-                <div className="bg-green-50 rounded-lg p-3">
-                  <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                  </svg>
-                </div>
-              </div>
-              <div className="bg-white rounded-xl p-6 shadow flex items-center justify-between">
-                <div>
-                  <div className="text-xs text-gray-500 mb-1">Note Moyenne</div>
-                  <div className="text-2xl font-bold text-blue-900">{stats.rating}/5</div>
-                </div>
-                <div className="bg-orange-50 rounded-lg p-3">
-                  <svg className="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                  </svg>
-                </div>
-              </div>
-            </div>
+    <div className="max-w-5xl mx-auto space-y-6 pb-12">
 
-            {/* Prochaine Mission */}
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="text-base font-bold text-gray-900">Prochaine Mission</h2>
-              <button 
-                onClick={() => onNavigate('planning')} 
-                className="text-xs text-blue-700 font-semibold hover:underline cursor-pointer"
-              >
-                Voir tout
-              </button>
-            </div>
-            <div className="bg-white rounded-xl shadow p-8 flex flex-col gap-4 mb-6">
-              <div className="flex items-center gap-4 mb-2">
-                <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded font-semibold text-xs">NAVETTE ENTREPRISE</span>
-                <span className="text-xl font-bold text-blue-900 ml-auto">15 000 FCFA</span>
-              </div>
-              <div className="flex gap-8">
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-green-600 font-bold">Départ</span>
-                    <span className="text-xs text-gray-500">07:30</span>
-                  </div>
-                  <div className="text-sm font-semibold text-gray-900">Sacré-Cœur 3, VDN</div>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-red-600 font-bold">Arrivée</span>
-                    <span className="text-xs text-gray-500">08:15 (EST)</span>
-                  </div>
-                  <div className="text-sm font-semibold text-gray-900">Siège Orange, Almadies</div>
-                </div>
-                <div className="flex flex-col gap-2 ml-auto">
-                  <button 
-                    onClick={() => {
-                      // Logique pour démarrer la mission
-                      alert('Fonctionnalité de démarrage de mission en cours de développement');
-                    }}
-                    className="px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg font-semibold flex items-center gap-2 cursor-pointer transition-colors"
-                  >
-                    <span className="text-lg">✈️</span> Démarrer
-                  </button>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="text-xs text-gray-500">Client: Orange Sénégal</div>
-                <div className="text-xs text-gray-500">Contact: 77 000 00 00</div>
-              </div>
-            </div>
+      {/* ── SECTION HERO : MISSION ACTIVE OU PROCHAINE ── */}
+      {missionActive && (
+        <div className="driver-card-enter rounded-[2rem] overflow-hidden mb-8 relative border-2 border-emerald-500/20 shadow-[0_0_50px_rgba(16,185,129,0.1)] group"
+          style={{
+            background: 'linear-gradient(135deg, #0A1520 0%, var(--color-driver-card) 100%)',
+          }}>
 
-            {/* Cet après-midi */}
-            <div className="text-xs font-bold text-gray-700 mb-2">CET APRÈS-MIDI</div>
-            <div className="bg-white rounded-xl shadow p-6 flex items-center gap-4 mb-8">
-              <div className="bg-blue-50 rounded-lg p-3">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
+          {/* Barre de progression colorée en haut */}
+          <div className="h-1"
+            style={{ background: 'linear-gradient(to right, var(--color-success), rgba(16,185,129,0.2))' }} />
+
+          <div className="p-5 sm:p-7">
+
+            {/* En-tête mission */}
+            <div className="flex items-start justify-between mb-6">
               <div>
-                <div className="font-semibold text-gray-900">Transfert AIBD</div>
-                <div className="text-xs text-gray-500">14:00 • Aéroport AIBD</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Panneau latéral droit */}
-          <div className="w-full lg:w-96 flex flex-col gap-6">
-            <div className="bg-orange-50 rounded-xl shadow p-6 mb-2">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-orange-500 text-xl">⚠️</span>
-                <span className="font-bold text-orange-700">Action Requise</span>
-              </div>
-              <div className="text-xs text-gray-700 mb-2">Votre assurance expire dans 5 jours. Veuillez mettre à jour le document.</div>
-              <button className="px-4 py-2 bg-orange-100 text-orange-700 rounded-lg font-semibold">METTRE À JOUR</button>
-            </div>
-            <div className="bg-white rounded-xl shadow p-6">
-              <div className="font-bold text-gray-700 mb-2">Aujourd'hui</div>
-              <div className="flex flex-col gap-2 mb-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-500">08:00</span>
-                  <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded font-semibold text-xs">Réservé - Navette</span>
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-2"
+                  style={{
+                    backgroundColor: 'rgba(16,185,129,0.1)',
+                    border: '1px solid rgba(16,185,129,0.2)',
+                  }}>
+                  {/* Point pulsant */}
+                  <span className="avail-online w-1.5 h-1.5 rounded-full"
+                    style={{ backgroundColor: 'var(--color-success)' }} />
+                  <span className="text-[11px] font-medium"
+                    style={{ color: 'var(--color-success)' }}>
+                    Mission en cours
+                  </span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-500">08:00</span>
-                  <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded font-semibold text-xs">Réservé - Navette</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-500">08:00</span>
-                  <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded font-semibold text-xs">Réservé - Navette</span>
-                </div>
+                <p className="text-xs" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
+                  #{missionActive.id}
+                </p>
               </div>
-              <button 
-                onClick={() => onNavigate('planning')}
-                className="w-full mt-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg font-semibold hover:bg-blue-100 cursor-pointer transition-colors"
-              >
-                Voir Planning Complet
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Modal de détails */}
-      {isModalOpen && selectedBooking && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            {/* En-tête de la modal */}
-            <div className="relative p-6 pb-4 border-b border-slate-200 dark:border-slate-700">
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="absolute top-4 right-4 w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-colors"
-              >
-                <span className="text-slate-600 dark:text-slate-400 text-xl">×</span>
-              </button>
-              
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-linear-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-white font-bold text-2xl">
-                  {selectedBooking.customerName.charAt(0).toUpperCase()}
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
-                    Détails de la Course
-                  </h2>
-                  <p className="text-slate-600 dark:text-slate-400">
-                    Réservation #{selectedBooking.id}
-                  </p>
-                </div>
-              </div>
-              
-              <div className="mt-4">
-                <span className={`inline-flex px-4 py-2 rounded-full text-sm font-medium ${getStatusColor(selectedBooking.status)}`}>
-                  {getStatusLabel(selectedBooking.status)}
-                </span>
-              </div>
-            </div>
-
-            {/* Contenu principal */}
-            <div className="p-6 space-y-6">
-              {/* Informations client */}
-              <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4">
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
-                  <span className="text-blue-500">👤</span>
-                  Informations Client
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">Nom</p>
-                    <p className="font-semibold text-slate-900 dark:text-white">{selectedBooking.customerName}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">Téléphone</p>
-                    <div className="flex items-center gap-2">
-                      <p className="font-semibold text-slate-900 dark:text-white">{selectedBooking.customerPhone}</p>
-                      <button
-                        onClick={() => handleCallClient(selectedBooking.customerPhone)}
-                        className="text-green-600 hover:text-green-700 transition-colors"
-                      >
-                        <span className="text-lg">📞</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Itinéraire */}
-              <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4">
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
-                  <span className="text-green-500">🗺️</span>
-                  Itinéraire
-                </h3>
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-3 h-3 bg-green-500 rounded-full mt-1.5"></div>
-                    <div>
-                      <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">Départ</p>
-                      <p className="font-semibold text-slate-900 dark:text-white">{selectedBooking.pickupAddress}</p>
-                    </div>
-                  </div>
-                  <div className="ml-1.5 w-0.5 h-8 bg-slate-300 dark:bg-slate-600"></div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-3 h-3 bg-red-500 rounded-full mt-1.5"></div>
-                    <div>
-                      <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">Arrivée</p>
-                      <p className="font-semibold text-slate-900 dark:text-white">{selectedBooking.dropoffAddress}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Horaire et véhicule */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4">
-                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
-                    <span className="text-orange-500">⏰</span>
-                    Horaire
-                  </h3>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                      {formatDateTime(selectedBooking.scheduledDateTime)}
-                    </p>
-                  </div>
-                </div>
-
-                {selectedBooking.vehicle && (
-                  <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4">
-                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
-                      <span className="text-purple-500">🚗</span>
-                      Véhicule
-                    </h3>
-                    <div className="space-y-2">
-                      <p className="font-semibold text-slate-900 dark:text-white">
-                        {selectedBooking.vehicle.make} {selectedBooking.vehicle.model}
-                      </p>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">
-                        {selectedBooking.vehicle.licensePlate} • {selectedBooking.vehicle.color}
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Prix */}
-              <div className="bg-linear-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl p-6 text-center border border-green-200 dark:border-green-800">
-                <p className="text-sm text-green-600 dark:text-green-400 mb-2">Prix total</p>
-                <p className="text-4xl font-bold text-green-700 dark:text-green-300">
-                  {selectedBooking.price} FCFA
+              {/* Heure de prise en charge */}
+              <div className="text-right">
+                <p className="text-[10px] uppercase tracking-[0.1em] mb-0.5"
+                  style={{ color: 'var(--color-text-muted)' }}>Prise en charge</p>
+                <p className="text-lg font-semibold"
+                  style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-text-primary)' }}>
+                  {formatTimeOnly(missionActive.scheduledDateTime)}
                 </p>
               </div>
             </div>
 
-            {/* Informations d'annulation (si applicable) */}
-            {selectedBooking.status === 'cancelled' && selectedBooking.cancellationReason && (
-              <div className="p-6 pt-0">
-                <div className="bg-red-50 dark:bg-red-900/20 rounded-xl p-4 border border-red-200 dark:border-red-800">
-                  <h4 className="text-lg font-semibold text-red-800 dark:text-red-200 mb-3 flex items-center gap-2">
-                    🚫 Réservation Annulée
-                  </h4>
-                  <div className="space-y-2">
-                    <div>
-                      <p className="text-sm font-medium text-red-700 dark:text-red-300 mb-1">
-                        Motif d'annulation :
-                      </p>
-                      <p className="text-red-900 dark:text-red-100 bg-white dark:bg-red-800/20 p-3 rounded-lg border">
-                        {selectedBooking.cancellationReason}
-                      </p>
-                    </div>
+            {/* Trajet — format visuel fort */}
+            <div className="flex items-center gap-4 mb-6 p-4 rounded-xl"
+              style={{ backgroundColor: 'rgba(255,255,255,0.03)' }}>
+              <div className="flex flex-col items-center gap-1 shrink-0">
+                <span className="w-3 h-3 rounded-full border-2"
+                  style={{ borderColor: 'var(--color-driver-accent)', backgroundColor: 'transparent' }} />
+                <div className="w-px flex-1 min-h-[20px]"
+                  style={{ backgroundColor: 'rgba(59,130,246,0.3)' }} />
+                <span className="w-3 h-3 rounded-full"
+                  style={{ backgroundColor: 'var(--color-success)' }} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate mb-3"
+                  style={{ color: 'var(--color-text-primary)' }}>
+                  {missionActive.pickupAddress}
+                </p>
+                <p className="text-sm font-medium truncate"
+                  style={{ color: 'var(--color-text-primary)' }}>
+                  {missionActive.dropoffAddress}
+                </p>
+              </div>
+            </div>
+
+            {/* Infos client */}
+            <div className="flex items-center gap-4 mb-8 p-5 rounded-2xl bg-white/5 border border-white/5">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center text-lg font-black shrink-0 bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                {missionActive.customerName.charAt(0).toUpperCase()}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-base font-bold text-white uppercase tracking-tight">
+                  {missionActive.customerName}
+                </p>
+                <div className="flex items-center gap-2 mt-1">
+                  <div className="px-2 py-0.5 rounded-md bg-blue-500/10 border border-blue-500/20 text-[10px] font-bold text-blue-400 uppercase tracking-widest font-mono">
+                    {missionActive.price} FCFA
+                  </div>
+                  <div className="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-bold text-emerald-400 uppercase tracking-widest font-mono">
+                    Cash
                   </div>
                 </div>
               </div>
-            )}
+              <a href={`tel:${missionActive.customerPhone}`}
+                className="w-14 h-14 rounded-2xl flex items-center justify-center transition-all shrink-0 bg-white/5 border border-white/10 text-blue-400 hover:bg-blue-500 hover:text-white hover:shadow-[0_0_20px_rgba(59,130,246,0.5)]"
+              >
+                <Phone size={22} weight="fill" />
+              </a>
+            </div>
 
-            {/* Actions de statut */}
-            {selectedBooking.status !== 'completed' && selectedBooking.status !== 'cancelled' && (
-              <div className="p-6 pt-0">
-                <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
-                  Actions disponibles
-                </h4>
-                <div className="grid grid-cols-2 gap-3 mb-4">
-                  {selectedBooking.status === 'assigned' && (
-                    <>
-                      <button
-                        onClick={async () => {
-                          const result = await updateBookingStatus(selectedBooking.id, 'confirmed')
-                          if (!result.success) {
-                            alert('Erreur: ' + result.error)
-                          }
-                        }}
-                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-                      >
-                        <span>✅</span>
-                        Confirmer
-                      </button>
-                      <button
-                        onClick={() => openCancelModal(selectedBooking)}
-                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-                      >
-                        <span>❌</span>
-                        Refuser
-                      </button>
-                    </>
-                  )}
-                  
-                  {selectedBooking.status === 'confirmed' && (
-                    <>
-                      <button
-                        onClick={async () => {
-                          const result = await updateBookingStatus(selectedBooking.id, 'in_progress')
-                          if (!result.success) {
-                            alert('Erreur: ' + result.error)
-                          }
-                        }}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-                      >
-                        <span>🚗</span>
-                        Démarrer
-                      </button>
-                      <button
-                        onClick={() => openCancelModal(selectedBooking)}
-                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-                      >
-                        <span>❌</span>
-                        Annuler
-                      </button>
-                    </>
-                  )}
-                  
-                  {selectedBooking.status === 'in_progress' && (
-                    <button
-                      onClick={async () => {
-                        const result = await updateBookingStatus(selectedBooking.id, 'completed')
-                        if (!result.success) {
-                          alert('Erreur: ' + result.error)
-                        }
-                      }}
-                      className="col-span-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-                    >
-                      <span>✅</span>
-                      Marquer comme terminé
-                    </button>
-                  )}
-                </div>
+            {/* ── BOUTON D'ACTION WORKFLOW ── */}
+            <button
+              onClick={() => updateBookingStatus(missionActive.id, 'completed')}
+              className="btn-mission w-full py-5 rounded-2xl text-base font-bold transition-all duration-200"
+              style={{
+                backgroundColor: 'var(--color-success)',
+                color: '#000',
+                fontSize: '17px',
+                letterSpacing: '0.01em',
+                boxShadow: '0 4px 24px rgba(16,185,129,0.3)',
+              }}>
+              Terminer la course →
+            </button>
+
+            {/* Bouton secondaire (navigation GPS) */}
+            <a href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(missionActive.dropoffAddress)}`}
+              target="_blank" rel="noopener noreferrer"
+              className="btn-mission w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-medium mt-3 transition-all"
+              style={{
+                backgroundColor: 'var(--color-driver-surface)',
+                color: 'var(--color-text-secondary)',
+                border: '1px solid var(--color-driver-border)',
+              }}>
+              <NavigationArrow size={16} weight="bold" className="text-blue-500" />
+              Naviguer vers la destination
+            </a>
+
+          </div>
+        </div>
+      )}
+
+      {!missionActive && prochaineMission && (
+        <div className="driver-card-enter rounded-2xl overflow-hidden mb-6"
+          style={{
+            background: 'linear-gradient(135deg, #0C1220 0%, var(--color-driver-card) 55%)',
+            border: '1px solid rgba(59,130,246,0.2)',
+            boxShadow: '0 0 40px rgba(59,130,246,0.04)',
+          }}>
+
+          {/* Barre top bleue */}
+          <div className="h-1"
+            style={{ background: 'linear-gradient(to right, var(--color-driver-accent), transparent)' }} />
+
+          <div className="p-5 sm:p-7">
+
+            {/* Badge + heure */}
+            <div className="flex items-center justify-between mb-5">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full"
+                style={{
+                  backgroundColor: 'var(--color-driver-accent-bg)',
+                  border: '1px solid rgba(59,130,246,0.2)',
+                }}>
+                <Clock size={12} weight="bold" className="text-blue-500" />
+                <span className="text-[11px] font-medium" style={{ color: 'var(--color-driver-accent)' }}>
+                  Prochaine mission
+                </span>
               </div>
-            )}
+              <p className="text-xl font-bold"
+                style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-driver-accent)' }}>
+                {formatTimeOnly(prochaineMission.scheduledDateTime)}
+              </p>
+            </div>
 
-            {/* Actions générales */}
-            <div className="p-6 pt-0 flex gap-3">
+            {/* Trajet */}
+            <div className="flex items-center gap-4 mb-6 p-4 rounded-xl"
+              style={{ backgroundColor: 'rgba(255,255,255,0.03)' }}>
+              <div className="flex flex-col items-center gap-1 shrink-0">
+                <span className="w-3 h-3 rounded-full border-2"
+                  style={{ borderColor: 'var(--color-driver-accent)', backgroundColor: 'transparent' }} />
+                <div className="w-px flex-1 min-h-[20px]"
+                  style={{ backgroundColor: 'rgba(59,130,246,0.3)' }} />
+                <span className="w-3 h-3 rounded-full"
+                  style={{ backgroundColor: 'var(--color-driver-accent)' }} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate mb-3"
+                  style={{ color: 'var(--color-text-primary)' }}>
+                  {prochaineMission.pickupAddress}
+                </p>
+                <p className="text-sm font-medium truncate"
+                  style={{ color: 'var(--color-text-primary)' }}>
+                  {prochaineMission.dropoffAddress}
+                </p>
+              </div>
+            </div>
+
+            {/* Infos client */}
+            <div className="flex items-center gap-4 mb-6 p-4 rounded-xl"
+              style={{
+                backgroundColor: 'var(--color-driver-surface)',
+                border: '1px solid var(--color-driver-border)',
+              }}>
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-semibold shrink-0"
+                style={{
+                  backgroundColor: 'rgba(59,130,246,0.12)',
+                  color: 'var(--color-driver-accent)',
+                }}>
+                {prochaineMission.customerName.charAt(0).toUpperCase()}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
+                  {prochaineMission.customerName}
+                </p>
+                <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
+                  {prochaineMission.price} FCFA
+                </p>
+              </div>
               <button
-                onClick={() => handleCallClient(selectedBooking.customerPhone)}
-                className="flex-1 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2"
-              >
-                <span>📞</span>
-                Appeler le client
-              </button>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="px-6 py-3 rounded-xl font-semibold bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
-              >
-                Fermer
+                onClick={() => handleCallClient(prochaineMission.customerPhone)}
+                className="w-11 h-11 rounded-xl flex items-center justify-center transition-all shrink-0"
+                style={{
+                  backgroundColor: 'rgba(59,130,246,0.12)',
+                  color: 'var(--color-driver-accent)',
+                  border: '1px solid rgba(59,130,246,0.2)',
+                }}>
+                <Phone size={18} weight="fill" />
               </button>
             </div>
+
+            {/* Bouton d'action */}
+            {prochaineMission.status === 'assigned' ? (
+              <button
+                onClick={() => updateBookingStatus(prochaineMission.id, 'confirmed')}
+                className="btn-mission w-full py-5 rounded-2xl text-base font-bold mt-5 flex items-center justify-center gap-2"
+                style={{
+                  backgroundColor: 'var(--color-driver-accent)',
+                  color: '#fff',
+                  fontSize: '17px',
+                  boxShadow: '0 4px 24px rgba(59,130,246,0.3)',
+                }}>
+                <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                Accepter la mission
+              </button>
+            ) : (
+              <button
+                onClick={() => updateBookingStatus(prochaineMission.id, 'in_progress')}
+                className="btn-mission w-full py-5 rounded-2xl text-base font-bold mt-5 flex items-center justify-center gap-2"
+                style={{
+                  backgroundColor: 'var(--color-driver-accent)',
+                  color: '#fff',
+                  fontSize: '17px',
+                  boxShadow: '0 4px 24px rgba(59,130,246,0.3)',
+                }}>
+                <Play size={20} weight="fill" />
+                Démarrer la mission
+              </button>
+            )}
+
+          </div>
+        </div>
+      )}
+
+      {!missionActive && !prochaineMission && isOnline && (
+        <div className="driver-card-enter rounded-2xl p-8 text-center mb-6"
+          style={{
+            backgroundColor: 'var(--color-driver-card)',
+            border: '1px dashed rgba(59,130,246,0.2)',
+          }}>
+          {/* Icône Radar ou Navigation animée */}
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
+            style={{ backgroundColor: 'var(--color-driver-accent-bg)' }}>
+            <NavigationArrow size={28} weight="light" className="text-blue-500" />
+          </div>
+          <p className="text-base font-semibold mb-1" style={{ color: 'var(--color-text-primary)' }}>
+            En attente de mission
+          </p>
+          <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
+            Vous serez notifié dès qu'une mission vous sera assignée.
+          </p>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        {/* ── FILE D'ATTENTE ── */}
+        <div className="lg:col-span-2 space-y-4">
+          <div className="driver-card-enter rounded-2xl overflow-hidden"
+            style={{
+              backgroundColor: 'var(--color-driver-card)',
+              border: '1px solid var(--color-driver-border)',
+            }}>
+
+            <div className="flex items-center justify-between px-5 py-4"
+              style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              <h3 className="text-base font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                Missions à venir
+              </h3>
+              {missionsAVenir.length > 0 && (
+                <span className="text-xs px-2.5 py-1 rounded-full font-medium"
+                  style={{
+                    backgroundColor: 'var(--color-driver-accent-bg)',
+                    color: 'var(--color-driver-accent)',
+                  }}>
+                  {missionsAVenir.length} assignée{missionsAVenir.length > 1 ? 's' : ''}
+                </span>
+              )}
+            </div>
+
+            <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
+              {missionsAVenir.map((mission, i) => (
+                <div key={mission.id}
+                  className="px-5 py-5 transition-colors cursor-pointer hover:bg-blue-500/5 group"
+                  style={{ animationDelay: `${i * 0.05}s` }}
+                  onClick={() => handleViewDetails(mission)}
+                >
+                  <div className="flex items-start gap-4">
+
+                    {/* Heure */}
+                    <div className="shrink-0 text-center w-14">
+                      <p className="text-base font-bold"
+                        style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-driver-accent)' }}>
+                        {formatTimeOnly(mission.scheduledDateTime)}
+                      </p>
+                      <p className="text-[9px] uppercase font-medium" style={{ color: 'var(--color-text-muted)' }}>
+                        {new Date(mission.scheduledDateTime).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
+                      </p>
+                    </div>
+
+                    {/* Séparateur vertical */}
+                    <div className="w-px self-stretch mt-1"
+                      style={{ backgroundColor: 'rgba(59,130,246,0.2)' }} />
+
+                    {/* Infos mission */}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold truncate mb-0.5"
+                        style={{ color: 'var(--color-text-primary)' }}>
+                        {mission.customerName}
+                      </p>
+                      <p className="text-xs truncate mb-3" style={{ color: 'var(--color-text-secondary)' }}>
+                        {mission.pickupAddress.split(',')[0]} → {mission.dropoffAddress.split(',')[0]}
+                      </p>
+                      <div className="flex items-center gap-4 text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                        <span className="flex items-center gap-1.5"><Users size={12} weight="light" /> 1-4</span>
+                        <span className="flex items-center gap-1.5"><Car size={12} weight="light" /> Standard</span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col items-end justify-between self-stretch">
+                      <MissionStatusBadge statut={mission.status} />
+                      <CaretRight size={16} weight="bold" className="text-gray-600 group-hover:text-blue-500 transition-colors" />
+                    </div>
+
+                  </div>
+                </div>
+              ))}
+
+              {missionsAVenir.length === 0 && (
+                <div className="text-center py-12 px-5">
+                  <p className="text-sm font-medium mb-1" style={{ color: 'var(--color-text-primary)' }}>
+                    Aucune mission programmée
+                  </p>
+                  <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                    Restez disponible pour recevoir de nouvelles missions.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* ── HISTORIQUE RÉCENT ── */}
+          <div className="driver-card-enter rounded-2xl overflow-hidden mt-6"
+            style={{
+              backgroundColor: 'var(--color-driver-card)',
+              border: '1px solid var(--color-driver-border)',
+            }}>
+
+            <div className="flex items-center justify-between px-5 py-4"
+              style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              <h3 className="text-base font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                Historique récent
+              </h3>
+              <button
+                onClick={() => onNavigate('planning')}
+                className="text-xs font-semibold hover:underline" style={{ color: 'var(--color-driver-accent)' }}>
+                Voir tout →
+              </button>
+            </div>
+
+            <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
+              {historique.map(mission => (
+                <div key={mission.id}
+                  className="flex items-center gap-4 px-5 py-4 transition-colors cursor-pointer hover:bg-white/2 group"
+                  onClick={() => handleViewDetails(mission)}
+                >
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                    style={{
+                      backgroundColor: mission.status === 'completed' ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)',
+                      color: mission.status === 'completed' ? 'var(--color-success)' : 'var(--color-error)',
+                    }}>
+                    <CheckCircle size={18} weight="fill" />
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate" style={{ color: 'var(--color-text-primary)' }}>
+                      {mission.pickupAddress.split(',')[0]} → {mission.dropoffAddress.split(',')[0]}
+                    </p>
+                    <p className="text-[11px] mt-0.5" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
+                      {formatDateTime(mission.scheduledDateTime)}
+                    </p>
+                  </div>
+
+                  <div className="text-right">
+                    <p className="text-sm font-bold"
+                      style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-gold)' }}>
+                      {mission.price} FCFA
+                    </p>
+                    <div className="flex items-center justify-end gap-1 mt-1">
+                      <Star size={10} weight="fill" className="fill-yellow-500 text-yellow-500" />
+                      <span className="text-[10px] font-bold text-yellow-500">5.0</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {historique.length === 0 && (
+                <div className="text-center py-10 px-5 text-sm text-gray-500">
+                  Aucun historique disponible
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* ── STATS DU JOUR ── */}
+        <div className="space-y-6">
+          <div className="driver-card-enter space-y-3">
+            <div className="flex items-center justify-between px-1">
+              <p className="text-sm font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-primary)' }}>
+                Aujourd'hui
+              </p>
+              <p className="text-[10px] font-medium"
+                style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
+                {new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+              </p>
+            </div>
+
+            {[
+              {
+                label: 'Missions',
+                value: stats.weeklyRides,
+                icon: <CheckCircle size={18} />,
+                color: 'var(--color-success)',
+                bg: 'rgba(16,185,129,0.08)',
+              },
+              {
+                label: 'Revenus',
+                value: `${stats.earnings.toLocaleString('fr-FR')} FCFA`,
+                icon: <Banknote size={18} />,
+                color: 'var(--color-gold)',
+                bg: 'rgba(201,168,76,0.08)',
+              },
+              {
+                label: 'Km parcourus',
+                value: '42 km', // Mock value
+                icon: <Route size={18} />,
+                color: 'var(--color-driver-accent)',
+                bg: 'rgba(59,130,246,0.08)',
+              },
+              {
+                label: 'Note moyenne',
+                value: '4.9/5',
+                icon: <Star size={18} weight="fill" />,
+                color: '#F59E0B',
+                bg: 'rgba(245,158,11,0.08)',
+              },
+            ].map(stat => (
+              <div key={stat.label}
+                className="flex items-center gap-4 px-4 py-4 rounded-2xl"
+                style={{
+                  backgroundColor: 'var(--color-driver-card)',
+                  border: '1px solid var(--color-driver-border)',
+                }}>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                  style={{ backgroundColor: stat.bg, color: stat.color }}>
+                  {stat.icon}
+                </div>
+                <div className="flex-1">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.08em]"
+                    style={{ color: 'var(--color-text-muted)' }}>
+                    {stat.label}
+                  </p>
+                  <p className="text-lg font-bold mt-0.5"
+                    style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-text-primary)' }}>
+                    {stat.value}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Quick Actions (Optional but good for mobile) */}
+          <div className="driver-card-enter rounded-2xl p-5 space-y-3"
+            style={{ backgroundColor: 'var(--color-driver-surface)', border: '1px solid var(--color-driver-border)' }}>
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 text-center">Raccourcis</p>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => onNavigate('vehicle-report')}
+                className="flex flex-col items-center justify-center p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5">
+                <Car size={20} weight="light" className="text-blue-400 mb-2" />
+                <span className="text-[10px] font-bold">Rapport</span>
+              </button>
+              <button
+                onClick={() => onNavigate('profile')}
+                className="flex flex-col items-center justify-center p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5">
+                <Users size={20} weight="light" className="text-purple-400 mb-2" />
+                <span className="text-[10px] font-bold">Profil</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* Modal de détails */}
+      {isModalOpen && selectedBooking && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fadeIn">
+          <div className="bg-[#0F1318] border border-white/10 rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
+            style={{ color: 'var(--color-text-primary)' }}>
+
+            <div className="p-6 border-b border-white/5">
+              <div className="flex justify-between items-start mb-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 bg-blue-600/20 text-blue-500 rounded-2xl flex items-center justify-center font-bold text-xl">
+                    {selectedBooking.customerName.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold">Détails Mission</h2>
+                    <p className="text-xs text-gray-500 font-mono">#{selectedBooking.id}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors text-white"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="flex gap-2">
+                <MissionStatusBadge statut={selectedBooking.status} />
+                <span className="px-3 py-1 rounded-full bg-white/5 text-[11px] font-bold text-gold tracking-wider">
+                  {selectedBooking.price} FCFA
+                </span>
+              </div>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Itinéraire */}
+              <div className="space-y-4">
+                <div className="flex items-start gap-4">
+                  <div className="w-4 h-4 rounded-full border-2 border-blue-500 mt-1 shrink-0" />
+                  <div>
+                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-1">Départ</p>
+                    <p className="text-sm font-medium">{selectedBooking.pickupAddress}</p>
+                  </div>
+                </div>
+                <div className="ml-2 w-px h-8 bg-blue-500/30" />
+                <div className="flex items-start gap-4">
+                  <div className="w-4 h-4 rounded-full bg-green-500 mt-1 shrink-0" />
+                  <div>
+                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-1">Arrivée</p>
+                    <p className="text-sm font-medium">{selectedBooking.dropoffAddress}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Infos Client */}
+              <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
+                <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-3">Passager</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-base font-bold">{selectedBooking.customerName}</span>
+                  <div className="flex gap-2">
+                    <a href={`tel:${selectedBooking.customerPhone}`} className="p-3 bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors">
+                      <Phone size={18} weight="fill" className="text-white" />
+                    </a>
+                    <a href={`https://wa.me/${selectedBooking.customerPhone}`} className="p-3 bg-green-600 hover:bg-green-700 rounded-xl transition-colors">
+                      <ChatCircle size={18} weight="fill" className="text-white" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions de workflow */}
+              <div className="space-y-3 pt-4 border-t border-white/5">
+                {selectedBooking.status === 'assigned' && (
+                  <button onClick={() => updateBookingStatus(selectedBooking.id, 'confirmed')}
+                    className="w-full py-4 bg-blue-600 text-white font-bold rounded-2xl shadow-lg shadow-blue-600/20 active:scale-[0.98] transition-transform">
+                    Accepter la mission
+                  </button>
+                )}
+                {selectedBooking.status === 'confirmed' && (
+                  <button onClick={() => updateBookingStatus(selectedBooking.id, 'in_progress')}
+                    className="w-full py-4 bg-blue-600 text-white font-bold rounded-2xl shadow-lg shadow-blue-600/20 active:scale-[0.98] transition-transform">
+                    Démarrer la mission
+                  </button>
+                )}
+                {selectedBooking.status === 'in_progress' && (
+                  <button onClick={() => updateBookingStatus(selectedBooking.id, 'completed')}
+                    className="w-full py-4 bg-green-600 text-white font-bold rounded-2xl shadow-lg shadow-green-600/20 active:scale-[0.98] transition-transform">
+                    Terminer la mission
+                  </button>
+                )}
+
+                {['assigned', 'confirmed'].includes(selectedBooking.status) && (
+                  <button onClick={() => openCancelModal(selectedBooking)}
+                    className="w-full py-3 text-red-500 font-bold hover:bg-red-500/10 rounded-2xl transition-colors">
+                    Désister / Annuler
+                  </button>
+                )}
+              </div>
+            </div>
+
           </div>
         </div>
       )}

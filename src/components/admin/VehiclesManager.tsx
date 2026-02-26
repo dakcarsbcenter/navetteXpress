@@ -5,6 +5,20 @@ import Image from 'next/image';
 import { SelectVehicle, SelectDriver, InsertVehicle } from '@/schema';
 import { ImageUploader } from '@/components/ImageUploader';
 import DeleteVehicleModal from '@/components/admin/DeleteVehicleModal';
+import {
+  MagnifyingGlass as Search,
+  Plus,
+  Trash as Trash2,
+  PencilSimple as Edit2,
+  Car,
+  Users,
+  Gear as Settings,
+  ShieldCheck,
+  FileText,
+  DeviceMobile as Smartphone,
+  Gauge
+} from "@phosphor-icons/react";
+import { StatusBadge } from '@/components/ui/StatusBadge';
 
 interface VehicleWithDriver {
   vehicle: SelectVehicle;
@@ -35,7 +49,7 @@ export function VehiclesManager() {
     driverId: null,
     isActive: true,
   });
-  
+
   // État pour gérer les features comme tableau temporaire
   const [featuresList, setFeaturesList] = useState<string[]>([]);
   const [newFeature, setNewFeature] = useState('');
@@ -55,7 +69,7 @@ export function VehiclesManager() {
     try {
       const response = await fetch('/api/admin/vehicles');
       const result = await response.json();
-      
+
       if (result.success) {
         setVehicles(result.data);
       } else {
@@ -72,7 +86,7 @@ export function VehiclesManager() {
     try {
       const response = await fetch('/api/admin/drivers');
       const result = await response.json();
-      
+
       if (result.success) {
         setDrivers(result.data);
       }
@@ -83,26 +97,26 @@ export function VehiclesManager() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validation de l'image
     if (!formData.photo) {
       alert('⚠️ Veuillez uploader une photo du véhicule');
       return;
     }
-    
+
     try {
       // Convertir featuresList en JSON string
       const dataToSend = {
         ...formData,
         features: JSON.stringify(featuresList),
       };
-      
-      const url = editingVehicle 
+
+      const url = editingVehicle
         ? `/api/admin/vehicles/${editingVehicle.id}`
         : '/api/admin/vehicles';
-      
+
       const method = editingVehicle ? 'PUT' : 'POST';
-      
+
       const response = await fetch(url, {
         method,
         headers: {
@@ -110,14 +124,14 @@ export function VehiclesManager() {
         },
         body: JSON.stringify(dataToSend),
       });
-      
+
       const result = await response.json();
-      
+
       if (result.success) {
         await fetchVehicles();
         resetForm();
         const isCloudinary = formData.photo.includes('cloudinary.com');
-        const message = editingVehicle 
+        const message = editingVehicle
           ? `✅ Véhicule modifié avec succès! ${isCloudinary ? '📸 Image optimisée par Cloudinary' : ''}`
           : `✅ Véhicule créé avec succès! ${isCloudinary ? '📸 Image optimisée par Cloudinary' : ''}`;
         alert(message);
@@ -135,9 +149,9 @@ export function VehiclesManager() {
       const response = await fetch(`/api/admin/vehicles/${id}`, {
         method: 'DELETE',
       });
-      
+
       const result = await response.json();
-      
+
       if (result.success) {
         await fetchVehicles();
         // suppression réussie
@@ -182,7 +196,7 @@ export function VehiclesManager() {
         parsedFeatures = [];
       }
     }
-    
+
     setFormData({
       make: vehicle.make,
       model: vehicle.model,
@@ -200,7 +214,7 @@ export function VehiclesManager() {
     setEditingVehicle(vehicle);
     setShowAddForm(true);
   };
-  
+
   // Gérer l'ajout d'une feature
   const handleAddFeature = () => {
     if (newFeature.trim()) {
@@ -208,7 +222,7 @@ export function VehiclesManager() {
       setNewFeature('');
     }
   };
-  
+
   // Supprimer une feature
   const handleRemoveFeature = (index: number) => {
     setFeaturesList(featuresList.filter((_, i) => i !== index));
@@ -216,7 +230,7 @@ export function VehiclesManager() {
 
   const filteredVehicles = vehicles.filter(item => {
     if (!item || !item.vehicle) return false;
-    
+
     const searchLower = searchTerm.toLowerCase();
     return (
       item.vehicle.make?.toLowerCase().includes(searchLower) ||
@@ -228,437 +242,319 @@ export function VehiclesManager() {
 
   if (loading) {
     return (
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
-          <div className="space-y-3">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-16 bg-gray-200 dark:bg-gray-700 rounded"></div>
-            ))}
-          </div>
-        </div>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gold"
+          style={{ borderColor: 'var(--color-gold) transparent transparent transparent' }}></div>
       </div>
     );
   }
 
   return (
     <>
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-            Gestion des Véhicules
-          </h2>
-          <button
-            onClick={() => setShowAddForm(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium"
-          >
-            + Nouveau Véhicule
-          </button>
-        </div>
-
-        {/* Recherche */}
-        <div className="mb-4">
-          <input
-            type="text"
-            placeholder="Rechercher par marque, modèle, plaque ou chauffeur..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
-          />
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-slate-900 dark:text-white">{vehicles.length}</div>
-            <div className="text-sm text-slate-500 dark:text-slate-400">Total</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">
-              {vehicles.filter(v => v?.vehicle?.isActive).length}
+      <div className="space-y-6 animate-fadeIn">
+        {/* Header & Stats */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <div className="lg:col-span-2 p-6 rounded-2xl border border-white/5" style={{ backgroundColor: 'var(--color-dash-card)' }}>
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h2 className="text-xl font-bold text-white">Gestion de la Flotte</h2>
+                <p className="text-xs text-slate-500 mt-0.5">Contrôlez et assignez vos véhicules</p>
+              </div>
+              <button
+                onClick={() => setShowAddForm(true)}
+                className="btn-gold flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold">
+                <Plus size={16} />
+                <span>Ajouter</span>
+              </button>
             </div>
-            <div className="text-sm text-slate-500 dark:text-slate-400">Disponibles</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">
-              {Math.round(vehicles.reduce((acc, v) => acc + (v?.vehicle?.capacity || 0), 0) / vehicles.length) || 0}
+
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+              <input
+                type="text"
+                placeholder="Rechercher marque, plaque, chauffeur..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-white/10 outline-none transition-all focus:border-gold/50"
+                style={{ backgroundColor: 'rgba(255,255,255,0.03)', color: 'var(--color-text-primary)' }}
+              />
             </div>
-            <div className="text-sm text-slate-500 dark:text-slate-400">Places moy.</div>
+          </div>
+
+          <div className="lg:col-span-2 grid grid-cols-3 gap-4">
+            {[
+              { label: 'Véhicules', value: vehicles.length, icon: <Car size={18} />, color: 'var(--color-gold)' },
+              { label: 'En service', value: vehicles.filter(v => v?.vehicle?.isActive).length, icon: <ShieldCheck size={18} />, color: '#10B981' },
+              { label: 'Cap. Moy', value: Math.round(vehicles.reduce((acc, v) => acc + (v?.vehicle?.capacity || 0), 0) / (vehicles.length || 1)), icon: <Users size={18} />, color: '#3B82F6' },
+            ].map((stat, i) => (
+              <div key={i} className="p-5 rounded-2xl border border-white/5 flex flex-col justify-center items-center text-center"
+                style={{ backgroundColor: 'var(--color-dash-card)' }}>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3"
+                  style={{ backgroundColor: `${stat.color}15`, color: stat.color }}>
+                  {stat.icon}
+                </div>
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{stat.label}</p>
+                <h3 className="text-2xl font-bold text-white font-mono">{stat.value}</h3>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
 
-      {/* Formulaire */}
-      {showAddForm && (
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-6">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
-            {editingVehicle ? 'Modifier le Véhicule' : 'Nouveau Véhicule'}
-          </h3>
-          
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Marque
-                </label>
-                <input
-                  type="text"
-                  value={formData.make || ''}
-                  onChange={(e) => setFormData({ ...formData, make: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
-                  required
-                />
-              </div>
+        {/* Formulaire (Nouveau/Modif) */}
+        {showAddForm && (
+          <div className="p-6 rounded-2xl border border-gold/20 bg-gold/5 animate-slideUp">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg font-bold text-white">
+                {editingVehicle ? 'Mise à jour du Véhicule' : 'Enregistrer une Unité'}
+              </h3>
+              <button onClick={resetForm} className="text-slate-400 hover:text-white">Annuler</button>
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Modèle
-                </label>
-                <input
-                  type="text"
-                  value={formData.model || ''}
-                  onChange={(e) => setFormData({ ...formData, model: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
-                  required
-                />
-              </div>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider ml-1">Marque</label>
+                  <input
+                    type="text"
+                    value={formData.make || ''}
+                    onChange={(e) => setFormData({ ...formData, make: e.target.value })}
+                    className="w-full px-4 py-2 text-sm rounded-xl border border-white/10 outline-none focus:border-gold/50 transition-all bg-white/5 text-white"
+                    required
+                  />
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Année
-                </label>
-                <input
-                  type="number"
-                  min="1990"
-                  max={new Date().getFullYear() + 1}
-                  value={formData.year || ''}
-                  onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
-                  required
-                />
-              </div>
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider ml-1">Modèle</label>
+                  <input
+                    type="text"
+                    value={formData.model || ''}
+                    onChange={(e) => setFormData({ ...formData, model: e.target.value })}
+                    className="w-full px-4 py-2 text-sm rounded-xl border border-white/10 outline-none focus:border-gold/50 transition-all bg-white/5 text-white"
+                    required
+                  />
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Plaque d&apos;immatriculation
-                </label>
-                <input
-                  type="text"
-                  value={formData.plateNumber || ''}
-                  onChange={(e) => setFormData({ ...formData, plateNumber: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
-                  required
-                />
-              </div>
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider ml-1">Année</label>
+                  <input
+                    type="number"
+                    value={formData.year || ''}
+                    onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) })}
+                    className="w-full px-4 py-2 text-sm rounded-xl border border-white/10 outline-none focus:border-gold/50 transition-all bg-white/5 text-white"
+                    required
+                  />
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Capacité (passagers)
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  max="50"
-                  value={formData.capacity || ''}
-                  onChange={(e) => setFormData({ ...formData, capacity: parseInt(e.target.value) })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
-                  required
-                />
-              </div>
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider ml-1">Immatriculation</label>
+                  <input
+                    type="text"
+                    value={formData.plateNumber || ''}
+                    onChange={(e) => setFormData({ ...formData, plateNumber: e.target.value })}
+                    className="w-full px-4 py-2 text-sm rounded-xl border border-white/10 outline-none focus:border-gold/50 transition-all bg-white/5 text-white"
+                    placeholder="EX-123-AB"
+                    required
+                  />
+                </div>
 
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-4">
-                  📸 Photo du véhicule *
-                </label>
-                <ImageUploader 
-                  onUploadComplete={handleImageUpload}
-                  currentImage={formData.photo}
-                  className="mb-4"
-                />
-                
-                {/* Option URL manuelle */}
-                <details className="mt-2">
-                  <summary className="text-xs text-slate-500 dark:text-slate-400 cursor-pointer hover:text-slate-700 dark:hover:text-slate-300">
-                    ⚙️ Saisir une URL manuellement (optionnel)
-                  </summary>
-                  <div className="mt-2 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
-                    <input
-                      type="url"
-                      value={formData.photo || ''}
-                      onChange={(e) => setFormData({ ...formData, photo: e.target.value })}
-                      placeholder="https://exemple.com/photo-vehicule.jpg"
-                      className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
-                    />
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                      ⚠️ Utilisez de préférence l'upload Cloudinary ci-dessus
-                    </p>
-                  </div>
-                </details>
-                
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-                  ✓ Upload automatique vers Cloudinary avec optimisation et CDN
-                </p>
-              </div>
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider ml-1">Capacité</label>
+                  <input
+                    type="number"
+                    value={formData.capacity || ''}
+                    onChange={(e) => setFormData({ ...formData, capacity: parseInt(e.target.value) })}
+                    className="w-full px-4 py-2 text-sm rounded-xl border border-white/10 outline-none focus:border-gold/50 transition-all bg-white/5 text-white"
+                    required
+                  />
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Type de véhicule
-                </label>
-                <select
-                  value={formData.vehicleType || 'sedan'}
-                  onChange={(e) => setFormData({ ...formData, vehicleType: e.target.value as 'sedan' | 'luxury' | 'suv' | 'van' | 'bus' })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
-                  required
-                >
-                  <option value="sedan">Berline</option>
-                  <option value="luxury">Berline de Luxe</option>
-                  <option value="suv">SUV</option>
-                  <option value="van">Van</option>
-                  <option value="bus">Bus</option>
-                </select>
-              </div>
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider ml-1">Type</label>
+                  <select
+                    value={formData.vehicleType || 'sedan'}
+                    onChange={(e) => setFormData({ ...formData, vehicleType: e.target.value as any })}
+                    className="w-full px-4 py-2 text-sm rounded-xl border border-white/10 outline-none focus:border-gold/50 transition-all bg-white/5 text-white cursor-pointer"
+                  >
+                    <option value="sedan">Berline</option>
+                    <option value="luxury">Luxe</option>
+                    <option value="suv">SUV</option>
+                    <option value="van">Van</option>
+                    <option value="bus">Bus</option>
+                  </select>
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Catégorie personnalisée (optionnel)
-                </label>
-                <input
-                  type="text"
-                  value={formData.category || ''}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  placeholder="Ex: Berline Executive"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
-                />
-              </div>
+                <div className="space-y-1.5 lg:col-span-2">
+                  <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider ml-1">Chauffeur Assigné</label>
+                  <select
+                    value={formData.driverId || ''}
+                    onChange={(e) => setFormData({ ...formData, driverId: e.target.value ? e.target.value : null })}
+                    className="w-full px-4 py-2 text-sm rounded-xl border border-white/10 outline-none focus:border-gold/50 transition-all bg-white/5 text-white cursor-pointer"
+                  >
+                    <option value="">Non assigné</option>
+                    {drivers.map((d) => (
+                      <option key={d.id} value={d.id}>{d.name}</option>
+                    ))}
+                  </select>
+                </div>
 
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Description pour la page Flotte
-                </label>
-                <textarea
-                  value={formData.description || ''}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Description du véhicule pour la page publique"
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Équipements (affichés sur la page Flotte)
-                </label>
-                <div className="space-y-2">
+                <div className="lg:col-span-2 space-y-1.5">
+                  <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider ml-1">Équipements</label>
                   <div className="flex gap-2">
                     <input
                       type="text"
                       value={newFeature}
                       onChange={(e) => setNewFeature(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddFeature())}
-                      placeholder="Ex: Wi-Fi gratuit, Climatisation, etc."
-                      className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+                      placeholder="Ajouter (Wi-Fi, AC...)"
+                      className="flex-1 px-4 py-2 text-sm rounded-xl border border-white/10 outline-none focus:border-gold/50 bg-white/5 text-white"
                     />
-                    <button
-                      type="button"
-                      onClick={handleAddFeature}
-                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium"
-                    >
-                      + Ajouter
-                    </button>
+                    <button type="button" onClick={handleAddFeature} className="px-4 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors">+</button>
                   </div>
-                  
-                  {featuresList.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {featuresList.map((feature, index) => (
-                        <div
-                          key={index}
-                          className="bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm flex items-center gap-2"
-                        >
-                          <span>{feature}</span>
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveFeature(index)}
-                            className="text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-100"
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {featuresList.map((f, i) => (
+                      <span key={i} className="px-2 py-1 rounded-lg bg-gold/10 text-gold text-[10px] font-bold flex items-center gap-1">
+                        {f} <button type="button" onClick={() => handleRemoveFeature(i)} className="hover:text-white">×</button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="lg:col-span-2 space-y-4">
+                  <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider ml-1">Visuel du véhicule</label>
+                  <ImageUploader
+                    onUploadComplete={handleImageUpload}
+                    currentImage={formData.photo}
+                    className="rounded-xl border border-dashed border-white/10 bg-white/[0.02]"
+                  />
                 </div>
               </div>
 
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Chauffeur assigné (optionnel)
+              <div className="flex items-center justify-between">
+                <label className="flex items-center cursor-pointer group">
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      checked={formData.isActive || false}
+                      onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                      className="sr-only"
+                    />
+                    <div className={`w-10 h-6 rounded-full transition-colors ${formData.isActive ? 'bg-gold' : 'bg-white/10'}`} />
+                    <div className={`absolute left-1 top-1 w-4 h-4 rounded-full bg-white transition-transform ${formData.isActive ? 'translate-x-4' : ''}`} />
+                  </div>
+                  <span className="ml-3 text-xs font-semibold text-slate-400 group-hover:text-white transition-colors">
+                    Véhicule opérationnel
+                  </span>
                 </label>
-                <select
-                  value={formData.driverId || ''}
-                  onChange={(e) => setFormData({ ...formData, driverId: e.target.value ? e.target.value : null })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+
+                <button
+                  type="submit"
+                  className="bg-gold text-black px-8 py-2.5 rounded-xl font-bold text-sm hover:scale-[1.02] transition-all active:scale-95 shadow-lg shadow-gold/10"
                 >
-                  <option value="">Aucun chauffeur assigné</option>
-                  {drivers.map((driver) => (
-                    <option key={driver.id} value={driver.id}>
-                      {driver.name} - {driver.email}
-                    </option>
-                  ))}
-                </select>
+                  {editingVehicle ? 'Enregistrer les modifications' : 'Confirmer Registration'}
+                </button>
               </div>
-            </div>
+            </form>
+          </div>
+        )}
 
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="isActiveVehicle"
-                checked={formData.isActive || false}
-                onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                className="mr-2"
-              />
-              <label htmlFor="isActiveVehicle" className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                Véhicule disponible
-              </label>
-            </div>
+        {/* Table Card */}
+        <div className="rounded-2xl border border-white/5 overflow-hidden" style={{ backgroundColor: 'var(--color-dash-card)' }}>
+          <div className="p-5 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
+            <h3 className="text-sm font-semibold text-white">État de la flotte ({filteredVehicles.length})</h3>
+          </div>
 
-            <div className="flex gap-4">
-              <button
-                type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium"
-              >
-                {editingVehicle ? 'Modifier' : 'Créer'}
-              </button>
-              <button
-                type="button"
-                onClick={resetForm}
-                className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg font-medium"
-              >
-                Annuler
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-
-      {/* Liste des véhicules */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
-          Véhicules ({filteredVehicles.length})
-        </h3>
-        
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-gray-200 dark:border-gray-700">
-                <th className="pb-3 text-slate-600 dark:text-slate-300 font-medium">Véhicule</th>
-                <th className="pb-3 text-slate-600 dark:text-slate-300 font-medium">Plaque</th>
-                <th className="pb-3 text-slate-600 dark:text-slate-300 font-medium">Chauffeur</th>
-                <th className="pb-3 text-slate-600 dark:text-slate-300 font-medium">Capacité</th>
-                <th className="pb-3 text-slate-600 dark:text-slate-300 font-medium">Statut</th>
-                <th className="pb-3 text-slate-600 dark:text-slate-300 font-medium">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredVehicles.map((item) => (
-                <tr key={item.vehicle.id} className="border-b border-gray-100 dark:border-gray-700">
-                  <td className="py-4">
-                    <div className="flex items-center gap-3">
-                      {item.vehicle.photo && (
-                        <div className="relative w-12 h-8 rounded overflow-hidden group">
-                          <Image
-                            src={item.vehicle.photo}
-                            alt={`${item.vehicle.make} ${item.vehicle.model}`}
-                            fill
-                            className="object-cover transition-transform group-hover:scale-110"
-                            sizes="48px"
-                          />
-                          {item.vehicle.photo.includes('cloudinary.com') && (
-                            <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border border-white" 
-                                 title="Image optimisée par Cloudinary">
-                            </div>
-                          )}
-                        </div>
-                      )}
-                      <div>
-                        <div className="font-medium text-slate-900 dark:text-white">
-                          {item.vehicle.make} {item.vehicle.model}
-                        </div>
-                        <div className="text-sm text-slate-500 dark:text-slate-400">
-                          {item.vehicle.year}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="py-4">
-                    <span className="font-mono text-sm bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
-                      {item.vehicle.plateNumber}
-                    </span>
-                  </td>
-                  <td className="py-4">
-                    <div className="text-sm">
-                      <div className="text-slate-900 dark:text-white">
-                        {item.driver?.name || 'Non assigné'}
-                      </div>
-                      {item.driver && (
-                        <div className="text-slate-500 dark:text-slate-400">
-                          {item.driver.phone}
-                        </div>
-                      )}
-                    </div>
-                  </td>
-                  <td className="py-4">
-                    <span className="text-sm text-slate-900 dark:text-white">
-                      {item.vehicle.capacity} places
-                    </span>
-                  </td>
-                  <td className="py-4">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      item.vehicle.isActive
-                        ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200'
-                        : 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200'
-                    }`}>
-                      {item.vehicle.isActive ? 'Disponible' : 'Indisponible'}
-                    </span>
-                  </td>
-                  <td className="py-4">
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => startEdit(item.vehicle)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm"
-                      >
-                        Modifier
-                      </button>
-                      <button
-                        onClick={() => setDeleteConfirm({ open: true, vehicle: item.vehicle })}
-                        className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
-                      >
-                        Supprimer
-                      </button>
-                    </div>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-white/[0.02] border-b border-white/5">
+                  <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Véhicule</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-center">Plaque</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Pilote Assigné</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-center">Config</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-center">Status</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          
-          {filteredVehicles.length === 0 && (
-            <div className="text-center py-8 text-slate-500 dark:text-slate-400">
-              Aucun véhicule trouvé
-            </div>
-          )}
+              </thead>
+              <tbody>
+                {filteredVehicles.map((item) => (
+                  <tr key={item.vehicle.id} className="hover:bg-white/[0.02] transition-colors border-b border-white/[0.03] group">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-4">
+                        {item.vehicle.photo ? (
+                          <div className="relative w-16 h-10 rounded-lg overflow-hidden border border-white/5">
+                            <Image src={item.vehicle.photo} alt={item.vehicle.make} fill className="object-cover" sizes="64px" />
+                          </div>
+                        ) : (
+                          <div className="w-16 h-10 rounded-lg bg-white/5 flex items-center justify-center border border-white/5">
+                            <Car size={16} className="text-slate-600" />
+                          </div>
+                        )}
+                        <div>
+                          <p className="text-sm font-semibold text-white group-hover:text-gold transition-colors">
+                            {item.vehicle.make} {item.vehicle.model}
+                          </p>
+                          <p className="text-[10px] text-slate-500 uppercase tracking-wider">{item.vehicle.year}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <span className="font-mono text-[11px] bg-white/5 px-2 py-1 rounded border border-white/5 text-slate-300">
+                        {item.vehicle.plateNumber}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      {item.driver ? (
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-gold/10 flex items-center justify-center text-[10px] font-bold text-gold border border-gold/20">
+                            {item.driver.name.charAt(0)}
+                          </div>
+                          <span className="text-xs text-slate-300">{item.driver.name}</span>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-slate-600 italic">Non assigné</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <div className="flex items-center justify-center gap-3 text-slate-400">
+                        <div className="flex items-center gap-1" title="Capacité">
+                          <Users size={12} />
+                          <span className="text-xs font-mono">{item.vehicle.capacity}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <StatusBadge statut={item.vehicle.isActive ? 'confirmed' : 'cancelled'} />
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => startEdit(item.vehicle)}
+                          className="p-1.5 rounded-lg hover:bg-gold/20 text-slate-400 hover:text-gold transition-all"
+                        >
+                          <Edit2 size={16} />
+                        </button>
+                        <button
+                          onClick={() => setDeleteConfirm({ open: true, vehicle: item.vehicle })}
+                          className="p-1.5 rounded-lg hover:bg-red-500/20 text-slate-400 hover:text-red-500 transition-all"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
 
-    <DeleteVehicleModal
-      isOpen={deleteConfirm.open}
-      vehicle={deleteConfirm.vehicle as any}
-      onCancel={() => setDeleteConfirm({ open: false, vehicle: null })}
-      onConfirm={() => handleDelete(deleteConfirm.vehicle!.id)}
-    />
-  </>
+      <DeleteVehicleModal
+        isOpen={deleteConfirm.open}
+        vehicle={deleteConfirm.vehicle as any}
+        onCancel={() => setDeleteConfirm({ open: false, vehicle: null })}
+        onConfirm={() => handleDelete(deleteConfirm.vehicle!.id)}
+      />
+    </>
   );
 }
 

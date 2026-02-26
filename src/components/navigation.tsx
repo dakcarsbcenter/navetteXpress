@@ -1,16 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Phone, Mail, Menu, X, ChevronDown } from "lucide-react";
+import { Phone, EnvelopeSimple, List, X, CaretDown, UserCircle, SignOut, SquaresFour } from "@phosphor-icons/react";
 import { trackPhoneCall, trackEmailClick } from "@/lib/analytics";
 
 interface NavigationProps {
   variant?: "transparent" | "solid";
-  showUserRole?: boolean;
 }
 
 export function Navigation({ variant = "solid" }: NavigationProps) {
@@ -18,19 +16,12 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Menu principal - Services principaux
-  const mainNavLinks = [
+  const navLinks = [
     { href: "/", label: "Accueil" },
     { href: "/services", label: "Services" },
     { href: "/flotte", label: "Flotte" },
-    { href: "/temoignages", label: "Témoignages" },
+    { href: "/temoignages", label: "Avis" },
     { href: "/contact", label: "Contact" },
-  ];
-
-  // Menu secondaire - Informations et support
-  const secondaryNavLinks = [
-    { href: "/faq", label: "FAQ" },
-    { href: "/devenir-partenaire", label: "Partenaires" },
   ];
 
   useEffect(() => {
@@ -41,323 +32,180 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Éviter les différences d'hydratation en utilisant des classes fixes pour le premier rendu
-  const baseClasses = variant === "transparent" 
-    ? `fixed top-10 left-0 right-0 z-40 transition-all duration-300 ${
-        isScrolled 
-          ? "bg-white/98 dark:bg-slate-900/98 backdrop-blur-md shadow-md border-b border-slate-200/50 dark:border-slate-700/50" 
-          : "bg-slate-900/95 backdrop-blur-md"
-      }`
-    : "bg-white/98 dark:bg-slate-900/98 backdrop-blur-md shadow-sm border-b border-slate-200/50 dark:border-slate-700/50 mt-10";
-
-  const textClasses = variant === "transparent"
-    ? isScrolled 
-      ? "text-slate-900 dark:text-white"
-      : "text-white"
-    : "text-slate-900 dark:text-white";
-
-  const linkClasses = variant === "transparent"
-    ? isScrolled
-      ? "text-gray-600 dark:text-gray-300 hover:text-[#A73B3C] dark:hover:text-[#E5C16C]"
-      : "text-white/90 hover:text-[#E5C16C]"
-    : "text-gray-600 dark:text-gray-300 hover:text-[#A73B3C] dark:hover:text-[#E5C16C]";
+  const headerClasses = variant === "transparent"
+    ? `fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled
+      ? "bg-midnight/80 backdrop-blur-xl border-b border-white/5 py-2"
+      : "bg-transparent py-4"
+    }`
+    : "fixed top-0 left-0 right-0 z-50 bg-midnight border-b border-white/5 py-2";
 
   return (
     <>
-      {/* Menu supérieur - Style moderne avec couleurs */}
-      <div className="bg-linear-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 border-b border-slate-200 dark:border-slate-700 text-xs sm:text-sm py-2.5 fixed top-0 left-0 right-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-          <div className="flex justify-between items-center gap-4">
-            <div className="flex items-center gap-4 lg:gap-6 shrink-0">
-              {/* Liens secondaires style moderne */}
-              {secondaryNavLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-slate-700 dark:text-slate-300 hover:text-[#A73B3C] dark:hover:text-[#E5C16C] font-medium transition-colors whitespace-nowrap hidden sm:inline-block"
-                >
-                  {link.label}
-                </Link>
-              ))}
-              <a 
-                href="tel:+221781319191" 
-                className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 hover:text-[#A73B3C] dark:hover:text-[#E5C16C] transition-colors whitespace-nowrap group"
-                onClick={() => trackPhoneCall('header')}
-              >
-                <Phone className="w-3.5 h-3.5 shrink-0 group-hover:scale-110 transition-transform" />
-                <span className="text-xs sm:text-sm font-medium">+221 78 131 91 91</span>
-              </a>
-              <a 
-                href="mailto:contact@navettexpress.com" 
-                className="hidden lg:flex items-center gap-1.5 text-slate-700 dark:text-slate-300 hover:text-[#A73B3C] dark:hover:text-[#E5C16C] transition-colors group"
-                onClick={() => trackEmailClick('header')}
-              >
-                <Mail className="w-3.5 h-3.5 shrink-0 group-hover:scale-110 transition-transform" />
-                <span className="text-xs sm:text-sm font-medium">contact@navettexpress.com</span>
-              </a>
-            </div>
-            <div className="flex items-center gap-3 lg:gap-4 shrink-0">
-              <div className="hidden md:flex items-center gap-2">
-                <span className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">Service 24h/24</span>
-                <div className="relative">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <div className="absolute inset-0 w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
-                </div>
-              </div>
-              
-              {/* Boutons d'authentification style moderne */}
-              {!session && (
-                <div className="flex items-center gap-2">
-                  <Link
-                    href="/auth/signin"
-                    className="text-slate-700 dark:text-slate-300 hover:text-[#A73B3C] dark:hover:text-[#E5C16C] px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap"
-                  >
-                    Connexion
-                  </Link>
-                  <Link
-                    href="/auth/signup"
-                    className="bg-[#A73B3C] hover:bg-[#8B3032] text-white px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap shadow-sm"
-                  >
-                    Inscription
-                  </Link>
-                </div>
-              )}
-              
-              {/* Badge Dashboard style moderne */}
-              {session?.user && (
-                <Link
-                  href={(session.user as unknown as { role?: string })?.role === 'admin' ? '/admin/dashboard' : 
-                        (session.user as unknown as { role?: string })?.role === 'driver' ? '/driver/dashboard' : '/client/dashboard'}
-                  className="flex items-center gap-1.5 bg-[#A73B3C] hover:bg-[#8B3032] text-white px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition-all duration-200 whitespace-nowrap shadow-sm"
-                >
-                  <span className="text-sm">
-                    {(session.user as unknown as { role?: string })?.role === 'admin' ? '👑' : 
-                     (session.user as unknown as { role?: string })?.role === 'driver' ? '🚗' : '👤'}
-                  </span>
-                  <span className="hidden sm:inline">
-                    {(session.user as unknown as { role?: string })?.role === 'admin' ? 'Admin' : 
-                     (session.user as unknown as { role?: string })?.role === 'driver' ? 'Chauffeur' : 'Espace'}
-                  </span>
-                </Link>
-              )}
-            </div>
+      {/* Top Bar - Midnight */}
+      <div className="bg-midnight border-b border-white/5 text-[10px] sm:text-xs py-1.5 fixed top-0 left-0 right-0 z-[60] hidden md:block">
+        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center text-white/50">
+          <div className="flex items-center gap-6">
+            <a
+              href="tel:+221781319191"
+              className="flex items-center gap-1.5 hover:text-gold transition-colors"
+              onClick={() => trackPhoneCall('header')}
+            >
+              <Phone size={12} weight="light" className="text-gold" />
+              <span>+221 78 131 91 91</span>
+            </a>
+            <a
+              href="mailto:contact@navettexpress.com"
+              className="flex items-center gap-1.5 hover:text-gold transition-colors"
+              onClick={() => trackEmailClick('header')}
+            >
+              <EnvelopeSimple size={12} weight="light" className="text-gold" />
+              <span>contact@navettexpress.com</span>
+            </a>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+              Service 24h/24
+            </span>
+            <div className="h-3 w-px bg-white/10"></div>
+            <Link href="/devenir-partenaire" className="hover:text-gold transition-colors">
+              Devenir Partenaire
+            </Link>
           </div>
         </div>
       </div>
 
-      {/* Menu principal - Optimisé */}
-      <header className={baseClasses}>
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-          <div className="flex justify-between items-center h-16 lg:h-18">
-          {/* Logo - Compact */}
-          <Link 
-            href="/" 
-            className="transition-transform duration-300 hover:scale-105 flex items-center gap-3 shrink-0"
-          >
-            <div className="w-10 h-10 lg:w-11 lg:h-11 bg-[#1A1A1A] dark:bg-white rounded-lg flex items-center justify-center">
-              <span className="text-white dark:text-[#1A1A1A] font-bold text-lg lg:text-xl">NX</span>
-            </div>
-            <span className={`${textClasses} font-bold text-lg lg:text-xl hidden sm:inline`}>
-              Navette Xpress
-            </span>
-          </Link>
-
-          {/* Desktop Navigation - Optimisé */}
-          <nav className="hidden lg:flex items-center gap-2 xl:gap-4">
-            {/* Menu principal */}
-            {mainNavLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`${linkClasses} font-medium transition-colors duration-200 px-4 py-2 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800 text-sm xl:text-base whitespace-nowrap`}
-              >
-                {link.label}
-              </Link>
-            ))}
-            
-            {/* Bouton CTA - Style moderne avec icône */}
-            <Link
-              href="/reservation"
-              className="ml-4 xl:ml-6 px-5 xl:px-6 py-2.5 rounded-lg font-semibold text-sm xl:text-base transition-all duration-300 whitespace-nowrap bg-[#1A1A1A] hover:bg-[#2A2A2A] text-white shadow-sm hover:shadow-md flex items-center gap-2"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <span>Réserver</span>
+      <header className={`${headerClasses} mt-0 md:mt-8`}>
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex justify-between items-center h-16">
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="w-10 h-10 bg-gold rounded-lg flex items-center justify-center transition-transform group-hover:rotate-12">
+                <span className="text-midnight font-bold text-xl">NX</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-white font-display text-xl leading-none tracking-wide">NAVETTE XPRESS</span>
+                <span className="text-gold text-[10px] tracking-[0.2em] font-medium leading-none mt-1 uppercase">Premium Service</span>
+              </div>
             </Link>
 
-            {/* Profil utilisateur - Simplifié */}
-            {session?.user && (
-              <div className="ml-2 xl:ml-3 relative group">
-                <button
-                  className={`flex items-center gap-2 px-2 xl:px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 cursor-pointer ${linkClasses} hover:bg-slate-100 dark:hover:bg-slate-800`}
+            {/* Desktop Nav */}
+            <nav className="hidden lg:flex items-center gap-8">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-white/70 hover:text-gold font-body text-sm font-medium transition-colors relative group"
                 >
-                  <span className="w-8 h-8 bg-linear-to-r from-blue-600 to-purple-600 text-white rounded-full flex items-center justify-center text-sm font-semibold shrink-0">
-                    {session.user.name?.charAt(0).toUpperCase() || 'U'}
-                  </span>
-                  <span className="hidden xl:block max-w-[100px] truncate">{session.user.name}</span>
-                  <ChevronDown className="w-4 h-4 shrink-0" />
-                </button>
-                
-                {/* Dropdown menu */}
-                <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  <div className="p-4 border-b border-slate-200 dark:border-slate-700">
-                    <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">{session.user.name}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">{session.user.email}</p>
-                    <span className="inline-block mt-2 px-2.5 py-1 bg-linear-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-800 dark:text-blue-300 text-xs font-semibold rounded-full">
-                      {(session.user as unknown as { role?: string })?.role === 'admin' ? '👑 Admin' : 
-                       (session.user as unknown as { role?: string })?.role === 'driver' ? '🚗 Chauffeur' : '👤 Client'}
-                    </span>
-                  </div>
-                  <div className="p-2">
-                    <Link
-                      href={(session.user as unknown as { role?: string })?.role === 'admin' ? '/admin/dashboard' : 
-                            (session.user as unknown as { role?: string })?.role === 'driver' ? '/driver/dashboard' : '/client/dashboard'}
-                      className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
-                    >
-                      <span className="text-base">📊</span>
-                      Mon Dashboard
-                    </Link>
-                    <button
-                      onClick={() => signOut({ callbackUrl: '/' })}
-                      className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                    >
-                      <span className="text-base">🚪</span>
-                      Se déconnecter
-                    </button>
+                  {link.label}
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all group-hover:w-full"></span>
+                </Link>
+              ))}
+            </nav>
+
+            <div className="hidden lg:flex items-center gap-6">
+              <ThemeToggle />
+
+              {!session ? (
+                <div className="flex items-center gap-3">
+                  <Link href="/auth/signin" className="text-white text-sm font-medium hover:text-gold transition-colors">
+                    Log In
+                  </Link>
+                  <Link
+                    href="/reservation"
+                    className="bg-gold text-midnight px-6 py-2.5 rounded-lg text-sm font-bold shadow-[0_0_20px_rgba(201,168,76,0.2)] hover:shadow-[0_0_30px_rgba(201,168,76,0.4)] transition-all hover:-translate-y-0.5"
+                  >
+                    Réserver
+                  </Link>
+                </div>
+              ) : (
+                <div className="relative group/user">
+                  <button className="flex items-center gap-2 text-white hover:text-gold transition-colors">
+                    <div className="w-8 h-8 rounded-full border border-gold/30 flex items-center justify-center bg-white/5">
+                      <UserCircle size={16} weight="light" className="text-gold" />
+                    </div>
+                    <CaretDown size={14} weight="light" />
+                  </button>
+
+                  <div className="absolute right-0 mt-2 w-56 bg-obsidian border border-white/5 rounded-xl shadow-2xl opacity-0 invisible group-hover/user:opacity-100 group-hover/user:visible transition-all duration-300 backdrop-blur-xl">
+                    <div className="p-4 border-b border-white/5">
+                      <p className="text-white text-sm font-bold truncate">{session.user.name}</p>
+                      <p className="text-white/50 text-xs truncate">{session.user.email}</p>
+                    </div>
+                    <div className="p-2 space-y-1">
+                      <Link
+                        href={(session.user as any).role === 'admin' ? '/admin/dashboard' : '/client/dashboard'}
+                        className="flex items-center gap-3 px-3 py-2 text-sm text-white/70 hover:text-gold hover:bg-white/5 rounded-lg transition-colors"
+                      >
+                        <SquaresFour size={16} weight="regular" className="text-gold" />
+                        Dashboard
+                      </Link>
+                      <button
+                        onClick={() => signOut({ callbackUrl: '/' })}
+                        className="w-full flex items-center gap-3 px-3 py-2 text-sm text-crimson hover:bg-crimson/10 rounded-lg transition-colors"
+                      >
+                        <SignOut size={16} weight="regular" />
+                        Déconnexion
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-
-            <div className="ml-2 xl:ml-3 shrink-0">
-              <ThemeToggle />
-            </div>
-          </nav>
-
-          {/* Mobile Menu Button */}
-          <div className="lg:hidden flex items-center gap-3">
-            <ThemeToggle />
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className={`${textClasses} p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200`}
-              aria-label="Toggle menu"
-            >
-              {isMobileMenuOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
               )}
+            </div>
+
+            {/* Mobile Menu Trigger */}
+            <button
+              className="lg:hidden text-white"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X size={28} weight="light" /> : <List size={28} weight="regular" />}
             </button>
           </div>
         </div>
 
         {/* Mobile Menu */}
-        <div className={`lg:hidden transition-all duration-300 overflow-hidden ${
-          isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-        }`}>
-          <nav className="py-4 space-y-2">
-            {/* Menu principal mobile */}
-            <div className="space-y-1">
-              {mainNavLinks.map((link) => (
+        <div className={`lg:hidden fixed inset-0 z-40 bg-midnight/95 backdrop-blur-2xl transition-transform duration-500 ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+          <div className="h-full flex flex-col p-8 pt-24">
+            <nav className="space-y-6">
+              {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`${linkClasses} block px-4 py-3 rounded-lg font-medium transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-800`}
+                  className="block text-2xl font-display text-white hover:text-gold transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {link.label}
                 </Link>
               ))}
-            </div>
-            
-            {/* Séparateur */}
-            <div className="border-t border-slate-200 dark:border-slate-700 my-3"></div>
-            
-            {/* Menu secondaire mobile */}
-            <div className="space-y-1">
-              <div className="px-4 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                Informations
-              </div>
-              {secondaryNavLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`${linkClasses} block px-4 py-2 rounded-lg text-sm transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-800`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-            
-            <Link
-              href="/reservation"
-              className="block bg-linear-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white px-4 py-3 rounded-lg font-semibold transition-all duration-200 shadow-lg w-fit mx-4"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Réserver
-            </Link>
+            </nav>
 
-            {session?.user && (
+            <div className="mt-auto space-y-4">
               <Link
-                href={(session.user as unknown as { role?: string })?.role === 'admin' ? '/admin/dashboard' : '/client/dashboard'}
-                className={`${linkClasses} block px-4 py-3 rounded-lg font-medium transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-800`}
+                href="/reservation"
+                className="block w-full bg-gold text-midnight text-center py-4 rounded-xl font-bold text-lg"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                {(session.user as unknown as { role?: string })?.role === 'admin' ? 'Dashboard Admin' : 'Mon Espace'}
+                Réserver Maintenant
               </Link>
-            )}
-
-            {!session && (
-              <div className="pt-4 border-t border-slate-200 dark:border-slate-700 px-4">
-                <div className="flex flex-col gap-2">
-                  <Link
-                    href="/auth/signin"
-                    className="w-full bg-linear-to-r from-[#FF7E38] to-[#E6682F] hover:from-[#E6682F] hover:to-[#D4571F] text-white px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg cursor-pointer text-center"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Se connecter
-                  </Link>
-                  <Link
-                    href="/auth/signup"
-                    className="w-full border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer text-center"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    S&apos;inscrire
-                  </Link>
-                </div>
-              </div>
-            )}
-
-            {session?.user && (
-              <div className="pt-4 border-t border-slate-200 dark:border-slate-700 px-4">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center text-lg font-semibold">
-                    {session.user.name?.charAt(0).toUpperCase() || 'U'}
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-slate-900 dark:text-white">{session.user.name}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{session.user.email}</p>
-                    <span className="inline-block mt-1 px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
-                      {(session.user as unknown as { role?: string })?.role === 'admin' ? 'Admin' : 'Client'}
-                    </span>
-                  </div>
-                </div>
-                <button
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    signOut({ callbackUrl: '/' });
-                  }}
-                  className="w-full text-left px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+              {!session ? (
+                <Link
+                  href="/auth/signin"
+                  className="block w-full border border-white/10 text-white text-center py-4 rounded-xl font-medium"
+                  onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Se déconnecter
+                  Se connecter
+                </Link>
+              ) : (
+                <button
+                  onClick={() => signOut({ callbackUrl: '/' })}
+                  className="block w-full text-crimson text-center py-4"
+                >
+                  Déconnexion
                 </button>
-              </div>
-            )}
-          </nav>
+              )}
+            </div>
+          </div>
         </div>
-      </div>
       </header>
     </>
   );

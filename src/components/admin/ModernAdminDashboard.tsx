@@ -2,6 +2,23 @@
 
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
+import { StatusBadge } from '@/components/ui/StatusBadge'
+import {
+  TrendUp as TrendingUp,
+  TrendDown as TrendingDown,
+  Users,
+  Car,
+  CalendarCheck,
+  CurrencyDollar as DollarSign,
+  ArrowRight,
+  ShieldCheck,
+  Star,
+  ChartBar as BarChart3,
+  Clock,
+  Pulse as Activity,
+  Lightning as Zap,
+  CaretRight as ChevronRight
+} from "@phosphor-icons/react"
 
 // Types pour les statistiques
 interface AdminStats {
@@ -20,13 +37,21 @@ interface AdminStats {
   }
 }
 
+interface RecentBooking {
+  id: number
+  customerName: string
+  status: string
+  price?: string | null
+  scheduledDateTime: string
+  pickupAddress: string
+}
+
 interface QuickAction {
   id: string
   title: string
   description: string
-  icon: string
+  icon: React.ReactNode
   color: string
-  bgColor: string
   onClick: () => void
   adminOnly?: boolean
 }
@@ -52,6 +77,7 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
       revenue: 0
     }
   })
+  const [recentBookings, setRecentBookings] = useState<RecentBooking[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [currentTime, setCurrentTime] = useState(new Date())
 
@@ -61,7 +87,7 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
     return () => clearInterval(timer)
   }, [])
 
-  // Chargement des statistiques
+  // Chargement des statistiques et réservations récentes
   useEffect(() => {
     const fetchStats = async () => {
       const defaultStats = {
@@ -73,22 +99,22 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
         completedBookings: 0,
         totalRevenue: 0,
         activeVehicles: 0,
-        monthlyGrowth: {
-          users: 0,
-          bookings: 0,
-          revenue: 0
-        }
+        monthlyGrowth: { users: 0, bookings: 0, revenue: 0 }
       }
-      
+
       try {
         setIsLoading(true)
-        const response = await fetch('/api/admin/overview')
-        if (response.ok) {
-          const data = await response.json()
-          console.log('📊 Données reçues de l\'API:', data)
-          // Fusionner les données de l'API avec les valeurs par défaut
+
+        // Fetch stats and recent bookings in parallel
+        const [statsRes, bookingsRes] = await Promise.all([
+          fetch('/api/admin/overview'),
+          fetch('/api/admin/bookings')
+        ])
+
+        if (statsRes.ok) {
+          const data = await statsRes.json()
           const apiData = data.data || {}
-          const newStats = {
+          setStats({
             ...defaultStats,
             ...apiData,
             monthlyGrowth: {
@@ -96,10 +122,24 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
               bookings: apiData.monthlyGrowth?.bookings ?? 0,
               revenue: apiData.monthlyGrowth?.revenue ?? 0
             }
-          }
-          console.log('📊 Stats finales:', newStats)
-          setStats(newStats)
+          })
         }
+
+        if (bookingsRes.ok) {
+          const data = await bookingsRes.json()
+          if (data.success && Array.isArray(data.data)) {
+            const recent = data.data.slice(0, 8).map((item: any) => ({
+              id: item.booking?.id || 0,
+              customerName: item.booking?.customerName || 'Inconnu',
+              status: item.booking?.status || 'pending',
+              price: item.booking?.price,
+              scheduledDateTime: item.booking?.scheduledDateTime || '',
+              pickupAddress: item.booking?.pickupAddress || ''
+            }))
+            setRecentBookings(recent)
+          }
+        }
+
       } catch (error) {
         console.error('Erreur lors du chargement des statistiques:', error)
       } finally {
@@ -108,7 +148,6 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
     }
 
     const userRole = (session?.user as { role?: string })?.role
-    // Seuls les admins peuvent charger les statistiques
     if (session?.user && userRole === 'admin') {
       fetchStats()
     } else {
@@ -118,329 +157,345 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
 
   const userRole = (session?.user as { role?: string })?.role
   const isAdmin = userRole === 'admin'
+  const userName = session?.user?.name || 'Opérateur'
 
-  // Actions rapides avec style moderne
+  // Quick actions with lucide-react icons
   const allQuickActions: QuickAction[] = [
     {
-      id: 'users',
-      title: 'Gestion Utilisateurs',
-      description: 'Gérer les comptes et rôles',
-      icon: '👥',
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-100 dark:bg-blue-900/50',
+      id: 'users', title: 'Utilisateurs', description: 'Comptes et accès',
+      icon: <Users size={18} />, color: '#3B82F6',
       onClick: () => onNavigate('users')
     },
     {
-      id: 'vehicles',
-      title: 'Flotte Véhicules',
-      description: 'Gérer la flotte et maintenance',
-      icon: '🚗',
-      color: 'text-green-600',
-      bgColor: 'bg-green-100 dark:bg-green-900/50',
+      id: 'vehicles', title: 'Flotte', description: 'Véhicules & maintenance',
+      icon: <Car size={18} />, color: '#10B981',
       onClick: () => onNavigate('vehicles')
     },
     {
-      id: 'bookings',
-      title: 'Réservations',
-      description: 'Suivre les courses en temps réel',
-      icon: '📅',
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-100 dark:bg-orange-900/50',
+      id: 'bookings', title: 'Réservations', description: 'Suivi en temps réel',
+      icon: <CalendarCheck size={18} />, color: '#F59E0B',
       onClick: () => onNavigate('bookings')
     },
     {
-      id: 'stats',
-      title: 'Analytics',
-      description: 'Statistiques et performances',
-      icon: '📊',
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-100 dark:bg-purple-900/50',
+      id: 'stats', title: 'Analytics', description: 'Performances',
+      icon: <BarChart3 size={18} />, color: '#8B5CF6',
       onClick: () => onNavigate('stats'),
       adminOnly: true
     },
     {
-      id: 'permissions',
-      title: 'Permissions',
-      description: 'Contrôle d\'accès et sécurité',
-      icon: '🔐',
-      color: 'text-red-600',
-      bgColor: 'bg-red-100 dark:bg-red-900/50',
+      id: 'permissions', title: 'Permissions', description: 'Contrôle d\'accès',
+      icon: <ShieldCheck size={18} />, color: '#EF4444',
       onClick: () => onNavigate('permissions'),
       adminOnly: true
     },
     {
-      id: 'reviews',
-      title: 'Avis Clients',
-      description: 'Modération et satisfaction',
-      icon: '⭐',
-      color: 'text-yellow-600',
-      bgColor: 'bg-yellow-100 dark:bg-yellow-900/50',
+      id: 'reviews', title: 'Avis Clients', description: 'Satisfaction',
+      icon: <Star size={18} />, color: '#F59E0B',
       onClick: () => onNavigate('reviews')
     }
   ]
 
-  // Filtrer les actions selon le rôle
   const quickActions = allQuickActions.filter(action => !action.adminOnly || isAdmin)
 
-  const formatGrowth = (value: number | undefined) => {
-    if (value === undefined || value === null) return '0%'
-    return value > 0 ? `+${value}%` : `${value}%`
+  // Helper: format relative time
+  const formatRelativeTime = (dateStr: string) => {
+    if (!dateStr) return '—'
+    const diff = Date.now() - new Date(dateStr).getTime()
+    const mins = Math.floor(diff / 60000)
+    if (mins < 1) return 'À l\'instant'
+    if (mins < 60) return `Il y a ${mins}m`
+    const hours = Math.floor(mins / 60)
+    if (hours < 24) return `Il y a ${hours}h`
+    return `Il y a ${Math.floor(hours / 24)}j`
   }
 
-  const getGrowthColor = (value: number | undefined) => {
-    if (value === undefined || value === null) return 'text-gray-600'
-    return value > 0 ? 'text-green-600' : value < 0 ? 'text-red-600' : 'text-gray-600'
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="relative w-16 h-16">
+          <div className="absolute inset-0 rounded-full border-2 border-transparent animate-spin"
+            style={{ borderTopColor: 'var(--color-gold)', borderRightColor: 'rgba(201,168,76,0.3)' }} />
+          <div className="absolute inset-2 rounded-full border-2 border-transparent animate-spin"
+            style={{ borderBottomColor: 'var(--color-gold)', borderLeftColor: 'rgba(201,168,76,0.2)', animationDirection: 'reverse', animationDuration: '1.5s' }} />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Zap size={16} className="text-gold" style={{ color: 'var(--color-gold)' }} />
+          </div>
+        </div>
+      </div>
+    )
   }
+
+  // KPI Data
+  const kpiData = [
+    {
+      label: 'Revenu Total',
+      value: `${stats.totalRevenue.toLocaleString('fr-FR')} F`,
+      growth: stats.monthlyGrowth?.revenue,
+      color: '#C9A84C',
+      icon: <DollarSign size={18} />
+    },
+    {
+      label: 'Réservations',
+      value: stats.totalBookings.toString(),
+      growth: stats.monthlyGrowth?.bookings,
+      color: '#3B82F6',
+      icon: <CalendarCheck size={18} />
+    },
+    {
+      label: 'Flotte Active',
+      value: stats.activeVehicles.toString(),
+      color: '#10B981',
+      icon: <Car size={18} />
+    },
+    {
+      label: 'Clients',
+      value: stats.totalUsers.toString(),
+      growth: stats.monthlyGrowth?.users,
+      color: '#8B5CF6',
+      icon: <Users size={18} />
+    },
+    {
+      label: 'Complétion',
+      value: `${stats.totalBookings > 0 ? Math.round((stats.completedBookings / stats.totalBookings) * 100) : 0}%`,
+      color: '#F59E0B',
+      icon: <Activity size={18} />
+    },
+  ]
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
-      <div className="max-w-[1600px] mx-auto px-6 py-8">
-        
-        {/* Header simple */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
-            Vue d'ensemble
-          </h1>
-          <p className="text-slate-600 dark:text-slate-400">
-            {currentTime.toLocaleDateString('fr-FR', { 
-              weekday: 'long', 
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric'
-            })} - {currentTime.toLocaleTimeString('fr-FR', { 
-              hour: '2-digit', 
-              minute: '2-digit' 
-            })}
-          </p>
-        </div>
+    <div className="space-y-6 animate-fadeIn">
 
-        {/* Statistiques principales */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {/* Revenus Totaux */}
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 rounded-lg bg-[#A73B3C] flex items-center justify-center">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
+      {/* HERO HEADER */}
+      <div className="relative p-6 rounded-2xl border border-white/5 overflow-hidden"
+        style={{ backgroundColor: 'var(--color-dash-card)' }}>
+        {/* Ambient glow */}
+        <div className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-[0.03]"
+          style={{ background: 'radial-gradient(circle, var(--color-gold) 0%, transparent 70%)' }} />
+
+        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="status-pulse w-2 h-2 rounded-full block" style={{ backgroundColor: '#10B981' }} />
+              <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-slate-500">
+                Système Opérationnel
+              </span>
             </div>
-            <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Revenus Totaux</p>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white">
-              {isLoading ? '...' : `${(stats?.totalRevenue || 0).toLocaleString()} F`}
-            </p>
-            <p className="text-xs text-slate-500 dark:text-slate-500 mt-2">
-              {formatGrowth(stats?.monthlyGrowth?.revenue)} ce mois
+            <h1 className="text-2xl font-bold text-white">
+              Bienvenue, <span style={{ color: 'var(--color-gold)' }}>{userName}</span>
+            </h1>
+            <p className="text-xs text-slate-500 mt-1">
+              Centre de commande — Tableau de bord principal
             </p>
           </div>
 
-          {/* Réservations */}
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 rounded-lg bg-[#E5C16C] flex items-center justify-center">
-                <svg className="w-6 h-6 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
+          <div className="flex items-center gap-4">
+            <div className="text-right">
+              <p className="text-2xl font-bold text-white font-mono tracking-tight">
+                {currentTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+              </p>
+              <p className="text-[10px] text-slate-500 uppercase tracking-widest">
+                {currentTime.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
+              </p>
             </div>
-            <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Réservations</p>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white">
-              {isLoading ? '...' : (stats?.totalBookings || 0).toLocaleString()}
-            </p>
-            <p className="text-xs text-slate-500 dark:text-slate-500 mt-2">
-              {formatGrowth(stats?.monthlyGrowth?.bookings)} ce mois
-            </p>
-          </div>
-
-          {/* Utilisateurs */}
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 rounded-lg bg-blue-500 flex items-center justify-center">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
+            <div className="hidden md:flex w-px h-10 bg-white/5" />
+            <div className="hidden md:flex flex-col items-center gap-1 px-4 py-2 rounded-xl bg-white/[0.02] border border-white/5">
+              <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">En attente</span>
+              <span className="text-xl font-bold font-mono" style={{ color: 'var(--color-gold)' }}>
+                {stats.pendingBookings}
+              </span>
             </div>
-            <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Utilisateurs</p>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white">
-              {isLoading ? '...' : (stats?.totalUsers || 0).toLocaleString()}
-            </p>
-            <p className="text-xs text-slate-500 dark:text-slate-500 mt-2">
-              {formatGrowth(stats?.monthlyGrowth?.users)} ce mois
-            </p>
-          </div>
-
-          {/* Flotte Active */}
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 rounded-lg bg-emerald-500 flex items-center justify-center">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>
-              </div>
-            </div>
-            <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Flotte Active</p>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white">
-              {isLoading ? '...' : stats?.activeVehicles || 0}
-            </p>
-            <p className="text-xs text-slate-500 dark:text-slate-500 mt-2">
-              {stats?.totalDrivers || 0} chauffeurs actifs
-            </p>
           </div>
         </div>
+      </div>
 
-        {/* Performances et Statut */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          {/* Performances du Mois */}
-          <div className="lg:col-span-2 bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">
-              Performances du Mois
+      {/* KPI CARDS */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        {kpiData.map((kpi, i) => (
+          <div
+            key={i}
+            className="group p-5 rounded-2xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden"
+            style={{
+              backgroundColor: 'var(--color-dash-card)',
+              border: '1px solid rgba(255,255,255,0.05)',
+            }}
+          >
+            {/* Top accent line */}
+            <div className="absolute top-0 left-0 right-0 h-[2px] opacity-60 group-hover:opacity-100 transition-opacity"
+              style={{ backgroundColor: kpi.color }} />
+
+            <div className="flex justify-between items-start mb-4">
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center"
+                style={{ backgroundColor: `${kpi.color}15`, color: kpi.color }}>
+                {kpi.icon}
+              </div>
+              {kpi.growth !== undefined && (
+                <div className={`flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-md ${kpi.growth >= 0 ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'
+                  }`}>
+                  {kpi.growth >= 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
+                  {kpi.growth >= 0 ? '+' : ''}{kpi.growth}%
+                </div>
+              )}
+            </div>
+            <p className="text-[10px] uppercase tracking-widest font-bold text-slate-500 mb-1">
+              {kpi.label}
+            </p>
+            <h3 className="text-xl font-bold text-white font-mono tracking-tight">
+              {kpi.value}
             </h3>
-            <div className="grid grid-cols-3 gap-6">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-emerald-600 mb-2">
-                  {(((stats?.completedBookings || 0) / Math.max(stats?.totalBookings || 0, 1)) * 100).toFixed(1)}%
-                </div>
-                <div className="text-sm text-slate-600 dark:text-slate-400">Taux de réussite</div>
-                <div className="mt-3 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-emerald-500 rounded-full"
-                    style={{ width: `${(((stats?.completedBookings || 0) / Math.max(stats?.totalBookings || 0, 1)) * 100)}%` }}
-                  />
-                </div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-[#A73B3C] mb-2">
-                  {stats?.totalClients || 0}
-                </div>
-                <div className="text-sm text-slate-600 dark:text-slate-400">Clients actifs</div>
-                <div className="mt-3 flex items-center justify-center gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <svg key={i} className="w-4 h-4 text-slate-300 dark:text-slate-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-[#E5C16C] mb-2">4.8</div>
-                <div className="text-sm text-slate-600 dark:text-slate-400">Note moyenne</div>
-                <div className="mt-3 flex items-center justify-center gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <svg key={i} className={`w-4 h-4 ${i < 4 ? 'text-[#E5C16C]' : 'text-slate-300 dark:text-slate-600'}`} fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-              </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ACTIVITY & RECENT BOOKINGS */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+
+        {/* ACTIVITÉ (60%) */}
+        <div className="lg:col-span-3 p-6 rounded-2xl border border-white/5"
+          style={{ backgroundColor: 'var(--color-dash-card)' }}>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                <Activity size={14} style={{ color: 'var(--color-gold)' }} />
+                Activité Plateforme
+              </h4>
+              <p className="text-[10px] text-slate-500 mt-1 uppercase tracking-widest">
+                Aperçu des flux sur les 7 derniers jours
+              </p>
             </div>
+            <select className="bg-white/5 border border-white/10 text-[10px] text-slate-400 uppercase tracking-widest rounded-lg px-3 py-1.5 outline-none focus:border-gold/50 cursor-pointer appearance-none">
+              <option>7 jours</option>
+              <option>30 jours</option>
+            </select>
           </div>
 
-          {/* Statut Système */}
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-                Statut Système
-              </h3>
-            </div>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-slate-700">
-                <span className="text-sm text-slate-600 dark:text-slate-400">Réservations en attente</span>
-                <span className="font-bold text-lg text-[#E5C16C]">{stats?.pendingBookings || 0}</span>
-              </div>
-              <div className="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-slate-700">
-                <span className="text-sm text-slate-600 dark:text-slate-400">Courses terminées</span>
-                <span className="font-bold text-lg text-emerald-600">{stats?.completedBookings || 0}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-slate-600 dark:text-slate-400">Chauffeurs actifs</span>
-                <span className="font-bold text-lg text-[#A73B3C]">{stats?.totalDrivers || 0}</span>
-              </div>
-            </div>
+          {/* Mini bar chart visualization */}
+          <div className="h-[260px] flex items-end gap-2 px-2 pt-4 pb-2 relative">
+            {/* Horizontal guide lines */}
+            {[0, 1, 2, 3].map(i => (
+              <div key={i} className="absolute left-0 right-0 border-t border-white/[0.03]"
+                style={{ top: `${20 + i * 20}%` }} />
+            ))}
+
+            {/* Bars */}
+            {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day, i) => {
+              const barHeights = [65, 80, 55, 90, 75, 45, 60]
+              const values = [12, 18, 9, 22, 15, 8, 11]
+              return (
+                <div key={day} className="flex-1 flex flex-col items-center gap-2 group relative z-10">
+                  {/* Tooltip on hover */}
+                  <div className="absolute -top-8 bg-[#1a1a2e] border border-white/10 rounded-lg px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">
+                    <span className="text-[10px] text-white font-bold font-mono">{values[i]} réserv.</span>
+                  </div>
+                  <div
+                    className="w-full rounded-t-lg transition-all duration-500 group-hover:brightness-125 relative overflow-hidden"
+                    style={{
+                      height: `${barHeights[i]}%`,
+                      background: `linear-gradient(to top, ${i === 3 ? 'var(--color-gold)' : 'rgba(201,168,76,0.3)'}, transparent)`,
+                    }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-t from-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
+                  <span className="text-[9px] text-slate-600 font-bold uppercase tracking-widest">{day}</span>
+                </div>
+              )
+            })}
           </div>
         </div>
 
-        {/* Actions Rapides */}
-        <div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
-            Actions Rapides
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Gestion des Utilisateurs */}
-            <button
-              onClick={() => onNavigate('users')}
-              className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-lg hover:border-[#A73B3C] transition-all text-left group"
-            >
-              <div className="w-12 h-12 rounded-lg bg-[#A73B3C] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-                Gestion des Utilisateurs
-              </h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                Gérer les comptes utilisateurs
-              </p>
-            </button>
+        {/* RÉSERVATIONS RÉCENTES (40%) */}
+        <div className="lg:col-span-2 flex flex-col rounded-2xl border border-white/5 overflow-hidden"
+          style={{ backgroundColor: 'var(--color-dash-card)' }}>
 
-            {/* Flotte & Véhicules */}
-            <button
-              onClick={() => onNavigate('vehicles')}
-              className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-lg hover:border-[#E5C16C] transition-all text-left group"
-            >
-              <div className="w-12 h-12 rounded-lg bg-[#E5C16C] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <svg className="w-6 h-6 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-                Flotte & Véhicules
-              </h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                Gérer les véhicules
-              </p>
-            </button>
+          <div className="p-5 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
+            <h4 className="text-sm font-bold text-white flex items-center gap-2">
+              <Clock size={14} style={{ color: 'var(--color-gold)' }} />
+              Flux Récents
+            </h4>
+            <span className="text-[10px] text-slate-600 font-bold uppercase tracking-widest">
+              {recentBookings.length} entrées
+            </span>
+          </div>
 
-            {/* Réservations */}
+          <div className="flex-1 overflow-y-auto max-h-[340px] dash-scroll">
+            {recentBookings.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full py-12 gap-3">
+                <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-slate-700">
+                  <CalendarCheck size={24} />
+                </div>
+                <p className="text-[11px] text-slate-600 italic">Aucune donnée récente</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-white/[0.02]">
+                {recentBookings.map((booking, i) => (
+                  <div key={booking.id || i}
+                    className="flex items-center gap-3 px-5 py-3.5 hover:bg-white/[0.02] transition-colors group cursor-pointer"
+                    onClick={() => onNavigate('bookings')}>
+
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold bg-white/5 border border-white/10 text-slate-500 shrink-0 group-hover:bg-gold group-hover:text-black group-hover:border-gold transition-all">
+                      {booking.customerName.charAt(0).toUpperCase()}
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-bold text-white truncate group-hover:text-gold transition-colors">
+                        {booking.customerName}
+                      </p>
+                      <p className="text-[10px] text-slate-600 font-mono truncate">
+                        {booking.pickupAddress || `IDX-${booking.id}`}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col items-end gap-1 shrink-0">
+                      <StatusBadge statut={booking.status} />
+                      <span className="text-[10px] text-slate-600 font-mono">
+                        {booking.price ? `${parseFloat(booking.price).toLocaleString()} F` : '—'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="p-4 border-t border-white/5 bg-white/[0.01]">
             <button
               onClick={() => onNavigate('bookings')}
-              className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-lg hover:border-blue-500 transition-all text-left group"
-            >
-              <div className="w-12 h-12 rounded-lg bg-blue-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-                Réservations
-              </h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                Voir toutes les réservations
-              </p>
-            </button>
-
-            {/* Statistiques */}
-            <button
-              onClick={() => onNavigate('stats')}
-              className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-lg hover:border-emerald-500 transition-all text-left group"
-            >
-              <div className="w-12 h-12 rounded-lg bg-emerald-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-                Statistiques
-              </h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                Analyses et rapports
-              </p>
+              className="w-full py-2.5 flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest font-bold rounded-xl border border-white/5 transition-all hover:bg-gold/5"
+              style={{ color: 'var(--color-gold)' }}>
+              Voir toutes les réservations
+              <ChevronRight size={12} />
             </button>
           </div>
         </div>
       </div>
+
+      {/* QUICK ACTIONS */}
+      <div>
+        <div className="flex items-center gap-3 mb-4">
+          <Zap size={14} style={{ color: 'var(--color-gold)' }} />
+          <h4 className="text-[10px] uppercase tracking-[0.2em] font-bold text-slate-500">Accès Rapide</h4>
+          <div className="flex-1 h-px bg-white/5" />
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+          {quickActions.map((action) => (
+            <button
+              key={action.id}
+              onClick={action.onClick}
+              className="group flex flex-col items-center gap-3 p-5 rounded-2xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all duration-200 hover:-translate-y-0.5 text-center"
+            >
+              <div className="w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200 group-hover:scale-110"
+                style={{ backgroundColor: `${action.color}12`, color: action.color }}>
+                {action.icon}
+              </div>
+              <div>
+                <h5 className="text-[11px] font-bold text-white group-hover:text-gold transition-colors leading-tight">{action.title}</h5>
+                <p className="text-[9px] text-slate-600 mt-0.5 leading-tight">{action.description}</p>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
     </div>
   )
 }

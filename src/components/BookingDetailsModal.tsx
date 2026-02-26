@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Phone, MapPin, Clock, User, Car } from "lucide-react";
+import { X, Phone, MapPin, Clock, UserCircle, Car } from "@phosphor-icons/react";
 
 interface BookingDetails {
   id: number;
@@ -32,7 +32,7 @@ export function BookingDetailsModal({ bookingId, onClose }: BookingDetailsModalP
       try {
         setLoading(true);
         setError(null);
-        
+
         // Simulation d'un appel API avec les données de démonstration
         const demoBookings: BookingDetails[] = [
           {
@@ -50,7 +50,7 @@ export function BookingDetailsModal({ bookingId, onClose }: BookingDetailsModalP
           },
           {
             id: 2,
-            client: "Mme. Martin", 
+            client: "Mme. Martin",
             pickup: "16 Rue de la Paix, Dakar",
             destination: "Gare du Nord",
             time: "16:00",
@@ -66,7 +66,7 @@ export function BookingDetailsModal({ bookingId, onClose }: BookingDetailsModalP
             client: "Dr. Rousseau",
             pickup: "Hôpital Pitié-Salpêtrière",
             destination: "Aéroport Orly",
-            time: "18:45", 
+            time: "18:45",
             status: "À venir",
             vehicle: "Audi A8",
             duration: "40 min",
@@ -78,7 +78,7 @@ export function BookingDetailsModal({ bookingId, onClose }: BookingDetailsModalP
 
         // Simulate API delay
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         const foundBooking = demoBookings.find(b => b.id === bookingId);
         if (foundBooking) {
           setBooking(foundBooking);
@@ -114,7 +114,7 @@ export function BookingDetailsModal({ bookingId, onClose }: BookingDetailsModalP
             onClick={onClose}
             className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
           >
-            <X className="w-6 h-6 text-slate-500" />
+            <X className="w-6 h-6 text-slate-500" weight="light" />
           </button>
         </div>
 
@@ -137,13 +137,12 @@ export function BookingDetailsModal({ bookingId, onClose }: BookingDetailsModalP
             <div className="space-y-6">
               {/* Status Badge */}
               <div className="flex justify-center">
-                <span className={`px-4 py-2 rounded-full text-sm font-medium ${
-                  booking.status === 'En cours' 
-                    ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200'
-                    : booking.status === 'Confirmé'
+                <span className={`px-4 py-2 rounded-full text-sm font-medium ${booking.status === 'En cours'
+                  ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200'
+                  : booking.status === 'Confirmé'
                     ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200'
                     : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-200'
-                }`}>
+                  }`}>
                   {booking.status}
                 </span>
               </div>
@@ -152,7 +151,7 @@ export function BookingDetailsModal({ bookingId, onClose }: BookingDetailsModalP
               <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 bg-linear-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
-                    <User className="w-5 h-5 text-white" />
+                    <UserCircle className="w-5 h-5 text-white" weight="regular" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-slate-900 dark:text-white">Informations Client</h3>
@@ -174,7 +173,7 @@ export function BookingDetailsModal({ bookingId, onClose }: BookingDetailsModalP
               <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 bg-linear-to-r from-green-600 to-emerald-600 rounded-full flex items-center justify-center">
-                    <MapPin className="w-5 h-5 text-white" />
+                    <MapPin className="w-5 h-5 text-white" weight="regular" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-slate-900 dark:text-white">Détails du Trajet</h3>
@@ -193,7 +192,7 @@ export function BookingDetailsModal({ bookingId, onClose }: BookingDetailsModalP
                     <div>
                       <div className="text-sm text-slate-500 dark:text-slate-400">Heure de prise en charge</div>
                       <div className="font-medium text-slate-900 dark:text-white flex items-center gap-2">
-                        <Clock className="w-4 h-4" />
+                        <Clock className="w-4 h-4" weight="regular" />
                         {booking.time}
                       </div>
                     </div>
@@ -209,7 +208,7 @@ export function BookingDetailsModal({ bookingId, onClose }: BookingDetailsModalP
               <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 bg-linear-to-r from-orange-600 to-red-600 rounded-full flex items-center justify-center">
-                    <Car className="w-5 h-5 text-white" />
+                    <Car className="w-5 h-5 text-white" weight="regular" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-slate-900 dark:text-white">Véhicule & Tarification</h3>
@@ -235,8 +234,8 @@ export function BookingDetailsModal({ bookingId, onClose }: BookingDetailsModalP
                     <span className="text-sm text-slate-500 dark:text-slate-400">{booking.progress}%</span>
                   </div>
                   <div className="w-full bg-slate-200 dark:bg-slate-600 rounded-full h-2">
-                    <div 
-                      className="bg-green-600 h-2 rounded-full transition-all duration-300" 
+                    <div
+                      className="bg-green-600 h-2 rounded-full transition-all duration-300"
                       style={{ width: `${booking.progress}%` }}
                     ></div>
                   </div>
@@ -253,7 +252,7 @@ export function BookingDetailsModal({ bookingId, onClose }: BookingDetailsModalP
               onClick={handleCallClient}
               className="flex-1 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
             >
-              <Phone className="w-5 h-5" />
+              <Phone className="w-5 h-5" weight="fill" />
               Appeler le client
             </button>
             <button

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
-import { Edit, Trash2, MoreVertical } from "lucide-react"
+import { PencilSimple as Edit, Trash as Trash2, DotsThreeVertical as MoreVertical } from "@phosphor-icons/react"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { useNotification } from "@/hooks/useNotification"
 import { ImageUploader } from "@/components/ImageUploader"
@@ -75,7 +75,7 @@ export function ModernPermissionsManagement() {
     permissions: [] as string[]
   })
   const { notifications, showSuccess, showError, removeNotification } = useNotification()
-  
+
   const [filters, setFilters] = useState({
     search: '',
     category: '',
@@ -121,7 +121,7 @@ export function ModernPermissionsManagement() {
 
       console.log('📡 Réponses API:', {
         roles: rolesRes.status,
-        permissions: permissionsRes.status, 
+        permissions: permissionsRes.status,
         users: usersRes.status
       })
 
@@ -141,22 +141,22 @@ export function ModernPermissionsManagement() {
         const errorText = await usersRes.text()
         console.error('Détails erreur users:', errorText)
       }
-      
+
       // Ne traiter que les réponses OK
       const rolesData = rolesRes.ok ? await rolesRes.json() : { success: false, data: [] }
       const permissionsData = permissionsRes.ok ? await permissionsRes.json() : { success: false, data: [] }
       const usersData = usersRes.ok ? await usersRes.json() : { success: false, data: [] }
-      
+
       if (rolesData.success) setRoles(rolesData.data)
       if (permissionsData.success) setPermissions(permissionsData.data)
       if (usersData.success) {
         // Transformer les données utilisateurs pour convertir role (string) en objet Role
         const transformedUsers = usersData.data.map((user: any) => {
           // Trouver le rôle correspondant dans la liste des rôles
-          const roleObj = rolesData.success 
+          const roleObj = rolesData.success
             ? rolesData.data.find((r: any) => r.name === user.role)
             : null
-          
+
           return {
             ...user,
             role: roleObj || {
@@ -175,7 +175,7 @@ export function ModernPermissionsManagement() {
         })
         setUsers(transformedUsers)
       }
-      
+
       console.log('✅ Données chargées avec succès')
     } catch (error) {
       console.error('❌ Erreur lors du chargement des données:', error)
@@ -215,7 +215,7 @@ export function ModernPermissionsManagement() {
       acc[perm.category].push(perm)
       return acc
     }, {} as Record<string, Permission[]>)
-    
+
     return Object.entries(categories).map(([name, perms]) => ({
       name,
       permissions: perms,
@@ -253,12 +253,12 @@ export function ModernPermissionsManagement() {
       const response = await fetch(`/api/admin/roles/${roleId}/permissions`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          permissionId, 
-          action: hasAccess ? 'remove' : 'add' 
+        body: JSON.stringify({
+          permissionId,
+          action: hasAccess ? 'remove' : 'add'
         })
       })
-      
+
       if (response.ok) {
         await fetchData()
         showSuccess(
@@ -283,9 +283,9 @@ export function ModernPermissionsManagement() {
           password: 'defaultPassword123'
         })
       })
-      
+
       const result = await response.json()
-      
+
       if (result.success) {
         await fetchData()
         setShowCreateUserModal(false)
@@ -319,7 +319,7 @@ export function ModernPermissionsManagement() {
         description: newRoleForm.description,
         permissions: []
       } as Partial<Role>)
-      
+
       setShowCreateRoleModal(false)
       setNewRoleForm({
         name: '',
@@ -346,16 +346,16 @@ export function ModernPermissionsManagement() {
 
   const editUser = async () => {
     if (!selectedUser) return
-    
+
     try {
       const response = await fetch(`/api/admin/users/${selectedUser.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editUserForm)
       })
-      
+
       const result = await response.json()
-      
+
       if (result.success) {
         await fetchData()
         setShowEditUserModal(false)
@@ -376,14 +376,14 @@ export function ModernPermissionsManagement() {
 
   const deleteUser = async () => {
     if (!selectedUser) return
-    
+
     try {
       const response = await fetch(`/api/admin/users/${selectedUser.id}`, {
         method: 'DELETE'
       })
-      
+
       const result = await response.json()
-      
+
       if (result.success) {
         await fetchData()
         setShowDeleteUserModal(false)
@@ -399,11 +399,11 @@ export function ModernPermissionsManagement() {
 
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-                         user.email.toLowerCase().includes(filters.search.toLowerCase())
+      user.email.toLowerCase().includes(filters.search.toLowerCase())
     const matchesRole = !filters.category || user.role.name === filters.category
-    const matchesStatus = !filters.status || 
-                         (filters.status === 'active' ? user.isActive : !user.isActive)
-    
+    const matchesStatus = !filters.status ||
+      (filters.status === 'active' ? user.isActive : !user.isActive)
+
     return matchesSearch && matchesRole && matchesStatus
   })
 
@@ -419,7 +419,7 @@ export function ModernPermissionsManagement() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(roleData)
       })
-      
+
       if (response.ok) {
         await fetchData()
         showSuccess('Nouveau rôle créé avec succès', 'Création réussie')
@@ -436,7 +436,7 @@ export function ModernPermissionsManagement() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ roleId: newRoleId })
       })
-      
+
       if (response.ok) {
         await fetchData()
         showSuccess('Rôle utilisateur mis à jour', 'Mise à jour réussie')
@@ -453,7 +453,7 @@ export function ModernPermissionsManagement() {
     const activeUsers = users.filter(u => u.isActive).length
     const systemRoles = roles.filter(r => r.isSystem).length
     const customRoles = roles.filter(r => !r.isSystem).length
-    
+
     return { totalRoles, totalPermissions, totalUsers, activeUsers, systemRoles, customRoles }
   }
 
@@ -512,7 +512,7 @@ export function ModernPermissionsManagement() {
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-indigo-50/30 to-slate-50 dark:from-slate-900 dark:via-indigo-900/10 dark:to-slate-900">
       <div className="p-6 max-w-7xl mx-auto">
-        
+
         {/* Header avec statistiques */}
         <div className="mb-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
@@ -524,17 +524,16 @@ export function ModernPermissionsManagement() {
                 Contrôlez l'accès et les droits de vos utilisateurs
               </p>
             </div>
-            
+
             <div className="flex items-center gap-3">
               {/* Boutons de vue */}
               <div className="flex bg-white dark:bg-slate-800 rounded-lg p-1 shadow-sm border border-slate-200 dark:border-slate-700">
                 <button
                   onClick={() => setViewMode('matrix')}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    viewMode === 'matrix'
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${viewMode === 'matrix'
                       ? 'bg-indigo-600 text-white shadow-sm'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
+                    }`}
                 >
                   <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -543,11 +542,10 @@ export function ModernPermissionsManagement() {
                 </button>
                 <button
                   onClick={() => setViewMode('roles')}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    viewMode === 'roles'
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${viewMode === 'roles'
                       ? 'bg-indigo-600 text-white shadow-sm'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
+                    }`}
                 >
                   <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -556,11 +554,10 @@ export function ModernPermissionsManagement() {
                 </button>
                 <button
                   onClick={() => setViewMode('users')}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    viewMode === 'users'
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${viewMode === 'users'
                       ? 'bg-indigo-600 text-white shadow-sm'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
+                    }`}
                 >
                   <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
@@ -568,11 +565,11 @@ export function ModernPermissionsManagement() {
                   Utilisateurs
                 </button>
               </div>
-              
+
               {/* Boutons d'action selon la vue */}
               <div className="flex gap-3">
                 {viewMode === 'users' && (
-                  <button 
+                  <button
                     onClick={() => setShowCreateUserModal(true)}
                     className="bg-linear-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
                   >
@@ -582,8 +579,8 @@ export function ModernPermissionsManagement() {
                     Nouvel utilisateur
                   </button>
                 )}
-                
-                <button 
+
+                <button
                   onClick={() => setShowCreateRoleModal(true)}
                   className="bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
                 >
@@ -607,7 +604,7 @@ export function ModernPermissionsManagement() {
                 <div className="text-2xl">🔐</div>
               </div>
             </div>
-            
+
             <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
@@ -617,7 +614,7 @@ export function ModernPermissionsManagement() {
                 <div className="text-2xl">⚙️</div>
               </div>
             </div>
-            
+
             <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
@@ -627,7 +624,7 @@ export function ModernPermissionsManagement() {
                 <div className="text-2xl">🎨</div>
               </div>
             </div>
-            
+
             <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
@@ -637,7 +634,7 @@ export function ModernPermissionsManagement() {
                 <div className="text-2xl">🔑</div>
               </div>
             </div>
-            
+
             <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
@@ -647,7 +644,7 @@ export function ModernPermissionsManagement() {
                 <div className="text-2xl">👥</div>
               </div>
             </div>
-            
+
             <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
@@ -706,16 +703,16 @@ export function ModernPermissionsManagement() {
                 </select>
               </>
             )}
-            
+
             {viewMode === 'matrix' && (
               <>
                 {['category', 'resource', 'level'].map((field) => {
                   const filterLabels = {
                     category: 'Toutes les catégories',
-                    resource: 'Toutes les ressources', 
+                    resource: 'Toutes les ressources',
                     level: 'Tous les niveaux'
                   }
-                  
+
                   return (
                     <select
                       key={field}
@@ -743,7 +740,7 @@ export function ModernPermissionsManagement() {
                 Vue d'ensemble des permissions par rôle
               </p>
             </div>
-            
+
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-slate-50 dark:bg-slate-900/50">
@@ -781,7 +778,7 @@ export function ModernPermissionsManagement() {
                           <td key={role.id} className="px-4 py-3"></td>
                         ))}
                       </tr>
-                      
+
                       {/* Lignes des permissions */}
                       {category.permissions.map((permission) => (
                         <tr key={permission.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
@@ -802,15 +799,13 @@ export function ModernPermissionsManagement() {
                                 <button
                                   onClick={() => toggleRolePermission(role.id, permission.id, hasAccess)}
                                   disabled={role.isSystem && role.name === 'super_admin'}
-                                  className={`w-8 h-8 rounded-full border-2 transition-all ${
-                                    hasAccess
+                                  className={`w-8 h-8 rounded-full border-2 transition-all ${hasAccess
                                       ? 'bg-green-500 border-green-500 text-white hover:bg-green-600'
                                       : 'bg-white dark:bg-slate-700 border-slate-300 dark:border-slate-600 hover:border-green-400'
-                                  } ${
-                                    role.isSystem && role.name === 'super_admin'
+                                    } ${role.isSystem && role.name === 'super_admin'
                                       ? 'cursor-not-allowed opacity-50'
                                       : 'cursor-pointer'
-                                  }`}
+                                    }`}
                                 >
                                   {hasAccess && (
                                     <svg className="w-4 h-4 mx-auto" fill="currentColor" viewBox="0 0 20 20">
@@ -855,11 +850,11 @@ export function ModernPermissionsManagement() {
                       </span>
                     )}
                   </div>
-                  
+
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
                     {role.description}
                   </p>
-                  
+
                   <div className="space-y-3">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-slate-600 dark:text-slate-400">Utilisateurs</span>
@@ -867,7 +862,7 @@ export function ModernPermissionsManagement() {
                         {role.userCount}
                       </span>
                     </div>
-                    
+
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-slate-600 dark:text-slate-400">Permissions</span>
                       <span className="font-medium text-slate-900 dark:text-white">
@@ -875,7 +870,7 @@ export function ModernPermissionsManagement() {
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
                     <div className="flex gap-2">
                       <button
@@ -908,7 +903,7 @@ export function ModernPermissionsManagement() {
                 Assignez des rôles aux utilisateurs
               </p>
             </div>
-            
+
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-slate-50 dark:bg-slate-900/50">
@@ -979,58 +974,57 @@ export function ModernPermissionsManagement() {
                             </div>
                           </div>
                         </td>
-                      <td className="px-6 py-4">
-                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(user.role)}`}>
-                          {getRoleIcon(user.role.name)} {user.role.name}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                          user.isActive
-                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                            : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-                        }`}>
-                          {user.isActive ? '✅ Actif' : '❌ Inactif'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
-                        {user.lastLogin 
-                          ? new Date(user.lastLogin).toLocaleDateString('fr-FR')
-                          : 'Jamais connecté'
-                        }
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center space-x-2">
-                          <select
-                            value={user.role.id}
-                            onChange={(e) => updateUserRole(user.id, parseInt(e.target.value))}
-                            className="text-xs px-2 py-1 border border-slate-300 dark:border-slate-600 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-slate-700 dark:text-white"
-                          >
-                            {roles.map((role) => (
-                              <option key={role.id} value={role.id}>
-                                {getRoleIcon(role.name)} {role.name}
-                              </option>
-                            ))}
-                          </select>
-                          
-                          <button
-                            onClick={() => openEditModal(user)}
-                            className="p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors"
-                            title="Modifier l'utilisateur"
-                          >
-                            <Edit size={16} />
-                          </button>
-                          
-                          <button
-                            onClick={() => openDeleteModal(user)}
-                            className="p-1 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
-                            title="Supprimer l'utilisateur"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
+                        <td className="px-6 py-4">
+                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(user.role)}`}>
+                            {getRoleIcon(user.role.name)} {user.role.name}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${user.isActive
+                              ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                              : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                            }`}>
+                            {user.isActive ? '✅ Actif' : '❌ Inactif'}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
+                          {user.lastLogin
+                            ? new Date(user.lastLogin).toLocaleDateString('fr-FR')
+                            : 'Jamais connecté'
+                          }
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center space-x-2">
+                            <select
+                              value={user.role.id}
+                              onChange={(e) => updateUserRole(user.id, parseInt(e.target.value))}
+                              className="text-xs px-2 py-1 border border-slate-300 dark:border-slate-600 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-slate-700 dark:text-white"
+                            >
+                              {roles.map((role) => (
+                                <option key={role.id} value={role.id}>
+                                  {getRoleIcon(role.name)} {role.name}
+                                </option>
+                              ))}
+                            </select>
+
+                            <button
+                              onClick={() => openEditModal(user)}
+                              className="p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors"
+                              title="Modifier l'utilisateur"
+                            >
+                              <Edit size={16} />
+                            </button>
+
+                            <button
+                              onClick={() => openDeleteModal(user)}
+                              className="p-1 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
+                              title="Supprimer l'utilisateur"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
                     ))
                   )}
                 </tbody>
@@ -1389,10 +1383,10 @@ export function ModernPermissionsManagement() {
                   </p>
                 </div>
               </div>
-              
+
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
                 <p className="text-red-800 dark:text-red-200 text-sm">
-                  ⚠️ <strong>Attention !</strong> Cette action est irréversible. 
+                  ⚠️ <strong>Attention !</strong> Cette action est irréversible.
                   Toutes les données associées à cet utilisateur seront définitivement supprimées.
                 </p>
               </div>

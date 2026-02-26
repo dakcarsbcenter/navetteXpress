@@ -1,7 +1,20 @@
-"use client"
-
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
+import {
+  ChartBar,
+  CaretLeft,
+  Car,
+  TrendUp as TrendingUp,
+  CreditCard,
+  Star,
+  Calendar,
+  Clock,
+  CaretRight,
+  Trophy,
+  Lightbulb,
+  Heart,
+  MapPin
+} from "@phosphor-icons/react"
 
 interface DriverStatsProps {
   onBack: () => void
@@ -51,20 +64,10 @@ export function DriverStats({ onBack }: DriverStatsProps) {
   const fetchDriverStats = async () => {
     try {
       setIsLoading(true)
-      console.log(`🔄 Récupération des statistiques pour la période: ${selectedPeriod}`)
-      
       const response = await fetch(`/api/driver/stats?period=${selectedPeriod}`)
-      
-      if (!response.ok) {
-        throw new Error('Erreur lors de la récupération des statistiques')
-      }
-
+      if (!response.ok) throw new Error('Erreur lors de la récupération des statistiques')
       const data = await response.json()
-      console.log(`📊 Statistiques reçues pour ${selectedPeriod}:`, data.data)
-      
-      if (data.success && data.data) {
-        setStats(data.data)
-      }
+      if (data.success && data.data) setStats(data.data)
     } catch (error) {
       console.error('Erreur lors de la récupération des statistiques:', error)
     } finally {
@@ -73,351 +76,371 @@ export function DriverStats({ onBack }: DriverStatsProps) {
   }
 
   const periods = [
-    { key: 'week' as const, label: 'Cette semaine' },
-    { key: 'month' as const, label: 'Ce mois' },
-    { key: 'year' as const, label: 'Cette année' }
+    { key: 'week' as const, label: 'Semaine' },
+    { key: 'month' as const, label: 'Mois' },
+    { key: 'year' as const, label: 'Année' }
   ]
 
   const getRatingStars = (rating: number) => {
-    const fullStars = Math.floor(rating)
-    const hasHalfStar = rating % 1 !== 0
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0)
-
     return (
-      <div className="flex items-center space-x-1">
-        {[...Array(fullStars)].map((_, i) => (
-          <span key={`full-${i}`} className="text-yellow-400">⭐</span>
-        ))}
-        {hasHalfStar && <span className="text-yellow-400">⭐</span>}
-        {[...Array(emptyStars)].map((_, i) => (
-          <span key={`empty-${i}`} className="text-gray-300">⭐</span>
+      <div className="flex items-center gap-0.5">
+        {[...Array(5)].map((_, i) => (
+          <Star
+            key={i}
+            size={14}
+            weight={(i < Math.floor(rating)) ? "fill" : "regular"}
+            className={(i < Math.floor(rating)) ? "text-yellow-500" : "text-gray-600"}
+          />
         ))}
       </div>
     )
   }
 
-  const getCompletionRate = () => {
-    return ((stats.completedRides / stats.totalRides) * 100).toFixed(1)
-  }
-
-  const getEarningsPerRide = () => {
-    if (stats.totalRides === 0) return '0'
-    return (stats.totalEarnings / stats.totalRides).toFixed(0)
-  }
-
-  const getEarningsPerHour = () => {
-    // Estimation basée sur une moyenne de 1.5h par course
-    const estimatedHours = stats.totalRides * 1.5
-    if (estimatedHours === 0) return '0'
-    return (stats.totalEarnings / estimatedHours).toFixed(0)
-  }
-
-  const getEarningsPerKm = () => {
-    // Estimation basée sur une moyenne de 15km par course
-    const estimatedDistance = stats.totalRides * 15
-    if (estimatedDistance === 0) return '0'
-    return (stats.totalEarnings / estimatedDistance).toFixed(0)
-  }
+  const getCompletionRate = () => ((stats.completedRides / (stats.totalRides || 1)) * 100).toFixed(1)
+  const getEarningsPerRide = () => (stats.totalEarnings / (stats.totalRides || 1)).toFixed(0)
+  const getEarningsPerHour = () => (stats.totalEarnings / ((stats.totalRides || 1) * 1.5)).toFixed(0)
+  const getEarningsPerKm = () => (stats.totalEarnings / ((stats.totalRides || 1) * 15)).toFixed(0)
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+    <div className="max-w-6xl mx-auto space-y-6 pb-12 animate-fadeIn">
+
+      {/* ── HEADER ── */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={onBack}
+            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all"
+            style={{
+              backgroundColor: 'var(--color-driver-card)',
+              border: '1px solid var(--color-driver-border)',
+              color: 'var(--color-text-secondary)'
+            }}
+          >
+            <CaretLeft size={20} weight="bold" />
+          </button>
+          <div>
+            <h1 className="text-xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
+              Analyses de Performance
+            </h1>
+            <p className="text-sm font-mono" style={{ color: 'var(--color-text-muted)' }}>
+              Période : {periods.find(p => p.key === selectedPeriod)?.label}
+            </p>
+          </div>
+        </div>
+
+        {/* Sélecteur de période style "Tab" */}
+        <div className="flex p-1 rounded-xl shrink-0"
+          style={{ backgroundColor: 'var(--color-driver-card)', border: '1px solid var(--color-driver-border)' }}>
+          {periods.map(period => (
             <button
-              onClick={onBack}
-              className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              key={period.key}
+              onClick={() => setSelectedPeriod(period.key)}
+              className="px-5 py-2 text-sm font-semibold rounded-lg transition-all duration-200"
+              style={{
+                backgroundColor: selectedPeriod === period.key ? 'var(--color-driver-accent)' : 'transparent',
+                color: selectedPeriod === period.key ? '#fff' : 'var(--color-text-secondary)',
+              }}
             >
-              <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
+              {period.label}
             </button>
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/20 rounded-xl flex items-center justify-center">
-                <span className="text-2xl">📊</span>
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  Statistiques - {periods.find(p => p.key === selectedPeriod)?.label}
-                </h1>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Analysez vos performances détaillées
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
-            {periods.map(period => (
-              <button
-                key={period.key}
-                onClick={() => setSelectedPeriod(period.key)}
-                disabled={isLoading}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors disabled:opacity-50 ${
-                  selectedPeriod === period.key
-                    ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                }`}
-              >
-                {isLoading && selectedPeriod === period.key ? (
-                  <div className="flex items-center space-x-2">
-                    <div className="w-3 h-3 border border-current border-t-transparent rounded-full animate-spin"></div>
-                    <span>{period.label}</span>
-                  </div>
-                ) : (
-                  period.label
-                )}
-              </button>
-            ))}
-          </div>
+          ))}
         </div>
       </div>
 
-      {/* Main Stats Grid */}
-      <div className="relative">
-        {isLoading && (
-          <div className="absolute inset-0 bg-white/80 dark:bg-gray-900/80 rounded-2xl z-10 flex items-center justify-center">
-            <div className="flex items-center space-x-3">
-              <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-              <span className="text-gray-700 dark:text-gray-300 font-medium">Chargement des statistiques...</span>
-            </div>
+      {/* ── MAIN STATS GRID ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+        {/* Total Courses */}
+        <div className="driver-card-enter rounded-2xl p-6 relative overflow-hidden group"
+          style={{ backgroundColor: 'var(--color-driver-card)', border: '1px solid var(--color-driver-border)' }}>
+          <div className="absolute -right-4 -top-4 text-blue-500/10 group-hover:scale-110 transition-transform duration-500">
+            <Car size={100} weight="light" />
           </div>
-        )}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-xl flex items-center justify-center">
-                <span className="text-blue-600 dark:text-blue-400 text-xl">🚗</span>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Total Courses</p>
-                <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.totalRides}</p>
-              </div>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+              style={{ backgroundColor: 'rgba(59,130,246,0.1)', color: 'var(--color-driver-accent)' }}>
+              <ChartBar size={20} weight="fill" />
             </div>
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-green-600 dark:text-green-400">✅ {stats.completedRides} terminées</span>
-            <span className="text-red-500 dark:text-red-400">❌ {stats.cancelledRides} annulées</span>
+            <span className="text-sm font-medium" style={{ color: 'var(--color-text-muted)' }}>Total Courses</span>
+          </div>
+          <p className="text-3xl font-bold mb-2" style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-mono)' }}>
+            {stats.totalRides}
+          </p>
+          <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider">
+            <span className="text-emerald-500">✓ {stats.completedRides}</span>
+            <span className="text-red-500">✕ {stats.cancelledRides}</span>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-xl flex items-center justify-center">
-              <span className="text-green-600 dark:text-green-400 text-xl">💰</span>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Revenus Totaux</p>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.totalEarnings.toLocaleString()} FCFA</p>
-            </div>
+        {/* Revenus Totaux */}
+        <div className="driver-card-enter rounded-2xl p-6 relative overflow-hidden group"
+          style={{ backgroundColor: 'var(--color-driver-card)', border: '1px solid var(--color-driver-border)', animationDelay: '0.1s' }}>
+          <div className="absolute -right-4 -top-4 text-emerald-500/10 group-hover:scale-110 transition-transform duration-500">
+            <TrendingUp size={100} weight="light" />
           </div>
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600 dark:text-gray-400">{getEarningsPerHour()} FCFA/h</span>
-            <span className="text-gray-600 dark:text-gray-400">{getEarningsPerKm()} FCFA/km</span>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/20 rounded-xl flex items-center justify-center">
-              <span className="text-orange-600 dark:text-orange-400 text-xl">💳</span>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-emerald-500"
+              style={{ backgroundColor: 'rgba(16,185,129,0.1)' }}>
+              <TrendingUp size={20} weight="bold" />
             </div>
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Revenus par Course</p>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white">{getEarningsPerRide()} FCFA</p>
-            </div>
+            <span className="text-sm font-medium" style={{ color: 'var(--color-text-muted)' }}>Revenus Totaux</span>
           </div>
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600 dark:text-gray-400">Estimation: {getEarningsPerHour()} FCFA/h</span>
-            <span className="text-green-600 dark:text-green-400">Taux: {getCompletionRate()}%</span>
+          <p className="text-3xl font-bold mb-2" style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-mono)' }}>
+            {stats.totalEarnings.toLocaleString()} <span className="text-sm font-normal text-emerald-500">FCFA</span>
+          </p>
+          <div className="text-[11px] font-bold text-emerald-500 uppercase tracking-wider">
+            Optimisé par volume
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/20 rounded-xl flex items-center justify-center">
-              <span className="text-purple-600 dark:text-purple-400 text-xl">⭐</span>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Note Moyenne</p>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.averageRating}/5</p>
-            </div>
+        {/* Revenus par Course */}
+        <div className="driver-card-enter rounded-2xl p-6 relative overflow-hidden group"
+          style={{ backgroundColor: 'var(--color-driver-card)', border: '1px solid var(--color-driver-border)', animationDelay: '0.2s' }}>
+          <div className="absolute -right-4 -top-4 text-blue-500/10 group-hover:scale-110 transition-transform duration-500">
+            <CreditCard size={100} weight="light" />
           </div>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-blue-400"
+              style={{ backgroundColor: 'rgba(59,130,246,0.1)' }}>
+              <CreditCard size={20} weight="bold" />
+            </div>
+            <span className="text-sm font-medium" style={{ color: 'var(--color-text-muted)' }}>Moy. / Course</span>
+          </div>
+          <p className="text-3xl font-bold mb-2" style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-mono)' }}>
+            {getEarningsPerRide()} <span className="text-sm font-normal text-blue-400">FCFA</span>
+          </p>
+          <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider">
+            <span className="text-blue-400">{getCompletionRate()}% Complétion</span>
+          </div>
+        </div>
+
+        {/* Note Moyenne */}
+        <div className="driver-card-enter rounded-2xl p-6 relative overflow-hidden group"
+          style={{ backgroundColor: 'var(--color-driver-card)', border: '1px solid var(--color-driver-border)', animationDelay: '0.3s' }}>
+          <div className="absolute -right-4 -top-4 text-yellow-500/10 group-hover:scale-110 transition-transform duration-500">
+            <Star size={100} weight="fill" />
+          </div>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-yellow-500"
+              style={{ backgroundColor: 'rgba(234,179,8,0.1)' }}>
+              <Star size={20} weight="fill" />
+            </div>
+            <span className="text-sm font-medium" style={{ color: 'var(--color-text-muted)' }}>Note Moyenne</span>
+          </div>
+          <p className="text-3xl font-bold mb-2" style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-mono)' }}>
+            {stats.averageRating}<span className="text-sm font-normal text-gray-500">/5</span>
+          </p>
           <div className="flex items-center justify-between">
             {getRatingStars(stats.averageRating)}
-            <span className="text-sm text-gray-600 dark:text-gray-400">{stats.totalRatings} avis</span>
+            <span className="text-[10px] uppercase font-bold text-gray-500 tracking-wider">
+              {stats.totalRatings} AVIS
+            </span>
           </div>
-        </div>
         </div>
       </div>
 
-      {/* Charts and Analytics */}
+      {/* ── CHARTS & ANALYTICS ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Monthly Performance */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Performance Mensuelle</h3>
-          <div className="space-y-4">
-            {stats.monthlyData.map((month) => (
-              <div key={month.month} className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 text-sm font-medium text-gray-600 dark:text-gray-400">
-                    {month.month}
+
+        {/* Performance Mensuelle (Graphique à barres horizontal) */}
+        <div className="driver-card-enter rounded-2xl p-6"
+          style={{ backgroundColor: 'var(--color-driver-card)', border: '1px solid var(--color-driver-border)' }}>
+          <div className="flex items-center gap-2 mb-8">
+            <Calendar className="text-blue-500" size={18} weight="light" />
+            <h3 className="text-base font-bold" style={{ color: 'var(--color-text-primary)' }}>Performance Mensuelle</h3>
+          </div>
+          <div className="space-y-6">
+            {stats.monthlyData.map((month, idx) => (
+              <div key={idx} className="space-y-2">
+                <div className="flex justify-between items-end">
+                  <span className="text-xs font-bold uppercase tracking-widest text-gray-500">{month.month}</span>
+                  <div className="text-right">
+                    <span className="block text-sm font-bold text-white">{month.rides} courses</span>
+                    <span className="block text-[10px] font-mono text-emerald-500">{month.earnings.toLocaleString()} FCFA</span>
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-1">
-                      <span className="text-sm font-medium text-gray-900 dark:text-white">
-                        {month.rides} courses
-                      </span>
-                      <span className="text-sm text-green-600 dark:text-green-400">
-                        {month.earnings.toLocaleString()} FCFA
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                      <div
-                        className="bg-linear-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-500"
-                        style={{
-                          width: `${(month.rides / Math.max(...stats.monthlyData.map(m => m.rides))) * 100}%`
-                        }}
-                      ></div>
-                    </div>
-                  </div>
+                </div>
+                <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-1000"
+                    style={{
+                      width: `${(month.rides / (Math.max(...stats.monthlyData.map(m => m.rides)) || 1)) * 100}%`,
+                      background: 'linear-gradient(90deg, #3B82F6 0%, #6366F1 100%)'
+                    }}
+                  />
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Rating Distribution */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Répartition des Notes</h3>
+        {/* Répartition des Notes */}
+        <div className="driver-card-enter rounded-2xl p-6"
+          style={{ backgroundColor: 'var(--color-driver-card)', border: '1px solid var(--color-driver-border)', animationDelay: '0.1s' }}>
+          <div className="flex items-center gap-2 mb-8">
+            <Star className="text-yellow-500" size={18} weight="fill" />
+            <h3 className="text-base font-bold" style={{ color: 'var(--color-text-primary)' }}>Répartition des Avis</h3>
+          </div>
           <div className="space-y-4">
-            {stats.ratingDistribution.reverse().map((rating) => (
-              <div key={rating.stars} className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2 w-16">
-                  <span className="text-sm font-medium text-gray-900 dark:text-white">
-                    {rating.stars}
+            {[5, 4, 3, 2, 1].map(stars => {
+              const rating = stats.ratingDistribution.find(r => r.stars === stars) || { count: 0, percentage: 0 };
+              const maxCount = Math.max(...stats.ratingDistribution.map(r => r.count)) || 1;
+              return (
+                <div key={stars} className="flex items-center gap-4">
+                  <div className="flex items-center gap-1 w-12 shrink-0">
+                    <span className="text-xs font-bold text-white">{stars}</span>
+                    <Star size={12} weight="fill" className="text-yellow-500" />
+                  </div>
+                  <div className="flex-1 h-3 bg-white/5 rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-1000"
+                      style={{
+                        width: `${(rating.count / maxCount) * 100}%`,
+                        backgroundColor: stars >= 4 ? '#10B981' : stars >= 3 ? '#F59E0B' : '#EF4444'
+                      }}
+                    />
+                  </div>
+                  <span className="text-[10px] font-mono w-10 text-right text-gray-500">
+                    {rating.count}
                   </span>
-                  <span className="text-yellow-400">⭐</span>
                 </div>
-                <div className="flex-1">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
-                      {rating.count} avis
-                    </span>
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
-                      {((rating.count / stats.totalRatings) * 100).toFixed(0)}%
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div
-                      className={`h-2 rounded-full transition-all duration-500 ${
-                        rating.stars >= 4 ? 'bg-green-500' : rating.stars >= 3 ? 'bg-yellow-500' : 'bg-red-500'
-                      }`}
-                      style={{
-                        width: `${(rating.count / Math.max(...stats.ratingDistribution.map(r => r.count))) * 100}%`
-                      }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
+          </div>
+          <div className="mt-8 pt-6 border-t border-white/5 flex justify-around text-center">
+            <div>
+              <p className="text-lg font-bold text-white">{stats.totalRatings}</p>
+              <p className="text-[9px] uppercase font-bold text-gray-500 tracking-tighter">Total Avis</p>
+            </div>
+            <div>
+              <p className="text-lg font-bold text-yellow-500">{stats.averageRating}</p>
+              <p className="text-[9px] uppercase font-bold text-gray-500 tracking-tighter">Note Finale</p>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Peak Hours and Top Routes */}
+      {/* ── PEAK HOURS & TOP ROUTES ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Peak Hours */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Heures de Pointe</h3>
+
+        {/* Heures de Pointe */}
+        <div className="driver-card-enter rounded-2xl p-6"
+          style={{ backgroundColor: 'var(--color-driver-card)', border: '1px solid var(--color-driver-border)' }}>
+          <div className="flex items-center gap-2 mb-8">
+            <Clock className="text-blue-500" size={18} weight="light" />
+            <h3 className="text-base font-bold" style={{ color: 'var(--color-text-primary)' }}>Heures de Pointe</h3>
+          </div>
+          <div className="flex items-end justify-between h-[180px] pt-4 gap-1">
+            {stats.peakHours.map((hourData, i) => (
+              <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
+                <div className="relative w-full h-full flex items-end">
+                  <div
+                    className="w-full rounded-t-lg transition-all duration-700 hover:brightness-125"
+                    style={{
+                      height: `${(hourData.rides / (Math.max(...stats.peakHours.map(h => h.rides)) || 1)) * 100}%`,
+                      backgroundColor: 'rgba(59,130,246,0.2)',
+                      borderTop: '2px solid #3B82F6'
+                    }}
+                  />
+                  {/* Tooltip on hover */}
+                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[10px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
+                    {hourData.rides} runs
+                  </div>
+                </div>
+                <span className="text-[9px] font-mono text-gray-500 leading-none">{hourData.hour}h</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Trajets les Plus Fréquents */}
+        <div className="driver-card-enter rounded-2xl p-6"
+          style={{ backgroundColor: 'var(--color-driver-card)', border: '1px solid var(--color-driver-border)', animationDelay: '0.1s' }}>
+          <div className="flex items-center gap-2 mb-8">
+            <MapPin className="text-blue-500" size={18} weight="light" />
+            <h3 className="text-base font-bold" style={{ color: 'var(--color-text-primary)' }}>Trajets les Plus Fréquents</h3>
+          </div>
           <div className="space-y-3">
-            {stats.peakHours.map((hour) => (
-              <div key={hour.hour} className="flex items-center space-x-4">
-                <div className="w-16 text-sm font-medium text-gray-600 dark:text-gray-400">
-                  {hour.hour}h00
+            {stats.topRoutes.slice(0, 4).map((route, idx) => (
+              <div key={idx} className="p-4 rounded-xl transition-all hover:bg-white/5 border border-white/[0.03]"
+                style={{ backgroundColor: 'rgba(255,255,255,0.02)' }}>
+                <div className="flex justify-between items-center mb-2">
+                  <div className="flex items-center gap-2 text-xs font-bold text-white truncate max-w-[70%]">
+                    {route.from.split(',')[0]} <CaretRight size={10} weight="bold" className="text-gray-500" /> {route.to.split(',')[0]}
+                  </div>
+                  <span className="text-[10px] font-mono text-blue-400">{route.count} x</span>
                 </div>
-                <div className="flex-1">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm text-gray-900 dark:text-white">
-                      {hour.rides} courses
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
-                    <div
-                      className="bg-linear-to-r from-orange-500 to-red-600 h-3 rounded-full transition-all duration-500"
-                      style={{
-                        width: `${(hour.rides / Math.max(...stats.peakHours.map(h => h.rides))) * 100}%`
-                      }}
-                    ></div>
-                  </div>
+                <div className="flex justify-between items-center">
+                  <div className="text-[10px] text-gray-500 italic">Prix moyen: {route.avgPrice} FCFA</div>
+                  <div className="text-sm font-bold text-emerald-500">{(route.count * route.avgPrice).toLocaleString()} FCFA</div>
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* Top Routes */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Trajets les Plus Fréquents</h3>
-          <div className="space-y-4">
-            {stats.topRoutes.map((route, index) => (
-              <div key={index} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
-                <div className="flex-1">
-                  <div className="flex items-center space-x-2 mb-1">
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">
-                      {route.from}
-                    </span>
-                    <span className="text-gray-400">→</span>
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">
-                      {route.to}
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-3 text-xs text-gray-600 dark:text-gray-400">
-                    <span>{route.count} courses</span>
-                    <span>•</span>
-                    <span>Prix moyen: {route.avgPrice} FCFA</span>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-lg font-bold text-green-600 dark:text-green-400">
-                    {(route.count * route.avgPrice).toLocaleString()} FCFA
-                  </div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
-                    total
-                  </div>
-                </div>
+            {stats.topRoutes.length === 0 && (
+              <div className="text-center py-8 text-sm italic text-gray-600">
+                Pas assez de données pour les trajets fréquents.
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>
 
-      {/* Additional Insights */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Analyses & Conseils</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="text-center p-6 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
-            <div className="text-3xl mb-3">🏆</div>
-            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Performance Excellente</h4>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Votre taux de complétion de {getCompletionRate()}% est au-dessus de la moyenne
+      {/* ── ANALYSES & CONSEILS ── */}
+      <div className="driver-card-enter rounded-2xl p-8"
+        style={{
+          background: 'linear-gradient(135deg, rgba(59,130,246,0.05) 0%, rgba(10:15:25,1) 100%)',
+          border: '1px solid rgba(59,130,246,0.1)'
+        }}>
+        <h3 className="text-lg font-bold text-white mb-8 flex items-center gap-2">
+          <Lightbulb className="text-yellow-500" size={20} weight="fill" />
+          Analyses & Conseils Personnalisés
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+          <div className="space-y-3">
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-blue-400"
+              style={{ backgroundColor: 'rgba(59,130,246,0.1)' }}>
+              <Trophy size={24} weight="fill" />
+            </div>
+            <h4 className="text-sm font-bold text-white">Performance</h4>
+            <p className="text-xs leading-relaxed text-gray-400">
+              Votre taux de complétion de <span className="text-emerald-500 font-bold">{getCompletionRate()}%</span> est exceptionnel. Vous faites partie de nos meilleurs chauffeurs.
             </p>
           </div>
-          <div className="text-center p-6 bg-green-50 dark:bg-green-900/20 rounded-xl">
-            <div className="text-3xl mb-3">💡</div>
-            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Optimisation</h4>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Concentrez-vous sur les créneaux 17h-19h pour maximiser vos revenus
+
+          <div className="space-y-3">
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-emerald-400"
+              style={{ backgroundColor: 'rgba(16,185,129,0.1)' }}>
+              <TrendingUp size={24} weight="bold" />
+            </div>
+            <h4 className="text-sm font-bold text-white">Optimisation</h4>
+            <p className="text-xs leading-relaxed text-gray-400">
+              Les créneaux de fin de journée semblent les plus rentables pour vous. Maximisez vos sorties entre <span className="text-blue-400 font-bold">17h et 20h</span>.
             </p>
           </div>
-          <div className="text-center p-6 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
-            <div className="text-3xl mb-3">⭐</div>
-            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Service Client</h4>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Votre note de {stats.averageRating}/5 témoigne d&apos;un service de qualité
+
+          <div className="space-y-3">
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-rose-400"
+              style={{ backgroundColor: 'rgba(244,63,94,0.1)' }}>
+              <Heart size={24} weight="fill" />
+            </div>
+            <h4 className="text-sm font-bold text-white">Relation Client</h4>
+            <p className="text-xs leading-relaxed text-gray-400">
+              Votre note de <span className="text-yellow-500 font-bold">{stats.averageRating}/5</span> est stable. Les passagers apprécient votre ponctualité.
             </p>
           </div>
+
         </div>
       </div>
+
+      {isLoading && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            <p className="text-white font-bold animate-pulse">Analyse des données...</p>
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }

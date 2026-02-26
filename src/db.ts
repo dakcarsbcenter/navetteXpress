@@ -1,6 +1,12 @@
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
+import { drizzle } from "drizzle-orm/neon-serverless";
+import { Pool, neonConfig } from "@neondatabase/serverless";
 import * as schema from "@/schema";
+import ws from "ws";
+
+// Pour que ça fonctionne en Node.js local avec les WebSockets
+if (typeof window === "undefined") {
+  neonConfig.webSocketConstructor = ws;
+}
 
 // Lazy init du client Drizzle/Postgres pour éviter l'accès ENV au chargement du module
 declare global {
@@ -18,13 +24,14 @@ export function getDb() {
     throw new Error("DATABASE_URL n'est pas défini. Veuillez le configurer dans votre environnement.");
   }
 
-  const sql = postgres(DATABASE_URL, {
-    ssl: DATABASE_URL.includes('neon.tech') ? 'require' : false,
+  const pool = new Pool({
+    connectionString: DATABASE_URL,
     max: 10,
-    idle_timeout: 20,
-    connect_timeout: 10,
+    idleTimeoutMillis: 20000,
+    connectionTimeoutMillis: 15000,
   });
-  _db = drizzle(sql, { schema });
+
+  _db = drizzle(pool, { schema });
   (globalThis as any).__drizzleDb = _db;
   return _db;
 }

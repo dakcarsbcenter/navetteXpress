@@ -1,7 +1,18 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Search, Plus, DollarSign, TrendingUp, AlertCircle, Calendar, Download, MoreVertical, Filter, FileText } from 'lucide-react'
+import {
+  MagnifyingGlass as Search,
+  Plus,
+  CurrencyDollar as DollarSign,
+  TrendUp as TrendingUp,
+  WarningCircle as AlertCircle,
+  Calendar,
+  Download,
+  DotsThreeVertical as MoreVertical,
+  Funnel as Filter,
+  FileText
+} from "@phosphor-icons/react"
 import { downloadInvoicePDF } from '@/lib/invoice-pdf'
 
 type InvoiceStatus = 'draft' | 'pending' | 'paid' | 'cancelled' | 'overdue'
@@ -65,13 +76,13 @@ export default function InvoicesManagementRedesigned() {
     }).length
     const pending = invoices.filter(inv => inv.status === 'pending').length
     const overdue = invoices.filter(inv => inv.status === 'overdue').length
-    
+
     return { totalRevenue, paidThisMonth, pending, overdue }
   }
 
   const filteredInvoices = invoices.filter(inv => {
     const matchesFilter = filter === 'all' || inv.status === filter
-    const matchesSearch = searchTerm === '' || 
+    const matchesSearch = searchTerm === '' ||
       inv.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
       inv.customerName.toLowerCase().includes(searchTerm.toLowerCase())
     return matchesFilter && matchesSearch
@@ -101,12 +112,12 @@ export default function InvoicesManagementRedesigned() {
     try {
       const response = await fetch(`/api/invoices/${invoiceId}`)
       if (!response.ok) throw new Error('Erreur lors de la récupération de la facture')
-      
+
       const data = await response.json()
       if (!data.success || !data.invoice) throw new Error('Facture introuvable')
 
       const invoice = data.invoice
-      
+
       const invoiceData = {
         invoiceNumber: invoice.invoiceNumber,
         customerName: invoice.customerName,
@@ -227,7 +238,7 @@ export default function InvoicesManagementRedesigned() {
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
             />
           </div>
-          
+
           <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
             <Filter className="w-4 h-4" />
             Filtrer
@@ -265,7 +276,7 @@ export default function InvoicesManagementRedesigned() {
               ) : (
                 filteredInvoices.map((invoice) => {
                   const statusBadge = getStatusBadge(invoice.status)
-                  
+
                   return (
                     <tr key={invoice.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4">

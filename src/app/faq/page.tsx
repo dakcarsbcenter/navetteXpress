@@ -2,6 +2,7 @@
 
 import { Navigation } from "@/components/navigation";
 import { useState } from "react";
+import { CaretDown, Phone, EnvelopeSimple } from "@phosphor-icons/react";
 
 export default function FAQPage() {
   const [openItems, setOpenItems] = useState<{ [key: string]: boolean }>({});
@@ -103,7 +104,7 @@ export default function FAQPage() {
         },
         {
           question: "Organisez-vous des tours touristiques ?",
-          answer: "Absolument ! Nos chauffeurs-guides vous feront découvrir Dakar et ses environs. Nous proposons des itinéraires personnalisés selon vos centres d'intérêt."
+          answer: "Absolument ! Nos chauffeurs-guides vous feront découvrir Dakar et ses environs. Nous proposons des itinéraires personnalisés selon vos centres d'interest."
         },
         {
           question: "Puis-je réserver pour un groupe ?",
@@ -116,12 +117,12 @@ export default function FAQPage() {
   return (
     <div className="min-h-screen">
       <Navigation variant="solid" />
-      
+
       {/* Hero Section */}
       <section className="relative bg-[#1A1A1A] text-white py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8 mt-16 sm:mt-20 overflow-hidden">
         {/* Pattern Overlay */}
-        <div className="absolute inset-0 opacity-10" style={{backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23E5C16C' fill-opacity='1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")"}}></div>
-        
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23E5C16C' fill-opacity='1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }}></div>
+
         <div className="relative max-w-6xl mx-auto text-center">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 leading-tight">
             <span className="text-[#E5C16C]">Questions</span> Fréquentes
@@ -140,7 +141,7 @@ export default function FAQPage() {
               <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] mb-6 sm:mb-8 text-center">
                 <span className="text-[#A73B3C]">{category.title}</span>
               </h2>
-              
+
               <div className="space-y-3 sm:space-y-4">
                 {category.questions.map((faq, faqIndex) => {
                   const isOpen = openItems[`${categoryIndex}-${faqIndex}`];
@@ -155,29 +156,18 @@ export default function FAQPage() {
                             {faq.question}
                           </h3>
                           <div className="shrink-0">
-                            <svg
-                              className={`w-5 h-5 sm:w-6 sm:h-6 text-[#A73B3C] transition-transform duration-200 ${
-                                isOpen ? 'rotate-180' : ''
-                              }`}
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M19 9l-7 7-7-7"
-                              />
-                            </svg>
+                            <CaretDown
+                              className={`w-5 h-5 sm:w-6 sm:h-6 text-[#A73B3C] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''
+                                }`}
+                              weight="bold"
+                            />
                           </div>
                         </div>
                       </button>
-                      
+
                       <div
-                        className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                          isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-                        }`}
+                        className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                          }`}
                       >
                         <div className="px-4 sm:px-5 md:px-6 pb-4 sm:pb-5 md:pb-6">
                           <div className="border-t border-[#E5C16C]/30 pt-3 sm:pt-4">
@@ -208,15 +198,15 @@ export default function FAQPage() {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center max-w-2xl mx-auto">
             <a
               href="tel:+221781319191"
-              className="w-full sm:w-auto bg-[#E5C16C] hover:bg-[#D4B060] text-[#1A1A1A] px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-colors text-center"
+              className="w-full sm:w-auto bg-[#E5C16C] hover:bg-[#D4B060] text-[#1A1A1A] px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-colors text-center flex items-center justify-center gap-2"
             >
-              📞 +221 78 131 91 91
+              <Phone weight="fill" /> +221 78 131 91 91
             </a>
             <a
               href="mailto:contact@navettexpress.com"
-              className="w-full sm:w-auto border-2 border-white text-white hover:bg-white hover:text-[#A73B3C] px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-colors text-center"
+              className="w-full sm:w-auto border-2 border-white text-white hover:bg-white hover:text-[#A73B3C] px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-colors text-center flex items-center justify-center gap-2"
             >
-              ✉️ Nous écrire
+              <EnvelopeSimple weight="fill" /> Nous écrire
             </a>
           </div>
         </div>

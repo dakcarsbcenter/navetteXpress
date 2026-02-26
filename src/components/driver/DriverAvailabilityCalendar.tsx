@@ -3,6 +3,19 @@
 import { useState, useEffect } from 'react'
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, subMonths, addWeeks, subWeeks, addDays, subDays, isSameDay, isToday, startOfYear, endOfYear, eachMonthOfInterval } from 'date-fns'
 import { fr } from 'date-fns/locale'
+import {
+  CheckCircle,
+  X,
+  Check,
+  Plus,
+  Calendar as CalendarIcon,
+  Lightning,
+  Clock,
+  CaretLeft as ChevronLeft,
+  CaretRight as ChevronRight,
+  FloppyDisk as Save,
+  Trash
+} from "@phosphor-icons/react"
 
 // Types
 interface TimeSlot {
@@ -148,7 +161,7 @@ export function DriverAvailabilityCalendar() {
         // Samedi = Lundi + 5 jours, Dimanche = Lundi + 6 jours
         const saturday = addDays(start, 5)
         const sunday = addDays(start, 6)
-        
+
         result[format(saturday, 'yyyy-MM-dd')] = {
           date: saturday,
           slots: [{ start: '00:00', end: '23:59' }],
@@ -173,7 +186,7 @@ export function DriverAvailabilityCalendar() {
         // Samedi = Lundi + 5 jours, Dimanche = Lundi + 6 jours
         const saturday = addDays(start, 5)
         const sunday = addDays(start, 6)
-        
+
         result[format(saturday, 'yyyy-MM-dd')] = {
           date: saturday,
           slots: [{ start: '09:00', end: '17:00' }],
@@ -210,7 +223,7 @@ export function DriverAvailabilityCalendar() {
         ...availability,
         [key]: {
           date,
-          slots: isFullDay 
+          slots: isFullDay
             ? [{ start: '00:00', end: '23:59' }]
             : [{ start: selectedTimeStart, end: selectedTimeEnd }],
           isFullDay
@@ -257,7 +270,7 @@ export function DriverAvailabilityCalendar() {
     if (!dayAvail) return
 
     const newSlots = dayAvail.slots.filter((_, idx) => idx !== slotIndex)
-    
+
     if (newSlots.length === 0) {
       const newAvailability = { ...availability }
       delete newAvailability[dateKey]
@@ -278,19 +291,19 @@ export function DriverAvailabilityCalendar() {
     const monthStart = startOfMonth(currentDate)
     const monthEnd = endOfMonth(currentDate)
     const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd })
-    
+
     const newAvailability = { ...availability }
     daysInMonth.forEach(day => {
       const key = format(day, 'yyyy-MM-dd')
       newAvailability[key] = {
         date: day,
-        slots: isFullDay 
+        slots: isFullDay
           ? [{ start: '00:00', end: '23:59' }]
           : [{ start: selectedTimeStart, end: selectedTimeEnd }],
         isFullDay
       }
     })
-    
+
     setAvailability(newAvailability)
     showToast(`Mois entier sélectionné (${daysInMonth.length} jours)`, 'success')
   }
@@ -299,13 +312,13 @@ export function DriverAvailabilityCalendar() {
     const monthStart = startOfMonth(currentDate)
     const monthEnd = endOfMonth(currentDate)
     const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd })
-    
+
     const newAvailability = { ...availability }
     daysInMonth.forEach(day => {
       const key = format(day, 'yyyy-MM-dd')
       delete newAvailability[key]
     })
-    
+
     setAvailability(newAvailability)
     showToast('Mois entier désélectionné', 'success')
   }
@@ -314,19 +327,19 @@ export function DriverAvailabilityCalendar() {
     const yearStart = startOfYear(currentDate)
     const yearEnd = endOfYear(currentDate)
     const daysInYear = eachDayOfInterval({ start: yearStart, end: yearEnd })
-    
+
     const newAvailability = { ...availability }
     daysInYear.forEach(day => {
       const key = format(day, 'yyyy-MM-dd')
       newAvailability[key] = {
         date: day,
-        slots: isFullDay 
+        slots: isFullDay
           ? [{ start: '00:00', end: '23:59' }]
           : [{ start: selectedTimeStart, end: selectedTimeEnd }],
         isFullDay
       }
     })
-    
+
     setAvailability(newAvailability)
     showToast(`Année entière sélectionnée (${daysInYear.length} jours)`, 'success')
   }
@@ -335,13 +348,13 @@ export function DriverAvailabilityCalendar() {
     const yearStart = startOfYear(currentDate)
     const yearEnd = endOfYear(currentDate)
     const daysInYear = eachDayOfInterval({ start: yearStart, end: yearEnd })
-    
+
     const newAvailability = { ...availability }
     daysInYear.forEach(day => {
       const key = format(day, 'yyyy-MM-dd')
       delete newAvailability[key]
     })
-    
+
     setAvailability(newAvailability)
     showToast('Année entière désélectionnée', 'success')
   }
@@ -350,24 +363,24 @@ export function DriverAvailabilityCalendar() {
     const monthStart = startOfMonth(currentDate)
     const monthEnd = endOfMonth(currentDate)
     const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd })
-    
+
     const weekendDays = daysInMonth.filter(day => {
       const dayOfWeek = day.getDay()
       return dayOfWeek === 0 || dayOfWeek === 6 // 0 = Dimanche, 6 = Samedi
     })
-    
+
     const newAvailability = { ...availability }
     weekendDays.forEach(day => {
       const key = format(day, 'yyyy-MM-dd')
       newAvailability[key] = {
         date: day,
-        slots: isFullDay 
+        slots: isFullDay
           ? [{ start: '00:00', end: '23:59' }]
           : [{ start: selectedTimeStart, end: selectedTimeEnd }],
         isFullDay
       }
     })
-    
+
     setAvailability(newAvailability)
     showToast(`Week-ends du mois sélectionnés (${weekendDays.length} jours)`, 'success')
   }
@@ -376,24 +389,24 @@ export function DriverAvailabilityCalendar() {
     const yearStart = startOfYear(currentDate)
     const yearEnd = endOfYear(currentDate)
     const daysInYear = eachDayOfInterval({ start: yearStart, end: yearEnd })
-    
+
     const weekendDays = daysInYear.filter(day => {
       const dayOfWeek = day.getDay()
       return dayOfWeek === 0 || dayOfWeek === 6 // 0 = Dimanche, 6 = Samedi
     })
-    
+
     const newAvailability = { ...availability }
     weekendDays.forEach(day => {
       const key = format(day, 'yyyy-MM-dd')
       newAvailability[key] = {
         date: day,
-        slots: isFullDay 
+        slots: isFullDay
           ? [{ start: '00:00', end: '23:59' }]
           : [{ start: selectedTimeStart, end: selectedTimeEnd }],
         isFullDay
       }
     })
-    
+
     setAvailability(newAvailability)
     showToast(`Week-ends de l'année sélectionnés (${weekendDays.length} jours)`, 'success')
   }
@@ -463,32 +476,31 @@ export function DriverAvailabilityCalendar() {
             </h3>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
             {TIME_SLOTS.map((time) => {
               const isSelected = dayAvailability?.slots.some(
                 slot => slot.start <= time && slot.end > time
               )
               return (
-                <button
+                <div
                   key={time}
-                  className={`p-3 rounded-lg font-semibold transition-all duration-200 cursor-default ${
-                    isSelected
-                      ? 'bg-linear-to-r from-green-500 to-green-600 text-white shadow-lg'
-                      : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
-                  }`}
+                  className={`p-4 rounded-2xl font-mono text-xs font-bold transition-all duration-300 border ${isSelected
+                    ? 'bg-blue-600/20 border-blue-500 text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.2)]'
+                    : 'bg-white/5 border-white/10 text-gray-500'
+                    }`}
                 >
                   {time}
-                </button>
+                </div>
               )
             })}
           </div>
 
-          <div className="mt-6 flex gap-3">
+          <div className="mt-8 flex flex-col sm:flex-row gap-4">
             <button
               onClick={() => toggleDayAvailability(currentDate, true)}
-              className="flex-1 py-3 px-4 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg"
+              className="flex-1 py-4 px-6 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-500 transition-all shadow-xl shadow-blue-500/10 flex items-center justify-center gap-3"
             >
-              Toute la journée
+              <CheckCircle size={20} weight="fill" /> Toute la journée
             </button>
             <button
               onClick={() => {
@@ -497,9 +509,9 @@ export function DriverAvailabilityCalendar() {
                 delete newAvailability[key]
                 setAvailability(newAvailability)
               }}
-              className="flex-1 py-3 px-4 bg-linear-to-r from-red-600 to-red-700 text-white rounded-xl font-semibold hover:from-red-700 hover:to-red-800 transition-all shadow-lg"
+              className="flex-1 py-4 px-6 bg-white/5 border border-white/10 text-white rounded-2xl font-bold hover:bg-red-500/20 hover:border-red-500/50 hover:text-red-400 transition-all flex items-center justify-center gap-3"
             >
-              Indisponible
+              <X size={20} weight="bold" /> Marquer Indisponible
             </button>
           </div>
         </div>
@@ -550,9 +562,7 @@ export function DriverAvailabilityCalendar() {
                     className="p-3 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
                     title="Supprimer ce créneau"
                   >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
+                    <Trash size={20} weight="bold" />
                   </button>
                 </div>
               ))}
@@ -561,18 +571,14 @@ export function DriverAvailabilityCalendar() {
                 onClick={() => addSlot(dateKey)}
                 className="w-full py-3 px-4 bg-linear-to-r from-green-600 to-green-700 text-white rounded-xl font-semibold hover:from-green-700 hover:to-green-800 transition-all shadow-lg flex items-center justify-center gap-2"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
+                <Plus size={20} weight="bold" />
                 Ajouter un créneau
               </button>
             </div>
           ) : dayAvailability?.isFullDay ? (
             <div className="text-center py-8">
               <div className="inline-flex items-center gap-2 px-6 py-3 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-xl font-semibold">
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
+                <CheckCircle size={24} weight="fill" />
                 Disponible toute la journée (24h/24)
               </div>
             </div>
@@ -599,8 +605,8 @@ export function DriverAvailabilityCalendar() {
     const weekDays = eachDayOfInterval({ start: weekStart, end: addDays(weekStart, 6) })
 
     return (
-      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden">
-        <div className="grid grid-cols-7 gap-px bg-slate-200 dark:bg-slate-700">
+      <div className="bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] rounded-3xl overflow-hidden shadow-2xl">
+        <div className="grid grid-cols-7 gap-px bg-white/5">
           {weekDays.map((day, index) => {
             const dateKey = format(day, 'yyyy-MM-dd')
             const dayAvailability = availability[dateKey]
@@ -609,113 +615,63 @@ export function DriverAvailabilityCalendar() {
             return (
               <div
                 key={index}
-                className="bg-white dark:bg-slate-800 min-h-[200px] p-4"
+                className="bg-[var(--color-driver-card)] min-h-[250px] p-5 relative overflow-hidden"
               >
-                <div className="text-center mb-3">
-                  <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">
+                {isCurrentDay && <div className="absolute top-0 left-0 right-0 h-1 bg-blue-500" />}
+                <div className="text-center mb-6">
+                  <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">
                     {WEEKDAY_NAMES[index]}
                   </div>
-                  <div className={`text-2xl font-bold mt-1 ${
-                    isCurrentDay 
-                      ? 'text-blue-600 dark:text-blue-400' 
-                      : 'text-slate-800 dark:text-white'
-                  }`}>
+                  <div className={`text-2xl font-black font-mono ${isCurrentDay
+                    ? 'text-blue-500'
+                    : 'text-white'
+                    }`}>
                     {format(day, 'd')}
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition-colors">
-                    <input
-                      type="checkbox"
-                      checked={!!dayAvailability?.isFullDay}
-                      onChange={() => toggleDayAvailability(day, true)}
-                      className="w-5 h-5 text-green-600 rounded focus:ring-2 focus:ring-green-500"
-                    />
-                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                      Journée entière
-                    </span>
-                  </label>
+                <div className="space-y-3">
+                  <button
+                    onClick={() => toggleDayAvailability(day, true)}
+                    className={`w-full flex items-center gap-2 p-2.5 rounded-xl text-[10px] font-bold uppercase tracking-tight transition-all border ${dayAvailability?.isFullDay
+                      ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-500'
+                      : 'bg-white/5 border-white/5 text-gray-500 hover:border-white/20'
+                      }`}
+                  >
+                    <CheckCircle size={14} weight="bold" /> 24h/24
+                  </button>
 
-                  {!dayAvailability?.isFullDay && (
-                    <div className="space-y-1">
-                      <label className="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition-colors">
-                        <input
-                          type="checkbox"
-                          checked={!!dayAvailability && !dayAvailability.isFullDay}
-                          onChange={() => toggleDayAvailability(day, false)}
-                          className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
-                        />
-                        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                          Heures spécifiques
-                        </span>
-                      </label>
-
-                      {dayAvailability && !dayAvailability.isFullDay && (
-                        <div className="pl-2 space-y-2 mt-2">
-                          {dayAvailability.slots.map((slot, idx) => (
-                            <div key={idx} className="bg-slate-50 dark:bg-slate-700 rounded-lg p-2 space-y-1">
-                              <div className="flex items-center gap-1">
-                                <select
-                                  value={slot.start}
-                                  onChange={(e) => updateSlotTime(dateKey, idx, 'start', e.target.value)}
-                                  className="flex-1 text-xs px-2 py-1 bg-white dark:bg-slate-600 border border-slate-200 dark:border-slate-500 rounded font-semibold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-blue-500"
-                                >
-                                  {TIME_SLOTS.map((time) => (
-                                    <option key={time} value={time}>{time}</option>
-                                  ))}
-                                </select>
-                                <span className="text-xs font-bold text-slate-400">→</span>
-                                <select
-                                  value={slot.end}
-                                  onChange={(e) => updateSlotTime(dateKey, idx, 'end', e.target.value)}
-                                  className="flex-1 text-xs px-2 py-1 bg-white dark:bg-slate-600 border border-slate-200 dark:border-slate-500 rounded font-semibold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-blue-500"
-                                >
-                                  {TIME_SLOTS.map((time) => (
-                                    <option key={time} value={time}>{time}</option>
-                                  ))}
-                                </select>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    removeSlot(dateKey, idx)
-                                  }}
-                                  className="p-1 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded"
-                                  title="Supprimer ce créneau"
-                                >
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                  </svg>
-                                </button>
-                              </div>
+                  <div className="space-y-2">
+                    {dayAvailability && !dayAvailability.isFullDay && (
+                      <div className="space-y-2">
+                        {dayAvailability.slots.map((slot, idx) => (
+                          <div key={idx} className="bg-blue-500/5 border border-blue-500/20 rounded-xl p-2.5">
+                            <div className="flex items-center justify-between gap-1 mb-2">
+                              <span className="text-[10px] font-mono text-blue-400 font-bold">{slot.start} - {slot.end}</span>
+                              <button
+                                onClick={() => removeSlot(dateKey, idx)}
+                                className="text-red-500/50 hover:text-red-500"
+                              >
+                                <X size={12} weight="bold" />
+                              </button>
                             </div>
-                          ))}
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              addSlot(dateKey)
-                            }}
-                            className="w-full py-1 px-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-xs font-semibold hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors flex items-center justify-center gap-1"
-                          >
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                            </svg>
-                            Ajouter un créneau
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <button
+                      onClick={() => dayAvailability?.isFullDay ? toggleDayAvailability(day, true) : addSlot(dateKey)}
+                      className="w-full py-2 px-2 bg-white/5 text-gray-400 rounded-xl text-[10px] font-bold uppercase hover:bg-white/10 transition-all flex items-center justify-center gap-1 border border-white/5"
+                    >
+                      <Plus size={12} weight="bold" /> Shift Modulé
+                    </button>
+                  </div>
                 </div>
 
                 {dayAvailability && (
-                  <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
-                    <div className="flex items-center justify-center gap-1 text-xs font-bold text-green-600 dark:text-green-400">
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      Disponible
-                    </div>
+                  <div className="absolute bottom-4 left-0 right-0 flex justify-center">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]" />
                   </div>
                 )}
               </div>
@@ -734,271 +690,193 @@ export function DriverAvailabilityCalendar() {
     const days = eachDayOfInterval({ start: startDate, end: endDate })
 
     return (
-      <div className="space-y-4">
+      <div className="space-y-6">
         {/* Actions rapides pour le mois */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-4">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="text-sm font-semibold text-slate-600 dark:text-slate-400">
-              Actions rapides:
-            </span>
+        <div className="bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] rounded-3xl p-6">
+          <div className="flex flex-wrap items-center gap-4">
+            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Contrôle Mensuel :</span>
             <button
               onClick={() => selectAllMonth(true)}
-              className="px-4 py-2 bg-linear-to-r from-green-600 to-green-700 text-white rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transition-all shadow-md flex items-center gap-2 text-sm"
+              className="px-4 py-2.5 bg-emerald-500/10 border border-emerald-500/50 text-emerald-500 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-emerald-500/20 transition-all"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              Tout le mois (24h/24)
+              24h/24 Partout
             </button>
             <button
               onClick={() => selectAllMonth(false)}
-              className="px-4 py-2 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-md flex items-center gap-2 text-sm"
+              className="px-4 py-2.5 bg-blue-500/10 border border-blue-500/50 text-blue-500 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-blue-500/20 transition-all"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              Tout le mois ({selectedTimeStart}-{selectedTimeEnd})
+              Slots Standard ({selectedTimeStart}-{selectedTimeEnd})
             </button>
             <button
               onClick={() => selectMonthWeekends(true)}
-              className="px-4 py-2 bg-linear-to-r from-purple-600 to-purple-700 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-purple-800 transition-all shadow-md flex items-center gap-2 text-sm"
+              className="px-4 py-2.5 bg-purple-500/10 border border-purple-500/50 text-purple-500 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-purple-500/20 transition-all"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              Week-ends (24h/24)
-            </button>
-            <button
-              onClick={() => selectMonthWeekends(false)}
-              className="px-4 py-2 bg-linear-to-r from-indigo-600 to-indigo-700 text-white rounded-lg font-semibold hover:from-indigo-700 hover:to-indigo-800 transition-all shadow-md flex items-center gap-2 text-sm"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              Week-ends ({selectedTimeStart}-{selectedTimeEnd})
+              Week-ends 24h/24
             </button>
             <button
               onClick={deselectAllMonth}
-              className="px-4 py-2 bg-linear-to-r from-red-600 to-red-700 text-white rounded-lg font-semibold hover:from-red-700 hover:to-red-800 transition-all shadow-md flex items-center gap-2 text-sm"
+              className="px-4 py-2.5 bg-red-500/10 border border-red-500/50 text-red-500 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-red-500/20 transition-all"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-              Effacer le mois
+              Reset Mois
             </button>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden">
-        {/* Days of week header */}
-        <div className="grid grid-cols-7 gap-px bg-slate-200 dark:bg-slate-700">
-          {WEEKDAY_NAMES.map((day) => (
-            <div key={day} className="bg-slate-100 dark:bg-slate-900 p-3 text-center">
-              <span className="text-sm font-bold text-slate-700 dark:text-slate-300">
-                {day}
-              </span>
-            </div>
-          ))}
-        </div>
+        <div className="bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] rounded-3xl overflow-hidden shadow-2xl">
+          <div className="grid grid-cols-7 gap-px bg-white/5">
+            {WEEKDAY_NAMES.map((day) => (
+              <div key={day} className="bg-white/5 p-4 text-center">
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">
+                  {day}
+                </span>
+              </div>
+            ))}
+          </div>
 
-        {/* Calendar grid */}
-        <div className="grid grid-cols-7 gap-px bg-slate-200 dark:bg-slate-700">
-          {days.map((day, index) => {
-            const dateKey = format(day, 'yyyy-MM-dd')
-            const dayAvailability = availability[dateKey]
-            const isCurrentMonth = day.getMonth() === currentDate.getMonth()
-            const isCurrentDay = isToday(day)
+          <div className="grid grid-cols-7 gap-px bg-white/5">
+            {days.map((day, index) => {
+              const dateKey = format(day, 'yyyy-MM-dd')
+              const dayAvailability = availability[dateKey]
+              const isCurrentMonth = day.getMonth() === currentDate.getMonth()
+              const isCurrentDay = isToday(day)
 
-            return (
-              <div
-                key={index}
-                className={`bg-white dark:bg-slate-800 min-h-[100px] p-2 ${
-                  !isCurrentMonth ? 'opacity-30' : ''
-                }`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className={`text-sm font-bold ${
-                    isCurrentDay 
-                      ? 'text-white bg-blue-600 rounded-full w-7 h-7 flex items-center justify-center' 
+              return (
+                <div
+                  key={index}
+                  className={`bg-[var(--color-driver-card)] min-h-[120px] p-4 group transition-all ${!isCurrentMonth ? 'opacity-10' : ''
+                    }`}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span className={`text-sm font-bold font-mono ${isCurrentDay
+                      ? 'text-blue-500'
                       : isCurrentMonth
-                      ? 'text-slate-800 dark:text-white'
-                      : 'text-slate-400'
-                  }`}>
-                    {format(day, 'd')}
-                  </span>
-                  
-                  {isCurrentMonth && (
-                    <button
-                      onClick={() => toggleDayAvailability(day, false)}
-                      className={`w-6 h-6 rounded-full transition-all ${
-                        dayAvailability
-                          ? 'bg-green-500 hover:bg-green-600 text-white'
-                          : 'bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600'
-                      }`}
-                    >
-                      {dayAvailability && (
-                        <svg className="w-4 h-4 mx-auto" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      )}
-                    </button>
-                  )}
-                </div>
+                        ? 'text-white'
+                        : 'text-gray-600'
+                      }`}>
+                      {format(day, 'd')}
+                    </span>
 
-                {dayAvailability && isCurrentMonth && (
-                  <div className="space-y-1">
-                    {dayAvailability.isFullDay ? (
-                      <div className="text-[10px] font-semibold text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30 rounded px-1 py-0.5">
-                        24h/24
-                      </div>
-                    ) : (
-                      dayAvailability.slots.map((slot, idx) => (
-                        <div 
-                          key={idx} 
-                          className="group text-[10px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 rounded px-1 py-0.5 flex items-center justify-between gap-1 hover:bg-blue-100 dark:hover:bg-blue-900/50 cursor-pointer"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            setEditingSlot({ dateKey, slotIndex: idx })
-                          }}
-                        >
-                          <span>{slot.start}-{slot.end}</span>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              removeSlot(dateKey, idx)
-                            }}
-                            className="opacity-0 group-hover:opacity-100 text-red-600 hover:text-red-700"
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ))
+                    {isCurrentMonth && (
+                      <button
+                        onClick={() => toggleDayAvailability(day, false)}
+                        className={`w-6 h-6 rounded-lg flex items-center justify-center transition-all border ${dayAvailability
+                          ? 'bg-blue-600 border-blue-500 text-white shadow-[0_0_10px_rgba(59,130,246,0.5)]'
+                          : 'bg-white/5 border-white/5 text-gray-600 hover:border-white/20'
+                          }`}
+                      >
+                        {dayAvailability ? <Check size={14} weight="bold" /> : <Plus size={14} weight="bold" />}
+                      </button>
                     )}
                   </div>
-                )}
-              </div>
-            )
-          })}
-        </div>
+
+                  {dayAvailability && isCurrentMonth && (
+                    <div className="space-y-1">
+                      {dayAvailability.isFullDay ? (
+                        <div className="text-[8px] font-bold text-emerald-500 bg-emerald-500/10 rounded-md px-1.5 py-0.5 uppercase tracking-tighter">
+                          24h/24
+                        </div>
+                      ) : (
+                        dayAvailability.slots.map((slot, idx) => (
+                          <div
+                            key={idx}
+                            className="group/slot text-[8px] font-bold text-blue-400 bg-blue-500/10 rounded-md px-1.5 py-0.5 flex items-center justify-between gap-1 hover:bg-blue-500/20 cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setEditingSlot({ dateKey, slotIndex: idx })
+                            }}
+                          >
+                            <span className="font-mono">{slot.start}-{slot.end}</span>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
         </div>
       </div>
     )
   }
 
   const renderYearView = () => {
-    const yearStart = startOfYear(currentDate)
-    const yearEnd = endOfYear(currentDate)
-    const months = eachMonthOfInterval({ start: yearStart, end: yearEnd })
+    const startOfCurrYear = startOfYear(currentDate)
+    const endOfCurrYear = endOfYear(currentDate)
+    const months = eachMonthOfInterval({ start: startOfCurrYear, end: endOfCurrYear })
 
     return (
-      <div className="space-y-4">
+      <div className="space-y-6">
         {/* Actions rapides pour l'année */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-4">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="text-sm font-semibold text-slate-600 dark:text-slate-400">
-              Actions rapides:
-            </span>
+        <div className="bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] rounded-3xl p-6">
+          <div className="flex flex-wrap items-center gap-4">
+            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Planification Annuelle :</span>
             <button
               onClick={() => selectAllYear(true)}
-              className="px-4 py-2 bg-linear-to-r from-green-600 to-green-700 text-white rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transition-all shadow-md flex items-center gap-2 text-sm"
+              className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/50 text-emerald-500 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-emerald-500/20"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              Toute l'année (24h/24)
-            </button>
-            <button
-              onClick={() => selectAllYear(false)}
-              className="px-4 py-2 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-md flex items-center gap-2 text-sm"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              Toute l'année ({selectedTimeStart}-{selectedTimeEnd})
-            </button>
-            <button
-              onClick={() => selectYearWeekends(true)}
-              className="px-4 py-2 bg-linear-to-r from-purple-600 to-purple-700 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-purple-800 transition-all shadow-md flex items-center gap-2 text-sm"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              Week-ends (24h/24)
-            </button>
-            <button
-              onClick={() => selectYearWeekends(false)}
-              className="px-4 py-2 bg-linear-to-r from-indigo-600 to-indigo-700 text-white rounded-lg font-semibold hover:from-indigo-700 hover:to-indigo-800 transition-all shadow-md flex items-center gap-2 text-sm"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              Week-ends ({selectedTimeStart}-{selectedTimeEnd})
+              7j/7 - 24h/24
             </button>
             <button
               onClick={deselectAllYear}
-              className="px-4 py-2 bg-linear-to-r from-red-600 to-red-700 text-white rounded-lg font-semibold hover:from-red-700 hover:to-red-800 transition-all shadow-md flex items-center gap-2 text-sm"
+              className="px-4 py-2 bg-red-500/10 border border-red-500/50 text-red-500 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-red-500/20"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-              Effacer l'année
+              Reset Annee
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {months.map((month, index) => {
-          const monthStart = startOfMonth(month)
-          const monthEnd = endOfMonth(month)
-          const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd })
-          
-          const availableDaysCount = daysInMonth.filter(day => {
-            const key = format(day, 'yyyy-MM-dd')
-            return !!availability[key]
-          }).length
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {months.map((month, index) => {
+            const monthStart = startOfMonth(month)
+            const monthEnd = endOfMonth(month)
+            const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd })
 
-          return (
-            <div
-              key={index}
-              className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-4 hover:shadow-xl transition-shadow cursor-pointer"
-              onClick={() => {
-                setCurrentDate(month)
-                setViewMode('month')
-              }}
-            >
-              <div className="text-center mb-3">
-                <h4 className="text-lg font-bold text-slate-800 dark:text-white">
-                  {MONTH_NAMES[index]}
-                </h4>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
-                  {format(month, 'yyyy')}
-                </p>
-              </div>
+            const availableDaysCount = daysInMonth.filter(day => {
+              const key = format(day, 'yyyy-MM-dd')
+              return !!availability[key]
+            }).length
 
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-600 dark:text-slate-400">Jours disponibles:</span>
-                  <span className="font-bold text-green-600 dark:text-green-400">
-                    {availableDaysCount}/{daysInMonth.length}
-                  </span>
+            return (
+              <div
+                key={index}
+                className="bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] rounded-3xl p-6 hover:border-blue-500/30 transition-all cursor-pointer group"
+                onClick={() => {
+                  setCurrentDate(month)
+                  setViewMode('month')
+                }}
+              >
+                <div className="text-center mb-6">
+                  <h4 className="text-lg font-bold text-white group-hover:text-blue-500 transition-colors">
+                    {MONTH_NAMES[index]}
+                  </h4>
+                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">
+                    {format(month, 'yyyy')}
+                  </p>
                 </div>
 
-                {availableDaysCount > 0 && (
-                  <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-gray-400 font-medium">Taux d'activité</span>
+                    <span className="font-bold text-white font-mono">
+                      {availableDaysCount}/{daysInMonth.length} J
+                    </span>
+                  </div>
+
+                  <div className="w-full bg-white/5 rounded-full h-1.5 overflow-hidden">
                     <div
-                      className="bg-linear-to-r from-green-500 to-green-600 h-2 transition-all duration-500"
+                      className="bg-blue-500 h-1.5 transition-all duration-700 shadow-[0_0_8px_rgba(59,130,246,0.6)]"
                       style={{ width: `${(availableDaysCount / daysInMonth.length) * 100}%` }}
                     />
                   </div>
-                )}
-              </div>
+                </div>
 
-              <button className="w-full mt-3 py-2 px-3 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-semibold text-sm hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
-                Voir le mois →
-              </button>
-            </div>
-          )
-        })}
+                <button className="w-full mt-6 py-2.5 px-3 bg-white/5 border border-white/5 text-gray-400 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-white/10 group-hover:text-white transition-all">
+                  Ouvrir le mois
+                </button>
+              </div>
+            )
+          })}
         </div>
       </div>
     )
@@ -1089,11 +967,10 @@ export function DriverAvailabilityCalendar() {
 
       {/* Toast notification */}
       {toastMessage && (
-        <div className={`fixed top-4 right-4 z-50 px-6 py-4 rounded-xl shadow-2xl animate-slide-in ${
-          toastMessage.type === 'success' 
-            ? 'bg-green-600 text-white' 
-            : 'bg-red-600 text-white'
-        }`}>
+        <div className={`fixed top-4 right-4 z-50 px-6 py-4 rounded-xl shadow-2xl animate-slide-in ${toastMessage.type === 'success'
+          ? 'bg-green-600 text-white'
+          : 'bg-red-600 text-white'
+          }`}>
           <div className="flex items-center gap-3">
             {toastMessage.type === 'success' ? (
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -1110,29 +987,28 @@ export function DriverAvailabilityCalendar() {
       )}
 
       {/* Header */}
-      <div className="bg-linear-to-r from-blue-600 via-blue-700 to-blue-800 dark:from-blue-900 dark:via-blue-950 dark:to-black rounded-2xl shadow-2xl p-6">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+      <div className="bg-gradient-to-br from-blue-600 to-indigo-900 rounded-3xl shadow-2xl p-8 border border-white/10">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           <div>
-            <h2 className="text-3xl font-bold text-white flex items-center gap-3">
-              <span className="text-4xl">🗓️</span>
+            <h2 className="text-3xl font-bold text-white flex items-center gap-4">
+              <CalendarIcon className="text-white" size={32} weight="fill" />
               Gestion de Disponibilités
             </h2>
-            <p className="text-blue-100 mt-2">
-              Définissez vos horaires de disponibilité avec un calendrier interactif
+            <p className="text-blue-100/70 mt-2 font-medium">
+              Définissez vos horaires d'activité pour optimiser vos missions.
             </p>
           </div>
 
           {/* View mode tabs */}
-          <div className="flex items-center gap-2 bg-white/10 backdrop-blur-lg rounded-xl p-1">
+          <div className="flex items-center gap-2 bg-black/20 backdrop-blur-xl rounded-2xl p-1.5 border border-white/5">
             {(['day', 'week', 'month', 'year'] as ViewMode[]).map((mode) => (
               <button
                 key={mode}
                 onClick={() => setViewMode(mode)}
-                className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200 ${
-                  viewMode === mode
-                    ? 'bg-white text-blue-700 shadow-lg'
-                    : 'text-white hover:bg-white/20'
-                }`}
+                className={`px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all duration-200 ${viewMode === mode
+                  ? 'bg-white text-blue-900 shadow-xl scale-105'
+                  : 'text-white/60 hover:text-white hover:bg-white/10'
+                  }`}
               >
                 {mode === 'day' && 'Jour'}
                 {mode === 'week' && 'Semaine'}
@@ -1146,38 +1022,36 @@ export function DriverAvailabilityCalendar() {
 
       {/* Presets */}
       {showPresets && (
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
-              <span>⚡</span>
-              Modèles rapides
+        <div className="bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] rounded-3xl shadow-xl p-8">
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="text-lg font-bold text-white flex items-center gap-3">
+              <Lightning size={18} weight="fill" className="text-blue-500" />
+              Modèles d'activité rapides
             </h3>
             <button
               onClick={() => setShowPresets(false)}
-              className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              className="p-2 bg-white/5 hover:bg-white/10 rounded-xl text-gray-400 transition-all"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <X size={20} weight="bold" />
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {availabilityPresets.map((preset) => (
               <button
                 key={preset.id}
                 onClick={() => applyPreset(preset)}
-                className="p-4 bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-700 dark:to-slate-800 rounded-xl hover:shadow-lg transition-all duration-200 text-left border-2 border-transparent hover:border-blue-500 dark:hover:border-blue-400 group"
+                className="p-5 bg-white/[0.02] border border-white/5 rounded-2xl hover:border-blue-500/50 hover:bg-blue-500/5 transition-all duration-300 text-left group"
               >
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-4">
                   <span className="text-3xl group-hover:scale-110 transition-transform">
                     {preset.icon}
                   </span>
                   <div className="flex-1">
-                    <h4 className="font-bold text-slate-800 dark:text-white mb-1">
+                    <h4 className="font-bold text-white mb-1 tracking-tight">
                       {preset.label}
                     </h4>
-                    <p className="text-xs text-slate-600 dark:text-slate-400">
+                    <p className="text-[11px] text-gray-500 leading-normal">
                       {preset.description}
                     </p>
                   </div>
@@ -1191,83 +1065,79 @@ export function DriverAvailabilityCalendar() {
       {!showPresets && (
         <button
           onClick={() => setShowPresets(true)}
-          className="w-full py-3 px-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+          className="w-full py-4 px-6 bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] text-white/70 rounded-2xl font-bold hover:bg-white/5 transition-all flex items-center justify-center gap-3"
         >
-          ⚡ Afficher les modèles rapides
+          <Lightning size={18} weight="fill" className="text-blue-500" /> Afficher les modèles de travail rapides
         </button>
       )}
 
       {/* Time selection for custom hours */}
-      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6">
-        <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-          <span>🕐</span>
-          Horaires par défaut
+      <div className="bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] rounded-3xl p-8">
+        <h3 className="text-sm font-bold text-white mb-6 flex items-center gap-3">
+          <Clock size={16} weight="bold" className="text-blue-500" />
+          Plage horaire par défaut
         </h3>
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1">
-            <label className="block text-sm font-semibold text-slate-600 dark:text-slate-400 mb-2">
-              Heure de début
-            </label>
-            <select
-              value={selectedTimeStart}
-              onChange={(e) => setSelectedTimeStart(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-xl font-semibold text-slate-800 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
-            >
-              {TIME_SLOTS.map((time) => (
-                <option key={time} value={time}>{time}</option>
-              ))}
-            </select>
+        <div className="flex flex-col sm:flex-row gap-6">
+          <div className="flex-1 space-y-2">
+            <label className="text-[10px] font-bold uppercase text-gray-500 tracking-widest px-1">Heure de début</label>
+            <div className="relative">
+              <select
+                value={selectedTimeStart}
+                onChange={(e) => setSelectedTimeStart(e.target.value)}
+                className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-white font-mono text-sm outline-none focus:border-blue-500 transition-all appearance-none"
+              >
+                {TIME_SLOTS.map((time) => (
+                  <option key={time} value={time} className="bg-[#0A0F14]">{time}</option>
+                ))}
+              </select>
+            </div>
           </div>
-          <div className="flex-1">
-            <label className="block text-sm font-semibold text-slate-600 dark:text-slate-400 mb-2">
-              Heure de fin
-            </label>
-            <select
-              value={selectedTimeEnd}
-              onChange={(e) => setSelectedTimeEnd(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-xl font-semibold text-slate-800 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
-            >
-              {TIME_SLOTS.map((time) => (
-                <option key={time} value={time}>{time}</option>
-              ))}
-            </select>
+          <div className="flex-1 space-y-2">
+            <label className="text-[10px] font-bold uppercase text-gray-500 tracking-widest px-1">Heure de fin</label>
+            <div className="relative">
+              <select
+                value={selectedTimeEnd}
+                onChange={(e) => setSelectedTimeEnd(e.target.value)}
+                className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-white font-mono text-sm outline-none focus:border-blue-500 transition-all appearance-none"
+              >
+                {TIME_SLOTS.map((time) => (
+                  <option key={time} value={time} className="bg-[#0A0F14]">{time}</option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <div className="flex items-center justify-between bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-4">
+      <div className="flex items-center justify-between bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] rounded-3xl p-6 shadow-xl">
         <button
           onClick={navigatePrevious}
-          className="p-3 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+          className="w-12 h-12 flex items-center justify-center bg-white/5 border border-white/10 text-gray-400 rounded-2xl hover:text-white hover:bg-white/10 transition-all"
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
+          <ChevronLeft size={24} weight="bold" />
         </button>
 
-        <div className="text-center">
-          <h3 className="text-xl font-bold text-slate-800 dark:text-white">
+        <div className="text-center group">
+          <h3 className="text-2xl font-black text-white tracking-tight uppercase font-mono">
             {viewMode === 'day' && format(currentDate, 'd MMMM yyyy', { locale: fr })}
-            {viewMode === 'week' && `Semaine du ${format(startOfWeek(currentDate, { weekStartsOn: 1 }), 'd MMM', { locale: fr })}`}
+            {viewMode === 'week' && `Du ${format(startOfWeek(currentDate, { weekStartsOn: 1 }), 'd MMM', { locale: fr })}`}
             {viewMode === 'month' && format(currentDate, 'MMMM yyyy', { locale: fr })}
-            {viewMode === 'year' && format(currentDate, 'yyyy')}
+            {viewMode === 'year' && format(currentDate, 'Année yyyy')}
           </h3>
           <button
             onClick={goToToday}
-            className="text-sm text-blue-600 dark:text-blue-400 font-semibold hover:underline mt-1"
+            className="mt-2 text-[10px] font-bold text-blue-400 uppercase tracking-[0.3em] hover:text-blue-300 transition-colors"
           >
-            Aujourd'hui
+            Revenir à aujourd'hui
           </button>
         </div>
 
         <button
           onClick={navigateNext}
-          className="p-3 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+          className="w-12 h-12 flex items-center justify-center bg-white/5 border border-white/10 text-gray-400 rounded-2xl hover:text-white hover:bg-white/10 transition-all"
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
+          <ChevronRight size={24} weight="bold" />
         </button>
       </div>
 
@@ -1280,41 +1150,38 @@ export function DriverAvailabilityCalendar() {
       </div>
 
       {/* Save button */}
-      <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row gap-4">
         <button
           onClick={saveAvailability}
-          className="flex-1 py-4 px-6 bg-linear-to-r from-green-600 to-green-700 text-white rounded-xl font-bold text-lg hover:from-green-700 hover:to-green-800 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3"
+          className="flex-1 py-5 px-8 bg-blue-600 text-white rounded-3xl font-black text-xs uppercase tracking-[0.2em] hover:bg-blue-500 transition-all shadow-2xl shadow-blue-500/20 flex items-center justify-center gap-4"
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
-          Enregistrer les disponibilités
+          <Save size={20} weight="bold" /> Enregistrer la Configuration
         </button>
         <button
           onClick={() => setAvailability({})}
-          className="py-4 px-6 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-bold hover:bg-slate-300 dark:hover:bg-slate-600 transition-all"
+          className="py-5 px-8 bg-white/5 border border-white/10 text-gray-500 rounded-3xl font-black text-xs uppercase tracking-[0.2em] hover:bg-red-500/20 hover:text-red-400 transition-all"
         >
           Effacer tout
         </button>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-linear-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white shadow-lg">
-          <div className="text-3xl font-bold">{Object.keys(availability).length}</div>
-          <div className="text-blue-100 mt-1 font-semibold">Jours configurés</div>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pb-8">
+        <div className="bg-linear-to-br from-blue-600/20 to-blue-600/5 border border-blue-500/20 rounded-3xl p-8 shadow-xl">
+          <div className="text-4xl font-black text-white font-mono tracking-tighter">{Object.keys(availability).length}</div>
+          <div className="text-[10px] uppercase font-bold text-blue-400 mt-2 tracking-widest">Jours d'activité prévus</div>
         </div>
-        <div className="bg-linear-to-br from-green-500 to-green-600 rounded-xl p-6 text-white shadow-lg">
-          <div className="text-3xl font-bold">
+        <div className="bg-linear-to-br from-emerald-600/20 to-emerald-600/5 border border-emerald-500/20 rounded-3xl p-8 shadow-xl">
+          <div className="text-4xl font-black text-white font-mono tracking-tighter">
             {Object.values(availability).filter(a => a.isFullDay).length}
           </div>
-          <div className="text-green-100 mt-1 font-semibold">Journées entières</div>
+          <div className="text-[10px] uppercase font-bold text-emerald-400 mt-2 tracking-widest">Disponibilités 24h/24</div>
         </div>
-        <div className="bg-linear-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white shadow-lg">
-          <div className="text-3xl font-bold">
+        <div className="bg-linear-to-br from-purple-600/20 to-purple-600/5 border border-purple-500/20 rounded-3xl p-8 shadow-xl">
+          <div className="text-4xl font-black text-white font-mono tracking-tighter">
             {Object.values(availability).filter(a => !a.isFullDay).length}
           </div>
-          <div className="text-purple-100 mt-1 font-semibold">Créneaux horaires</div>
+          <div className="text-[10px] uppercase font-bold text-purple-400 mt-2 tracking-widest">Créneaux horaires modulés</div>
         </div>
       </div>
     </div>

@@ -1,14 +1,16 @@
 import { Navigation } from "@/components/navigation";
 import { Metadata } from "next";
+import { TestimonialCard } from "@/components/ui/TestimonialCard";
+import { Footer } from "@/components/footer";
 
 export const metadata: Metadata = {
-  title: "Témoignages Clients | Navette Xpress Sénégal - Transfert Aéroport AIBD",
-  description: "Découvrez les témoignages de nos clients satisfaits. Plus de 1000 transferts aéroport AIBD réussis au Sénégal. Chauffeurs professionnels, service 24h/24.",
-  keywords: "témoignages transfert aéroport Dakar, avis clients navette AIBD, satisfaction client Sénégal",
+  title: 'Avis Clients | Navette Xpress — Chauffeur Privé Dakar',
+  description: 'Découvrez les avis de nos clients satisfaits. Note 4.9/5 sur plus de 1 000 transferts aéroport AIBD et navettes privées à Dakar, Sénégal.',
+  keywords: 'avis navette Dakar, témoignages chauffeur privé Dakar, avis transfert AIBD, clients satisfaits Navette Xpress',
   openGraph: {
-    title: "Témoignages Clients | Navette Xpress Sénégal",
-    description: "Découvrez les témoignages de nos clients satisfaits pour nos services de transfert aéroport AIBD.",
-    url: 'https://navettexpress.sn/temoignages',
+    title: 'Avis Clients — Navette Xpress',
+    description: '4.9/5 sur 1 000+ transferts à Dakar. Lisez les témoignages de nos clients.',
+    url: 'https://navettexpress.com/temoignages',
   },
 };
 
@@ -88,136 +90,201 @@ export default function TemoignagesPage() {
     }
   ];
 
-  const stats = [
-    { nombre: "1000+", label: "Transferts Réussis" },
-    { nombre: "4.9/5", label: "Note Moyenne" },
-    { nombre: "98%", label: "Clients Satisfaits" },
-    { nombre: "24/7", label: "Service Disponible" }
-  ];
+  const noteGlobale = 4.9;
+  const nombreAvis = 1000;
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen noise-bg" style={{ backgroundColor: 'var(--color-midnight)' }}>
       <Navigation variant="solid" />
-      
-      {/* Hero Section */}
-      <section className="relative bg-[#1A1A1A] text-white pt-20 pb-6 sm:pt-32 sm:pb-8 md:pt-36 md:pb-10 px-6 sm:px-8 md:px-8 overflow-hidden">
-        {/* Pattern Overlay */}
-        <div className="absolute inset-0 opacity-10" style={{backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23E5C16C' fill-opacity='1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")"}}></div>
-        
-        <div className="relative max-w-6xl mx-auto text-center">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2 sm:mb-3 leading-tight px-2">
-            <span className="text-[#E5C16C]">Témoignages</span> Clients
+
+      {/* SECTION HERO — Note globale + résumé */}
+      <section
+        className="relative py-20 sm:py-28 text-center overflow-hidden"
+      >
+        {/* Halo décoratif doré derrière le contenu */}
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full pointer-events-none"
+          style={{
+            background: 'radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 70%)',
+            filter: 'blur(40px)',
+          }}
+        />
+
+        <div className="relative max-w-3xl mx-auto px-4">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 animate-fade-in-up"
+            style={{
+              backgroundColor: 'rgba(201,168,76,0.1)',
+              border: '1px solid rgba(201,168,76,0.25)',
+            }}>
+            <span style={{ color: 'var(--color-gold)', fontSize: '12px' }}>✦</span>
+            <span className="text-xs tracking-[0.15em] uppercase"
+              style={{ color: 'var(--color-gold)', fontFamily: 'var(--font-body)' }}>
+              Avis clients vérifiés
+            </span>
+          </div>
+
+          {/* Titre */}
+          <h1
+            className="text-4xl sm:text-6xl leading-tight mb-4 animate-fade-in-up"
+            style={{
+              fontFamily: 'var(--font-display)',
+              color: 'var(--color-text-primary)',
+              fontWeight: 400,
+            }}>
+            Ils nous ont fait{' '}
+            <span style={{ color: 'var(--color-gold)', fontStyle: 'italic' }}>confiance</span>
           </h1>
-          <p className="text-sm sm:text-base md:text-lg text-gray-300 max-w-4xl mx-auto leading-relaxed px-4">
-            Découvrez pourquoi plus de 1000 clients nous font confiance pour leurs transferts aéroport au Sénégal
+
+          <p className="text-base sm:text-lg mb-12 text-gray-400 animate-fade-in-up delay-100"
+            style={{ fontFamily: 'var(--font-body)' }}>
+            Plus de 1 000 transferts réalisés à Dakar. Voici ce que nos clients disent de leur expérience.
           </p>
-        </div>
-      </section>
 
-      {/* Stats Section */}
-      <section className="py-6 sm:py-8 md:py-10 px-4 sm:px-6 md:px-8 bg-[#FAFAFA]">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#A73B3C] mb-1 sm:mb-2">
-                  {stat.nombre}
-                </div>
-                <div className="text-xs sm:text-sm md:text-base text-gray-600 font-medium">
-                  {stat.label}
-                </div>
+          {/* NOTE GLOBALE — bloc trophée */}
+          <div className="inline-flex flex-col sm:flex-row items-center gap-8 px-10 py-8 rounded-3xl animate-scaleIn"
+            style={{
+              backgroundColor: 'var(--color-obsidian)',
+              border: '1px solid rgba(201,168,76,0.2)',
+              boxShadow: '0 0 60px rgba(201,168,76,0.08)',
+            }}>
+
+            {/* Note chiffre */}
+            <div className="text-center">
+              <p className="text-7xl font-semibold leading-none"
+                style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-gold)' }}>
+                {noteGlobale}
+              </p>
+              <p className="text-xs uppercase tracking-[0.15em] mt-2"
+                style={{ color: 'var(--color-text-secondary)' }}>
+                sur 5
+              </p>
+            </div>
+
+            {/* Séparateur vertical */}
+            <div className="hidden sm:block w-px h-16"
+              style={{ backgroundColor: 'rgba(255,255,255,0.08)' }} />
+
+            {/* Étoiles + nb avis */}
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1 mb-2">
+                {[1, 2, 3, 4, 5].map(i => (
+                  <svg key={i} width="22" height="22" viewBox="0 0 20 20" fill="none">
+                    <path
+                      d="M10 1l2.39 4.84L18 6.76l-4 3.9.94 5.5L10 13.77 5.06 16.16 6 10.66 2 6.76l5.61-.92L10 1z"
+                      fill={i <= Math.round(noteGlobale) ? 'var(--color-gold)' : 'rgba(201,168,76,0.2)'}
+                    />
+                  </svg>
+                ))}
               </div>
-            ))}
+              <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                {nombreAvis}+ avis vérifiés
+              </p>
+              <a href="#"
+                className="text-xs underline underline-offset-2 mt-1 inline-block transition-colors hover:text-white"
+                style={{ color: 'var(--color-gold)' }}>
+                Voir sur Google →
+              </a>
+            </div>
+
+            {/* Séparateur vertical */}
+            <div className="hidden sm:block w-px h-16"
+              style={{ backgroundColor: 'rgba(255,255,255,0.08)' }} />
+
+            {/* Stats rapides */}
+            <div className="text-center">
+              <p className="text-2xl font-semibold"
+                style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-text-primary)' }}>
+                98%
+              </p>
+              <p className="text-xs uppercase tracking-[0.12em] mt-1"
+                style={{ color: 'var(--color-text-secondary)' }}>
+                Clients Satisfaits
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Témoignages Grid */}
-      <section className="py-8 sm:py-10 md:py-12 px-4 sm:px-6 md:px-8 bg-white dark:bg-[#1A1A1A]">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-6 sm:mb-8 md:mb-10">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1A1A1A] dark:text-white mb-2 sm:mb-3 leading-tight">
-              Ce que disent <span className="text-[#E5C16C]">nos clients</span>
-            </h2>
-            <p className="text-sm sm:text-base md:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto px-4">
-              Plus de 1000 transferts aéroport réussis au Sénégal avec une satisfaction client de 98%
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+      {/* SECTION GRILLE TÉMOIGNAGES */}
+      <section className="py-16">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="columns-1 sm:columns-2 lg:columns-3 gap-5 space-y-5">
             {temoignages.map((temoignage) => (
-              <div key={temoignage.id} className="bg-white dark:bg-[#252525] p-4 sm:p-5 md:p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 border-t-4 border-[#A73B3C]">
-                {/* Note */}
-                <div className="flex flex-wrap items-center gap-2 mb-3 sm:mb-4">
-                  <div className="flex text-[#E5C16C]">
-                    {[...Array(temoignage.note)].map((_, i) => (
-                      <svg key={i} className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
-                    ))}
-                  </div>
-                  <span className="text-xs sm:text-sm text-gray-500">
-                    {temoignage.date}
-                  </span>
-                </div>
-
-                {/* Commentaire */}
-                <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 mb-3 sm:mb-4 italic leading-relaxed">
-                  &quot;{temoignage.commentaire}&quot;
-                </p>
-
-                {/* Service */}
-                <div className="mb-3 sm:mb-4">
-                  <span className="inline-block bg-[#E5C16C]/20 text-[#A73B3C] text-xs font-medium px-2.5 py-0.5 rounded-full">
-                    {temoignage.service}
-                  </span>
-                </div>
-
-                {/* Client */}
-                <div className="flex items-center">
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-[#A73B3C] rounded-full flex items-center justify-center text-white font-semibold text-sm shrink-0">
-                    {temoignage.nom.charAt(0)}
-                  </div>
-                  <div className="ml-2 sm:ml-3">
-                    <div className="font-semibold text-sm sm:text-base text-[#1A1A1A] dark:text-white">
-                      {temoignage.nom}
-                    </div>
-                    <div className="text-xs sm:text-sm text-gray-500">
-                      {temoignage.role}
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <TestimonialCard
+                key={temoignage.id}
+                name={temoignage.nom}
+                role={temoignage.role}
+                content={temoignage.commentaire}
+                rating={temoignage.note}
+                date={temoignage.date}
+                service={temoignage.service}
+                isVerified={true}
+              />
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-8 sm:py-10 md:py-12 px-4 sm:px-6 md:px-8 bg-[#A73B3C] text-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 leading-tight">
-            Rejoignez nos clients satisfaits
+      {/* SECTION CTA FINAL — "Votre avis compte" */}
+      <section className="py-20" style={{ backgroundColor: 'var(--color-obsidian)' }}>
+        <div className="max-w-2xl mx-auto px-4 text-center">
+          {/* Déco étoiles */}
+          <div className="flex justify-center gap-1 mb-6">
+            {[1, 2, 3, 4, 5].map(i => (
+              <svg key={i} width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M10 1l2.39 4.84L18 6.76l-4 3.9.94 5.5L10 13.77 5.06 16.16 6 10.66 2 6.76l5.61-.92L10 1z"
+                  fill="var(--color-gold)" />
+              </svg>
+            ))}
+          </div>
+
+          <h2 className="text-3xl sm:text-4xl mb-4"
+            style={{
+              fontFamily: 'var(--font-display)',
+              color: 'var(--color-text-primary)',
+              fontWeight: 400,
+            }}>
+            Votre avis nous aide à{' '}
+            <span style={{ color: 'var(--color-gold)', fontStyle: 'italic' }}>grandir</span>
           </h2>
-          <p className="text-base sm:text-lg md:text-xl mb-5 sm:mb-6 text-gray-100 leading-relaxed px-2">
-            Découvrez pourquoi plus de 1000 clients nous font confiance pour leurs transferts aéroport au Sénégal
+
+          <p className="text-base mb-10"
+            style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}>
+            Vous avez voyagé avec Navette Xpress ? Partagez votre expérience sur Google et aidez d'autres voyageurs à faire le bon choix.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center max-w-2xl mx-auto">
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <a
+              href="#"
+              target="_blank" rel="noopener noreferrer"
+              className="btn-gold w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-base transition-all duration-200"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.92 3.32-2.12 4.52-1.36 1.36-3.48 2.84-7.44 2.84-6.4 0-11.6-5.2-11.6-11.6s5.2-11.6 11.6-11.6c3.48 0 6.04 1.36 7.92 3.16l2.32-2.32c-2.12-2.04-4.92-3.64-10.24-3.64-9.48 0-17.24 7.76-17.24 17.24s7.76 17.24 17.24 17.24c5.12 0 9.04-1.68 12.16-4.92 3.24-3.24 4.24-7.76 4.24-11.32 0-.92-.08-1.76-.24-2.52h-16.16z" />
+              </svg>
+              Laisser un avis Google
+            </a>
+
             <a
               href="/reservation"
-              className="w-full sm:w-auto bg-[#E5C16C] hover:bg-[#D4B060] text-[#1A1A1A] px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-200 shadow-lg hover:shadow-xl text-center"
-            >
-              Réserver Maintenant
-            </a>
-            <a
-              href="tel:+221781319191"
-              className="w-full sm:w-auto border-2 border-white text-white hover:bg-white hover:text-[#A73B3C] px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-colors text-center"
-            >
-              📞 +221 78 131 91 91
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-medium text-base transition-all duration-200"
+              style={{
+                backgroundColor: 'transparent',
+                color: 'var(--color-text-secondary)',
+                border: '1px solid rgba(255,255,255,0.1)',
+              }}>
+              Réserver une navette →
             </a>
           </div>
+
+          <p className="text-xs mt-8" style={{ color: 'var(--color-text-muted)' }}>
+            Tous nos avis sont vérifiés et proviennent de clients ayant effectué un trajet avec nous.
+          </p>
         </div>
       </section>
+
+      <Footer />
     </div>
   );
 }

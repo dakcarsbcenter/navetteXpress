@@ -1,54 +1,47 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Cormorant_Garamond, DM_Sans, DM_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
 import { GoogleAnalytics } from "./google-analytics";
 
-const poppins = Poppins({
-  variable: "--font-poppins",
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
+
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  display: "swap",
+});
+
+const dmMono = DM_Mono({
+  variable: "--font-dm-mono",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Navette Xpress - Transfert Aéroport Dakar AIBD | Chauffeur Privé Sénégal",
-  description: "Service de transfert aéroport AIBD Dakar, Thies, Mbour. Chauffeurs privés professionnels 24h/24. Réservation instantanée, véhicules de luxe, prix compétitifs.",
-  keywords: "transfert aéroport Dakar, navette AIBD, chauffeur privé Sénégal, transport privé Dakar, transfert aéroport Thies, transfert aéroport Mbour, service chauffeur 24h Dakar",
-  authors: [{ name: "Navette Xpress Sénégal" }],
-  creator: "Navette Xpress",
-  publisher: "Navette Xpress Sénégal",
-  icons: {
-    icon: [
-      { url: '/icon.svg', type: 'image/svg+xml' },
-      { url: '/favicon.ico', sizes: '32x32' },
-    ],
-    apple: '/apple-touch-icon.png',
-  },
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-  metadataBase: new URL('https://navettexpress.sn'),
-  alternates: {
-    canonical: '/',
-    languages: {
-      'fr-SN': '/',
-      'en-SN': '/en',
-    },
-  },
+  title: "Navette Xpress | Chauffeur Privé Dakar & Transfert Aéroport AIBD",
+  description: "Service de chauffeur privé N°1 à Dakar. Transfert aéroport AIBD, navette Dakar, mise à disposition. Réservation instantanée, prix fixes, disponible 24h/24. +221 78 131 91 91",
+  keywords: "chauffeur privé Dakar, transfert aéroport AIBD, navette Dakar aéroport, VTC Dakar, chauffeur Dakar, transport privé Sénégal, navette AIBD, taxi privé Dakar, chauffeur professionnel Dakar",
+  authors: [{ name: "Navette Xpress" }],
   openGraph: {
-    title: "Navette Xpress - Transfert Aéroport Dakar AIBD | Chauffeur Privé Sénégal",
-    description: "Service de transfert aéroport AIBD Dakar, Thies, Mbour. Chauffeurs privés professionnels 24h/24. Réservation instantanée, véhicules de luxe.",
-    url: 'https://navettexpress.sn',
-    siteName: 'Navette Xpress Sénégal',
+    title: "Navette Xpress — Chauffeur Privé Premium à Dakar",
+    description: "Transferts AIBD, navettes et mise à disposition avec chauffeurs professionnels certifiés. Disponible 24h/24 à Dakar.",
+    url: 'https://navettexpress.com',
+    siteName: 'Navette Xpress',
     images: [
       {
         url: '/og-image-navette-xpress.jpg',
         width: 1200,
         height: 630,
-        alt: 'Navette Xpress - Service de Transfert Aéroport Dakar AIBD',
+        alt: 'Navette Xpress — Chauffeur Privé Premium à Dakar',
       },
     ],
     locale: 'fr_SN',
@@ -56,23 +49,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Navette Xpress - Transfert Aéroport Dakar AIBD",
-    description: "Service de transfert aéroport AIBD Dakar, Thies, Mbour. Chauffeurs privés professionnels 24h/24.",
+    title: "Navette Xpress — Chauffeur Privé Premium à Dakar",
+    description: "Transferts AIBD, navettes et mise à disposition avec chauffeurs professionnels certifiés.",
     images: ['/og-image-navette-xpress.jpg'],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
-  verification: {
-    google: 'your-google-verification-code',
   },
 };
 
@@ -81,115 +60,83 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const schemaOrg = {
+  const localBusinessSchema = {
     "@context": "https://schema.org",
-    "@type": "TransportationService",
-    "name": "Navette Xpress Sénégal",
-    "description": "Service de transfert aéroport AIBD Dakar, Thies, Mbour. Chauffeurs privés professionnels 24h/24 pour tous vos déplacements au Sénégal.",
-    "url": "https://navettexpress.sn",
+    "@type": "LocalBusiness",
+    "name": "Navette Xpress",
+    "description": "Service de chauffeur privé et transfert aéroport AIBD à Dakar, Sénégal",
+    "@id": "https://navettexpress.com",
+    "url": "https://navettexpress.com",
     "telephone": "+221781319191",
     "email": "contact@navettexpress.com",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "Avenue Léopold Sédar Senghor",
+      "streetAddress": "Dakar",
       "addressLocality": "Dakar",
-      "addressRegion": "Dakar",
-      "addressCountry": "SN",
-      "postalCode": "10000"
+      "addressCountry": "SN"
     },
     "geo": {
       "@type": "GeoCoordinates",
-      "latitude": "14.6928",
-      "longitude": "-17.4467"
+      "latitude": 14.7167,
+      "longitude": -17.4677
     },
-    "areaServed": [
-      {
-        "@type": "City",
-        "name": "Dakar",
-        "containedInPlace": {
-          "@type": "Country",
-          "name": "Sénégal"
-        }
-      },
-      {
-        "@type": "City", 
-        "name": "Thiès",
-        "containedInPlace": {
-          "@type": "Country",
-          "name": "Sénégal"
-        }
-      },
-      {
-        "@type": "City",
-        "name": "Mbour", 
-        "containedInPlace": {
-          "@type": "Country",
-          "name": "Sénégal"
-        }
-      }
-    ],
-    "serviceType": [
-      "Transfert Aéroport",
-      "Transport Privé",
-      "Chauffeur Privé",
-      "Navette Aéroport"
-    ],
-    "hasOfferCatalog": {
-      "@type": "OfferCatalog",
-      "name": "Services de Transport",
-      "itemListElement": [
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "Transfert Aéroport AIBD Dakar",
-            "description": "Service de transfert vers et depuis l'aéroport AIBD de Dakar"
-          }
-        },
-        {
-          "@type": "Offer", 
-          "itemOffered": {
-            "@type": "Service",
-            "name": "Transfert Aéroport Thies",
-            "description": "Service de transfert vers et depuis l'aéroport de Thies"
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service", 
-            "name": "Transfert Aéroport Mbour",
-            "description": "Service de transfert vers et depuis l'aéroport de Mbour"
-          }
-        }
-      ]
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      "opens": "00:00",
+      "closes": "23:59"
     },
-    "openingHours": "Mo-Su 00:00-23:59",
     "priceRange": "$$",
-    "foundingDate": "2024",
+    "image": "https://navettexpress.com/og-image-navette-xpress.jpg",
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "reviewCount": "127"
+    },
     "sameAs": [
       "https://www.facebook.com/navettexpresssenegal",
       "https://www.instagram.com/navettexpresssenegal"
     ]
   };
 
+  const serviceSchema = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "Chauffeur privé et transfert aéroport",
+    "provider": { "@type": "LocalBusiness", "name": "Navette Xpress" },
+    "areaServed": {
+      "@type": "City",
+      "name": "Dakar",
+      "containedIn": { "@type": "Country", "name": "Sénégal" }
+    },
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": "XOF",
+      "availability": "https://schema.org/InStock"
+    }
+  };
+
   return (
-    <html lang="fr" suppressHydrationWarning data-scroll-behavior="smooth">
+    <html lang="fr" suppressHydrationWarning className="scroll-smooth">
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(schemaOrg),
+            __html: JSON.stringify(localBusinessSchema),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(serviceSchema),
           }}
         />
       </head>
-      <body
-        className={`${poppins.variable} antialiased font-sans`}
-      >
+      <body className={`${cormorant.variable} ${dmSans.variable} ${dmMono.variable} antialiased font-body bg-background text-foreground`}>
         <AuthSessionProvider>
           <ThemeProvider
             attribute="class"
-            defaultTheme="light"
+            defaultTheme="dark"
             enableSystem
             disableTransitionOnChange
           >

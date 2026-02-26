@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { downloadInvoicePDF } from '@/lib/invoice-pdf'
-import { CheckCircle, XCircle, X } from 'lucide-react'
+import { CheckCircle, XCircle, X } from "@phosphor-icons/react"
 
 type InvoiceStatus = 'draft' | 'pending' | 'paid' | 'cancelled' | 'overdue'
 
@@ -68,14 +68,14 @@ export default function AdminInvoicesView() {
       if (!response.ok) {
         throw new Error('Erreur lors de la récupération de la facture')
       }
-      
+
       const data = await response.json()
       if (!data.success || !data.invoice) {
         throw new Error('Facture introuvable')
       }
 
       const invoice = data.invoice
-      
+
       // Préparer les données pour le PDF
       const invoiceData = {
         invoiceNumber: invoice.invoiceNumber,
@@ -103,7 +103,7 @@ export default function AdminInvoicesView() {
 
       // Télécharger le PDF
       downloadInvoicePDF(invoiceData)
-      
+
       // Notification de succès
       setModalType('success')
       setModalMessage('PDF téléchargé avec succès!')
@@ -132,8 +132,8 @@ export default function AdminInvoicesView() {
     paidAmountTTC: invoices.filter(inv => inv.status === 'paid').reduce((sum, inv) => sum + inv.amountTTC, 0),
   }
 
-  const filteredInvoices = filter === 'all' 
-    ? invoices 
+  const filteredInvoices = filter === 'all'
+    ? invoices
     : invoices.filter(inv => inv.status === filter)
 
   const getStatusColor = (status: InvoiceStatus) => {
@@ -272,41 +272,37 @@ export default function AdminInvoicesView() {
       <div className="flex flex-wrap gap-3">
         <button
           onClick={() => setFilter('all')}
-          className={`px-4 py-2 rounded-lg font-medium transition-all ${
-            filter === 'all'
+          className={`px-4 py-2 rounded-lg font-medium transition-all ${filter === 'all'
               ? 'bg-blue-600 text-white'
               : 'bg-slate-800 text-gray-400 hover:bg-slate-700'
-          }`}
+            }`}
         >
           Toutes ({stats.total})
         </button>
         <button
           onClick={() => setFilter('pending')}
-          className={`px-4 py-2 rounded-lg font-medium transition-all ${
-            filter === 'pending'
+          className={`px-4 py-2 rounded-lg font-medium transition-all ${filter === 'pending'
               ? 'bg-blue-600 text-white'
               : 'bg-slate-800 text-gray-400 hover:bg-slate-700'
-          }`}
+            }`}
         >
           En attente ({stats.pending})
         </button>
         <button
           onClick={() => setFilter('paid')}
-          className={`px-4 py-2 rounded-lg font-medium transition-all ${
-            filter === 'paid'
+          className={`px-4 py-2 rounded-lg font-medium transition-all ${filter === 'paid'
               ? 'bg-green-600 text-white'
               : 'bg-slate-800 text-gray-400 hover:bg-slate-700'
-          }`}
+            }`}
         >
           Payées ({stats.paid})
         </button>
         <button
           onClick={() => setFilter('overdue')}
-          className={`px-4 py-2 rounded-lg font-medium transition-all ${
-            filter === 'overdue'
+          className={`px-4 py-2 rounded-lg font-medium transition-all ${filter === 'overdue'
               ? 'bg-red-600 text-white'
               : 'bg-slate-800 text-gray-400 hover:bg-slate-700'
-          }`}
+            }`}
         >
           En retard ({stats.overdue})
         </button>
@@ -386,7 +382,7 @@ export default function AdminInvoicesView() {
                       {invoice.amountTTC.toLocaleString()} FCFA
                     </p>
                   </div>
-                  
+
                   <div className="flex flex-wrap gap-2 mt-2">
                     <button
                       onClick={() => handleDownloadPDF(invoice.id)}
@@ -490,11 +486,10 @@ export default function AdminInvoicesView() {
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4 animate-in zoom-in-95 duration-300">
             <div className="flex flex-col items-center text-center">
               {/* Icône */}
-              <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-4 ${
-                modalType === 'success' 
-                  ? 'bg-green-100 dark:bg-green-900/30' 
+              <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-4 ${modalType === 'success'
+                  ? 'bg-green-100 dark:bg-green-900/30'
                   : 'bg-red-100 dark:bg-red-900/30'
-              }`}>
+                }`}>
                 {modalType === 'success' ? (
                   <CheckCircle className="w-12 h-12 text-green-600 dark:text-green-400" />
                 ) : (
@@ -503,11 +498,10 @@ export default function AdminInvoicesView() {
               </div>
 
               {/* Message */}
-              <h3 className={`text-2xl font-bold mb-2 ${
-                modalType === 'success' 
-                  ? 'text-green-600 dark:text-green-400' 
+              <h3 className={`text-2xl font-bold mb-2 ${modalType === 'success'
+                  ? 'text-green-600 dark:text-green-400'
                   : 'text-red-600 dark:text-red-400'
-              }`}>
+                }`}>
                 {modalType === 'success' ? 'Succès!' : 'Erreur!'}
               </h3>
               <p className="text-gray-600 dark:text-gray-300 mb-6">
@@ -517,11 +511,10 @@ export default function AdminInvoicesView() {
               {/* Bouton OK */}
               <button
                 onClick={() => setShowModal(false)}
-                className={`px-8 py-3 rounded-xl font-semibold text-white transition-all duration-200 transform hover:scale-105 ${
-                  modalType === 'success'
+                className={`px-8 py-3 rounded-xl font-semibold text-white transition-all duration-200 transform hover:scale-105 ${modalType === 'success'
                     ? 'bg-linear-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-lg shadow-green-500/50'
                     : 'bg-linear-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg shadow-red-500/50'
-                }`}
+                  }`}
               >
                 OK
               </button>

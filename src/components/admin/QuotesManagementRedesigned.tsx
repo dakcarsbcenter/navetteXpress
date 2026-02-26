@@ -1,7 +1,17 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Search, Plus, FileText, TrendingUp, DollarSign, Calendar, MoreVertical, Grid, List } from "lucide-react"
+import {
+  MagnifyingGlass as Search,
+  Plus,
+  FileText,
+  TrendUp as TrendingUp,
+  CurrencyDollar as DollarSign,
+  Calendar,
+  DotsThreeVertical as MoreVertical,
+  SquaresFour as Grid,
+  List
+} from "@phosphor-icons/react"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { useNotification } from "@/hooks/useNotification"
 
@@ -28,7 +38,7 @@ export function QuotesManagementRedesigned() {
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { notifications, showSuccess, showError, removeNotification } = useNotification()
-  
+
   const [filters, setFilters] = useState({
     search: ''
   })
@@ -44,11 +54,11 @@ export function QuotesManagementRedesigned() {
         headers: { 'Content-Type': 'application/json' },
         cache: 'no-store'
       })
-      
+
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
-      
+
       const result = await response.json()
-      
+
       if (result.success) {
         setQuotes(result.data || [])
       } else {
@@ -69,7 +79,7 @@ export function QuotesManagementRedesigned() {
     const totalValue = quotes
       .filter(q => q.status === 'accepted' && q.estimatedPrice)
       .reduce((sum, q) => sum + parseFloat(q.estimatedPrice || '0'), 0)
-    
+
     return { total, pending, conversion, totalValue }
   }
 
@@ -80,7 +90,7 @@ export function QuotesManagementRedesigned() {
       sent: ['sent'],
       accepted: ['accepted']
     }
-    
+
     return quotes.filter(q => statusMap[status]?.includes(q.status))
   }
 
@@ -123,7 +133,7 @@ export function QuotesManagementRedesigned() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
       })
-      
+
       if (response.ok) {
         showSuccess('Statut mis à jour', 'Succès')
         fetchQuotes()
@@ -231,22 +241,20 @@ export function QuotesManagementRedesigned() {
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
             />
           </div>
-          
+
           <div className="flex items-center gap-2 border border-gray-300 rounded-lg p-1">
-            <button 
+            <button
               onClick={() => setViewMode('kanban')}
-              className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
-                viewMode === 'kanban' ? 'bg-red-600 text-white' : 'text-gray-600 hover:bg-gray-100'
-              }`}
+              className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${viewMode === 'kanban' ? 'bg-red-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+                }`}
             >
               <Grid className="w-4 h-4 inline mr-1" />
               Kanban
             </button>
-            <button 
+            <button
               onClick={() => setViewMode('list')}
-              className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
-                viewMode === 'list' ? 'bg-red-600 text-white' : 'text-gray-600 hover:bg-gray-100'
-              }`}
+              className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${viewMode === 'list' ? 'bg-red-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+                }`}
             >
               <List className="w-4 h-4 inline mr-1" />
               Liste
@@ -293,7 +301,7 @@ export function QuotesManagementRedesigned() {
                           <MoreVertical className="w-4 h-4" />
                         </button>
                       </div>
-                      
+
                       <div className="flex items-center gap-2 text-xs text-gray-600 mb-3">
                         <span className="flex items-center gap-1">
                           {getServiceIcon(quote.service)} {quote.service}
@@ -352,7 +360,7 @@ export function QuotesManagementRedesigned() {
                           <MoreVertical className="w-4 h-4" />
                         </button>
                       </div>
-                      
+
                       <div className="flex items-center gap-2 text-xs text-gray-600 mb-3">
                         <span className="flex items-center gap-1">
                           {getServiceIcon(quote.service)} Transfert AIBD (VW)
@@ -417,7 +425,7 @@ export function QuotesManagementRedesigned() {
                           <MoreVertical className="w-4 h-4" />
                         </button>
                       </div>
-                      
+
                       <div className="flex items-center gap-2 text-xs text-gray-600 mb-3">
                         <span className="flex items-center gap-1">
                           {getServiceIcon(quote.service)} Circuit Touristique
@@ -482,7 +490,7 @@ export function QuotesManagementRedesigned() {
                           <MoreVertical className="w-4 h-4" />
                         </button>
                       </div>
-                      
+
                       <div className="flex items-center gap-2 text-xs text-gray-600 mb-3">
                         <span className="flex items-center gap-1">
                           {getServiceIcon(quote.service)} Navette Event
@@ -532,7 +540,7 @@ export function QuotesManagementRedesigned() {
               <tbody className="divide-y divide-gray-200">
                 {quotes.map((quote) => {
                   const statusBadge = getStatusBadge(quote.status)
-                  
+
                   return (
                     <tr key={quote.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4">

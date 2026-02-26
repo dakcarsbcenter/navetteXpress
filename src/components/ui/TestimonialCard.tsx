@@ -31,95 +31,130 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
     return Array.from({ length: 5 }, (_, index) => (
       <svg
         key={index}
-        className={cn(
-          "w-4 h-4",
-          index < rating 
-            ? "text-yellow-400 fill-current" 
-            : "text-gray-300 dark:text-gray-600"
-        )}
-        fill="currentColor"
+        className="w-3.5 h-3.5"
+        fill="none"
         viewBox="0 0 20 20"
       >
-        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+        <path
+          d="M10 1l2.39 4.84L18 6.76l-4 3.9.94 5.5L10 13.77 5.06 16.16 6 10.66 2 6.76l5.61-.92L10 1z"
+          fill={index < rating ? 'var(--color-gold)' : 'rgba(201,168,76,0.2)'}
+        />
       </svg>
     ));
   };
 
+  const initiales = name.split(' ').map(n => n[0]).join('').toUpperCase();
+
   return (
-    <Card 
-      variant="testimonial" 
-      className={cn("h-full", className)}
+    <div
+      className={cn(
+        "break-inside-avoid rounded-2xl p-6 mb-5 transition-all duration-300 group select-none",
+        "bg-[var(--color-obsidian)] border border-[rgba(255,255,255,0.07)]",
+        "hover:border-[rgba(201,168,76,0.2)] hover:shadow-[0_8px_40px_rgba(0,0,0,0.3)] hover:-translate-y-0.5",
+        className
+      )}
     >
-      <CardContent className="p-6">
-        {/* Header */}
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-linear-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg overflow-hidden">
-              {avatar ? (
-                <div className="relative w-full h-full">
-                  <Image 
-                    src={avatar} 
-                    alt={name}
-                    fill
-                    className="object-cover"
-                    sizes="48px"
-                  />
-                </div>
-              ) : (
-                name.charAt(0).toUpperCase()
-              )}
+      {/* EN-TÊTE : Avatar + Nom + Badge service */}
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex items-center gap-3">
+          {/* Avatar */}
+          {avatar ? (
+            <div
+              className="w-11 h-11 rounded-full overflow-hidden shrink-0 ring-2 ring-[rgba(201,168,76,0.3)]"
+            >
+              <Image
+                src={avatar}
+                alt={name}
+                width={44}
+                height={44}
+                className="w-full h-full object-cover"
+              />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h4 className="font-semibold text-slate-900 dark:text-white">
-                  {name}
-                </h4>
-                {isVerified && (
-                  <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                )}
-              </div>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                {role}
-              </p>
+          ) : (
+            <div
+              className="w-11 h-11 rounded-full flex items-center justify-center text-sm font-semibold shrink-0"
+              style={{
+                backgroundColor: 'rgba(201,168,76,0.15)',
+                color: 'var(--color-gold)',
+                fontFamily: 'var(--font-body)',
+              }}
+            >
+              {initiales}
             </div>
-          </div>
-          
-          <div className="text-right">
-            <div className="flex items-center gap-1 mb-1">
-              {renderStars(rating)}
-            </div>
-            {date && (
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                {date}
-              </p>
-            )}
+          )}
+
+          <div>
+            <p
+              className="font-medium text-sm"
+              style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-body)' }}
+            >
+              {name}
+            </p>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
+              {role}
+            </p>
           </div>
         </div>
-        
-        {/* Service Badge */}
+
+        {/* Badge service */}
         {service && (
-          <div className="mb-4">
-            <Badge variant="info" size="sm">
-              {service}
-            </Badge>
+          <span className="text-[10px] px-2.5 py-1 rounded-full shrink-0"
+            style={{
+              backgroundColor: 'rgba(201,168,76,0.1)',
+              color: 'var(--color-gold)',
+              border: '1px solid rgba(201,168,76,0.2)',
+              fontFamily: 'var(--font-body)',
+              letterSpacing: '0.05em',
+            }}>
+            {service}
+          </span>
+        )}
+      </div>
+
+      {/* ÉTOILES */}
+      <div className="flex items-center gap-0.5 mb-3">
+        {renderStars(rating)}
+        <span className="ml-1.5 text-xs font-mono" style={{ color: 'var(--color-text-muted)' }}>
+          {rating}/5
+        </span>
+      </div>
+
+      {/* GUILLEMET DÉCORATIF */}
+      <p className="text-5xl leading-none mb-1 -mt-1 select-none"
+        style={{ color: 'rgba(201,168,76,0.2)', fontFamily: 'var(--font-display)', lineHeight: 1 }}>
+        &quot;
+      </p>
+
+      {/* TEXTE DU TÉMOIGNAGE */}
+      <blockquote
+        className="text-sm sm:text-base leading-relaxed"
+        style={{
+          color: 'var(--color-text-secondary)',
+          fontFamily: 'var(--font-display)',
+          fontStyle: 'italic',
+          fontWeight: 300,
+        }}
+      >
+        {content}
+      </blockquote>
+
+      {/* PIED : Date + Vérifié */}
+      <div className="flex items-center justify-between mt-5 pt-4"
+        style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+        <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+          {date}
+        </p>
+        {isVerified && (
+          <div className="flex items-center gap-1.5 text-xs"
+            style={{ color: 'var(--color-success)' }}>
+            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <span>Avis vérifié</span>
           </div>
         )}
-        
-        {/* Content */}
-        <blockquote className="text-slate-700 dark:text-slate-300 leading-relaxed">
-          &quot;{content}&quot;
-        </blockquote>
-        
-        {/* Quote Icon */}
-        <div className="mt-4 flex justify-end">
-          <svg className="w-6 h-6 text-blue-200 dark:text-blue-800" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V8a1 1 0 112 0v2.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
-          </svg>
-        </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 

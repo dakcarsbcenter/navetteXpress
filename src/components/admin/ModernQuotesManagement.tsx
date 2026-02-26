@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { X, Calendar, Clock, MapPin, Users, Car, Phone, Mail, FileText } from "lucide-react"
+import { X, Calendar, Clock, MapPin, Users, Car, Phone, Envelope as Mail, FileText } from "@phosphor-icons/react"
 import { format } from "date-fns"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { useNotification } from "@/hooks/useNotification"
@@ -34,7 +34,7 @@ const availableServices = [
 // Helper functions pour les dates sécurisées
 const formatDateSafely = (dateValue: any, formatString: string = 'dd/MM/yyyy à HH:mm'): string => {
   if (!dateValue) return 'Non spécifiée'
-  
+
   try {
     const date = new Date(dateValue)
     if (isNaN(date.getTime())) {
@@ -49,7 +49,7 @@ const formatDateSafely = (dateValue: any, formatString: string = 'dd/MM/yyyy à 
 
 const toLocaleDateStringSafely = (dateValue: any): string => {
   if (!dateValue) return 'Non spécifiée'
-  
+
   try {
     const date = new Date(dateValue)
     if (isNaN(date.getTime())) {
@@ -75,7 +75,7 @@ export function ModernQuotesManagement() {
   const [showQuoteDetailsModal, setShowQuoteDetailsModal] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { notifications, showSuccess, showError, removeNotification } = useNotification()
-  
+
   const [newQuoteForm, setNewQuoteForm] = useState({
     customerName: '',
     customerEmail: '',
@@ -110,7 +110,7 @@ export function ModernQuotesManagement() {
     status: '',
     estimatedPrice: ''
   })
-  
+
   const [filters, setFilters] = useState({
     status: '',
     dateRange: '',
@@ -132,7 +132,7 @@ export function ModernQuotesManagement() {
   const fetchQuotes = async () => {
     try {
       console.log('🔍 Chargement des devis...')
-      
+
       const response = await fetch('/api/quotes', {
         method: 'GET',
         headers: {
@@ -140,17 +140,17 @@ export function ModernQuotesManagement() {
         },
         cache: 'no-store'
       })
-      
+
       console.log('📡 Response status:', response.status)
-      
+
       if (!response.ok) {
         console.error('❌ HTTP Error:', response.status, response.statusText)
         throw new Error(`HTTP error! status: ${response.status}`)
       }
-      
+
       const result = await response.json()
       console.log('📊 API Response:', result)
-      
+
       if (result.success) {
         console.log('✅ Devis chargés:', result.data.length, 'devis trouvés')
         setQuotes(result.data)
@@ -180,7 +180,7 @@ export function ModernQuotesManagement() {
     }
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase()
-      filtered = filtered.filter(quote => 
+      filtered = filtered.filter(quote =>
         quote.customerName.toLowerCase().includes(searchTerm) ||
         quote.customerEmail.toLowerCase().includes(searchTerm) ||
         quote.service.toLowerCase().includes(searchTerm) ||
@@ -192,20 +192,20 @@ export function ModernQuotesManagement() {
     filtered.sort((a, b) => {
       let aValue = a[filters.sortBy as keyof Quote] as string
       let bValue = b[filters.sortBy as keyof Quote] as string
-      
+
       if (filters.sortBy === 'createdAt' || filters.sortBy === 'updatedAt' || filters.sortBy === 'preferredDate') {
         // Gestion sécurisée des dates pour le tri
         const aDate = aValue ? new Date(aValue) : new Date(0)
         const bDate = bValue ? new Date(bValue) : new Date(0)
-        
+
         // Vérifier si les dates sont valides
         const aTime = isNaN(aDate.getTime()) ? 0 : aDate.getTime()
         const bTime = isNaN(bDate.getTime()) ? 0 : bDate.getTime()
-        
+
         aValue = aTime.toString()
         bValue = bTime.toString()
       }
-      
+
       const result = aValue.localeCompare(bValue)
       return filters.sortOrder === 'asc' ? result : -result
     })
@@ -215,43 +215,43 @@ export function ModernQuotesManagement() {
 
   const getStatusConfig = (status: string) => {
     const configs = {
-      pending: { 
-        label: 'En attente', 
+      pending: {
+        label: 'En attente',
         color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
         icon: '⏳',
         dot: 'bg-yellow-500',
         step: 1
       },
-      in_progress: { 
-        label: 'En cours', 
+      in_progress: {
+        label: 'En cours',
         color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
         icon: '🔄',
         dot: 'bg-blue-500',
         step: 2
       },
-      sent: { 
-        label: 'Envoyé', 
+      sent: {
+        label: 'Envoyé',
         color: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
         icon: '📤',
         dot: 'bg-purple-500',
         step: 3
       },
-      accepted: { 
-        label: 'Accepté', 
+      accepted: {
+        label: 'Accepté',
         color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
         icon: '✅',
         dot: 'bg-green-500',
         step: 4
       },
-      rejected: { 
-        label: 'Rejeté', 
+      rejected: {
+        label: 'Rejeté',
         color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
         icon: '❌',
         dot: 'bg-red-500',
         step: 4
       },
-      expired: { 
-        label: 'Expiré', 
+      expired: {
+        label: 'Expiré',
         color: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300',
         icon: '⏰',
         dot: 'bg-gray-500',
@@ -280,7 +280,7 @@ export function ModernQuotesManagement() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
       })
-      
+
       if (response.ok) {
         await fetchQuotes()
         showSuccess(
@@ -305,7 +305,7 @@ export function ModernQuotesManagement() {
   const handleServiceChange = (serviceId: string, checked: boolean) => {
     setNewQuoteForm(prev => ({
       ...prev,
-      services: checked 
+      services: checked
         ? [...prev.services, serviceId]
         : prev.services.filter(s => s !== serviceId)
     }))
@@ -321,7 +321,7 @@ export function ModernQuotesManagement() {
   const handleEditServiceChange = (serviceId: string, checked: boolean) => {
     setEditQuoteForm(prev => ({
       ...prev,
-      services: checked 
+      services: checked
         ? [...prev.services, serviceId]
         : prev.services.filter(s => s !== serviceId)
     }))
@@ -375,7 +375,7 @@ export function ModernQuotesManagement() {
     // Préparer les données pour l'édition
     const services = quote.service ? quote.service.split(', ') : []
     const message = quote.message || ''
-    
+
     // Parser le message pour extraire les informations
     const numberOfPeopleMatch = message.match(/pour (\d+) personne/)
     const durationMatch = message.match(/Durée: (\d+) jour/)
@@ -410,7 +410,7 @@ export function ModernQuotesManagement() {
       status: quote.status || 'pending',
       estimatedPrice: quote.estimatedPrice || ''
     })
-    
+
     setSelectedQuote(quote)
     setShowEditQuoteModal(true)
   }
@@ -422,17 +422,17 @@ export function ModernQuotesManagement() {
 
   const handleSubmitNewQuote = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     // Validation des champs requis
-    if (!newQuoteForm.customerName || !newQuoteForm.customerEmail || 
-        !newQuoteForm.numberOfPeople || newQuoteForm.services.length === 0 ||
-        !newQuoteForm.duration || !newQuoteForm.departure || !newQuoteForm.destination) {
+    if (!newQuoteForm.customerName || !newQuoteForm.customerEmail ||
+      !newQuoteForm.numberOfPeople || newQuoteForm.services.length === 0 ||
+      !newQuoteForm.duration || !newQuoteForm.departure || !newQuoteForm.destination) {
       showError('Veuillez remplir tous les champs requis', 'Formulaire incomplet')
       return
     }
 
     setIsSubmitting(true)
-    
+
     try {
       const quoteData = {
         customerName: newQuoteForm.customerName,
@@ -463,14 +463,14 @@ Description: ${newQuoteForm.description}`,
       })
 
       console.log('📨 Réponse API status:', response.status)
-      
+
       if (response.ok) {
         const result = await response.json()
         console.log('✅ Devis créé avec succès:', result)
-        
+
         console.log('🔄 Rechargement de la liste des devis...')
         await fetchQuotes()
-        
+
         setShowNewQuoteModal(false)
         resetForm()
         showSuccess('Devis créé avec succès', 'Création réussie')
@@ -489,17 +489,17 @@ Description: ${newQuoteForm.description}`,
 
   const handleEditQuote = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     // Validation des champs requis
-    if (!editQuoteForm.customerName || !editQuoteForm.customerEmail || 
-        !editQuoteForm.numberOfPeople || editQuoteForm.services.length === 0 ||
-        !editQuoteForm.duration || !editQuoteForm.departure || !editQuoteForm.destination) {
+    if (!editQuoteForm.customerName || !editQuoteForm.customerEmail ||
+      !editQuoteForm.numberOfPeople || editQuoteForm.services.length === 0 ||
+      !editQuoteForm.duration || !editQuoteForm.departure || !editQuoteForm.destination) {
       showError('Veuillez remplir tous les champs requis', 'Formulaire incomplet')
       return
     }
 
     setIsSubmitting(true)
-    
+
     try {
       const quoteData = {
         customerName: editQuoteForm.customerName,
@@ -530,14 +530,14 @@ Description: ${editQuoteForm.description}`,
       })
 
       console.log('📨 Réponse API status:', response.status)
-      
+
       if (response.ok) {
         const result = await response.json()
         console.log('✅ Devis modifié avec succès:', result)
-        
+
         console.log('🔄 Rechargement de la liste des devis...')
         await fetchQuotes()
-        
+
         setShowEditQuoteModal(false)
         resetEditForm()
         setSelectedQuote(null)
@@ -559,7 +559,7 @@ Description: ${editQuoteForm.description}`,
     if (!selectedQuote) return
 
     setIsSubmitting(true)
-    
+
     try {
       console.log('🗑️ Suppression du devis ID:', selectedQuote.id)
 
@@ -568,13 +568,13 @@ Description: ${editQuoteForm.description}`,
       })
 
       console.log('📨 Réponse API status:', response.status)
-      
+
       if (response.ok) {
         console.log('✅ Devis supprimé avec succès')
-        
+
         console.log('🔄 Rechargement de la liste des devis...')
         await fetchQuotes()
-        
+
         setShowDeleteConfirm(false)
         setSelectedQuote(null)
         showSuccess('Devis supprimé avec succès', 'Suppression réussie')
@@ -602,7 +602,7 @@ Description: ${editQuoteForm.description}`,
     const totalValue = quotes
       .filter(q => q.status === 'accepted' && q.estimatedPrice)
       .reduce((sum, q) => sum + parseFloat(q.estimatedPrice!), 0)
-    
+
     return { total, pending, inProgress, sent, accepted, rejected, conversionRate, totalValue }
   }
 
@@ -613,7 +613,7 @@ Description: ${editQuoteForm.description}`,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
       })
-      
+
       if (response.ok) {
         await fetchQuotes()
         showSuccess(`Statut mis à jour vers "${getStatusConfig(newStatus).label}"`, 'Mise à jour réussie')
@@ -629,7 +629,7 @@ Description: ${editQuoteForm.description}`,
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       })
-      
+
       if (response.ok) {
         await fetchQuotes()
         showSuccess('Le devis a été envoyé par email au client', 'Envoi réussi')
@@ -686,7 +686,7 @@ Description: ${editQuoteForm.description}`,
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-purple-50/30 to-slate-50 dark:from-slate-900 dark:via-purple-900/10 dark:to-slate-900">
       <div className="p-3 sm:p-6 max-w-7xl mx-auto">
-        
+
         {/* Header avec statistiques */}
         <div className="mb-4 sm:mb-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
@@ -698,7 +698,7 @@ Description: ${editQuoteForm.description}`,
                 Suivez le workflow complet de vos demandes de devis
               </p>
             </div>
-            
+
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full lg:w-auto">
               {/* Actions en masse */}
               {selectedQuotes.length > 0 && (
@@ -716,11 +716,10 @@ Description: ${editQuoteForm.description}`,
               <div className="hidden sm:flex bg-white dark:bg-slate-800 rounded-lg p-1 shadow-sm border border-slate-200 dark:border-slate-700">
                 <button
                   onClick={() => setViewMode('workflow')}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    viewMode === 'workflow'
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${viewMode === 'workflow'
                       ? 'bg-purple-600 text-white shadow-sm'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
+                    }`}
                 >
                   <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -729,11 +728,10 @@ Description: ${editQuoteForm.description}`,
                 </button>
                 <button
                   onClick={() => setViewMode('cards')}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    viewMode === 'cards'
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${viewMode === 'cards'
                       ? 'bg-purple-600 text-white shadow-sm'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
+                    }`}
                 >
                   <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -742,11 +740,10 @@ Description: ${editQuoteForm.description}`,
                 </button>
                 <button
                   onClick={() => setViewMode('table')}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    viewMode === 'table'
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${viewMode === 'table'
                       ? 'bg-purple-600 text-white shadow-sm'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
+                    }`}
                 >
                   <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -754,9 +751,9 @@ Description: ${editQuoteForm.description}`,
                   Tableau
                 </button>
               </div>
-              
+
               {/* Bouton Nouveau devis */}
-              <button 
+              <button
                 onClick={() => setShowNewQuoteModal(true)}
                 className="w-full sm:w-auto bg-linear-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl text-sm sm:text-base font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
               >
@@ -780,7 +777,7 @@ Description: ${editQuoteForm.description}`,
                 <div className="text-xl sm:text-2xl">📊</div>
               </div>
             </div>
-            
+
             <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
@@ -790,7 +787,7 @@ Description: ${editQuoteForm.description}`,
                 <div className="text-xl sm:text-2xl">⏳</div>
               </div>
             </div>
-            
+
             <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
@@ -800,7 +797,7 @@ Description: ${editQuoteForm.description}`,
                 <div className="text-xl sm:text-2xl">🔄</div>
               </div>
             </div>
-            
+
             <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
@@ -810,7 +807,7 @@ Description: ${editQuoteForm.description}`,
                 <div className="text-xl sm:text-2xl">📤</div>
               </div>
             </div>
-            
+
             <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
@@ -820,7 +817,7 @@ Description: ${editQuoteForm.description}`,
                 <div className="text-xl sm:text-2xl">✅</div>
               </div>
             </div>
-            
+
             <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
@@ -830,7 +827,7 @@ Description: ${editQuoteForm.description}`,
                 <div className="text-xl sm:text-2xl">📈</div>
               </div>
             </div>
-            
+
             <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700 col-span-2 md:col-span-1">
               <div className="flex items-center justify-between">
                 <div className="min-w-0 flex-1">
@@ -921,7 +918,7 @@ Description: ${editQuoteForm.description}`,
             <p className="text-sm text-slate-600 dark:text-slate-400">
               {filteredQuotes.length} devis trouvé{filteredQuotes.length > 1 ? 's' : ''}
             </p>
-            
+
             {Object.values(filters).some(v => v !== '' && v !== 'createdAt' && v !== 'desc') && (
               <button
                 onClick={() => setFilters({ status: '', dateRange: '', search: '', priceRange: '', service: '', sortBy: 'createdAt', sortOrder: 'desc' })}
@@ -942,13 +939,13 @@ Description: ${editQuoteForm.description}`,
               { status: 'sent', title: 'En attente client' },
               { status: 'accepted', title: 'Finalisés' }
             ].map(({ status, title }) => {
-              const statusQuotes = filteredQuotes.filter(q => 
-                status === 'accepted' 
+              const statusQuotes = filteredQuotes.filter(q =>
+                status === 'accepted'
                   ? ['accepted', 'rejected', 'expired'].includes(q.status)
                   : q.status === status
               )
               const statusConfig = getStatusConfig(status)
-              
+
               return (
                 <div key={status} className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
                   <div className="p-4 border-b border-slate-200 dark:border-slate-700">
@@ -964,14 +961,14 @@ Description: ${editQuoteForm.description}`,
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className="p-4 space-y-3 max-h-96 overflow-y-auto">
                     {statusQuotes.map((quote) => {
                       const quoteStatusConfig = getStatusConfig(quote.status)
-                      
+
                       return (
-                        <div 
-                          key={quote.id} 
+                        <div
+                          key={quote.id}
                           className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-3 border border-slate-200 dark:border-slate-600 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-500 transition-all cursor-pointer"
                           onClick={() => openQuoteDetails(quote)}
                         >
@@ -983,15 +980,15 @@ Description: ${editQuoteForm.description}`,
                               {quoteStatusConfig.icon}
                             </span>
                           </div>
-                          
+
                           <div className="text-xs text-slate-600 dark:text-slate-400 mb-2">
                             🛎️ {quote.service}
                           </div>
-                          
+
                           <div className="text-xs text-slate-600 dark:text-slate-400 mb-2 truncate">
                             💬 {quote.message.substring(0, 50)}...
                           </div>
-                          
+
                           <div className="flex items-center justify-between text-xs">
                             <span className="text-slate-500 dark:text-slate-400">
                               {toLocaleDateStringSafely(quote.createdAt)}
@@ -1002,7 +999,7 @@ Description: ${editQuoteForm.description}`,
                               </span>
                             )}
                           </div>
-                          
+
                           {/* Actions rapides */}
                           <div className="mt-2 flex gap-1">
                             {quote.status === 'pending' && (
@@ -1031,7 +1028,7 @@ Description: ${editQuoteForm.description}`,
                         </div>
                       )
                     })}
-                    
+
                     {statusQuotes.length === 0 && (
                       <div className="text-center py-8 text-slate-400 dark:text-slate-500">
                         <div className="text-3xl mb-2">{statusConfig.icon}</div>
@@ -1135,7 +1132,7 @@ Description: ${editQuoteForm.description}`,
                         Envoyer
                       </button>
                     )}
-                    
+
                     {/* Boutons CRUD */}
                     <button
                       onClick={() => openEditModal(quote)}
@@ -1155,7 +1152,7 @@ Description: ${editQuoteForm.description}`,
                       </svg>
                       Suppr
                     </button>
-                    
+
                     <span className="text-xs text-slate-500 dark:text-slate-400 self-center ml-auto">
                       {toLocaleDateStringSafely(quote.createdAt)}
                     </span>
@@ -1284,7 +1281,7 @@ Description: ${editQuoteForm.description}`,
                               Envoyer
                             </button>
                           )}
-                          
+
                           {/* Boutons CRUD */}
                           <button
                             onClick={() => openEditModal(quote)}
@@ -1352,7 +1349,7 @@ Description: ${editQuoteForm.description}`,
                   ✕
                 </button>
               </div>
-              
+
               <form onSubmit={handleSubmitNewQuote} className="space-y-6">
                 {/* Section Informations client */}
                 <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
@@ -1362,7 +1359,7 @@ Description: ${editQuoteForm.description}`,
                     </svg>
                     Informations client
                   </h4>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
@@ -1377,7 +1374,7 @@ Description: ${editQuoteForm.description}`,
                         required
                       />
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                         Email *
@@ -1391,7 +1388,7 @@ Description: ${editQuoteForm.description}`,
                         required
                       />
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                         Téléphone
@@ -1404,7 +1401,7 @@ Description: ${editQuoteForm.description}`,
                         placeholder="+33 X XX XX XX XX"
                       />
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                         Nombre de personnes *
@@ -1431,7 +1428,7 @@ Description: ${editQuoteForm.description}`,
                     </svg>
                     Services demandés
                   </h4>
-                  
+
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
@@ -1454,7 +1451,7 @@ Description: ${editQuoteForm.description}`,
                         ))}
                       </div>
                     </div>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
@@ -1471,7 +1468,7 @@ Description: ${editQuoteForm.description}`,
                           required
                         />
                       </div>
-                      
+
                       <div>
                         <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                           Date de début souhaitée
@@ -1496,7 +1493,7 @@ Description: ${editQuoteForm.description}`,
                     </svg>
                     Itinéraire
                   </h4>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
@@ -1511,7 +1508,7 @@ Description: ${editQuoteForm.description}`,
                         required
                       />
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                         Destination *
@@ -1536,7 +1533,7 @@ Description: ${editQuoteForm.description}`,
                     </svg>
                     Bagages et paiement
                   </h4>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
@@ -1569,12 +1566,12 @@ Description: ${editQuoteForm.description}`,
                         </div>
                       </div>
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                         Mode de paiement souhaité
                       </label>
-                      <select 
+                      <select
                         value={newQuoteForm.paymentMode}
                         onChange={(e) => handleFormChange('paymentMode', e.target.value)}
                         className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-slate-700 dark:text-white"
@@ -1599,7 +1596,7 @@ Description: ${editQuoteForm.description}`,
                     </svg>
                     Prix estimé
                   </h4>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
@@ -1636,7 +1633,7 @@ Description: ${editQuoteForm.description}`,
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Section Description */}
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
@@ -1650,7 +1647,7 @@ Description: ${editQuoteForm.description}`,
                     placeholder="Informations supplémentaires, exigences particulières, remarques..."
                   />
                 </div>
-                
+
                 <div className="flex gap-3 pt-4">
                   <button
                     type="button"
@@ -1694,7 +1691,7 @@ Description: ${editQuoteForm.description}`,
                   </svg>
                 </button>
               </div>
-              
+
               <form onSubmit={handleEditQuote} className="space-y-6">
                 {/* Section Informations client */}
                 <div>
@@ -1704,7 +1701,7 @@ Description: ${editQuoteForm.description}`,
                     </svg>
                     Informations client
                   </h3>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
@@ -1733,7 +1730,7 @@ Description: ${editQuoteForm.description}`,
                       />
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <div>
                       <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
@@ -1773,7 +1770,7 @@ Description: ${editQuoteForm.description}`,
                     </svg>
                     Services demandés *
                   </h4>
-                  
+
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {availableServices.map((service) => (
                       <label key={service.id} className="flex items-center gap-2 p-3 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-600 hover:border-purple-300 dark:hover:border-purple-500 cursor-pointer">
@@ -1800,7 +1797,7 @@ Description: ${editQuoteForm.description}`,
                     </svg>
                     Planning et durée *
                   </h4>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
@@ -1847,7 +1844,7 @@ Description: ${editQuoteForm.description}`,
                     </svg>
                     Itinéraire *
                   </h4>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
@@ -1886,7 +1883,7 @@ Description: ${editQuoteForm.description}`,
                     </svg>
                     Bagages et paiement
                   </h4>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
@@ -1919,12 +1916,12 @@ Description: ${editQuoteForm.description}`,
                         </div>
                       </div>
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                         Mode de paiement souhaité
                       </label>
-                      <select 
+                      <select
                         value={editQuoteForm.paymentMode}
                         onChange={(e) => handleEditFormChange('paymentMode', e.target.value)}
                         className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-slate-700 dark:text-white"
@@ -1949,7 +1946,7 @@ Description: ${editQuoteForm.description}`,
                     </svg>
                     Prix estimé
                   </h4>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
@@ -1995,8 +1992,8 @@ Description: ${editQuoteForm.description}`,
                     </svg>
                     Statut du devis
                   </h4>
-                  
-                  <select 
+
+                  <select
                     value={editQuoteForm.status}
                     onChange={(e) => handleEditFormChange('status', e.target.value)}
                     className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-slate-700 dark:text-white"
@@ -2022,7 +2019,7 @@ Description: ${editQuoteForm.description}`,
                     placeholder="Informations supplémentaires, exigences particulières, remarques..."
                   />
                 </div>
-                
+
                 <div className="flex gap-3 pt-4">
                   <button
                     type="button"
@@ -2069,7 +2066,7 @@ Description: ${editQuoteForm.description}`,
                   </p>
                 </div>
               </div>
-              
+
               <div className="mb-6">
                 <p className="text-slate-700 dark:text-slate-300">
                   Êtes-vous sûr de vouloir supprimer le devis de{' '}
@@ -2084,7 +2081,7 @@ Description: ${editQuoteForm.description}`,
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex gap-3">
                 <button
                   onClick={() => {
@@ -2133,7 +2130,7 @@ Description: ${editQuoteForm.description}`,
                 <h4 className="text-lg font-medium text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">
                   Informations Client
                 </h4>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Nom du client
@@ -2288,14 +2285,13 @@ Description: ${editQuoteForm.description}`,
                     Statut
                   </label>
                   <div className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700">
-                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                      selectedQuote.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                      selectedQuote.status === 'approved' ? 'bg-green-100 text-green-800' :
-                      'bg-red-100 text-red-800'
-                    }`}>
+                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${selectedQuote.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                        selectedQuote.status === 'approved' ? 'bg-green-100 text-green-800' :
+                          'bg-red-100 text-red-800'
+                      }`}>
                       {selectedQuote.status === 'pending' ? 'En attente' :
-                       selectedQuote.status === 'approved' ? 'Approuvé' :
-                       'Rejeté'}
+                        selectedQuote.status === 'approved' ? 'Approuvé' :
+                          'Rejeté'}
                     </span>
                   </div>
                 </div>
@@ -2366,7 +2362,7 @@ Description: ${editQuoteForm.description}`,
                   </button>
                 </>
               )}
-              
+
               <button
                 onClick={() => {
                   // Save admin notes if modified

@@ -3,6 +3,22 @@
 import { useState, useEffect } from "react"
 import { usePermissions } from "@/hooks/usePermissions"
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal"
+import {
+  Star,
+  User,
+  MapPin,
+  Calendar,
+  PencilSimple as Edit2,
+  Trash as Trash2,
+  Plus,
+  MagnifyingGlass as Search,
+  ChatCircleDots as MessageSquare,
+  TrendUp as TrendingUp,
+  XCircle,
+  DotsThree as MoreHorizontal,
+  ArrowRight,
+  Quotes as Quote
+} from "@phosphor-icons/react"
 
 interface Review {
   id: number
@@ -79,7 +95,7 @@ export function ReviewsManagement() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       })
-      
+
       if (response.ok) {
         await fetchReviews()
         setIsModalOpen(false)
@@ -93,14 +109,14 @@ export function ReviewsManagement() {
   const handleUpdateReview = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!editingReview) return
-    
+
     try {
       const response = await fetch(`/api/admin/reviews/${editingReview.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       })
-      
+
       if (response.ok) {
         await fetchReviews()
         setIsModalOpen(false)
@@ -158,188 +174,140 @@ export function ReviewsManagement() {
     setIsModalOpen(true)
   }
 
-  const getRatingStars = (rating: number) => {
-    return '⭐'.repeat(rating) + '☆'.repeat(5 - rating)
-  }
-
-  const getRatingColor = (rating: number) => {
-    if (rating >= 4) return 'text-green-600 dark:text-green-400'
-    if (rating >= 3) return 'text-yellow-600 dark:text-yellow-400'
-    return 'text-red-600 dark:text-red-400'
+  const getRatingSummary = () => {
+    if (reviews.length === 0) return { avg: 0, positive: 0, total: 0 }
+    const total = reviews.length
+    const sum = reviews.reduce((acc, r) => acc + r.rating, 0)
+    const avg = sum / total
+    const positive = reviews.filter(r => r.rating >= 4).length
+    return { avg: avg.toFixed(1), positive, total }
   }
 
   if (isLoading) {
     return (
-      <div className="p-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-6"></div>
-          <div className="space-y-4">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-16 bg-gray-200 dark:bg-gray-700 rounded"></div>
-            ))}
-          </div>
-        </div>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gold"
+          style={{ borderColor: 'var(--color-gold) transparent transparent transparent' }}></div>
       </div>
     )
   }
 
+  const stats = getRatingSummary()
+
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Gestion des avis
-        </h2>
-        <button
-          onClick={openCreateModal}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-        >
-          + Nouvel avis
-        </button>
+    <div className="space-y-6 animate-fadeIn">
+      {/* Header & Stats Cards */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        <div className="lg:col-span-2 p-6 rounded-2xl border border-white/5 flex flex-col justify-between"
+          style={{ backgroundColor: 'var(--color-dash-card)' }}>
+          <div>
+            <h2 className="text-xl font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <MessageSquare size={20} className="text-gold" />
+              Index des Avis
+            </h2>
+            <p className="text-xs text-slate-500 mt-1">Surveillez et gérez les retours d'expérience clients</p>
+          </div>
+
+          <div className="mt-8 flex gap-3">
+            <button
+              onClick={openCreateModal}
+              className="btn-gold flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold shadow-lg shadow-gold/10">
+              <Plus size={16} />
+              Rédiger un Témoignage
+            </button>
+          </div>
+        </div>
+
+        {[
+          { label: 'Note Moyenne', value: stats.avg, color: 'var(--color-gold)', icon: <Star size={18} fill="currentColor" /> },
+          { label: 'Avis Positifs', value: stats.positive, color: '#10B981', icon: <TrendingUp size={18} /> },
+        ].map((stat, i) => (
+          <div key={i} className="p-5 rounded-2xl border border-white/5 flex flex-col items-center justify-center text-center"
+            style={{ backgroundColor: 'var(--color-dash-card)' }}>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3"
+              style={{ backgroundColor: `${stat.color}15`, color: stat.color }}>
+              {stat.icon}
+            </div>
+            <p className="text-[10px] uppercase tracking-widest font-bold text-slate-500 mb-1">{stat.label}</p>
+            <h3 className="text-2xl font-bold text-white font-mono">{stat.value}</h3>
+          </div>
+        ))}
       </div>
 
-      {/* Tableau des avis */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+      {/* Main Registry Card */}
+      <div className="rounded-2xl border border-white/5 overflow-hidden" style={{ backgroundColor: 'var(--color-dash-card)' }}>
+        <div className="p-5 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
+          <h3 className="text-sm font-semibold text-white tracking-wide">Base de Données Avis ({reviews.length})</h3>
+        </div>
+
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-700">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Client
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Trajet
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Note
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Commentaire
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Date
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Actions
-                </th>
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-white/[0.02] border-b border-white/5">
+                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Auteur & Prestation</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-center">Évaluation</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Commentaire</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody>
               {reviews.map((review) => (
-                <tr key={review.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div>
-                      <div className="text-sm font-medium text-gray-900 dark:text-white">
-                        {review.booking?.customerName || 'Client inconnu'}
-                      </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {review.booking?.customerEmail || ''}
-                      </div>
-                    </div>
-                  </td>
+                <tr key={review.id} className="hover:bg-white/[0.02] transition-colors border-b border-white/[0.03] group">
                   <td className="px-6 py-4">
-                    <div className="text-sm text-gray-900 dark:text-white">
-                      <div className="font-medium">📍 {review.booking?.pickupAddress || 'Adresse inconnue'}</div>
-                      <div className="text-gray-500 dark:text-gray-400">↓</div>
-                      <div className="font-medium">🎯 {review.booking?.dropoffAddress || 'Destination inconnue'}</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
-                        {review.booking?.scheduledDateTime ? 
-                          new Date(review.booking.scheduledDateTime).toLocaleDateString('fr-FR') : 
-                          'Date inconnue'
-                        }
+                    <div className="flex gap-4">
+                      <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 font-bold text-xs shrink-0">
+                        {review.booking?.customerName?.[0] || '?'}
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className={`text-lg font-bold ${getRatingColor(review.rating)}`}>
-                      {getRatingStars(review.rating)}
-                    </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                      {review.rating}/5
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-gray-900 dark:text-white max-w-xs">
-                      {review.comment ? (
-                        <div className="truncate" title={review.comment}>
-                          {review.comment}
+                      <div>
+                        <p className="text-sm font-semibold text-white group-hover:text-gold transition-colors">{review.booking?.customerName || 'Anonyme'}</p>
+                        <div className="flex items-center gap-1.5 mt-1 text-[10px] text-slate-500">
+                          <MapPin size={10} />
+                          <span className="truncate max-w-[150px]">{review.booking?.dropoffAddress || 'Trajet inconnu'}</span>
                         </div>
-                      ) : (
-                        <span className="text-gray-500 dark:text-gray-400 italic">
-                          Aucun commentaire
-                        </span>
-                      )}
+                      </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {new Date(review.createdAt).toLocaleDateString('fr-FR')}
+                  <td className="px-6 py-4">
+                    <div className="flex flex-col items-center">
+                      <div className="flex gap-0.5">
+                        {[1, 2, 3, 4, 5].map((s) => (
+                          <Star key={s} size={12}
+                            className={s <= review.rating ? "text-gold" : "text-white/5"}
+                            fill={s <= review.rating ? "currentColor" : "none"} />
+                        ))}
+                      </div>
+                      <span className="text-[10px] font-mono font-bold text-slate-500 mt-1">{review.rating}/5.0</span>
+                    </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="relative">
+                  <td className="px-6 py-4">
+                    <div className="relative max-w-sm">
+                      <Quote size={12} className="absolute -left-2 -top-2 text-white/5" />
+                      <p className="text-xs text-slate-400 italic line-clamp-2 leading-relaxed pl-2 underline decoration-white/5 underline-offset-4">
+                        {review.comment || "Aucun commentaire laissé par le client."}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2 mt-2 text-[9px] font-bold text-slate-600 uppercase tracking-tighter">
+                      <Calendar size={10} />
+                      {new Date(review.createdAt).toLocaleDateString('fr-FR')}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
                       <button
-                        onClick={() => setOpenDropdownId(openDropdownId === review.id ? null : review.id)}
-                        className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        onClick={() => openEditModal(review)}
+                        className="p-1.5 rounded-lg hover:bg-white/5 text-slate-400 hover:text-white transition-colors"
+                        title="Éditer"
                       >
-                        Actions
-                        <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
+                        <Edit2 size={16} />
                       </button>
-
-                      {/* Menu déroulant */}
-                      {openDropdownId === review.id && (
-                        <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 z-50">
-                          <div className="py-1">
-                            {/* Option Modifier */}
-                            <button
-                              onClick={() => {
-                                openEditModal(review);
-                                setOpenDropdownId(null);
-                              }}
-                              className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 w-full text-left transition-colors duration-200"
-                            >
-                              <span className="flex items-center gap-2">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                </svg>
-                                Modifier
-                              </span>
-                            </button>
-
-                            {/* Séparateur et Option Supprimer - Seulement si autorisé */}
-                            {canDelete('reviews') && (
-                              <>
-                                <div className="border-t border-gray-100 dark:border-gray-600"></div>
-
-                                <button
-                                  onClick={() => {
-                                    openDeleteConfirm(review.id);
-                                    setOpenDropdownId(null);
-                                  }}
-                                  className="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-700 dark:hover:text-red-300 w-full text-left transition-colors duration-200"
-                                >
-                                  <span className="flex items-center gap-2">
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                    Supprimer
-                                  </span>
-                                </button>
-                              </>
-                            )}
-                          </div>
-                          {/* Modal de confirmation de suppression */}
-                          <ConfirmationModal
-                            isOpen={deleteConfirmOpen}
-                            onClose={() => { setDeleteConfirmOpen(false); setDeleteTargetId(null) }}
-                            title="Supprimer l’avis"
-                            message="Cette action est irréversible. L’avis sera définitivement supprimé. Voulez-vous continuer ?"
-                            type="error"
-                            confirmText="Supprimer définitivement"
-                            onConfirm={handleDeleteReview}
-                            showCancel={true}
-                            cancelText="Annuler"
-                          />
-                        </div>
+                      {canDelete('reviews') && (
+                        <button
+                          onClick={() => openDeleteConfirm(review.id)}
+                          className="p-1.5 rounded-lg hover:bg-red-500/10 text-slate-400 hover:text-red-500 transition-colors"
+                          title="Supprimer"
+                        >
+                          <Trash2 size={16} />
+                        </button>
                       )}
                     </div>
                   </td>
@@ -347,81 +315,97 @@ export function ReviewsManagement() {
               ))}
             </tbody>
           </table>
+
+          {reviews.length === 0 && (
+            <div className="py-20 text-center">
+              <p className="text-slate-500 italic text-sm">Aucun avis enregistré pour le moment.</p>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Modal de création/édition */}
+      {/* Modal Redesign */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              {editingReview ? 'Modifier l\'avis' : 'Nouvel avis'}
-            </h3>
-            
-            <form onSubmit={editingReview ? handleUpdateReview : handleCreateReview} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  ID de la réservation
-                </label>
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[110] p-4 animate-fadeIn">
+          <div className="w-full max-w-md rounded-3xl border border-white/10 p-8 shadow-2xl relative animate-slideUp"
+            style={{ backgroundColor: 'var(--color-obsidian)' }}>
+
+            <div className="flex justify-between items-start mb-8 text-center w-full block">
+              <div className="w-full">
+                <h3 className="text-xl font-bold text-white uppercase tracking-[0.2em] mb-2">{editingReview ? 'Éditer' : 'Enregistrer'} Retour</h3>
+                <div className="h-1 w-12 bg-gold mx-auto"></div>
+              </div>
+              <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 text-slate-500 hover:text-white transition-colors">
+                <XCircle size={24} />
+              </button>
+            </div>
+
+            <form onSubmit={editingReview ? handleUpdateReview : handleCreateReview} className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-[10px] uppercase font-bold text-slate-500 tracking-widest ml-1">Référence Réservation</label>
                 <input
                   type="number"
                   value={formData.bookingId}
-                  onChange={(e) => setFormData({...formData, bookingId: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                  required
+                  onChange={(e) => setFormData({ ...formData, bookingId: e.target.value })}
+                  className="w-full px-4 py-3 text-sm rounded-xl border border-white/10 outline-none focus:border-gold/50 transition-all bg-white/5 text-white"
+                  placeholder="ID de la course..."
                 />
               </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Note (1-5)
-                </label>
-                <select
-                  value={formData.rating}
-                  onChange={(e) => setFormData({...formData, rating: parseInt(e.target.value)})}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                  required
-                >
-                  <option value={1}>⭐ (1/5)</option>
-                  <option value={2}>⭐⭐ (2/5)</option>
-                  <option value={3}>⭐⭐⭐ (3/5)</option>
-                  <option value={4}>⭐⭐⭐⭐ (4/5)</option>
-                  <option value={5}>⭐⭐⭐⭐⭐ (5/5)</option>
-                </select>
+
+              <div className="space-y-2">
+                <label className="text-[10px] uppercase font-bold text-slate-500 tracking-widest ml-1">Index de Satisfaction</label>
+                <div className="flex items-center gap-4 bg-white/5 p-4 rounded-2xl border border-white/5">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, rating: star })}
+                      className="transition-transform active:scale-90"
+                    >
+                      <Star size={24}
+                        className={star <= formData.rating ? "text-gold" : "text-slate-700"}
+                        fill={star <= formData.rating ? "currentColor" : "none"} />
+                    </button>
+                  ))}
+                  <span className="ml-auto font-mono text-gold font-bold">{formData.rating}/5</span>
+                </div>
               </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Commentaire
-                </label>
+
+              <div className="space-y-2">
+                <label className="text-[10px] uppercase font-bold text-slate-500 tracking-widest ml-1">Témoignage Client</label>
                 <textarea
                   value={formData.comment}
-                  onChange={(e) => setFormData({...formData, comment: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
                   rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                  placeholder="Laissez un commentaire sur le service..."
+                  className="w-full px-4 py-4 text-sm rounded-xl border border-white/10 outline-none focus:border-gold/50 transition-all bg-white/5 text-white resize-none leading-relaxed"
+                  placeholder="Saisissez les impressions du passager..."
                 />
               </div>
-              
-              <div className="flex justify-end space-x-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-                >
-                  Annuler
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium"
-                >
-                  {editingReview ? 'Mettre à jour' : 'Créer'}
-                </button>
-              </div>
+
+              <button
+                type="submit"
+                className="w-full btn-gold py-4 rounded-2xl font-bold text-sm hover:scale-[1.02] transition-all active:scale-95 shadow-lg shadow-gold/20 flex items-center justify-center gap-2"
+              >
+                {editingReview ? 'Mettre à jour' : 'Confirmer le Retour'}
+                <ArrowRight size={18} />
+              </button>
             </form>
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Overlay */}
+      <ConfirmationModal
+        isOpen={deleteConfirmOpen}
+        onClose={() => { setDeleteConfirmOpen(false); setDeleteTargetId(null) }}
+        title="Archivage Définitif"
+        message="Voulez-vous vraiment supprimer cet avis ? Cette action est irréversible et modifiera les statistiques globales."
+        type="error"
+        confirmText="Supprimer"
+        onConfirm={handleDeleteReview}
+        showCancel={true}
+        cancelText="Annuler"
+      />
     </div>
   )
 }

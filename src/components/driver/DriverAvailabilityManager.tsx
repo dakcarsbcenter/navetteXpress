@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { Check, X, PencilSimple, Trash, Plus } from "@phosphor-icons/react"
 
 interface Availability {
   id: number
@@ -46,7 +47,7 @@ export function DriverAvailabilityManager() {
     try {
       const response = await fetch('/api/driver/availability')
       const data = await response.json()
-      
+
       if (data.success) {
         setAvailabilities(data.data)
       }
@@ -60,12 +61,12 @@ export function DriverAvailabilityManager() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     try {
-      const url = editingId 
+      const url = editingId
         ? '/api/driver/availability'
         : '/api/driver/availability'
-      
+
       const method = editingId ? 'PUT' : 'POST'
       const body = editingId
         ? { ...formData, id: editingId }
@@ -158,14 +159,14 @@ export function DriverAvailabilityManager() {
           onClick={() => { resetForm(); setShowAddModal(true) }}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
         >
-          + Ajouter une disponibilité
+          <Plus size={18} weight="bold" /> Ajouter une disponibilité
         </button>
       </div>
 
       {/* Disponibilités récurrentes */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
         <h3 className="text-lg font-semibold mb-4">Disponibilités hebdomadaires</h3>
-        
+
         {recurringAvailabilities.length === 0 ? (
           <p className="text-gray-500 text-center py-4">
             Aucune disponibilité récurrente définie
@@ -174,7 +175,7 @@ export function DriverAvailabilityManager() {
           <div className="space-y-2">
             {DAY_NAMES.map((dayName, dayIndex) => {
               const dayAvailabilities = recurringAvailabilities.filter(a => a.dayOfWeek === dayIndex)
-              
+
               if (dayAvailabilities.length === 0) return null
 
               return (
@@ -185,7 +186,7 @@ export function DriverAvailabilityManager() {
                       <div key={avail.id} className="flex items-center justify-between text-sm">
                         <div className="flex items-center gap-2">
                           <span className={avail.isAvailable ? 'text-green-600' : 'text-red-600'}>
-                            {avail.isAvailable ? '✓' : '✗'}
+                            {avail.isAvailable ? <Check size={16} weight="bold" /> : <X size={16} weight="bold" />}
                           </span>
                           <span className="text-gray-700 dark:text-gray-300">
                             {avail.startTime} - {avail.endTime}
@@ -199,13 +200,13 @@ export function DriverAvailabilityManager() {
                             onClick={() => handleEdit(avail)}
                             className="text-blue-600 hover:text-blue-800"
                           >
-                            ✏️
+                            <PencilSimple size={18} weight="bold" />
                           </button>
                           <button
                             onClick={() => handleDelete(avail.id)}
                             className="text-red-600 hover:text-red-800"
                           >
-                            🗑️
+                            <Trash size={18} weight="bold" />
                           </button>
                         </div>
                       </div>
@@ -222,13 +223,13 @@ export function DriverAvailabilityManager() {
       {specificAvailabilities.length > 0 && (
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold mb-4">Disponibilités/Indisponibilités spécifiques</h3>
-          
+
           <div className="space-y-2">
             {specificAvailabilities.map(avail => (
               <div key={avail.id} className="flex items-center justify-between border-b pb-2">
                 <div className="flex items-center gap-3">
                   <span className={avail.isAvailable ? 'text-green-600' : 'text-red-600'}>
-                    {avail.isAvailable ? '✓ Disponible' : '✗ Indisponible'}
+                    {avail.isAvailable ? <><Check size={16} weight="bold" /> Disponible</> : <><X size={16} weight="bold" /> Indisponible</>}
                   </span>
                   <span className="font-medium">
                     {avail.specificDate && new Date(avail.specificDate).toLocaleDateString('fr-FR')}
@@ -245,13 +246,13 @@ export function DriverAvailabilityManager() {
                     onClick={() => handleEdit(avail)}
                     className="text-blue-600 hover:text-blue-800"
                   >
-                    ✏️
+                    <PencilSimple size={18} weight="bold" />
                   </button>
                   <button
                     onClick={() => handleDelete(avail.id)}
                     className="text-red-600 hover:text-red-800"
                   >
-                    🗑️
+                    <Trash size={18} weight="bold" />
                   </button>
                 </div>
               </div>
@@ -267,7 +268,7 @@ export function DriverAvailabilityManager() {
             <h3 className="text-xl font-bold mb-4">
               {editingId ? 'Modifier' : 'Ajouter'} une disponibilité
             </h3>
-            
+
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Type de disponibilité */}
               <div>
@@ -374,16 +375,14 @@ export function DriverAvailabilityManager() {
       {/* Toast notifications */}
       {toastMessage && (
         <div className="fixed bottom-4 right-4 z-50 animate-in slide-in-from-right-full">
-          <div className={`p-4 rounded-lg shadow-lg max-w-md ${
-            toastMessage.type === 'error'
-              ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
-              : 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
-          }`}>
-            <p className={`text-sm font-medium ${
-              toastMessage.type === 'error'
-                ? 'text-red-900 dark:text-red-200'
-                : 'text-green-900 dark:text-green-200'
+          <div className={`p-4 rounded-lg shadow-lg max-w-md ${toastMessage.type === 'error'
+            ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
+            : 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
             }`}>
+            <p className={`text-sm font-medium ${toastMessage.type === 'error'
+              ? 'text-red-900 dark:text-red-200'
+              : 'text-green-900 dark:text-green-200'
+              }`}>
               {toastMessage.message}
             </p>
           </div>

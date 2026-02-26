@@ -5,6 +5,17 @@ import Image from "next/image"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { FilterBar } from "@/components/ui/FilterBar"
 import { useNotification } from "@/hooks/useNotification"
+import {
+  ClipboardText,
+  CheckCircle,
+  X,
+  Car,
+  Flag,
+  CurrencyDollar,
+  MapPin,
+  ArrowDown,
+  CaretDown
+} from "@phosphor-icons/react"
 
 interface DriverBooking {
   id: number
@@ -83,7 +94,7 @@ export function DriverBookings() {
     // Filtre par recherche
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase()
-      filtered = filtered.filter(booking => 
+      filtered = filtered.filter(booking =>
         booking.customerName.toLowerCase().includes(searchTerm) ||
         booking.customerEmail.toLowerCase().includes(searchTerm) ||
         booking.pickupAddress.toLowerCase().includes(searchTerm) ||
@@ -128,7 +139,7 @@ export function DriverBookings() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action })
       })
-      
+
       if (response.ok) {
         await fetchBookings()
         const actionText = action === 'approve' ? 'approuvée' : 'rejetée'
@@ -158,14 +169,14 @@ export function DriverBookings() {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'assigned': return '📋'
-      case 'approved': return '✅'
-      case 'rejected': return '❌'
-      case 'confirmed': return '✅'
-      case 'in_progress': return '🚗'
-      case 'completed': return '🏁'
-      case 'cancelled': return '❌'
-      default: return '❓'
+      case 'assigned': return <ClipboardText size={16} weight="bold" />
+      case 'approved': return <CheckCircle size={16} weight="fill" />
+      case 'rejected': return <X size={16} weight="bold" />
+      case 'confirmed': return <CheckCircle size={16} weight="fill" />
+      case 'in_progress': return <Car size={16} weight="bold" />
+      case 'completed': return <Flag size={16} weight="bold" />
+      case 'cancelled': return <X size={16} weight="bold" />
+      default: return null
     }
   }
 
@@ -199,12 +210,12 @@ export function DriverBookings() {
             label: 'Statut',
             options: [
               { value: 'all', label: 'Tous les statuts' },
-              { value: 'assigned', label: '📋 Assignées', count: getFilterCounts().statusCounts.assigned },
-              { value: 'approved', label: '✅ Approuvées', count: getFilterCounts().statusCounts.approved },
-              { value: 'rejected', label: '❌ Rejetées', count: getFilterCounts().statusCounts.rejected },
-              { value: 'confirmed', label: '✅ Confirmées', count: getFilterCounts().statusCounts.confirmed },
-              { value: 'in_progress', label: '🚗 En cours', count: getFilterCounts().statusCounts.in_progress },
-              { value: 'completed', label: '🏁 Terminées', count: getFilterCounts().statusCounts.completed }
+              { value: 'assigned', label: <span className="flex items-center gap-2"><ClipboardText size={14} weight="bold" /> Assignées</span>, count: getFilterCounts().statusCounts.assigned },
+              { value: 'approved', label: <span className="flex items-center gap-2"><CheckCircle size={14} weight="fill" /> Approuvées</span>, count: getFilterCounts().statusCounts.approved },
+              { value: 'rejected', label: <span className="flex items-center gap-2"><X size={14} weight="bold" /> Rejetées</span>, count: getFilterCounts().statusCounts.rejected },
+              { value: 'confirmed', label: <span className="flex items-center gap-2"><CheckCircle size={14} weight="fill" /> Confirmées</span>, count: getFilterCounts().statusCounts.confirmed },
+              { value: 'in_progress', label: <span className="flex items-center gap-2"><Car size={14} weight="bold" /> En cours</span>, count: getFilterCounts().statusCounts.in_progress },
+              { value: 'completed', label: <span className="flex items-center gap-2"><Flag size={14} weight="bold" /> Terminées</span>, count: getFilterCounts().statusCounts.completed }
             ],
             value: filters.status,
             onChange: (value) => handleFilterChange('status', value)
@@ -268,9 +279,15 @@ export function DriverBookings() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-sm text-gray-900 dark:text-white">
-                      <div className="font-medium">📍 {booking.pickupAddress}</div>
-                      <div className="text-gray-500 dark:text-gray-400">↓</div>
-                      <div className="font-medium">🎯 {booking.dropoffAddress}</div>
+                      <div className="font-medium flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+                        <MapPin size={14} weight="fill" /> {booking.pickupAddress}
+                      </div>
+                      <div className="text-gray-400 ml-4 my-1">
+                        <ArrowDown size={12} weight="bold" />
+                      </div>
+                      <div className="font-medium flex items-center gap-2 text-blue-600 dark:text-blue-400">
+                        <MapPin size={14} weight="fill" /> {booking.dropoffAddress}
+                      </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
@@ -295,7 +312,7 @@ export function DriverBookings() {
                         </div>
                       ) : null}
                       <div className={`h-8 w-8 rounded bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-gray-600 dark:text-gray-300 text-xs font-medium ${booking.vehicle?.photo ? 'hidden' : ''}`}>
-                        🚗
+                        <Car size={16} weight="fill" />
                       </div>
                     </div>
                   </td>
@@ -306,8 +323,8 @@ export function DriverBookings() {
                         {booking.vehicle?.plateNumber}
                       </div>
                       {booking.price && (
-                        <div className="text-green-600 dark:text-green-400 font-medium">
-                          💰 {booking.price} FCFA
+                        <div className="text-green-600 dark:text-green-400 font-medium flex items-center gap-1 mt-1">
+                          <CurrencyDollar size={14} weight="bold" /> {booking.price.toLocaleString()} FCFA
                         </div>
                       )}
                     </div>
@@ -332,9 +349,7 @@ export function DriverBookings() {
                           <option value="reject" className="text-red-600">Rejeter</option>
                         </select>
                         <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
+                          <CaretDown size={14} weight="bold" className="text-gray-400" />
                         </div>
                       </div>
                     ) : (

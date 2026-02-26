@@ -1,556 +1,625 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Navigation } from "@/components/navigation";
-import { SignedIn, SignedOut } from "@/components/auth/auth-components";
+import { Footer } from "@/components/footer";
+import { trackPageView } from "@/lib/analytics";
+import { motion } from "framer-motion";
 import Link from "next/link";
-import Image from "next/image";
-import { Calendar, Users, Phone, ChevronDown, Clock, CheckCircle, Shield } from "lucide-react";
-import { BookNowIcon, PrivateDriverIcon } from "@/components/icons/custom-icons";
+import { ArrowRight, UserCircle, Van, Star, MapPin, Phone, EnvelopeSimple, FacebookLogo, InstagramLogo, AirplaneTakeoff, Clock, Car, ShieldCheck, CheckCircle, CaretRight, ChatCircle, Question } from "@phosphor-icons/react";
 
-// Fonction pour récupérer les véhicules depuis l'API
-async function getVehicles() {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/vehicles`, {
-      next: { revalidate: 3600 }, // Cache pendant 1 heure
-    });
-    
-    if (!res.ok) {
-      console.error('Erreur lors de la récupération des véhicules');
-      return [];
+export default function Home() {
+  const [vehicles, setVehicles] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    trackPageView('home');
+    const fetchVehicles = async () => {
+      try {
+        const response = await fetch('/api/vehicles');
+        const data = await response.json();
+        setVehicles(data.data || []);
+      } catch (error) {
+        console.error("Error fetching vehicles:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchVehicles();
+  }, []);
+
+  const services = [
+    {
+      title: "Transfert Aéroport",
+      description: "Accueil personnalisé à l'AIBD avec pancarte. Suivi des vols en temps réel pour une ponctualité absolue.",
+      icon: <AirplaneTakeoff className="text-gold" size={32} weight="thin" />,
+      link: "/services#airport"
+    },
+    {
+      title: "Chauffeur Privé",
+      description: "Mise à disposition pour vos rendez-vous d'affaires ou escapades touristiques avec un service de conciergerie.",
+      icon: <UserCircle className="text-gold" size={32} weight="thin" />,
+      link: "/services#private"
+    },
+    {
+      title: "Transport de Groupe",
+      description: "Vans et minibus premium pour vos délégations, mariages ou sorties en famille en toute élégance.",
+      icon: <Van className="text-gold" size={32} weight="thin" />,
+      link: "/services#group"
     }
-    
-    const data = await res.json();
-    return data.success ? data.data : [];
-  } catch (error) {
-    console.error('Erreur:', error);
-    return [];
-  }
-}
+  ];
 
-// Fonction helper pour mapper le type de véhicule vers une catégorie
-function getVehicleCategory(vehicleType: string, customCategory?: string | null) {
-  if (customCategory) return customCategory;
-  
-  const categoryMap: Record<string, string> = {
-    'sedan': 'Berline Affaires',
-    'luxury': 'Berline de Luxe',
-    'suv': 'SUV VIP',
-    'van': 'Van Premium',
-    'bus': 'Bus',
-  };
-  
-  return categoryMap[vehicleType] || 'Véhicule';
-}
+  const features = [
+    {
+      title: "Discrétion Absolue",
+      description: "Nos chauffeurs sont formés au protocole et garantissent une totale confidentialité.",
+      icon: <ShieldCheck className="text-gold" weight="thin" />
+    },
+    {
+      title: "Flotte de Prestige",
+      description: "Véhicules récents, climatisés et équipés (Wi-Fi, rafraîchissements).",
+      icon: <Star className="text-gold" weight="thin" />
+    },
+    {
+      title: "Prix Garantis",
+      description: "Tarification transparente fixée à l'avance, sans surprise ni surcoût.",
+      icon: <Star className="text-gold" weight="thin" />
+    }
+  ];
 
-export default async function Home() {
-  // Récupérer les véhicules et prendre seulement les 3 premiers
-  const dbVehicles = await getVehicles();
-  const featuredVehicles = dbVehicles.slice(0, 3).map((vehicle: {
-    id: number;
-    make: string;
-    model: string;
-    year: number;
-    vehicleType: string;
-    category: string | null;
-    capacity: number;
-    photo: string | null;
-    description: string | null;
-  }) => ({
-    id: vehicle.id,
-    name: `${vehicle.make} ${vehicle.model}`,
-    category: getVehicleCategory(vehicle.vehicleType, vehicle.category),
-    capacity: vehicle.capacity,
-    image: vehicle.photo || 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&h=600&fit=crop&crop=center',
-    description: vehicle.description || `${vehicle.make} ${vehicle.model} ${vehicle.year} - Véhicule moderne et confortable.`,
-  }));
-  
+  const featuredVehicles = [
+    {
+      name: "Mercedes Classe S",
+      category: "Luxe Suprême",
+      price: "45,000",
+      image: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=800",
+      passengers: 3,
+      luggage: 2
+    },
+    {
+      name: "Range Rover Vogue",
+      category: "Prestige SUV",
+      price: "55,000",
+      image: "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=800",
+      passengers: 4,
+      luggage: 3
+    },
+    {
+      name: "Mercedes Classe V",
+      category: "Business Van",
+      price: "65,000",
+      image: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=800",
+      passengers: 7,
+      luggage: 6
+    }
+  ];
+
+  const testimonials = [
+    {
+      name: "Jean-Pierre Durand",
+      role: "Sénateur",
+      content: "Une ponctualité exemplaire et un service d'une discrétion absolue. La référence à Dakar.",
+      rating: 5
+    },
+    {
+      name: "Fatou Sow",
+      role: "CEO TechAfrica",
+      content: "Le confort des véhicules et la courtoisie des chauffeurs font toute la différence pour mes déplacements d'affaires.",
+      rating: 5
+    }
+  ];
+
+  const faqs = [
+    { q: "Comment se passe l'accueil à l'aéroport ?", a: "Votre chauffeur vous attend à la sortie des passagers avec une pancarte à votre nom. Il suit votre vol en temps réel." },
+    { q: "Quels sont les modes de paiement ?", a: "Vous pouvez payer en ligne lors de la réservation ou directement au chauffeur en espèces ou par carte bancaire." },
+    { q: "Puis-je annuler ma réservation ?", a: "Oui, l'annulation est gratuite jusqu'à 24h avant le début de la prestation." }
+  ];
+
   return (
-    <div className="font-sans min-h-screen">
+    <div className="min-h-screen bg-midnight font-body selection:bg-gold/30 selection:text-gold selection:text-white overflow-hidden">
       <Navigation variant="transparent" />
 
       <main>
-      {/* Hero Section - Nouvelle Palette Bordeaux */}
-      <section className="relative flex items-center justify-center bg-linear-to-br from-slate-800 via-slate-700 to-slate-600 dark:from-[#1A1A1A] dark:via-[#2A2A2A] dark:to-[#1A1A1A] pt-32 sm:pt-40 md:pt-44 px-4 sm:px-6 pb-12 sm:pb-16 md:pb-20">
-        {/* Subtle background pattern avec accent Or Vieilli */}
-        <div className="absolute inset-0 opacity-5" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23E5C16C' fill-opacity='0.1'%3E%3Ccircle cx='20' cy='20' r='1'/%3E%3C/g%3E%3C/svg%3E")`
-        }}></div>
+        {/* Hero Section */}
+        <section className="relative min-h-[95vh] flex items-center pt-20 overflow-hidden">
+          <div className="absolute inset-0 z-0">
+            <div className="absolute inset-0 bg-midnight"></div>
+            <motion.div
+              animate={{
+                scale: [1, 1.2, 1],
+                rotate: [0, 90, 180, 270, 360],
+                opacity: [0.3, 0.5, 0.3]
+              }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              className="absolute -top-1/2 -left-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(201,168,76,0.15),transparent_70%)]"
+            ></motion.div>
+            <motion.div
+              animate={{
+                scale: [1, 1.1, 1],
+                opacity: [0.2, 0.4, 0.2]
+              }}
+              transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(167,59,60,0.1),transparent_70%)]"
+            ></motion.div>
+            <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]"></div>
+          </div>
 
-        <div className="relative z-10 max-w-6xl mx-auto text-center">
-          <div className="space-y-4 sm:space-y-5 md:space-y-6">
-            {/* Main headline - cleaner typography */}
-            <div className="space-y-2 sm:space-y-3">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight px-2">
-                Voyagez en toute <span className="text-[#E5C16C]">Sérénité et Confort</span>
-                <span className="block text-2xl sm:text-3xl md:text-4xl lg:text-4xl text-white/90 mt-1.5 sm:mt-2">
-                  Votre Chauffeur Privé à Dakar
-                </span>
-              </h1>
-              <p className="text-sm sm:text-base md:text-lg text-white/80 max-w-3xl mx-auto leading-relaxed px-4">
-                Transfert aéroport AIBD, chauffeur privé à Dakar et mise à disposition. 
-                Service premium 24/7 avec des chauffeurs professionnels certifiés.
-              </p>
-            </div>
-            
-            {/* Trust indicators */}
-            <div className="flex flex-wrap justify-center gap-2 sm:gap-3 md:gap-4 text-xs sm:text-sm text-slate-400 px-4 pt-1">
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-400 rounded-full shrink-0"></div>
-                <span className="whitespace-nowrap">Transfert AIBD 24h/24</span>
-              </div>
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-400 rounded-full shrink-0"></div>
-                <span className="whitespace-nowrap">Chauffeurs pros</span>
-              </div>
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-400 rounded-full shrink-0"></div>
-                <span className="whitespace-nowrap">Prix compétitifs</span>
-              </div>
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-400 rounded-full shrink-0"></div>
-                <span className="whitespace-nowrap">Réservation instant.</span>
-              </div>
-            </div>
-            
-            {/* Primary CTA - More prominent */}
-            <div className="pt-3 sm:pt-4 md:pt-5 px-4">
-              <SignedOut>
-                <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 justify-center items-center max-w-2xl mx-auto">
-                  <Link href="/reservation" className="w-full sm:flex-1">
-                    <button className="w-full bg-[#A73B3C] hover:bg-[#8B3032] text-white px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl font-semibold text-base sm:text-lg transition-all duration-200 shadow-xl hover:shadow-2xl flex items-center justify-center gap-2 sm:gap-3 group">
-                      <BookNowIcon size={20} color="white" className="group-hover:scale-110 transition-transform shrink-0" />
-                      <span>Planifier mon voyage</span>
-                    </button>
-                  </Link>
-                  <Link href="/quote-request" className="w-full sm:flex-1">
-                    <div className="w-full bg-[#E5C16C] hover:bg-[#D4B060] text-[#1A1A1A] px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl font-semibold text-base sm:text-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2 sm:gap-3 cursor-pointer group">
-                      <span>Demander un Devis</span>
-                    </div>
-                  </Link>
+          <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+              <div className="space-y-8">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/10 border border-gold/20 text-gold text-xs font-bold tracking-widest uppercase"
+                >
+                  <span className="w-2 h-2 rounded-full bg-gold animate-pulse"></span>
+                  L'Excellence à Dakar
+                </motion.div>
+
+                <div className="space-y-4">
+                  <motion.h1
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-5xl md:text-7xl xl:text-8xl text-white font-display leading-[1.1] tracking-tight"
+                  >
+                    L'Art de la <br />
+                    <span className="text-transparent bg-clip-text bg-linear-to-r from-gold via-white to-gold bg-[length:200%_auto] animate-shimmer">
+                      Mobilité Privée
+                    </span>
+                  </motion.h1>
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="text-text-secondary text-lg md:text-xl max-w-xl leading-relaxed"
+                  >
+                    Expérimentez le prestige avec Navette Xpress. Transferts aéroport AIBD et chauffeurs privés haut de gamme disponibles 24h/24 au Sénégal.
+                  </motion.p>
                 </div>
-              </SignedOut>
 
-              <SignedIn>
-                <Link href="/reservation" className="inline-block w-full sm:w-auto">
-                  <button className="w-full sm:w-auto bg-[#A73B3C] hover:bg-[#8B3032] text-white px-8 sm:px-12 py-3 sm:py-3.5 rounded-xl font-semibold text-lg sm:text-xl transition-all duration-200 shadow-xl hover:shadow-2xl flex items-center justify-center gap-2 sm:gap-3 mx-auto group">
-                    <BookNowIcon size={20} color="white" className="group-hover:scale-110 transition-transform shrink-0" />
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="flex flex-col sm:flex-row gap-4 pt-4"
+                >
+                  <Link
+                    href="/reservation"
+                    className="px-8 py-4 bg-gold text-midnight rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all hover:scale-105 shadow-[0_0_30px_rgba(201,168,76,0.3)] hover:shadow-[0_0_50px_rgba(201,168,76,0.5)]"
+                  >
                     <span>Réserver Maintenant</span>
-                  </button>
-                </Link>
-              </SignedIn>
-            </div>
+                    <ArrowRight size={20} weight="regular" />
+                  </Link>
+                  <Link
+                    href="/services"
+                    className="px-8 py-4 bg-white/5 backdrop-blur-md border border-white/10 text-white rounded-xl font-bold text-lg hover:bg-white/10 transition-all text-center"
+                  >
+                    Nos Services
+                  </Link>
+                </motion.div>
 
-            {/* Quick stats */}
-            <div className="grid grid-cols-3 gap-4 sm:gap-6 max-w-2xl mx-auto pt-4 sm:pt-5 md:pt-6 px-4">
-              <div className="text-center">
-                <div className="text-xl sm:text-2xl font-bold text-white">1000+</div>
-                <div className="text-xs sm:text-sm text-slate-400 mt-0.5 sm:mt-1">Transferts AIBD</div>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.6 }}
+                  className="flex items-center gap-8 pt-6"
+                >
+                  <div>
+                    <div className="text-white font-bold text-2xl font-mono">15k+</div>
+                    <div className="text-text-muted text-xs uppercase tracking-widest mt-1">Voyages</div>
+                  </div>
+                  <div className="h-8 w-px bg-white/10"></div>
+                  <div>
+                    <div className="text-white font-bold text-2xl font-mono">4.9/5</div>
+                    <div className="text-text-muted text-xs uppercase tracking-widest mt-1">Note Client</div>
+                  </div>
+                  <div className="h-8 w-px bg-white/10"></div>
+                  <div>
+                    <div className="text-white font-bold text-2xl font-mono">24/7</div>
+                    <div className="text-text-muted text-xs uppercase tracking-widest mt-1">Support</div>
+                  </div>
+                </motion.div>
               </div>
-              <div className="text-center">
-                <div className="text-xl sm:text-2xl font-bold text-white">24/7</div>
-                <div className="text-xs sm:text-sm text-slate-400 mt-0.5 sm:mt-1">Disponible</div>
-              </div>
-              <div className="text-center">
-                <div className="text-xl sm:text-2xl font-bold text-white">4.9/5</div>
-                <div className="text-xs sm:text-sm text-slate-400 mt-0.5 sm:mt-1">Satisfaction</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* How to Book Section - 3 Steps */}
-      <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-[#FAFAFA] dark:bg-[#F5F5F5]/5">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-10 sm:mb-12 md:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1A1A1A] dark:text-[#FAFAFA] mb-3 sm:mb-4">
-              Réserver votre trajet en 3 étapes simples
-            </h2>
-            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-              Processus simple et rapide - Confirmation immédiate par email et SMS
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Step 1 */}
-            <div className="text-center p-8 bg-white dark:bg-[#252525] rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-              <div className="w-16 h-16 bg-[#A73B3C] rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-2xl font-bold text-white">1</span>
-              </div>
-              <h3 className="text-xl font-semibold text-[#1A1A1A] dark:text-[#FAFAFA] mb-3">
-                Planifiez & Devis
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Entrez votre destination et obtenez un prix instantané via le widget de réservation.
-              </p>
-            </div>
-
-            {/* Step 2 */}
-            <div className="text-center p-8 bg-white dark:bg-[#252525] rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-              <div className="w-16 h-16 bg-[#A73B3C] rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-2xl font-bold text-white">2</span>
-              </div>
-              <h3 className="text-xl font-semibold text-[#1A1A1A] dark:text-[#FAFAFA] mb-3">
-                Confirmation Sécurisée
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Recevez votre confirmation par email/SMS avec les détails de votre chauffeur et véhicule.
-              </p>
-            </div>
-
-            {/* Step 3 */}
-            <div className="text-center p-8 bg-white dark:bg-[#252525] rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-              <div className="w-16 h-16 bg-[#A73B3C] rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-2xl font-bold text-white">3</span>
-              </div>
-              <h3 className="text-xl font-semibold text-[#1A1A1A] dark:text-[#FAFAFA] mb-3">
-                Voyagez Sereinement
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Votre chauffeur vous attend, votre confort et votre sécurité sont notre priorité absolue.
-              </p>
-            </div>
-          </div>
-
-          {/* CTA Button */}
-          <div className="text-center mt-10 sm:mt-12">
-            <Link
-              href="/reservation"
-              className="inline-flex items-center gap-2 bg-[#A73B3C] hover:bg-[#8B3032] text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl"
-            >
-              <Calendar className="w-5 h-5" />
-              Réserver Maintenant
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Services Section - Simplified */}
-      <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-white dark:bg-[#1A1A1A]">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-10 sm:mb-12 md:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1A1A1A] dark:text-[#FAFAFA] mb-3 sm:mb-4 px-2">
-              Pourquoi Choisir Navette Xpress ?
-            </h2>
-            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto px-4">
-              Service premium de transport avec chauffeurs professionnels. Votre confort et sécurité sont notre priorité.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Card 1: Suivi des Vols */}
-            <div className="text-center p-6 bg-white dark:bg-[#252525] rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-              <div className="flex justify-center mb-4">
-                <svg className="w-16 h-16 text-[#A73B3C]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-[#1A1A1A] dark:text-[#FAFAFA] mb-3">
-                Suivi des Vols en Temps Réel
-              </h3>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                Votre chauffeur ajuste son heure d&apos;arrivée en fonction du statut de votre vol. Pas de frais d&apos;attente imprévus.
-              </p>
-            </div>
-
-            {/* Card 2: Accueil Personnalisé */}
-            <div className="text-center p-6 bg-white dark:bg-[#252525] rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-              <div className="flex justify-center mb-4">
-                <svg className="w-16 h-16 text-[#A73B3C]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                  <circle cx="8.5" cy="7" r="4"/>
-                  <line x1="17" y1="11" x2="23" y2="11"/>
-                  <line x1="20" y1="8" x2="20" y2="14"/>
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-[#1A1A1A] dark:text-[#FAFAFA] mb-3">
-                Accueil Personnalisé AIBD
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Votre chauffeur vous attend à la sortie avec une pancarte à votre nom pour une prise en charge immédiate.
-              </p>
-            </div>
-
-            {/* Card 3: Prix Fixes */}
-            <div className="text-center p-6 bg-white dark:bg-[#252525] rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-              <div className="flex justify-center mb-4">
-                <svg className="w-16 h-16 text-[#A73B3C]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M13 2H6a2 2 0 0 0-2 2v7.586a2 2 0 0 0 .586 1.414l8.414 8.414a2 2 0 0 0 2.828 0l5.414-5.414a2 2 0 0 0 0-2.828L14.414 2.586A2 2 0 0 0 13 2z"/>
-                  <path d="M7 8h.01"/>
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-[#1A1A1A] dark:text-[#FAFAFA] mb-3">
-                Prix Fixes et Compétitifs
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Le prix est confirmé à la réservation. Aucun compteur, aucune mauvaise surprise, même en cas de trafic.
-              </p>
-            </div>
-
-            {/* Card 4: Véhicules de Luxe */}
-            <div className="text-center p-6 bg-white dark:bg-[#252525] rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-              <div className="flex justify-center mb-4">
-                <svg className="w-16 h-16 text-[#A73B3C]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M17 19H7a4 4 0 0 1-4-4V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v8a4 4 0 0 1-4 4z"/>
-                  <circle cx="7" cy="16" r="2"/>
-                  <circle cx="17" cy="16" r="2"/>
-                  <path d="M10 5v4h4V5"/>
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-[#1A1A1A] dark:text-[#FAFAFA] mb-3">
-                Véhicules de Luxe Climatisés
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Voyagez dans notre flotte moderne, entretenue selon les plus hauts standards de confort et de sécurité.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Fleet Section */}
-      <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-white dark:bg-[#1A1A1A]">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-10 sm:mb-12 md:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1A1A1A] dark:text-[#FAFAFA] mb-3 sm:mb-4">
-              Découvrez Notre Flotte de Véhicules
-            </h2>
-            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-              Nous vous garantissons un voyage en toute élégance et sécurité. Nos véhicules sont récents et équipés du WiFi et de la climatisation.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {featuredVehicles.length > 0 ? (
-              featuredVehicles.map((vehicle: {
-                id: number;
-                name: string;
-                category: string;
-                capacity: number;
-                image: string;
-                description: string;
-              }) => (
-                <div key={vehicle.id} className="bg-white dark:bg-[#252525] rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
-                  <div className="relative h-48 bg-[#1A1A1A] dark:bg-[#0A0A0A]">
-                    <Image
-                      src={vehicle.image}
-                      alt={vehicle.name}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1, ease: "easeOut" }}
+                className="hidden lg:block relative"
+              >
+                <div className="relative z-10 p-2 rounded-[2.5rem] bg-linear-to-br from-gold/30 to-transparent border border-white/10 backdrop-blur-2xl">
+                  <div className="rounded-[2rem] overflow-hidden bg-obsidian">
+                    <img
+                      src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=1200"
+                      alt="Luxe Car"
+                      className="w-full h-[500px] object-cover opacity-80 hover:scale-110 transition-transform duration-1000"
                     />
                   </div>
-                  <div className="p-6">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-semibold text-[#A73B3C] uppercase tracking-wide">
-                        {vehicle.category}
-                      </span>
-                      <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
-                        <Users className="w-4 h-4" />
-                        <span className="text-xs">{vehicle.capacity}</span>
+                </div>
+                <div className="absolute -top-10 -right-10 w-40 h-40 bg-gold/20 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-crimson/20 rounded-full blur-3xl"></div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* Services Section */}
+        <section className="py-32 relative bg-midnight overflow-hidden">
+          <div className="max-w-7xl mx-auto px-6 relative z-10">
+            <div className="text-center mb-20">
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="text-4xl md:text-6xl text-white font-display mb-6"
+              >
+                Services d'Exception
+              </motion.h2>
+              <motion.div
+                initial={{ width: 0 }}
+                whileInView={{ width: "80px" }}
+                viewport={{ once: true }}
+                className="h-1 bg-gold mx-auto mb-8"
+              ></motion.div>
+              <p className="text-text-secondary text-lg max-w-2xl mx-auto">
+                Chaque trajet est une expérience unique, conçue pour votre confort et votre sérénité.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {services.map((service, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="group p-8 rounded-3xl bg-surface border border-white/5 hover:border-gold/30 transition-all duration-500"
+                >
+                  <div className="w-16 h-16 rounded-2xl bg-midnight flex items-center justify-center mb-8 border border-white/5 group-hover:bg-gold/10 transition-colors">
+                    {service.icon}
+                  </div>
+                  <h3 className="text-2xl text-white font-display mb-4">{service.title}</h3>
+                  <p className="text-text-muted mb-8 group-hover:text-text-secondary transition-colors">
+                    {service.description}
+                  </p>
+                  <Link href={service.link} className="inline-flex items-center gap-2 text-gold font-bold uppercase tracking-widest text-xs hover:gap-4 transition-all">
+                    Découvrir <CaretRight size={14} weight="light" />
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Why Choose Us */}
+        <section className="py-32 relative bg-obsidian">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+              >
+                <div className="text-gold font-bold uppercase tracking-[0.2em] text-xs mb-6">Pourquoi nous ?</div>
+                <h2 className="text-4xl md:text-6xl text-white font-display mb-12 leading-tight">
+                  L'Engagement pour un Service <span className="italic text-gold">Impeccable</span>
+                </h2>
+                <div className="space-y-10">
+                  {features.map((feature, index) => (
+                    <div key={index} className="flex gap-6">
+                      <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center shrink-0 border border-gold/20">
+                        {feature.icon}
+                      </div>
+                      <div>
+                        <h3 className="text-xl text-white font-display mb-2">{feature.title}</h3>
+                        <p className="text-text-muted leading-relaxed">
+                          {feature.description}
+                        </p>
                       </div>
                     </div>
-                    <h3 className="text-xl font-semibold text-[#1A1A1A] dark:text-[#FAFAFA] mb-3">
-                      {vehicle.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">
-                      {vehicle.description}
-                    </p>
-                    <Link
-                      href="/flotte"
-                      className="inline-block text-[#A73B3C] hover:text-[#8B3032] font-semibold text-sm transition-colors"
-                    >
-                      En savoir plus →
-                    </Link>
-                  </div>
+                  ))}
                 </div>
-              ))
-            ) : (
-              // Fallback si aucun véhicule n'est disponible
-              <>
-                <div className="bg-white dark:bg-[#252525] rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
-                  <div className="bg-[#1A1A1A] dark:bg-[#0A0A0A] h-48 flex items-center justify-center">
-                    <h3 className="text-3xl font-bold text-white">Berline Affaires</h3>
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-semibold text-[#1A1A1A] dark:text-[#FAFAFA] mb-3">
-                      Berline Affaires
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                      Idéale pour les transferts rapides et confortables. Capacité : 3 passagers, 2 bagages.
-                    </p>
-                    <Link
-                      href="/flotte"
-                      className="inline-block text-[#A73B3C] hover:text-[#8B3032] font-semibold text-sm"
-                    >
-                      En savoir plus →
-                    </Link>
-                  </div>
-                </div>
-                <div className="bg-white dark:bg-[#252525] rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
-                  <div className="bg-[#1A1A1A] dark:bg-[#0A0A0A] h-48 flex items-center justify-center">
-                    <h3 className="text-3xl font-bold text-white">Van Premium</h3>
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-semibold text-[#1A1A1A] dark:text-[#FAFAFA] mb-3">
-                      Van Premium
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                      Parfait pour les familles ou les petits groupes. Capacité : 7 passagers, 6 bagages.
-                    </p>
-                    <Link
-                      href="/flotte"
-                      className="inline-block text-[#A73B3C] hover:text-[#8B3032] font-semibold text-sm"
-                    >
-                      En savoir plus →
-                    </Link>
-                  </div>
-                </div>
-                <div className="bg-white dark:bg-[#252525] rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
-                  <div className="bg-[#1A1A1A] dark:bg-[#0A0A0A] h-48 flex items-center justify-center">
-                    <h3 className="text-3xl font-bold text-white">SUV VIP</h3>
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-semibold text-[#1A1A1A] dark:text-[#FAFAFA] mb-3">
-                      SUV VIP
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                      Le choix du luxe et de l&apos;espace. Capacité : 4 passagers, 3 bagages.
-                    </p>
-                    <Link
-                      href="/flotte"
-                      className="inline-block text-[#A73B3C] hover:text-[#8B3032] font-semibold text-sm"
-                    >
-                      En savoir plus →
-                    </Link>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
+              </motion.div>
 
-          {/* CTA Button */}
-          <div className="text-center mt-10 sm:mt-12">
-            <Link
-              href="/flotte"
-              className="inline-flex items-center gap-2 bg-[#A73B3C] hover:bg-[#8B3032] text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl"
-            >
-              Voir Toute la Flotte
-              <ChevronDown className="w-5 h-5 -rotate-90" />
-            </Link>
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                className="relative"
+              >
+                <div className="aspect-square rounded-[3rem] overflow-hidden border border-white/10">
+                  <img
+                    src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&q=80&w=1200"
+                    alt="Driver Service"
+                    className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
+                  />
+                </div>
+                {/* Decorative floating stats */}
+                <div className="absolute -bottom-10 -right-10 p-8 rounded-3xl bg-midnight border border-gold/30 backdrop-blur-xl shadow-2xl">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-full bg-gold flex items-center justify-center text-midnight">
+                      <CheckCircle size={32} weight="thin" />
+                    </div>
+                    <div>
+                      <div className="text-gold font-bold text-3xl font-mono">100%</div>
+                      <div className="text-white text-xs uppercase tracking-widest font-bold">Satisfaction</div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Devenir Partenaire Section */}
-      <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-[#A73B3C]">
-        <div className="max-w-6xl mx-auto text-center">
-          {/* Ligne de séparation décorative */}
-          <div className="flex justify-center mb-6 sm:mb-8">
-            <div className="w-32 sm:w-40 h-0.5 bg-white/30"></div>
+        {/* Process Section - High End Flow */}
+        <section className="py-32 relative bg-midnight">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="text-center mb-20">
+              <h2 className="text-4xl md:text-5xl text-white font-display mb-6">Votre Voyage, en <span className="text-gold italic">3 Étapes</span></h2>
+              <p className="text-text-muted">Simplicité, Rapidité, Excellence.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
+              {/* Connector Line (Desktop) */}
+              <div className="hidden md:block absolute top-1/2 left-0 w-full h-px bg-linear-to-r from-transparent via-gold/20 to-transparent -translate-y-1/2"></div>
+
+              {[
+                { step: "01", title: "Réservation", desc: "Choisissez votre trajet et votre véhicule en quelques clics." },
+                { step: "02", title: "Confirmation", desc: "Recevez votre confirmation instantanée et les détails du chauffeur." },
+                { step: "03", title: "Détente", desc: "Profitez d'un trajet serein dans un confort absolu." }
+              ].map((item, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.2 }}
+                  className="relative z-10 text-center space-y-6"
+                >
+                  <div className="w-20 h-20 rounded-2xl bg-obsidian border border-gold/30 flex items-center justify-center mx-auto text-gold font-display text-4xl shadow-[0_0_20px_rgba(201,168,76,0.1)] group-hover:shadow-[0_0_40px_rgba(201,168,76,0.3)] transition-all">
+                    {item.step}
+                  </div>
+                  <h3 className="text-2xl text-white font-display">{item.title}</h3>
+                  <p className="text-text-muted max-w-[250px] mx-auto">{item.desc}</p>
+                </motion.div>
+              ))}
+            </div>
           </div>
-          
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4">
-            Vous êtes chauffeur professionnel ?
-          </h2>
-          <p className="text-base sm:text-lg text-white/90 mb-8 sm:mb-10 max-w-3xl mx-auto">
-            Rejoignez notre équipe de partenaires et bénéficiez de revenus attractifs et d&apos;horaires flexibles.
-          </p>
-          
-          <Link href="/devenir-partenaire">
-            <button className="bg-white text-[#A73B3C] hover:bg-[#FAFAFA] px-8 sm:px-10 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-200 shadow-lg hover:shadow-xl">
-              Devenir Partenaire
-            </button>
-          </Link>
-        </div>
-      </section>
+        </section>
+
+        {/* Booking Widget Section - The Centerpiece */}
+        <section className="py-32 relative bg-midnight" id="booking">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(167,59,60,0.05),transparent_50%)]"></div>
+          <div className="max-w-7xl mx-auto px-6 relative z-10">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-16 items-center">
+              <div className="lg:col-span-2 space-y-8">
+                <h2 className="text-4xl md:text-6xl text-white font-display leading-[1.1]">
+                  Prêt pour l'Exceptionnel ?
+                </h2>
+                <p className="text-text-secondary text-lg">
+                  Réservez maintenant votre transfert aéroport ou votre trajet privé avec une tarification transparente.
+                </p>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4 text-white">
+                    <CheckCircle className="text-gold" size={20} weight="light" />
+                    <span>Attente gratuite à l'aéroport</span>
+                  </div>
+                  <div className="flex items-center gap-4 text-white">
+                    <CheckCircle className="text-gold" size={20} weight="light" />
+                    <span>Annulation gratuite 24h avant</span>
+                  </div>
+                  <div className="flex items-center gap-4 text-white">
+                    <CheckCircle className="text-gold" size={20} weight="light" />
+                    <span>Paiement sécurisé à bord</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="lg:col-span-3">
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="p-1 rounded-[2.5rem] bg-linear-to-br from-gold/30 to-white/5 shadow-2xl"
+                >
+                  <div className="bg-obsidian/90 backdrop-blur-3xl rounded-[2.4rem] p-8 md:p-12">
+                    <div className="flex gap-4 mb-10 p-1 bg-midnight rounded-xl border border-white/5">
+                      <button className="flex-1 py-3 px-6 rounded-lg bg-gold text-midnight font-bold transition-all">
+                        Transfert AIBD
+                      </button>
+                      <button className="flex-1 py-3 px-6 rounded-lg text-white font-bold hover:bg-white/5 transition-all">
+                        Ville & Régions
+                      </button>
+                    </div>
+
+                    <div className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <label className="text-gold text-xs font-bold uppercase tracking-widest ml-1">Départ</label>
+                          <div className="relative">
+                            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/50" size={18} weight="light" />
+                            <input
+                              type="text"
+                              placeholder="Lieu de prise en charge"
+                              className="w-full bg-midnight border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-gold/50 transition-all font-body"
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-gold text-xs font-bold uppercase tracking-widest ml-1">Destination</label>
+                          <div className="relative">
+                            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/50" size={18} weight="light" />
+                            <input
+                              type="text"
+                              placeholder="Lieu d'arrivée"
+                              className="w-full bg-midnight border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-gold/50 transition-all font-body"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <label className="text-gold text-xs font-bold uppercase tracking-widest ml-1">Date & Heure</label>
+                          <div className="relative">
+                            <Clock className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/50" size={18} weight="light" />
+                            <input
+                              type="datetime-local"
+                              className="w-full bg-midnight border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-gold/50 transition-all font-body"
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-gold text-xs font-bold uppercase tracking-widest ml-1">Passagers</label>
+                          <div className="relative">
+                            <UserCircle className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/50" size={18} weight="light" />
+                            <select className="w-full bg-midnight border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-gold/50 transition-all font-body appearance-none">
+                              <option>1-3 Personnes</option>
+                              <option>4-7 Personnes</option>
+                              <option>8+ Personnes</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+
+                      <button className="w-full py-5 bg-gold text-midnight font-bold text-xl rounded-2xl shadow-[0_10px_40px_rgba(201,168,76,0.3)] hover:scale-[1.02] transition-all flex items-center justify-center gap-3 mt-8">
+                        Vérifier les Prix & Véhicules
+                        <ArrowRight size={24} weight="regular" />
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Fleet Showcase */}
+        <section className="py-32 bg-midnight">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+              <div>
+                <motion.h2
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="text-4xl md:text-6xl text-white font-display mb-6"
+                >
+                  Notre Flotte
+                </motion.h2>
+                <p className="text-text-secondary text-lg max-w-xl">
+                  Des véhicules d'exception pour des passagers exigeants. Entretien rigoureux et confort absolu.
+                </p>
+              </div>
+              <Link href="/flotte" className="text-gold font-bold uppercase tracking-widest text-xs border-b border-gold/30 pb-2 hover:border-gold transition-all">
+                Voir tous les véhicules
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {featuredVehicles.map((vehicle, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="group rounded-[2rem] overflow-hidden bg-surface border border-white/5 hover:border-gold/20 transition-all"
+                >
+                  <div className="h-64 overflow-hidden relative">
+                    <img
+                      src={vehicle.image}
+                      alt={vehicle.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    <div className="absolute top-4 right-4 px-4 py-1 rounded-full bg-midnight/80 backdrop-blur-md border border-white/10 text-gold text-[10px] font-bold uppercase tracking-widest">
+                      {vehicle.category}
+                    </div>
+                  </div>
+                  <div className="p-8">
+                    <h3 className="text-2xl text-white font-display mb-4">{vehicle.name}</h3>
+                    <div className="flex items-center gap-6 mb-8 text-text-muted text-sm">
+                      <div className="flex items-center gap-2">
+                        <UserCircle size={16} weight="light" className="text-gold" />
+                        <span>{vehicle.passengers}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Van size={16} weight="light" className="text-gold" />
+                        <span>{vehicle.luggage}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-text-muted text-[10px] uppercase tracking-widest mb-1">Dès</div>
+                        <div className="text-white font-bold text-xl font-mono">{vehicle.price} <span className="text-xs text-text-muted font-normal">FCFA</span></div>
+                      </div>
+                      <Link href="/reservation" className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-gold hover:text-midnight transition-all">
+                        <ArrowRight size={20} weight="regular" />
+                      </Link>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonials & FAQ */}
+        <section className="py-32 bg-obsidian relative">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
+              <div className="space-y-12">
+                <h2 className="text-4xl text-white font-display">Témoignages</h2>
+                <div className="space-y-8">
+                  {testimonials.map((t, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      className="p-8 rounded-3xl bg-midnight border border-white/5 relative"
+                    >
+                      <ChatCircle className="absolute -top-4 -left-4 text-gold/20" size={48} weight="thin" />
+                      <div className="flex gap-1 mb-6">
+                        {[...Array(5)].map((_, i) => <Star key={i} size={14} weight="fill" className="text-gold" />)}
+                      </div>
+                      <p className="text-white text-lg italic mb-6 leading-relaxed">"{t.content}"</p>
+                      <div>
+                        <div className="text-white font-bold">{t.name}</div>
+                        <div className="text-gold text-xs uppercase tracking-widest">{t.role}</div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-12">
+                <h2 className="text-4xl text-white font-display">F.A.Q</h2>
+                <div className="space-y-6">
+                  {faqs.map((f, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      className="group p-6 rounded-2xl bg-midnight/50 border border-white/5 hover:border-gold/20 transition-all"
+                    >
+                      <h3 className="text-white font-bold mb-4 flex items-center gap-3">
+                        <Question className="text-gold" size={18} weight="light" />
+                        {f.q}
+                      </h3>
+                      <p className="text-text-muted text-sm leading-relaxed">{f.a}</p>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
 
-      {/* Footer */}
-      <footer className="pt-16 sm:pt-20 md:pt-24 pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8 bg-[#1A1A1A] text-gray-400">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-8 sm:mb-12">
-            <div className="sm:col-span-2 md:col-span-2">
-              <div className="flex items-center gap-3 mb-4 sm:mb-6">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-lg flex items-center justify-center shrink-0">
-                  <span className="text-[#1A1A1A] font-bold text-lg sm:text-xl">NX</span>
-                </div>
-                <span className="text-xl sm:text-2xl font-bold text-white">
-                  Navette Xpress
-                </span>
-              </div>
-              <p className="text-slate-300 mb-4 sm:mb-6 max-w-md leading-relaxed text-sm sm:text-base">
-                Service premium de transport de luxe avec chauffeurs professionnels. 
-                Votre confort et votre sécurité sont notre priorité.
-              </p>
-              <div className="flex gap-3 sm:gap-4">
-                {/* Facebook */}
-                <a href="https://www.facebook.com/navettexpresssenegal" aria-label="Suivez-nous sur Facebook" className="w-9 h-9 sm:w-10 sm:h-10 bg-[#252525] hover:bg-[#E5C16C] rounded-lg flex items-center justify-center transition-colors duration-300 group">
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white group-hover:text-[#1A1A1A]" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                  </svg>
-                </a>
-                {/* TikTok */}
-                <a href="https://www.tiktok.com/@navettexpresssenegal" aria-label="Suivez-nous sur TikTok" className="w-9 h-9 sm:w-10 sm:h-10 bg-[#252525] hover:bg-[#E5C16C] rounded-lg flex items-center justify-center transition-colors duration-300 group">
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white group-hover:text-[#1A1A1A]" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-                  </svg>
-                </a>
-                {/* Instagram */}
-                <a href="https://www.instagram.com/navettexpresssenegal" aria-label="Suivez-nous sur Instagram" className="w-9 h-9 sm:w-10 sm:h-10 bg-[#252525] hover:bg-[#E5C16C] rounded-lg flex items-center justify-center transition-colors duration-300 group">
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white group-hover:text-[#1A1A1A]" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                  </svg>
-                </a>
-                {/* LinkedIn */}
-                <a href="https://www.linkedin.com/company/navettexpresssenegal" aria-label="Suivez-nous sur LinkedIn" className="w-9 h-9 sm:w-10 sm:h-10 bg-[#252525] hover:bg-[#E5C16C] rounded-lg flex items-center justify-center transition-colors duration-300 group">
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white group-hover:text-[#1A1A1A]" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                  </svg>
-                </a>
-              </div>
-            </div>
-            
-            <div>
-              <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Contact</h3>
-              <ul className="space-y-2 sm:space-y-3 text-sm sm:text-base">
-                <li className="flex items-start gap-2">
-                  <span className="text-base sm:text-lg shrink-0">📞</span>
-                  <a href="tel:+221781319191" className="text-slate-400 hover:text-white transition-colors duration-300 break-all">
-                    +221 78 131 91 91
-                  </a>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-base sm:text-lg shrink-0">✉️</span>
-                  <a href="mailto:contact@navettexpress.com" className="text-slate-400 hover:text-white transition-colors duration-300 break-all">
-                    contact@navettexpress.com
-                  </a>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-base sm:text-lg shrink-0">�</span>
-                  <span className="text-slate-400">Dakar, Sénégal</span>
-                </li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Services</h3>
-              <ul className="space-y-2 sm:space-y-3 text-sm sm:text-base">
-                <li><a href="/services" className="text-gray-300 hover:text-[#E5C16C] transition-colors duration-300">Transferts Aéroport</a></li>
-                <li><a href="/services" className="text-gray-300 hover:text-[#E5C16C] transition-colors duration-300">Événements Spéciaux</a></li>
-                <li><a href="/services" className="text-gray-300 hover:text-[#E5C16C] transition-colors duration-300">Voyages d&apos;Affaires</a></li>
-                <li><a href="/flotte" className="text-gray-300 hover:text-[#E5C16C] transition-colors duration-300">Notre Flotte</a></li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="border-t border-[#252525] pt-6 sm:pt-8 text-center">
-            <p className="text-gray-500 text-xs sm:text-sm">
-              &copy; 2024 Navette Xpress Services. Tous droits réservés. 
-            </p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
-
-

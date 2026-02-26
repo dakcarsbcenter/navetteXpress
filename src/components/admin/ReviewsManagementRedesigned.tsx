@@ -1,7 +1,15 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Star, Search, Download, MessageSquare, CheckCircle, Clock, TrendingUp } from 'lucide-react'
+import {
+  Star,
+  MagnifyingGlass as Search,
+  Download,
+  ChatCircleDots as MessageSquare,
+  CheckCircle,
+  Clock,
+  TrendUp as TrendingUp
+} from "@phosphor-icons/react"
 
 interface Review {
   id: number
@@ -42,7 +50,7 @@ export default function ReviewsManagementRedesigned() {
       setLoading(true)
       const response = await fetch('/api/reviews')
       const result = await response.json()
-      
+
       if (result.success) {
         setReviews(result.data || [])
       }
@@ -135,10 +143,10 @@ export default function ReviewsManagementRedesigned() {
     const matchesSearch = searchTerm === '' ||
       review.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       review.comment.toLowerCase().includes(searchTerm.toLowerCase())
-    
-    const matchesRating = ratingFilter === 'all' || 
+
+    const matchesRating = ratingFilter === 'all' ||
       (ratingFilter === 'all' ? true : review.rating.toString() === ratingFilter)
-    
+
     const matchesStatus = statusFilter === 'all' ||
       (statusFilter === 'published' && review.isPublic) ||
       (statusFilter === 'pending' && !review.isApproved) ||
@@ -154,9 +162,8 @@ export default function ReviewsManagementRedesigned() {
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
-            className={`${sizeClass} ${
-              star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
-            }`}
+            className={`${sizeClass} ${star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+              }`}
           />
         ))}
       </div>
@@ -236,7 +243,7 @@ export default function ReviewsManagementRedesigned() {
                 </span>
                 <div className="flex items-center gap-2 flex-1 mx-3">
                   <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
-                    <div 
+                    <div
                       className="bg-green-500 h-full rounded-full"
                       style={{ width: `${stats.totalReviews > 0 ? (stats.distribution[5] / stats.totalReviews) * 100 : 0}%` }}
                     ></div>
@@ -252,7 +259,7 @@ export default function ReviewsManagementRedesigned() {
                 </span>
                 <div className="flex items-center gap-2 flex-1 mx-3">
                   <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
-                    <div 
+                    <div
                       className="bg-green-400 h-full rounded-full"
                       style={{ width: `${stats.totalReviews > 0 ? (stats.distribution[4] / stats.totalReviews) * 100 : 0}%` }}
                     ></div>
@@ -268,7 +275,7 @@ export default function ReviewsManagementRedesigned() {
                 </span>
                 <div className="flex items-center gap-2 flex-1 mx-3">
                   <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
-                    <div 
+                    <div
                       className="bg-yellow-400 h-full rounded-full"
                       style={{ width: `${stats.totalReviews > 0 ? (stats.distribution[3] / stats.totalReviews) * 100 : 0}%` }}
                     ></div>
@@ -284,7 +291,7 @@ export default function ReviewsManagementRedesigned() {
                 </span>
                 <div className="flex items-center gap-2 flex-1 mx-3">
                   <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
-                    <div 
+                    <div
                       className="bg-red-400 h-full rounded-full"
                       style={{ width: `${stats.totalReviews > 0 ? (stats.distribution['1-2'] / stats.totalReviews) * 100 : 0}%` }}
                     ></div>
@@ -345,7 +352,7 @@ export default function ReviewsManagementRedesigned() {
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
             />
           </div>
-          
+
           <select
             value={ratingFilter}
             onChange={(e) => setRatingFilter(e.target.value)}
@@ -383,7 +390,7 @@ export default function ReviewsManagementRedesigned() {
             filteredReviews.map((review) => {
               const statusBadge = getStatusBadge(review)
               const borderColor = !review.isApproved ? 'border-l-4 border-l-orange-400' : ''
-              
+
               return (
                 <div key={review.id} className={`bg-white border border-gray-200 rounded-xl p-6 ${borderColor}`}>
                   <div className="flex items-start justify-between gap-4">
@@ -394,7 +401,7 @@ export default function ReviewsManagementRedesigned() {
                           {getInitials(review.customerName)}
                         </span>
                       </div>
-                      
+
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-1">
                           <h3 className="font-bold text-gray-900">{review.customerName}</h3>
@@ -458,7 +465,7 @@ export default function ReviewsManagementRedesigned() {
                           Publier
                         </button>
                       ) : null}
-                      
+
                       <button
                         onClick={() => handleRespond(review)}
                         className="px-4 py-2 text-sm bg-gray-900 hover:bg-gray-800 text-white rounded-lg font-medium transition-colors"
@@ -481,7 +488,7 @@ export default function ReviewsManagementRedesigned() {
             <h2 className="text-xl font-bold text-gray-900 mb-4">
               Répondre à l'avis de {selectedReview.customerName}
             </h2>
-            
+
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
               <div className="flex items-center gap-2 mb-2">
                 {renderStars(selectedReview.rating)}

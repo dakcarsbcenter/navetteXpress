@@ -1,7 +1,16 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Search, Plus, Car, Wrench, AlertTriangle, Grid, List, MoreVertical } from "lucide-react"
+import {
+  MagnifyingGlass as Search,
+  Plus,
+  Car,
+  Wrench,
+  Warning as AlertTriangle,
+  SquaresFour as Grid,
+  List,
+  DotsThreeVertical as MoreVertical
+} from "@phosphor-icons/react"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { useNotification } from "@/hooks/useNotification"
 import Image from "next/image"
@@ -44,13 +53,13 @@ export function VehiclesManagementRedesigned() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null)
   const { notifications, showSuccess, showError, removeNotification } = useNotification()
-  
+
   const [filters, setFilters] = useState({
     capacity: 'all',
     status: 'all',
     search: ''
   })
-  
+
   const [formData, setFormData] = useState({
     make: '',
     model: '',
@@ -125,7 +134,7 @@ export function VehiclesManagementRedesigned() {
 
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase()
-      filtered = filtered.filter(v => 
+      filtered = filtered.filter(v =>
         v.make.toLowerCase().includes(searchTerm) ||
         v.model.toLowerCase().includes(searchTerm) ||
         v.plateNumber.toLowerCase().includes(searchTerm)
@@ -140,7 +149,7 @@ export function VehiclesManagementRedesigned() {
     const inService = vehicles.filter(v => v.isActive && v.driverId).length
     const maintenance = vehicles.filter(v => !v.isActive).length
     const unassigned = vehicles.filter(v => v.isActive && !v.driverId).length
-    
+
     return { total, inService, maintenance, unassigned }
   }
 
@@ -210,17 +219,17 @@ export function VehiclesManagementRedesigned() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     try {
       const url = editingVehicle ? `/api/admin/vehicles/${editingVehicle.id}` : '/api/admin/vehicles'
       const method = editingVehicle ? 'PUT' : 'POST'
-      
+
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       })
-      
+
       if (response.ok) {
         showSuccess(
           editingVehicle ? 'Véhicule modifié avec succès' : 'Véhicule créé avec succès',
@@ -239,7 +248,7 @@ export function VehiclesManagementRedesigned() {
 
   const handleDelete = async (vehicle: Vehicle) => {
     if (!confirm(`Êtes-vous sûr de vouloir supprimer ${vehicle.make} ${vehicle.model} ?`)) return
-    
+
     try {
       const response = await fetch(`/api/admin/vehicles/${vehicle.id}`, { method: 'DELETE' })
       if (response.ok) {
@@ -351,7 +360,7 @@ export function VehiclesManagementRedesigned() {
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm"
             />
           </div>
-          
+
           <select
             value={filters.capacity}
             onChange={(e) => setFilters({ ...filters, capacity: e.target.value })}
@@ -399,7 +408,7 @@ export function VehiclesManagementRedesigned() {
               const statusBadge = getStatusBadge(vehicle)
               const fuelType = getFuelTypeBadge(vehicle.vehicleType)
               const driver = getDriverInfo(vehicle)
-              
+
               return (
                 <div
                   key={vehicle.id}
@@ -463,7 +472,7 @@ export function VehiclesManagementRedesigned() {
                         <p className="text-xs text-red-700">Problème freinage - Garage Auto</p>
                       </div>
                     ) : (
-                      <button 
+                      <button
                         className="w-full mb-3 p-2 text-sm text-yellow-700 bg-yellow-50 border border-yellow-200 rounded hover:bg-yellow-100 transition-colors"
                         onClick={() => openEditModal(vehicle)}
                       >
@@ -500,7 +509,7 @@ export function VehiclesManagementRedesigned() {
             <h2 className="text-xl font-bold text-gray-900 mb-4">
               {editingVehicle ? 'Modifier le véhicule' : 'Nouveau véhicule'}
             </h2>
-            
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>

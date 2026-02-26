@@ -5,6 +5,25 @@ import { NotificationCenter } from "@/components/ui/NotificationCenter";
 import { FilterBar } from "@/components/ui/FilterBar";
 import { useNotification } from "@/hooks/useNotification";
 import { usePermissions } from "@/hooks/usePermissions";
+import {
+  MagnifyingGlass as Search,
+  Plus,
+  Clock,
+  Coins,
+  User,
+  Envelope as Mail,
+  Phone,
+  ArrowUpRight,
+  CheckSquare,
+  XCircle,
+  PaperPlaneRight as Send,
+  DotsThree as MoreHorizontal,
+  CaretLeft as ChevronLeft,
+  CaretRight as ChevronRight,
+  FileText,
+  Calendar
+} from "@phosphor-icons/react"
+import { StatusBadge } from '@/components/ui/StatusBadge';
 
 interface Quote {
   id: number;
@@ -30,15 +49,15 @@ export function QuotesManagement() {
   const [editingQuote, setEditingQuote] = useState<Quote | null>(null);
   const { notifications, showSuccess, showError, removeNotification } = useNotification();
   const { canDelete } = usePermissions();
-  
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const [paginatedQuotes, setPaginatedQuotes] = useState<Quote[]>([]);
-  
+
   // Dropdown state
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
-  
+
   const [filters, setFilters] = useState({
     status: '',
     search: ''
@@ -79,7 +98,7 @@ export function QuotesManagement() {
     if (openDropdownId) {
       document.addEventListener('click', handleClickOutside);
     }
-    
+
     return () => {
       document.removeEventListener('click', handleClickOutside);
     };
@@ -89,7 +108,7 @@ export function QuotesManagement() {
     try {
       const response = await fetch('/api/quotes');
       const result = await response.json();
-      
+
       if (result.success) {
         setQuotes(result.data);
       } else {
@@ -112,7 +131,7 @@ export function QuotesManagement() {
 
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
-      filtered = filtered.filter(quote => 
+      filtered = filtered.filter(quote =>
         quote.customerName.toLowerCase().includes(searchLower) ||
         quote.customerEmail.toLowerCase().includes(searchLower) ||
         quote.service.toLowerCase().includes(searchLower) ||
@@ -135,7 +154,7 @@ export function QuotesManagement() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!editingQuote) return;
 
     try {
@@ -144,7 +163,7 @@ export function QuotesManagement() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
-      
+
       if (response.ok) {
         await fetchQuotes();
         showSuccess('Demande de devis mise à jour avec succès', 'Mise à jour réussie');
@@ -165,7 +184,7 @@ export function QuotesManagement() {
       const response = await fetch(`/api/quotes/${quoteId}`, {
         method: 'DELETE'
       });
-      
+
       if (response.ok) {
         await fetchQuotes();
         showSuccess('Demande de devis supprimée avec succès', 'Suppression réussie');
@@ -217,7 +236,7 @@ export function QuotesManagement() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
-      
+
       if (response.ok) {
         await fetchQuotes();
         showSuccess('Le devis a été envoyé par email au client', 'Envoi réussi');
@@ -228,30 +247,6 @@ export function QuotesManagement() {
     } catch (error) {
       console.error('Erreur lors de l\'envoi:', error);
       showError('Une erreur est survenue lors de l\'envoi du devis', 'Erreur technique');
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-200';
-      case 'in_progress': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200';
-      case 'sent': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-200';
-      case 'accepted': return 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200';
-      case 'rejected': return 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200';
-      case 'expired': return 'bg-gray-100 text-gray-800 dark:bg-gray-900/50 dark:text-gray-200';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/50 dark:text-gray-200';
-    }
-  };
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'pending': return '⏳ En attente';
-      case 'in_progress': return '🔄 En cours';
-      case 'sent': return '📤 Envoyé';
-      case 'accepted': return '✅ Accepté';
-      case 'rejected': return '❌ Rejeté';
-      case 'expired': return '⏰ Expiré';
-      default: return '❓ Inconnu';
     }
   };
 
@@ -266,185 +261,156 @@ export function QuotesManagement() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-600 dark:text-slate-300">Chargement des demandes de devis...</p>
-        </div>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gold"
+          style={{ borderColor: 'var(--color-gold) transparent transparent transparent' }}></div>
       </div>
     );
   }
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Gestion demandes de devis
-        </h2>
-        <button
-          onClick={openCreateModal}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-        >
-          + Nouvelle demande
-        </button>
+    <div className="space-y-6 animate-fadeIn p-2 lg:p-0">
+      {/* Header & Stats Cards */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+        <div className="lg:col-span-2 p-6 rounded-2xl border border-white/5 flex flex-col justify-between"
+          style={{ backgroundColor: 'var(--color-dash-card)' }}>
+          <div>
+            <h2 className="text-xl font-bold text-white">Demandes de Devis</h2>
+            <p className="text-xs text-slate-500 mt-1">Convertissez vos prospects en clients</p>
+          </div>
+
+          <div className="mt-6 flex gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600" />
+              <input
+                type="text"
+                placeholder="Rechercher client, service..."
+                value={filters.search}
+                onChange={(e) => handleFilterChange('search', e.target.value)}
+                className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-white/10 outline-none focus:border-gold/50 transition-all bg-white/5 text-white"
+              />
+            </div>
+            <button
+              onClick={openCreateModal}
+              className="btn-gold flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold shadow-lg shadow-gold/10">
+              <Plus size={16} />
+              <span className="hidden sm:inline">Nouveau</span>
+            </button>
+          </div>
+        </div>
+
+        {[
+          { label: 'Attente', value: getFilterCounts().statusCounts.pending || 0, color: 'var(--color-status-pending)', icon: <Clock size={16} /> },
+          { label: 'En Cours', value: getFilterCounts().statusCounts.in_progress || 0, color: 'var(--color-status-inprogress)', icon: <Send size={16} /> },
+          { label: 'Acceptés', value: getFilterCounts().statusCounts.accepted || 0, color: 'var(--color-status-confirmed)', icon: <CheckSquare size={16} /> },
+        ].map((stat, i) => (
+          <div key={i} className="p-5 rounded-2xl border border-white/5 flex flex-col items-center justify-center text-center"
+            style={{ backgroundColor: 'var(--color-dash-card)' }}>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3"
+              style={{ backgroundColor: `${stat.color}15`, color: stat.color }}>
+              {stat.icon}
+            </div>
+            <p className="text-[10px] uppercase tracking-widest font-bold text-slate-500 mb-1">{stat.label}</p>
+            <h3 className="text-2xl font-bold text-white font-mono">{stat.value}</h3>
+          </div>
+        ))}
       </div>
 
-      {/* Barre de filtres */}
-      <FilterBar
-        filters={{
-          status: {
-            label: 'Statut',
-            options: [
-              { value: '', label: 'Tous les statuts' },
-              { value: 'pending', label: '⏳ En attente', count: getFilterCounts().statusCounts.pending },
-              { value: 'in_progress', label: '🔄 En cours', count: getFilterCounts().statusCounts.in_progress },
-              { value: 'sent', label: '📤 Envoyé', count: getFilterCounts().statusCounts.sent },
-              { value: 'accepted', label: '✅ Accepté', count: getFilterCounts().statusCounts.accepted },
-              { value: 'rejected', label: '❌ Rejeté', count: getFilterCounts().statusCounts.rejected },
-              { value: 'expired', label: '⏰ Expiré', count: getFilterCounts().statusCounts.expired }
-            ],
-            value: filters.status,
-            onChange: (value) => handleFilterChange('status', value)
-          },
-          search: {
-            label: 'Recherche',
-            placeholder: 'Nom, email, service...',
-            value: filters.search,
-            onChange: (value) => handleFilterChange('search', value),
-            type: 'search'
-          }
-        }}
-        onClearAll={() => {
-          setFilters({ status: '', search: '' });
-        }}
-        activeFiltersCount={(filters.status ? 1 : 0) + (filters.search ? 1 : 0)}
-      />
+      {/* Main Table Card */}
+      <div className="rounded-2xl border border-white/5 overflow-hidden" style={{ backgroundColor: 'var(--color-dash-card)' }}>
+        <div className="p-5 border-b border-white/5 flex items-center gap-4 bg-white/[0.01]">
+          {['', 'pending', 'in_progress', 'sent', 'accepted'].map((st) => (
+            <button
+              key={st}
+              onClick={() => handleFilterChange('status', st)}
+              className={`text-[10px] uppercase tracking-widest font-bold px-3 py-1.5 rounded-lg transition-all ${filters.status === st ? 'bg-gold text-black' : 'text-slate-500 hover:text-white hover:bg-white/5'
+                }`}>
+              {st === '' ? 'Tout' : st.replace('_', ' ')}
+            </button>
+          ))}
+        </div>
 
-      {/* Tableau des demandes de devis */}
-      <div className="bg-white dark:bg-slate-800 rounded-lg shadow overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-slate-700">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Client
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Service
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Date souhaitée
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Statut
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Prix estimé
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Date de création
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Actions
-                </th>
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-white/[0.02] border-b border-white/5">
+                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Prospect</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Service & Intention</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Logistique</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-center">Estimation</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-center">Status</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody>
               {paginatedQuotes.map((quote) => (
-                <tr key={quote.id} className="hover:bg-gray-50 dark:hover:bg-slate-700">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900 dark:text-white">
-                      {quote.customerName}
-                    </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                      {quote.customerEmail}
-                    </div>
-                    {quote.customerPhone && (
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {quote.customerPhone}
+                <tr key={quote.id} className="hover:bg-white/[0.02] transition-colors border-b border-white/[0.03] group">
+                  <td className="px-6 py-4">
+                    <div>
+                      <p className="text-sm font-semibold text-white group-hover:text-gold transition-colors">{quote.customerName}</p>
+                      <div className="flex flex-col gap-0.5 mt-1">
+                        <span className="text-[10px] text-slate-500 flex items-center gap-1"><Mail size={10} /> {quote.customerEmail}</span>
+                        {quote.customerPhone && <span className="text-[10px] text-slate-500 flex items-center gap-1"><Phone size={10} /> {quote.customerPhone}</span>}
                       </div>
-                    )}
+                    </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm text-gray-900 dark:text-white">
-                      {quote.service}
-                    </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400 max-w-xs truncate">
-                      {quote.message}
+                    <div className="max-w-[200px]">
+                      <p className="text-xs font-bold text-slate-300 mb-1">{quote.service}</p>
+                      <p className="text-[10px] text-slate-500 line-clamp-1 italic">"{quote.message}"</p>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                    {quote.preferredDate ? new Date(quote.preferredDate).toLocaleDateString('fr-FR') : '-'}
+                  <td className="px-6 py-4">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-1.5 text-[10px] text-slate-300">
+                        <Calendar size={12} className="text-slate-500" />
+                        <span>{quote.preferredDate ? new Date(quote.preferredDate).toLocaleDateString('fr-FR') : 'Date libre'}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-[10px] text-slate-500">
+                        <Clock size={12} />
+                        <span className="font-mono">{new Date(quote.createdAt).toLocaleDateString('fr-FR')}</span>
+                      </div>
+                    </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(quote.status)}`}>
-                      {getStatusLabel(quote.status)}
-                    </span>
+                  <td className="px-6 py-4 text-center">
+                    {quote.estimatedPrice ? (
+                      <div className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-emerald-500/10 text-emerald-500 font-mono text-xs font-bold">
+                        <Coins size={12} />
+                        {parseInt(quote.estimatedPrice).toLocaleString()}
+                      </div>
+                    ) : (
+                      <span className="text-[10px] text-slate-600 font-bold uppercase tracking-tighter italic">À chiffrer</span>
+                    )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                    {quote.estimatedPrice ? `${quote.estimatedPrice} FCFA` : '-'}
+                  <td className="px-6 py-4 text-center">
+                    <StatusBadge statut={quote.status} />
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {new Date(quote.createdAt).toLocaleDateString('fr-FR')}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="relative flex justify-end" data-dropdown-container>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
                       <button
-                        onClick={(e) => toggleDropdown(quote.id, e)}
-                        className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
-                        type="button"
+                        onClick={() => openEditModal(quote)}
+                        className="p-1.5 rounded-lg hover:bg-white/5 text-slate-400 hover:text-white transition-colors"
+                        title="Détails / Éditer"
                       >
-                        Actions...
-                        <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
+                        <FileText size={16} />
                       </button>
-
-                      {/* Menu déroulant */}
-                      {openDropdownId === quote.id && (
-                        <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 z-50">
-                          <div className="py-1">
-                            {/* Option Modifier */}
-                            <button
-                              onClick={() => {
-                                openEditModal(quote);
-                                setOpenDropdownId(null);
-                              }}
-                              className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 w-full text-left transition-colors duration-200"
-                            >
-                              Modifier
-                            </button>
-
-                            {/* Option Envoyer le devis */}
-                            {quote.status !== 'sent' && quote.estimatedPrice && (
-                              <button
-                                onClick={() => {
-                                  handleSendQuote(quote.id);
-                                  setOpenDropdownId(null);
-                                }}
-                                className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-green-600 dark:hover:text-green-400 w-full text-left transition-colors duration-200"
-                              >
-                                📤 Envoyer le devis
-                              </button>
-                            )}
-
-                            {/* Option Supprimer - Seulement si autorisé */}
-                            {canDelete('quotes') && (
-                              <>
-                                <div className="border-t border-gray-200 dark:border-gray-600"></div>
-                                <button
-                                  onClick={() => {
-                                    handleDeleteQuote(quote.id);
-                                    setOpenDropdownId(null);
-                                  }}
-                                  className="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 w-full text-left transition-colors duration-200"
-                                >
-                                  Supprimer
-                                </button>
-                              </>
-                            )}
-                          </div>
-                        </div>
+                      {quote.estimatedPrice && quote.status !== 'sent' && (
+                        <button
+                          onClick={() => handleSendQuote(quote.id)}
+                          className="p-1.5 rounded-lg hover:bg-gold/10 text-slate-400 hover:text-gold transition-colors"
+                          title="Envoyer le devis"
+                        >
+                          <Send size={16} />
+                        </button>
+                      )}
+                      {canDelete('quotes') && (
+                        <button
+                          onClick={() => handleDeleteQuote(quote.id)}
+                          className="p-1.5 rounded-lg hover:bg-red-500/10 text-slate-400 hover:text-red-500 transition-colors"
+                          title="Supprimer"
+                        >
+                          <Trash2 size={16} />
+                        </button>
                       )}
                     </div>
                   </td>
@@ -452,188 +418,125 @@ export function QuotesManagement() {
               ))}
             </tbody>
           </table>
+
+          {paginatedQuotes.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-4 text-slate-600">
+                <FileText size={32} />
+              </div>
+              <p className="text-slate-500 text-sm font-medium italic">Aucune demande de devis à afficher</p>
+            </div>
+          )}
         </div>
-        
-        {/* Pagination */}
-        {filteredQuotes.length > 0 && (
-          <div className="bg-white dark:bg-slate-800 px-4 py-3 border-t border-gray-200 dark:border-gray-700 sm:px-6">
-            <div className="flex items-center justify-between">
-              <div className="flex-1 flex justify-between sm:hidden">
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Précédent
-                </button>
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(filteredQuotes.length / itemsPerPage)))}
-                  disabled={currentPage === Math.ceil(filteredQuotes.length / itemsPerPage)}
-                  className="ml-3 relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Suivant
-                </button>
-              </div>
-              
-              <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">
-                    Affichage de{' '}
-                    <span className="font-medium">{((currentPage - 1) * itemsPerPage) + 1}</span>
-                    {' '}à{' '}
-                    <span className="font-medium">
-                      {Math.min(currentPage * itemsPerPage, filteredQuotes.length)}
-                    </span>
-                    {' '}sur{' '}
-                    <span className="font-medium">{filteredQuotes.length}</span>
-                    {' '}devis
-                  </p>
-                </div>
-                
-                <div>
-                  <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                    <button
-                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                      disabled={currentPage === 1}
-                      className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <span className="sr-only">Page précédente</span>
-                      <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </button>
-                    
-                    {/* Pages numbers */}
-                    {Array.from({ length: Math.ceil(filteredQuotes.length / itemsPerPage) }, (_, i) => i + 1).map((page) => {
-                      const isCurrentPage = page === currentPage;
-                      const showPage = (
-                        page === 1 || 
-                        page === Math.ceil(filteredQuotes.length / itemsPerPage) ||
-                        (page >= currentPage - 1 && page <= currentPage + 1)
-                      );
-                      
-                      if (!showPage) {
-                        if (page === currentPage - 2 || page === currentPage + 2) {
-                          return (
-                            <span key={page} className="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300">
-                              ...
-                            </span>
-                          );
-                        }
-                        return null;
-                      }
-                      
-                      return (
-                        <button
-                          key={page}
-                          onClick={() => setCurrentPage(page)}
-                          className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                            isCurrentPage
-                              ? 'z-10 bg-blue-50 dark:bg-blue-900/50 border-blue-500 text-blue-600 dark:text-blue-400'
-                              : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600'
-                          }`}
-                        >
-                          {page}
-                        </button>
-                      );
-                    })}
-                    
-                    <button
-                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(filteredQuotes.length / itemsPerPage)))}
-                      disabled={currentPage === Math.ceil(filteredQuotes.length / itemsPerPage)}
-                      className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <span className="sr-only">Page suivante</span>
-                      <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </button>
-                  </nav>
-                </div>
-              </div>
+
+        {/* Improved Pagination */}
+        {filteredQuotes.length > itemsPerPage && (
+          <div className="p-4 border-t border-white/5 flex items-center justify-between bg-white/[0.01]">
+            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+              Page {currentPage} sur {Math.ceil(filteredQuotes.length / itemsPerPage)}
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="p-2 rounded-xl bg-white/5 border border-white/5 text-slate-400 disabled:opacity-30 hover:text-white hover:bg-white/10 transition-all">
+                <ChevronLeft size={16} />
+              </button>
+              <button
+                onClick={() => setCurrentPage(p => Math.min(Math.ceil(filteredQuotes.length / itemsPerPage), p + 1))}
+                disabled={currentPage === Math.ceil(filteredQuotes.length / itemsPerPage)}
+                className="p-2 rounded-xl bg-white/5 border border-white/5 text-slate-400 disabled:opacity-30 hover:text-white hover:bg-white/10 transition-all">
+                <ChevronRight size={16} />
+              </button>
             </div>
           </div>
         )}
       </div>
 
-      {/* Modal d'édition */}
+      {/* Redesigned Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-slate-800 rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              {editingQuote ? 'Modifier la demande de devis' : 'Nouvelle demande de devis'}
-            </h3>
-            
-            <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100] animate-fadeIn p-4">
+          <div className="w-full max-w-xl rounded-3xl border border-white/10 p-8 shadow-2xl relative animate-slideUp"
+            style={{ backgroundColor: 'var(--color-obsidian)' }}>
+
+            <div className="flex justify-between items-start mb-8">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Statut
-                </label>
-                <select
-                  value={formData.status}
-                  onChange={(e) => handleInputChange('status', e.target.value)}
-                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
-                >
-                  <option value="pending">⏳ En attente</option>
-                  <option value="in_progress">🔄 En cours</option>
-                  <option value="sent">📤 Envoyé</option>
-                  <option value="accepted">✅ Accepté</option>
-                  <option value="rejected">❌ Rejeté</option>
-                  <option value="expired">⏰ Expiré</option>
-                </select>
+                <h3 className="text-xl font-bold text-white leading-none">Traitement Dossier</h3>
+                <p className="text-xs text-slate-500 mt-2">Référence : Q-{editingQuote?.id || 'NEW'}</p>
+              </div>
+              <button onClick={() => setIsModalOpen(false)} className="text-slate-500 hover:text-white transition-colors">
+                <XCircle size={24} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Statut du Dossier</label>
+                  <select
+                    value={formData.status}
+                    onChange={(e) => handleInputChange('status', e.target.value)}
+                    className="w-full px-4 py-2.5 text-sm rounded-xl border border-white/10 outline-none focus:border-gold/50 transition-all bg-white/5 text-white cursor-pointer"
+                  >
+                    <option value="pending">⏳ En attente</option>
+                    <option value="in_progress">🔄 En cours</option>
+                    <option value="sent">📤 Envoyé</option>
+                    <option value="accepted">✅ Accepté</option>
+                    <option value="rejected">❌ Rejeté</option>
+                    <option value="expired">⏰ Expiré </option>
+                  </select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Chiffrage Estimé (FCFA)</label>
+                  <div className="relative">
+                    <Coins className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                    <input
+                      type="number"
+                      value={formData.estimatedPrice}
+                      onChange={(e) => handleInputChange('estimatedPrice', e.target.value)}
+                      className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-white/10 outline-none focus:border-gold/50 transition-all bg-white/5 text-white"
+                      placeholder="Montant total..."
+                    />
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Prix estimé (FCFA)
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={formData.estimatedPrice}
-                  onChange={(e) => handleInputChange('estimatedPrice', e.target.value)}
-                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
-                  placeholder="0.00"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Notes administrateur
-                </label>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Notes Administrateur</label>
                 <textarea
                   value={formData.adminNotes}
                   onChange={(e) => handleInputChange('adminNotes', e.target.value)}
                   rows={4}
-                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
-                  placeholder="Notes internes..."
+                  className="w-full px-4 py-3 text-sm rounded-xl border border-white/10 outline-none focus:border-gold/50 transition-all bg-white/5 text-white resize-none"
+                  placeholder="Notes internes pour l'équipe..."
                 />
               </div>
 
-              <div className="flex justify-end space-x-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsModalOpen(false);
-                    resetForm();
-                  }}
-                  className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-600 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500"
-                >
-                  Annuler
-                </button>
+              <div className="pt-4 flex gap-3">
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                  className="flex-1 bg-gold text-black py-3 rounded-2xl font-bold text-sm hover:scale-[1.02] transition-all active:scale-95 shadow-lg shadow-gold/20"
                 >
-                  {editingQuote ? 'Mettre à jour' : 'Créer'}
+                  {editingQuote ? 'Mettre à jour le Dossier' : 'Générer Demande'}
                 </button>
+                {editingQuote?.estimatedPrice && editingQuote.status !== 'sent' && (
+                  <button
+                    type="button"
+                    onClick={() => handleSendQuote(editingQuote.id)}
+                    className="px-6 bg-white/5 hover:bg-white/10 text-white rounded-2xl border border-white/10 transition-all flex items-center justify-center"
+                    title="Envoyer Devis Directement"
+                  >
+                    <Send size={18} />
+                  </button>
+                )}
               </div>
             </form>
           </div>
         </div>
       )}
 
-      {/* Notifications */}
+      {/* Notifications overlayed nicely */}
       <NotificationCenter
         notifications={notifications}
         onRemove={removeNotification}

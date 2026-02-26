@@ -14,6 +14,8 @@ import { ClientInvoicesView } from "@/components/client/ClientInvoicesView"
 import UniversalProfilePhotoUpload from "@/components/ui/UniversalProfilePhotoUpload"
 import { VehiclesManagement } from "@/components/client/VehiclesManagement"
 import { ClientUsersManagement } from "@/components/client/ClientUsersManagement"
+import { TripStatusBadge } from "@/components/client/TripStatusBadge"
+import { SquaresFour, CalendarBlank, FileText, Receipt, Star, ChatCircle, Car, Users, SignOut, Bell, Plus, MapPin, Clock, AirplaneTakeoff, Eye, Phone, Wallet, Calendar, UserCircle, ClipboardText, CaretRight, NavigationArrow, DownloadSimple, PencilSimple, Trash, List, CreditCard, X } from "@phosphor-icons/react"
 
 interface Booking {
   id: number
@@ -120,17 +122,17 @@ function ClientDashboardContent() {
 
   useEffect(() => {
     if (status === "loading") return
-    
+
     if (status === "unauthenticated") {
       router.push("/auth/signin")
       return
     }
-    
+
     if (session?.user && (session.user as unknown as { role?: string }).role !== 'customer') {
       router.push("/dashboard") // Redirection vers dashboard générique
       return
     }
-    
+
     setIsLoading(false)
   }, [session, status, router])
 
@@ -220,7 +222,7 @@ function ClientDashboardContent() {
     const pendingQuotes = quotes.filter(q => ['pending', 'in_progress'].includes(q.status)).length
     const acceptedQuotes = quotes.filter(q => q.status === 'accepted').length
     const totalReviews = reviews.length
-    const averageRating = reviews.length > 0 
+    const averageRating = reviews.length > 0
       ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
       : 0
 
@@ -239,23 +241,26 @@ function ClientDashboardContent() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#1A1A1A]">
-        <div className="text-xl text-gray-600 dark:text-gray-300">Chargement...</div>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--color-client-bg)' }}>
+        <div className="text-center">
+          <div className="w-12 h-12 rounded-full border-2 border-transparent mx-auto mb-3 animate-spin" style={{ borderTopColor: 'var(--color-client-accent)' }} />
+          <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>Chargement...</p>
+        </div>
       </div>
     )
   }
 
   if (!session?.user || (session.user as unknown as { role?: string }).role !== 'customer') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#1A1A1A]">
-        <div className="text-xl text-red-600">Accès refusé. Page réservée aux clients.</div>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--color-client-bg)' }}>
+        <div className="text-sm font-medium" style={{ color: 'var(--color-trip-cancelled)' }}>Accès refusé. Page réservée aux clients.</div>
       </div>
     )
   }
 
   // Fonctions pour vérifier les permissions de manière précise
   const isAdmin = (session?.user as any)?.role === 'admin'
-  
+
   // Bookings permissions - Chaque permission est indépendante
   const hasBookingsManagePermission = userPermissions.bookings?.includes('manage')
   const hasBookingsReadPermission = userPermissions.bookings?.includes('read') || hasBookingsManagePermission
@@ -292,16 +297,16 @@ function ClientDashboardContent() {
   const canManageReviews = hasReviewsReadPermission || hasReviewsCreatePermission || hasReviewsUpdatePermission || hasReviewsDeletePermission
 
   // Vérifier si l'utilisateur peut gérer les véhicules
-  const canManageVehicles = userPermissions.vehicles?.includes('manage') || 
-                           userPermissions.vehicles?.includes('read') ||
-                           userPermissions.vehicles?.includes('create') ||
-                           userPermissions.vehicles?.includes('update')
+  const canManageVehicles = userPermissions.vehicles?.includes('manage') ||
+    userPermissions.vehicles?.includes('read') ||
+    userPermissions.vehicles?.includes('create') ||
+    userPermissions.vehicles?.includes('update')
 
   // Vérifier si l'utilisateur peut gérer les utilisateurs
-  const canManageUsers = userPermissions.users?.includes('manage') || 
-                        userPermissions.users?.includes('read') ||
-                        userPermissions.users?.includes('create') ||
-                        userPermissions.users?.includes('update')
+  const canManageUsers = userPermissions.users?.includes('manage') ||
+    userPermissions.users?.includes('read') ||
+    userPermissions.users?.includes('create') ||
+    userPermissions.users?.includes('update')
 
   const tabs = [
     { id: 'overview' as TabType, label: 'Vue d\'ensemble', icon: '📊' },
@@ -328,10 +333,10 @@ function ClientDashboardContent() {
       completed: { label: 'Terminée', color: 'bg-green-100 text-green-800' },
       cancelled: { label: 'Annulée', color: 'bg-red-100 text-red-800' },
     }
-    
-    const config = statusConfig[status as keyof typeof statusConfig] || 
-                   { label: status, color: 'bg-gray-100 text-gray-800' }
-    
+
+    const config = statusConfig[status as keyof typeof statusConfig] ||
+      { label: status, color: 'bg-gray-100 text-gray-800' }
+
     return (
       <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.color}`}>
         {config.label}
@@ -341,9 +346,7 @@ function ClientDashboardContent() {
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
-      <span key={i} className={i < rating ? 'text-yellow-400' : 'text-gray-300'}>
-        ⭐
-      </span>
+      <Star key={i} weight={i < rating ? "fill" : "regular"} className={`w-4 h-4 ${i < rating ? 'text-yellow-400' : 'text-gray-300'}`} />
     ))
   }
 
@@ -351,274 +354,160 @@ function ClientDashboardContent() {
     switch (activeTab) {
       case 'overview':
         return (
-          <div className="space-y-8">
-            {/* Welcome Banner - Style amélioré avec design professionnel */}
-            <div className="bg-linear-to-r from-[#A73B3C] to-[#8B3032] rounded-2xl p-8 text-white shadow-xl relative overflow-hidden">
-              <div className="relative z-10">
-                <h1 className="text-3xl font-bold mb-2">
-                  Bonjour, {session?.user?.name || 'Client'} 👋
-                </h1>
-                <p className="opacity-90">
-                  Bienvenue dans votre espace client. Voici ce qui se passe avec vos trajets aujourd'hui.
-                </p>
-              </div>
-              {/* Decorative Circle */}
-              <div className="absolute right-0 top-0 h-64 w-64 bg-white opacity-5 rounded-full transform translate-x-20 -translate-y-20"></div>
-            </div>
-
-            {/* Stats Grid - Design modernisé avec icônes et effets */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {/* Card 1: Total Réservations */}
-              <div className="bg-white dark:bg-[#252525] rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 transition-all hover:transform hover:-translate-y-0.5 hover:shadow-lg">
-                <div className="flex justify-between items-start mb-4">
+          <div className="space-y-6">
+            {/* Hero Greeting */}
+            <div className="client-card-enter relative rounded-2xl overflow-hidden"
+              style={{ background: 'linear-gradient(135deg, #111E1A 0%, var(--color-client-card) 60%)', border: '1px solid rgba(16,185,129,0.15)' }}>
+              <div className="h-1 w-full" style={{ background: 'linear-gradient(to right, var(--color-client-accent), transparent)' }} />
+              <div className="p-6 sm:p-8">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Total Réservations</p>
-                    <h3 className="text-3xl font-bold text-[#1A1A1A] dark:text-white mt-1">{stats.totalBookings}</h3>
+                    <p className="text-xs uppercase tracking-[0.15em] mb-1" style={{ color: 'var(--color-client-accent)' }}>
+                      {new Date().getHours() < 12 ? 'Bonjour' : new Date().getHours() < 18 ? 'Bon après-midi' : 'Bonsoir'}
+                    </p>
+                    <h1 className="text-2xl sm:text-3xl font-medium" style={{ color: 'var(--color-text-primary)' }}>
+                      {session?.user?.name || 'Bienvenue'}
+                    </h1>
+                    <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
+                      {new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
+                    </p>
                   </div>
-                  <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                    </svg>
+                  <div className="flex items-center gap-4">
+                    <div className="text-right hidden sm:block">
+                      <p className="text-[10px] uppercase tracking-[0.1em]" style={{ color: 'var(--color-text-muted)' }}>En attente</p>
+                      <p className="text-xl font-semibold" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-client-accent)' }}>{stats.pendingBookings}</p>
+                    </div>
+                    <Link href="/reservation"
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all"
+                      style={{ backgroundColor: 'var(--color-client-accent)', color: '#000' }}>
+                      <Plus size={15} weight="bold" /> Nouveau trajet
+                    </Link>
                   </div>
-                </div>
-                <div className="text-xs text-green-500 flex items-center font-medium">
-                  <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                  </svg>
-                  +{stats.totalBookings > 0 ? Math.ceil(stats.totalBookings * 0.2) : 0} cette semaine
-                </div>
-              </div>
-
-              {/* Card 2: Terminées */}
-              <div className="bg-white dark:bg-[#252525] rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 transition-all hover:transform hover:-translate-y-0.5 hover:shadow-lg">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Terminées</p>
-                    <h3 className="text-3xl font-bold text-[#1A1A1A] dark:text-white mt-1">{stats.completedBookings}</h3>
-                  </div>
-                  <div className="w-10 h-10 rounded-lg bg-green-50 dark:bg-green-900/20 flex items-center justify-center text-green-600 dark:text-green-400">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                </div>
-                <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-1.5 mt-2">
-                  <div 
-                    className="bg-green-500 h-1.5 rounded-full transition-all" 
-                    style={{ width: `${stats.totalBookings > 0 ? (stats.completedBookings / stats.totalBookings) * 100 : 0}%` }}
-                  ></div>
-                </div>
-              </div>
-
-              {/* Card 3: En Attente */}
-              <div className="bg-white dark:bg-[#252525] rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 transition-all hover:transform hover:-translate-y-0.5 hover:shadow-lg">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">En Attente</p>
-                    <h3 className="text-3xl font-bold text-[#1A1A1A] dark:text-white mt-1">{stats.pendingBookings}</h3>
-                  </div>
-                  <div className="w-10 h-10 rounded-lg bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center text-orange-500">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {stats.pendingBookings > 0 ? 'Prochain départ bientôt' : 'Aucun trajet en attente'}
-                </p>
-              </div>
-
-              {/* Card 4: Total Devis */}
-              <div className="bg-white dark:bg-[#252525] rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 transition-all hover:transform hover:-translate-y-0.5 hover:shadow-lg">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Total Devis</p>
-                    <h3 className="text-3xl font-bold text-[#1A1A1A] dark:text-white mt-1">{stats.totalQuotes}</h3>
-                  </div>
-                  <div className="w-10 h-10 rounded-lg bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center text-purple-500">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <span className="text-[10px] px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-md font-medium">
-                    {stats.acceptedQuotes} Acceptés
-                  </span>
-                  <span className="text-[10px] px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md font-medium">
-                    {stats.pendingQuotes} En attente
-                  </span>
                 </div>
               </div>
             </div>
 
-            {/* Secondary Stats Row */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Note Moyenne */}
-              <div className="bg-white dark:bg-[#252525] rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-between">
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {[
+                { label: 'Total Réservations', value: stats.totalBookings, icon: <CalendarBlank size={16} weight="light" />, color: 'var(--color-client-accent)' },
+                { label: 'Terminées', value: stats.completedBookings, icon: <MapPin size={16} weight="light" />, color: '#10B981' },
+                { label: 'En Attente', value: stats.pendingBookings, icon: <Clock size={16} weight="light" />, color: '#F59E0B' },
+                { label: 'Total Devis', value: stats.totalQuotes, icon: <FileText size={16} weight="light" />, color: '#8B5CF6' },
+              ].map((stat, i) => (
+                <div key={i} className="client-card-enter group p-5 rounded-2xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden"
+                  style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
+                  <div className="absolute top-0 left-0 right-0 h-[2px] opacity-60 group-hover:opacity-100 transition-opacity" style={{ backgroundColor: stat.color }} />
+                  <div className="w-8 h-8 rounded-xl flex items-center justify-center mb-3" style={{ backgroundColor: `${stat.color}18`, color: stat.color }}>
+                    {stat.icon}
+                  </div>
+                  <p className="text-[10px] uppercase tracking-[0.08em] mb-1" style={{ color: 'var(--color-text-muted)' }}>{stat.label}</p>
+                  <h3 className="text-xl font-bold" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-text-primary)' }}>{stat.value}</h3>
+                </div>
+              ))}
+            </div>
+
+            {/* Secondary Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="client-card-enter rounded-2xl p-5 flex items-center justify-between"
+                style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
                 <div>
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Note Moyenne</p>
+                  <p className="text-[10px] uppercase tracking-[0.08em]" style={{ color: 'var(--color-text-muted)' }}>Note Moyenne</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <h3 className="text-2xl font-bold text-[#1A1A1A] dark:text-white">
+                    <h3 className="text-xl font-bold" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-text-primary)' }}>
                       {stats.averageRating > 0 ? stats.averageRating.toFixed(1) : '0.0'}
                     </h3>
-                    <div className="flex text-[#E5C16C] text-sm">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <svg 
-                          key={star}
-                          className={`w-4 h-4 ${star <= Math.round(stats.averageRating) ? 'fill-current' : 'fill-gray-300 dark:fill-gray-600'}`}
-                          viewBox="0 0 24 24"
-                        >
-                          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                        </svg>
+                    <div className="flex gap-0.5">
+                      {[1, 2, 3, 4, 5].map(s => (
+                        <Star key={s} size={12} className={s <= Math.round(stats.averageRating) ? 'fill-current' : ''} style={{ color: s <= Math.round(stats.averageRating) ? '#F59E0B' : '#4A4759' }} />
                       ))}
                     </div>
                   </div>
                 </div>
-                <div className="w-12 h-12 rounded-full bg-[#E5C16C]/20 flex items-center justify-center text-[#E5C16C]">
-                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-                  </svg>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'rgba(245,158,11,0.1)', color: '#F59E0B' }}>
+                  <Star size={18} weight="fill" />
                 </div>
               </div>
 
-              {/* À Évaluer */}
-              <div className="bg-white dark:bg-[#252525] rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-between relative overflow-hidden group cursor-pointer hover:border-[#A73B3C] transition">
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#A73B3C]"></div>
+              <div className="client-card-enter rounded-2xl p-5 flex items-center justify-between cursor-pointer group"
+                onClick={() => setActiveTab('create-reviews')}
+                style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
                 <div>
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Trajets à Évaluer</p>
-                  <h3 className="text-2xl font-bold text-[#A73B3C] mt-1">{stats.reviewableBookings}</h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  <p className="text-[10px] uppercase tracking-[0.08em]" style={{ color: 'var(--color-text-muted)' }}>Trajets à Évaluer</p>
+                  <h3 className="text-xl font-bold mt-1" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-client-accent)' }}>{stats.reviewableBookings}</h3>
+                  <p className="text-[10px] mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
                     {stats.reviewableBookings > 0 ? 'Partagez votre expérience' : 'Tout est à jour'}
                   </p>
                 </div>
-                <div className="w-10 h-10 rounded-full bg-red-50 dark:bg-red-900/20 flex items-center justify-center text-[#A73B3C] group-hover:bg-[#A73B3C] group-hover:text-white transition">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                  </svg>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center transition-colors" style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)' }}>
+                  <PencilSimple size={18} weight="light" />
                 </div>
               </div>
 
-              {/* Total Avis */}
-              <div className="bg-white dark:bg-[#252525] rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-between">
+              <div className="client-card-enter rounded-2xl p-5 flex items-center justify-between"
+                style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
                 <div>
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Mes Avis</p>
-                  <h3 className="text-2xl font-bold text-[#1A1A1A] dark:text-white mt-1">{stats.totalReviews}</h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Avis publiés</p>
+                  <p className="text-[10px] uppercase tracking-[0.08em]" style={{ color: 'var(--color-text-muted)' }}>Mes Avis</p>
+                  <h3 className="text-xl font-bold mt-1" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-text-primary)' }}>{stats.totalReviews}</h3>
+                  <p className="text-[10px] mt-0.5" style={{ color: 'var(--color-text-muted)' }}>Avis publiés</p>
                 </div>
-                <div className="w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center text-purple-500">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                  </svg>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'rgba(139,92,246,0.1)', color: '#8B5CF6' }}>
+                  <ChatCircle size={18} weight="light" />
                 </div>
               </div>
             </div>
 
-            {/* Réservations récentes - Tableau professionnel */}
-            <div className="bg-white dark:bg-[#252525] rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-              <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-                <h3 className="font-bold text-[#1A1A1A] dark:text-white text-lg">Réservations récentes</h3>
-                <button
-                  onClick={() => setActiveTab('bookings')}
-                  className="text-sm text-[#A73B3C] font-medium hover:underline"
-                >
-                  Voir tout
+            {/* Recent Bookings */}
+            <div className="client-card-enter rounded-2xl overflow-hidden"
+              style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
+              <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>Réservations récentes</h3>
+                <button onClick={() => setActiveTab('bookings')} className="text-xs transition-colors" style={{ color: 'var(--color-client-accent)' }}>
+                  Voir tout →
                 </button>
               </div>
-              
+
               {bookings.slice(0, 5).length > 0 ? (
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-gray-50 dark:bg-[#1A1A1A]/50 text-left">
-                      <tr>
-                        <th className="px-6 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">ID</th>
-                        <th className="px-6 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Trajet</th>
-                        <th className="px-6 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date & Heure</th>
-                        <th className="px-6 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Statut</th>
-                        <th className="px-6 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Prix</th>
-                        <th className="px-6 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-right">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                      {bookings.slice(0, 5).map((booking) => (
-                        <tr key={booking.id} className="hover:bg-gray-50 dark:hover:bg-[#1A1A1A]/30 transition">
-                          <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
-                            #{booking.id}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
-                            <div className="flex items-center gap-2">
-                              <div className={`w-8 h-8 rounded flex items-center justify-center text-xs ${
-                                booking.pickupAddress?.toLowerCase().includes('aibd') || booking.pickupAddress?.toLowerCase().includes('aéroport')
-                                  ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                                  : 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400'
-                              }`}>
-                                {booking.pickupAddress?.toLowerCase().includes('aibd') || booking.pickupAddress?.toLowerCase().includes('aéroport') ? (
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                  </svg>
-                                ) : (
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                                  </svg>
-                                )}
-                              </div>
-                              <div className="max-w-xs truncate">
-                                <div className="font-medium text-[#1A1A1A] dark:text-white text-xs">
-                                  {booking.pickupAddress?.substring(0, 30)}{booking.pickupAddress?.length > 30 ? '...' : ''}
-                                </div>
-                                <div className="text-gray-500 dark:text-gray-400 text-xs">
-                                  → {booking.dropoffAddress?.substring(0, 30)}{booking.dropoffAddress?.length > 30 ? '...' : ''}
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
-                            {new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR', {
-                              day: 'numeric',
-                              month: 'short'
-                            })}, {new Date(booking.scheduledDateTime).toLocaleTimeString('fr-FR', {
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
-                          </td>
-                          <td className="px-6 py-4">
-                            {getStatusBadge(booking.status)}
-                          </td>
-                          <td className="px-6 py-4 text-sm font-bold text-gray-900 dark:text-white">
-                            {booking.price ? `${parseFloat(booking.price).toLocaleString('fr-FR')} FCFA` : 'N/A'}
-                          </td>
-                          <td className="px-6 py-4 text-right">
-                            <button 
-                              onClick={() => {
-                                setEditingBooking(booking)
-                                setIsEditBookingModalOpen(true)
-                              }}
-                              className="text-gray-400 hover:text-[#A73B3C] transition"
-                            >
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-                              </svg>
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
+                  {bookings.slice(0, 5).map((booking) => (
+                    <div key={booking.id} className="flex items-center gap-4 px-6 py-4 transition-colors duration-150 hover:bg-white/[0.02]">
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                        style={{ backgroundColor: booking.status === 'in_progress' ? 'var(--color-trip-inprogress-bg)' : booking.status === 'pending' ? 'rgba(245,158,11,0.1)' : 'rgba(255,255,255,0.04)', color: booking.status === 'in_progress' ? 'var(--color-trip-inprogress)' : booking.status === 'pending' ? '#F59E0B' : '#6B7280' }}>
+                        <MapPin size={16} weight="light" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm truncate" style={{ color: 'var(--color-text-primary)' }}>
+                          {booking.pickupAddress?.substring(0, 30)}{booking.pickupAddress?.length > 30 ? '...' : ''}
+                          <span style={{ color: 'var(--color-text-muted)', margin: '0 6px' }}>→</span>
+                          {booking.dropoffAddress?.substring(0, 30)}{booking.dropoffAddress?.length > 30 ? '...' : ''}
+                        </p>
+                        <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
+                          {new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}, {new Date(booking.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                      </div>
+                      <TripStatusBadge statut={booking.status} />
+                      <p className="text-sm shrink-0 hidden sm:block" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-text-secondary)' }}>
+                        {booking.price ? `${parseFloat(booking.price).toLocaleString('fr-FR')} FCFA` : 'N/A'}
+                      </p>
+                      <button
+                        onClick={() => { setEditingBooking(booking); setIsEditBookingModalOpen(true) }}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center transition-all shrink-0"
+                        style={{ backgroundColor: 'rgba(255,255,255,0.04)', color: 'var(--color-text-muted)' }}>
+                        <Eye size={14} weight="regular" />
+                      </button>
+                    </div>
+                  ))}
                 </div>
               ) : (
-                <div className="p-12 text-center">
-                  <div className="w-16 h-16 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-300 dark:text-gray-600">
-                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-                    </svg>
+                <div className="text-center py-12">
+                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: 'rgba(255,255,255,0.03)' }}>
+                    <Calendar size={20} weight="light" style={{ color: 'var(--color-text-muted)' }} />
                   </div>
-                  <h3 className="text-gray-900 dark:text-white font-medium mb-1">Aucune réservation récente</h3>
-                  <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">Commencez par réserver votre premier trajet.</p>
-                  <Link
-                    href="/reservation"
-                    className="inline-block text-[#A73B3C] font-semibold text-sm hover:underline"
-                  >
-                    Faire une réservation
+                  <p className="text-sm font-medium mb-1" style={{ color: 'var(--color-text-primary)' }}>Aucune réservation récente</p>
+                  <p className="text-xs mb-4" style={{ color: 'var(--color-text-muted)' }}>Commencez par réserver votre premier trajet.</p>
+                  <Link href="/reservation" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium"
+                    style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)', border: '1px solid rgba(16,185,129,0.2)' }}>
+                    Réserver un trajet
                   </Link>
                 </div>
               )}
@@ -627,20 +516,21 @@ function ClientDashboardContent() {
         )
 
       case 'bookings':
-        const filteredClientBookings = bookingsFilter === 'all' 
-          ? bookings 
+        const filteredClientBookings = bookingsFilter === 'all'
+          ? bookings
           : bookings.filter(b => b.status === bookingsFilter)
-        
+
         return (
-          <div className="bg-white dark:bg-[#252525] rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+          <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
+            <div className="p-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
               <div className="flex items-center justify-between flex-wrap gap-4">
-                <h3 className="text-lg font-semibold text-[#1A1A1A] dark:text-white">Mes réservations</h3>
+                <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>Mes réservations</h3>
                 <div className="flex gap-2 items-center flex-wrap">
                   <select
                     value={bookingsFilter}
                     onChange={(e) => setBookingsFilter(e.target.value)}
-                    className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-[#1A1A1A] text-gray-900 dark:text-white"
+                    className="px-3 py-2 rounded-xl text-xs outline-none"
+                    style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-text-primary)' }}
                   >
                     <option value="pending">En attente</option>
                     <option value="confirmed">Confirmées</option>
@@ -650,7 +540,7 @@ function ClientDashboardContent() {
                     <option value="all">Toutes</option>
                   </select>
                   {hasQuotesCreatePermission && (
-                    <Link 
+                    <Link
                       href="/quote-request"
                       className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
                     >
@@ -658,7 +548,7 @@ function ClientDashboardContent() {
                     </Link>
                   )}
                   {hasBookingsCreatePermission && (
-                    <Link 
+                    <Link
                       href="/reservation"
                       className="bg-[#A73B3C] hover:bg-[#8B3032] text-white px-4 py-2 rounded-lg text-sm transition-colors"
                     >
@@ -716,7 +606,7 @@ function ClientDashboardContent() {
                               className="bg-linear-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-all shadow-sm hover:shadow-md flex items-center gap-1.5"
                               title="Répondre à la proposition de prix"
                             >
-                              💰 Répondre
+                              <Wallet weight="light" /> Répondre
                             </button>
                           )}
                           {/* Bouton éditer visible seulement si la réservation n'est pas confirmée/terminée/annulée */}
@@ -729,7 +619,7 @@ function ClientDashboardContent() {
                               className="text-[#A73B3C] hover:text-[#8B3032] text-sm font-medium px-2 py-1 rounded hover:bg-[#E5C16C]/10 transition-colors"
                               title="Modifier la réservation"
                             >
-                              ✏️ Modifier
+                              <PencilSimple size={14} weight="light" className="inline mr-1" /> Modifier
                             </button>
                           )}
                           {hasBookingsDeletePermission && (
@@ -737,12 +627,12 @@ function ClientDashboardContent() {
                               className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium"
                               title="Supprimer la réservation"
                             >
-                              🗑️
+                              <Trash size={14} weight="light" />
                             </button>
                           )}
                         </div>
                       </div>
-                      
+
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                         <div>
                           <p className="font-medium text-[#1A1A1A] dark:text-gray-300">Date et heure</p>
@@ -756,14 +646,14 @@ function ClientDashboardContent() {
                             })}
                           </p>
                         </div>
-                        
+
                         {booking.price && (
                           <div>
                             <p className="font-medium text-[#1A1A1A] dark:text-gray-300">Prix</p>
                             <p className="text-gray-600 dark:text-gray-400">{booking.price} FCFA</p>
                           </div>
                         )}
-                        
+
                         <div>
                           <p className="font-medium text-[#1A1A1A] dark:text-gray-300">Créée le</p>
                           <p className="text-gray-600 dark:text-gray-400">
@@ -771,7 +661,7 @@ function ClientDashboardContent() {
                           </p>
                         </div>
                       </div>
-                      
+
                       {booking.notes && (
                         <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
                           <p className="font-medium text-[#1A1A1A] dark:text-gray-300 text-sm">Notes</p>
@@ -785,7 +675,7 @@ function ClientDashboardContent() {
                 <div className="text-center py-8">
                   <p className="text-gray-500 dark:text-gray-400">Aucune réservation trouvée</p>
                   {hasBookingsCreatePermission && (
-                    <Link 
+                    <Link
                       href="/reservation"
                       className="inline-block mt-2 bg-[#A73B3C] hover:bg-[#8B3032] text-white px-4 py-2 rounded-lg text-sm transition-colors"
                     >
@@ -800,91 +690,70 @@ function ClientDashboardContent() {
 
       case 'create-reviews':
         return (
-          <div className="bg-white dark:bg-[#252525] rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold text-[#1A1A1A] dark:text-white">Trajets à évaluer</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    Évaluez vos trajets terminés et aidez-nous à améliorer notre service
-                  </p>
-                </div>
-                {stats.reviewableBookings > 0 && (
-                  <span className="bg-[#A73B3C]/20 text-[#A73B3C] px-3 py-1 rounded-full text-sm font-medium">
-                    {stats.reviewableBookings} à évaluer
-                  </span>
-                )}
+          <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
+            <div className="p-5 flex items-center justify-between" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              <div>
+                <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>Trajets à évaluer</h3>
+                <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>Évaluez vos trajets terminés</p>
               </div>
+              {stats.reviewableBookings > 0 && (
+                <span className="px-2.5 py-1 rounded-full text-[11px] font-medium" style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)' }}>
+                  {stats.reviewableBookings} à évaluer
+                </span>
+              )}
             </div>
-            <div className="p-6">
+            <div className="p-5">
               {reviewableBookings.length > 0 ? (
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {reviewableBookings.map((booking) => (
-                    <div key={booking.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                    <div key={booking.id} className="rounded-xl p-4 transition-all hover:bg-white/[0.02]" style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-client-border)' }}>
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <span className="text-xl">🚗</span>
-                            <h4 className="font-medium text-[#1A1A1A] dark:text-white">
-                              Trajet #{booking.id}
-                            </h4>
-                          </div>
-                          
-                          <p className="text-[#1A1A1A] dark:text-gray-300 mb-2">
-                            <strong>Itinéraire :</strong> {booking.pickupAddress} → {booking.dropoffAddress}
-                          </p>
-                          
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-3">
-                            <div>
-                              <p className="font-medium text-[#1A1A1A] dark:text-gray-300">Chauffeur</p>
-                              <p className="text-gray-600 dark:text-gray-400">{booking.driver.name}</p>
+                            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)' }}>
+                              <Car size={14} weight="light" />
                             </div>
-                            
+                            <h4 className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>Trajet <span style={{ fontFamily: 'var(--font-mono)' }}>#{booking.id}</span></h4>
+                          </div>
+                          <p className="text-xs mb-2" style={{ color: 'var(--color-text-secondary)' }}>
+                            {booking.pickupAddress} <span style={{ color: 'var(--color-text-muted)' }}>→</span> {booking.dropoffAddress}
+                          </p>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                             <div>
-                              <p className="font-medium text-[#1A1A1A] dark:text-gray-300">Date du trajet</p>
-                              <p className="text-gray-600 dark:text-gray-400">
-                                {new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR', {
-                                  day: 'numeric',
-                                  month: 'long',
-                                  year: 'numeric',
-                                  hour: '2-digit',
-                                  minute: '2-digit'
-                                })}
+                              <p className="text-[10px] uppercase tracking-[0.08em]" style={{ color: 'var(--color-text-muted)' }}>Chauffeur</p>
+                              <p style={{ color: 'var(--color-text-secondary)' }}>{booking.driver.name}</p>
+                            </div>
+                            <div>
+                              <p className="text-[10px] uppercase tracking-[0.08em]" style={{ color: 'var(--color-text-muted)' }}>Date du trajet</p>
+                              <p style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-mono)' }}>
+                                {new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                               </p>
                             </div>
                           </div>
                         </div>
-                        
                         <button
-                          onClick={() => {
-                            setSelectedBookingForReview(booking)
-                            setIsReviewModalOpen(true)
-                          }}
-                          className="bg-[#A73B3C] hover:bg-[#8B3032] text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+                          onClick={() => { setSelectedBookingForReview(booking); setIsReviewModalOpen(true) }}
+                          className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all shrink-0 ml-3"
+                          style={{ backgroundColor: 'rgba(245,158,11,0.1)', color: '#F59E0B', border: '1px solid rgba(245,158,11,0.2)' }}
                           disabled={!hasReviewsCreatePermission}
                           title={hasReviewsCreatePermission ? "Évaluer ce trajet" : "Vous n'avez pas la permission de créer des avis"}
                         >
-                          <span className="text-lg">⭐</span>
-                          Évaluer
+                          <Star size={13} /> Évaluer
                         </button>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8">
-                  <div className="text-6xl mb-4">⭐</div>
-                  <h3 className="text-lg font-semibold text-[#1A1A1A] dark:text-white mb-2">
-                    Aucun trajet à évaluer
-                  </h3>
-                  <p className="text-gray-500 dark:text-gray-400 mb-4">
-                    Vous avez évalué tous vos trajets terminés !
-                  </p>
+                <div className="text-center py-10">
+                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: 'rgba(245,158,11,0.1)' }}>
+                    <Star size={20} style={{ color: '#F59E0B' }} />
+                  </div>
+                  <p className="text-sm font-medium mb-1" style={{ color: 'var(--color-text-primary)' }}>Aucun trajet à évaluer</p>
+                  <p className="text-xs mb-4" style={{ color: 'var(--color-text-muted)' }}>Vous avez évalué tous vos trajets terminés !</p>
                   {hasBookingsCreatePermission && (
-                    <Link 
-                      href="/reservation"
-                      className="inline-block bg-[#A73B3C] hover:bg-[#8B3032] text-white px-4 py-2 rounded-lg text-sm transition-colors"
-                    >
+                    <Link href="/reservation" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium"
+                      style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)', border: '1px solid rgba(16,185,129,0.2)' }}>
                       Faire une nouvelle réservation
                     </Link>
                   )}
@@ -902,55 +771,43 @@ function ClientDashboardContent() {
 
       case 'reviews':
         return (
-          <div className="bg-white dark:bg-[#252525] rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-[#1A1A1A] dark:text-white">Mes avis publiés</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Avis que vous avez donnés sur vos trajets
-              </p>
+          <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
+            <div className="p-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>Mes avis publiés</h3>
+              <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>Avis que vous avez donnés sur vos trajets</p>
             </div>
-            <div className="p-6">
+            <div className="p-5">
               {reviews.length > 0 ? (
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {reviews.map((review) => (
-                    <div key={review.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                      <div className="flex items-start justify-between mb-3">
+                    <div key={review.id} className="rounded-xl p-4" style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-client-border)' }}>
+                      <div className="flex items-start justify-between mb-2">
                         <div className="flex-1">
-                          <h4 className="font-medium text-[#1A1A1A] dark:text-white">
-                            Avis pour la réservation #{review.bookingId}
-                          </h4>
+                          <h4 className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>Réservation <span style={{ fontFamily: 'var(--font-mono)' }}>#{review.bookingId}</span></h4>
                           {review.booking && (
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                              {review.booking.pickupAddress} → {review.booking.dropoffAddress}
+                            <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
+                              {review.booking.pickupAddress} <span style={{ color: 'var(--color-text-muted)' }}>→</span> {review.booking.dropoffAddress}
                             </p>
                           )}
                         </div>
                         <div className="flex items-center gap-1">
                           {renderStars(review.rating)}
-                          <span className="text-sm text-gray-600 dark:text-gray-400 ml-1">
-                            ({review.rating}/5)
-                          </span>
+                          <span className="text-xs ml-1" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>({review.rating}/5)</span>
                         </div>
                       </div>
-                      
                       {review.comment && (
-                        <div className="mb-3">
-                          <p className="text-[#1A1A1A] dark:text-gray-300">{review.comment}</p>
-                        </div>
+                        <p className="text-xs mb-2" style={{ color: 'var(--color-text-secondary)' }}>{review.comment}</p>
                       )}
-                      
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                      <p className="text-[10px]" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
                         Publié le {new Date(review.createdAt).toLocaleDateString('fr-FR')}
-                      </div>
+                      </p>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8">
-                  <p className="text-gray-500 dark:text-gray-400">Aucun avis donné pour le moment</p>
-                  <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">
-                    Vous pourrez évaluer vos trajets une fois qu&apos;ils seront terminés
-                  </p>
+                <div className="text-center py-10">
+                  <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>Aucun avis donné pour le moment</p>
+                  <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>Vous pourrez évaluer vos trajets une fois qu&apos;ils seront terminés</p>
                 </div>
               )}
             </div>
@@ -959,129 +816,81 @@ function ClientDashboardContent() {
 
       case 'profile':
         return (
-          <div className="space-y-6">
-            {/* Section Informations Personnelles */}
-            <div className="bg-white dark:bg-[#252525] rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-              <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold text-[#1A1A1A] dark:text-white flex items-center gap-2">
-                      <span className="text-2xl">👤</span>
-                      Mon profil
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                      Gérez vos informations personnelles
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setIsEditProfileModalOpen(true)}
-                    className="bg-[#A73B3C] hover:bg-[#8B3032] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
-                  >
-                    <span className="text-lg">✏️</span>
-                    Modifier
-                  </button>
+          <div className="space-y-5">
+            {/* Informations Personnelles */}
+            <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
+              <div className="p-5 flex items-center justify-between" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                <div>
+                  <h3 className="text-sm font-semibold flex items-center gap-2" style={{ color: 'var(--color-text-primary)' }}>
+                    <UserCircle size={15} weight="light" style={{ color: 'var(--color-client-accent)' }} /> Mon profil
+                  </h3>
+                  <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>Gérez vos informations personnelles</p>
                 </div>
+                <button onClick={() => setIsEditProfileModalOpen(true)}
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-colors"
+                  style={{ backgroundColor: 'var(--color-client-accent)', color: '#000' }}>
+                  <PencilSimple size={12} weight="bold" /> Modifier
+                </button>
               </div>
-              
-              <div className="p-6">
-                <div className="grid md:grid-cols-2 gap-6">
+              <div className="p-5">
+                <div className="grid md:grid-cols-2 gap-5">
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-[#1A1A1A] dark:text-gray-300 mb-2">
-                        Nom complet
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <p className="text-[#1A1A1A] dark:text-white font-medium">
-                          {userProfile?.name || session?.user?.name || "Non renseigné"}
-                        </p>
-                      </div>
+                      <p className="text-[10px] uppercase tracking-[0.08em] mb-1" style={{ color: 'var(--color-text-muted)' }}>Nom complet</p>
+                      <p className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
+                        {userProfile?.name || session?.user?.name || "Non renseigné"}
+                      </p>
                     </div>
-                    
                     <div>
-                      <label className="block text-sm font-medium text-[#1A1A1A] dark:text-gray-300 mb-2">
-                        Adresse email
-                      </label>
+                      <p className="text-[10px] uppercase tracking-[0.08em] mb-1" style={{ color: 'var(--color-text-muted)' }}>Adresse email</p>
                       <div className="flex items-center gap-2">
-                        <p className="text-[#1A1A1A] dark:text-white">
+                        <p className="text-sm" style={{ color: 'var(--color-text-primary)' }}>
                           {userProfile?.email || session?.user?.email || "Non renseigné"}
                         </p>
-                        <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 text-xs rounded-full">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium"
+                          style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)' }}>
                           ✓ Vérifié
                         </span>
                       </div>
                     </div>
-                    
                     <div>
-                      <label className="block text-sm font-medium text-[#1A1A1A] dark:text-gray-300 mb-2">
-                        Téléphone
-                      </label>
-                      <p className="text-[#1A1A1A] dark:text-white">
+                      <p className="text-[10px] uppercase tracking-[0.08em] mb-1" style={{ color: 'var(--color-text-muted)' }}>Téléphone</p>
+                      <p className="text-sm" style={{ color: 'var(--color-text-primary)' }}>
                         {userProfile?.phone || "Non renseigné"}
                       </p>
                     </div>
                   </div>
-                  
                   <div className="space-y-4">
-                    {/* Section Photo de Profil */}
                     <div>
-                      <label className="block text-sm font-medium text-[#1A1A1A] dark:text-gray-300 mb-2">
-                        Photo de profil
-                      </label>
+                      <p className="text-[10px] uppercase tracking-[0.08em] mb-1" style={{ color: 'var(--color-text-muted)' }}>Photo de profil</p>
                       <UniversalProfilePhotoUpload
                         currentImage={session?.user?.image || undefined}
-                        onImageUpdate={(imageUrl) => {
-                          // La photo sera automatiquement mise à jour dans la session
-                          console.log('✅ Photo mise à jour:', imageUrl)
-                        }}
-                        onSuccess={(message) => {
-                          // Vous pouvez ajouter une notification de succès ici
-                          console.log('✅ Photo mise à jour:', message)
-                        }}
-                        onError={(error) => {
-                          // Vous pouvez ajouter une notification d'erreur ici
-                          console.error('❌ Erreur upload:', error)
-                        }}
+                        onImageUpdate={(imageUrl) => { console.log('✅ Photo mise à jour:', imageUrl) }}
+                        onSuccess={(message) => { console.log('✅ Photo mise à jour:', message) }}
+                        onError={(error) => { console.error('❌ Erreur upload:', error) }}
                       />
                     </div>
-                    
                     <div>
-                      <label className="block text-sm font-medium text-[#1A1A1A] dark:text-gray-300 mb-2">
-                        Rôle
-                      </label>
+                      <p className="text-[10px] uppercase tracking-[0.08em] mb-1" style={{ color: 'var(--color-text-muted)' }}>Rôle</p>
                       <div className="flex items-center gap-2">
-                        <span className="inline-flex items-center px-3 py-1 bg-[#A73B3C]/20 text-[#A73B3C] dark:bg-[#A73B3C]/30 dark:text-[#E5C16C] text-sm rounded-full font-medium">
-                          👤 Client
-                        </span>
-                        <span className="text-gray-500 dark:text-gray-400 text-xs flex items-center gap-1">
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                          </svg>
-                          Verrouillé
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium"
+                          style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)' }}>
+                          <UserCircle size={11} weight="fill" /> Client
                         </span>
                       </div>
                     </div>
-                    
                     <div>
-                      <label className="block text-sm font-medium text-[#1A1A1A] dark:text-gray-300 mb-2">
-                        Membre depuis
-                      </label>
-                      <p className="text-[#1A1A1A] dark:text-white">
-                        {userProfile?.createdAt ? 
-                          new Date(userProfile.createdAt).toLocaleDateString('fr-FR', { 
-                            day: 'numeric', 
-                            month: 'long', 
-                            year: 'numeric' 
-                          }) : 
+                      <p className="text-[10px] uppercase tracking-[0.08em] mb-1" style={{ color: 'var(--color-text-muted)' }}>Membre depuis</p>
+                      <p className="text-sm" style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-mono)' }}>
+                        {userProfile?.createdAt ?
+                          new Date(userProfile.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) :
                           "Information non disponible"
                         }
                       </p>
                     </div>
-                    
                     <div>
-                      <label className="block text-sm font-medium text-[#1A1A1A] dark:text-gray-300 mb-2">
-                        ID Client
-                      </label>
-                      <p className="text-gray-600 dark:text-gray-400 text-sm font-mono">
+                      <p className="text-[10px] uppercase tracking-[0.08em] mb-1" style={{ color: 'var(--color-text-muted)' }}>ID Client</p>
+                      <p className="text-xs" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
                         {userProfile?.id?.slice(0, 8) || (session?.user as unknown as { id?: string })?.id?.slice(0, 8) || "N/A"}...
                       </p>
                     </div>
@@ -1090,88 +899,51 @@ function ClientDashboardContent() {
               </div>
             </div>
 
-            {/* Section Statistiques du Profil */}
-            <div className="bg-white dark:bg-[#252525] rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-              <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h3 className="text-lg font-semibold text-[#1A1A1A] dark:text-white flex items-center gap-2">
-                  <span className="text-2xl">📊</span>
-                  Mon activité
+            {/* Activité */}
+            <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
+              <div className="p-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                <h3 className="text-sm font-semibold flex items-center gap-2" style={{ color: 'var(--color-text-primary)' }}>
+                  <ClipboardText size={15} weight="light" style={{ color: 'var(--color-client-accent)' }} /> Mon activité
                 </h3>
               </div>
-              
-              <div className="p-6">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="text-center p-4 bg-slate-50 dark:bg-[#1A1A1A]/50 rounded-lg">
-                    <div className="text-2xl font-bold text-[#A73B3C] dark:text-[#E5C16C]">
-                      {stats.totalBookings}
+              <div className="p-5">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {[
+                    { label: 'Réservations', value: stats.totalBookings, color: 'var(--color-client-accent)' },
+                    { label: 'Terminées', value: stats.completedBookings, color: '#10B981' },
+                    { label: 'Avis donnés', value: stats.totalReviews, color: '#8B5CF6' },
+                    { label: 'Note moy.', value: stats.averageRating.toFixed(1), color: '#F59E0B' },
+                  ].map((s, i) => (
+                    <div key={i} className="text-center p-4 rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-client-border)' }}>
+                      <div className="text-lg font-bold" style={{ fontFamily: 'var(--font-mono)', color: s.color }}>{s.value}</div>
+                      <div className="text-[10px] uppercase tracking-[0.08em] mt-0.5" style={{ color: 'var(--color-text-muted)' }}>{s.label}</div>
                     </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
-                      Réservations
-                    </div>
-                  </div>
-                  
-                  <div className="text-center p-4 bg-slate-50 dark:bg-[#1A1A1A]/50 rounded-lg">
-                    <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                      {stats.completedBookings}
-                    </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
-                      Terminées
-                    </div>
-                  </div>
-                  
-                  <div className="text-center p-4 bg-slate-50 dark:bg-[#1A1A1A]/50 rounded-lg">
-                    <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                      {stats.totalReviews}
-                    </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
-                      Avis donnés
-                    </div>
-                  </div>
-                  
-                  <div className="text-center p-4 bg-slate-50 dark:bg-[#1A1A1A]/50 rounded-lg">
-                    <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
-                      {stats.averageRating.toFixed(1)}
-                    </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
-                      Note moy.
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
 
-            {/* Section Sécurité (future extension) */}
-            <div className="bg-white dark:bg-[#252525] rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-              <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h3 className="text-lg font-semibold text-[#1A1A1A] dark:text-white flex items-center gap-2">
-                  <span className="text-2xl">🔒</span>
-                  Sécurité du compte
+            {/* Sécurité */}
+            <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
+              <div className="p-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                <h3 className="text-sm font-semibold flex items-center gap-2" style={{ color: 'var(--color-text-primary)' }}>
+                  <Eye size={15} weight="light" style={{ color: 'var(--color-client-accent)' }} /> Sécurité du compte
                 </h3>
               </div>
-              
-              <div className="p-6">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-[#1A1A1A]/50 rounded-lg">
-                    <div>
-                      <h4 className="font-medium text-[#1A1A1A] dark:text-white">Mot de passe</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Dernière modification il y a plus de 30 jours
-                      </p>
-                    </div>
-                    <button className="text-[#A73B3C] hover:text-[#8B3032] text-sm font-medium">
-                      Changer
-                    </button>
+              <div className="p-5 space-y-3">
+                <div className="flex items-center justify-between p-3 rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-client-border)' }}>
+                  <div>
+                    <h4 className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>Mot de passe</h4>
+                    <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>Dernière modification il y a plus de 30 jours</p>
                   </div>
-                  
-                  <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-                    <div>
-                      <h4 className="font-medium text-green-900 dark:text-green-400">Email vérifié</h4>
-                      <p className="text-sm text-green-700 dark:text-green-300">
-                        Votre adresse email est confirmée
-                      </p>
-                    </div>
-                    <span className="text-green-600 dark:text-green-400 text-2xl">✓</span>
+                  <button className="text-xs font-medium" style={{ color: 'var(--color-client-accent)' }}>Changer</button>
+                </div>
+                <div className="flex items-center justify-between p-3 rounded-xl" style={{ backgroundColor: 'var(--color-client-accent-bg)', border: '1px solid rgba(16,185,129,0.15)' }}>
+                  <div>
+                    <h4 className="text-sm font-medium" style={{ color: 'var(--color-client-accent)' }}>Email vérifié</h4>
+                    <p className="text-xs" style={{ color: 'var(--color-client-accent-light)' }}>Votre adresse email est confirmée</p>
                   </div>
+                  <span className="text-lg" style={{ color: 'var(--color-client-accent)' }}>✓</span>
                 </div>
               </div>
             </div>
@@ -1192,183 +964,142 @@ function ClientDashboardContent() {
   return (
     <div className="flex h-screen overflow-hidden bg-[#F3F4F6] dark:bg-[#1A1A1A]">
       {/* SIDEBAR - Navigation Latérale Style Professionnel */}
-      <aside className="hidden md:flex flex-col w-64 bg-[#1A1A1A] shadow-2xl z-20 fixed left-0 top-0 h-screen">
+      <aside className="hidden md:flex flex-col w-64 shadow-2xl z-20 fixed left-0 top-0 h-screen overflow-y-auto" style={{ backgroundColor: '#090D12', borderRight: '1px solid var(--color-client-border)' }}>
         {/* Logo Area */}
-        <div className="h-20 flex items-center justify-center border-b border-gray-800">
-          <Link href="/" className="text-2xl font-bold text-[#A73B3C] tracking-tight flex items-center gap-2">
-            <span className="bg-white rounded-full w-8 h-8 flex items-center justify-center text-sm">NX</span>
-            Navette Xpress
+        <div className="h-24 flex items-center px-6 mb-2">
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-[#090D12] font-bold text-lg shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-transform group-hover:scale-105">
+              NX
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-bold tracking-tight text-white leading-tight">NAVETTE</span>
+              <span className="text-[10px] font-medium tracking-[0.2em] text-[#10B981] leading-tight">XPRESS</span>
+            </div>
           </Link>
         </div>
 
-        {/* User Profile Summary (Mini) */}
-        <div className="p-6 flex items-center gap-3 border-b border-gray-800">
-          <div className="w-10 h-10 rounded-full bg-[#E5C16C] flex items-center justify-center text-[#1A1A1A] font-bold text-sm">
-            {session.user.name?.substring(0, 2).toUpperCase() || 'CL'}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-white text-sm font-semibold truncate">{session.user.name || 'Client'}</p>
-            <p className="text-gray-500 text-xs truncate">Client Premium</p>
+        {/* User Card */}
+        <div className="px-5 mb-8">
+          <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.05]">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-full border-2 border-[#10B981] p-0.5 overflow-hidden">
+                {session?.user?.image ? (
+                  <img src={session.user.image} alt="" className="w-full h-full object-cover rounded-full" />
+                ) : (
+                  <div className="w-full h-full bg-slate-800 flex items-center justify-center text-xs font-bold text-[#10B981]">
+                    {session?.user?.name?.slice(0, 2).toUpperCase() || 'CX'}
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col min-w-0">
+                <span className="text-xs font-semibold text-white truncate">{session?.user?.name || 'Client'}</span>
+                <span className="text-[10px] text-gray-500 font-medium">Membre Premium</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5 text-[10px] text-[#10B981]">
+              <span className="w-1 h-1 rounded-full bg-[#10B981] animate-pulse"></span>
+              En ligne
+            </div>
           </div>
         </div>
 
-        {/* Navigation Links */}
-        <nav className="flex-1 overflow-y-auto py-4 space-y-1">
-          {/* Section principale */}
-          <button
-            onClick={() => setActiveTab('overview')}
-            className={`sidebar-link w-full flex items-center px-4 py-3 transition-all duration-300 border-l-3 ${
-              activeTab === 'overview'
-                ? 'bg-[#A73B3C]/10 text-[#E5C16C] border-l-[#E5C16C]'
-                : 'text-gray-400 hover:bg-white/5 hover:text-white border-l-transparent'
-            }`}
-          >
-            <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-            </svg>
-            <span className="flex-1 text-left text-sm">Vue d'ensemble</span>
-          </button>
-          
-          {canViewBookings && (
+        {/* Navigation */}
+        <nav className="flex-1 px-3 space-y-1">
+          <div className="px-4 mb-2 text-[10px] font-semibold text-gray-600 uppercase tracking-widest">Navigation</div>
+          {[
+            { id: 'overview', label: 'Vue d\'ensemble', icon: SquaresFour },
+            { id: 'bookings', label: 'Mes Réservations', icon: CalendarBlank },
+            { id: 'quotes', label: 'Mes Devis', icon: FileText },
+            { id: 'invoices', label: 'Mes Factures', icon: CreditCard },
+          ].map((item) => (
             <button
-              onClick={() => setActiveTab('bookings')}
-              className={`sidebar-link w-full flex items-center px-4 py-3 transition-all duration-300 border-l-3 ${
-                activeTab === 'bookings'
-                  ? 'bg-[#A73B3C]/10 text-[#E5C16C] border-l-[#E5C16C]'
-                  : 'text-gray-400 hover:bg-white/5 hover:text-white border-l-transparent'
-              }`}
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${activeTab === item.id
+                ? 'bg-[#10B981]/10 text-white border-l-2 border-[#10B981]'
+                : 'text-gray-500 hover:bg-white/[0.02] hover:text-gray-300 border-l-2 border-transparent'
+                }`}
             >
-              <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <span className="flex-1 text-left text-sm">Mes réservations</span>
-              {stats.pendingBookings > 0 && (
-                <span className="ml-2 bg-yellow-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-                  {stats.pendingBookings}
-                </span>
-              )}
+              <item.icon size={18} weight={activeTab === item.id ? "fill" : "light"} className={activeTab === item.id ? 'text-[#10B981]' : 'group-hover:text-gray-300'} />
+              <span className="text-sm font-medium">{item.label}</span>
             </button>
-          )}
-          
-          {canManageQuotes && (
-            <button
-              onClick={() => setActiveTab('quotes')}
-              className={`sidebar-link w-full flex items-center px-4 py-3 transition-all duration-300 border-l-3 ${
-                activeTab === 'quotes'
-                  ? 'bg-[#A73B3C]/10 text-[#E5C16C] border-l-[#E5C16C]'
-                  : 'text-gray-400 hover:bg-white/5 hover:text-white border-l-transparent'
-              }`}
-            >
-              <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              <span className="flex-1 text-left text-sm">Mes devis</span>
-            </button>
-          )}
-          
-          <button
-            onClick={() => setActiveTab('invoices')}
-            className={`sidebar-link w-full flex items-center px-4 py-3 transition-all duration-300 border-l-3 ${
-              activeTab === 'invoices'
-                ? 'bg-[#A73B3C]/10 text-[#E5C16C] border-l-[#E5C16C]'
-                : 'text-gray-400 hover:bg-white/5 hover:text-white border-l-transparent'
-            }`}
-          >
-            <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <span className="flex-1 text-left text-sm">Mes factures</span>
-          </button>
-          
-          {/* Section FEEDBACK */}
-          <div className="pt-4 pb-1 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">
-            Feedback
-          </div>
-          
+          ))}
+
+          <div className="px-4 mt-6 mb-2 text-[10px] font-semibold text-gray-600 uppercase tracking-widest">Expérience</div>
           <button
             onClick={() => setActiveTab('create-reviews')}
-            className={`sidebar-link w-full flex items-center px-4 py-3 transition-all duration-300 border-l-3 ${
-              activeTab === 'create-reviews'
-                ? 'bg-[#A73B3C]/10 text-[#E5C16C] border-l-[#E5C16C]'
-                : 'text-gray-400 hover:bg-white/5 hover:text-white border-l-transparent'
-            }`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${activeTab === 'create-reviews'
+              ? 'bg-[#10B981]/10 text-white border-l-2 border-[#10B981]'
+              : 'text-gray-500 hover:bg-white/[0.02] hover:text-gray-300 border-l-2 border-transparent'
+              }`}
           >
-            <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-            </svg>
-            <span className="flex-1 text-left text-sm">Évaluer trajets</span>
+            <Star size={18} weight={activeTab === 'create-reviews' ? "fill" : "light"} className={activeTab === 'create-reviews' ? 'text-[#10B981]' : 'group-hover:text-gray-300'} />
+            <span className="flex-1 text-left text-sm font-medium">Évaluer trajets</span>
             {stats.reviewableBookings > 0 && (
-              <span className="bg-[#A73B3C] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+              <span className="bg-[#10B981] text-black text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
                 {stats.reviewableBookings}
               </span>
             )}
           </button>
-          
+
           {canManageReviews && (
             <button
               onClick={() => setActiveTab('reviews')}
-              className={`sidebar-link w-full flex items-center px-4 py-3 transition-all duration-300 border-l-3 ${
-                activeTab === 'reviews'
-                  ? 'bg-[#A73B3C]/10 text-[#E5C16C] border-l-[#E5C16C]'
-                  : 'text-gray-400 hover:bg-white/5 hover:text-white border-l-transparent'
-              }`}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${activeTab === 'reviews'
+                ? 'bg-[#10B981]/10 text-white border-l-2 border-[#10B981]'
+                : 'text-gray-500 hover:bg-white/[0.02] hover:text-gray-300 border-l-2 border-transparent'
+                }`}
             >
-              <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-              </svg>
-              <span className="flex-1 text-left text-sm">Mes avis</span>
+              <ChatCircle size={18} weight={activeTab === 'reviews' ? "fill" : "light"} className={activeTab === 'reviews' ? 'text-[#10B981]' : 'group-hover:text-gray-300'} />
+              <span className="text-sm font-medium">Mes avis</span>
             </button>
           )}
-          
-          {/* Sections additionnelles si permissions */}
+
           {(canManageVehicles || canManageUsers) && (
             <>
+              <div className="px-4 mt-6 mb-2 text-[10px] font-semibold text-gray-600 uppercase tracking-widest">Gestion</div>
               {canManageVehicles && (
                 <button
                   onClick={() => setActiveTab('vehicles')}
-                  className={`sidebar-link w-full flex items-center px-4 py-3 transition-all duration-300 border-l-3 ${
-                    activeTab === 'vehicles'
-                      ? 'bg-[#A73B3C]/10 text-[#E5C16C] border-l-[#E5C16C]'
-                      : 'text-gray-400 hover:bg-white/5 hover:text-white border-l-transparent'
-                  }`}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${activeTab === 'vehicles'
+                    ? 'bg-[#10B981]/10 text-white border-l-2 border-[#10B981]'
+                    : 'text-gray-500 hover:bg-white/[0.02] hover:text-gray-300 border-l-2 border-transparent'
+                    }`}
                 >
-                  <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                  </svg>
-                  <span className="flex-1 text-left text-sm">Véhicules</span>
+                  <Car size={18} weight={activeTab === 'vehicles' ? "fill" : "light"} className={activeTab === 'vehicles' ? 'text-[#10B981]' : 'group-hover:text-gray-300'} />
+                  <span className="text-sm font-medium">Véhicules</span>
                 </button>
               )}
-              
               {canManageUsers && (
                 <button
                   onClick={() => setActiveTab('users')}
-                  className={`sidebar-link w-full flex items-center px-4 py-3 transition-all duration-300 border-l-3 ${
-                    activeTab === 'users'
-                      ? 'bg-[#A73B3C]/10 text-[#E5C16C] border-l-[#E5C16C]'
-                      : 'text-gray-400 hover:bg-white/5 hover:text-white border-l-transparent'
-                  }`}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${activeTab === 'users'
+                    ? 'bg-[#10B981]/10 text-white border-l-2 border-[#10B981]'
+                    : 'text-gray-500 hover:bg-white/[0.02] hover:text-gray-300 border-l-2 border-transparent'
+                    }`}
                 >
-                  <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
-                  <span className="flex-1 text-left text-sm">Utilisateurs</span>
+                  <Users size={18} weight={activeTab === 'users' ? "fill" : "light"} className={activeTab === 'users' ? 'text-[#10B981]' : 'group-hover:text-gray-300'} />
+                  <span className="text-sm font-medium">Utilisateurs</span>
                 </button>
               )}
             </>
           )}
         </nav>
 
-        {/* Footer Sidebar - Déconnexion */}
-        <div className="p-4 border-t border-gray-800">
+        {/* CTA Sidebar */}
+        <div className="p-4 mt-4">
+          <Link href="/reservation" className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-gradient-to-r from-[#10B981] to-[#059669] text-black font-bold text-sm shadow-[0_4px_20_rgba(16,185,129,0.2)] transition-transform hover:scale-[1.02] active:scale-[0.98]">
+            <Plus size={16} weight="bold" /> Réserver un trajet
+          </Link>
+        </div>
+
+        {/* Footer Sidebar */}
+        <div className="p-4 mt-auto border-t border-white/5">
           <button
-            onClick={async () => {
-              await signOut({ callbackUrl: '/', redirect: true })
-            }}
-            className="sidebar-link w-full flex items-center px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded-lg transition-all"
+            onClick={async () => { await signOut({ callbackUrl: '/', redirect: true }) }}
+            className="w-full flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-red-400 hover:bg-red-400/5 rounded-xl transition-all"
           >
-            <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
+            <SignOut size={18} weight="light" />
             <span className="text-sm font-medium">Déconnexion</span>
           </button>
         </div>
@@ -1376,81 +1107,89 @@ function ClientDashboardContent() {
 
       {/* MAIN CONTENT */}
       <div className="flex-1 flex flex-col overflow-hidden md:ml-64">
-        
+
         {/* TOP HEADER */}
-        <header className="h-20 bg-white dark:bg-[#252525] shadow-sm flex items-center justify-between px-4 md:px-8 z-10 border-b border-gray-100 dark:border-gray-700">
+        <header className="h-20 flex items-center justify-between px-4 md:px-8 z-10 sticky top-0" style={{ backgroundColor: '#0B0F14', borderBottom: '1px solid var(--color-client-border)' }}>
           {/* Mobile Menu Button */}
-          <button 
+          <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden text-gray-600 dark:text-gray-300"
+            className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 text-gray-400"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+            {mobileMenuOpen ? <X size={20} weight="light" /> : <List size={20} weight="light" />}
           </button>
 
-          {/* Page Title */}
-          <h2 className="text-xl font-semibold text-[#1A1A1A] dark:text-white hidden md:block">
-            Tableau de Bord
-          </h2>
+          {/* Dynamic Greeting */}
+          <div className="hidden md:block">
+            <h2 className="text-lg font-bold text-white tracking-tight">
+              {new Date().getHours() < 12 ? 'Bonjour' : new Date().getHours() < 18 ? 'Bon après-midi' : 'Bonsoir'}, <span style={{ color: 'var(--color-client-accent)' }}>{session?.user?.name?.split(' ')[0] || 'Voyageur'}</span>
+            </h2>
+            <p className="text-[10px] text-gray-500 font-medium uppercase tracking-[0.15em]">Où allons-nous aujourd'hui ?</p>
+          </div>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-4 md:gap-6">
-            <button className="relative text-gray-400 hover:text-[#A73B3C] transition">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-              </svg>
+          <div className="flex items-center gap-3 md:gap-5">
+            <button className="relative w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 text-gray-400 hover:text-[#10B981] transition group" title="Notifications">
+              <Bell size={20} weight="light" className="group-hover:scale-110 transition-transform" />
               {stats.reviewableBookings > 0 && (
-                <span className="absolute -top-1 -right-1 w-2 h-2 bg-[#A73B3C] rounded-full"></span>
+                <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-[#10B981] rounded-full ring-[3px] ring-[#0B0F14]"></span>
               )}
             </button>
-            
-            {/* CTA Principal - Nouvelle Réservation */}
-            <Link 
+
+            {/* CTA Header mobile only or secondary */}
+            <Link
               href="/reservation"
-              className="bg-[#A73B3C] text-white px-4 md:px-5 py-2.5 rounded-lg font-medium shadow-lg hover:bg-[#8B3032] transition flex items-center gap-2 text-sm md:text-base"
+              className="px-4 py-2.5 rounded-xl bg-[#E5C16C] text-black font-bold text-xs shadow-lg hover:shadow-[#E5C16C]/10 transition-all active:scale-95"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              <span className="hidden sm:inline">Nouvelle Réservation</span>
-              <span className="sm:hidden">Réserver</span>
+              Réserver
             </Link>
           </div>
         </header>
 
         {/* Mobile Menu Dropdown */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-white dark:bg-[#252525] border-b border-gray-200 dark:border-gray-700 shadow-lg">
-            <nav className="px-4 py-3 space-y-1 max-h-[60vh] overflow-y-auto">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => {
-                    setActiveTab(tab.id)
-                    setMobileMenuOpen(false)
-                  }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium ${
-                    activeTab === tab.id
-                      ? 'bg-[#A73B3C] text-white'
-                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
-                  }`}
-                >
-                  <span className="text-xl">{tab.icon}</span>
-                  <span className="flex-1 text-left">{tab.label}</span>
-                  {tab.badge && (
-                    <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-                      {tab.badge}
-                    </span>
-                  )}
-                </button>
-              ))}
+          <div className="md:hidden overflow-hidden transition-all duration-300" style={{ backgroundColor: '#090D12', borderBottom: '1px solid var(--color-client-border)' }}>
+            <nav className="px-4 py-4 space-y-1">
+              {tabs.map((tab) => {
+                const Icon = {
+                  overview: SquaresFour,
+                  bookings: CalendarBlank,
+                  quotes: FileText,
+                  invoices: CreditCard,
+                  'create-reviews': Star,
+                  reviews: ChatCircle,
+                  profile: UserCircle,
+                  vehicles: Car,
+                  users: Users
+                }[tab.id] || SquaresFour;
+
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => {
+                      setActiveTab(tab.id)
+                      setMobileMenuOpen(false)
+                    }}
+                    className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${activeTab === tab.id
+                      ? 'bg-[#10B981]/10 text-[#10B981]'
+                      : 'text-gray-400 hover:bg-white/5'
+                      }`}
+                  >
+                    <Icon size={20} weight={activeTab === tab.id ? "fill" : "light"} />
+                    <span className="flex-1 text-left text-sm">{tab.label}</span>
+                    {tab.badge && (
+                      <span className="bg-[#10B981] text-black text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
+                        {tab.badge}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
             </nav>
           </div>
         )}
 
         {/* DASHBOARD CONTENT SCROLLABLE */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-[#F3F4F6] dark:bg-[#1A1A1A] p-4 md:p-8">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-8 noise-bg" style={{ backgroundColor: 'var(--color-client-bg)' }}>
           {renderContent()}
         </main>
       </div>
@@ -1522,10 +1261,10 @@ function ClientDashboardContent() {
 export default function ClientDashboard() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-[#FAFAFA] to-[#E5C16C]/10 dark:from-[#1A1A1A] dark:to-[#252525]">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--color-client-bg)' }}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A73B3C] mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Chargement du tableau de bord...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#10B981] mx-auto shadow-[0_0_15px_rgba(16,185,129,0.2)]"></div>
+          <p className="mt-4 text-xs font-medium uppercase tracking-widest text-gray-500">Chargement de votre espace...</p>
         </div>
       </div>
     }>

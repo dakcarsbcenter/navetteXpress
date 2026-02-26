@@ -1,120 +1,188 @@
+"use client";
+
 import { Navigation } from "@/components/navigation";
-import { 
-  AirportIcon, 
-  LuxuryCarIcon, 
-  PrivateDriverIcon, 
+import { Footer } from "@/components/footer";
+import {
+  AirportIcon,
+  LuxuryCarIcon,
+  PrivateDriverIcon,
   SafetyFirstIcon,
   BookNowIcon
 } from "@/components/icons/custom-icons";
 import { serviceTypes } from "@/lib/services";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { ShieldCheck, Clock, MapPin, Star, CaretRight } from "@phosphor-icons/react";
 
 export default function ServicesPage() {
   // Function to get icon component for each service
   const getServiceIcon = (serviceId: string) => {
     switch (serviceId) {
       case "transfert-aibd-dakar":
-        return <AirportIcon size={40} color="primary" />;
+        return <AirportIcon size={48} className="text-gold" />;
       case "transfert-Dakar-AIBD":
-        return <LuxuryCarIcon size={40} color="secondary" />;
+        return <LuxuryCarIcon size={48} className="text-gold" />;
       case "chauffeur-prive-dakar":
-        return <PrivateDriverIcon size={40} color="primary" />;
+        return <PrivateDriverIcon size={48} className="text-gold" />;
       case "tours-excursions":
-        return <SafetyFirstIcon size={40} color="secondary" />;
+        return <SafetyFirstIcon size={48} className="text-gold" />;
       case "services-vip":
-        return <LuxuryCarIcon size={40} color="primary" />;
+        return <LuxuryCarIcon size={48} className="text-gold" />;
       case "mise-a-disposition":
-        return <PrivateDriverIcon size={40} color="neutral" />;
+        return <PrivateDriverIcon size={48} className="text-gold" />;
       default:
-        return <AirportIcon size={40} color="primary" />;
+        return <AirportIcon size={48} className="text-gold" />;
     }
   };
 
   return (
-    <div className="min-h-screen">
-      <Navigation variant="solid" />
-      
-      {/* Hero Section */}
-      <section className="relative bg-[#1A1A1A] text-white pt-24 pb-16 sm:pt-32 sm:pb-20 md:pt-40 md:pb-24 px-4 sm:px-6 md:px-8">
-        <div className="absolute inset-0 opacity-10" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23E5C16C' fill-opacity='0.1'%3E%3Ccircle cx='20' cy='20' r='1'/%3E%3C/g%3E%3C/svg%3E")`
-        }}></div>
-        <div className="max-w-6xl mx-auto text-center relative z-10">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-4 sm:mb-6 leading-tight">
-            <span className="text-[#E5C16C]">Trois Services</span>, Une Qualité
-          </h1>
-          <p className="text-lg sm:text-xl md:text-2xl mb-6 sm:mb-8 text-white/90 max-w-4xl mx-auto leading-relaxed">
-            Découvrez l&apos;offre qui correspond le mieux à vos exigences de déplacement au Sénégal.
-          </p>
-        </div>
-      </section>
+    <div className="min-h-screen bg-midnight text-white selection:bg-gold/30">
+      {/* Noise Background Overlay */}
+      <div className="fixed inset-0 pointer-events-none z-[1] opacity-[0.03] mix-blend-overlay"
+        style={{ backgroundImage: `url('/noise.png')` }}></div>
 
-      {/* Services Grid */}
-      <section className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8 bg-[#FAFAFA] dark:bg-[#1A1A1A]">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
-            {serviceTypes.map((service) => (
-              <div 
-                key={service.id}
-                className="bg-white dark:bg-[#252525] rounded-xl shadow-2xl hover:shadow-3xl transition-all duration-300 overflow-hidden border-t-4 border-[#A73B3C]"
-              >
-                <div className="p-6 sm:p-8">
-                  {/* Header */}
-                  <div className="flex flex-col items-start mb-6">
-                    <div className="text-[#A73B3C] mb-4">
-                      {getServiceIcon(service.id)}
-                    </div>
-                    <div className="w-full">
-                      <h3 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] dark:text-[#FAFAFA] mb-3">
+      <Navigation variant="transparent" />
+
+      <main className="relative z-10">
+        {/* Hero Section */}
+        <section className="relative pt-40 pb-20 px-4 overflow-hidden">
+          {/* Decorative Elements */}
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gold/5 rounded-full blur-[128px] -z-10 animate-pulse-slow"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gold/5 rounded-full blur-[128px] -z-10 animate-pulse-slow ml-20"></div>
+
+          <div className="max-w-6xl mx-auto text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <h1 className="font-serif text-5xl md:text-7xl mb-6 tracking-tight">
+                L'Excellence <span className="text-gold italic">en Mouvement</span>
+              </h1>
+              <p className="font-sans text-xl md:text-2xl text-white/70 max-w-3xl mx-auto leading-relaxed mb-12">
+                Découvrez nos solutions de mobilité premium conçues pour répondre à vos exigences les plus élevées au Sénégal.
+              </p>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Services Grid */}
+        <section className="py-20 px-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {serviceTypes.map((service, index) => (
+                <motion.div
+                  key={service.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="group relative"
+                >
+                  <div className="h-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 hover:border-gold/30 hover:bg-white/[0.07] transition-all duration-500 overflow-hidden">
+                    {/* Background Shine Effect */}
+                    <div className="absolute -top-24 -right-24 w-48 h-48 bg-gold/10 blur-[64px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+
+                    <div className="relative z-10">
+                      <div className="mb-6 p-4 bg-midnight/50 border border-white/10 rounded-xl w-fit group-hover:scale-110 transition-transform duration-500">
+                        {getServiceIcon(service.id)}
+                      </div>
+
+                      <h3 className="font-serif text-3xl mb-4 text-white group-hover:text-gold transition-colors duration-300">
                         {service.name}
                       </h3>
-                      <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 leading-relaxed">
+
+                      <p className="font-sans text-white/60 mb-8 leading-relaxed">
                         {service.description}
                       </p>
+
+                      <ul className="space-y-3 mb-10">
+                        {service.features?.map((feature, fIndex) => (
+                          <li key={fIndex} className="flex items-center gap-3 text-sm text-white/80">
+                            <span className="w-1.5 h-1.5 bg-gold rounded-full shrink-0"></span>
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+
+                      <Link
+                        href={`/reservation?service=${service.id}`}
+                        className="flex items-center gap-2 text-gold font-medium group/link"
+                      >
+                        <span className="border-b border-transparent group-hover/link:border-gold transition-all duration-300">
+                          Réserver maintenant
+                        </span>
+                        <CaretRight size={18} weight="light" className="translate-y-[1px] group-hover/link:translate-x-1 transition-transform" />
+                      </Link>
                     </div>
                   </div>
-
-                  {/* Features */}
-                  <div className="mb-6">
-                    <ul className="space-y-3 text-gray-700 dark:text-gray-300">
-                      {service.features?.map((feature, index) => (
-                        <li key={index} className="flex items-start">
-                          <span className="text-[#E5C16C] mr-2 text-xl font-bold">•</span>
-                          <span className="text-sm sm:text-base">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* CTA */}
-                  <Link
-                    href={`/reservation?service=${service.id}`}
-                    className="w-full block text-center py-3 bg-[#A73B3C] hover:bg-[#8B3032] text-white font-bold rounded-lg transition-all duration-200 shadow-lg"
-                  >
-                    Réserver ce Service
-                  </Link>
-                </div>
-              </div>
-            ))}
+                </motion.div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Call to Action */}
-      <section className="py-16 sm:py-20 px-4 sm:px-6 md:px-8 bg-[#A73B3C] text-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-4xl font-extrabold mb-4">Une Question sur nos Forfaits ?</h2>
-          <p className="text-lg sm:text-xl mb-8 text-white/90">
-            Notre équipe est disponible 24/7 pour vous conseiller et vous accompagner.
-          </p>
-          <Link
-            href="/contact"
-            className="inline-block px-8 py-3 bg-[#E5C16C] hover:bg-[#D4B060] text-[#1A1A1A] font-bold rounded-lg shadow-2xl transition-all duration-300 text-lg"
+        {/* Comparison Table / Value Prop */}
+        <section className="py-24 px-4 bg-white/[0.02] border-y border-white/5">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="font-serif text-4xl md:text-5xl mb-6">Pourquoi Choisir <span className="text-gold italic">Navette Xpress</span> ?</h2>
+              <p className="text-white/60 max-w-2xl mx-auto">L'alliance parfaite de la technologie moderne et de l'hospitalité sénégalaise authentique.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+              {[
+                { icon: <ShieldCheck size={24} weight="thin" className="text-gold" />, title: "Sécurité Totale", desc: "Véhicules assurés et suivis par GPS en temps réel." },
+                { icon: <Clock size={24} weight="thin" className="text-gold" />, title: "Ponctualité", desc: "Arrivée garantie 15 minutes avant l'heure prévue." },
+                { icon: <Star size={24} weight="thin" className="text-gold" />, title: "Expérience VIP", desc: "Eau fraîche, WiFi et presse à bord de chaque véhicule." },
+                { icon: <MapPin size={24} weight="thin" className="text-gold" />, title: "Partout au Sénégal", desc: "Des transferts AIBD aux circuits touristiques nationaux." },
+              ].map((item, i) => (
+                <div key={i} className="text-center">
+                  <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    {item.icon}
+                  </div>
+                  <h4 className="font-serif text-xl mb-2">{item.title}</h4>
+                  <p className="text-sm text-white/50 leading-relaxed">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Final CTA */}
+        <section className="py-32 px-4 text-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-gold/5 blur-[120px] -z-10 rounded-full scale-150 transform translate-y-1/2"></div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="max-w-4xl mx-auto"
           >
-            Contacter un Conseiller
-          </Link>
-        </div>
-      </section>
+            <h2 className="font-serif text-5xl md:text-6xl mb-10 leading-tight">
+              Prêt pour une Expérience <br />
+              <span className="text-gold italic">Inoubliable ?</span>
+            </h2>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+              <Link
+                href="/reservation"
+                className="group relative inline-flex items-center justify-center px-10 py-5 font-bold tracking-widest text-[#1A1A1A] uppercase overflow-hidden bg-gold rounded-full transition-all hover:scale-105 active:scale-95"
+              >
+                <span className="absolute inset-0 w-full h-full bg-white/20 -translate-x-full group-hover:translate-x-0 skew-x-12 transition-transform duration-500"></span>
+                <span className="relative">Réserver mon trajet</span>
+              </Link>
+              <Link
+                href="/contact"
+                className="px-10 py-5 border border-white/20 rounded-full font-bold tracking-widest uppercase hover:bg-white/5 transition-all"
+              >
+                Nous contacter
+              </Link>
+            </div>
+          </motion.div>
+        </section>
+      </main>
+
+      <Footer />
     </div>
   );
 }

@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Moon, Sun, Monitor } from "lucide-react"
+import { Moon, Sun, Desktop } from "@phosphor-icons/react"
 import { useTheme } from "./theme-provider"
 
 export function ThemeToggle() {
@@ -20,13 +20,13 @@ export function ThemeToggle() {
   const getIcon = () => {
     switch (theme) {
       case "light":
-        return <Sun className="h-5 w-5" />
+        return <Sun className="h-5 w-5" weight="light" />
       case "dark":
-        return <Moon className="h-5 w-5" />
+        return <Moon className="h-5 w-5" weight="light" />
       case "system":
-        return <Monitor className="h-5 w-5" />
+        return <Desktop className="h-5 w-5" weight="light" />
       default:
-        return <Sun className="h-5 w-5" />
+        return <Sun className="h-5 w-5" weight="light" />
     }
   }
 

@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { AlertTriangle, X, User, Mail, Shield } from "lucide-react"
+import { Warning, X, User, EnvelopeSimple, ShieldCheck } from "@phosphor-icons/react"
 
 interface DeleteUserModalProps {
   isOpen: boolean
@@ -57,7 +57,7 @@ export function DeleteUserModal({
   const isConfirmValid = confirmText.toLowerCase() === "supprimer"
 
   const getRoleBadgeColor = (role?: string) => {
-    switch(role) {
+    switch (role) {
       case 'admin':
         return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
       case 'driver':
@@ -70,7 +70,7 @@ export function DeleteUserModal({
   }
 
   const getRoleLabel = (role?: string) => {
-    switch(role) {
+    switch (role) {
       case 'admin': return 'Administrateur'
       case 'driver': return 'Chauffeur'
       case 'customer': return 'Client'
@@ -81,21 +81,19 @@ export function DeleteUserModal({
   return (
     <div className="fixed inset-0 z-[9999] overflow-y-auto">
       {/* Backdrop amélioré avec effet blur */}
-      <div 
-        className={`fixed inset-0 backdrop-blur-sm transition-all duration-300 ${
-          isVisible ? 'bg-black/70' : 'bg-black/0'
-        }`}
+      <div
+        className={`fixed inset-0 backdrop-blur-sm transition-all duration-300 ${isVisible ? 'bg-black/70' : 'bg-black/0'
+          }`}
         onClick={onClose}
       />
-      
+
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
-        <div 
-          className={`relative transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800 shadow-2xl transition-all duration-300 w-full max-w-md border border-red-200 dark:border-red-900/50 ${
-            isVisible 
-              ? 'scale-100 opacity-100 translate-y-0' 
-              : 'scale-95 opacity-0 translate-y-4'
-          }`}
+        <div
+          className={`relative transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800 shadow-2xl transition-all duration-300 w-full max-w-md border border-red-200 dark:border-red-900/50 ${isVisible
+            ? 'scale-100 opacity-100 translate-y-0'
+            : 'scale-95 opacity-0 translate-y-4'
+            }`}
         >
           {/* Header avec gradient rouge */}
           <div className="relative bg-gradient-to-br from-red-50 to-red-100 dark:from-red-950/40 dark:to-red-900/40 px-6 pt-6 pb-4">
@@ -104,15 +102,15 @@ export function DeleteUserModal({
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
               aria-label="Fermer"
             >
-              <X className="w-5 h-5" />
+              <X className="w-5 h-5" weight="light" />
             </button>
-            
+
             {/* Icon d'alerte animé */}
             <div className="flex justify-center mb-4">
               <div className="relative">
                 <div className="absolute inset-0 bg-red-500 rounded-full animate-ping opacity-25"></div>
                 <div className="relative bg-red-500 dark:bg-red-600 rounded-full p-4 shadow-lg">
-                  <AlertTriangle className="w-8 h-8 text-white" strokeWidth={2.5} />
+                  <Warning className="w-8 h-8 text-white" weight="bold" />
                 </div>
               </div>
             </div>
@@ -138,7 +136,7 @@ export function DeleteUserModal({
             <div className="bg-gray-50 dark:bg-slate-700/50 rounded-xl p-4 space-y-3">
               <div className="flex items-center gap-3">
                 <div className="bg-white dark:bg-slate-800 rounded-lg p-2">
-                  <User className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  <User className="w-5 h-5 text-gray-600 dark:text-gray-400" weight="light" />
                 </div>
                 <div className="flex-1">
                   <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Nom</p>
@@ -149,7 +147,7 @@ export function DeleteUserModal({
               {userEmail && (
                 <div className="flex items-center gap-3">
                   <div className="bg-white dark:bg-slate-800 rounded-lg p-2">
-                    <Mail className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <EnvelopeSimple className="w-5 h-5 text-gray-600 dark:text-gray-400" weight="light" />
                   </div>
                   <div className="flex-1">
                     <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Email</p>
@@ -161,7 +159,7 @@ export function DeleteUserModal({
               {userRole && (
                 <div className="flex items-center gap-3">
                   <div className="bg-white dark:bg-slate-800 rounded-lg p-2">
-                    <Shield className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <ShieldCheck className="w-5 h-5 text-gray-600 dark:text-gray-400" weight="light" />
                   </div>
                   <div className="flex-1">
                     <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Rôle</p>
@@ -212,11 +210,10 @@ export function DeleteUserModal({
                 type="button"
                 onClick={handleConfirm}
                 disabled={!isConfirmValid || isConfirming}
-                className={`flex-1 px-6 py-3 text-sm font-bold text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed ${
-                  isConfirmValid 
-                    ? 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 transform hover:scale-105' 
-                    : 'bg-gray-400 dark:bg-gray-600'
-                }`}
+                className={`flex-1 px-6 py-3 text-sm font-bold text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed ${isConfirmValid
+                  ? 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 transform hover:scale-105'
+                  : 'bg-gray-400 dark:bg-gray-600'
+                  }`}
               >
                 {isConfirming ? (
                   <span className="flex items-center justify-center gap-2">

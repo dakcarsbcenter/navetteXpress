@@ -1,13 +1,86 @@
-/**
- * Centralized icon exports from lucide-react
- * This file serves as a single source of truth for all icons used in the Navette Xpress project
- * 
- * Usage:
- * import { PhoneIcon, MailIcon, CarIcon } from '@/components/icons';
- * <PhoneIcon className="w-5 h-5" />
- */
+import {
+  List as Menu,
+  X,
+  CaretDown as ChevronDown,
+  CaretRight as ChevronRight,
+  CaretLeft as ChevronLeft,
+  ArrowRight,
+  ArrowLeft,
+  Phone,
+  Envelope as Mail,
+  ChatCircle as MessageCircle,
+  PaperPlaneRight as Send,
+  Car,
+  FirstAid as Plane, // No direct Plane in base sometimes, but Phosphor usually has it. Let's check.
+  MapPin,
+  NavigationArrow as Navigation,
+  MapTrifold as Map,
+  User,
+  Users,
+  UserPlus,
+  UserCheck,
+  SignIn as LogIn,
+  SignOut as LogOut,
+  Gear as Settings,
+  Calendar,
+  CalendarBlank as CalendarDays,
+  Clock,
+  Timer,
+  WarningCircle as AlertCircle,
+  Bell,
+  BellRinging as BellRing,
+  Check,
+  CheckCircle,
+  XCircle,
+  Warning as AlertTriangle,
+  Info,
+  Plus,
+  Minus,
+  PencilSimple as Edit,
+  Trash,
+  MagnifyingGlass as Search,
+  Funnel as Filter,
+  Download,
+  Upload,
+  FloppyDisk as Save,
+  ArrowsCounterClockwise as RefreshCw,
+  Eye,
+  EyeSlash as EyeOff,
+  House as Home,
+  Star,
+  Heart,
+  ShareNetwork as Share2,
+  ArrowSquareOut as ExternalLink,
+  Link,
+  Copy,
+  CircleNotch as Loader2,
+  Briefcase,
+  CreditCard,
+  CurrencyDollar as DollarSign,
+  TrendUp as TrendingUp,
+  ChartBar as BarChart,
+  ChartPie as PieChart,
+  FacebookLogo as Facebook,
+  InstagramLogo as Instagram,
+  LinkedinLogo as Linkedin,
+  TwitterLogo as Twitter,
+  Shield,
+  ShieldCheck,
+  Lock,
+  LockOpen as Unlock,
+  FileText,
+  File,
+  Sun,
+  Moon,
+  Desktop as Monitor,
+  DotsThreeVertical as MoreVertical,
+  DotsThree as MoreHorizontal,
+  SquaresFour as Grid,
+  List as ListIcon,
+  Package,
+  Lightning as Zap
+} from "@phosphor-icons/react"
 
-// Navigation & Menu Icons
 export {
   Menu,
   X,
@@ -16,27 +89,15 @@ export {
   ChevronLeft,
   ArrowRight,
   ArrowLeft,
-} from 'lucide-react';
-
-// Communication Icons
-export {
   Phone,
   Mail,
   MessageCircle,
   Send,
-} from 'lucide-react';
-
-// Transportation Icons
-export {
   Car,
   Plane,
   MapPin,
   Navigation,
   Map,
-} from 'lucide-react';
-
-// User & Account Icons
-export {
   User,
   Users,
   UserPlus,
@@ -44,19 +105,11 @@ export {
   LogIn,
   LogOut,
   Settings,
-} from 'lucide-react';
-
-// Booking & Calendar Icons
-export {
   Calendar,
   CalendarDays,
   Clock,
   Timer,
   AlertCircle,
-} from 'lucide-react';
-
-// Status & Notification Icons
-export {
   Bell,
   BellRing,
   Check,
@@ -64,24 +117,16 @@ export {
   XCircle,
   AlertTriangle,
   Info,
-} from 'lucide-react';
-
-// Action Icons
-export {
   Plus,
   Minus,
   Edit,
-  Trash2,
+  Trash as Trash2,
   Search,
   Filter,
   Download,
   Upload,
   Save,
   RefreshCw,
-} from 'lucide-react';
-
-// UI & Interface Icons
-export {
   Eye,
   EyeOff,
   Home,
@@ -92,57 +137,33 @@ export {
   Link,
   Copy,
   Loader2,
-} from 'lucide-react';
-
-// Business Icons
-export {
   Briefcase,
   CreditCard,
   DollarSign,
   TrendingUp,
   BarChart,
   PieChart,
-} from 'lucide-react';
-
-// Social Media Icons
-export {
   Facebook,
   Instagram,
   Linkedin,
   Twitter,
-} from 'lucide-react';
-
-// Security & Safety Icons
-export {
   Shield,
   ShieldCheck,
   Lock,
   Unlock,
-} from 'lucide-react';
-
-// Document Icons
-export {
   FileText,
   File,
   Download as FileDownload,
   Upload as FileUpload,
-} from 'lucide-react';
-
-// Theme Icons
-export {
   Sun,
   Moon,
   Monitor,
-} from 'lucide-react';
-
-// Utility Icons
-export {
   MoreVertical,
   MoreHorizontal,
   Grid,
-  List,
+  ListIcon as List,
   Package,
-  Zap,
-} from 'lucide-react';
+  Zap
+}
 
 

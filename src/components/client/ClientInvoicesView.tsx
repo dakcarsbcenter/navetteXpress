@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { downloadInvoicePDF } from '@/lib/invoice-pdf'
-import { CheckCircle, XCircle, X } from 'lucide-react'
+import { CheckCircle, XCircle, X } from "@phosphor-icons/react"
 
 interface Invoice {
   id: number

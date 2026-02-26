@@ -3,6 +3,20 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import UniversalProfilePhotoUpload from "@/components/ui/UniversalProfilePhotoUpload"
+import {
+  User,
+  CaretLeft,
+  PencilSimple,
+  FloppyDisk,
+  X,
+  Envelope,
+  Phone,
+  CreditCard,
+  ShieldCheck,
+  Calendar,
+  Lock,
+  Camera
+} from "@phosphor-icons/react"
 
 interface DriverProfileProps {
   onBack: () => void
@@ -81,257 +95,196 @@ export function DriverProfile({ onBack }: DriverProfileProps) {
 
   if (isLoading) {
     return (
-      <div className="p-6">
-        <div className="text-center py-12">
-          <div className="text-lg text-gray-600">Chargement de votre profil...</div>
-        </div>
+      <div className="flex flex-col items-center justify-center py-20 gap-4">
+        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+        <p className="text-blue-400 font-mono text-xs animate-pulse">CHARGEMENT DU PROFIL...</p>
       </div>
     )
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      {/* Header avec bouton retour */}
-      <div className="mb-6">
-        <button
-          onClick={onBack}
-          className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium mb-4"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Retour au tableau de bord
-        </button>
+    <div className="max-w-5xl mx-auto space-y-6 pb-12 animate-fadeIn">
 
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Mon Profil</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">
-              Gérez vos informations personnelles et professionnelles
-            </p>
-          </div>
-          
+      {/* ── HEADER ── */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
           <button
-            onClick={() => setIsEditing(!isEditing)}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${
-              isEditing 
-                ? 'bg-gray-600 hover:bg-gray-700 text-white' 
-                : 'bg-blue-600 hover:bg-blue-700 text-white'
-            }`}
+            onClick={onBack}
+            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] text-[var(--color-text-secondary)] hover:text-white"
           >
-            {isEditing ? (
-              <>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-                Annuler
-              </>
-            ) : (
-              <>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-                Modifier
-              </>
-            )}
+            <CaretLeft size={20} weight="bold" />
           </button>
+          <div>
+            <h1 className="text-xl font-bold text-[var(--color-text-primary)]">Mon Profil Chauffeur</h1>
+            <p className="text-sm font-mono text-[var(--color-text-muted)]">Poste de contrôle • Identité Vérifiée</p>
+          </div>
         </div>
+
+        <button
+          onClick={() => isEditing ? handleSaveProfile() : setIsEditing(true)}
+          className={`flex items-center justify-center gap-2 py-3 px-6 rounded-xl font-bold transition-all shadow-xl ${isEditing
+            ? 'bg-emerald-600 text-white hover:bg-emerald-500 shadow-emerald-500/10'
+            : 'bg-blue-600 text-white hover:bg-blue-500 shadow-blue-500/10'
+            }`}
+        >
+          {isEditing ? <><FloppyDisk size={18} weight="fill" /> Sauvegarder</> : <><PencilSimple size={18} weight="bold" /> Modifier Infos</>}
+        </button>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* Colonne principale - Informations */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Informations personnelles */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-            <div className="p-6 border-b border-slate-200 dark:border-slate-700">
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
-                <span className="text-2xl">👤</span>
-                Informations personnelles
-              </h3>
-            </div>
-            
-            <div className="p-6 space-y-4">
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Nom complet
-                  </label>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={editFormData.name}
-                      onChange={(e) => setEditFormData({...editFormData, name: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                    />
-                  ) : (
-                    <p className="text-gray-900 dark:text-white font-medium">
-                      {driverData?.name || 'Non renseigné'}
-                    </p>
-                  )}
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Email
-                  </label>
-                  <p className="text-gray-900 dark:text-white">
-                    {driverData?.email || 'Non renseigné'}
-                  </p>
-                  <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 text-xs rounded-full mt-1">
-                    ✓ Vérifié
-                  </span>
-                </div>
-              </div>
+      <div className="grid lg:grid-cols-3 gap-8">
 
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Téléphone
-                  </label>
-                  {isEditing ? (
-                    <input
-                      type="tel"
-                      value={editFormData.phone}
-                      onChange={(e) => setEditFormData({...editFormData, phone: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                      placeholder="Ex: +33 6 12 34 56 78"
-                    />
-                  ) : (
-                    <p className="text-gray-900 dark:text-white">
-                      {driverData?.phone || 'Non renseigné'}
-                    </p>
-                  )}
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Numéro de permis
-                  </label>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={editFormData.licenseNumber}
-                      onChange={(e) => setEditFormData({...editFormData, licenseNumber: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                      placeholder="Ex: 123456789012"
-                    />
-                  ) : (
-                    <p className="text-gray-900 dark:text-white">
-                      {driverData?.licenseNumber || 'Non renseigné'}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {isEditing && (
-                <div className="pt-4 border-t border-gray-200 dark:border-gray-600">
-                  <div className="flex gap-3">
-                    <button
-                      onClick={handleSaveProfile}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      Sauvegarder
-                    </button>
-                    <button
-                      onClick={() => setIsEditing(false)}
-                      className="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors"
-                    >
-                      Annuler
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Informations du compte */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-            <div className="p-6 border-b border-slate-200 dark:border-slate-700">
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
-                <span className="text-2xl">🔐</span>
-                Informations du compte
-              </h3>
-            </div>
-            
-            <div className="p-6 space-y-4">
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Rôle
-                  </label>
-                  <span className="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 text-sm rounded-full font-medium">
-                    🚗 Chauffeur
-                  </span>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Statut
-                  </label>
-                  <span className={`inline-flex items-center px-3 py-1 text-sm rounded-full font-medium ${
-                    driverData?.isActive 
-                      ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                      : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
-                  }`}>
-                    {driverData?.isActive ? '✅ Actif' : '❌ Inactif'}
-                  </span>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Membre depuis
-                </label>
-                <p className="text-gray-900 dark:text-white">
-                  {driverData?.createdAt ? 
-                    new Date(driverData.createdAt).toLocaleDateString('fr-FR', { 
-                      day: 'numeric', 
-                      month: 'long', 
-                      year: 'numeric' 
-                    }) : 
-                    "Information non disponible"
-                  }
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Colonne latérale - Photo de profil */}
+        {/* COLONNE GAUCHE - PHOTO & QUICK INFO */}
         <div className="space-y-6">
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-            <div className="p-6 border-b border-slate-200 dark:border-slate-700">
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
-                <span className="text-2xl">📸</span>
-                Photo de profil
-              </h3>
-            </div>
-            
-            <div className="p-6">
+          <div className="bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] rounded-3xl p-8 text-center relative overflow-hidden">
+            {/* Background Glow */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-indigo-600" />
+
+            <div className="relative inline-block mb-6">
               <UniversalProfilePhotoUpload
                 currentImage={driverData?.image || session?.user?.image || undefined}
                 onImageUpdate={(imageUrl) => {
-                  // Mettre à jour les données locales
-                  if (driverData) {
-                    setDriverData({...driverData, image: imageUrl || undefined})
-                  }
+                  if (driverData) setDriverData({ ...driverData, image: imageUrl || undefined })
                 }}
-                onSuccess={(message) => {
-                  console.log('✅ Photo mise à jour:', message)
-                  // Recharger les données du profil pour mettre à jour l'image
-                  fetchDriverData()
-                }}
-                onError={(error) => {
-                  console.error('❌ Erreur upload:', error)
-                }}
+                onSuccess={() => fetchDriverData()}
+                onError={(err) => console.error(err)}
               />
+              <div className="absolute bottom-2 right-2 p-2 bg-blue-600 rounded-lg text-white border-2 border-[var(--color-driver-bg)]">
+                <Camera size={14} weight="fill" />
+              </div>
+            </div>
+
+            <h2 className="text-2xl font-bold text-white tracking-tight">{driverData?.name}</h2>
+            <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold uppercase tracking-widest border border-emerald-500/20">
+              <ShieldCheck size={12} weight="fill" /> Chauffeur Certifié
+            </div>
+
+            <div className="mt-8 pt-8 border-t border-white/5 space-y-4">
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-gray-500 font-bold uppercase tracking-tighter">Statut Compte</span>
+                <span className="text-emerald-500 font-bold">ACTIF</span>
+              </div>
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-gray-500 font-bold uppercase tracking-tighter">Depuis le</span>
+                <span className="text-white font-mono">
+                  {driverData?.createdAt ? new Date(driverData.createdAt).toLocaleDateString('fr-FR') : '--'}
+                </span>
+              </div>
             </div>
           </div>
+
+          <div className="bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] rounded-3xl p-6">
+            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+              <Lock size={14} weight="bold" className="text-blue-500" /> Sécurité
+            </h3>
+            <button className="w-full py-3 px-4 rounded-xl bg-white/5 border border-white/10 text-sm font-bold text-white hover:bg-white/10 transition-all text-left">
+              Réinitialiser le mot de passe
+            </button>
+          </div>
+        </div>
+
+        {/* COLONNE DROITE - FORMULAIRE & DETAILS */}
+        <div className="lg:col-span-2 space-y-6">
+
+          <div className="bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] rounded-3xl overflow-hidden shadow-2xl">
+            <div className="px-8 py-6 bg-white/5 flex items-center justify-between border-b border-white/5">
+              <div className="flex items-center gap-3">
+                <User size={18} weight="bold" className="text-blue-500" />
+                <h3 className="font-bold text-white text-lg">Informations État-Civil</h3>
+              </div>
+              {isEditing && (
+                <button onClick={() => setIsEditing(false)} className="text-gray-500 hover:text-white transition-colors">
+                  <X size={20} weight="bold" />
+                </button>
+              )}
+            </div>
+
+            <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase text-gray-500 tracking-widest flex items-center gap-1.5 px-1">
+                  <User size={10} weight="bold" /> Nom Complet
+                </label>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={editFormData.name}
+                    onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-blue-500 transition-all"
+                  />
+                ) : (
+                  <div className="px-4 py-3 rounded-xl bg-white/[0.02] border border-white/5 text-white font-medium">
+                    {driverData?.name}
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase text-gray-500 tracking-widest flex items-center gap-1.5 px-1">
+                  <Envelope size={10} weight="bold" /> Adresse Email
+                </label>
+                <div className="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-gray-500 font-mono text-sm flex items-center justify-between">
+                  {driverData?.email}
+                  <ShieldCheck size={14} weight="fill" className="text-emerald-500" />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase text-gray-500 tracking-widest flex items-center gap-1.5 px-1">
+                  <Phone size={10} weight="bold" /> Téléphone Mobile
+                </label>
+                {isEditing ? (
+                  <input
+                    type="tel"
+                    value={editFormData.phone}
+                    onChange={(e) => setEditFormData({ ...editFormData, phone: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-blue-500 transition-all"
+                  />
+                ) : (
+                  <div className="px-4 py-3 rounded-xl bg-white/[0.02] border border-white/5 text-white font-mono">
+                    {driverData?.phone || 'Non renseigné'}
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase text-gray-500 tracking-widest flex items-center gap-1.5 px-1">
+                  <CreditCard size={10} weight="bold" /> N° Permis de Conduire
+                </label>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={editFormData.licenseNumber}
+                    onChange={(e) => setEditFormData({ ...editFormData, licenseNumber: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-blue-500 transition-all"
+                  />
+                ) : (
+                  <div className="px-4 py-3 rounded-xl bg-white/[0.02] border border-white/5 text-white font-mono">
+                    {driverData?.licenseNumber || 'Non renseigné'}
+                  </div>
+                )}
+              </div>
+
+            </div>
+          </div>
+
+          <div className="bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] rounded-3xl p-8 flex items-center gap-6">
+            <div className="w-16 h-16 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-400 border border-blue-500/20">
+              <Calendar size={24} weight="light" />
+            </div>
+            <div className="flex-1">
+              <h4 className="text-white font-bold tracking-tight">Vérification de Conformité</h4>
+              <p className="text-xs text-gray-500 mt-1">
+                Vos documents sont à jour. Prochaine vérification prévue dans 6 mois.
+              </p>
+            </div>
+            <div className="shrink-0 text-emerald-500 font-bold text-xs uppercase tracking-widest">
+              OK
+            </div>
+          </div>
+
         </div>
       </div>
+
     </div>
   )
 }

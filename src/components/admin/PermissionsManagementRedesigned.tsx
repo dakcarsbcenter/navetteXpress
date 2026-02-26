@@ -4,7 +4,15 @@ import React, { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { useNotification } from "@/hooks/useNotification"
-import { Shield, Lock, Users, FileText, Plus, RefreshCw, Save } from 'lucide-react'
+import {
+  Shield,
+  Lock,
+  Users,
+  FileText,
+  Plus,
+  ArrowsCounterClockwise as RefreshCw,
+  FloppyDisk as Save
+} from "@phosphor-icons/react"
 
 // Définition des permissions composées
 const COMPOSED_PERMISSIONS = {
@@ -30,9 +38,9 @@ const COMPOSED_PERMISSIONS = {
 
 // Ressources disponibles avec leurs permissions spécifiques
 const RESOURCES = [
-  { 
-    name: 'users', 
-    label: 'UTILISATEURS', 
+  {
+    name: 'users',
+    label: 'UTILISATEURS',
     icon: '👥',
     permissions: [
       { key: 'manage', label: 'Gérer utilisateurs', description: 'Créer, modifier, supprimer' },
@@ -40,9 +48,9 @@ const RESOURCES = [
       { key: 'update', label: 'Modifier utilisateurs', description: 'Modification uniquement' }
     ]
   },
-  { 
-    name: 'vehicles', 
-    label: 'VÉHICULES', 
+  {
+    name: 'vehicles',
+    label: 'VÉHICULES',
     icon: '🚗',
     permissions: [
       { key: 'manage', label: 'Gérer véhicules', description: 'Créer, modifier, supprimer' },
@@ -50,9 +58,9 @@ const RESOURCES = [
       { key: 'update', label: 'Modifier véhicules', description: 'Modification statut' }
     ]
   },
-  { 
-    name: 'bookings', 
-    label: 'RÉSERVATIONS', 
+  {
+    name: 'bookings',
+    label: 'RÉSERVATIONS',
     icon: '📅',
     permissions: [
       { key: 'manage', label: 'Gérer réservations', description: 'Créer, modifier, supprimer' },
@@ -60,27 +68,27 @@ const RESOURCES = [
       { key: 'update', label: 'Modifier réservations', description: 'Modification uniquement' }
     ]
   },
-  { 
-    name: 'quotes', 
-    label: 'DEVIS', 
+  {
+    name: 'quotes',
+    label: 'DEVIS',
     icon: '📋',
     permissions: [
       { key: 'manage', label: 'Gérer devis', description: 'Créer, modifier, supprimer' },
       { key: 'read', label: 'Lire devis', description: 'Consultation uniquement' }
     ]
   },
-  { 
-    name: 'reviews', 
-    label: 'AVIS', 
+  {
+    name: 'reviews',
+    label: 'AVIS',
     icon: '⭐',
     permissions: [
       { key: 'manage', label: 'Gérer avis', description: 'Créer, modifier, supprimer' },
       { key: 'read', label: 'Lire avis', description: 'Consultation uniquement' }
     ]
   },
-  { 
-    name: 'profile', 
-    label: 'PROFIL', 
+  {
+    name: 'profile',
+    label: 'PROFIL',
     icon: '👤',
     permissions: [
       { key: 'read', label: 'Lire profil', description: 'Voir son propre profil' },
@@ -116,7 +124,7 @@ export default function PermissionsManagementRedesigned() {
     setIsLoading(true)
     try {
       console.log('🔍 Chargement des rôles et permissions...')
-      
+
       // Récupérer les rôles
       const rolesRes = await fetch('/api/admin/roles', {
         method: 'GET',
@@ -125,14 +133,14 @@ export default function PermissionsManagementRedesigned() {
         },
         cache: 'no-store'
       })
-      
+
       if (!rolesRes.ok) {
         throw new Error(`HTTP error! status: ${rolesRes.status}`)
       }
-      
+
       const rolesData = await rolesRes.json()
       const rolesList = rolesData.data || rolesData.roles || []
-      
+
       // Transformer en format simple pour l'affichage
       const rolesFormatted = rolesList.map((role: any) => ({
         name: role.name,
@@ -140,12 +148,12 @@ export default function PermissionsManagementRedesigned() {
         icon: getRoleIcon(role.name),
         userCount: role.userCount || 0
       }))
-      
+
       setRoles(rolesFormatted)
-      
+
       // Récupérer les permissions pour chaque rôle
       const permissionsData: Record<string, RolePermissions> = {}
-      
+
       for (const role of rolesList) {
         const permRes = await fetch(`/api/admin/permissions/composed?role=${role.name}`, {
           method: 'GET',
@@ -154,16 +162,16 @@ export default function PermissionsManagementRedesigned() {
           },
           cache: 'no-store'
         })
-        
+
         if (!permRes.ok) {
           console.error(`❌ HTTP Error (permissions ${role.name}):`, permRes.status)
           continue
         }
-        
+
         const data = await permRes.json()
         permissionsData[role.name] = data.permissions || {}
       }
-      
+
       setPermissions(permissionsData)
     } catch (error) {
       console.error('❌ Erreur lors du chargement des permissions:', error)
@@ -172,7 +180,7 @@ export default function PermissionsManagementRedesigned() {
       setIsLoading(false)
     }
   }
-  
+
   const getRoleIcon = (roleName: string) => {
     const icons: Record<string, string> = {
       'admin': '👑',
@@ -197,22 +205,22 @@ export default function PermissionsManagementRedesigned() {
 
   const hasComposedPermission = (roleName: string, resource: string, composedPerm: string): boolean => {
     const rolePerms = permissions[roleName]?.[resource] || []
-    
+
     // Si c'est "manage", vérifier si toutes les actions sont présentes
     if (composedPerm === 'manage') {
       const requiredActions = ['create', 'read', 'update', 'delete']
       return requiredActions.every(action => rolePerms.includes(action))
     }
-    
+
     // Pour les autres, vérifier l'action spécifique
     return rolePerms.includes(composedPerm)
   }
 
   const togglePermission = async (roleName: string, resource: string, composedPerm: string) => {
     const currentState = hasComposedPermission(roleName, resource, composedPerm)
-    
+
     console.log('🔧 Toggle permission:', { roleName, resource, composedPerm, currentState })
-    
+
     setIsSaving(true)
     try {
       const response = await fetch('/api/admin/permissions/composed', {
@@ -255,7 +263,7 @@ export default function PermissionsManagementRedesigned() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <NotificationCenter 
+      <NotificationCenter
         notifications={notifications}
         onRemove={removeNotification}
       />
@@ -267,7 +275,7 @@ export default function PermissionsManagementRedesigned() {
             <h1 className="text-2xl font-bold text-gray-900">Matrice des Permissions</h1>
             <p className="text-sm text-gray-500 mt-1">Définissez précisément les accès pour chaque rôle.</p>
           </div>
-          
+
           {/* Action Buttons */}
           <div className="flex items-center gap-3">
             <button className="flex items-center gap-2 px-3 py-2 text-sm text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-lg hover:bg-yellow-100 transition-colors">
@@ -407,7 +415,7 @@ export default function PermissionsManagementRedesigned() {
                       <div className="col-span-7 grid grid-cols-4 gap-4">
                         {roles.map((role) => {
                           const isEnabled = hasComposedPermission(role.name, resource.name, perm.key)
-                          
+
                           return (
                             <div key={role.name} className="flex justify-center">
                               <button
