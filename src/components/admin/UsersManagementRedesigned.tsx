@@ -18,6 +18,7 @@ import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { DeleteUserModal } from "@/components/ui/DeleteUserModal"
 import Image from "next/image"
 import { BulkDeleteModal } from "@/components/ui/BulkDeleteModal"
+import { useNotification } from "@/hooks/useNotification"
 
 interface User {
   id: string

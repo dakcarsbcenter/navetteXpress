@@ -18,6 +18,7 @@ import AdminGlobalStats from "@/components/admin/AdminGlobalStats"
 import { ModernAdminDashboard } from "@/components/admin/ModernAdminDashboard"
 import InvoicesManagementRedesigned from "@/components/admin/InvoicesManagementRedesigned"
 import { LocationsManagementRedesigned } from "@/components/admin/LocationsManagementRedesigned"
+import PublicitesClient from "@/components/admin/ads/PublicitesClient"
 
 type TabType = 'modern' | 'users' | 'vehicles' | 'bookings' | 'quotes' | 'invoices' | 'permissions' | 'reviews' | 'stats' | 'ads' | 'locations'
 
@@ -151,12 +152,43 @@ export default function AdminDashboard() {
       case 'locations':
         return <LocationsManagementRedesigned />
       case 'ads':
-        // On redirige vers la page dédiée car elle est plus complexe (formulaires etc)
-        // Mais on peut aussi l'intégrer ici si on veut. Pour l'instant, on redirige.
-        redirect('/admin/publicites')
+        return <AdsManagementWrapper />
       default:
         return <ModernAdminDashboard onNavigate={(section: string) => setActiveTab(section as TabType)} />
     }
+  }
+
+  // Wrapper for Ads Component to fetch data client-side since page.tsx is a client component
+  const AdsManagementWrapper = () => {
+    const [ads, setAds] = useState<any[]>([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+      const fetchAds = async () => {
+        try {
+          const res = await fetch('/api/ads/all')
+          if (res.ok) {
+            const data = await res.json()
+            setAds(data)
+          }
+        } catch (error) {
+          console.error('Error fetching ads:', error)
+        } finally {
+          setLoading(false)
+        }
+      }
+      fetchAds()
+    }, [])
+
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center p-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+        </div>
+      )
+    }
+
+    return <PublicitesClient ads={ads} />
   }
 
   // Affichage avec sidebar redessinée "Command Center"

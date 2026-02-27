@@ -16,6 +16,7 @@ import {
   ChartBar as BarChart3,
   Clock,
   Pulse as Activity,
+  Lightning as Zap,
   CaretRight as ChevronRight,
   Megaphone,
   MapPin

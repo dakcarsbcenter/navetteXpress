@@ -63,6 +63,23 @@ function ReservationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [errorModal, setErrorModal] = useState<{ open: boolean; title: string; message: string }>({ open: false, title: '', message: '' });
+  const [locations, setLocations] = useState<{ id: string; name: string }[]>([]);
+
+  // Fetch locations
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        const response = await fetch('/api/locations');
+        const data = await response.json();
+        if (data.success) {
+          setLocations(data.data || []);
+        }
+      } catch (error) {
+        console.error("Erreur lors de la récupération des lieux:", error);
+      }
+    };
+    fetchLocations();
+  }, []);
 
   // Gérer la pré-sélection du formulaire depuis l'URL
   useEffect(() => {
@@ -412,26 +429,54 @@ function ReservationForm() {
                         <div className="space-y-2">
                           <label className="text-[10px] tracking-widest uppercase text-gold font-medium block">Lieu de prise en charge</label>
                           <div className="relative group">
-                            <input
-                              type="text"
-                              value={formData.pickupAddress}
-                              onChange={(e) => handleInputChange('pickupAddress', e.target.value)}
-                              placeholder="Aéroport AIBD, Dakar..."
-                              className="w-full bg-white/5 border border-white/10 rounded-xl px-10 py-4 text-white focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all"
-                            />
+                            {locations.length > 0 ? (
+                              <select
+                                value={formData.pickupAddress}
+                                onChange={(e) => handleInputChange('pickupAddress', e.target.value)}
+                                className="w-full bg-white/5 border border-white/10 rounded-xl px-10 py-4 text-white focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all appearance-none"
+                              >
+                                <option value="" disabled className="bg-midnight text-white/50">Sélectionnez un lieu...</option>
+                                {locations.map(loc => (
+                                  <option key={loc.id} value={loc.name} className="bg-midnight text-white">{loc.name}</option>
+                                ))}
+                                <option value="Autre" className="bg-midnight text-white">Autre (préciser dans les notes)</option>
+                              </select>
+                            ) : (
+                              <input
+                                type="text"
+                                value={formData.pickupAddress}
+                                onChange={(e) => handleInputChange('pickupAddress', e.target.value)}
+                                placeholder="Aéroport AIBD, Dakar..."
+                                className="w-full bg-white/5 border border-white/10 rounded-xl px-10 py-4 text-white focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all"
+                              />
+                            )}
                             <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-gold transition-colors" size={18} weight="light" />
                           </div>
                         </div>
                         <div className="space-y-2">
                           <label className="text-[10px] tracking-widest uppercase text-gold font-medium block">Destination finale</label>
                           <div className="relative group">
-                            <input
-                              type="text"
-                              value={formData.destinationAddress}
-                              onChange={(e) => handleInputChange('destinationAddress', e.target.value)}
-                              placeholder="Almadies, Hotel Terrou-Bi..."
-                              className="w-full bg-white/5 border border-white/10 rounded-xl px-10 py-4 text-white focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all"
-                            />
+                            {locations.length > 0 ? (
+                              <select
+                                value={formData.destinationAddress}
+                                onChange={(e) => handleInputChange('destinationAddress', e.target.value)}
+                                className="w-full bg-white/5 border border-white/10 rounded-xl px-10 py-4 text-white focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all appearance-none"
+                              >
+                                <option value="" disabled className="bg-midnight text-white/50">Sélectionnez une destination...</option>
+                                {locations.map(loc => (
+                                  <option key={loc.id} value={loc.name} className="bg-midnight text-white">{loc.name}</option>
+                                ))}
+                                <option value="Autre" className="bg-midnight text-white">Autre (préciser dans les notes)</option>
+                              </select>
+                            ) : (
+                              <input
+                                type="text"
+                                value={formData.destinationAddress}
+                                onChange={(e) => handleInputChange('destinationAddress', e.target.value)}
+                                placeholder="Almadies, Hotel Terrou-Bi..."
+                                className="w-full bg-white/5 border border-white/10 rounded-xl px-10 py-4 text-white focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all"
+                              />
+                            )}
                             <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-gold transition-colors" size={18} weight="light" />
                           </div>
                         </div>
@@ -689,7 +734,7 @@ function ReservationForm() {
                       whileTap={{ scale: 0.98 }}
                       onClick={handleSubmit}
                       disabled={isSubmitting}
-                      className="lux-button w-full sm:w-auto flex items-center justify-center gap-3 px-12 py-4 font-bold uppercase tracking-[0.2em] text-sm shadow-[0_10px_30px_rgba(201,168,76,0.3)]"
+                      className="lux-button w-full sm:w-auto flex items-center justify-center gap-3 px-12 py-4 font-bold uppercase tracking-[0.2em] text-sm text-white shadow-[0_10px_30px_rgba(201,168,76,0.3)]"
                     >
                       {isSubmitting ? (
                         <>

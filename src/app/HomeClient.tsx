@@ -19,10 +19,6 @@ export default function HomeClient() {
 
   // Widget state
   const [bookingService, setBookingService] = useState('transfert-aibd-dakar');
-  const [bookingPickup, setBookingPickup] = useState('');
-  const [bookingDestination, setBookingDestination] = useState('');
-  const [bookingDateTime, setBookingDateTime] = useState('');
-  const [bookingPassengers, setBookingPassengers] = useState('1');
   const carouselRef = useRef<HTMLDivElement>(null);
   const [isCarouselHovered, setIsCarouselHovered] = useState(false);
 
@@ -482,80 +478,21 @@ export default function HomeClient() {
                     </div>
 
                     <div className="space-y-6">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <label className="text-gold text-xs font-bold uppercase tracking-widest ml-1">Départ</label>
-                          <div className="relative">
-                            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/50" size={18} weight="light" />
-                            <input
-                              type="text"
-                              value={bookingPickup}
-                              onChange={(e) => setBookingPickup(e.target.value)}
-                              placeholder="Lieu de prise en charge"
-                              className="w-full bg-midnight border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-gold/50 transition-all font-body"
-                            />
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-gold text-xs font-bold uppercase tracking-widest ml-1">Destination</label>
-                          <div className="relative">
-                            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/50" size={18} weight="light" />
-                            <input
-                              type="text"
-                              value={bookingDestination}
-                              onChange={(e) => setBookingDestination(e.target.value)}
-                              placeholder="Lieu d'arrivée"
-                              className="w-full bg-midnight border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-gold/50 transition-all font-body"
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <label className="text-gold text-xs font-bold uppercase tracking-widest ml-1">Date & Heure</label>
-                          <div className="relative">
-                            <Clock className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/50" size={18} weight="light" />
-                            <input
-                              type="datetime-local"
-                              value={bookingDateTime}
-                              onChange={(e) => setBookingDateTime(e.target.value)}
-                              className="w-full bg-midnight border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-gold/50 transition-all font-body [color-scheme:dark]"
-                              min={new Date().toISOString().slice(0, 16)}
-                            />
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-gold text-xs font-bold uppercase tracking-widest ml-1">Passagers</label>
-                          <div className="relative">
-                            <UserCircle className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/50" size={18} weight="light" />
-                            <select
-                              value={bookingPassengers}
-                              onChange={(e) => setBookingPassengers(e.target.value)}
-                              className="w-full bg-midnight border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-gold/50 transition-all font-body appearance-none"
-                            >
-                              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => (
-                                <option key={n} value={n}>{n} {n === 1 ? 'Personne' : 'Personnes'}</option>
-                              ))}
-                              <option value="11">+10 Personnes</option>
-                            </select>
-                          </div>
-                        </div>
+                      <div className="p-6 rounded-2xl bg-white/5 border border-white/10 text-center mb-4">
+                        <p className="text-text-secondary text-lg">
+                          Simplifiez l'organisation de vos déplacements avec Navette Xpress.
+                        </p>
                       </div>
 
                       <button
                         onClick={() => {
                           const queryParams = new URLSearchParams();
                           if (bookingService) queryParams.append('service', bookingService);
-                          if (bookingPickup) queryParams.append('pickup', bookingPickup);
-                          if (bookingDestination) queryParams.append('destination', bookingDestination);
-                          if (bookingDateTime) queryParams.append('datetime', bookingDateTime);
-                          if (bookingPassengers) queryParams.append('passengers', bookingPassengers);
                           router.push(`/reservation?${queryParams.toString()}`);
                         }}
-                        className="w-full py-5 bg-gold text-midnight font-bold text-xl rounded-2xl shadow-[0_10px_40px_rgba(201,168,76,0.3)] hover:scale-[1.02] transition-all flex items-center justify-center gap-3 mt-8"
+                        className="w-full py-5 bg-gold text-midnight font-bold text-xl rounded-2xl shadow-[0_10px_40px_rgba(201,168,76,0.3)] hover:scale-[1.02] hover:shadow-[0_10px_50px_rgba(201,168,76,0.5)] transition-all flex items-center justify-center gap-3 mt-8"
                       >
-                        Je réserve
+                        Réserver mon trajet
                         <ArrowRight size={24} weight="regular" />
                       </button>
                     </div>
