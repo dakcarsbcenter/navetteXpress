@@ -352,6 +352,14 @@ export const advertisements = pgTable('advertisements', {
   createdBy: text('created_by'),               // ID admin qui a créé la pub
 });
 
+// Lieux de prise en charge / destination
+export const locationsTable = pgTable('locations', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull().unique(), // Nom du lieu (Ex: "Aéroport AIBD", "Plateau", "Almadies")
+  isActive: boolean('is_active').notNull().default(true),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
+});
 
 // Alias pour les exports
 export const quotes = quotesTable;
@@ -361,6 +369,8 @@ export type InsertDriverAvailability = typeof driverAvailabilityTable.$inferInse
 export type SelectDriverAvailability = typeof driverAvailabilityTable.$inferSelect;
 export type Advertisement = typeof advertisements.$inferSelect;
 export type NewAdvertisement = typeof advertisements.$inferInsert;
+export type InsertLocation = typeof locationsTable.$inferInsert;
+export type SelectLocation = typeof locationsTable.$inferSelect;
 
 
 // Types pour les réponses API

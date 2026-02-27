@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { trackPageView } from "@/lib/analytics";
@@ -23,6 +23,25 @@ export default function HomeClient() {
   const [bookingDestination, setBookingDestination] = useState('');
   const [bookingDateTime, setBookingDateTime] = useState('');
   const [bookingPassengers, setBookingPassengers] = useState('1');
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const [isCarouselHovered, setIsCarouselHovered] = useState(false);
+
+  useEffect(() => {
+    if (loading || isCarouselHovered) return;
+    const interval = setInterval(() => {
+      if (carouselRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth, children } = carouselRef.current;
+        if (scrollLeft + clientWidth >= scrollWidth - 10) {
+          carouselRef.current.scrollTo({ left: 0, behavior: "smooth" });
+        } else {
+          const firstChild = children[0] as HTMLElement;
+          const scrollAmount = firstChild ? firstChild.offsetWidth + 32 : 400; // gap-8 = 32px
+          carouselRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+        }
+      }
+    }, 6000);
+    return () => clearInterval(interval);
+  }, [loading, isCarouselHovered, vehicles]);
 
   useEffect(() => {
     trackPageView('home');
@@ -536,7 +555,7 @@ export default function HomeClient() {
                         }}
                         className="w-full py-5 bg-gold text-midnight font-bold text-xl rounded-2xl shadow-[0_10px_40px_rgba(201,168,76,0.3)] hover:scale-[1.02] transition-all flex items-center justify-center gap-3 mt-8"
                       >
-                        Vérifier les Prix & Véhicules
+                        Je réserve
                         <ArrowRight size={24} weight="regular" />
                       </button>
                     </div>
@@ -569,53 +588,80 @@ export default function HomeClient() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {featuredVehicles.map((vehicle, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="group rounded-[2rem] overflow-hidden bg-surface border border-white/5 hover:border-gold/20 transition-all"
-                >
-                  <div className="h-64 overflow-hidden relative">
-                    <Image
-                      src={vehicle.image}
-                      alt={`Véhicule Navette Xpress : ${vehicle.name}`}
-                      width={600}
-                      height={400}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                    <div className="absolute top-4 right-4 px-4 py-1 rounded-full bg-midnight/80 backdrop-blur-md border border-white/10 text-gold text-[10px] font-bold uppercase tracking-widest">
-                      {vehicle.category}
-                    </div>
-                  </div>
-                  <div className="p-8">
-                    <h3 className="text-2xl text-white font-display mb-4">{vehicle.name}</h3>
-                    <div className="flex items-center gap-6 mb-8 text-text-muted text-sm">
-                      <div className="flex items-center gap-2">
-                        <UserCircle size={16} weight="light" className="text-gold" />
-                        <span>{vehicle.passengers}</span>
+            {loading ? (
+              <div className="flex justify-center items-center py-20">
+                <div className="w-12 h-12 border-2 border-gold border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            ) : (
+              <div
+                ref={carouselRef}
+                onMouseEnter={() => setIsCarouselHovered(true)}
+                onMouseLeave={() => setIsCarouselHovered(false)}
+                className="flex gap-8 overflow-x-auto pb-12 pt-4 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
+              >
+                {(vehicles.length > 0 ? vehicles : featuredVehicles.map((v: any, index) => ({
+                  id: index,
+                  make: v.name.split(' ')[0],
+                  model: v.name.split(' ').slice(1).join(' '),
+                  category: v.category,
+                  photo: v.image,
+                  capacity: v.passengers,
+                  price: v.price
+                }))).map((vehicle: any, i: number) => (
+                  <motion.div
+                    key={vehicle.id || i}
+                    initial={{ opacity: 0, x: 50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1 }}
+                    className="group min-w-[85vw] md:min-w-[400px] flex-shrink-0 snap-center rounded-[2rem] bg-surface border border-white/5 hover:border-gold/20 transition-all [perspective:1000px] flex flex-col justify-between"
+                  >
+                    <motion.div
+                      className="h-64 relative rounded-t-[2rem] overflow-hidden [transform-style:preserve-3d] transition-transform duration-700 ease-out"
+                      whileHover={{ rotateX: 5, rotateY: -5, scale: 1.02 }}
+                    >
+                      <Image
+                        src={vehicle.photo || vehicle.image || 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=800'}
+                        alt={`Véhicule Navette Xpress : ${vehicle.make} ${vehicle.model}`}
+                        width={600}
+                        height={400}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(11,11,15,0.6),transparent)]"></div>
+                      <div className="absolute top-4 right-4 px-4 py-1 rounded-full bg-midnight/80 backdrop-blur-md border border-white/10 text-gold text-[10px] font-bold uppercase tracking-widest [transform:translateZ(30px)] shadow-xl">
+                        {vehicle.category || vehicle.vehicleType || "VIP"}
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Van size={16} weight="light" className="text-gold" />
-                        <span>{vehicle.luggage}</span>
+                    </motion.div>
+                    <div className="p-8 pb-10">
+                      <h3 className="text-2xl text-white font-display mb-4">{vehicle.make} {vehicle.model}</h3>
+                      <div className="flex items-center gap-6 mb-8 text-text-muted text-sm">
+                        <div className="flex items-center gap-2">
+                          <UserCircle size={16} weight="light" className="text-gold" />
+                          <span>{vehicle.capacity || 4}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Van size={16} weight="light" className="text-gold" />
+                          <span>Bagages inclus</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between mt-auto">
+                        <div>
+                          <div className="text-text-muted text-[10px] uppercase tracking-widest mb-1">Dès</div>
+                          {vehicle.price ? (
+                            <div className="text-white font-bold text-xl font-mono">{vehicle.price} <span className="text-xs text-text-muted font-normal">FCFA</span></div>
+                          ) : (
+                            <div className="text-white font-bold text-lg">Sur devis</div>
+                          )}
+                        </div>
+                        <Link href="/reservation" className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-gold hover:text-midnight transition-colors">
+                          <ArrowRight size={20} weight="regular" />
+                        </Link>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="text-text-muted text-[10px] uppercase tracking-widest mb-1">Dès</div>
-                        <div className="text-white font-bold text-xl font-mono">{vehicle.price} <span className="text-xs text-text-muted font-normal">FCFA</span></div>
-                      </div>
-                      <Link href="/reservation" className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-gold hover:text-midnight transition-all">
-                        <ArrowRight size={20} weight="regular" />
-                      </Link>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 

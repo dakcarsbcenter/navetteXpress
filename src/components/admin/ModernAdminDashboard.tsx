@@ -16,9 +16,9 @@ import {
   ChartBar as BarChart3,
   Clock,
   Pulse as Activity,
-  Lightning as Zap,
   CaretRight as ChevronRight,
-  Megaphone
+  Megaphone,
+  MapPin
 } from "@phosphor-icons/react"
 
 // Types pour les statistiques
@@ -193,6 +193,12 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
       id: 'reviews', title: 'Avis Clients', description: 'Satisfaction',
       icon: <Star size={18} />, color: '#F59E0B',
       onClick: () => onNavigate('reviews')
+    },
+    {
+      id: 'locations', title: 'Lieux', description: 'Gérer les adresses',
+      icon: <MapPin size={18} />, color: '#10B981',
+      onClick: () => onNavigate('locations'),
+      adminOnly: true
     },
     {
       id: 'ads', title: 'Publicités', description: 'Gérer les pubs',
