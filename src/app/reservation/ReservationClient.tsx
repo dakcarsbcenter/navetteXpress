@@ -64,15 +64,27 @@ function ReservationForm() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [errorModal, setErrorModal] = useState<{ open: boolean; title: string; message: string }>({ open: false, title: '', message: '' });
 
-  // Gérer la pré-sélection du service depuis l'URL
+  // Gérer la pré-sélection du formulaire depuis l'URL
   useEffect(() => {
     const serviceParam = searchParams?.get('service');
-    if (serviceParam && getServiceById(serviceParam)) {
-      setFormData(prev => ({
-        ...prev,
-        serviceType: serviceParam
-      }));
-    }
+    const pickupParam = searchParams?.get('pickup');
+    const destinationParam = searchParams?.get('destination');
+    const datetimeParam = searchParams?.get('datetime');
+    const passengersParam = searchParams?.get('passengers');
+
+    setFormData(prev => {
+      const newData = { ...prev };
+
+      if (serviceParam && getServiceById(serviceParam)) {
+        newData.serviceType = serviceParam;
+      }
+      if (pickupParam) newData.pickupAddress = pickupParam;
+      if (destinationParam) newData.destinationAddress = destinationParam;
+      if (datetimeParam) newData.datetime = datetimeParam;
+      if (passengersParam) newData.passengers = parseInt(passengersParam, 10) || 1;
+
+      return newData;
+    });
   }, [searchParams]);
 
   const handleInputChange = (field: keyof FormData, value: string | number | boolean | string[]) => {
@@ -666,7 +678,7 @@ function ReservationForm() {
                           (!isSignedIn && (!formData.clientName || !formData.clientEmail))
                         ))
                       }
-                      className="lux-button w-full sm:w-auto flex items-center justify-center gap-3 px-10 py-4 font-bold uppercase tracking-[0.2em] text-sm group"
+                      className="lux-button w-full sm:w-auto flex items-center justify-center gap-3 px-10 py-4 font-bold uppercase tracking-[0.2em] text-sm group text-white"
                     >
                       Suivant
                       <ArrowRight size={18} weight="regular" className="group-hover:translate-x-1 transition-transform" />

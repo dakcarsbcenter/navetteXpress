@@ -16,8 +16,8 @@ import {
 } from "@phosphor-icons/react"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { DeleteUserModal } from "@/components/ui/DeleteUserModal"
-import { useNotification } from "@/hooks/useNotification"
 import Image from "next/image"
+import { BulkDeleteModal } from "@/components/ui/BulkDeleteModal"
 
 interface User {
   id: string
@@ -48,6 +48,8 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [resettingPasswordUser, setResettingPasswordUser] = useState<User | null>(null)
   const [deletingUser, setDeletingUser] = useState<User | null>(null)
+  const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(new Set())
+  const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false)
   const [newPassword, setNewPassword] = useState('')
   const [currentUserRole, setCurrentUserRole] = useState<string>('')
   const { notifications, showSuccess, showError, removeNotification } = useNotification()
@@ -202,6 +204,12 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
         showSuccess('Utilisateur supprimé avec succès', 'Succès')
         setIsDeleteModalOpen(false)
         setDeletingUser(null)
+        // enlever des sélectionnés si besoin
+        setSelectedUserIds(prev => {
+          const newSet = new Set(prev)
+          newSet.delete(deletingUser.id)
+          return newSet
+        })
         fetchUsers()
       } else {
         // Afficher le message d'erreur spécifique retourné par l'API
@@ -213,6 +221,48 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
       console.error('Erreur technique:', error)
       showError('Erreur technique lors de la suppression', 'Erreur')
     }
+  }
+
+  const handleBulkDelete = async () => {
+    try {
+      const response = await fetch('/api/admin/users/bulk-delete', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: Array.from(selectedUserIds) })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        showSuccess(data.message || 'Utilisateurs supprimés avec succès', 'Succès')
+        setSelectedUserIds(new Set())
+        fetchUsers()
+      } else {
+        showError(data.error || 'Erreur lors de la suppression multiple', 'Erreur')
+      }
+    } catch (error) {
+      showError('Erreur technique lors de la suppression multiple', 'Erreur')
+    }
+  }
+
+  const toggleSelectAll = () => {
+    if (selectedUserIds.size === filteredUsers.length && filteredUsers.length > 0) {
+      setSelectedUserIds(new Set())
+    } else {
+      setSelectedUserIds(new Set(filteredUsers.map(user => user.id)))
+    }
+  }
+
+  const toggleSelectUser = (userId: string) => {
+    setSelectedUserIds(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(userId)) {
+        newSet.delete(userId)
+      } else {
+        newSet.add(userId)
+      }
+      return newSet
+    })
   }
 
   const openResetPasswordModal = (user: User) => {
@@ -345,12 +395,24 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
                 className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-white/10 outline-none focus:border-gold/50 transition-all bg-white/5 text-white"
               />
             </div>
-            <button
-              onClick={openCreateModal}
-              className="btn-gold flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold shadow-lg shadow-gold/10">
-              <Plus size={16} />
-              <span className="hidden sm:inline">Nouveau</span>
-            </button>
+
+            <div className="flex items-center gap-3">
+              {selectedUserIds.size > 0 && (
+                <button
+                  onClick={() => setIsBulkDeleteModalOpen(true)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold bg-red-600/10 text-red-500 border border-red-500/20 hover:bg-red-600 hover:text-white transition-all shadow-lg shadow-red-500/5 animate-in slide-in-from-right-4 fade-in duration-200"
+                >
+                  <Trash2 size={16} />
+                  <span className="hidden sm:inline">Supprimer ({selectedUserIds.size})</span>
+                </button>
+              )}
+              <button
+                onClick={openCreateModal}
+                className="btn-gold flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold shadow-lg shadow-gold/10">
+                <Plus size={16} />
+                <span className="hidden sm:inline">Nouveau</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -400,6 +462,14 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-white/[0.02] border-b border-white/5">
+                <th className="pl-6 pr-3 py-4 w-12">
+                  <input
+                    type="checkbox"
+                    checked={filteredUsers.length > 0 && selectedUserIds.size === filteredUsers.length}
+                    onChange={toggleSelectAll}
+                    className="w-4 h-4 rounded border-white/10 bg-white/5 text-gold focus:ring-gold/50 transition-all cursor-pointer"
+                  />
+                </th>
                 <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Utilisateur</th>
                 <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Rôle & Accès</th>
                 <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">État</th>
@@ -410,7 +480,7 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
             <tbody className="divide-y divide-white/[0.02]">
               {filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-20 text-center">
+                  <td colSpan={6} className="px-6 py-20 text-center">
                     <div className="flex flex-col items-center gap-3">
                       <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-slate-600">
                         <Users size={24} />
@@ -426,6 +496,14 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
 
                   return (
                     <tr key={user.id} className="hover:bg-white/[0.01] transition-colors group">
+                      <td className="pl-6 pr-3 py-4">
+                        <input
+                          type="checkbox"
+                          checked={selectedUserIds.has(user.id)}
+                          onChange={() => toggleSelectUser(user.id)}
+                          className="w-4 h-4 rounded border-white/10 bg-white/5 text-gold focus:ring-gold/50 transition-all cursor-pointer"
+                        />
+                      </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div className="relative">
@@ -663,6 +741,15 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
         userName={deletingUser?.name}
         userEmail={deletingUser?.email}
         userRole={deletingUser?.role}
+      />
+
+      {/* Bulk Delete Modal */}
+      <BulkDeleteModal
+        isOpen={isBulkDeleteModalOpen}
+        onClose={() => setIsBulkDeleteModalOpen(false)}
+        onConfirm={handleBulkDelete}
+        count={selectedUserIds.size}
+        resourceName="utilisateurs"
       />
     </div>
   )

@@ -11,9 +11,12 @@ import {
   Download,
   DotsThreeVertical as MoreVertical,
   Funnel as Filter,
-  FileText
+  FileText,
+  Trash
 } from "@phosphor-icons/react"
 import { downloadInvoicePDF } from '@/lib/invoice-pdf'
+import { BulkDeleteModal } from '@/components/ui/BulkDeleteModal'
+import { useNotification } from '@/hooks/useNotification'
 
 type InvoiceStatus = 'draft' | 'pending' | 'paid' | 'cancelled' | 'overdue'
 
@@ -44,6 +47,10 @@ export default function InvoicesManagementRedesigned() {
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<'all' | InvoiceStatus>('all')
   const [searchTerm, setSearchTerm] = useState('')
+
+  const [selectedInvoiceIds, setSelectedInvoiceIds] = useState<Set<number>>(new Set())
+  const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false)
+  const { notifications, showSuccess, showError, removeNotification } = useNotification()
 
   const fetchInvoices = async () => {
     try {
@@ -148,6 +155,49 @@ export default function InvoicesManagementRedesigned() {
     }
   }
 
+  const toggleSelectAll = () => {
+    if (selectedInvoiceIds.size === filteredInvoices.length && filteredInvoices.length > 0) {
+      setSelectedInvoiceIds(new Set())
+    } else {
+      setSelectedInvoiceIds(new Set(filteredInvoices.map(inv => inv.id)))
+    }
+  }
+
+  const toggleSelectInvoice = (e: React.MouseEvent, invoiceId: number) => {
+    e.stopPropagation()
+    setSelectedInvoiceIds(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(invoiceId)) {
+        newSet.delete(invoiceId)
+      } else {
+        newSet.add(invoiceId)
+      }
+      return newSet
+    })
+  }
+
+  const handleBulkDelete = async () => {
+    try {
+      const response = await fetch('/api/invoices/bulk-delete', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: Array.from(selectedInvoiceIds) })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        showSuccess(data.message || 'Factures supprimées', 'Succès')
+        setSelectedInvoiceIds(new Set())
+        fetchInvoices()
+      } else {
+        showError(data.error || 'Erreur lors de la suppression', 'Erreur')
+      }
+    } catch (error) {
+      showError('Erreur technique', 'Erreur')
+    }
+  }
+
   const stats = getStatsData()
 
   if (loading) {
@@ -167,12 +217,23 @@ export default function InvoicesManagementRedesigned() {
             <h1 className="text-2xl font-bold text-gray-900">Factures & Paiements</h1>
             <p className="text-sm text-gray-500 mt-1">Suivi de la facturation et des encaissements.</p>
           </div>
-          <button
-            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-          >
-            <Plus className="w-5 h-5" />
-            Créer facture
-          </button>
+          <div className="flex gap-2">
+            {selectedInvoiceIds.size > 0 && (
+              <button
+                onClick={() => setIsBulkDeleteModalOpen(true)}
+                className="flex items-center gap-2 bg-red-100 text-red-700 hover:bg-red-200 px-4 py-2 rounded-lg font-medium transition-colors"
+              >
+                <Trash className="w-5 h-5" />
+                <span className="hidden sm:inline">Supprimer ({selectedInvoiceIds.size})</span>
+              </button>
+            )}
+            <button
+              className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              <Plus className="w-5 h-5" />
+              Créer facture
+            </button>
+          </div>
         </div>
 
         {/* Stats Cards */}
@@ -257,6 +318,14 @@ export default function InvoicesManagementRedesigned() {
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
+                <th className="pl-6 w-12 py-4">
+                  <input
+                    type="checkbox"
+                    checked={filteredInvoices.length > 0 && selectedInvoiceIds.size === filteredInvoices.length}
+                    onChange={toggleSelectAll}
+                    className="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500 cursor-pointer"
+                  />
+                </th>
                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600 uppercase">N° Facture</th>
                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600 uppercase">Client</th>
                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600 uppercase">Date Émission</th>
@@ -269,7 +338,7 @@ export default function InvoicesManagementRedesigned() {
             <tbody className="divide-y divide-gray-200">
               {filteredInvoices.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
                     Aucune facture trouvée
                   </td>
                 </tr>
@@ -279,6 +348,14 @@ export default function InvoicesManagementRedesigned() {
 
                   return (
                     <tr key={invoice.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="pl-6 py-4" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          checked={selectedInvoiceIds.has(invoice.id)}
+                          onChange={(e) => toggleSelectInvoice(e as unknown as React.MouseEvent, invoice.id)}
+                          className="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500 cursor-pointer"
+                        />
+                      </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <div className="w-8 h-8 rounded bg-blue-100 flex items-center justify-center">
@@ -361,6 +438,15 @@ export default function InvoicesManagementRedesigned() {
           </div>
         </div>
       </div>
+
+      {/* Bulk Delete Modal */}
+      <BulkDeleteModal
+        isOpen={isBulkDeleteModalOpen}
+        onClose={() => setIsBulkDeleteModalOpen(false)}
+        onConfirm={handleBulkDelete}
+        count={selectedInvoiceIds.size}
+        resourceName="factures"
+      />
     </div>
   )
 }

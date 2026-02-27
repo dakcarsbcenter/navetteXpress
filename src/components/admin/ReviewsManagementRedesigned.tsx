@@ -8,8 +8,11 @@ import {
   ChatCircleDots as MessageSquare,
   CheckCircle,
   Clock,
-  TrendUp as TrendingUp
+  TrendUp as TrendingUp,
+  Trash
 } from "@phosphor-icons/react"
+import { BulkDeleteModal } from "@/components/ui/BulkDeleteModal"
+import { useNotification } from "@/hooks/useNotification"
 
 interface Review {
   id: number
@@ -40,6 +43,10 @@ export default function ReviewsManagementRedesigned() {
   const [showResponseModal, setShowResponseModal] = useState(false)
   const [selectedReview, setSelectedReview] = useState<Review | null>(null)
   const [responseText, setResponseText] = useState('')
+
+  const [selectedReviewIds, setSelectedReviewIds] = useState<Set<number>>(new Set())
+  const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false)
+  const { notifications, showSuccess, showError, removeNotification } = useNotification()
 
   useEffect(() => {
     fetchReviews()
@@ -155,6 +162,49 @@ export default function ReviewsManagementRedesigned() {
     return matchesSearch && matchesRating && matchesStatus
   })
 
+  const toggleSelectAll = () => {
+    if (selectedReviewIds.size === filteredReviews.length && filteredReviews.length > 0) {
+      setSelectedReviewIds(new Set())
+    } else {
+      setSelectedReviewIds(new Set(filteredReviews.map(r => r.id)))
+    }
+  }
+
+  const toggleSelectReview = (e: React.MouseEvent, reviewId: number) => {
+    e.stopPropagation()
+    setSelectedReviewIds(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(reviewId)) {
+        newSet.delete(reviewId)
+      } else {
+        newSet.add(reviewId)
+      }
+      return newSet
+    })
+  }
+
+  const handleBulkDelete = async () => {
+    try {
+      const response = await fetch('/api/reviews/bulk-delete', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: Array.from(selectedReviewIds) })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        showSuccess(data.message || 'Avis supprimés', 'Succès')
+        setSelectedReviewIds(new Set())
+        fetchReviews()
+      } else {
+        showError(data.error || 'Erreur lors de la suppression', 'Erreur')
+      }
+    } catch (error) {
+      showError('Erreur technique', 'Erreur')
+    }
+  }
+
   const renderStars = (rating: number, size: 'sm' | 'lg' = 'sm') => {
     const sizeClass = size === 'lg' ? 'w-6 h-6' : 'w-4 h-4'
     return (
@@ -207,10 +257,21 @@ export default function ReviewsManagementRedesigned() {
             <h1 className="text-2xl font-bold text-gray-900">Avis & Satisfaction</h1>
             <p className="text-sm text-gray-500 mt-1">Modérez les retours et analysez la satisfaction client.</p>
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
-            <Download className="w-4 h-4" />
-            Exporter
-          </button>
+          <div className="flex gap-2">
+            {selectedReviewIds.size > 0 && (
+              <button
+                onClick={() => setIsBulkDeleteModalOpen(true)}
+                className="flex items-center gap-2 bg-red-100 text-red-700 hover:bg-red-200 px-4 py-2 rounded-lg font-medium transition-colors"
+              >
+                <Trash className="w-5 h-5" />
+                <span className="hidden sm:inline">Supprimer ({selectedReviewIds.size})</span>
+              </button>
+            )}
+            <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
+              <Download className="w-4 h-4" />
+              Exporter
+            </button>
+          </div>
         </div>
 
         {/* Stats Cards */}
@@ -339,8 +400,18 @@ export default function ReviewsManagementRedesigned() {
         </div>
       </div>
 
-      {/* Filters */}
       <div className="bg-white border-b border-gray-200 px-8 py-4">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              checked={filteredReviews.length > 0 && selectedReviewIds.size === filteredReviews.length}
+              onChange={toggleSelectAll}
+              className="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500 cursor-pointer"
+            />
+            <span className="text-sm text-gray-600">Tout sélectionner</span>
+          </div>
+        </div>
         <div className="flex items-center gap-3">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -392,8 +463,18 @@ export default function ReviewsManagementRedesigned() {
               const borderColor = !review.isApproved ? 'border-l-4 border-l-orange-400' : ''
 
               return (
-                <div key={review.id} className={`bg-white border border-gray-200 rounded-xl p-6 ${borderColor}`}>
-                  <div className="flex items-start justify-between gap-4">
+                <div key={review.id} className={`bg-white border border-gray-200 rounded-xl p-6 relative ${borderColor}`}>
+                  {/* Select Checkbox */}
+                  <div className="absolute top-4 left-4 z-10" onClick={(e) => e.stopPropagation()}>
+                    <input
+                      type="checkbox"
+                      checked={selectedReviewIds.has(review.id)}
+                      onChange={(e) => toggleSelectReview(e as unknown as React.MouseEvent, review.id)}
+                      className="w-4 h-4 rounded text-red-600 focus:ring-red-500 border-gray-300 cursor-pointer"
+                    />
+                  </div>
+
+                  <div className="flex items-start justify-between gap-4 pl-6">
                     {/* Left: User Info */}
                     <div className="flex items-start gap-4 flex-1">
                       <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
@@ -526,6 +607,15 @@ export default function ReviewsManagementRedesigned() {
           </div>
         </div>
       )}
+
+      {/* Bulk Delete Modal */}
+      <BulkDeleteModal
+        isOpen={isBulkDeleteModalOpen}
+        onClose={() => setIsBulkDeleteModalOpen(false)}
+        onConfirm={handleBulkDelete}
+        count={selectedReviewIds.size}
+        resourceName="avis"
+      />
     </div>
   )
 }

@@ -17,7 +17,8 @@ import {
   Clock,
   Pulse as Activity,
   Lightning as Zap,
-  CaretRight as ChevronRight
+  CaretRight as ChevronRight,
+  Megaphone
 } from "@phosphor-icons/react"
 
 // Types pour les statistiques
@@ -192,6 +193,11 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
       id: 'reviews', title: 'Avis Clients', description: 'Satisfaction',
       icon: <Star size={18} />, color: '#F59E0B',
       onClick: () => onNavigate('reviews')
+    },
+    {
+      id: 'ads', title: 'Publicités', description: 'Gérer les pubs',
+      icon: <Megaphone size={18} />, color: '#6366f1',
+      onClick: () => onNavigate('ads')
     }
   ]
 

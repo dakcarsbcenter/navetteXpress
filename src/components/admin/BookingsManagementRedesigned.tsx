@@ -11,9 +11,11 @@ import {
   Clock,
   User,
   Phone,
-  Envelope as Mail
+  Envelope as Mail,
+  Trash
 } from "@phosphor-icons/react"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
+import { BulkDeleteModal } from "@/components/ui/BulkDeleteModal"
 import { useNotification } from "@/hooks/useNotification"
 import { BookingDetailsModal } from "./BookingDetailsModal"
 import { StatusBadge } from "@/components/ui/StatusBadge"
@@ -77,6 +79,9 @@ export function BookingsManagementRedesigned() {
     driver: 'all',
     search: ''
   })
+
+  const [selectedBookingIds, setSelectedBookingIds] = useState<Set<number>>(new Set())
+  const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false)
 
   const [drivers, setDrivers] = useState<Driver[]>([])
   const [vehicles, setVehicles] = useState<Vehicle[]>([])
@@ -203,6 +208,49 @@ export function BookingsManagementRedesigned() {
     showSuccess('Réservation mise à jour avec succès', 'Succès')
   }
 
+  const toggleSelectAll = () => {
+    if (selectedBookingIds.size === filteredBookings.length && filteredBookings.length > 0) {
+      setSelectedBookingIds(new Set())
+    } else {
+      setSelectedBookingIds(new Set(filteredBookings.map(b => b.id)))
+    }
+  }
+
+  const toggleSelectBooking = (e: React.MouseEvent, bookingId: number) => {
+    e.stopPropagation()
+    setSelectedBookingIds(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(bookingId)) {
+        newSet.delete(bookingId)
+      } else {
+        newSet.add(bookingId)
+      }
+      return newSet
+    })
+  }
+
+  const handleBulkDelete = async () => {
+    try {
+      const response = await fetch('/api/admin/bookings/bulk-delete', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: Array.from(selectedBookingIds) })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        showSuccess(data.message || 'Réservations supprimées', 'Succès')
+        setSelectedBookingIds(new Set())
+        fetchBookings()
+      } else {
+        showError(data.error || 'Erreur lors de la suppression', 'Erreur')
+      }
+    } catch (error) {
+      showError('Erreur technique', 'Erreur')
+    }
+  }
+
   const getStatsData = () => {
     const total = bookings.length
     const pending = bookings.filter(b => b.status === 'pending').length
@@ -323,12 +371,23 @@ export function BookingsManagementRedesigned() {
           </select>
         </div>
 
-        <button
-          onClick={() => {/* TODO */ }}
-          className="sm:ml-auto btn-gold flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg shadow-gold/10">
-          <Plus size={16} />
-          Planifier Transfert
-        </button>
+        <div className="sm:ml-auto flex items-center gap-3">
+          {selectedBookingIds.size > 0 && (
+            <button
+              onClick={() => setIsBulkDeleteModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold bg-red-600/10 text-red-500 border border-red-500/20 hover:bg-red-600 hover:text-white transition-all shadow-lg shadow-red-500/5 animate-in slide-in-from-right-4 fade-in duration-200"
+            >
+              <Trash size={16} />
+              <span className="hidden sm:inline">Supprimer ({selectedBookingIds.size})</span>
+            </button>
+          )}
+          <button
+            onClick={() => {/* TODO */ }}
+            className="btn-gold flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg shadow-gold/10">
+            <Plus size={16} />
+            Planifier Transfert
+          </button>
+        </div>
       </div>
 
       {/* Main Content View */}
@@ -349,11 +408,21 @@ export function BookingsManagementRedesigned() {
                 className="group p-5 rounded-2xl border border-white/5 transition-all duration-300 hover:-translate-y-1 cursor-pointer relative overflow-hidden"
                 style={{ backgroundColor: 'var(--color-dash-card)' }}
               >
+                {/* Select Checkbox */}
+                <div className="absolute top-4 right-4 z-10" onClick={(e) => e.stopPropagation()}>
+                  <input
+                    type="checkbox"
+                    checked={selectedBookingIds.has(booking.id)}
+                    onChange={(e) => toggleSelectBooking(e as unknown as React.MouseEvent, booking.id)}
+                    className="w-4 h-4 rounded border-white/10 bg-white/5 text-gold focus:ring-gold/50 cursor-pointer shadow-sm"
+                  />
+                </div>
+
                 {/* Visual indicator bar */}
                 <div className="absolute top-0 left-0 w-1 h-full opacity-30 group-hover:opacity-100 transition-opacity"
                   style={{ backgroundColor: `var(--color-status-${booking.status.replace(/_/g, '')})` || 'var(--color-gold)' }} />
 
-                <div className="flex justify-between items-start mb-6">
+                <div className="flex justify-between items-start mb-6 pr-6">
                   <div className="flex items-center gap-3">
                     <div className="relative">
                       <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xs font-bold border border-white/10 bg-white/5 text-gold group-hover:bg-gold group-hover:text-black transition-all">
@@ -432,6 +501,14 @@ export function BookingsManagementRedesigned() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-white/[0.02] border-b border-white/5">
+                <th className="pl-6 w-12 py-4">
+                  <input
+                    type="checkbox"
+                    checked={filteredBookings.length > 0 && selectedBookingIds.size === filteredBookings.length}
+                    onChange={toggleSelectAll}
+                    className="w-4 h-4 rounded border-white/10 bg-white/5 text-gold focus:ring-gold/50 cursor-pointer"
+                  />
+                </th>
                 <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Identité</th>
                 <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Planning</th>
                 <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Trajectoire</th>
@@ -444,6 +521,14 @@ export function BookingsManagementRedesigned() {
                 <tr key={booking.id}
                   onClick={() => openBookingDetails(booking)}
                   className="hover:bg-white/[0.02] transition-colors cursor-pointer group">
+                  <td className="pl-6 py-4" onClick={(e) => e.stopPropagation()}>
+                    <input
+                      type="checkbox"
+                      checked={selectedBookingIds.has(booking.id)}
+                      onChange={(e) => toggleSelectBooking(e as unknown as React.MouseEvent, booking.id)}
+                      className="w-4 h-4 rounded border-white/10 bg-white/5 text-gold focus:ring-gold/50 cursor-pointer"
+                    />
+                  </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-xl flex items-center justify-center text-[10px] font-bold bg-white/5 text-slate-500 group-hover:bg-gold group-hover:text-black transition-all border border-white/10 group-hover:border-gold">
@@ -500,6 +585,15 @@ export function BookingsManagementRedesigned() {
           onUpdate={handleBookingUpdate}
         />
       )}
+
+      {/* Bulk Delete Modal */}
+      <BulkDeleteModal
+        isOpen={isBulkDeleteModalOpen}
+        onClose={() => setIsBulkDeleteModalOpen(false)}
+        onConfirm={handleBulkDelete}
+        count={selectedBookingIds.size}
+        resourceName="réservations"
+      />
     </div>
   )
 }

@@ -10,9 +10,11 @@ import {
   Calendar,
   DotsThreeVertical as MoreVertical,
   SquaresFour as Grid,
-  List
+  List,
+  Trash
 } from "@phosphor-icons/react"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
+import { BulkDeleteModal } from "@/components/ui/BulkDeleteModal"
 import { useNotification } from "@/hooks/useNotification"
 
 interface Quote {
@@ -37,6 +39,10 @@ export function QuotesManagementRedesigned() {
   const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban')
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const [selectedQuoteIds, setSelectedQuoteIds] = useState<Set<number>>(new Set())
+  const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false)
+
   const { notifications, showSuccess, showError, removeNotification } = useNotification()
 
   const [filters, setFilters] = useState({
@@ -145,6 +151,49 @@ export function QuotesManagementRedesigned() {
     }
   }
 
+  const toggleSelectAll = () => {
+    if (selectedQuoteIds.size === quotes.length && quotes.length > 0) {
+      setSelectedQuoteIds(new Set())
+    } else {
+      setSelectedQuoteIds(new Set(quotes.map(q => q.id)))
+    }
+  }
+
+  const toggleSelectQuote = (e: React.MouseEvent, quoteId: number) => {
+    e.stopPropagation()
+    setSelectedQuoteIds(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(quoteId)) {
+        newSet.delete(quoteId)
+      } else {
+        newSet.add(quoteId)
+      }
+      return newSet
+    })
+  }
+
+  const handleBulkDelete = async () => {
+    try {
+      const response = await fetch('/api/quotes/bulk-delete', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: Array.from(selectedQuoteIds) })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        showSuccess(data.message || 'Devis supprimés', 'Succès')
+        setSelectedQuoteIds(new Set())
+        fetchQuotes()
+      } else {
+        showError(data.error || 'Erreur lors de la suppression', 'Erreur')
+      }
+    } catch (error) {
+      showError('Erreur technique', 'Erreur')
+    }
+  }
+
   const stats = getStatsData()
 
   if (isLoading) {
@@ -169,13 +218,24 @@ export function QuotesManagementRedesigned() {
             <h1 className="text-2xl font-bold text-gray-900">Gestion des Devis</h1>
             <p className="text-sm text-gray-500 mt-1">Suivez le pipeline commercial et les conversions.</p>
           </div>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-          >
-            <Plus className="w-5 h-5" />
-            Nouveau devis
-          </button>
+          <div className="flex gap-2">
+            {selectedQuoteIds.size > 0 && (
+              <button
+                onClick={() => setIsBulkDeleteModalOpen(true)}
+                className="flex items-center gap-2 bg-red-100 text-red-700 hover:bg-red-200 px-4 py-2 rounded-lg font-medium transition-colors"
+              >
+                <Trash className="w-5 h-5" />
+                <span className="hidden sm:inline">Supprimer ({selectedQuoteIds.size})</span>
+              </button>
+            )}
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              <Plus className="w-5 h-5" />
+              Nouveau devis
+            </button>
+          </div>
         </div>
 
         {/* Stats Cards */}
@@ -287,8 +347,17 @@ export function QuotesManagementRedesigned() {
                   </div>
                 ) : (
                   getQuotesByStatus('new').map((quote) => (
-                    <div key={quote.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer">
-                      <div className="flex items-start justify-between mb-2">
+                    <div key={quote.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer relative">
+                      {/* Checkbox */}
+                      <div className="absolute top-2 right-2 text-gray-400 focus:outline-none" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          checked={selectedQuoteIds.has(quote.id)}
+                          onChange={(e) => toggleSelectQuote(e as unknown as React.MouseEvent, quote.id)}
+                          className="w-4 h-4 rounded text-red-600 focus:ring-red-500 border-gray-300 cursor-pointer"
+                        />
+                      </div>
+                      <div className="flex items-start justify-between mb-2 pr-6">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-xs text-gray-500">N° {quote.id.toString().padStart(4, '0')}</span>
@@ -347,8 +416,17 @@ export function QuotesManagementRedesigned() {
                   </div>
                 ) : (
                   getQuotesByStatus('in_progress').map((quote) => (
-                    <div key={quote.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer">
-                      <div className="flex items-start justify-between mb-2">
+                    <div key={quote.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer relative">
+                      {/* Checkbox */}
+                      <div className="absolute top-2 right-2 text-gray-400 focus:outline-none" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          checked={selectedQuoteIds.has(quote.id)}
+                          onChange={(e) => toggleSelectQuote(e as unknown as React.MouseEvent, quote.id)}
+                          className="w-4 h-4 rounded text-red-600 focus:ring-red-500 border-gray-300 cursor-pointer"
+                        />
+                      </div>
+                      <div className="flex items-start justify-between mb-2 pr-6">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-xs text-gray-500">N° {quote.id.toString().padStart(4, '0')}</span>
@@ -406,8 +484,17 @@ export function QuotesManagementRedesigned() {
                   </div>
                 ) : (
                   getQuotesByStatus('sent').map((quote) => (
-                    <div key={quote.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer">
-                      <div className="flex items-start justify-between mb-2">
+                    <div key={quote.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer relative">
+                      {/* Checkbox */}
+                      <div className="absolute top-2 right-2 text-gray-400 focus:outline-none" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          checked={selectedQuoteIds.has(quote.id)}
+                          onChange={(e) => toggleSelectQuote(e as unknown as React.MouseEvent, quote.id)}
+                          className="w-4 h-4 rounded text-red-600 focus:ring-red-500 border-gray-300 cursor-pointer"
+                        />
+                      </div>
+                      <div className="flex items-start justify-between mb-2 pr-6">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-xs text-gray-500">N° {quote.id.toString().padStart(4, '0')}</span>
@@ -471,8 +558,17 @@ export function QuotesManagementRedesigned() {
                   </div>
                 ) : (
                   getQuotesByStatus('accepted').map((quote) => (
-                    <div key={quote.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer">
-                      <div className="flex items-start justify-between mb-2">
+                    <div key={quote.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer relative">
+                      {/* Checkbox */}
+                      <div className="absolute top-2 right-2 text-gray-400 focus:outline-none" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          checked={selectedQuoteIds.has(quote.id)}
+                          onChange={(e) => toggleSelectQuote(e as unknown as React.MouseEvent, quote.id)}
+                          className="w-4 h-4 rounded text-red-600 focus:ring-red-500 border-gray-300 cursor-pointer"
+                        />
+                      </div>
+                      <div className="flex items-start justify-between mb-2 pr-6">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-xs text-gray-500">N° {quote.id.toString().padStart(4, '0')}</span>
@@ -530,6 +626,14 @@ export function QuotesManagementRedesigned() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
+                  <th className="pl-6 w-12 py-4">
+                    <input
+                      type="checkbox"
+                      checked={quotes.length > 0 && selectedQuoteIds.size === quotes.length}
+                      onChange={toggleSelectAll}
+                      className="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500 cursor-pointer"
+                    />
+                  </th>
                   <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600 uppercase">Client</th>
                   <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600 uppercase">Service</th>
                   <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600 uppercase">Statut</th>
@@ -543,6 +647,14 @@ export function QuotesManagementRedesigned() {
 
                   return (
                     <tr key={quote.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="pl-6 py-4" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          checked={selectedQuoteIds.has(quote.id)}
+                          onChange={(e) => toggleSelectQuote(e as unknown as React.MouseEvent, quote.id)}
+                          className="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500 cursor-pointer"
+                        />
+                      </td>
                       <td className="px-6 py-4">
                         <div className="font-semibold text-gray-900">{quote.customerName}</div>
                         <div className="text-sm text-gray-500">{quote.customerEmail}</div>
@@ -571,6 +683,15 @@ export function QuotesManagementRedesigned() {
           </div>
         </div>
       )}
+
+      {/* Bulk Delete Modal */}
+      <BulkDeleteModal
+        isOpen={isBulkDeleteModalOpen}
+        onClose={() => setIsBulkDeleteModalOpen(false)}
+        onConfirm={handleBulkDelete}
+        count={selectedQuoteIds.size}
+        resourceName="devis"
+      />
     </div>
   )
 }

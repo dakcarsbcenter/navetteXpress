@@ -18,7 +18,7 @@ import AdminGlobalStats from "@/components/admin/AdminGlobalStats"
 import { ModernAdminDashboard } from "@/components/admin/ModernAdminDashboard"
 import InvoicesManagementRedesigned from "@/components/admin/InvoicesManagementRedesigned"
 
-type TabType = 'modern' | 'users' | 'vehicles' | 'bookings' | 'quotes' | 'invoices' | 'permissions' | 'reviews' | 'stats'
+type TabType = 'modern' | 'users' | 'vehicles' | 'bookings' | 'quotes' | 'invoices' | 'permissions' | 'reviews' | 'stats' | 'ads'
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession()
@@ -95,6 +95,7 @@ export default function AdminDashboard() {
     { id: 'invoices' as TabType, label: 'Factures', shortLabel: 'Factures', icon: '🧾', resource: '', always: true },
     { id: 'permissions' as TabType, label: 'Permissions', shortLabel: 'Perms', icon: '🔐', resource: 'users', requireManage: true, adminOnly: true },
     { id: 'reviews' as TabType, label: 'Avis', shortLabel: 'Avis', icon: '⭐', resource: 'reviews' },
+    { id: 'ads' as TabType, label: 'Publicités', shortLabel: 'Pubs', icon: '📢', resource: '', always: true },
   ]
 
   // Filtrer les onglets selon les permissions
@@ -145,6 +146,10 @@ export default function AdminDashboard() {
         return <PermissionsManagementRedesigned />
       case 'reviews':
         return <ReviewsManagementRedesigned />
+      case 'ads':
+        // On redirige vers la page dédiée car elle est plus complexe (formulaires etc)
+        // Mais on peut aussi l'intégrer ici si on veut. Pour l'instant, on redirige.
+        redirect('/admin/publicites')
       default:
         return <ModernAdminDashboard onNavigate={(section: string) => setActiveTab(section as TabType)} />
     }
@@ -248,7 +253,7 @@ export default function AdminDashboard() {
             style={{ color: 'var(--color-text-muted)' }}>
             Finance & Admin
           </p>
-          {tabs.filter(t => ['quotes', 'invoices', 'permissions', 'reviews'].includes(t.id)).map(tab => (
+          {tabs.filter(t => ['quotes', 'invoices', 'ads', 'permissions', 'reviews'].includes(t.id)).map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}

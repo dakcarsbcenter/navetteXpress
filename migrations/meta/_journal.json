@@ -71,6 +71,13 @@
       "when": 1762903251532,
       "tag": "0009_last_spot",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1772127299080,
+      "tag": "0010_fixed_roughhouse",
+      "breakpoints": true
     }
   ]
 }

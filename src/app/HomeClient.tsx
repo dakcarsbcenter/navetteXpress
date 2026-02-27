@@ -8,9 +8,21 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, UserCircle, Van, Star, MapPin, Phone, EnvelopeSimple, FacebookLogo, InstagramLogo, AirplaneTakeoff, Clock, Car, ShieldCheck, CheckCircle, CaretRight, ChatCircle, Question } from "@phosphor-icons/react";
 import Image from "next/image";
+import AdSlot from "@/components/public/AdSlot";
+
+import { useRouter } from "next/navigation";
+
 export default function HomeClient() {
+  const router = useRouter();
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Widget state
+  const [bookingService, setBookingService] = useState('transfert-aibd-dakar');
+  const [bookingPickup, setBookingPickup] = useState('');
+  const [bookingDestination, setBookingDestination] = useState('');
+  const [bookingDateTime, setBookingDateTime] = useState('');
+  const [bookingPassengers, setBookingPassengers] = useState('1');
 
   useEffect(() => {
     trackPageView('home');
@@ -246,6 +258,9 @@ export default function HomeClient() {
           </div>
         </section>
 
+        {/* Ad Slot: Home Hero */}
+        <AdSlot placement="home_hero" />
+
         {/* Services Section */}
         <section className="py-32 relative bg-midnight overflow-hidden">
           <div className="max-w-7xl mx-auto px-6 relative z-10">
@@ -294,6 +309,9 @@ export default function HomeClient() {
             </div>
           </div>
         </section>
+
+        {/* Ad Slot: Home Services */}
+        <AdSlot placement="home_services" />
 
         {/* Why Choose Us */}
         <section className="py-32 relative bg-obsidian">
@@ -430,10 +448,16 @@ export default function HomeClient() {
                 >
                   <div className="bg-obsidian/90 backdrop-blur-3xl rounded-[2.4rem] p-8 md:p-12">
                     <div className="flex gap-4 mb-10 p-1 bg-midnight rounded-xl border border-white/5">
-                      <button className="flex-1 py-3 px-6 rounded-lg bg-gold text-midnight font-bold transition-all">
+                      <button
+                        onClick={() => setBookingService('transfert-aibd-dakar')}
+                        className={`flex-1 py-3 px-6 rounded-lg font-bold transition-all ${bookingService === 'transfert-aibd-dakar' ? 'bg-gold text-midnight' : 'text-white hover:bg-white/5'}`}
+                      >
                         Transfert AIBD
                       </button>
-                      <button className="flex-1 py-3 px-6 rounded-lg text-white font-bold hover:bg-white/5 transition-all">
+                      <button
+                        onClick={() => setBookingService('chauffeur-prive-dakar')}
+                        className={`flex-1 py-3 px-6 rounded-lg font-bold transition-all ${bookingService === 'chauffeur-prive-dakar' ? 'bg-gold text-midnight' : 'text-white hover:bg-white/5'}`}
+                      >
                         Ville & Régions
                       </button>
                     </div>
@@ -446,6 +470,8 @@ export default function HomeClient() {
                             <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/50" size={18} weight="light" />
                             <input
                               type="text"
+                              value={bookingPickup}
+                              onChange={(e) => setBookingPickup(e.target.value)}
                               placeholder="Lieu de prise en charge"
                               className="w-full bg-midnight border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-gold/50 transition-all font-body"
                             />
@@ -457,6 +483,8 @@ export default function HomeClient() {
                             <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/50" size={18} weight="light" />
                             <input
                               type="text"
+                              value={bookingDestination}
+                              onChange={(e) => setBookingDestination(e.target.value)}
                               placeholder="Lieu d'arrivée"
                               className="w-full bg-midnight border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-gold/50 transition-all font-body"
                             />
@@ -471,7 +499,10 @@ export default function HomeClient() {
                             <Clock className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/50" size={18} weight="light" />
                             <input
                               type="datetime-local"
-                              className="w-full bg-midnight border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-gold/50 transition-all font-body"
+                              value={bookingDateTime}
+                              onChange={(e) => setBookingDateTime(e.target.value)}
+                              className="w-full bg-midnight border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-gold/50 transition-all font-body [color-scheme:dark]"
+                              min={new Date().toISOString().slice(0, 16)}
                             />
                           </div>
                         </div>
@@ -479,16 +510,32 @@ export default function HomeClient() {
                           <label className="text-gold text-xs font-bold uppercase tracking-widest ml-1">Passagers</label>
                           <div className="relative">
                             <UserCircle className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/50" size={18} weight="light" />
-                            <select className="w-full bg-midnight border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-gold/50 transition-all font-body appearance-none">
-                              <option>1-3 Personnes</option>
-                              <option>4-7 Personnes</option>
-                              <option>8+ Personnes</option>
+                            <select
+                              value={bookingPassengers}
+                              onChange={(e) => setBookingPassengers(e.target.value)}
+                              className="w-full bg-midnight border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-gold/50 transition-all font-body appearance-none"
+                            >
+                              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => (
+                                <option key={n} value={n}>{n} {n === 1 ? 'Personne' : 'Personnes'}</option>
+                              ))}
+                              <option value="11">+10 Personnes</option>
                             </select>
                           </div>
                         </div>
                       </div>
 
-                      <button className="w-full py-5 bg-gold text-midnight font-bold text-xl rounded-2xl shadow-[0_10px_40px_rgba(201,168,76,0.3)] hover:scale-[1.02] transition-all flex items-center justify-center gap-3 mt-8">
+                      <button
+                        onClick={() => {
+                          const queryParams = new URLSearchParams();
+                          if (bookingService) queryParams.append('service', bookingService);
+                          if (bookingPickup) queryParams.append('pickup', bookingPickup);
+                          if (bookingDestination) queryParams.append('destination', bookingDestination);
+                          if (bookingDateTime) queryParams.append('datetime', bookingDateTime);
+                          if (bookingPassengers) queryParams.append('passengers', bookingPassengers);
+                          router.push(`/reservation?${queryParams.toString()}`);
+                        }}
+                        className="w-full py-5 bg-gold text-midnight font-bold text-xl rounded-2xl shadow-[0_10px_40px_rgba(201,168,76,0.3)] hover:scale-[1.02] transition-all flex items-center justify-center gap-3 mt-8"
+                      >
                         Vérifier les Prix & Véhicules
                         <ArrowRight size={24} weight="regular" />
                       </button>
@@ -571,6 +618,9 @@ export default function HomeClient() {
             </div>
           </div>
         </section>
+
+        {/* Ad Slot: Home Fleet */}
+        <AdSlot placement="home_fleet" />
 
         {/* Testimonials & FAQ */}
         <section className="py-32 bg-obsidian relative">

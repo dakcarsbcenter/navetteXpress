@@ -6,6 +6,32 @@ export const userRoleEnum = pgEnum('user_role', ['admin', 'manager', 'driver', '
 export const bookingStatusEnum = pgEnum('booking_status', ['pending', 'assigned', 'approved', 'rejected', 'confirmed', 'in_progress', 'completed', 'cancelled']);
 export const vehicleTypeEnum = pgEnum('vehicle_type', ['sedan', 'suv', 'van', 'luxury', 'bus']);
 export const quoteStatusEnum = pgEnum('quote_status', ['pending', 'in_progress', 'sent', 'accepted', 'rejected', 'expired']);
+export const adTypeEnum = pgEnum('ad_type', [
+  'banner_image',    // Bannière image statique (JPG/PNG/WebP)
+  'banner_animated', // Bannière animée (GIF/MP4)
+  'text_sponsored',  // Texte sponsorisé (titre + description + lien)
+  'card_sponsored',  // Card (image + titre + bouton CTA)
+]);
+
+export const adStatusEnum = pgEnum('ad_status', [
+  'draft',    // Brouillon — en préparation
+  'active',   // Active — visible sur le site
+  'paused',   // Mise en pause manuellement
+  'expired',  // Expirée automatiquement (date dépassée)
+]);
+
+export const adPlacementEnum = pgEnum('ad_placement', [
+  'home_hero',          // Page accueil — après la section hero
+  'home_services',      // Page accueil — après la section services
+  'home_fleet',         // Page accueil — après la section flotte
+  'home_testimonials',  // Page accueil — après les témoignages
+  'page_temoignages',   // Page /temoignages — en haut
+  'page_flotte',        // Page /flotte — en haut
+  'page_services',      // Page /services — en haut
+  'client_dashboard',   // Dashboard client — widget latéral
+  'confirmation',       // Page confirmation de réservation
+]);
+
 
 // Utilisateurs
 export const users = pgTable('users', {
@@ -277,12 +303,65 @@ export const driverAvailabilityTable = pgTable('driver_availability', {
   dayOfWeekCheck: check('day_of_week_check', sql`${table.dayOfWeek} >= 0 AND ${table.dayOfWeek} <= 6`),
 }));
 
+// ── Table principale Publicités ──
+export const advertisements = pgTable('advertisements', {
+  id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+
+  // Identité
+  title: text('title').notNull(),          // Nom interne (visible admin seulement)
+  advertiser: text('advertiser').notNull(),      // Nom de l'annonceur
+
+  // Type et contenu
+  type: adTypeEnum('type').notNull(),
+
+  // Contenu selon le type
+  imageUrl: text('image_url'),                // banner_image, banner_animated, card_sponsored
+  videoUrl: text('video_url'),                // banner_animated (MP4)
+  altText: text('alt_text'),                 // Accessibilité image
+  headline: text('headline'),                 // text_sponsored, card_sponsored
+  description: text('description'),              // text_sponsored
+  ctaLabel: text('cta_label'),                // card_sponsored — texte du bouton
+  destinationUrl: text('destination_url').notNull(), // URL de redirection au clic
+
+  // Emplacement
+  placement: adPlacementEnum('placement').notNull(),
+
+  // Dimensions (pour le rendu correct)
+  width: integer('width'),
+  height: integer('height'),
+
+  // Planification
+  startDate: timestamp('start_date').notNull(),
+  endDate: timestamp('end_date').notNull(),
+
+  // Statut
+  status: adStatusEnum('status').notNull().default('draft'),
+
+  // Statistiques (tracking basique)
+  impressions: integer('impressions').notNull().default(0),
+  clicks: integer('clicks').notNull().default(0),
+
+  // Facturation (référence externe)
+  invoiceRef: text('invoice_ref'),              // Référence facture manuelle
+  priceXof: integer('price_xof'),             // Prix en FCFA (pour mémoire)
+  notes: text('notes'),                    // Notes internes admin
+
+  // Timestamps
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  createdBy: text('created_by'),               // ID admin qui a créé la pub
+});
+
+
 // Alias pour les exports
 export const quotes = quotesTable;
 
 // Types pour les nouveaux schémas
 export type InsertDriverAvailability = typeof driverAvailabilityTable.$inferInsert;
 export type SelectDriverAvailability = typeof driverAvailabilityTable.$inferSelect;
+export type Advertisement = typeof advertisements.$inferSelect;
+export type NewAdvertisement = typeof advertisements.$inferInsert;
+
 
 // Types pour les réponses API
 export type ApiResponse<T = unknown> = {

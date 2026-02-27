@@ -14,6 +14,8 @@ import {
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { useNotification } from "@/hooks/useNotification"
 import Image from "next/image"
+import { BulkDeleteModal } from "@/components/ui/BulkDeleteModal"
+import { Trash } from "@phosphor-icons/react"
 
 interface Vehicle {
   id: number
@@ -52,6 +54,10 @@ export function VehiclesManagementRedesigned() {
   const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null)
+
+  const [selectedVehicleIds, setSelectedVehicleIds] = useState<Set<number>>(new Set())
+  const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false)
+
   const { notifications, showSuccess, showError, removeNotification } = useNotification()
 
   const [filters, setFilters] = useState({
@@ -83,6 +89,26 @@ export function VehiclesManagementRedesigned() {
   useEffect(() => {
     applyFilters()
   }, [vehicles, filters])
+
+  const toggleSelectAll = () => {
+    if (selectedVehicleIds.size === filteredVehicles.length && filteredVehicles.length > 0) {
+      setSelectedVehicleIds(new Set())
+    } else {
+      setSelectedVehicleIds(new Set(filteredVehicles.map(v => v.id)))
+    }
+  }
+
+  const toggleSelectVehicle = (vehicleId: number) => {
+    setSelectedVehicleIds(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(vehicleId)) {
+        newSet.delete(vehicleId)
+      } else {
+        newSet.add(vehicleId)
+      }
+      return newSet
+    })
+  }
 
   const fetchVehicles = async () => {
     try {
@@ -253,9 +279,36 @@ export function VehiclesManagementRedesigned() {
       const response = await fetch(`/api/admin/vehicles/${vehicle.id}`, { method: 'DELETE' })
       if (response.ok) {
         showSuccess('Véhicule supprimé avec succès', 'Succès')
+        setSelectedVehicleIds(prev => {
+          const newSet = new Set(prev)
+          newSet.delete(vehicle.id)
+          return newSet
+        })
         fetchVehicles()
       } else {
         showError('Erreur lors de la suppression', 'Erreur')
+      }
+    } catch (error) {
+      showError('Erreur technique', 'Erreur')
+    }
+  }
+
+  const handleBulkDelete = async () => {
+    try {
+      const response = await fetch('/api/admin/vehicles/bulk-delete', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: Array.from(selectedVehicleIds) })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        showSuccess(data.message || 'Véhicules supprimés', 'Succès')
+        setSelectedVehicleIds(new Set())
+        fetchVehicles()
+      } else {
+        showError(data.error || 'Erreur lors de la suppression', 'Erreur')
       }
     } catch (error) {
       showError('Erreur technique', 'Erreur')
@@ -286,13 +339,25 @@ export function VehiclesManagementRedesigned() {
             <h1 className="text-2xl font-bold text-gray-900">Flotte de Véhicules</h1>
             <p className="text-sm text-gray-500 mt-1">Gérez l'état, l'affectation et la maintenance.</p>
           </div>
-          <button
-            onClick={openCreateModal}
-            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-          >
-            <Plus className="w-5 h-5" />
-            Nouveau véhicule
-          </button>
+
+          <div className="flex gap-2">
+            {selectedVehicleIds.size > 0 && (
+              <button
+                onClick={() => setIsBulkDeleteModalOpen(true)}
+                className="flex items-center gap-2 bg-red-100 text-red-700 hover:bg-red-200 px-4 py-2 rounded-lg font-medium transition-colors"
+              >
+                <Trash className="w-5 h-5" />
+                <span className="hidden sm:inline">Supprimer ({selectedVehicleIds.size})</span>
+              </button>
+            )}
+            <button
+              onClick={openCreateModal}
+              className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              <Plus className="w-5 h-5" />
+              Nouveau véhicule
+            </button>
+          </div>
         </div>
 
         {/* Stats Cards */}
@@ -412,8 +477,18 @@ export function VehiclesManagementRedesigned() {
               return (
                 <div
                   key={vehicle.id}
-                  className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow"
+                  className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow relative"
                 >
+                  {/* Select Checkbox */}
+                  <div className="absolute top-3 left-3 z-10">
+                    <input
+                      type="checkbox"
+                      checked={selectedVehicleIds.has(vehicle.id)}
+                      onChange={() => toggleSelectVehicle(vehicle.id)}
+                      className="w-4 h-4 rounded text-red-600 bg-white/50 border-gray-300 focus:ring-red-500 cursor-pointer shadow-sm"
+                    />
+                  </div>
+
                   {/* Vehicle Image */}
                   <div className="relative h-40 sm:h-48 bg-linear-to-br from-gray-800 to-gray-900">
                     {vehicle.photo ? (
@@ -632,6 +707,15 @@ export function VehiclesManagementRedesigned() {
           </div>
         </div>
       )}
+
+      {/* Bulk Delete Modal */}
+      <BulkDeleteModal
+        isOpen={isBulkDeleteModalOpen}
+        onClose={() => setIsBulkDeleteModalOpen(false)}
+        onConfirm={handleBulkDelete}
+        count={selectedVehicleIds.size}
+        resourceName="véhicules"
+      />
     </div>
   )
 }
