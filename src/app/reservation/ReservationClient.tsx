@@ -816,7 +816,12 @@ export default function ReservationClient() {
     <Suspense fallback={
       <div className="min-h-screen bg-midnight flex items-center justify-center">
         <div className="text-center">
-          <div className="w-12 h-12 border-2 border-gold border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="flex flex-col items-center gap-4">
+  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+       style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
+    Navette Xpress
+  </div>
+</div>
           <p className="text-gold tracking-widest uppercase text-xs font-medium">Initialisation...</p>
         </div>
       </div>

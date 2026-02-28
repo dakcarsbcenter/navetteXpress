@@ -181,12 +181,12 @@ export function VehiclesManagementRedesigned() {
 
   const getStatusBadge = (vehicle: Vehicle) => {
     if (!vehicle.isActive) {
-      return { label: 'Maintenance', color: 'text-red-700', bg: 'bg-red-50 border-red-200' }
+      return { label: 'Maintenance', color: 'text-red-400', bg: 'bg-red-500/10 border-red-500/20' }
     }
     if (vehicle.driverId) {
-      return { label: 'En Service', color: 'text-green-700', bg: 'bg-green-50 border-green-200' }
+      return { label: 'En Service', color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' }
     }
-    return { label: 'En Course', color: 'text-blue-700', bg: 'bg-blue-50 border-blue-200' }
+    return { label: 'En Course', color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/20' }
   }
 
   const getFuelTypeBadge = (type?: string) => {
@@ -319,152 +319,156 @@ export function VehiclesManagementRedesigned() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+      <div className="flex items-center justify-center p-12">
+        <div className="flex flex-col items-center gap-4">
+  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+       style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
+    Navette Xpress
+  </div>
+</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="space-y-6">
       <NotificationCenter
         notifications={notifications}
         onRemove={removeNotification}
       />
 
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Flotte de Véhicules</h1>
-            <p className="text-sm text-gray-500 mt-1">Gérez l'état, l'affectation et la maintenance.</p>
-          </div>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-white">Flotte de Véhicules</h1>
+          <p className="text-slate-400 mt-1 text-sm">Gérez l'état, l'affectation et la maintenance.</p>
+        </div>
 
-          <div className="flex gap-2">
-            {selectedVehicleIds.size > 0 && (
-              <button
-                onClick={() => setIsBulkDeleteModalOpen(true)}
-                className="flex items-center gap-2 bg-red-100 text-red-700 hover:bg-red-200 px-4 py-2 rounded-lg font-medium transition-colors"
-              >
-                <Trash className="w-5 h-5" />
-                <span className="hidden sm:inline">Supprimer ({selectedVehicleIds.size})</span>
-              </button>
-            )}
+        <div className="flex gap-2 w-full sm:w-auto">
+          {selectedVehicleIds.size > 0 && (
             <button
-              onClick={openCreateModal}
-              className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+              onClick={() => setIsBulkDeleteModalOpen(true)}
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-xl transition-colors border border-red-500/20"
             >
-              <Plus className="w-5 h-5" />
-              Nouveau véhicule
+              <Trash className="w-5 h-5" />
+              <span className="hidden sm:inline">Supprimer ({selectedVehicleIds.size})</span>
             </button>
-          </div>
+          )}
+          <button
+            onClick={openCreateModal}
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 btn-gold"
+          >
+            <Plus className="w-5 h-5" />
+            Nouveau véhicule
+          </button>
         </div>
+      </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm text-gray-500 mb-1">TOTAL FLOTTE</div>
-                <div className="text-3xl font-bold text-gray-900">{stats.total}</div>
-              </div>
-              <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center">
-                <Car className="w-6 h-6 text-gray-600" />
-              </div>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* TOTAL FLOTTE */}
+        <div className="p-6 rounded-2xl border border-white/5 relative overflow-hidden group" style={{ backgroundColor: 'var(--color-dash-card)' }}>
+          <div className="absolute inset-0 bg-gradient-to-br from-gold/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div className="flex justify-between items-start relative z-10">
+            <div>
+              <p className="text-slate-400 text-sm font-medium mb-1">Total Flotte</p>
+              <h3 className="text-3xl font-bold text-white">{stats.total}</h3>
             </div>
-          </div>
-
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm text-green-700 mb-1">EN SERVICE</div>
-                <div className="text-3xl font-bold text-green-600">{stats.inService}</div>
-              </div>
-              <div className="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center">
-                <svg className="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm text-red-700 mb-1">MAINTENANCE</div>
-                <div className="text-3xl font-bold text-red-600">{stats.maintenance}</div>
-              </div>
-              <div className="w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center">
-                <Wrench className="w-6 h-6 text-red-600" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm text-yellow-700 mb-1">NON ASSIGNÉS</div>
-                <div className="text-3xl font-bold text-yellow-600">{stats.unassigned}</div>
-              </div>
-              <div className="w-12 h-12 rounded-lg bg-yellow-100 flex items-center justify-center">
-                <AlertTriangle className="w-6 h-6 text-yellow-600" />
-              </div>
+            <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shadow-inner">
+              <Car size={24} className="text-gold" weight="fill" />
             </div>
           </div>
         </div>
 
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
-          <div className="relative flex-1 sm:max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+        {/* EN SERVICE */}
+        <div className="p-6 rounded-2xl border border-emerald-500/20 relative overflow-hidden group" style={{ backgroundColor: 'var(--color-dash-card)' }}>
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div className="flex justify-between items-start relative z-10">
+            <div>
+              <p className="text-emerald-400 text-sm font-medium mb-1">En Service</p>
+              <h3 className="text-3xl font-bold text-emerald-400">{stats.inService}</h3>
+            </div>
+            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shadow-inner">
+              <svg className="w-6 h-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* MAINTENANCE */}
+        <div className="p-6 rounded-2xl border border-red-500/20 relative overflow-hidden group" style={{ backgroundColor: 'var(--color-dash-card)' }}>
+          <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div className="flex justify-between items-start relative z-10">
+            <div>
+              <p className="text-red-400 text-sm font-medium mb-1">Maintenance</p>
+              <h3 className="text-3xl font-bold text-red-500">{stats.maintenance}</h3>
+            </div>
+            <div className="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center shadow-inner">
+              <Wrench size={24} className="text-red-400" weight="fill" />
+            </div>
+          </div>
+        </div>
+
+        {/* NON ASSIGNÉS */}
+        <div className="p-6 rounded-2xl border border-amber-500/20 relative overflow-hidden group" style={{ backgroundColor: 'var(--color-dash-card)' }}>
+          <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div className="flex justify-between items-start relative z-10">
+            <div>
+              <p className="text-amber-400 text-sm font-medium mb-1">Non Assignés</p>
+              <h3 className="text-3xl font-bold text-amber-500">{stats.unassigned}</h3>
+            </div>
+            <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shadow-inner">
+              <AlertTriangle size={24} className="text-amber-400" weight="fill" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="p-4 sm:p-6 lg:p-8 rounded-2xl border border-white/5" style={{ backgroundColor: 'var(--color-dash-card)' }}>
+        <div className="flex flex-col lg:flex-row gap-4 mb-6">
+          <div className="relative flex-1">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
             <input
               type="text"
               placeholder="Marque, modèle ou plaque..."
               value={filters.search}
               onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm"
+              className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/50 transition-all font-mono text-sm"
             />
           </div>
 
-          <select
-            value={filters.capacity}
-            onChange={(e) => setFilters({ ...filters, capacity: e.target.value })}
-            className="px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
-          >
-            <option value="all">Toutes les capacités</option>
-            <option value="2">2 places</option>
-            <option value="4">4 places</option>
-            <option value="5">5 places</option>
-            <option value="7">7 places</option>
-            <option value="9">9 places</option>
-          </select>
+          <div className="flex gap-2 min-w-max">
+            <select
+              value={filters.capacity}
+              onChange={(e) => setFilters({ ...filters, capacity: e.target.value })}
+              className="px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-gold/50 transition-colors [&>option]:bg-gray-900"
+            >
+              <option value="all">Toutes les capacités</option>
+              <option value="2">2 places</option>
+              <option value="4">4 places</option>
+              <option value="5">5 places</option>
+              <option value="7">7 places</option>
+              <option value="9">9 places</option>
+            </select>
 
-          <select
-            value={filters.status}
-            onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-            className="px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
-          >
-            <option value="all">Tous les statuts</option>
-            <option value="active">Actif</option>
-            <option value="available">Disponible</option>
-            <option value="maintenance">Maintenance</option>
-          </select>
-
-          <div className="flex items-center gap-2 border border-gray-300 rounded-lg p-1">
-            <button className="p-2 rounded bg-gray-200">
-              <Grid className="w-5 h-5" />
-            </button>
-            <button className="p-2 rounded hover:bg-gray-100">
-              <List className="w-5 h-5" />
-            </button>
+            <select
+              value={filters.status}
+              onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+              className="px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-gold/50 transition-colors [&>option]:bg-gray-900"
+            >
+              <option value="all">Tous les statuts</option>
+              <option value="active">Actif</option>
+              <option value="available">Disponible</option>
+              <option value="maintenance">Maintenance</option>
+            </select>
           </div>
         </div>
-      </div>
 
-      {/* Vehicles Grid */}
-      <div className="p-4 sm:p-6 lg:p-8">
+        {/* Vehicles Grid */}
         {filteredVehicles.length === 0 ? (
-          <div className="text-center py-12 text-gray-500">
+          <div className="text-center py-12 text-slate-500">
             Aucun véhicule trouvé
           </div>
         ) : (
@@ -477,7 +481,7 @@ export function VehiclesManagementRedesigned() {
               return (
                 <div
                   key={vehicle.id}
-                  className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow relative"
+                  className="bg-white/[0.02] border border-white/5 rounded-xl overflow-hidden hover:border-gold/20 hover:shadow-lg hover:shadow-gold/5 transition-all relative group"
                 >
                   {/* Select Checkbox */}
                   <div className="absolute top-3 left-3 z-10">
@@ -485,70 +489,71 @@ export function VehiclesManagementRedesigned() {
                       type="checkbox"
                       checked={selectedVehicleIds.has(vehicle.id)}
                       onChange={() => toggleSelectVehicle(vehicle.id)}
-                      className="w-4 h-4 rounded text-red-600 bg-white/50 border-gray-300 focus:ring-red-500 cursor-pointer shadow-sm"
+                      className="w-4 h-4 rounded text-gold bg-black/50 border-white/20 focus:ring-gold/50 cursor-pointer shadow-sm"
                     />
                   </div>
 
                   {/* Vehicle Image */}
-                  <div className="relative h-40 sm:h-48 bg-linear-to-br from-gray-800 to-gray-900">
+                  <div className="relative h-40 sm:h-48 bg-black/80">
                     {vehicle.photo ? (
                       <Image
                         src={vehicle.photo}
                         alt={`${vehicle.make} ${vehicle.model}`}
                         fill
-                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     ) : (
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="text-center text-white">
-                          <Car className="w-16 h-16 mx-auto mb-2 opacity-50" />
+                        <div className="text-center text-white/20">
+                          <Car className="w-16 h-16 mx-auto mb-2" />
                           <p className="text-2xl font-bold">{vehicle.make}</p>
                           <p className="text-lg">{vehicle.model}</p>
                         </div>
                       </div>
                     )}
-                    <span className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-medium border ${statusBadge.bg} ${statusBadge.color}`}>
+                    <span className={`absolute top-3 right-3 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border ${statusBadge.bg} ${statusBadge.color}`}>
                       {statusBadge.label}
                     </span>
                   </div>
 
                   {/* Vehicle Info */}
-                  <div className="p-3 sm:p-4">
-                    <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1">
+                  <div className="p-4">
+                    <h3 className="text-base sm:text-lg font-bold text-white mb-1 group-hover:text-gold transition-colors">
                       {vehicle.make} {vehicle.model}
                     </h3>
-                    <p className="text-xs sm:text-sm text-gray-500 mb-2 sm:mb-3">
+                    <p className="text-xs sm:text-sm text-slate-400 mb-3 font-mono">
                       {vehicle.plateNumber} • {vehicle.year}
                     </p>
 
-                    <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
-                      <span className="px-2 py-1 bg-gray-100 rounded text-xs">
+                    <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-300 mb-4">
+                      <span className="px-2 py-1 bg-white/5 border border-white/10 rounded-md text-xs">
                         {fuelType.icon} {fuelType.label}
                       </span>
-                      <span className="px-2 py-1 bg-gray-100 rounded text-xs">
+                      <span className="px-2 py-1 bg-white/5 border border-white/10 rounded-md text-xs">
                         👥 {vehicle.capacity} pers.
                       </span>
                     </div>
 
                     {/* Driver Info or Alert */}
                     {driver ? (
-                      <div className="flex items-center gap-2 mb-3 p-2 bg-blue-50 border border-blue-200 rounded">
-                        <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-semibold">
+                      <div className="flex items-center gap-2 mb-3 p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl">
+                        <div className="w-8 h-8 rounded-lg bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 text-xs font-bold">
                           {driver.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs text-gray-500">Chauffeur</p>
-                          <p className="text-sm font-medium text-gray-900 truncate">{driver.name}</p>
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Chauffeur</p>
+                          <p className="text-sm font-medium text-white truncate">{driver.name}</p>
                         </div>
                       </div>
                     ) : !vehicle.isActive ? (
-                      <div className="flex items-center gap-2 mb-3 p-2 bg-red-50 border border-red-200 rounded">
-                        <AlertTriangle className="w-4 h-4 text-red-600" />
-                        <p className="text-xs text-red-700">Problème freinage - Garage Auto</p>
+                      <div className="flex items-center gap-2 mb-3 p-3 bg-red-500/10 border border-red-500/20 rounded-xl">
+                        <AlertTriangle className="w-4 h-4 text-red-500" />
+                        <p className="text-xs text-red-400 font-medium">Problème - Garage Auto</p>
                       </div>
                     ) : (
                       <button
-                        className="w-full mb-3 p-2 text-sm text-yellow-700 bg-yellow-50 border border-yellow-200 rounded hover:bg-yellow-100 transition-colors"
+                        className="w-full mb-3 p-3 font-medium text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-xl hover:bg-amber-500/20 transition-colors"
                         onClick={() => openEditModal(vehicle)}
                       >
                         + Assigner Chauffeur
@@ -556,16 +561,16 @@ export function VehiclesManagementRedesigned() {
                     )}
 
                     {/* Actions */}
-                    <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+                    <div className="flex items-center justify-between pt-4 border-t border-white/10">
                       {!vehicle.driverId && (
-                        <span className="text-xs text-gray-500">Non assigné</span>
+                        <span className="text-[10px] uppercase font-bold tracking-widest text-slate-500">Non assigné</span>
                       )}
                       <div className="flex items-center gap-2 ml-auto">
                         <button
                           onClick={() => openEditModal(vehicle)}
-                          className="text-gray-400 hover:text-gray-600"
+                          className="w-8 h-8 rounded-lg border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
                         >
-                          <MoreVertical className="w-5 h-5" />
+                          <MoreVertical weight="bold" />
                         </button>
                       </div>
                     </div>
@@ -579,64 +584,64 @@ export function VehiclesManagementRedesigned() {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-900 rounded-2xl border border-white/10 shadow-2xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <h2 className="text-xl font-bold text-white mb-6">
               {editingVehicle ? 'Modifier le véhicule' : 'Nouveau véhicule'}
             </h2>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Marque</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Marque</label>
                   <input
                     type="text"
                     value={formData.make}
                     onChange={(e) => setFormData({ ...formData, make: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/50 transition-all font-mono text-sm"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Modèle</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Modèle</label>
                   <input
                     type="text"
                     value={formData.model}
                     onChange={(e) => setFormData({ ...formData, model: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/50 transition-all font-mono text-sm"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Année</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Année</label>
                   <input
                     type="number"
                     value={formData.year}
                     onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/50 transition-all font-mono text-sm"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Plaque</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Plaque</label>
                   <input
                     type="text"
                     value={formData.plateNumber}
                     onChange={(e) => setFormData({ ...formData, plateNumber: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/50 transition-all font-mono text-sm uppercase"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Capacité</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Capacité</label>
                   <select
                     value={formData.capacity}
                     onChange={(e) => setFormData({ ...formData, capacity: parseInt(e.target.value) })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-gold/50 transition-colors [&>option]:bg-gray-900"
                   >
                     <option value={2}>2 places</option>
                     <option value={4}>4 places</option>
@@ -647,11 +652,11 @@ export function VehiclesManagementRedesigned() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Type de carburant</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Type de carburant</label>
                   <select
                     value={formData.vehicleType}
                     onChange={(e) => setFormData({ ...formData, vehicleType: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-gold/50 transition-colors [&>option]:bg-gray-900"
                   >
                     <option value="sedan">Berline (Diesel)</option>
                     <option value="suv">SUV (Essence)</option>
@@ -662,11 +667,11 @@ export function VehiclesManagementRedesigned() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Chauffeur assigné</label>
+                <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Chauffeur assigné</label>
                 <select
                   value={formData.driverId}
                   onChange={(e) => setFormData({ ...formData, driverId: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-gold/50 transition-colors [&>option]:bg-gray-900"
                 >
                   <option value="">Aucun chauffeur assigné</option>
                   {drivers.filter(d => d.isActive).map(driver => (
@@ -675,32 +680,32 @@ export function VehiclesManagementRedesigned() {
                 </select>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3 bg-white/5 p-4 rounded-xl border border-white/10">
                 <input
                   type="checkbox"
                   id="isActive"
                   checked={formData.isActive}
                   onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                  className="rounded border-gray-300 text-red-600 focus:ring-red-500"
+                  className="w-5 h-5 rounded border-white/10 bg-white/5 text-gold focus:ring-gold/50"
                 />
-                <label htmlFor="isActive" className="text-sm text-gray-700">
-                  Véhicule actif
+                <label htmlFor="isActive" className="text-sm font-medium text-white cursor-pointer">
+                  Véhicule actif (disponible pour les courses)
                 </label>
               </div>
 
-              <div className="flex gap-3 pt-4">
+              <div className="flex gap-4 pt-4 border-t border-white/10">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex-1 px-4 py-3 border border-white/10 text-slate-300 rounded-xl hover:bg-white/5 hover:text-white transition-colors uppercase text-xs font-bold tracking-widest"
                 >
                   Annuler
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                  className="flex-1 px-4 py-3 btn-gold"
                 >
-                  {editingVehicle ? 'Modifier' : 'Créer'}
+                  {editingVehicle ? 'Enregistrer' : 'Créer'}
                 </button>
               </div>
             </form>

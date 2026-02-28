@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
+import { Download, Upload } from "@phosphor-icons/react"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { useNotification } from "@/hooks/useNotification"
 import UniversalProfilePhotoUpload from "@/components/ui/UniversalProfilePhotoUpload"
@@ -34,7 +35,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
   const [deletingUser, setDeletingUser] = useState<User | null>(null)
   const [currentUserRole, setCurrentUserRole] = useState<string>('')
   const { notifications, showSuccess, showError, removeNotification } = useNotification()
-  
+
   const [filters, setFilters] = useState({
     role: '',
     status: '',
@@ -42,7 +43,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
     sortBy: 'name',
     sortOrder: 'asc' as 'asc' | 'desc'
   })
-  
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -53,7 +54,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
     password: '',
     image: ''
   })
-  
+
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [newPassword, setNewPassword] = useState('')
@@ -118,7 +119,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       })
-      
+
       if (response.ok) {
         await fetchUsers()
         setIsModalOpen(false)
@@ -137,17 +138,17 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
   const handleUpdateUser = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!editingUser) return
-    
+
     try {
       // Exclure le champ image du formData car il est géré séparément
       const { image, ...updateData } = formData
-      
+
       const response = await fetch(`/api/admin/users/${editingUser.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updateData)
       })
-      
+
       if (response.ok) {
         await fetchUsers()
         setIsModalOpen(false)
@@ -167,14 +168,14 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!selectedUser || !newPassword) return
-    
+
     try {
       const response = await fetch(`/api/admin/users/${selectedUser.id}/password`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password: newPassword })
       })
-      
+
       if (response.ok) {
         setIsPasswordModalOpen(false)
         setNewPassword('')
@@ -192,12 +193,12 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
 
   const handleDeleteUser = async () => {
     if (!deletingUser) return
-    
+
     try {
       const response = await fetch(`/api/admin/users/${deletingUser.id}`, {
         method: 'DELETE'
       })
-      
+
       if (response.ok) {
         await fetchUsers()
         setDeletingUser(null)
@@ -210,6 +211,39 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
       console.error('Erreur lors de la suppression:', error)
       showError('Une erreur est survenue lors de la suppression', 'Erreur technique')
     }
+  }
+
+  const handleExportCSV = () => {
+    const headers = ["Nom", "Email", "Role", "Statut", "Permis", "Date de création"]
+    const rows = filteredUsers.map(u => [
+      `"${u.name}"`,
+      `"${u.email}"`,
+      `"${u.role}"`,
+      `"${u.isActive ? 'Actif' : 'Inactif'}"`,
+      `"${u.licenseNumber || ''}"`,
+      `"${new Date(u.createdAt).toLocaleDateString('fr-FR')}"`
+    ].join(","))
+
+    // Add BOM for Excel utf8 reading
+    const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + [headers.join(","), ...rows].join("\n")
+    const encodedUri = encodeURI(csvContent)
+    const link = document.createElement("a")
+    link.setAttribute("href", encodedUri)
+    link.setAttribute("download", "utilisateurs_export.csv")
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    showSuccess("Export CSV réussi", "Succès")
+  }
+
+  const handleImportCSVClick = () => {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = '.csv'
+    input.onchange = (e) => {
+      showSuccess("Le fichier a été sélectionné avec succès ! (En attente d'implémentation backend)", "Import CSV")
+    }
+    input.click()
   }
 
   const resetForm = () => {
@@ -293,7 +327,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
     }
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase()
-      filtered = filtered.filter(user => 
+      filtered = filtered.filter(user =>
         user.name?.toLowerCase().includes(searchTerm) ||
         user.email?.toLowerCase().includes(searchTerm) ||
         user.phone?.toLowerCase().includes(searchTerm)
@@ -304,12 +338,12 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
     filtered.sort((a, b) => {
       let aValue = a[filters.sortBy as keyof User] as string
       let bValue = b[filters.sortBy as keyof User] as string
-      
+
       if (filters.sortBy === 'createdAt') {
         aValue = new Date(aValue).getTime().toString()
         bValue = new Date(bValue).getTime().toString()
       }
-      
+
       const result = aValue.localeCompare(bValue)
       return filters.sortOrder === 'asc' ? result : -result
     })
@@ -330,7 +364,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
   }
 
   const getRoleIcon = (role: string) => {
-    switch(role) {
+    switch (role) {
       case 'admin': return '👑'
       case 'manager': return '👨‍💼'
       case 'driver': return '🚗'
@@ -340,7 +374,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
   }
 
   const getRoleLabel = (role: string) => {
-    switch(role) {
+    switch (role) {
       case 'admin': return 'Administrateur'
       case 'manager': return 'Manager'
       case 'driver': return 'Chauffeur'
@@ -350,7 +384,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
   }
 
   const getRoleBadgeColor = (role: string) => {
-    switch(role) {
+    switch (role) {
       case 'admin': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
       case 'manager': return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'
       case 'driver': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
@@ -366,7 +400,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
     const managers = users.filter(u => u.role === 'manager').length
     const drivers = users.filter(u => u.role === 'driver').length
     const customers = users.filter(u => u.role === 'customer').length
-    
+
     return { total, active, admins, managers, drivers, customers }
   }
 
@@ -390,7 +424,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       <div className="p-3 sm:p-6 max-w-7xl mx-auto">
-        
+
         {/* Header avec statistiques */}
         <div className="mb-6 sm:mb-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
@@ -402,17 +436,16 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                 Gérez tous vos utilisateurs, rôles et permissions
               </p>
             </div>
-            
+
             <div className="flex items-center gap-2 sm:gap-3">
               {/* Boutons de vue - Cachés sur mobile */}
               <div className="hidden sm:flex bg-white dark:bg-slate-800 rounded-lg p-1 shadow-sm border border-slate-200 dark:border-slate-700">
                 <button
                   onClick={() => setViewMode('cards')}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    viewMode === 'cards'
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${viewMode === 'cards'
                       ? 'bg-blue-600 text-white shadow-sm'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
+                    }`}
                 >
                   <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -421,11 +454,10 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                 </button>
                 <button
                   onClick={() => setViewMode('table')}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    viewMode === 'table'
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${viewMode === 'table'
                       ? 'bg-blue-600 text-white shadow-sm'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
+                    }`}
                 >
                   <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -433,7 +465,24 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                   Tableau
                 </button>
               </div>
-              
+
+              <div className="hidden lg:flex items-center gap-2">
+                <button
+                  onClick={handleExportCSV}
+                  className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition shadow-sm"
+                >
+                  <Download size={18} />
+                  Exporter
+                </button>
+                <button
+                  onClick={handleImportCSVClick}
+                  className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition shadow-sm"
+                >
+                  <Upload size={18} />
+                  Importer
+                </button>
+              </div>
+
               {/* Bouton Nouvel utilisateur */}
               {canCreate() && (
                 <button
@@ -461,7 +510,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                 <div className="text-xl sm:text-2xl">👥</div>
               </div>
             </div>
-            
+
             <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
@@ -471,7 +520,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                 <div className="text-xl sm:text-2xl">✅</div>
               </div>
             </div>
-            
+
             {isStrictAdmin() && (
               <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
                 <div className="flex items-center justify-between">
@@ -483,7 +532,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                 </div>
               </div>
             )}
-            
+
             {isCurrentUserAdmin() && (
               <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
                 <div className="flex items-center justify-between">
@@ -495,7 +544,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                 </div>
               </div>
             )}
-            
+
             <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
@@ -505,7 +554,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                 <div className="text-xl sm:text-2xl">🚗</div>
               </div>
             </div>
-            
+
             <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
@@ -584,7 +633,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
               {filteredUsers.length} utilisateur{filteredUsers.length > 1 ? 's' : ''} trouvé{filteredUsers.length > 1 ? 's' : ''}
             </p>
-            
+
             {(filters.search || filters.role || filters.status) && (
               <button
                 onClick={() => setFilters({ role: '', status: '', search: '', sortBy: 'name', sortOrder: 'asc' })}
@@ -620,11 +669,10 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                           </div>
                         )}
                         {/* Indicateur de statut */}
-                        <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 sm:w-4 sm:h-4 rounded-full border-2 border-white dark:border-slate-800 ${
-                          user.isActive ? 'bg-green-500' : 'bg-red-500'
-                        }`}></div>
+                        <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 sm:w-4 sm:h-4 rounded-full border-2 border-white dark:border-slate-800 ${user.isActive ? 'bg-green-500' : 'bg-red-500'
+                          }`}></div>
                       </div>
-                      
+
                       <div className="flex-1 min-w-0">
                         <h3 className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white truncate">
                           {user.name}
@@ -639,7 +687,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                         )}
                       </div>
                     </div>
-                    
+
                     {/* Badge de rôle */}
                     <span className={`inline-flex items-center px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-xs font-medium whitespace-nowrap shrink-0 ${getRoleBadgeColor(user.role)}`}>
                       <span className="hidden sm:inline">{getRoleIcon(user.role)} {getRoleLabel(user.role)}</span>
@@ -658,7 +706,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                       <span className="truncate">Permis : {user.licenseNumber}</span>
                     </div>
                   )}
-                  
+
                   <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-500">
                     <svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -696,7 +744,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                           Modifier
                         </button>
                       )}
-                      
+
                       {canUpdate() && (
                         <button
                           onClick={() => {
@@ -713,7 +761,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                         </button>
                       )}
                     </div>
-                    
+
                     {/* Ligne 2: Supprimer */}
                     {canDelete() && (
                       <button
@@ -795,9 +843,8 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                                 {user.name?.charAt(0)?.toUpperCase() || '?'}
                               </div>
                             )}
-                            <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white dark:border-slate-800 ${
-                              user.isActive ? 'bg-green-500' : 'bg-red-500'
-                            }`}></div>
+                            <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white dark:border-slate-800 ${user.isActive ? 'bg-green-500' : 'bg-red-500'
+                              }`}></div>
                           </div>
                           <div>
                             <p className="font-medium text-slate-900 dark:text-white">{user.name}</p>
@@ -821,11 +868,10 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-                          user.isActive
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${user.isActive
                             ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
                             : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-                        }`}>
+                          }`}>
                           {user.isActive ? '✅ Actif' : '❌ Inactif'}
                         </span>
                       </td>
@@ -858,7 +904,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                               </svg>
                             </button>
                           )}
-                          
+
                           {canUpdate() && (
                             <button
                               onClick={() => {
@@ -873,7 +919,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                               </svg>
                             </button>
                           )}
-                          
+
                           {canDelete() && (
                             <button
                               onClick={() => setDeletingUser(user)}
@@ -927,7 +973,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
             <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6">
               {editingUser ? 'Modifier l\'utilisateur' : 'Nouvel utilisateur'}
             </h3>
-            
+
             <form onSubmit={editingUser ? handleUpdateUser : handleCreateUser} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
@@ -936,12 +982,12 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                 <input
                   type="text"
                   value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
                   required
                 />
               </div>
-              
+
               {/* Photo de profil - seulement pour les utilisateurs existants */}
               {editingUser && (
                 <div>
@@ -960,7 +1006,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                   />
                 </div>
               )}
-              
+
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                   Email
@@ -968,19 +1014,19 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                 <input
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                   Rôle
                 </label>
                 <select
                   value={formData.role}
-                  onChange={(e) => setFormData({...formData, role: e.target.value as 'admin' | 'manager' | 'driver' | 'customer'})}
+                  onChange={(e) => setFormData({ ...formData, role: e.target.value as 'admin' | 'manager' | 'driver' | 'customer' })}
                   className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
                 >
                   <option value="customer">👤 Client</option>
@@ -989,7 +1035,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                   {isStrictAdmin() && <option value="admin">👑 Admin</option>}
                 </select>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                   Téléphone
@@ -997,12 +1043,12 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                 <input
                   type="tel"
                   value={formData.phone}
-                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
                   placeholder="+33 6 12 34 56 78"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                   Numéro de permis
@@ -1010,12 +1056,12 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                 <input
                   type="text"
                   value={formData.licenseNumber}
-                  onChange={(e) => setFormData({...formData, licenseNumber: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, licenseNumber: e.target.value })}
                   className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
                   placeholder="Optionnel"
                 />
               </div>
-              
+
               {!editingUser && (
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
@@ -1024,26 +1070,26 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                   <input
                     type="password"
                     value={formData.password}
-                    onChange={(e) => setFormData({...formData, password: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
                     placeholder="Laissez vide pour mot de passe par défaut"
                   />
                 </div>
               )}
-              
+
               <div className="flex items-center">
                 <input
                   type="checkbox"
                   id="isActive"
                   checked={formData.isActive}
-                  onChange={(e) => setFormData({...formData, isActive: e.target.checked})}
+                  onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded"
                 />
                 <label htmlFor="isActive" className="ml-2 block text-sm text-slate-700 dark:text-slate-300">
                   Utilisateur actif
                 </label>
               </div>
-              
+
               <div className="flex justify-end gap-3 pt-4">
                 <button
                   type="button"
@@ -1087,14 +1133,14 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                 </p>
               </div>
             </div>
-            
+
             <form onSubmit={handleResetPassword} className="space-y-4">
               <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
                 <p className="text-sm text-blue-800 dark:text-blue-200">
                   <strong>Email:</strong> {selectedUser.email}
                 </p>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                   Nouveau mot de passe
@@ -1112,7 +1158,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                   Le mot de passe doit contenir au moins 6 caractères
                 </p>
               </div>
-              
+
               <div className="flex justify-end gap-3 pt-4">
                 <button
                   type="button"
@@ -1182,7 +1228,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                       </svg>
                     </div>
                   )}
-                  
+
                   <div className="flex-1 min-w-0">
                     <h4 className="text-lg font-bold text-slate-900 dark:text-white truncate">
                       {deletingUser.name}
@@ -1195,27 +1241,25 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
 
                 {/* Badges d'informations */}
                 <div className="flex flex-wrap gap-2">
-                  <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${
-                    deletingUser.role === 'admin' 
+                  <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${deletingUser.role === 'admin'
                       ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
                       : deletingUser.role === 'driver'
-                      ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-                      : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
-                  }`}>
+                        ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+                        : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
+                    }`}>
                     {deletingUser.role === 'admin' && '👑'}
                     {deletingUser.role === 'driver' && '🚗'}
                     {deletingUser.role === 'customer' && '👤'}
                     <span className="capitalize">{
                       deletingUser.role === 'admin' ? 'Administrateur' :
-                      deletingUser.role === 'driver' ? 'Chauffeur' : 'Client'
+                        deletingUser.role === 'driver' ? 'Chauffeur' : 'Client'
                     }</span>
                   </span>
-                  
-                  <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${
-                    deletingUser.isActive 
+
+                  <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${deletingUser.isActive
                       ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
                       : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-                  }`}>
+                    }`}>
                     <span className={`w-2 h-2 rounded-full ${deletingUser.isActive ? 'bg-green-500' : 'bg-red-500'}`}></span>
                     {deletingUser.isActive ? 'Actif' : 'Inactif'}
                   </span>

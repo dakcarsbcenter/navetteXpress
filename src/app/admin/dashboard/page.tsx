@@ -26,6 +26,17 @@ export default function AdminDashboard() {
   const { data: session, status } = useSession()
   const { permissions, loading: permissionsLoading, canRead, canManage } = usePermissions()
   const [activeTab, setActiveTab] = useState<TabType>('modern')
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tab = urlParams.get('tab');
+      if (tab) {
+        setActiveTab(tab as TabType);
+        window.history.replaceState({}, '', '/admin/dashboard');
+      }
+    }
+  }, []);
   const [isLoading, setIsLoading] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [pendingBookingsCount, setPendingBookingsCount] = useState(0)
@@ -183,7 +194,12 @@ export default function AdminDashboard() {
     if (loading) {
       return (
         <div className="flex items-center justify-center p-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+          <div className="flex flex-col items-center gap-4">
+  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+       style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
+    Navette Xpress
+  </div>
+</div>
         </div>
       )
     }
@@ -217,7 +233,7 @@ export default function AdminDashboard() {
           <div>
             <p className="text-sm font-semibold"
               style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-body)' }}>
-              Navette <span style={{ color: 'var(--color-gold)' }}>Hub</span>
+              Navette <span>Xpress</span>
             </p>
             {/* Indicateur système opérationnel */}
             <div className="flex items-center gap-1.5 mt-0.5">
@@ -358,7 +374,7 @@ export default function AdminDashboard() {
               {tabs.find(t => t.id === activeTab)?.label || 'Dashboard'}
             </h1>
             <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
-              Navette Hub Admin
+              Navette Xpress Admin
             </p>
           </div>
 
@@ -401,8 +417,7 @@ export default function AdminDashboard() {
       {/* MOBILE OVERLAY (Simplified for now) */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-[#09090F] border-b border-white/5 p-4 flex justify-between items-center h-16">
         <div className="flex items-center gap-2">
-          <span className="text-white font-bold">Navette</span>
-          <span className="text-gold font-bold" style={{ color: 'var(--color-gold)' }}>Hub</span>
+          <span>Navette</span> <span>Xpress</span>
         </div>
         <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-white">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

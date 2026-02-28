@@ -112,7 +112,12 @@ export function LocationsManagementRedesigned() {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center h-96">
-                <div className="w-12 h-12 border-2 border-gold border-t-transparent rounded-full animate-spin"></div>
+                <div className="flex flex-col items-center gap-4">
+  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+       style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
+    Navette Xpress
+  </div>
+</div>
             </div>
         )
     }

@@ -225,13 +225,10 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="relative w-16 h-16">
-          <div className="absolute inset-0 rounded-full border-2 border-transparent animate-spin"
-            style={{ borderTopColor: 'var(--color-gold)', borderRightColor: 'rgba(201,168,76,0.3)' }} />
-          <div className="absolute inset-2 rounded-full border-2 border-transparent animate-spin"
-            style={{ borderBottomColor: 'var(--color-gold)', borderLeftColor: 'rgba(201,168,76,0.2)', animationDirection: 'reverse', animationDuration: '1.5s' }} />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Zap size={16} className="text-gold" style={{ color: 'var(--color-gold)' }} />
+        <div className="flex flex-col items-center gap-4">
+          <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+            style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
+            Navette Xpress
           </div>
         </div>
       </div>

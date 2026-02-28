@@ -96,7 +96,12 @@ export function DriverProfile({ onBack }: DriverProfileProps) {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
-        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+        <div className="flex flex-col items-center gap-4">
+  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+       style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
+    Navette Xpress
+  </div>
+</div>
         <p className="text-blue-400 font-mono text-xs animate-pulse">CHARGEMENT DU PROFIL...</p>
       </div>
     )

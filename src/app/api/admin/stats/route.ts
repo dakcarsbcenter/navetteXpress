@@ -16,23 +16,23 @@ export async function GET(request: NextRequest) {
 
     // Les admins ont toujours accès
     if (!session?.user || !userRole) {
-      return NextResponse.json({ 
-        success: false, 
-        message: 'Non authentifié' 
+      return NextResponse.json({
+        success: false,
+        message: 'Non authentifié'
       }, { status: 401 })
     }
 
     // Les managers doivent avoir la permission, seuls les admins ont accès direct
     if (userRole !== 'admin') {
-      return NextResponse.json({ 
-        success: false, 
-        message: 'Accès non autorisé. Seuls les administrateurs peuvent accéder aux statistiques globales.' 
+      return NextResponse.json({
+        success: false,
+        message: 'Accès non autorisé. Seuls les administrateurs peuvent accéder aux statistiques globales.'
       }, { status: 403 })
     }
 
     const { searchParams } = new URL(request.url)
     const period = searchParams.get('period') || 'month'
-    
+
     console.log(`📊 [ADMIN] Récupération des statistiques globales pour la période: ${period}`)
 
     // Calculer les dates selon la période
@@ -70,6 +70,12 @@ export async function GET(request: NextRequest) {
           sql`${bookingsTable.driverId} IS NOT NULL`
         )
       )
+
+    // 1b. Total des chauffeurs enregistrés
+    const totalDriversCount = await db
+      .select({ count: count(users.id) })
+      .from(users)
+      .where(eq(users.role, 'driver'))
 
     // 2. Répartition globale par statut
     const globalStatusStats = await db
@@ -171,9 +177,9 @@ export async function GET(request: NextRequest) {
         email: driver.driverEmail, // Normaliser l'email pour le frontend
         averageRating: Number(ratingData?.averageRating || 0),
         totalRatings: Number(ratingData?.totalRatings || 0),
-        completionRate: driver.totalRides > 0 ? 
+        completionRate: driver.totalRides > 0 ?
           Math.round((Number(driver.completedRides) / driver.totalRides) * 100) : 0,
-        earningsPerRide: driver.totalRides > 0 ? 
+        earningsPerRide: driver.totalRides > 0 ?
           Math.round(Number(driver.totalEarnings) / Number(driver.completedRides || 1)) : 0
       }
     })
@@ -185,17 +191,18 @@ export async function GET(request: NextRequest) {
         start: startDate.toISOString(),
         end: now.toISOString()
       },
-      
+
       // Métriques globales
       globalMetrics: {
         totalRides: globalStats[0]?.totalRides || 0,
         totalEarnings: Number(globalStats[0]?.totalEarnings || 0),
         activeDrivers: globalStats[0]?.totalDrivers || 0,
+        totalDrivers: totalDriversCount[0]?.count || 0,
         completedRides: globalStatusStats.find(s => s.status === 'completed')?.count || 0,
         cancelledRides: globalStatusStats.find(s => s.status === 'cancelled')?.count || 0,
-        averageEarningsPerRide: globalStats[0]?.totalRides > 0 ? 
+        averageEarningsPerRide: globalStats[0]?.totalRides > 0 ?
           Math.round(Number(globalStats[0]?.totalEarnings || 0) / globalStats[0].totalRides) : 0,
-        completionRate: globalStats[0]?.totalRides > 0 ? 
+        completionRate: globalStats[0]?.totalRides > 0 ?
           Math.round(((globalStatusStats.find(s => s.status === 'completed')?.count || 0) / globalStats[0].totalRides) * 100) : 0
       },
 
@@ -204,7 +211,7 @@ export async function GET(request: NextRequest) {
         status: s.status,
         count: s.count || 0,
         earnings: Number(s.earnings || 0),
-        percentage: globalStats[0]?.totalRides > 0 ? 
+        percentage: globalStats[0]?.totalRides > 0 ?
           Math.round(((s.count || 0) / globalStats[0].totalRides) * 100) : 0
       })),
 

@@ -208,20 +208,21 @@ export default function HomeClient() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
-                  className="flex flex-col sm:flex-row gap-4 pt-4"
+                  className="flex flex-col sm:flex-row flex-wrap gap-4 pt-4"
                 >
                   <Link
                     href="/reservation"
-                    className="px-8 py-4 bg-gold text-midnight rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all hover:scale-105 shadow-[0_0_30px_rgba(201,168,76,0.3)] hover:shadow-[0_0_50px_rgba(201,168,76,0.5)]"
+                    className="px-6 py-4 bg-gold text-midnight rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all hover:scale-105 shadow-[0_0_30px_rgba(201,168,76,0.3)] hover:shadow-[0_0_50px_rgba(201,168,76,0.5)]"
                   >
                     <span>Réserver Maintenant</span>
-                    <ArrowRight size={20} weight="regular" />
+                    <ArrowRight size={20} weight="bold" />
                   </Link>
                   <Link
-                    href="/services"
-                    className="px-8 py-4 bg-white/5 backdrop-blur-md border border-white/10 text-white rounded-xl font-bold text-lg hover:bg-white/10 transition-all text-center"
+                    href="/devenir-partenaire"
+                    className="px-6 py-4 bg-white/5 backdrop-blur-md border border-white/10 text-white rounded-xl font-bold text-lg hover:bg-white/10 transition-all flex items-center justify-center gap-3"
                   >
-                    Nos Services
+                    <Car size={24} weight="fill" className="text-gold shadow-gold drop-shadow-lg" />
+                    <span>Devenir Partenaire</span>
                   </Link>
                 </motion.div>
 
@@ -255,7 +256,7 @@ export default function HomeClient() {
                 className="hidden lg:block relative"
               >
                 <div className="relative z-10 p-2 rounded-[2.5rem] bg-linear-to-br from-gold/30 to-transparent border border-white/10 backdrop-blur-2xl">
-                  <div className="rounded-[2rem] overflow-hidden bg-obsidian">
+                  <div className="rounded-[2rem] overflow-hidden bg-obsidian relative">
                     <Image
                       src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=1200"
                       alt="Véhicule de luxe premium Navette Xpress Dakar"
@@ -266,6 +267,26 @@ export default function HomeClient() {
                     />
                   </div>
                 </div>
+
+                {/* Floating Partner Illustration Badge */}
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.2, type: "spring" }}
+                  className="absolute -left-12 bottom-12 z-20 bg-[#09090F]/90 backdrop-blur-xl border border-white/10 p-5 rounded-2xl flex items-center gap-4 shadow-[0_20px_50px_rgba(0,0,0,0.5)] hover:-translate-y-2 transition-transform duration-300 cursor-pointer"
+                  onClick={() => router.push('/devenir-partenaire')}
+                >
+                  <div className="w-14 h-14 bg-gold/10 rounded-full flex items-center justify-center border border-gold/20 shadow-inner">
+                    <Car size={28} className="text-gold" weight="fill" />
+                  </div>
+                  <div>
+                    <p className="text-white font-bold text-sm tracking-wide">Propriétaire de véhicule ?</p>
+                    <p className="text-gold text-xs font-semibold mt-1 flex items-center gap-1">
+                      Rentabilisez votre actif <ArrowRight size={12} weight="bold" />
+                    </p>
+                  </div>
+                </motion.div>
+
                 <div className="absolute -top-10 -right-10 w-40 h-40 bg-gold/20 rounded-full blur-3xl animate-pulse"></div>
                 <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-crimson/20 rounded-full blur-3xl"></div>
               </motion.div>
@@ -527,7 +548,12 @@ export default function HomeClient() {
 
             {loading ? (
               <div className="flex justify-center items-center py-20">
-                <div className="w-12 h-12 border-2 border-gold border-t-transparent rounded-full animate-spin"></div>
+                <div className="flex flex-col items-center gap-4">
+                  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+                    style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
+                    Navette Xpress
+                  </div>
+                </div>
               </div>
             ) : (
               <div

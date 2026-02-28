@@ -36,6 +36,7 @@ interface Ad {
 export default function PublicitesClient({ ads: initialAds }: { ads: Ad[] }) {
     const [ads, setAds] = useState(initialAds);
     const [loading, setLoading] = useState(false);
+    const [adToDelete, setAdToDelete] = useState<string | null>(null);
 
     const stats = {
         total: ads.length,
@@ -64,14 +65,18 @@ export default function PublicitesClient({ ads: initialAds }: { ads: Ad[] }) {
         }
     };
 
-    const handleDelete = async (id: string) => {
-        if (!confirm('Êtes-vous sûr de vouloir supprimer cette publicité ?')) return;
+    const confirmDelete = (id: string) => {
+        setAdToDelete(id);
+    };
+
+    const handleDelete = async () => {
+        if (!adToDelete) return;
 
         setLoading(true);
         try {
-            const res = await fetch(`/api/ads/${id}`, { method: 'DELETE' });
+            const res = await fetch(`/api/ads/${adToDelete}`, { method: 'DELETE' });
             if (res.ok) {
-                setAds(ads.filter(a => a.id !== id));
+                setAds(ads.filter(a => a.id !== adToDelete));
             } else {
                 alert('Erreur lors de la suppression');
             }
@@ -80,6 +85,7 @@ export default function PublicitesClient({ ads: initialAds }: { ads: Ad[] }) {
             alert('Erreur lors de la suppression');
         } finally {
             setLoading(false);
+            setAdToDelete(null);
         }
     };
 
@@ -204,7 +210,7 @@ export default function PublicitesClient({ ads: initialAds }: { ads: Ad[] }) {
                                                 <PencilSimple size={20} />
                                             </Link>
                                             <button
-                                                onClick={() => handleDelete(ad.id)}
+                                                onClick={() => confirmDelete(ad.id)}
                                                 disabled={loading}
                                                 className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors disabled:opacity-50"
                                                 title="Supprimer"
@@ -231,6 +237,40 @@ export default function PublicitesClient({ ads: initialAds }: { ads: Ad[] }) {
                     </table>
                 </div>
             </div>
+
+            {/* Delete Confirmation Modal */}
+            {adToDelete && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
+                    <div className="bg-[#09090F] border border-white/10 rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl animate-scaleIn">
+                        <div className="p-6">
+                            <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-4 border border-red-500/20">
+                                <Trash size={24} className="text-red-500" />
+                            </div>
+                            <h3 className="text-xl font-bold text-white mb-2">Supprimer la publicité</h3>
+                            <p className="text-slate-400 text-sm leading-relaxed">
+                                Êtes-vous sûr de vouloir supprimer définitivement cette campagne publicitaire ? Cette action est irréversible.
+                            </p>
+                        </div>
+                        <div className="p-4 border-t border-white/5 bg-white/5 flex gap-3 justify-end items-center">
+                            <button
+                                onClick={() => setAdToDelete(null)}
+                                disabled={loading}
+                                className="px-4 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
+                            >
+                                Annuler
+                            </button>
+                            <button
+                                onClick={handleDelete}
+                                disabled={loading}
+                                className="px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-red-500/20"
+                            >
+                                {loading && <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />}
+                                Supprimer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

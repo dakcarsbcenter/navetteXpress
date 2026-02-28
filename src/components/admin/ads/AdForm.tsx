@@ -12,7 +12,8 @@ import {
     Calendar,
     MapPin,
     Link as LinkIcon,
-    Info
+    Info,
+    ChartBar
 } from '@phosphor-icons/react';
 
 interface AdFormProps {
@@ -95,7 +96,7 @@ export default function AdForm({ initialData, isEditing = false }: AdFormProps) 
             });
 
             if (res.ok) {
-                router.push('/admin/publicites');
+                router.push('/admin/dashboard?tab=ads');
                 router.refresh();
             } else {
                 const error = await res.json();

@@ -10,7 +10,6 @@ import {
   Calendar,
   DotsThreeVertical as MoreVertical,
   SquaresFour as Grid,
-  Grid,
   List,
   Trash,
   CarProfile,
@@ -18,8 +17,11 @@ import {
   AirplaneTilt,
   Crown,
   User,
-  Confetti
+  Confetti,
+  Download
 } from "@phosphor-icons/react"
+import jsPDF from "jspdf"
+import autoTable from "jspdf-autotable"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { BulkDeleteModal } from "@/components/ui/BulkDeleteModal"
 import { useNotification } from "@/hooks/useNotification"
@@ -201,12 +203,50 @@ export function QuotesManagementRedesigned() {
     }
   }
 
+  const exportToPDF = () => {
+    try {
+      const doc = new jsPDF()
+      doc.text("Liste des Devis - Navette Xpress", 14, 15)
+
+      const tableColumn = ["Client", "Email", "Service", "Statut", "Date Prévue"]
+      const tableRows: any[] = []
+
+      quotes.forEach(quote => {
+        const row = [
+          quote.customerName,
+          quote.customerEmail,
+          quote.service,
+          quote.status,
+          quote.preferredDate ? new Date(quote.preferredDate).toLocaleDateString('fr-FR') : '-'
+        ]
+        tableRows.push(row)
+      })
+
+      autoTable(doc, {
+        head: [tableColumn],
+        body: tableRows,
+        startY: 20,
+        styles: { fontSize: 10 }
+      })
+
+      doc.save("devis_export.pdf")
+      showSuccess("Devis exportés en PDF", "Export réussi")
+    } catch (error) {
+      showError("Erreur lors de l'export PDF", "Erreur technique")
+    }
+  }
+
   const stats = getStatsData()
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+        <div className="flex flex-col items-center gap-4">
+          <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+            style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
+            Navette Xpress
+          </div>
+        </div>
       </div>
     )
   }
@@ -235,6 +275,13 @@ export function QuotesManagementRedesigned() {
                 <span className="hidden sm:inline">Supprimer ({selectedQuoteIds.size})</span>
               </button>
             )}
+            <button
+              onClick={exportToPDF}
+              className="flex items-center gap-2 bg-blue-500/10 text-blue-500 border border-blue-500/20 hover:bg-blue-500/20 px-4 py-2 rounded-xl text-sm font-bold uppercase tracking-wider transition-colors whitespace-nowrap"
+            >
+              <Download className="w-4 h-4" weight="bold" />
+              <span className="hidden sm:inline">Export PDF</span>
+            </button>
             <button
               onClick={() => setIsModalOpen(true)}
               className="btn-gold flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold shadow-lg shadow-gold/10 whitespace-nowrap"
@@ -416,237 +463,105 @@ export function QuotesManagementRedesigned() {
         </div>
       )}
 
-      {/* Envoyé */}
-      <div className="bg-white rounded-xl border border-gray-200">
-        <div className="px-4 py-3 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-purple-500"></div>
-              <h3 className="font-semibold text-gray-900">Envoyé</h3>
-            </div>
-            <span className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-medium">
-              {getQuotesByStatus('sent').length}
-            </span>
-          </div>
-        </div>
-        <div className="p-3 space-y-3 max-h-[calc(100vh-400px)] overflow-y-auto">
-          {getQuotesByStatus('sent').length === 0 ? (
-            <div className="text-center py-8 text-gray-400 text-sm">
-              Aucun devis en attente client
-            </div>
-          ) : (
-            getQuotesByStatus('sent').map((quote) => (
-              <div key={quote.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer relative">
-                {/* Checkbox */}
-                <div className="absolute top-2 right-2 text-gray-400 focus:outline-none" onClick={(e) => e.stopPropagation()}>
-                  <input
-                    type="checkbox"
-                    checked={selectedQuoteIds.has(quote.id)}
-                    onChange={(e) => toggleSelectQuote(e as unknown as React.MouseEvent, quote.id)}
-                    className="w-4 h-4 rounded text-red-600 focus:ring-red-500 border-gray-300 cursor-pointer"
-                  />
-                </div>
-                <div className="flex items-start justify-between mb-2 pr-6">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs text-gray-500">N° {quote.id.toString().padStart(4, '0')}</span>
-                      <span className="px-2 py-0.5 bg-purple-50 text-purple-600 text-xs rounded-full flex items-center gap-1">
-                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                          <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                        </svg>
-                      </span>
-                    </div>
-                    <h4 className="font-semibold text-gray-900">{quote.customerName}</h4>
-                    <p className="text-xs text-gray-500">{quote.service}</p>
-                  </div>
-                  <button className="text-gray-400 hover:text-gray-600">
-                    <MoreVertical className="w-4 h-4" />
-                  </button>
-                </div>
 
-                <div className="flex items-center gap-2 text-xs text-gray-600 mb-3">
-                  <span className="flex items-center gap-1">
-                    {getServiceIcon(quote.service)} Circuit Touristique
-                  </span>
-                </div>
 
-                <div className="pt-3 border-t border-gray-100">
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-bold text-green-600">
-                      {formatCurrency(quote.estimatedPrice)}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mt-3 flex items-center gap-2">
-                  <button className="flex-1 text-xs px-3 py-1.5 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors">
-                    Relancer
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
-
-      {/* Gagné */}
-      <div className="bg-white rounded-xl border border-gray-200">
-        <div className="px-4 py-3 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-green-500"></div>
-              <h3 className="font-semibold text-gray-900">Gagné</h3>
-            </div>
-            <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs font-medium">
-              {getQuotesByStatus('accepted').length}
-            </span>
-          </div>
-        </div>
-        <div className="p-3 space-y-3 max-h-[calc(100vh-400px)] overflow-y-auto">
-          {getQuotesByStatus('accepted').length === 0 ? (
-            <div className="text-center py-8 text-gray-400 text-sm">
-              Aucun devis accepté
-            </div>
-          ) : (
-            getQuotesByStatus('accepted').map((quote) => (
-              <div key={quote.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer relative">
-                {/* Checkbox */}
-                <div className="absolute top-2 right-2 text-gray-400 focus:outline-none" onClick={(e) => e.stopPropagation()}>
-                  <input
-                    type="checkbox"
-                    checked={selectedQuoteIds.has(quote.id)}
-                    onChange={(e) => toggleSelectQuote(e as unknown as React.MouseEvent, quote.id)}
-                    className="w-4 h-4 rounded text-red-600 focus:ring-red-500 border-gray-300 cursor-pointer"
-                  />
-                </div>
-                <div className="flex items-start justify-between mb-2 pr-6">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs text-gray-500">N° {quote.id.toString().padStart(4, '0')}</span>
-                      <span className="px-2 py-0.5 bg-green-50 text-green-600 text-xs rounded-full flex items-center gap-1">
-                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                        Signé
-                      </span>
-                    </div>
-                    <h4 className="font-semibold text-gray-900">{quote.customerName}</h4>
-                    <p className="text-xs text-gray-500">{quote.service}</p>
-                  </div>
-                  <button className="text-gray-400 hover:text-gray-600">
-                    <MoreVertical className="w-4 h-4" />
-                  </button>
-                </div>
-
-                <div className="flex items-center gap-2 text-xs text-gray-600 mb-3">
-                  <span className="flex items-center gap-1">
-                    {getServiceIcon(quote.service)} Navette Event
-                  </span>
-                </div>
-
-                <div className="pt-3 border-t border-gray-100">
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-bold text-green-600">
-                      {formatCurrency(quote.estimatedPrice)}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mt-2 text-xs text-gray-500">
-                  <span>20 Nov</span>
-                </div>
-
-                <div className="mt-3">
-                  <button className="w-full text-xs px-3 py-1.5 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
-                    Voir Rés→
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
-    </div>
-        </div >
-      )
-}
-
-{/* List View */ }
-{
-  viewMode === 'list' && (
-    <div className="p-4 sm:p-6 lg:p-8">
-      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th className="pl-6 w-12 py-4">
-                <input
-                  type="checkbox"
-                  checked={quotes.length > 0 && selectedQuoteIds.size === quotes.length}
-                  onChange={toggleSelectAll}
-                  className="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500 cursor-pointer"
-                />
-              </th>
-              <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600 uppercase">Client</th>
-              <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600 uppercase">Service</th>
-              <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600 uppercase">Statut</th>
-              <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600 uppercase">Montant</th>
-              <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600 uppercase">Date</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {quotes.map((quote) => {
-              const statusBadge = getStatusBadge(quote.status)
-
-              return (
-                <tr key={quote.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="pl-6 py-4" onClick={(e) => e.stopPropagation()}>
+      {/* List View */}
+      {viewMode === 'list' && (
+        <div className="rounded-2xl border border-white/5 overflow-hidden" style={{ backgroundColor: 'var(--color-dash-card)' }}>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead className="bg-white/[0.02] border-b border-white/5">
+                <tr>
+                  <th className="pl-6 w-12 py-4">
                     <input
                       type="checkbox"
-                      checked={selectedQuoteIds.has(quote.id)}
-                      onChange={(e) => toggleSelectQuote(e as unknown as React.MouseEvent, quote.id)}
-                      className="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500 cursor-pointer"
+                      checked={quotes.length > 0 && selectedQuoteIds.size === quotes.length}
+                      onChange={toggleSelectAll}
+                      className="w-4 h-4 rounded border-white/10 bg-white/5 text-gold focus:ring-gold/50 cursor-pointer"
                     />
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="font-semibold text-gray-900">{quote.customerName}</div>
-                    <div className="text-sm text-gray-500">{quote.customerEmail}</div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-sm text-gray-900">{getServiceIcon(quote.service)} {quote.service}</span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${statusBadge.bg} ${statusBadge.color}`}>
-                      {statusBadge.label}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-sm font-semibold text-gray-900">
-                      {formatCurrency(quote.estimatedPrice)}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-sm text-gray-600">{formatDate(quote.createdAt)}</span>
-                  </td>
+                  </th>
+                  <th className="px-6 py-4 text-[10px] uppercase tracking-widest font-bold text-slate-500">ID</th>
+                  <th className="px-6 py-4 text-[10px] uppercase tracking-widest font-bold text-slate-500">Client</th>
+                  <th className="px-6 py-4 text-[10px] uppercase tracking-widest font-bold text-slate-500">Service</th>
+                  <th className="px-6 py-4 text-[10px] uppercase tracking-widest font-bold text-slate-500">Statut</th>
+                  <th className="px-6 py-4 text-[10px] uppercase tracking-widest font-bold text-slate-500">Montant</th>
+                  <th className="px-6 py-4 text-[10px] uppercase tracking-widest font-bold text-slate-500">Date</th>
                 </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  )
-}
+              </thead>
+              <tbody className="divide-y divide-white/[0.02]">
+                {quotes.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="px-6 py-12 text-center text-slate-500 text-sm">
+                      Aucun devis trouvé.
+                    </td>
+                  </tr>
+                ) : (
+                  quotes.map((quote: Quote) => {
+                    const statusBadge = getStatusBadge(quote.status)
 
-{/* Bulk Delete Modal */ }
-<BulkDeleteModal
-  isOpen={isBulkDeleteModalOpen}
-  onClose={() => setIsBulkDeleteModalOpen(false)}
-  onConfirm={handleBulkDelete}
-  count={selectedQuoteIds.size}
-  resourceName="devis"
-/>
+                    return (
+                      <tr key={quote.id} className="hover:bg-white/[0.01] transition-colors group">
+                        <td className="pl-6 py-4" onClick={(e) => e.stopPropagation()}>
+                          <input
+                            type="checkbox"
+                            checked={selectedQuoteIds.has(quote.id)}
+                            onChange={(e) => toggleSelectQuote(e as unknown as React.MouseEvent, quote.id)}
+                            className="w-4 h-4 rounded border-white/10 bg-white/5 text-gold focus:ring-gold/50 cursor-pointer"
+                          />
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="text-xs font-mono font-bold text-gold bg-gold/10 px-2 py-1 rounded-md border border-gold/20">
+                            #{quote.id.toString().padStart(4, '0')}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="font-bold text-white group-hover:text-gold transition-colors">{quote.customerName}</div>
+                          <div className="text-xs text-slate-500">{quote.customerEmail}</div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2 text-slate-400">
+                            <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
+                              {getServiceIcon(quote.service)}
+                            </div>
+                            <span className="text-sm">{quote.service}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border ${statusBadge.bg} ${statusBadge.color}`}>
+                            {quote.status === 'accepted' && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />}
+                            {quote.status === 'in_progress' && <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />}
+                            {statusBadge.label}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="text-sm font-bold text-white font-mono">
+                            {formatCurrency(quote.estimatedPrice)}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-1.5 text-slate-500 text-xs">
+                            <Calendar size={14} className="text-slate-400" />
+                            {formatDate(quote.createdAt)}
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Delete Modal */}
+      <BulkDeleteModal
+        isOpen={isBulkDeleteModalOpen}
+        onClose={() => setIsBulkDeleteModalOpen(false)}
+        onConfirm={handleBulkDelete}
+        count={selectedQuoteIds.size}
+        resourceName="devis"
+      />
     </div >
   )
 }

@@ -14,8 +14,11 @@ import {
   FileText,
   Trash
 } from "@phosphor-icons/react"
+import jsPDF from "jspdf"
+import autoTable from "jspdf-autotable"
 import { downloadInvoicePDF } from '@/lib/invoice-pdf'
 import { BulkDeleteModal } from '@/components/ui/BulkDeleteModal'
+import { NotificationCenter } from '@/components/ui/NotificationCenter'
 import { useNotification } from '@/hooks/useNotification'
 
 type InvoiceStatus = 'draft' | 'pending' | 'paid' | 'cancelled' | 'overdue'
@@ -199,18 +202,61 @@ export default function InvoicesManagementRedesigned() {
     }
   }
 
+  const exportToPDF = () => {
+    try {
+      const doc = new jsPDF()
+      doc.text("Liste des Factures - Navette Xpress", 14, 15)
+
+      const tableColumn = ["Facture", "Client", "Statut", "Date", "Montant"]
+      const tableRows: any[] = []
+
+      filteredInvoices.forEach(inv => {
+        const row = [
+          inv.invoiceNumber,
+          inv.customerName,
+          inv.status,
+          new Date(inv.issueDate).toLocaleDateString('fr-FR'),
+          `${inv.amountTTC.toLocaleString('fr-FR')} FCFA`
+        ]
+        tableRows.push(row)
+      })
+
+      autoTable(doc, {
+        head: [tableColumn],
+        body: tableRows,
+        startY: 20,
+        styles: { fontSize: 10 }
+      })
+
+      doc.save("factures_export.pdf")
+      showSuccess("Factures exportées en PDF", "Export réussi")
+    } catch (error) {
+      showError("Erreur lors de l'export PDF", "Erreur technique")
+    }
+  }
+
   const stats = getStatsData()
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+        <div className="flex flex-col items-center gap-4">
+          <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+            style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
+            Navette Xpress
+          </div>
+        </div>
       </div>
     )
   }
 
   return (
     <div className="space-y-6 animate-fadeIn">
+      <NotificationCenter
+        notifications={notifications}
+        onRemove={removeNotification}
+      />
+
       {/* Header */}
       <div className="p-6 rounded-2xl border border-white/5" style={{ backgroundColor: 'var(--color-dash-card)' }}>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
@@ -228,6 +274,13 @@ export default function InvoicesManagementRedesigned() {
                 <span className="hidden sm:inline">Supprimer ({selectedInvoiceIds.size})</span>
               </button>
             )}
+            <button
+              onClick={exportToPDF}
+              className="flex items-center gap-2 bg-blue-500/10 text-blue-500 border border-blue-500/20 hover:bg-blue-500/20 px-4 py-2 rounded-xl text-sm font-bold uppercase tracking-wider transition-colors whitespace-nowrap"
+            >
+              <Download className="w-4 h-4" weight="bold" />
+              <span className="hidden sm:inline">Export PDF</span>
+            </button>
             <button
               className="btn-gold flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold shadow-lg shadow-gold/10 whitespace-nowrap"
             >
