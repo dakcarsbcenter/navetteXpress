@@ -26,6 +26,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         if (body.description !== undefined) updateData.description = body.description.trim();
         if (body.icon !== undefined) updateData.icon = body.icon.trim();
         if (body.slug !== undefined) updateData.slug = body.slug.trim();
+        if (body.features !== undefined) updateData.features = Array.isArray(body.features) ? body.features : null;
         if (body.sortOrder !== undefined) updateData.sortOrder = body.sortOrder;
         if (body.isActive !== undefined) updateData.isActive = body.isActive;
 

@@ -64,6 +64,23 @@ function ReservationForm() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [errorModal, setErrorModal] = useState<{ open: boolean; title: string; message: string }>({ open: false, title: '', message: '' });
   const [locations, setLocations] = useState<{ id: string; name: string }[]>([]);
+  const [dbServices, setDbServices] = useState<any[]>([]);
+
+  // Fetch services from DB
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await fetch('/api/services');
+        const data = await response.json();
+        if (data.success) {
+          setDbServices(data.data || []);
+        }
+      } catch (error) {
+        console.error("Erreur lors de la récupération des services:", error);
+      }
+    };
+    fetchServices();
+  }, []);
 
   // Fetch locations
   useEffect(() => {
@@ -326,29 +343,29 @@ function ReservationForm() {
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {serviceTypes.map((service) => (
+                      {(dbServices.length > 0 ? dbServices : serviceTypes).map((service) => (
                         <motion.div
-                          key={service.id}
-                          onClick={() => handleInputChange('serviceType', service.id)}
+                          key={service.slug || service.id}
+                          onClick={() => handleInputChange('serviceType', service.slug || service.id)}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          className={`group p-6 rounded-2xl cursor-pointer transition-all duration-300 relative overflow-hidden ${formData.serviceType === service.id
+                          className={`group p-6 rounded-2xl cursor-pointer transition-all duration-300 relative overflow-hidden ${formData.serviceType === (service.slug || service.id)
                             ? 'bg-gold/10 border-2 border-gold/50 shadow-[0_0_30px_rgba(201,168,76,0.1)]'
                             : 'bg-white/5 border border-white/10 hover:border-white/20'
                             }`}
                         >
-                          {formData.serviceType === service.id && (
+                          {formData.serviceType === (service.slug || service.id) && (
                             <motion.div layoutId="activeService" className="absolute top-2 right-2 flex items-center justify-center w-6 h-6 rounded-full bg-gold text-midnight">
                               <CheckCircle size={14} weight="bold" />
                             </motion.div>
                           )}
                           <div className="flex items-start space-x-5">
-                            <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-3xl transition-colors duration-300 ${formData.serviceType === service.id ? 'bg-gold text-midnight shadow-[0_4px_15px_rgba(201,168,76,0.3)]' : 'bg-white/5 text-gold'
+                            <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-3xl transition-colors duration-300 ${formData.serviceType === (service.slug || service.id) ? 'bg-gold text-midnight shadow-[0_4px_15px_rgba(201,168,76,0.3)]' : 'bg-white/5 text-gold'
                               }`}>
                               {service.icon}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h3 className={`font-bold text-lg transition-colors duration-300 ${formData.serviceType === service.id ? 'text-gold' : 'text-white group-hover:text-gold'
+                              <h3 className={`font-bold text-lg transition-colors duration-300 ${formData.serviceType === (service.slug || service.id) ? 'text-gold' : 'text-white group-hover:text-gold'
                                 }`}>
                                 {service.name}
                               </h3>
@@ -630,7 +647,11 @@ function ReservationForm() {
                           <div>
                             <p className="text-[10px] uppercase tracking-widest text-gold opacity-50 mb-1">Type de Service</p>
                             <p className="text-white font-medium text-sm capitalize">
-                              {formData.serviceType === "autres" ? formData.customServiceType : (serviceTypes.find(s => s.id === formData.serviceType)?.name || 'Standard')}
+                              {formData.serviceType === "autres" ? formData.customServiceType : (
+                                dbServices.find(s => s.slug === formData.serviceType)?.name ||
+                                serviceTypes.find(s => s.id === formData.serviceType)?.name ||
+                                'Standard'
+                              )}
                             </p>
                           </div>
                         </div>
@@ -743,7 +764,7 @@ function ReservationForm() {
                         </>
                       ) : (
                         <>
-                          <BookNowIcon size={18} color="currentColor" />
+                          <BookNowIcon size={18} color="white" />
                           Confirmer la Réservation
                         </>
                       )}
@@ -817,11 +838,11 @@ export default function ReservationClient() {
       <div className="min-h-screen bg-midnight flex items-center justify-center">
         <div className="text-center">
           <div className="flex flex-col items-center gap-4">
-  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
-       style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
-    Navette Xpress
-  </div>
-</div>
+            <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+              style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
+              Navette Xpress
+            </div>
+          </div>
           <p className="text-gold tracking-widest uppercase text-xs font-medium">Initialisation...</p>
         </div>
       </div>

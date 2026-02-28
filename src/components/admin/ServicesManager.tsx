@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import {
     Plus, PencilSimple, Trash, ToggleLeft, ToggleRight,
     FloppyDisk, X, ArrowUp, ArrowDown, MagnifyingGlass,
-    Spinner
+    Spinner, CheckCircle
 } from '@phosphor-icons/react';
 
 /* ─── Types ──────────────────────────────────────────────────── */
@@ -14,6 +14,7 @@ interface Service {
     description: string;
     icon: string;
     slug: string;
+    features: string[] | null;
     sortOrder: number;
     isActive: boolean;
     createdAt: string;
@@ -25,12 +26,13 @@ type FormState = {
     description: string;
     icon: string;
     slug: string;
+    features: string[];
     sortOrder: number;
     isActive: boolean;
 };
 
 const EMPTY_FORM: FormState = {
-    name: '', description: '', icon: '✈️', slug: '', sortOrder: 0, isActive: true,
+    name: '', description: '', icon: '✈️', slug: '', features: [], sortOrder: 0, isActive: true,
 };
 
 /* ─── Helpers ─────────────────────────────────────────────────── */
@@ -56,6 +58,7 @@ export function ServicesManager() {
     const [editingId, setEditingId] = useState<number | null>(null);
     const [showModal, setShowModal] = useState(false);
     const [deleteTarget, setDeleteTarget] = useState<Service | null>(null);
+    const [newFeature, setNewFeature] = useState('');
 
     /* ── Fetch ── */
     const fetchServices = useCallback(async () => {
@@ -84,15 +87,34 @@ export function ServicesManager() {
         setForm(EMPTY_FORM);
         setEditingId(null);
         setShowModal(true);
+        setNewFeature('');
     };
 
     const openEdit = (s: Service) => {
         setForm({
-            name: s.name, description: s.description, icon: s.icon,
-            slug: s.slug, sortOrder: s.sortOrder, isActive: s.isActive,
+            name: s.name,
+            description: s.description,
+            icon: s.icon,
+            slug: s.slug,
+            features: s.features || [],
+            sortOrder: s.sortOrder,
+            isActive: s.isActive,
         });
         setEditingId(s.id);
         setShowModal(true);
+        setNewFeature('');
+    };
+
+    /* ── Feature Helpers ── */
+    const addFeature = () => {
+        if (!newFeature.trim()) return;
+        if (form.features.includes(newFeature.trim())) return;
+        setForm(f => ({ ...f, features: [...f.features, newFeature.trim()] }));
+        setNewFeature('');
+    };
+
+    const removeFeature = (idx: number) => {
+        setForm(f => ({ ...f, features: f.features.filter((_, i) => i !== idx) }));
     };
 
     /* ── Save ── */
@@ -249,6 +271,7 @@ export function ServicesManager() {
                                 <th className="px-4 py-3 text-left text-[10px] uppercase tracking-widest text-slate-500 font-bold w-10">#</th>
                                 <th className="px-4 py-3 text-left text-[10px] uppercase tracking-widest text-slate-500 font-bold">Service</th>
                                 <th className="px-4 py-3 text-left text-[10px] uppercase tracking-widest text-slate-500 font-bold hidden md:table-cell">Slug</th>
+                                <th className="px-4 py-3 text-center text-[10px] uppercase tracking-widest text-slate-500 font-bold border-l border-white/5">Points forts</th>
                                 <th className="px-4 py-3 text-center text-[10px] uppercase tracking-widest text-slate-500 font-bold">Statut</th>
                                 <th className="px-4 py-3 text-center text-[10px] uppercase tracking-widest text-slate-500 font-bold">Ordre</th>
                                 <th className="px-4 py-3 text-right text-[10px] uppercase tracking-widest text-slate-500 font-bold">Actions</th>
@@ -269,6 +292,13 @@ export function ServicesManager() {
                                     {/* Slug */}
                                     <td className="px-4 py-3 hidden md:table-cell">
                                         <code className="text-[11px] text-slate-400 bg-white/5 px-2 py-0.5 rounded">{s.slug}</code>
+                                    </td>
+
+                                    {/* Features count */}
+                                    <td className="px-4 py-3 text-center border-l border-white/5">
+                                        <span className="text-[10px] text-slate-400 bg-white/5 px-2 py-0.5 rounded-full">
+                                            {s.features?.length || 0} points
+                                        </span>
                                     </td>
 
                                     {/* Toggle actif */}
@@ -341,7 +371,7 @@ export function ServicesManager() {
             {showModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
                     <div
-                        className="w-full max-w-lg rounded-2xl border border-white/10 shadow-2xl p-6 space-y-5"
+                        className="w-full max-w-2xl rounded-2xl border border-white/10 shadow-2xl p-6 space-y-5 max-h-[90vh] overflow-y-auto dash-scroll"
                         style={{ backgroundColor: 'var(--color-dash-bg)' }}
                     >
                         <div className="flex items-center justify-between">
@@ -353,109 +383,162 @@ export function ServicesManager() {
                             </button>
                         </div>
 
-                        {/* Icônes rapides */}
-                        <div>
-                            <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-2 font-bold">Icône</label>
-                            <div className="flex flex-wrap gap-2 mb-2">
-                                {POPULAR_ICONS.map(ic => (
-                                    <button
-                                        key={ic}
-                                        onClick={() => setForm(f => ({ ...f, icon: ic }))}
-                                        className={`w-9 h-9 text-xl rounded-lg flex items-center justify-center transition-all ${form.icon === ic ? 'bg-gold/20 ring-2 ring-gold/50' : 'bg-white/5 hover:bg-white/10'}`}
-                                        style={{ '--color-gold': 'var(--color-gold)' } as React.CSSProperties}
-                                    >
-                                        {ic}
-                                    </button>
-                                ))}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Colonne Gauche: Infos de base */}
+                            <div className="space-y-4">
+                                {/* Icônes rapides */}
+                                <div>
+                                    <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-2 font-bold">Icône</label>
+                                    <div className="flex flex-wrap gap-2 mb-2">
+                                        {POPULAR_ICONS.map(ic => (
+                                            <button
+                                                key={ic}
+                                                type="button"
+                                                onClick={() => setForm(f => ({ ...f, icon: ic }))}
+                                                className={`w-9 h-9 text-xl rounded-lg flex items-center justify-center transition-all ${form.icon === ic ? 'bg-gold/20 ring-2 ring-gold/50' : 'bg-white/5 hover:bg-white/10'}`}
+                                                style={{ '--color-gold': 'var(--color-gold)' } as React.CSSProperties}
+                                            >
+                                                {ic}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <input
+                                        value={form.icon}
+                                        onChange={e => setForm(f => ({ ...f, icon: e.target.value }))}
+                                        placeholder="Emoji ou texte..."
+                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-gold/40 transition-colors"
+                                    />
+                                </div>
+
+                                {/* Nom */}
+                                <div>
+                                    <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-2 font-bold">Nom *</label>
+                                    <input
+                                        value={form.name}
+                                        onChange={e => handleNameChange(e.target.value)}
+                                        placeholder="Transfert Aéroport"
+                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-gold/40 transition-colors"
+                                    />
+                                </div>
+
+                                {/* Slug */}
+                                <div>
+                                    <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-2 font-bold">Slug *</label>
+                                    <input
+                                        value={form.slug}
+                                        onChange={e => setForm(f => ({ ...f, slug: toSlug(e.target.value) }))}
+                                        placeholder="transfert-aeroport"
+                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm font-mono focus:outline-none focus:border-gold/40 transition-colors"
+                                    />
+                                </div>
+
+                                {/* Description */}
+                                <div>
+                                    <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-2 font-bold">Description *</label>
+                                    <textarea
+                                        value={form.description}
+                                        onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
+                                        placeholder="Description courte..."
+                                        rows={4}
+                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-gold/40 transition-colors resize-none"
+                                    />
+                                </div>
                             </div>
-                            <input
-                                value={form.icon}
-                                onChange={e => setForm(f => ({ ...f, icon: e.target.value }))}
-                                placeholder="Emoji ou texte..."
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-gold/40 transition-colors"
-                            />
-                        </div>
 
-                        {/* Nom */}
-                        <div>
-                            <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-2 font-bold">Nom *</label>
-                            <input
-                                value={form.name}
-                                onChange={e => handleNameChange(e.target.value)}
-                                placeholder="Transfert Aéroport"
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-gold/40 transition-colors"
-                            />
-                        </div>
+                            {/* Colonne Droite: Points forts */}
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-2 font-bold">Points forts (Highlights)</label>
+                                    <div className="flex gap-2 mb-3">
+                                        <input
+                                            value={newFeature}
+                                            onChange={e => setNewFeature(e.target.value)}
+                                            onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addFeature())}
+                                            placeholder="Ex: WiFi gratuit..."
+                                            className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-gold/40"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={addFeature}
+                                            className="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gold transition-colors"
+                                        >
+                                            <Plus size={18} weight="bold" />
+                                        </button>
+                                    </div>
 
-                        {/* Slug */}
-                        <div>
-                            <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-2 font-bold">Slug (identifiant unique) *</label>
-                            <input
-                                value={form.slug}
-                                onChange={e => setForm(f => ({ ...f, slug: toSlug(e.target.value) }))}
-                                placeholder="transfert-aeroport"
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm font-mono focus:outline-none focus:border-gold/40 transition-colors"
-                            />
-                            <p className="text-[10px] text-slate-600 mt-1">Généré automatiquement depuis le nom. Ne doit pas changer après création.</p>
-                        </div>
+                                    <div className="space-y-2 max-h-[250px] overflow-y-auto pr-1 dash-scroll">
+                                        {form.features.length === 0 ? (
+                                            <p className="text-[11px] text-slate-600 italic py-4 text-center">Aucun point fort ajouté.</p>
+                                        ) : (
+                                            form.features.map((feat, i) => (
+                                                <div key={i} className="flex items-center justify-between gap-3 p-2.5 rounded-lg bg-white/5 border border-white/5 group/feat">
+                                                    <div className="flex items-center gap-2 min-w-0">
+                                                        <CheckCircle size={14} className="text-gold shrink-0" weight="fill" />
+                                                        <span className="text-xs text-white truncate">{feat}</span>
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeFeature(i)}
+                                                        className="text-slate-600 hover:text-red-400 transition-colors"
+                                                    >
+                                                        <X size={14} />
+                                                    </button>
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                </div>
 
-                        {/* Description */}
-                        <div>
-                            <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-2 font-bold">Description *</label>
-                            <textarea
-                                value={form.description}
-                                onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-                                placeholder="Description courte du service..."
-                                rows={3}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-gold/40 transition-colors resize-none"
-                            />
-                        </div>
-
-                        {/* Ordre + Statut */}
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-2 font-bold">Ordre d'affichage</label>
-                                <input
-                                    type="number"
-                                    value={form.sortOrder}
-                                    onChange={e => setForm(f => ({ ...f, sortOrder: parseInt(e.target.value) || 0 }))}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-gold/40 transition-colors"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-2 font-bold">Statut</label>
-                                <button
-                                    onClick={() => setForm(f => ({ ...f, isActive: !f.isActive }))}
-                                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border transition-all"
-                                    style={{
-                                        background: form.isActive ? 'rgba(16,185,129,0.1)' : 'rgba(100,100,100,0.1)',
-                                        color: form.isActive ? '#10B981' : '#6b7280',
-                                        borderColor: form.isActive ? 'rgba(16,185,129,0.3)' : 'rgba(100,100,100,0.2)',
-                                    }}
-                                >
-                                    {form.isActive ? <><ToggleRight size={16} weight="fill" /> Actif</> : <><ToggleLeft size={16} /> Inactif</>}
-                                </button>
+                                {/* Ordre + Statut */}
+                                <div className="grid grid-cols-2 gap-4 pt-2">
+                                    <div>
+                                        <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-2 font-bold">Ordre</label>
+                                        <input
+                                            type="number"
+                                            value={form.sortOrder}
+                                            onChange={e => setForm(f => ({ ...f, sortOrder: parseInt(e.target.value) || 0 }))}
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-gold/40 transition-colors"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-2 font-bold">Statut</label>
+                                        <button
+                                            type="button"
+                                            onClick={() => setForm(f => ({ ...f, isActive: !f.isActive }))}
+                                            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border transition-all"
+                                            style={{
+                                                background: form.isActive ? 'rgba(16,185,129,0.1)' : 'rgba(100,100,100,0.1)',
+                                                color: form.isActive ? '#10B981' : '#6b7280',
+                                                borderColor: form.isActive ? 'rgba(16,185,129,0.3)' : 'rgba(100,100,100,0.2)',
+                                            }}
+                                        >
+                                            {form.isActive ? <><ToggleRight size={16} weight="fill" /> Actif</> : <><ToggleLeft size={16} /> Inactif</>}
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
                         {error && <p className="text-xs text-red-400">{error}</p>}
 
                         {/* Actions */}
-                        <div className="flex gap-3 pt-2">
+                        <div className="flex gap-3 pt-4 border-t border-white/5">
                             <button
+                                type="button"
                                 onClick={() => { setShowModal(false); setError(null); }}
-                                className="flex-1 py-2.5 rounded-xl border border-white/10 text-sm text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+                                className="flex-1 py-3 rounded-xl border border-white/10 text-sm text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
                             >
                                 Annuler
                             </button>
                             <button
+                                type="button"
                                 onClick={handleSave}
                                 disabled={saving}
-                                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-all hover:brightness-110 disabled:opacity-60"
+                                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all hover:brightness-110 disabled:opacity-60 shadow-lg shadow-gold/10"
                                 style={{ background: 'var(--color-gold)', color: 'var(--color-midnight)' }}
                             >
-                                {saving ? <Spinner size={16} className="animate-spin" /> : <FloppyDisk size={16} />}
-                                {editingId ? 'Enregistrer' : 'Créer'}
+                                {saving ? <Spinner size={18} className="animate-spin" /> : <FloppyDisk size={18} weight="bold" />}
+                                {editingId ? 'Enregistrer les modifications' : 'Créer le service'}
                             </button>
                         </div>
                     </div>
@@ -476,7 +559,6 @@ export function ServicesManager() {
                             <h3 className="text-base font-bold text-white mb-2">Supprimer ce service ?</h3>
                             <p className="text-sm text-slate-400">
                                 <span className="text-white font-semibold">{deleteTarget.name}</span> sera supprimé définitivement.
-                                Les réservations existantes ne seront pas affectées.
                             </p>
                         </div>
                         <div className="flex gap-3">

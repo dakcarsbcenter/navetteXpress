@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from "react";
 
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
@@ -12,16 +13,39 @@ import {
 import { serviceTypes } from "@/lib/services";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ShieldCheck, Clock, MapPin, Star, CaretRight } from "@phosphor-icons/react";
+import { ShieldCheck, Clock, MapPin, Star, CaretRight, Spinner } from "@phosphor-icons/react";
 
 export default function ServicesClient() {
+  const [dbServices, setDbServices] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch services from DB
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await fetch('/api/services');
+        const data = await response.json();
+        if (data.success) {
+          setDbServices(data.data || []);
+        }
+      } catch (error) {
+        console.error("Erreur lors de la récupération des services:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchServices();
+  }, []);
+
   // Function to get icon component for each service
-  const getServiceIcon = (serviceId: string) => {
-    switch (serviceId) {
+  const getServiceIcon = (service: any) => {
+    // If it's a known slug, use a custom icon, otherwise default or use icon string
+    const iconStr = service.icon || '✈️';
+    const slug = service.slug;
+
+    switch (slug) {
       case "transfert-aibd-dakar":
         return <AirportIcon size={48} className="text-gold" />;
-      case "transfert-Dakar-AIBD":
-        return <LuxuryCarIcon size={48} className="text-gold" />;
       case "chauffeur-prive-dakar":
         return <PrivateDriverIcon size={48} className="text-gold" />;
       case "tours-excursions":
@@ -31,7 +55,8 @@ export default function ServicesClient() {
       case "mise-a-disposition":
         return <PrivateDriverIcon size={48} className="text-gold" />;
       default:
-        return <AirportIcon size={48} className="text-gold" />;
+        // Render the icon string (emoji) if no custom SVG component
+        return <div className="text-5xl">{iconStr}</div>;
     }
   };
 
@@ -70,54 +95,65 @@ export default function ServicesClient() {
         <section className="py-20 px-4">
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {serviceTypes.map((service, index) => (
-                <motion.div
-                  key={service.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="group relative"
-                >
-                  <div className="h-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 hover:border-gold/30 hover:bg-white/[0.07] transition-all duration-500 overflow-hidden">
-                    {/* Background Shine Effect */}
-                    <div className="absolute -top-24 -right-24 w-48 h-48 bg-gold/10 blur-[64px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+              {loading ? (
+                <div className="col-span-full flex flex-col items-center justify-center py-20 grayscale opacity-50">
+                  <Spinner size={48} className="animate-spin text-gold mb-4" />
+                  <p className="text-white/40 tracking-widest uppercase text-xs">Chargement des services prestige...</p>
+                </div>
+              ) : dbServices.length === 0 ? (
+                <div className="col-span-full text-center py-20">
+                  <p className="text-white/50">Aucun service disponible pour le moment.</p>
+                </div>
+              ) : (
+                (dbServices.length > 0 ? dbServices : serviceTypes).map((service: any, index: number) => (
+                  <motion.div
+                    key={service.slug || service.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className="group relative"
+                  >
+                    <div className="h-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 hover:border-gold/30 hover:bg-white/[0.07] transition-all duration-500 overflow-hidden">
+                      {/* Background Shine Effect */}
+                      <div className="absolute -top-24 -right-24 w-48 h-48 bg-gold/10 blur-[64px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
-                    <div className="relative z-10">
-                      <div className="mb-6 p-4 bg-midnight/50 border border-white/10 rounded-xl w-fit group-hover:scale-110 transition-transform duration-500">
-                        {getServiceIcon(service.id)}
+                      <div className="relative z-10">
+                        <div className="mb-6 p-4 bg-midnight/50 border border-white/10 rounded-xl w-fit group-hover:scale-110 transition-transform duration-500 min-w-20 min-h-20 flex items-center justify-center">
+                          {getServiceIcon(service)}
+                        </div>
+
+                        <h3 className="font-serif text-3xl mb-4 text-white group-hover:text-gold transition-colors duration-300">
+                          {service.name}
+                        </h3>
+
+                        <p className="font-sans text-white/60 mb-8 leading-relaxed h-20 line-clamp-3">
+                          {service.description}
+                        </p>
+
+                        <ul className="space-y-3 mb-10 min-h-[140px]">
+                          {(service.features || []).map((feature: string, fIndex: number) => (
+                            <li key={fIndex} className="flex items-center gap-3 text-sm text-white/80">
+                              <span className="w-1.5 h-1.5 bg-gold rounded-full shrink-0"></span>
+                              {feature}
+                            </li>
+                          ))}
+                        </ul>
+
+                        <Link
+                          href={`/reservation?service=${service.slug || service.id}`}
+                          className="flex items-center gap-2 text-gold font-medium group/link"
+                        >
+                          <span className="border-b border-transparent group-hover/link:border-gold transition-all duration-300">
+                            Réserver maintenant
+                          </span>
+                          <CaretRight size={18} weight="light" className="translate-y-[1px] group-hover/link:translate-x-1 transition-transform" />
+                        </Link>
                       </div>
-
-                      <h3 className="font-serif text-3xl mb-4 text-white group-hover:text-gold transition-colors duration-300">
-                        {service.name}
-                      </h3>
-
-                      <p className="font-sans text-white/60 mb-8 leading-relaxed">
-                        {service.description}
-                      </p>
-
-                      <ul className="space-y-3 mb-10">
-                        {service.features?.map((feature, fIndex) => (
-                          <li key={fIndex} className="flex items-center gap-3 text-sm text-white/80">
-                            <span className="w-1.5 h-1.5 bg-gold rounded-full shrink-0"></span>
-                            {feature}
-                          </li>
-                        ))}
-                      </ul>
-
-                      <Link
-                        href={`/reservation?service=${service.id}`}
-                        className="flex items-center gap-2 text-gold font-medium group/link"
-                      >
-                        <span className="border-b border-transparent group-hover/link:border-gold transition-all duration-300">
-                          Réserver maintenant
-                        </span>
-                        <CaretRight size={18} weight="light" className="translate-y-[1px] group-hover/link:translate-x-1 transition-transform" />
-                      </Link>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                ))
+              )}
             </div>
           </div>
         </section>

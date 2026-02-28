@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     try {
         await requireAdminRole();
         const body = await req.json();
-        const { name, description, icon, slug, sortOrder, isActive } = body;
+        const { name, description, icon, slug, features, sortOrder, isActive } = body;
 
         if (!name?.trim() || !description?.trim() || !slug?.trim()) {
             return NextResponse.json(
@@ -60,6 +60,7 @@ export async function POST(req: NextRequest) {
                 description: description.trim(),
                 icon: icon?.trim() || '✈️',
                 slug: slug.trim(),
+                features: Array.isArray(features) ? features : null,
                 sortOrder: sortOrder ?? 0,
                 isActive: isActive !== undefined ? isActive : true,
             })

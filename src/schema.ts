@@ -368,6 +368,7 @@ export const servicesTable = pgTable('services', {
   description: text('description').notNull(),
   icon: text('icon').notNull().default('✈️'),
   slug: text('slug').notNull().unique(), // identifiant URL-safe (ex: "transfert-aeroport")
+  features: text('features').array(), // Liste des points forts (ex: ["Wifi gratuit", "Eau fraîche"])
   sortOrder: integer('sort_order').notNull().default(0),
   isActive: boolean('is_active').notNull().default(true),
   createdAt: timestamp('created_at').notNull().defaultNow(),
