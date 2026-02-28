@@ -11,30 +11,18 @@ export interface ServiceType {
 export const serviceTypes: ServiceType[] = [
   {
     id: "transfert-aibd-dakar",
-    name: "Transfert Aéroport AIBD Dakar",
+    name: "Transfert Aéroport",
     description: "Service de transfert vers et depuis l'aéroport AIBD de Dakar. Chauffeurs professionnels, véhicules de luxe, prix compétitifs.",
     icon: "✈️",
     features: [
       "Suivi des vols en temps réel",
-      "Accueil personnalisé avec panneau", 
+      "Accueil personnalisé avec panneau",
       "Véhicules de luxe climatisés",
       "Service 24h/24, 7j/7",
       "Prix compétitifs au Sénégal"
     ]
   },
-  {
-    id: "transfert-thies-mbour",
-    name: "Transfert AIBD - DAKAR", 
-    description: "Service de transfert vers les aéroports de Thies et Mbour. Déplacements confortables et sécurisés au Sénégal.",
-    icon: "🚁",
-    features: [
-      "Véhicules modernes et climatisés",
-      "Chauffeurs expérimentés",
-      "Réservation facile et rapide", 
-      "Tarifs attractifs",
-      "Service 24h/24"
-    ]
-  },
+
   {
     id: "chauffeur-prive-dakar",
     name: "Chauffeur Privé Dakar",
@@ -49,13 +37,13 @@ export const serviceTypes: ServiceType[] = [
     ]
   },
   {
-    id: "tours-excursions", 
+    id: "tours-excursions",
     name: "Tours & Excursions",
     description: "Découvrez Dakar et ses environs avec nos guides-chauffeurs expérimentés pour une expérience unique.",
     icon: "🏛️",
     features: [
       "Guides-chauffeurs multilingues",
-      "Itinéraires personnalisables", 
+      "Itinéraires personnalisables",
       "Arrêts photos inclus",
       "Commentaires historiques",
       "Entrées monuments sur demande"
@@ -63,14 +51,14 @@ export const serviceTypes: ServiceType[] = [
   },
   {
     id: "services-vip",
-    name: "Services VIP", 
+    name: "Services VIP",
     description: "Service ultra-premium avec véhicules d'exception et prestations sur-mesure pour une clientèle exigeante.",
     icon: "👑",
     features: [
       "Véhicules de collection",
       "Butler personnel disponible",
       "Service conciergerie inclus",
-      "Sécurité renforcée possible", 
+      "Sécurité renforcée possible",
       "Prestations 100% personnalisables"
     ]
   },

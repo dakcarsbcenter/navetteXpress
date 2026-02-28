@@ -257,14 +257,16 @@ export default function HomeClient() {
               >
                 <div className="relative z-10 p-2 rounded-[2.5rem] bg-linear-to-br from-gold/30 to-transparent border border-white/10 backdrop-blur-2xl">
                   <div className="rounded-[2rem] overflow-hidden bg-obsidian relative">
-                    <Image
-                      src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=1200"
-                      alt="Véhicule de luxe premium Navette Xpress Dakar"
-                      width={1200}
-                      height={500}
-                      priority
-                      className="w-full h-[500px] object-cover opacity-80 hover:scale-110 transition-transform duration-1000"
-                    />
+                    <div className="relative w-full h-[500px]">
+                      <Image
+                        src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=1200"
+                        alt="Véhicule de luxe premium Navette Xpress Dakar"
+                        fill
+                        priority
+                        sizes="(max-width: 1024px) 100vw, 50vw"
+                        className="object-cover opacity-80 hover:scale-110 transition-transform duration-1000"
+                      />
+                    </div>
                   </div>
                 </div>
 

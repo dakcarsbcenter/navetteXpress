@@ -19,8 +19,9 @@ import { ModernAdminDashboard } from "@/components/admin/ModernAdminDashboard"
 import InvoicesManagementRedesigned from "@/components/admin/InvoicesManagementRedesigned"
 import { LocationsManagementRedesigned } from "@/components/admin/LocationsManagementRedesigned"
 import PublicitesClient from "@/components/admin/ads/PublicitesClient"
+import { ServicesManager } from "@/components/admin/ServicesManager"
 
-type TabType = 'modern' | 'users' | 'vehicles' | 'bookings' | 'quotes' | 'invoices' | 'permissions' | 'reviews' | 'stats' | 'ads' | 'locations'
+type TabType = 'modern' | 'users' | 'vehicles' | 'bookings' | 'quotes' | 'invoices' | 'permissions' | 'reviews' | 'stats' | 'ads' | 'locations' | 'services'
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession()
@@ -110,6 +111,7 @@ export default function AdminDashboard() {
     { id: 'reviews' as TabType, label: 'Avis', shortLabel: 'Avis', icon: '⭐', resource: 'reviews' },
     { id: 'locations' as TabType, label: 'Lieux', shortLabel: 'Lieux', icon: '📍', resource: '', always: true, adminOnly: true },
     { id: 'ads' as TabType, label: 'Publicités', shortLabel: 'Pubs', icon: '📢', resource: '', always: true },
+    { id: 'services' as TabType, label: 'Services', shortLabel: 'Services', icon: '🛎️', resource: '', always: true, adminOnly: true },
   ]
 
   // Filtrer les onglets selon les permissions
@@ -162,6 +164,8 @@ export default function AdminDashboard() {
         return <ReviewsManagementRedesigned />
       case 'locations':
         return <LocationsManagementRedesigned />
+      case 'services':
+        return <ServicesManager />
       case 'ads':
         return <AdsManagementWrapper />
       default:
@@ -195,11 +199,11 @@ export default function AdminDashboard() {
       return (
         <div className="flex items-center justify-center p-12">
           <div className="flex flex-col items-center gap-4">
-  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
-       style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
-    Navette Xpress
-  </div>
-</div>
+            <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+              style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
+              Navette Xpress
+            </div>
+          </div>
         </div>
       )
     }
@@ -305,7 +309,7 @@ export default function AdminDashboard() {
             style={{ color: 'var(--color-text-muted)' }}>
             Finance & Admin
           </p>
-          {tabs.filter(t => ['quotes', 'invoices', 'ads', 'permissions', 'reviews', 'locations'].includes(t.id)).map(tab => (
+          {tabs.filter(t => ['quotes', 'invoices', 'ads', 'permissions', 'reviews', 'locations', 'services'].includes(t.id)).map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}

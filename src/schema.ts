@@ -361,6 +361,22 @@ export const locationsTable = pgTable('locations', {
   updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
 });
 
+// Services proposés aux clients (gérés par l'admin)
+export const servicesTable = pgTable('services', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull(),
+  description: text('description').notNull(),
+  icon: text('icon').notNull().default('✈️'),
+  slug: text('slug').notNull().unique(), // identifiant URL-safe (ex: "transfert-aeroport")
+  sortOrder: integer('sort_order').notNull().default(0),
+  isActive: boolean('is_active').notNull().default(true),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
+});
+
+export type InsertService = typeof servicesTable.$inferInsert;
+export type SelectService = typeof servicesTable.$inferSelect;
+
 // Alias pour les exports
 export const quotes = quotesTable;
 

@@ -78,6 +78,13 @@
       "when": 1772127299080,
       "tag": "0010_fixed_roughhouse",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1772303528967,
+      "tag": "0011_add_services_table",
+      "breakpoints": true
     }
   ]
 }
