@@ -1,6 +1,53 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
+ * Validate and sanitize image URL to prevent SSRF attacks
+ */
+function isValidImageUrl(imageUrl: string): { valid: boolean; error?: string } {
+  try {
+    // Parse the URL to validate format
+    const url = new URL(imageUrl);
+
+    // Only allow http and https protocols
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+      return { valid: false, error: 'Protocole invalide (http/https requis)' };
+    }
+
+    // Prevent access to localhost and private IP ranges
+    const hostname = url.hostname.toLowerCase();
+    const privatePatterns = [
+      /^localhost$/,
+      /^127\./, // 127.x.x.x
+      /^192\.168\./, // 192.168.x.x
+      /^10\./, // 10.x.x.x
+      /^172\.(1[6-9]|2[0-9]|3[01])\./, // 172.16-31.x.x
+      /^169\.254\./, // 169.254.x.x (link-local)
+      /^::1$/, // IPv6 localhost
+      /^fc[0-9a-f]{2}:/i, // IPv6 private
+      /^fe[89a-f][0-9a-f]:/i, // IPv6 link-local
+    ];
+
+    if (privatePatterns.some(pattern => pattern.test(hostname))) {
+      return { valid: false, error: 'Accès aux réseaux privés non autorisé' };
+    }
+
+    // Prevent access to common internal services
+    if (hostname.includes('internal') || hostname.includes('admin') || hostname.includes('private')) {
+      return { valid: false, error: 'Accès à ce domaine non autorisé' };
+    }
+
+    // Validate URL length to prevent DoS
+    if (imageUrl.length > 2048) {
+      return { valid: false, error: 'URL trop grande' };
+    }
+
+    return { valid: true };
+  } catch {
+    return { valid: false, error: 'URL invalide' };
+  }
+}
+
+/**
  * API pour migrer une image externe vers Cloudinary
  * Contourne les problèmes CORS en téléchargeant côté serveur
  */
@@ -11,6 +58,15 @@ export async function POST(request: NextRequest) {
     if (!imageUrl) {
       return NextResponse.json(
         { success: false, error: 'URL d\'image manquante' },
+        { status: 400 }
+      );
+    }
+
+    // Validate URL to prevent SSRF attacks
+    const urlValidation = isValidImageUrl(imageUrl);
+    if (!urlValidation.valid) {
+      return NextResponse.json(
+        { success: false, error: urlValidation.error || 'URL d\'image invalide' },
         { status: 400 }
       );
     }

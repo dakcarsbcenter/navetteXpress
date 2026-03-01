@@ -273,6 +273,16 @@ export function ModernPermissionsManagement() {
     }
   }
 
+  // Generate a secure random password
+  const generateSecurePassword = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%'
+    let password = ''
+    for (let i = 0; i < 16; i++) {
+      password += chars.charAt(Math.floor(Math.random() * chars.length))
+    }
+    return password
+  }
+
   const createUser = async () => {
     try {
       const response = await fetch('/api/admin/users', {
@@ -280,7 +290,7 @@ export function ModernPermissionsManagement() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...newUserForm,
-          password: 'defaultPassword123'
+          password: generateSecurePassword()
         })
       })
 
@@ -478,7 +488,7 @@ export function ModernPermissionsManagement() {
       <div className="min-h-screen bg-linear-to-br from-slate-50 via-indigo-50/30 to-slate-50 dark:from-slate-900 dark:via-indigo-900/10 dark:to-slate-900 flex items-center justify-center">
         <div className="text-center">
           <div className="flex flex-col items-center gap-4">
-  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-linear-to-r from-gold via-white to-gold animate-pulse"
        style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
     Navette Xpress
   </div>
@@ -1367,11 +1377,12 @@ export function ModernPermissionsManagement() {
             <div className="mb-6">
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 flex items-center justify-center mr-4">
-                  {selectedUser.photo ? (
+                  {selectedUser.photo && /^(https?:\/\/|data:image)/.test(selectedUser.photo) ? (
                     <img
                       src={selectedUser.photo}
                       alt={`Photo de ${selectedUser.name}`}
                       className="w-full h-full object-cover"
+                      onError={(e) => { e.currentTarget.style.display = 'none' }}
                     />
                   ) : (
                     <div className="text-slate-500 dark:text-slate-400 text-lg font-medium">

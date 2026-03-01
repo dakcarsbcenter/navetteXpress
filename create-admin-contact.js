@@ -6,9 +6,16 @@ require('dotenv').config();
 const sql = postgres(process.env.DATABASE_URL, { ssl: 'require' });
 
 async function run() {
-    const email = 'contact@navettexpress.com';
-    const password = 'Admin123!';
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const email = process.env.ADMIN_EMAIL;
+    
+    // snyk:disable-next-line javascript/HardcodedNonCryptoSecret,javascript/NoHardcodedPasswords
+    if (!email || !process.env.ADMIN_PASSWORD) {
+        console.error('❌ Error: ADMIN_EMAIL and ADMIN_PASSWORD environment variables must be set');
+        process.exit(1);
+    }
+    
+    // snyk:disable-next-line javascript/HardcodedNonCryptoSecret,javascript/NoHardcodedPasswords  
+    const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, 12);
 
     console.log(`🔍 Checking if ${email} exists...`);
     const existing = await sql`SELECT id FROM users WHERE email = ${email}`;

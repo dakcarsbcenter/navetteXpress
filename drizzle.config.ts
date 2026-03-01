@@ -5,7 +5,11 @@ import * as dotenv from "dotenv";
 dotenv.config({ path: ".env.local" });
 dotenv.config({ path: ".env" });
 
-const dbUrl = process.env.DATABASE_URL || "postgres://postgres:iNN9kThHnnpcMJKamorJYpIXxjNJpwpALtKD2wq8czsrJH81B24PM49dXzeW2uyY@109.199.101.247:5432/navettexpress";
+const dbUrl = process.env.DATABASE_URL;
+
+if (!dbUrl) {
+  throw new Error("DATABASE_URL environment variable is not set. Please configure it in .env.local");
+}
 
 console.log(`📡 Drizzle Kit using database: ${dbUrl.split('@')[1].split('/')[0]}`);
 

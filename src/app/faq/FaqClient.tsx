@@ -1,7 +1,9 @@
 "use client";
 
 import { Navigation } from "@/components/navigation";
+import { Footer } from "@/components/footer";
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { CaretDown, Phone, EnvelopeSimple } from "@phosphor-icons/react";
 
 export default function FaqClient() {

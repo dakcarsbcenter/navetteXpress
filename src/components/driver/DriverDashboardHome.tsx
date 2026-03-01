@@ -83,6 +83,34 @@ const formatGreeting = () => {
   }
 }
 
+// Validate and sanitize phone numbers to prevent injection attacks
+const isValidPhoneNumber = (phone: string | null | undefined): boolean => {
+  if (!phone || typeof phone !== 'string') return false
+  // Only allow digits, spaces, dashes, parentheses, and plus sign
+  // Prevent javascript:, data:, and other protocols
+  return /^[+\d\s()\-]{7,20}$/.test(phone) && !phone.toLowerCase().includes('javascript:') && !phone.toLowerCase().includes('data:')
+}
+
+// Sanitize phone for tel: and URL usage
+const sanitizePhoneNumber = (phone: string | null | undefined): string => {
+  if (!isValidPhoneNumber(phone)) return ''
+  // Remove all non-digit characters except the leading +
+  return (phone || '').replace(/[^+\d]/g, '')
+}
+
+// Safe URL builders for phone-based links
+const getSafePhoneUrl = (phone: string | null | undefined): string => {
+  if (!isValidPhoneNumber(phone)) return '#'
+  const sanitized = sanitizePhoneNumber(phone)
+  return sanitized ? `tel:${sanitized}` : '#'
+}
+
+const getSafeWhatsAppUrl = (phone: string | null | undefined): string => {
+  if (!isValidPhoneNumber(phone)) return '#'
+  const sanitized = sanitizePhoneNumber(phone)
+  return sanitized ? `https://wa.me/${sanitized}` : '#'
+}
+
 export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoading }: DriverDashboardHomeProps) {
   const { data: session } = useSession()
   const [isLoading, setIsLoading] = useState(false)
@@ -292,7 +320,10 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
   }
 
   const handleCallClient = (phone: string) => {
-    window.location.href = `tel:${phone}`
+    const safeUrl = getSafePhoneUrl(phone)
+    if (safeUrl !== '#') {
+      window.location.href = safeUrl
+    }
   }
 
   // Fonctions pour la modal d'annulation
@@ -351,7 +382,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
 
       {/* ── SECTION HERO : MISSION ACTIVE OU PROCHAINE ── */}
       {missionActive && (
-        <div className="driver-card-enter rounded-[2rem] overflow-hidden mb-8 relative border-2 border-emerald-500/20 shadow-[0_0_50px_rgba(16,185,129,0.1)] group"
+        <div className="driver-card-enter rounded-4xl overflow-hidden mb-8 relative border-2 border-emerald-500/20 shadow-[0_0_50px_rgba(16,185,129,0.1)] group"
           style={{
             background: 'linear-gradient(135deg, #0A1520 0%, var(--color-driver-card) 100%)',
           }}>
@@ -384,7 +415,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
               </div>
               {/* Heure de prise en charge */}
               <div className="text-right">
-                <p className="text-[10px] uppercase tracking-[0.1em] mb-0.5"
+                <p className="text-[10px] uppercase tracking-widest mb-0.5"
                   style={{ color: 'var(--color-text-muted)' }}>Prise en charge</p>
                 <p className="text-lg font-semibold"
                   style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-text-primary)' }}>
@@ -399,7 +430,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
               <div className="flex flex-col items-center gap-1 shrink-0">
                 <span className="w-3 h-3 rounded-full border-2"
                   style={{ borderColor: 'var(--color-driver-accent)', backgroundColor: 'transparent' }} />
-                <div className="w-px flex-1 min-h-[20px]"
+                <div className="w-px flex-1 min-h-5"
                   style={{ backgroundColor: 'rgba(59,130,246,0.3)' }} />
                 <span className="w-3 h-3 rounded-full"
                   style={{ backgroundColor: 'var(--color-success)' }} />
@@ -434,7 +465,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
                   </div>
                 </div>
               </div>
-              <a href={`tel:${missionActive.customerPhone}`}
+              <a href={getSafePhoneUrl(missionActive.customerPhone)}
                 className="w-14 h-14 rounded-2xl flex items-center justify-center transition-all shrink-0 bg-white/5 border border-white/10 text-blue-400 hover:bg-blue-500 hover:text-white hover:shadow-[0_0_20px_rgba(59,130,246,0.5)]"
               >
                 <Phone size={22} weight="fill" />
@@ -510,7 +541,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
               <div className="flex flex-col items-center gap-1 shrink-0">
                 <span className="w-3 h-3 rounded-full border-2"
                   style={{ borderColor: 'var(--color-driver-accent)', backgroundColor: 'transparent' }} />
-                <div className="w-px flex-1 min-h-[20px]"
+                <div className="w-px flex-1 min-h-5"
                   style={{ backgroundColor: 'rgba(59,130,246,0.3)' }} />
                 <span className="w-3 h-3 rounded-full"
                   style={{ backgroundColor: 'var(--color-driver-accent)' }} />
@@ -596,18 +627,21 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
       {!missionActive && !prochaineMission && isOnline && (
         <div className="driver-card-enter rounded-2xl p-8 text-center mb-6"
           style={{
-            backgroundColor: 'var(--color-driver-card)',
-            border: '1px dashed rgba(59,130,246,0.2)',
+            backgroundColor: 'linear-gradient(135deg, rgba(59,130,246,0.08) 0%, rgba(59,130,246,0.04) 100%)',
+            border: '2px solid rgba(59,130,246,0.3)',
           }}>
           {/* Icône Radar ou Navigation animée */}
           <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
-            style={{ backgroundColor: 'var(--color-driver-accent-bg)' }}>
-            <NavigationArrow size={28} weight="light" className="text-blue-500" />
+            style={{ 
+              backgroundColor: 'rgba(59,130,246,0.15)', 
+              boxShadow: '0 0 20px rgba(59,130,246,0.2)'
+            }}>
+            <NavigationArrow size={28} weight="light" className="text-blue-400" />
           </div>
-          <p className="text-base font-semibold mb-1" style={{ color: 'var(--color-text-primary)' }}>
+          <p className="text-lg font-bold mb-2" style={{ color: 'rgba(255,255,255,0.95)' }}>
             En attente de mission
           </p>
-          <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
+          <p className="text-sm" style={{ color: 'rgba(255,255,255,0.75)' }}>
             Vous serez notifié dès qu'une mission vous sera assignée.
           </p>
         </div>
@@ -784,6 +818,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
                 icon: <CheckCircle size={18} />,
                 color: 'var(--color-success)',
                 bg: 'rgba(16,185,129,0.08)',
+                textColor: '#10B981',
               },
               {
                 label: 'Revenus',
@@ -791,6 +826,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
                 icon: <Banknote size={18} />,
                 color: 'var(--color-gold)',
                 bg: 'rgba(201,168,76,0.08)',
+                textColor: '#C9A84C',
               },
               {
                 label: 'Km parcourus',
@@ -798,6 +834,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
                 icon: <Route size={18} />,
                 color: 'var(--color-driver-accent)',
                 bg: 'rgba(59,130,246,0.08)',
+                textColor: '#3B82F6',
               },
               {
                 label: 'Note moyenne',
@@ -805,25 +842,26 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
                 icon: <Star size={18} weight="fill" />,
                 color: '#F59E0B',
                 bg: 'rgba(245,158,11,0.08)',
+                textColor: '#FBBF24',
               },
             ].map(stat => (
               <div key={stat.label}
-                className="flex items-center gap-4 px-4 py-4 rounded-2xl"
+                className="flex items-center gap-4 px-4 py-5 rounded-2xl transition-all hover:shadow-lg"
                 style={{
-                  backgroundColor: 'var(--color-driver-card)',
-                  border: '1px solid var(--color-driver-border)',
+                  backgroundColor: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
+                  border: '1px solid rgba(255,255,255,0.1)',
                 }}>
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
                   style={{ backgroundColor: stat.bg, color: stat.color }}>
                   {stat.icon}
                 </div>
                 <div className="flex-1">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.08em]"
-                    style={{ color: 'var(--color-text-muted)' }}>
+                  <p className="text-[9px] font-bold uppercase tracking-widest"
+                    style={{ color: 'rgba(255,255,255,0.55)' }}>
                     {stat.label}
                   </p>
-                  <p className="text-lg font-bold mt-0.5"
-                    style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-text-primary)' }}>
+                  <p className="text-xl font-bold mt-1.5"
+                    style={{ fontFamily: 'var(--font-mono)', color: stat.textColor }}>
                     {stat.value}
                   </p>
                 </div>
@@ -834,19 +872,19 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
           {/* Quick Actions (Optional but good for mobile) */}
           <div className="driver-card-enter rounded-2xl p-5 space-y-3"
             style={{ backgroundColor: 'var(--color-driver-surface)', border: '1px solid var(--color-driver-border)' }}>
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 text-center">Raccourcis</p>
+            <p className="text-xs font-bold text-white uppercase tracking-widest mb-3 text-center">Raccourcis</p>
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => onNavigate('vehicle-report')}
                 className="flex flex-col items-center justify-center p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5">
                 <Car size={20} weight="light" className="text-blue-400 mb-2" />
-                <span className="text-[10px] font-bold">Rapport</span>
+                <span className="text-[10px] font-bold text-white">Rapport</span>
               </button>
               <button
                 onClick={() => onNavigate('profile')}
                 className="flex flex-col items-center justify-center p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5">
                 <Users size={20} weight="light" className="text-purple-400 mb-2" />
-                <span className="text-[10px] font-bold">Profil</span>
+                <span className="text-[10px] font-bold text-white">Profil</span>
               </button>
             </div>
           </div>
@@ -858,7 +896,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
       {/* Modal de détails */}
       {isModalOpen && selectedBooking && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fadeIn">
-          <div className="bg-[#0F1318] border border-white/10 rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
+          <div className="bg-driver-card border border-white/10 rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
             style={{ color: 'var(--color-text-primary)' }}>
 
             <div className="p-6 border-b border-white/5">
@@ -914,10 +952,10 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
                 <div className="flex items-center justify-between">
                   <span className="text-base font-bold">{selectedBooking.customerName}</span>
                   <div className="flex gap-2">
-                    <a href={`tel:${selectedBooking.customerPhone}`} className="p-3 bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors">
+                    <a href={getSafePhoneUrl(selectedBooking.customerPhone)} className="p-3 bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors">
                       <Phone size={18} weight="fill" className="text-white" />
                     </a>
-                    <a href={`https://wa.me/${selectedBooking.customerPhone}`} className="p-3 bg-green-600 hover:bg-green-700 rounded-xl transition-colors">
+                    <a href={getSafeWhatsAppUrl(selectedBooking.customerPhone)} className="p-3 bg-green-600 hover:bg-green-700 rounded-xl transition-colors">
                       <ChatCircle size={18} weight="fill" className="text-white" />
                     </a>
                   </div>

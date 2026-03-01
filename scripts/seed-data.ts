@@ -4,7 +4,11 @@ import { users, vehiclesTable, bookingsTable, reviewsTable } from "../src/schema
 import { eq } from "drizzle-orm";
 
 // Configuration de la base de données
-const DATABASE_URL = process.env.DATABASE_URL || "postgresql://neondb_owner:npg_4JAmYGR2ENSu@ep-sweet-resonance-ab6ilynd-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require";
+const DATABASE_URL = process.env.DATABASE_URL;
+
+if (!DATABASE_URL) {
+  throw new Error('DATABASE_URL environment variable is not set');
+}
 const sql = neon(DATABASE_URL);
 const db = drizzle({ client: sql });
 

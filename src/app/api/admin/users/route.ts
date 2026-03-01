@@ -11,6 +11,16 @@ import { eq, and } from "drizzle-orm"
 import bcrypt from "bcryptjs"
 import { randomUUID } from "crypto"
 
+// Function to generate a secure random password
+function generateSecurePassword(): string {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*'
+  let password = ''
+  for (let i = 0; i < 16; i++) {
+    password += chars.charAt(Math.floor(Math.random() * chars.length))
+  }
+  return password
+}
+
 // Fonction pour vérifier les permissions dynamiques
 async function hasUsersPermission(userRole: string, action: 'read' | 'create' | 'update' | 'delete'): Promise<boolean> {
   try {
@@ -196,7 +206,7 @@ export async function POST(request: NextRequest) {
 
     // Créer le nouvel utilisateur
     const userId = randomUUID()
-    const finalPassword = password || "password123" // Utiliser le mot de passe fourni ou le défaut
+    const finalPassword = password || generateSecurePassword() // Utiliser le mot de passe fourni ou générer un sécurisé
     const hashedPassword = await bcrypt.hash(finalPassword, 12)
 
     console.log('🔨 [CREATE USER] Préparation insertion:', { userId, name, email, role: normalizedRole, isActive })

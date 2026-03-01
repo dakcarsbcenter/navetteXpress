@@ -180,6 +180,8 @@ export default function SimpleUploadTestPage() {
 
         {/* Input file caché */}
         <input
+          id="file-upload"
+          name="image-upload"
           ref={fileInputRef}
           type="file"
           accept="image/jpeg,image/jpg,image/png,image/webp"

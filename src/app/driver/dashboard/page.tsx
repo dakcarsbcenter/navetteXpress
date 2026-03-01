@@ -64,7 +64,7 @@ export default function DriverDashboard() {
             <div className="max-w-7xl mx-auto">
               <button
                 onClick={() => setCurrentView('home')}
-                className="mb-8 flex items-center gap-2 px-6 py-3 bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] text-white rounded-2xl hover:bg-white/5 transition-all shadow-xl"
+                className="mb-8 flex items-center gap-2 px-6 py-3 bg-driver-card border border-driver-border text-white rounded-2xl hover:bg-white/5 transition-all shadow-xl"
               >
                 <CaretLeft size={20} weight="bold" />
                 Retour au Tableau de Bord

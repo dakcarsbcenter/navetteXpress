@@ -40,7 +40,7 @@ export default function DriverSidebar(props: Props) {
 
   return (
     <aside
-      className="w-[220px] flex flex-col shrink-0 hidden lg:flex h-screen sticky top-0"
+      className="w-[220px] hidden lg:flex flex-col shrink-0 h-screen sticky top-0"
       style={{
         backgroundColor: '#060A0D',
         borderRight: '1px solid rgba(255,255,255,0.05)',
@@ -53,10 +53,10 @@ export default function DriverSidebar(props: Props) {
           <span className="text-white font-bold text-sm">NX</span>
         </div>
         <div>
-          <p className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+          <p className="text-sm font-semibold" style={{ color: '#FFFFFF' }}>
             Navette <span style={{ color: 'var(--color-gold)' }}>Xpress</span>
           </p>
-          <p className="text-[10px] mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
+          <p className="text-[10px] mt-0.5" style={{ color: '#FFFFFF' }}>
             Espace chauffeur
           </p>
         </div>
@@ -86,7 +86,7 @@ export default function DriverSidebar(props: Props) {
           </div>
           <div className="min-w-0">
             <p className="text-sm font-semibold truncate"
-              style={{ color: 'var(--color-text-primary)' }}>
+              style={{ color: '#FFFFFF' }}>
               {session?.user?.name || 'Chauffeur'}
             </p>
             <p className="text-[10px]" style={{ color: isOnline ? 'var(--color-success)' : 'var(--color-text-muted)' }}>

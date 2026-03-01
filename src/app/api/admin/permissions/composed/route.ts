@@ -44,10 +44,14 @@ const COMPOSED_PERMISSIONS: Record<string, ComposedPermission> = {
   }
 }
 
+// Liste des rôles valides pour validation
+const VALID_ROLES = ['admin', 'manager', 'driver', 'customer'] as const;
+
 // GET - Obtenir les permissions composées pour la matrice
 export async function GET(request: NextRequest) {
   try {
     console.log('🔐 GET /api/admin/permissions/composed - Début de la requête')
+
     
     const session = await getServerSession(authOptions)
     const userRole = (session?.user as any)?.role
@@ -68,17 +72,27 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Rôle requis' }, { status: 400 })
     }
 
+    // Validation du rôle pour prévenir l'injection de format string
+    const rolesAllowed: readonly string[] = ['admin', 'manager', 'driver', 'customer'];
+    if (!rolesAllowed.includes(roleName)) {
+      console.log('❌ Rôle invalide')
+      return NextResponse.json({ error: 'Rôle invalide' }, { status: 400 })
+    }
+
+    // À ce stade, roleName est validé et peut être utilisé
+    const validatedRole: typeof rolesAllowed[number] = roleName as typeof rolesAllowed[number];
+
     // Récupérer toutes les permissions atomiques du rôle
-    console.log(`🔍 Récupération des permissions pour ${roleName}...`)
+    console.log('🔍 Récupération des permissions')
     const permissions = await db
       .select()
       .from(rolePermissionsTable)
       .where(and(
-        eq(rolePermissionsTable.roleName, roleName),
+        eq(rolePermissionsTable.roleName, validatedRole),
         eq(rolePermissionsTable.allowed, true)
       ))
 
-    console.log(`📊 Permissions atomiques pour ${roleName}:`, permissions.map(p => `${p.resource}.${p.action}`))
+    console.log('📊 Permissions atomiques:', permissions.map(p => `${p.resource}.${p.action}`))
 
     // Grouper par ressource
     const permissionsByResource = permissions.reduce((acc, perm) => {
@@ -89,15 +103,15 @@ export async function GET(request: NextRequest) {
       return acc
     }, {} as Record<string, string[]>)
 
-    console.log(`📦 Groupées par ressource:`, permissionsByResource)
+    console.log('📦 Groupées par ressource:', permissionsByResource)
 
     // NE PAS convertir en permissions composées !
     // Le composant a besoin des actions atomiques pour calculer lui-même les permissions composées
-    console.log(`✅ Permissions atomiques par ressource pour ${roleName}:`, permissionsByResource)
+    console.log('✅ Permissions atomiques par ressource')
 
     return NextResponse.json({
       success: true,
-      role: roleName,
+      role: validatedRole,
       permissions: permissionsByResource  // Retourner les actions atomiques, pas composées
     })
 
@@ -135,6 +149,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Validation du rôle pour prévenir l'injection de format string
+    const rolesAllowed: readonly string[] = ['admin', 'manager', 'driver', 'customer'];
+    if (!rolesAllowed.includes(roleName)) {
+      return NextResponse.json(
+        { error: 'Rôle invalide' },
+        { status: 400 }
+      )
+    }
+
+    // À ce stade, roleName est validé et peut être utilisé
+    const validatedRole: typeof rolesAllowed[number] = roleName as typeof rolesAllowed[number];
+
     const permission = COMPOSED_PERMISSIONS[composedPermission]
     if (!permission) {
       return NextResponse.json(
@@ -153,7 +179,7 @@ export async function POST(request: NextRequest) {
         .select()
         .from(rolePermissionsTable)
         .where(and(
-          eq(rolePermissionsTable.roleName, roleName),
+          eq(rolePermissionsTable.roleName, validatedRole),
           eq(rolePermissionsTable.resource, resource)
         ))
 
@@ -171,14 +197,14 @@ export async function POST(request: NextRequest) {
       await db
         .delete(rolePermissionsTable)
         .where(and(
-          eq(rolePermissionsTable.roleName, roleName),
+          eq(rolePermissionsTable.roleName, validatedRole),
           eq(rolePermissionsTable.resource, resource)
         ))
 
       // Réinsérer toutes les actions (les 4 au total)
       const allActions = ['create', 'read', 'update', 'delete']
       const permissionsToInsert = allActions.map(action => ({
-        roleName,
+        roleName: validatedRole,
         resource,
         action,
         allowed: existingActions.has(action)
@@ -193,7 +219,7 @@ export async function POST(request: NextRequest) {
         .select()
         .from(rolePermissionsTable)
         .where(and(
-          eq(rolePermissionsTable.roleName, roleName),
+          eq(rolePermissionsTable.roleName, validatedRole),
           eq(rolePermissionsTable.resource, resource)
         ))
 
@@ -211,14 +237,14 @@ export async function POST(request: NextRequest) {
       await db
         .delete(rolePermissionsTable)
         .where(and(
-          eq(rolePermissionsTable.roleName, roleName),
+          eq(rolePermissionsTable.roleName, validatedRole),
           eq(rolePermissionsTable.resource, resource)
         ))
 
       // Réinsérer avec les nouvelles valeurs
       const allActions = ['create', 'read', 'update', 'delete']
       const permissionsToInsert = allActions.map(action => ({
-        roleName,
+        roleName: validatedRole,
         resource,
         action,
         allowed: activeActions.has(action)
@@ -262,10 +288,22 @@ export async function PUT(request: NextRequest) {
       )
     }
 
+    // Validation du rôle pour prévenir l'injection de format string
+    const rolesAllowed: readonly string[] = ['admin', 'manager', 'driver', 'customer'];
+    if (!rolesAllowed.includes(roleName)) {
+      return NextResponse.json(
+        { error: 'Rôle invalide' },
+        { status: 400 }
+      )
+    }
+
+    // À ce stade, roleName est validé et peut être utilisé
+    const validatedRole: typeof rolesAllowed[number] = roleName as typeof rolesAllowed[number];
+
     // Supprimer toutes les permissions existantes du rôle
     await db
       .delete(rolePermissionsTable)
-      .where(eq(rolePermissionsTable.roleName, roleName))
+      .where(eq(rolePermissionsTable.roleName, validatedRole))
 
     // Ajouter les nouvelles permissions
     const permissionsToInsert: any[] = []
@@ -276,7 +314,7 @@ export async function PUT(request: NextRequest) {
         if (permission) {
           for (const action of permission.actions) {
             permissionsToInsert.push({
-              roleName,
+              roleName: validatedRole,
               resource,
               action,
               allowed: true,
@@ -293,7 +331,8 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: `Permissions mises à jour pour le rôle ${roleName}`,
+      message: 'Permissions mises à jour pour le rôle',
+      role: validatedRole,
       count: permissionsToInsert.length
     })
 

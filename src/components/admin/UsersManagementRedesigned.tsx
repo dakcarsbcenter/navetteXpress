@@ -365,7 +365,7 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
     return (
       <div className="flex items-center justify-center h-96">
         <div className="flex flex-col items-center gap-4">
-  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-linear-to-r from-gold via-white to-gold animate-pulse"
        style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
     Navette Xpress
   </div>
@@ -441,7 +441,7 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
 
       {/* Main Table Card */}
       <div className="rounded-2xl border border-white/5 overflow-hidden" style={{ backgroundColor: 'var(--color-dash-card)' }}>
-        <div className="p-5 border-b border-white/5 flex items-center gap-4 bg-white/[0.01]">
+        <div className="p-5 border-b border-white/5 flex items-center gap-4 bg-white/1">
           {['all', 'admin', 'manager', 'driver', 'customer'].map((role) => (
             <button
               key={role}
@@ -467,7 +467,7 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-white/[0.02] border-b border-white/5">
+              <tr className="bg-white/2 border-b border-white/5">
                 <th className="pl-6 pr-3 py-4 w-12">
                   <input
                     type="checkbox"
@@ -483,7 +483,7 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
                 <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-center">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/[0.02]">
+            <tbody className="divide-y divide-white/2">
               {filteredUsers.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-20 text-center">
@@ -501,7 +501,7 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
                   const statusBadge = getStatusBadge(user.isActive)
 
                   return (
-                    <tr key={user.id} className="hover:bg-white/[0.01] transition-colors group">
+                    <tr key={user.id} className="hover:bg-white/1 transition-colors group">
                       <td className="pl-6 pr-3 py-4">
                         <input
                           type="checkbox"
@@ -520,7 +520,7 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
                                 {getInitials(user.name)}
                               </div>
                             )}
-                            <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-[#09090F] ${statusBadge.dot}`} />
+                            <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-dash-sidebar ${statusBadge.dot}`} />
                           </div>
                           <div>
                             <div className="text-sm font-bold text-white group-hover:text-gold transition-colors">{user.name}</div>
@@ -582,7 +582,7 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-[#09090B]/80 backdrop-blur-sm" onClick={() => setIsModalOpen(false)} />
           <div className="relative w-full max-w-md bg-[#12121A] border border-white/10 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
-            <div className="p-6 border-b border-white/5 bg-white/[0.02] flex items-center justify-between">
+            <div className="p-6 border-b border-white/5 bg-white/2 flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-bold text-white">{editingUser ? "Édition Profil" : "Nouvel Utilisateur"}</h3>
                 <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Terminal de Configuration</p>
@@ -653,7 +653,7 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
                 )}
               </div>
 
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-white/2 border border-white/5">
                 <input
                   type="checkbox"
                   id="isActive"
@@ -689,7 +689,7 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-[#09090B]/80 backdrop-blur-sm" onClick={() => setIsResetPasswordModalOpen(false)} />
           <div className="relative w-full max-w-sm bg-[#12121A] border border-white/10 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
-            <div className="p-6 border-b border-white/5 bg-blue-500/[0.02] flex items-center gap-4">
+            <div className="p-6 border-b border-white/5 bg-blue-500/2 flex items-center gap-4">
               <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-400">
                 <Key size={20} />
               </div>

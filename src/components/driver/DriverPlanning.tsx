@@ -212,24 +212,24 @@ export function DriverPlanning({ onBack }: PlanningProps) {
         <div className="flex items-center gap-4">
           <button
             onClick={onBack}
-            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] text-[var(--color-text-secondary)] hover:text-white"
+            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-driver-card border border-driver-border text-text-secondary hover:text-white"
           >
             <CaretLeft size={20} weight="bold" />
           </button>
           <div>
-            <h1 className="text-xl font-bold text-[var(--color-text-primary)]">
+            <h1 className="text-xl font-bold text-text-primary">
               Planning des Missions
             </h1>
-            <p className="text-sm font-mono text-[var(--color-text-muted)]">
+            <p className="text-sm font-mono text-text-muted">
               Flux en temps réel • {filteredBookings.length} assignées
             </p>
           </div>
         </div>
 
         {/* Quick Stats style "Road" */}
-        <div className="flex items-center gap-2 p-1 rounded-xl bg-[var(--color-driver-card)] border border-[var(--color-driver-border)]">
+        <div className="flex items-center gap-2 p-1 rounded-xl bg-driver-card border border-driver-border">
           <div className="px-4 py-2 rounded-lg bg-blue-500/10 text-blue-400 text-xs font-bold uppercase tracking-tight">
-            Hoy : {bookings.filter(b => b.date === new Date().toISOString().split('T')[0]).length} runs
+            Aujourd'hui : {bookings.filter(b => b.date === new Date().toISOString().split('T')[0]).length} trajets
           </div>
           <div className="px-4 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-bold uppercase tracking-tight">
             Total : {filteredBookings.reduce((sum, b) => sum + b.price, 0).toLocaleString()} FCFA
@@ -238,7 +238,7 @@ export function DriverPlanning({ onBack }: PlanningProps) {
       </div>
 
       {/* ── FILTERS & SEARCH ── */}
-      <div className="p-4 rounded-2xl bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] shadow-2xl">
+      <div className="p-4 rounded-2xl bg-driver-card border border-driver-border shadow-2xl">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Search bar stylish */}
           <div className="relative group">
@@ -261,7 +261,7 @@ export function DriverPlanning({ onBack }: PlanningProps) {
                 onChange={(e) => setStatusFilter(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm appearance-none text-white outline-none focus:border-blue-500"
               >
-                <option value="all">S-Statut (Tous)</option>
+                <option value="all">Statut (Tous)</option>
                 <option value="assigned">Assigné</option>
                 <option value="confirmed">Confirmé</option>
                 <option value="in_progress">En cours</option>
@@ -299,7 +299,7 @@ export function DriverPlanning({ onBack }: PlanningProps) {
         {isLoading ? (
           <div className="py-20 flex flex-col items-center gap-4">
             <div className="flex flex-col items-center gap-4">
-  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-linear-to-r from-gold via-white to-gold animate-pulse"
        style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
     Navette Xpress
   </div>
@@ -318,7 +318,7 @@ export function DriverPlanning({ onBack }: PlanningProps) {
               <div
                 key={booking.id}
                 onClick={() => openDetails(booking)}
-                className="driver-card-enter group relative p-5 rounded-2xl bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] hover:border-blue-500/50 transition-all cursor-pointer overflow-hidden"
+                className="driver-card-enter group relative p-5 rounded-2xl bg-driver-card border border-driver-border hover:border-blue-500/50 transition-all cursor-pointer overflow-hidden"
               >
                 {/* Status indicator on the left edge */}
                 <div className={`absolute left-0 top-0 bottom-0 w-1 ${booking.status === 'confirmed' ? 'bg-emerald-500' :
@@ -380,11 +380,11 @@ export function DriverPlanning({ onBack }: PlanningProps) {
 
       {/* ── MODAL DETAILS (ROAD MODE) ── */}
       {isModalOpen && selectedBooking && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-          <div className="w-full max-w-lg bg-[var(--color-driver-bg)] border border-[var(--color-driver-border)] rounded-3xl shadow-2xl overflow-hidden animate-slide-up">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-100 flex items-center justify-center p-4">
+          <div className="w-full max-w-lg bg-driver-bg border border-driver-border rounded-3xl shadow-2xl overflow-hidden animate-slide-up">
 
             {/* Header Modal */}
-            <div className="relative h-32 bg-gradient-to-br from-blue-600 to-indigo-900 p-6 flex flex-col justify-end">
+            <div className="relative h-32 bg-linear-to-br from-blue-600 to-indigo-900 p-6 flex flex-col justify-end">
               <button
                 onClick={() => setIsModalOpen(false)}
                 className="absolute top-4 right-4 p-2 bg-black/20 hover:bg-black/40 rounded-full text-white/80 transition-all"
@@ -490,10 +490,10 @@ export function DriverPlanning({ onBack }: PlanningProps) {
 
       {/* ── TOAST ── */}
       {toast && (
-        <div className="fixed bottom-8 right-8 z-[200] animate-slide-up">
+        <div className="fixed bottom-8 right-8 z-200 animate-slide-up">
           <div className={`flex items-center gap-3 px-6 py-4 rounded-2xl shadow-2xl border ${toast.type === 'success'
-            ? 'bg-[var(--color-driver-bg)] border-emerald-500/50 text-emerald-400'
-            : 'bg-[var(--color-driver-bg)] border-red-500/50 text-red-400'
+            ? 'bg-driver-bg border-emerald-500/50 text-emerald-400'
+            : 'bg-driver-bg border-red-500/50 text-red-400'
             }`}>
             {toast.type === 'success' ? <CheckCircle size={20} weight="fill" /> : <AlertCircle size={20} weight="fill" />}
             <span className="font-bold text-sm tracking-tight">{toast.message}</span>

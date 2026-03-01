@@ -372,7 +372,7 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
                 Aperçu des flux sur les 7 derniers jours
               </p>
             </div>
-            <select className="bg-white/5 border border-white/10 text-[10px] text-slate-400 uppercase tracking-widest rounded-lg px-3 py-1.5 outline-none focus:border-gold/50 cursor-pointer appearance-none">
+            <select id="period-filter" name="period" className="bg-white/5 border border-white/10 text-[10px] text-slate-400 uppercase tracking-widest rounded-lg px-3 py-1.5 outline-none focus:border-gold/50 cursor-pointer appearance-none">
               <option>7 jours</option>
               <option>30 jours</option>
             </select>

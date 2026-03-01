@@ -11,7 +11,7 @@ async function checkConnectivity() {
   console.log('🔍 Vérification de la connectivité à Coolify PostgreSQL\n');
 
   // L'URL interne Coolify (ne fonctionne que depuis le réseau Coolify)
-  const internalUrl = "postgresql://postgres:8aS0bLp5Hmcf0jH4RhwRJxjQYi5hZJvMLLcBPBl9y37wRJ87YFOT4AqrEMS69agk@db-navettexpress:5432/postgres";
+  const internalUrl = "postgresql://postgres:YOUR_PASSWORD@db-navettexpress:5432/postgres";
   
   console.log('❌ PROBLÈME DÉTECTÉ:');
   console.log('   Le hostname "db-navettexpress" n\'est pas accessible depuis votre machine locale.');
@@ -27,11 +27,11 @@ async function checkConnectivity() {
   console.log('1. Connectez-vous en SSH à votre serveur Coolify');
   console.log('2. Naviguez vers le répertoire de votre application');
   console.log('3. Exécutez:');
-  console.log('   export DATABASE_URL="postgresql://postgres:8aS0bLp5Hmcf0jH4RhwRJxjQYi5hZJvMLLcBPBl9y37wRJ87YFOT4AqrEMS69agk@db-navettexpress:5432/postgres"');
+  console.log('   export DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@db-navettexpress:5432/postgres"');
   console.log('   npm run db:push  # Créer le schéma');
   console.log('');
   console.log('4. Ensuite, importez les données depuis Neon:');
-  console.log('   NEON_URL="postgresql://neondb_owner:npg_4JAmYGR2ENSu@ep-sweet-resonance-ab6ilynd-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require"');
+  console.log('   NEON_URL="YOUR_NEON_DATABASE_URL"');
   console.log('   pg_dump $NEON_URL --data-only --no-owner --no-privileges -f neon_data.sql');
   console.log('   psql $DATABASE_URL -f neon_data.sql');
   console.log('');
@@ -56,7 +56,7 @@ async function checkConnectivity() {
   console.log('');
   console.log('1. SSH vers Coolify');
   console.log('2. Dans le répertoire de l\'app:');
-  console.log('   export DATABASE_URL="postgresql://postgres:8aS0bLp5Hmcf0jH4RhwRJxjQYi5hZJvMLLcBPBl9y37wRJ87YFOT4AqrEMS69agk@db-navettexpress:5432/postgres"');
+  console.log('   export DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@db-navettexpress:5432/postgres"');
   console.log('   npm run db:push');
   console.log('   npm run db:studio');
   console.log('');
@@ -71,8 +71,8 @@ async function checkConnectivity() {
   console.log('Sur le serveur Coolify:');
   console.log('');
   console.log('docker run --rm --network=coolify \\');
-  console.log('  -e NEON_URL="postgresql://neondb_owner:npg_4JAmYGR2ENSu@ep-sweet-resonance-ab6ilynd-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require" \\');
-  console.log('  -e COOLIFY_URL="postgresql://postgres:8aS0bLp5Hmcf0jH4RhwRJxjQYi5hZJvMLLcBPBl9y37wRJ87YFOT4AqrEMS69agk@db-navettexpress:5432/postgres" \\');
+  console.log('  -e NEON_URL="YOUR_NEON_DATABASE_URL" \\');
+  console.log('  -e COOLIFY_URL="postgresql://postgres:YOUR_PASSWORD@db-navettexpress:5432/postgres" \\');
   console.log('  postgres:16-alpine sh -c \'');
   console.log('    apk add --no-cache postgresql-client && \\');
   console.log('    pg_dump "$NEON_URL" --data-only --no-owner --no-privileges | \\');

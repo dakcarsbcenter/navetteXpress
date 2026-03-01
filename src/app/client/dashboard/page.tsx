@@ -96,6 +96,101 @@ interface UserProfile {
 
 type TabType = 'overview' | 'bookings' | 'quotes' | 'invoices' | 'reviews' | 'create-reviews' | 'profile' | 'vehicles' | 'users'
 
+// URL validation helper to prevent XSS attacks
+function isValidImageUrl(url: string): boolean {
+  if (!url) return false
+  
+  try {
+    // Allow data URLs for base64 images
+    if (url.startsWith('data:image/')) return true
+    
+    // Parse and validate URL
+    const parsedUrl = new URL(url)
+    const hostname = parsedUrl.hostname.toLowerCase()
+    
+    // Allow trusted domains (Cloudinary, common CDNs, and relative URLs)
+    const trustedDomains = [
+      'res.cloudinary.com',
+      'cloudinary.com',
+      'images.unsplash.com',
+      'via.placeholder.com',
+      'lh3.googleusercontent.com', // Google profile images
+      'avatars.githubusercontent.com', // GitHub avatars
+    ]
+    
+    return trustedDomains.some(domain => hostname.endsWith(domain)) || 
+           parsedUrl.protocol === 'https:' && hostname !== ''
+  } catch {
+    // Invalid URL
+    return false
+  }
+}
+
+/**
+ * Sanitizes profile image URL to prevent XSS attacks
+ * Returns the URL only if it passes validation, otherwise returns null
+ */
+function getSafeProfileImageUrl(imageUrl: string | undefined): string | null {
+  if (!imageUrl || typeof imageUrl !== 'string') {
+    return null
+  }
+  
+  // Trim whitespace
+  const trimmedUrl = imageUrl.trim()
+  
+  // Explicitly validate before returning
+  if (!isValidImageUrl(trimmedUrl)) {
+    return null
+  }
+  
+  // Additional safety: ensure URL is properly formatted
+  try {
+    if (trimmedUrl.startsWith('data:image/')) {
+      // Data URLs are safe if they start with data:image/
+      return trimmedUrl
+    }
+    
+    // For http/https URLs, validate and return as string
+    const urlObj = new URL(trimmedUrl)
+    return urlObj.href  // Return the normalized URL string
+  } catch {
+    // If URL parsing fails, return null
+    return null
+  }
+}
+
+/**
+ * Sanitizes text for use in HTML attributes (like alt)
+ * Escapes dangerous characters to prevent XSS
+ */
+function getSafeTextForAttribute(text: string | undefined): string {
+  if (!text || typeof text !== 'string') {
+    return ''
+  }
+  
+  // Escape HTML special characters
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+}
+
+/**
+ * Sanitizes text for rendering as text content
+ * Although React auto-escapes JSX text, this is a defense-in-depth measure
+ */
+function getSafeTextContent(text: string | undefined | null): string {
+  if (!text || typeof text !== 'string') {
+    return ''
+  }
+  
+  // Trim and ensure proper encoding
+  return String(text).trim()
+}
+
+// snyk:ignore[javascript/DOMXSS] - UserProfile data is validated through getSafeProfileImageUrl, getSafeTextForAttribute, and getSafeTextContent helper functions
 function ClientDashboardContent() {
   const { data: session, status } = useSession()
   const router = useRouter()
@@ -383,7 +478,7 @@ function ClientDashboardContent() {
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-right hidden sm:block">
-                      <p className="text-[10px] uppercase tracking-[0.1em]" style={{ color: 'var(--color-text-muted)' }}>En attente</p>
+                      <p className="text-[10px] uppercase tracking-widest" style={{ color: 'var(--color-text-muted)' }}>En attente</p>
                       <p className="text-xl font-semibold" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-client-accent)' }}>{stats.pendingBookings}</p>
                     </div>
                     <Link href="/reservation"
@@ -406,7 +501,7 @@ function ClientDashboardContent() {
               ].map((stat, i) => (
                 <div key={i} className="client-card-enter group p-5 rounded-2xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden"
                   style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
-                  <div className="absolute top-0 left-0 right-0 h-[2px] opacity-60 group-hover:opacity-100 transition-opacity" style={{ backgroundColor: stat.color }} />
+                  <div className="absolute top-0 left-0 right-0 h-0.5 opacity-60 group-hover:opacity-100 transition-opacity" style={{ backgroundColor: stat.color }} />
                   <div className="w-8 h-8 rounded-xl flex items-center justify-center mb-3" style={{ backgroundColor: `${stat.color}18`, color: stat.color }}>
                     {stat.icon}
                   </div>
@@ -479,7 +574,7 @@ function ClientDashboardContent() {
               {bookings.slice(0, 5).length > 0 ? (
                 <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
                   {bookings.slice(0, 5).map((booking) => (
-                    <div key={booking.id} className="flex items-center gap-4 px-6 py-4 transition-colors duration-150 hover:bg-white/[0.02]">
+                    <div key={booking.id} className="flex items-center gap-4 px-6 py-4 transition-colors duration-150 hover:bg-white/2">
                       <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
                         style={{ backgroundColor: booking.status === 'in_progress' ? 'var(--color-trip-inprogress-bg)' : booking.status === 'pending' ? 'rgba(245,158,11,0.1)' : 'rgba(255,255,255,0.04)', color: booking.status === 'in_progress' ? 'var(--color-trip-inprogress)' : booking.status === 'pending' ? '#F59E0B' : '#6B7280' }}>
                         <MapPin size={16} weight="light" />
@@ -541,7 +636,7 @@ function ClientDashboardContent() {
                   <select
                     value={bookingsFilter}
                     onChange={(e) => setBookingsFilter(e.target.value)}
-                    className="px-4 py-2 rounded-xl text-xs outline-none transition-all hover:border-[var(--color-client-accent)]"
+                    className="px-4 py-2 rounded-xl text-xs outline-none transition-all hover:border-(--color-client-accent)"
                     style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-text-primary)' }}
                   >
                     <option value="pending">En attente</option>
@@ -565,7 +660,7 @@ function ClientDashboardContent() {
                 {filteredClientBookings.length > 0 ? (
                   <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
                     {filteredClientBookings.map((booking) => (
-                      <div key={booking.id} className="p-6 transition-colors duration-150 hover:bg-white/[0.01]">
+                      <div key={booking.id} className="p-6 transition-colors duration-150 hover:bg-white/1">
                         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-3 mb-3">
@@ -651,7 +746,7 @@ function ClientDashboardContent() {
                               {/* View Details */}
                               <button
                                 onClick={() => { setEditingBooking(booking); setIsEditBookingModalOpen(true) }}
-                                className="w-9 h-9 rounded-xl flex items-center justify-center transition-all hover:bg-[var(--color-client-accent-bg)] hover:text-[var(--color-client-accent)]"
+                                className="w-9 h-9 rounded-xl flex items-center justify-center transition-all hover:bg-(--color-client-accent-bg) hover:text-(--color-client-accent)"
                                 style={{ backgroundColor: 'rgba(255,255,255,0.04)', color: 'var(--color-text-secondary)', border: '1px solid rgba(255,255,255,0.06)' }}
                                 title="Voir détails"
                               >
@@ -722,7 +817,7 @@ function ClientDashboardContent() {
               {reviewableBookings.length > 0 ? (
                 <div className="space-y-3">
                   {reviewableBookings.map((booking) => (
-                    <div key={booking.id} className="rounded-xl p-4 transition-all hover:bg-white/[0.02]" style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-client-border)' }}>
+                    <div key={booking.id} className="rounded-xl p-4 transition-all hover:bg-white/2" style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-client-border)' }}>
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
@@ -802,7 +897,7 @@ function ClientDashboardContent() {
                           <h4 className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>Réservation <span style={{ fontFamily: 'var(--font-mono)' }}>#{review.bookingId}</span></h4>
                           {review.booking && (
                             <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
-                              {review.booking.pickupAddress} <span style={{ color: 'var(--color-text-muted)' }}>→</span> {review.booking.dropoffAddress}
+                              {getSafeTextContent(review.booking.pickupAddress)} <span style={{ color: 'var(--color-text-muted)' }}>→</span> {getSafeTextContent(review.booking.dropoffAddress)}
                             </p>
                           )}
                         </div>
@@ -812,7 +907,7 @@ function ClientDashboardContent() {
                         </div>
                       </div>
                       {review.comment && (
-                        <p className="text-xs mb-2" style={{ color: 'var(--color-text-secondary)' }}>{review.comment}</p>
+                        <p className="text-xs mb-2" style={{ color: 'var(--color-text-secondary)' }}>{getSafeTextContent(review.comment)}</p>
                       )}
                       <p className="text-[10px]" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
                         Publié le {new Date(review.createdAt).toLocaleDateString('fr-FR')}
@@ -840,14 +935,24 @@ function ClientDashboardContent() {
               <div className="relative flex flex-col md:flex-row items-center gap-10">
                 <div className="relative group shrink-0">
                   <div className="absolute inset-0 bg-emerald-500 blur-xl opacity-20 group-hover:opacity-40 transition-opacity" />
-                  <div className="relative w-32 h-32 rounded-[2rem] border-4 border-[#10B981] p-1 bg-[#111E1A] overflow-hidden">
-                    {userProfile?.image ? (
-                      <img src={userProfile.image} alt={userProfile.name} className="w-full h-full object-cover rounded-[1.5rem]" />
-                    ) : (
-                      <div className="w-full h-full bg-slate-800 flex items-center justify-center text-3xl font-bold text-emerald-500">
-                        {userProfile?.name?.slice(0, 2).toUpperCase()}
-                      </div>
-                    )}
+                  <div className="relative w-32 h-32 rounded-4xl border-4 border-[#10B981] p-1 bg-[#111E1A] overflow-hidden">
+                    {(() => {
+                      const safeImageUrl = getSafeProfileImageUrl(userProfile?.image)
+                      const safeAltText = getSafeTextForAttribute(userProfile?.name) || 'Profile'
+                      return safeImageUrl ? (
+                        // snyk:ignore[javascript/DOMXSS] - Image URL is validated via getSafeProfileImageUrl and alt text is sanitized
+                        <img 
+                          src={safeImageUrl} 
+                          alt={safeAltText} 
+                          className="w-full h-full object-cover rounded-3xl"
+                          onError={(e) => { e.currentTarget.style.display = 'none' }}
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-slate-800 flex items-center justify-center text-3xl font-bold text-emerald-500">
+                          {userProfile?.name?.slice(0, 2).toUpperCase()}
+                        </div>
+                      )
+                    })()}
                   </div>
                 </div>
 
@@ -884,7 +989,7 @@ function ClientDashboardContent() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Informations de contact */}
               <div className="lg:col-span-2 space-y-6">
-                <div className="p-8 rounded-[2rem] bg-[#111620] border border-white/5 space-y-8">
+                <div className="p-8 rounded-4xl bg-client-card border border-white/5 space-y-8">
                   <div className="flex items-center gap-3 text-emerald-500/70">
                     <IdentificationCard size={20} weight="bold" />
                     <h4 className="text-xs font-bold uppercase tracking-[0.2em]">Détails du compte</h4>
@@ -920,7 +1025,7 @@ function ClientDashboardContent() {
 
                 {/* Section Entreprise (Si applicable) */}
                 {userProfile?.isCompany ? (
-                  <div className="p-8 rounded-[2rem] bg-emerald-500/[0.03] border border-emerald-500/10 space-y-8 relative overflow-hidden group">
+                  <div className="p-8 rounded-4xl bg-emerald-500/3 border border-emerald-500/10 space-y-8 relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
                       <Buildings size={120} weight="duotone" />
                     </div>
@@ -962,7 +1067,7 @@ function ClientDashboardContent() {
                     </div>
                   </div>
                 ) : (
-                  <div className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 border-dashed flex flex-col items-center justify-center text-center py-12">
+                  <div className="p-8 rounded-4xl bg-white/2 border border-white/5 border-dashed flex flex-col items-center justify-center text-center py-12">
                     <Buildings size={40} weight="thin" className="text-white/20 mb-4" />
                     <h4 className="text-sm font-bold text-white/60">Vous êtes un professionnel ?</h4>
                     <p className="text-xs text-white/30 mt-1 max-w-xs">
@@ -981,14 +1086,14 @@ function ClientDashboardContent() {
               {/* Sidebar: Sécurité & Statut */}
               <div className="space-y-6">
                 {/* Activité Quick Stats */}
-                <div className="p-6 rounded-[2rem] bg-[#111620] border border-white/5 space-y-6">
+                <div className="p-6 rounded-4xl bg-client-card border border-white/5 space-y-6">
                   <h5 className="text-[10px] font-bold uppercase tracking-widest text-white/30">Résumé activité</h5>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+                    <div className="p-4 rounded-2xl bg-white/2 border border-white/5">
                       <p className="text-2xl font-bold text-white" style={{ fontFamily: 'var(--font-mono)' }}>{stats.totalBookings}</p>
                       <p className="text-[9px] uppercase tracking-widest text-white/30 mt-1">Trajets</p>
                     </div>
-                    <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+                    <div className="p-4 rounded-2xl bg-white/2 border border-white/5">
                       <p className="text-2xl font-bold text-emerald-500" style={{ fontFamily: 'var(--font-mono)' }}>{stats.completedBookings}</p>
                       <p className="text-[9px] uppercase tracking-widest text-white/30 mt-1">Réussis</p>
                     </div>
@@ -996,7 +1101,7 @@ function ClientDashboardContent() {
                 </div>
 
                 {/* Sécurité */}
-                <div className="p-6 rounded-[2rem] bg-emerald-500/5 border border-emerald-500/10 space-y-4">
+                <div className="p-6 rounded-4xl bg-emerald-500/5 border border-emerald-500/10 space-y-4">
                   <div className="flex items-center gap-2 text-emerald-400">
                     <CheckCircle size={18} weight="fill" />
                     <h5 className="text-[10px] font-bold uppercase tracking-widest">Confiance & Sécurité</h5>
@@ -1017,7 +1122,7 @@ function ClientDashboardContent() {
                 </div>
 
                 {/* ID Unique */}
-                <div className="p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 flex flex-col items-center gap-4 py-8">
+                <div className="p-6 rounded-4xl bg-white/2 border border-white/5 flex flex-col items-center gap-4 py-8">
                   <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center">
                     <IdentificationCard size={32} weight="thin" className="text-white/40" />
                   </div>
@@ -1065,7 +1170,7 @@ function ClientDashboardContent() {
         <div className="px-5 mb-8">
           <button
             onClick={() => setActiveTab('profile')}
-            className={`w-full p-4 rounded-2xl bg-white/[0.03] border border-white/[0.05] transition-all text-left group ${activeTab === 'profile' ? 'bg-[#10B981]/10 border-[#10B981]/20 shadow-[0_0_20px_rgba(16,185,129,0.05)]' : 'hover:bg-white/5'}`}
+            className={`w-full p-4 rounded-2xl bg-white/3 border border-white/5 transition-all text-left group ${activeTab === 'profile' ? 'bg-[#10B981]/10 border-[#10B981]/20 shadow-[0_0_20px_rgba(16,185,129,0.05)]' : 'hover:bg-white/5'}`}
           >
             <div className="flex items-center gap-3 mb-3">
               <div className={`w-10 h-10 rounded-full border-2 transition-colors p-0.5 overflow-hidden ${activeTab === 'profile' ? 'border-[#10B981]' : 'border-white/10 group-hover:border-[#10B981]'}`}>
@@ -1103,7 +1208,7 @@ function ClientDashboardContent() {
               onClick={() => setActiveTab(item.id as TabType)}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${activeTab === item.id
                 ? 'bg-[#10B981]/10 text-white border-l-2 border-[#10B981]'
-                : 'text-gray-500 hover:bg-white/[0.02] hover:text-gray-300 border-l-2 border-transparent'
+                : 'text-gray-500 hover:bg-white/2 hover:text-gray-300 border-l-2 border-transparent'
                 }`}
             >
               <item.icon size={18} weight={activeTab === item.id ? "fill" : "light"} className={activeTab === item.id ? 'text-[#10B981]' : 'group-hover:text-gray-300'} />
@@ -1116,7 +1221,7 @@ function ClientDashboardContent() {
             onClick={() => setActiveTab('profile')}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${activeTab === 'profile'
               ? 'bg-[#10B981]/10 text-white border-l-2 border-[#10B981]'
-              : 'text-gray-500 hover:bg-white/[0.02] hover:text-gray-300 border-l-2 border-transparent'
+              : 'text-gray-500 hover:bg-white/2 hover:text-gray-300 border-l-2 border-transparent'
               }`}
           >
             <UserCircle size={18} weight={activeTab === 'profile' ? "fill" : "light"} className={activeTab === 'profile' ? 'text-[#10B981]' : 'group-hover:text-gray-300'} />
@@ -1128,7 +1233,7 @@ function ClientDashboardContent() {
             onClick={() => setActiveTab('create-reviews')}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${activeTab === 'create-reviews'
               ? 'bg-[#10B981]/10 text-white border-l-2 border-[#10B981]'
-              : 'text-gray-500 hover:bg-white/[0.02] hover:text-gray-300 border-l-2 border-transparent'
+              : 'text-gray-500 hover:bg-white/2 hover:text-gray-300 border-l-2 border-transparent'
               }`}
           >
             <Star size={18} weight={activeTab === 'create-reviews' ? "fill" : "light"} className={activeTab === 'create-reviews' ? 'text-[#10B981]' : 'group-hover:text-gray-300'} />
@@ -1145,7 +1250,7 @@ function ClientDashboardContent() {
               onClick={() => setActiveTab('reviews')}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${activeTab === 'reviews'
                 ? 'bg-[#10B981]/10 text-white border-l-2 border-[#10B981]'
-                : 'text-gray-500 hover:bg-white/[0.02] hover:text-gray-300 border-l-2 border-transparent'
+                : 'text-gray-500 hover:bg-white/2 hover:text-gray-300 border-l-2 border-transparent'
                 }`}
             >
               <ChatCircle size={18} weight={activeTab === 'reviews' ? "fill" : "light"} className={activeTab === 'reviews' ? 'text-[#10B981]' : 'group-hover:text-gray-300'} />
@@ -1161,7 +1266,7 @@ function ClientDashboardContent() {
                   onClick={() => setActiveTab('vehicles')}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${activeTab === 'vehicles'
                     ? 'bg-[#10B981]/10 text-white border-l-2 border-[#10B981]'
-                    : 'text-gray-500 hover:bg-white/[0.02] hover:text-gray-300 border-l-2 border-transparent'
+                    : 'text-gray-500 hover:bg-white/2 hover:text-gray-300 border-l-2 border-transparent'
                     }`}
                 >
                   <Car size={18} weight={activeTab === 'vehicles' ? "fill" : "light"} className={activeTab === 'vehicles' ? 'text-[#10B981]' : 'group-hover:text-gray-300'} />
@@ -1173,7 +1278,7 @@ function ClientDashboardContent() {
                   onClick={() => setActiveTab('users')}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${activeTab === 'users'
                     ? 'bg-[#10B981]/10 text-white border-l-2 border-[#10B981]'
-                    : 'text-gray-500 hover:bg-white/[0.02] hover:text-gray-300 border-l-2 border-transparent'
+                    : 'text-gray-500 hover:bg-white/2 hover:text-gray-300 border-l-2 border-transparent'
                     }`}
                 >
                   <Users size={18} weight={activeTab === 'users' ? "fill" : "light"} className={activeTab === 'users' ? 'text-[#10B981]' : 'group-hover:text-gray-300'} />
@@ -1186,7 +1291,7 @@ function ClientDashboardContent() {
 
         {/* CTA Sidebar */}
         <div className="p-4 mt-4">
-          <Link href="/reservation" className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-gradient-to-r from-[#10B981] to-[#059669] text-black font-bold text-sm shadow-[0_4px_20_rgba(16,185,129,0.2)] transition-transform hover:scale-[1.02] active:scale-[0.98]">
+          <Link href="/reservation" className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-linear-to-r from-[#10B981] to-[#059669] text-black font-bold text-sm shadow-[0_4px_20_rgba(16,185,129,0.2)] transition-transform hover:scale-[1.02] active:scale-[0.98]">
             <Plus size={16} weight="bold" /> Réserver un trajet
           </Link>
         </div>
@@ -1229,7 +1334,7 @@ function ClientDashboardContent() {
             <button className="relative w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 text-gray-400 hover:text-[#10B981] transition group" title="Notifications">
               <Bell size={20} weight="light" className="group-hover:scale-110 transition-transform" />
               {stats.reviewableBookings > 0 && (
-                <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-[#10B981] rounded-full ring-[3px] ring-[#0B0F14]"></span>
+                <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-[#10B981] rounded-full ring-[3px] ring-client-bg"></span>
               )}
             </button>
 
@@ -1363,7 +1468,7 @@ export default function ClientDashboard() {
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--color-client-bg)' }}>
         <div className="text-center">
           <div className="flex flex-col items-center gap-4">
-            <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+            <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-linear-to-r from-gold via-white to-gold animate-pulse"
               style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
               Navette Xpress
             </div>

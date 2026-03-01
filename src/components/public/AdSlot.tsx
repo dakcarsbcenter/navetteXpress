@@ -91,7 +91,7 @@ export default function AdSlot({ placement, className = "" }: AdSlotProps) {
                             >
                                 {/* Render by type */}
                                 {ad.type === 'banner_image' && ad.imageUrl && (
-                                    <div className="relative w-full aspect-[21/9] md:aspect-[3/1]">
+                                    <div className="relative w-full aspect-21/9 md:aspect-3/1">
                                         <img
                                             src={ad.imageUrl}
                                             alt={ad.altText || ad.title}
@@ -101,7 +101,7 @@ export default function AdSlot({ placement, className = "" }: AdSlotProps) {
                                 )}
 
                                 {ad.type === 'banner_animated' && (ad.videoUrl || ad.imageUrl) && (
-                                    <div className="relative w-full aspect-[21/9] md:aspect-[3/1] bg-slate-900">
+                                    <div className="relative w-full aspect-21/9 md:aspect-3/1 bg-slate-900">
                                         {ad.videoUrl ? (
                                             <video
                                                 src={ad.videoUrl}

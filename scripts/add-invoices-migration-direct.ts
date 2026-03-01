@@ -3,7 +3,11 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 // Utiliser l'URL depuis drizzle.config.ts
-const DATABASE_URL = process.env.DATABASE_URL || "postgresql://neondb_owner:npg_4JAmYGR2ENSu@ep-sweet-resonance-ab6ilynd-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+const DATABASE_URL = process.env.DATABASE_URL;
+
+if (!DATABASE_URL) {
+  throw new Error('DATABASE_URL environment variable is not set');
+}
 
 async function runMigration() {
   console.log('🚀 Début de la migration: Ajout de la table invoices')

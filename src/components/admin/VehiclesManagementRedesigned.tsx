@@ -321,7 +321,7 @@ export function VehiclesManagementRedesigned() {
     return (
       <div className="flex items-center justify-center p-12">
         <div className="flex flex-col items-center gap-4">
-  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+    <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-linear-to-r from-gold via-white to-gold animate-pulse"
        style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
     Navette Xpress
   </div>
@@ -368,7 +368,7 @@ export function VehiclesManagementRedesigned() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* TOTAL FLOTTE */}
         <div className="p-6 rounded-2xl border border-white/5 relative overflow-hidden group" style={{ backgroundColor: 'var(--color-dash-card)' }}>
-          <div className="absolute inset-0 bg-gradient-to-br from-gold/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div className="absolute inset-0 bg-linear-to-br from-gold/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
           <div className="flex justify-between items-start relative z-10">
             <div>
               <p className="text-slate-400 text-sm font-medium mb-1">Total Flotte</p>
@@ -382,7 +382,7 @@ export function VehiclesManagementRedesigned() {
 
         {/* EN SERVICE */}
         <div className="p-6 rounded-2xl border border-emerald-500/20 relative overflow-hidden group" style={{ backgroundColor: 'var(--color-dash-card)' }}>
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div className="absolute inset-0 bg-linear-to-br from-emerald-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
           <div className="flex justify-between items-start relative z-10">
             <div>
               <p className="text-emerald-400 text-sm font-medium mb-1">En Service</p>
@@ -398,7 +398,7 @@ export function VehiclesManagementRedesigned() {
 
         {/* MAINTENANCE */}
         <div className="p-6 rounded-2xl border border-red-500/20 relative overflow-hidden group" style={{ backgroundColor: 'var(--color-dash-card)' }}>
-          <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div className="absolute inset-0 bg-linear-to-br from-red-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
           <div className="flex justify-between items-start relative z-10">
             <div>
               <p className="text-red-400 text-sm font-medium mb-1">Maintenance</p>
@@ -412,7 +412,7 @@ export function VehiclesManagementRedesigned() {
 
         {/* NON ASSIGNÉS */}
         <div className="p-6 rounded-2xl border border-amber-500/20 relative overflow-hidden group" style={{ backgroundColor: 'var(--color-dash-card)' }}>
-          <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div className="absolute inset-0 bg-linear-to-br from-amber-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
           <div className="flex justify-between items-start relative z-10">
             <div>
               <p className="text-amber-400 text-sm font-medium mb-1">Non Assignés</p>
@@ -481,7 +481,7 @@ export function VehiclesManagementRedesigned() {
               return (
                 <div
                   key={vehicle.id}
-                  className="bg-white/[0.02] border border-white/5 rounded-xl overflow-hidden hover:border-gold/20 hover:shadow-lg hover:shadow-gold/5 transition-all relative group"
+                  className="bg-white/2 border border-white/5 rounded-xl overflow-hidden hover:border-gold/20 hover:shadow-lg hover:shadow-gold/5 transition-all relative group"
                 >
                   {/* Select Checkbox */}
                   <div className="absolute top-3 left-3 z-10">

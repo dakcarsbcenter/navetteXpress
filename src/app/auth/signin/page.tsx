@@ -252,7 +252,7 @@ function SignInForm() {
                   style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-gold)' }}>
                   {stat.value}
                 </p>
-                <p className="text-[10px] uppercase tracking-[0.1em] mt-0.5"
+                <p className="text-[10px] uppercase tracking-widest mt-0.5"
                   style={{ color: '#6B6880' }}>
                   {stat.label}
                 </p>
@@ -459,7 +459,7 @@ export default function SignInPage() {
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-[#0A0A0F]">
         <div className="text-center">
-          <Loader2 className="animate-spin h-10 w-10 text-[#C9A84C] mx-auto" />
+          <Loader2 className="animate-spin h-10 w-10 text-dash-nav-active-border mx-auto" />
           <p className="mt-4 text-[#8A8799] animate-pulse">Chargement...</p>
         </div>
       </div>

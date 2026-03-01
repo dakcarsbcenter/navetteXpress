@@ -319,6 +319,16 @@ html {
   --color-mission-inprogress-bg: rgba(16, 185, 129, 0.08);
   --color-mission-done: #6B7280;
   --color-mission-done-bg: rgba(107, 114, 128, 0.07);
+
+  /* ── Tokens spécifiques dashboard CHAUFFEUR ── */
+  --color-driver-bg: var(--color-driver-bg);
+  --color-driver-card: var(--color-driver-card);
+  --color-driver-surface: var(--color-driver-surface);
+  --color-driver-border: var(--color-driver-border);
+  --color-driver-accent: var(--color-driver-accent);
+  --color-driver-accent-light: var(--color-driver-accent-light);
+  --color-driver-accent-bg: var(--color-driver-accent-bg);
+  --color-driver-accent-glow: var(--color-driver-accent-glow);
 }
 
 /* ── Animation entrée des cards client ── */
@@ -967,4 +977,21 @@ html {
 /* Border-left width for sidebar */
 .border-l-3 {
   border-left-width: 3px;
+}
+
+/* Style for select dropdown options */
+select option {
+  background-color: #1A1A26;
+  color: #F0EDE8;
+  padding: 4px 8px;
+}
+
+select option:checked {
+  background-color: #C9A84C;
+  color: #0A0A0F;
+}
+
+select option:hover {
+  background-color: #22222F;
+  color: #F0EDE8;
 }

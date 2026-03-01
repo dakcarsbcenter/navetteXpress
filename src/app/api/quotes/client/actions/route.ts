@@ -28,11 +28,24 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
+    // Validate quoteId is a positive integer to prevent format string vulnerabilities
+    const sanitizedQuoteId = parseInt(String(quoteId), 10)
+    if (isNaN(sanitizedQuoteId) || sanitizedQuoteId <= 0) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'ID du devis invalide' 
+      }, { status: 400 })
+    }
+
+    // Sanitize message to prevent format string vulnerabilities
+    // Convert to string, trim whitespace, and limit length to 500 characters
+    const sanitizedMessage = message ? String(message).trim().slice(0, 500) : null
+
     // Vérifier que le devis appartient au client
     const quote = await db.select()
       .from(quotes)
       .where(and(
-        eq(quotes.id, quoteId),
+        eq(quotes.id, sanitizedQuoteId),
         eq(quotes.customerEmail, session.user.email)
       ))
       .limit(1)
@@ -61,24 +74,24 @@ export async function POST(request: NextRequest) {
       case 'accept':
         newStatus = 'accepted'
         clientNotes += `\n[${new Date().toLocaleString('fr-FR')}] Devis accepté par le client`
-        if (message) {
-          clientNotes += `\nMessage du client: ${message}`
+        if (sanitizedMessage) {
+          clientNotes += `\nMessage du client: ${sanitizedMessage}`
         }
         break
       
       case 'reject':
         newStatus = 'rejected'
         clientNotes += `\n[${new Date().toLocaleString('fr-FR')}] Devis rejeté par le client`
-        if (message) {
-          clientNotes += `\nRaison du rejet: ${message}`
+        if (sanitizedMessage) {
+          clientNotes += `\nRaison du rejet: ${sanitizedMessage}`
         }
         break
       
       case 'negotiate':
         newStatus = 'pending'
         clientNotes += `\n[${new Date().toLocaleString('fr-FR')}] Demande de négociation du client`
-        if (message) {
-          clientNotes += `\nMessage de négociation: ${message}`
+        if (sanitizedMessage) {
+          clientNotes += `\nMessage de négociation: ${sanitizedMessage}`
         }
         break
       
@@ -90,7 +103,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Mettre à jour le devis
-    console.log('Mise à jour du devis avec:', { status: newStatus, clientNotes, quoteId })
+    console.log('Mise à jour du devis avec:', { status: newStatus, clientNotes, quoteId: sanitizedQuoteId })
     
     await db.update(quotes)
       .set({
@@ -98,7 +111,7 @@ export async function POST(request: NextRequest) {
         clientNotes,
         updatedAt: new Date()
       })
-      .where(eq(quotes.id, quoteId))
+      .where(eq(quotes.id, sanitizedQuoteId))
       
     console.log('Devis mis à jour avec succès')
 
@@ -108,7 +121,8 @@ export async function POST(request: NextRequest) {
     
     if (action === 'accept') {
       console.log('📄 Génération automatique de la facture et réservation...')
-      console.log(`   📋 Devis #${currentQuote.id}:`, {
+      console.log('   📋 Devis:', {
+        id: currentQuote.id,
         customerName: currentQuote.customerName,
         estimatedPrice: currentQuote.estimatedPrice,
         preferredDate: currentQuote.preferredDate,
@@ -154,7 +168,7 @@ export async function POST(request: NextRequest) {
           status: 'pending',
           issueDate,
           dueDate,
-          notes: message ? `Note du client: ${message}` : null
+          notes: sanitizedMessage ? `Note du client: ${sanitizedMessage}` : null
         }).returning()
 
         console.log(`✅ Facture ${invoiceNumber} créée avec succès (ID: ${newInvoice.id})`)
@@ -253,7 +267,7 @@ export async function POST(request: NextRequest) {
           scheduledDateTime,
           status: 'confirmed' as const, // Statut confirmé directement
           price: currentQuote.estimatedPrice,
-          notes: `Réservation créée automatiquement suite à l'acceptation du devis #${currentQuote.id}\n\nService: ${currentQuote.service}\n\nDétails du devis:\n${quoteMessage}\n\n${message ? `Message du client: ${message}` : ''}`,
+          notes: `Réservation créée automatiquement suite à l'acceptation du devis #${currentQuote.id}\n\nService: ${currentQuote.service}\n\nDétails du devis:\n${quoteMessage}\n\n${sanitizedMessage ? `Message du client: ${sanitizedMessage}` : ''}`,
           passengers,
           luggage,
           updatedAt: new Date()
@@ -299,7 +313,7 @@ export async function POST(request: NextRequest) {
 
       // Envoyer email à l'admin pour notifier l'acceptation du devis
       try {
-        console.log(`📧 Envoi notification admin pour devis accepté #${currentQuote.id}...`);
+        console.log('📧 Envoi notification admin pour devis accepté #' + String(currentQuote.id) + '...');
         
         await sendQuoteAcceptedEmail({
           quoteId: `QUOTE-${currentQuote.id}`,
@@ -318,14 +332,14 @@ export async function POST(request: NextRequest) {
     // Si le devis est rejeté, envoyer email à l'admin
     if (action === 'reject') {
       try {
-        console.log(`📧 Envoi notification admin pour devis rejeté #${currentQuote.id}...`);
+        console.log('📧 Envoi notification admin pour devis rejeté #' + String(currentQuote.id) + '...');
         
         await sendQuoteRejectedEmail({
           quoteId: `QUOTE-${currentQuote.id}`,
           customerName: currentQuote.customerName,
           customerEmail: currentQuote.customerEmail,
           service: currentQuote.service,
-          rejectionReason: message
+          rejectionReason: sanitizedMessage
         });
 
         console.log(`✅ Notification admin devis rejeté envoyée`);

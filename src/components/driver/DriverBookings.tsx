@@ -344,9 +344,9 @@ export function DriverBookings() {
                           }}
                           className="appearance-none bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 dark:text-gray-300"
                         >
-                          <option value="">Actions...</option>
-                          <option value="approve" className="text-green-600">Approuver</option>
-                          <option value="reject" className="text-red-600">Rejeter</option>
+                          <option value="" style={{ color: '#000' }}>Actions...</option>
+                          <option value="approve" className="text-green-600" style={{ color: '#000' }}>Approuver</option>
+                          <option value="reject" className="text-red-600" style={{ color: '#000' }}>Rejeter</option>
                         </select>
                         <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                           <CaretDown size={14} weight="bold" className="text-gray-400" />

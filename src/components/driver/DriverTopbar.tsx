@@ -38,10 +38,10 @@ export function DriverTopbar() {
             }}>
 
             <div>
-                <h1 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                <h1 className="text-2xl font-bold" style={{ color: '#FFFFFF' }}>
                     Tableau de bord
                 </h1>
-                <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
+                <p className="text-sm mt-1" style={{ color: '#FFFFFF', fontFamily: 'var(--font-mono)' }}>
                     {formatDate(currentDateTime)} — {formatTime(currentDateTime)}
                 </p>
             </div>
