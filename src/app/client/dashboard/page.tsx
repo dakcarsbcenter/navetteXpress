@@ -7,7 +7,7 @@ import { Navigation } from "@/components/navigation"
 import Link from "next/link"
 import { CreateReviewModal } from "@/components/client/CreateReviewModal"
 import { EditProfileModal } from "@/components/client/EditProfileModal"
-import { EditBookingModal } from "@/components/client/EditBookingModal"
+import { BookingDetailsModal } from "@/components/client/BookingDetailsModal"
 import { PriceApprovalModal } from "@/components/client/PriceApprovalModal"
 import { ClientQuotesView } from "@/components/client/ClientQuotesView"
 import { ClientInvoicesView } from "@/components/client/ClientInvoicesView"
@@ -15,7 +15,7 @@ import UniversalProfilePhotoUpload from "@/components/ui/UniversalProfilePhotoUp
 import { VehiclesManagement } from "@/components/client/VehiclesManagement"
 import { ClientUsersManagement } from "@/components/client/ClientUsersManagement"
 import { TripStatusBadge } from "@/components/client/TripStatusBadge"
-import { SquaresFour, CalendarBlank, FileText, Receipt, Star, ChatCircle, Car, Users, SignOut, Bell, Plus, MapPin, Clock, AirplaneTakeoff, Eye, Phone, Wallet, Calendar, UserCircle, ClipboardText, CaretRight, NavigationArrow, DownloadSimple, PencilSimple, Trash, List, CreditCard, X } from "@phosphor-icons/react"
+import { SquaresFour, CalendarBlank, FileText, Receipt, Star, ChatCircle, Car, Users, SignOut, Bell, Plus, MapPin, Clock, AirplaneTakeoff, Eye, Phone, Wallet, Calendar, UserCircle, ClipboardText, CaretRight, NavigationArrow, DownloadSimple, PencilSimple, Trash, List, CreditCard, X, CheckCircle, Envelope, Buildings, IdentificationCard } from "@phosphor-icons/react"
 
 interface Booking {
   id: number
@@ -81,6 +81,15 @@ interface UserProfile {
   name: string
   email: string
   phone?: string
+  image?: string
+  address?: string
+  isCompany?: boolean
+  companyName?: string
+  ninea?: string
+  raisonSociale?: string
+  companyAddress?: string
+  companyPhone?: string
+  bp?: string
   role: string
   createdAt: string
 }
@@ -521,15 +530,18 @@ function ClientDashboardContent() {
           : bookings.filter(b => b.status === bookingsFilter)
 
         return (
-          <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
-            <div className="p-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-              <div className="flex items-center justify-between flex-wrap gap-4">
-                <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>Mes réservations</h3>
-                <div className="flex gap-2 items-center flex-wrap">
+          <div className="space-y-6">
+            <div className="client-card-enter rounded-2xl overflow-hidden" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
+              <div className="flex items-center justify-between flex-wrap gap-4 px-6 py-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                <div>
+                  <h3 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>Mes réservations</h3>
+                  <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>Gérez l'historique et le statut de vos trajets</p>
+                </div>
+                <div className="flex gap-3 items-center flex-wrap">
                   <select
                     value={bookingsFilter}
                     onChange={(e) => setBookingsFilter(e.target.value)}
-                    className="px-3 py-2 rounded-xl text-xs outline-none"
+                    className="px-4 py-2 rounded-xl text-xs outline-none transition-all hover:border-[var(--color-client-accent)]"
                     style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-text-primary)' }}
                   >
                     <option value="pending">En attente</option>
@@ -539,151 +551,155 @@ function ClientDashboardContent() {
                     <option value="cancelled">Annulées</option>
                     <option value="all">Toutes</option>
                   </select>
-                  {hasQuotesCreatePermission && (
-                    <Link
-                      href="/quote-request"
-                      className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
-                    >
-                      Demander un devis
-                    </Link>
-                  )}
                   {hasBookingsCreatePermission && (
-                    <Link
-                      href="/reservation"
-                      className="bg-[#A73B3C] hover:bg-[#8B3032] text-white px-4 py-2 rounded-lg text-sm transition-colors"
-                    >
-                      Nouvelle réservation
+                    <Link href="/reservation"
+                      className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all hover:brightness-110"
+                      style={{ backgroundColor: 'var(--color-client-accent)', color: '#000' }}>
+                      <Plus size={14} weight="bold" /> Nouvelle réservation
                     </Link>
                   )}
                 </div>
               </div>
-            </div>
-            <div className="p-6">
-              {filteredClientBookings.length > 0 ? (
-                <div className="space-y-4">
-                  {filteredClientBookings.map((booking) => (
-                    <div key={booking.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex-1">
-                          <h4 className="font-medium text-[#1A1A1A] dark:text-white">
-                            Réservation #{booking.id}
-                          </h4>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                            {booking.pickupAddress} → {booking.dropoffAddress}
-                          </p>
-                          {/* Badge pour prix en attente d'approbation */}
-                          {booking.clientResponse === 'pending' && booking.price && parseFloat(booking.price) > 0 && (
-                            <div className="mt-2">
-                              <span className="inline-flex items-center gap-1 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 px-2 py-1 rounded-full text-xs font-medium border border-yellow-200 dark:border-yellow-700">
-                                💰 En attente de votre réponse
-                              </span>
+
+              <div className="p-0">
+                {filteredClientBookings.length > 0 ? (
+                  <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
+                    {filteredClientBookings.map((booking) => (
+                      <div key={booking.id} className="p-6 transition-colors duration-150 hover:bg-white/[0.01]">
+                        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-3 mb-3">
+                              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                                style={{ backgroundColor: 'rgba(255,255,255,0.03)', color: 'var(--color-text-secondary)' }}>
+                                <ClipboardText size={18} weight="light" />
+                              </div>
+                              <div>
+                                <h4 className="font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>
+                                  Réservation <span style={{ fontFamily: 'var(--font-mono)' }}>#{booking.id}</span>
+                                </h4>
+                                <p className="text-[10px] uppercase tracking-wider mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
+                                  Créée le {new Date(booking.createdAt).toLocaleDateString('fr-FR')}
+                                </p>
+                              </div>
+                              <TripStatusBadge statut={booking.status} />
                             </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ml-0 lg:ml-13">
+                              <div className="flex items-start gap-3">
+                                <div className="mt-1 w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: 'var(--color-client-accent)' }} />
+                                <div>
+                                  <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color: 'var(--color-text-muted)' }}>Départ</p>
+                                  <p className="text-sm line-clamp-1" style={{ color: 'var(--color-text-secondary)' }}>{booking.pickupAddress}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-start gap-3">
+                                <div className="mt-1 w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: '#EF4444' }} />
+                                <div>
+                                  <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color: 'var(--color-text-muted)' }}>Arrivée</p>
+                                  <p className="text-sm line-clamp-1" style={{ color: 'var(--color-text-secondary)' }}>{booking.dropoffAddress}</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex flex-wrap items-center gap-6 lg:gap-12 shrink-0">
+                            <div>
+                              <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color: 'var(--color-text-muted)' }}>Date & Heure</p>
+                              <div className="flex items-center gap-2">
+                                <Calendar size={14} style={{ color: 'var(--color-client-accent)' }} />
+                                <p className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
+                                  {new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
+                                </p>
+                                <Clock size={14} className="ml-1" style={{ color: 'var(--color-client-accent)' }} />
+                                <p className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
+                                  {new Date(booking.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="text-left lg:text-right">
+                              <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color: 'var(--color-text-muted)' }}>Montant</p>
+                              <p className="text-lg font-bold" style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-mono)' }}>
+                                {booking.price ? `${parseFloat(booking.price).toLocaleString('fr-FR')} FCFA` : '---'}
+                              </p>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                              {/* Price Approval Action */}
+                              {booking.clientResponse === 'pending' && booking.price && parseFloat(booking.price) > 0 && (
+                                <button
+                                  onClick={() => { setBookingForPriceApproval(booking); setIsPriceApprovalModalOpen(true) }}
+                                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold transition-all live-badge"
+                                  style={{ backgroundColor: 'var(--color-client-accent)', color: '#000' }}
+                                >
+                                  <Wallet size={14} weight="bold" /> Accepter le prix
+                                </button>
+                              )}
+
+                              {/* Edit Action */}
+                              {hasBookingsUpdatePermission && !['confirmed', 'in_progress', 'completed', 'cancelled'].includes(booking.status) && (
+                                <button
+                                  onClick={() => { setEditingBooking(booking); setIsEditBookingModalOpen(true) }}
+                                  className="w-9 h-9 rounded-xl flex items-center justify-center transition-all"
+                                  style={{ backgroundColor: 'rgba(255,255,255,0.04)', color: 'var(--color-text-secondary)', border: '1px solid rgba(255,255,255,0.06)' }}
+                                  title="Modifier"
+                                >
+                                  <PencilSimple size={16} />
+                                </button>
+                              )}
+
+                              {/* View Details */}
+                              <button
+                                onClick={() => { setEditingBooking(booking); setIsEditBookingModalOpen(true) }}
+                                className="w-9 h-9 rounded-xl flex items-center justify-center transition-all hover:bg-[var(--color-client-accent-bg)] hover:text-[var(--color-client-accent)]"
+                                style={{ backgroundColor: 'rgba(255,255,255,0.04)', color: 'var(--color-text-secondary)', border: '1px solid rgba(255,255,255,0.06)' }}
+                                title="Voir détails"
+                              >
+                                <Eye size={16} />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Price Status Messages */}
+                        <div className="mt-4 flex flex-wrap gap-2 ml-0 lg:ml-13">
+                          {booking.clientResponse === 'pending' && booking.price && parseFloat(booking.price) > 0 && (
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-medium" style={{ backgroundColor: 'rgba(245,158,11,0.1)', color: '#F59E0B', border: '1px solid rgba(245,158,11,0.2)' }}>
+                              <Clock size={12} /> Proposition de prix reçue - En attente de votre validation
+                            </span>
                           )}
                           {booking.clientResponse === 'accepted' && (
-                            <div className="mt-2">
-                              <span className="inline-flex items-center gap-1 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 px-2 py-1 rounded-full text-xs font-medium border border-green-200 dark:border-green-700">
-                                ✅ Prix accepté
-                              </span>
-                            </div>
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-medium" style={{ backgroundColor: 'rgba(16,185,129,0.1)', color: 'var(--color-client-accent)', border: '1px solid rgba(16,185,129,0.2)' }}>
+                              <CheckCircle size={12} weight="fill" /> Prix accepté
+                            </span>
                           )}
                           {booking.clientResponse === 'rejected' && (
-                            <div className="mt-2">
-                              <span className="inline-flex items-center gap-1 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 px-2 py-1 rounded-full text-xs font-medium border border-red-200 dark:border-red-700">
-                                ❌ Prix refusé
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {getStatusBadge(booking.status)}
-                          {/* Bouton pour répondre à la proposition de prix */}
-                          {booking.clientResponse === 'pending' && booking.price && parseFloat(booking.price) > 0 && (
-                            <button
-                              onClick={() => {
-                                setBookingForPriceApproval(booking)
-                                setIsPriceApprovalModalOpen(true)
-                              }}
-                              className="bg-linear-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-all shadow-sm hover:shadow-md flex items-center gap-1.5"
-                              title="Répondre à la proposition de prix"
-                            >
-                              <Wallet weight="light" /> Répondre
-                            </button>
-                          )}
-                          {/* Bouton éditer visible seulement si la réservation n'est pas confirmée/terminée/annulée */}
-                          {hasBookingsUpdatePermission && !['confirmed', 'in_progress', 'completed', 'cancelled'].includes(booking.status) && (
-                            <button
-                              onClick={() => {
-                                setEditingBooking(booking)
-                                setIsEditBookingModalOpen(true)
-                              }}
-                              className="text-[#A73B3C] hover:text-[#8B3032] text-sm font-medium px-2 py-1 rounded hover:bg-[#E5C16C]/10 transition-colors"
-                              title="Modifier la réservation"
-                            >
-                              <PencilSimple size={14} weight="light" className="inline mr-1" /> Modifier
-                            </button>
-                          )}
-                          {hasBookingsDeletePermission && (
-                            <button
-                              className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium"
-                              title="Supprimer la réservation"
-                            >
-                              <Trash size={14} weight="light" />
-                            </button>
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-medium" style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.2)' }}>
+                              <X size={12} weight="bold" /> Prix refusé
+                            </span>
                           )}
                         </div>
                       </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                        <div>
-                          <p className="font-medium text-[#1A1A1A] dark:text-gray-300">Date et heure</p>
-                          <p className="text-gray-600 dark:text-gray-400">
-                            {new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR', {
-                              day: 'numeric',
-                              month: 'long',
-                              year: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
-                          </p>
-                        </div>
-
-                        {booking.price && (
-                          <div>
-                            <p className="font-medium text-[#1A1A1A] dark:text-gray-300">Prix</p>
-                            <p className="text-gray-600 dark:text-gray-400">{booking.price} FCFA</p>
-                          </div>
-                        )}
-
-                        <div>
-                          <p className="font-medium text-[#1A1A1A] dark:text-gray-300">Créée le</p>
-                          <p className="text-gray-600 dark:text-gray-400">
-                            {new Date(booking.createdAt).toLocaleDateString('fr-FR')}
-                          </p>
-                        </div>
-                      </div>
-
-                      {booking.notes && (
-                        <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                          <p className="font-medium text-[#1A1A1A] dark:text-gray-300 text-sm">Notes</p>
-                          <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">{booking.notes}</p>
-                        </div>
-                      )}
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-20 px-6">
+                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-client-border)' }}>
+                      <CalendarBlank size={28} weight="light" style={{ color: 'var(--color-text-muted)' }} />
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <p className="text-gray-500 dark:text-gray-400">Aucune réservation trouvée</p>
-                  {hasBookingsCreatePermission && (
-                    <Link
-                      href="/reservation"
-                      className="inline-block mt-2 bg-[#A73B3C] hover:bg-[#8B3032] text-white px-4 py-2 rounded-lg text-sm transition-colors"
-                    >
-                      Faire ma première réservation
-                    </Link>
-                  )}
-                </div>
-              )}
+                    <h4 className="text-base font-medium mb-1" style={{ color: 'var(--color-text-primary)' }}>Aucune réservation trouvée</h4>
+                    <p className="text-xs max-w-xs mx-auto mb-6" style={{ color: 'var(--color-text-muted)' }}>
+                      {bookingsFilter === 'all' ? "Vous n'avez pas encore effectué de réservation." : `Aucune réservation avec le statut "${bookingsFilter}".`}
+                    </p>
+                    {hasBookingsCreatePermission && (
+                      <Link href="/reservation" className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-medium transition-all"
+                        style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)', border: '1px solid var(--color-client-accent-glow)' }}>
+                        <Plus size={16} weight="bold" /> Réserver un trajet
+                      </Link>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )
@@ -816,134 +832,201 @@ function ClientDashboardContent() {
 
       case 'profile':
         return (
-          <div className="space-y-5">
-            {/* Informations Personnelles */}
-            <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
-              <div className="p-5 flex items-center justify-between" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                <div>
-                  <h3 className="text-sm font-semibold flex items-center gap-2" style={{ color: 'var(--color-text-primary)' }}>
-                    <UserCircle size={15} weight="light" style={{ color: 'var(--color-client-accent)' }} /> Mon profil
-                  </h3>
-                  <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>Gérez vos informations personnelles</p>
+          <div className="space-y-6 animate-fadeIn">
+            {/* Profil Header Card */}
+            <div className="relative rounded-[2.5rem] overflow-hidden bg-[#111E1A] border border-[#10B981]/10 px-8 py-10 shadow-2xl">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 blur-[100px] rounded-full -mr-20 -mt-20" />
+
+              <div className="relative flex flex-col md:flex-row items-center gap-10">
+                <div className="relative group shrink-0">
+                  <div className="absolute inset-0 bg-emerald-500 blur-xl opacity-20 group-hover:opacity-40 transition-opacity" />
+                  <div className="relative w-32 h-32 rounded-[2rem] border-4 border-[#10B981] p-1 bg-[#111E1A] overflow-hidden">
+                    {userProfile?.image ? (
+                      <img src={userProfile.image} alt={userProfile.name} className="w-full h-full object-cover rounded-[1.5rem]" />
+                    ) : (
+                      <div className="w-full h-full bg-slate-800 flex items-center justify-center text-3xl font-bold text-emerald-500">
+                        {userProfile?.name?.slice(0, 2).toUpperCase()}
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <button onClick={() => setIsEditProfileModalOpen(true)}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-colors"
-                  style={{ backgroundColor: 'var(--color-client-accent)', color: '#000' }}>
-                  <PencilSimple size={12} weight="bold" /> Modifier
-                </button>
+
+                <div className="flex-1 text-center md:text-left space-y-4">
+                  <div>
+                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-2">
+                      <h2 className="text-3xl font-bold text-white tracking-tight">{userProfile?.name}</h2>
+                      {userProfile?.isCompany && (
+                        <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-widest border border-emerald-500/20">
+                          Compte Business
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-white/40 flex items-center justify-center md:justify-start gap-2 text-sm font-medium">
+                      <Envelope size={16} weight="duotone" /> {userProfile?.email}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap justify-center md:justify-start gap-4 pt-2">
+                    <button
+                      onClick={() => setIsEditProfileModalOpen(true)}
+                      className="px-6 py-2.5 rounded-xl bg-emerald-500 text-black font-bold text-sm hover:brightness-110 active:scale-95 transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/10"
+                    >
+                      <PencilSimple size={18} weight="bold" /> Modifier mon profil
+                    </button>
+                    <button className="px-6 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white/70 font-bold text-sm hover:bg-white/10 transition-all flex items-center gap-2">
+                      <IdentificationCard size={18} /> Voir ma carte
+                    </button>
+                  </div>
+                </div>
               </div>
-              <div className="p-5">
-                <div className="grid md:grid-cols-2 gap-5">
-                  <div className="space-y-4">
-                    <div>
-                      <p className="text-[10px] uppercase tracking-[0.08em] mb-1" style={{ color: 'var(--color-text-muted)' }}>Nom complet</p>
-                      <p className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
-                        {userProfile?.name || session?.user?.name || "Non renseigné"}
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Informations de contact */}
+              <div className="lg:col-span-2 space-y-6">
+                <div className="p-8 rounded-[2rem] bg-[#111620] border border-white/5 space-y-8">
+                  <div className="flex items-center gap-3 text-emerald-500/70">
+                    <IdentificationCard size={20} weight="bold" />
+                    <h4 className="text-xs font-bold uppercase tracking-[0.2em]">Détails du compte</h4>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Numéro de téléphone</p>
+                      <p className="text-white font-medium flex items-center gap-2">
+                        <Phone size={16} className="text-emerald-500" /> {userProfile?.phone || "Non renseigné"}
                       </p>
                     </div>
-                    <div>
-                      <p className="text-[10px] uppercase tracking-[0.08em] mb-1" style={{ color: 'var(--color-text-muted)' }}>Adresse email</p>
-                      <div className="flex items-center gap-2">
-                        <p className="text-sm" style={{ color: 'var(--color-text-primary)' }}>
-                          {userProfile?.email || session?.user?.email || "Non renseigné"}
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Adresse de résidence</p>
+                      <p className="text-white font-medium flex items-center gap-2 line-clamp-1">
+                        <MapPin size={16} className="text-emerald-500" /> {userProfile?.address || "Dakar, Sénégal"}
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Membre depuis</p>
+                      <p className="text-white font-medium flex items-center gap-2">
+                        <CalendarBlank size={16} className="text-emerald-500" /> {userProfile?.createdAt ? new Date(userProfile.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : "---"}
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Statut du compte</p>
+                      <p className="text-white font-medium flex items-center gap-2">
+                        <CheckCircle size={16} className="text-emerald-500" weight="fill" /> Vérifié & Actif
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section Entreprise (Si applicable) */}
+                {userProfile?.isCompany ? (
+                  <div className="p-8 rounded-[2rem] bg-emerald-500/[0.03] border border-emerald-500/10 space-y-8 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                      <Buildings size={120} weight="duotone" />
+                    </div>
+
+                    <div className="flex items-center gap-3 text-emerald-500">
+                      <Buildings size={20} weight="bold" />
+                      <h4 className="text-xs font-bold uppercase tracking-[0.2em]">Informations Entreprise</h4>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 relative">
+                      <div className="space-y-1">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Nom de l'entreprise</p>
+                        <p className="text-white text-lg font-bold">{userProfile.companyName || "Non renseigné"}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">NINEA</p>
+                        <p className="text-white font-mono font-medium tracking-wider">{userProfile.ninea || "Non renseigné"}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Raison Sociale</p>
+                        <p className="text-white font-medium">{userProfile.raisonSociale || "Non renseigné"}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Boîte Postale (BP)</p>
+                        <p className="text-white font-medium">{userProfile.bp || "Aucune"}</p>
+                      </div>
+                      <div className="space-y-1 md:col-span-2">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Siège Social</p>
+                        <p className="text-white font-medium flex items-center gap-2">
+                          <MapPin size={16} className="text-emerald-500" /> {userProfile.companyAddress || "Non renseignée"}
                         </p>
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium"
-                          style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)' }}>
-                          ✓ Vérifié
-                        </span>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Téléphone pro</p>
+                        <p className="text-white font-medium flex items-center gap-2">
+                          <Phone size={16} className="text-emerald-500" /> {userProfile.companyPhone || "Non renseigné"}
+                        </p>
                       </div>
                     </div>
-                    <div>
-                      <p className="text-[10px] uppercase tracking-[0.08em] mb-1" style={{ color: 'var(--color-text-muted)' }}>Téléphone</p>
-                      <p className="text-sm" style={{ color: 'var(--color-text-primary)' }}>
-                        {userProfile?.phone || "Non renseigné"}
-                      </p>
-                    </div>
                   </div>
-                  <div className="space-y-4">
-                    <div>
-                      <p className="text-[10px] uppercase tracking-[0.08em] mb-1" style={{ color: 'var(--color-text-muted)' }}>Photo de profil</p>
-                      <UniversalProfilePhotoUpload
-                        currentImage={session?.user?.image || undefined}
-                        onImageUpdate={(imageUrl) => { console.log('✅ Photo mise à jour:', imageUrl) }}
-                        onSuccess={(message) => { console.log('✅ Photo mise à jour:', message) }}
-                        onError={(error) => { console.error('❌ Erreur upload:', error) }}
-                      />
-                    </div>
-                    <div>
-                      <p className="text-[10px] uppercase tracking-[0.08em] mb-1" style={{ color: 'var(--color-text-muted)' }}>Rôle</p>
-                      <div className="flex items-center gap-2">
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium"
-                          style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)' }}>
-                          <UserCircle size={11} weight="fill" /> Client
-                        </span>
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-[10px] uppercase tracking-[0.08em] mb-1" style={{ color: 'var(--color-text-muted)' }}>Membre depuis</p>
-                      <p className="text-sm" style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-mono)' }}>
-                        {userProfile?.createdAt ?
-                          new Date(userProfile.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) :
-                          "Information non disponible"
-                        }
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] uppercase tracking-[0.08em] mb-1" style={{ color: 'var(--color-text-muted)' }}>ID Client</p>
-                      <p className="text-xs" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
-                        {userProfile?.id?.slice(0, 8) || (session?.user as unknown as { id?: string })?.id?.slice(0, 8) || "N/A"}...
-                      </p>
-                    </div>
+                ) : (
+                  <div className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 border-dashed flex flex-col items-center justify-center text-center py-12">
+                    <Buildings size={40} weight="thin" className="text-white/20 mb-4" />
+                    <h4 className="text-sm font-bold text-white/60">Vous êtes un professionnel ?</h4>
+                    <p className="text-xs text-white/30 mt-1 max-w-xs">
+                      Activez le mode entreprise dans vos réglages pour bénéficier d'une facturation professionnelle et de services dédiés.
+                    </p>
+                    <button
+                      onClick={() => setIsEditProfileModalOpen(true)}
+                      className="mt-6 px-5 py-2 rounded-xl bg-white/5 border border-white/10 text-white/60 text-xs font-bold hover:bg-white/10 transition-all uppercase tracking-widest"
+                    >
+                      Passer au compte Pro
+                    </button>
                   </div>
-                </div>
+                )}
               </div>
-            </div>
 
-            {/* Activité */}
-            <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
-              <div className="p-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                <h3 className="text-sm font-semibold flex items-center gap-2" style={{ color: 'var(--color-text-primary)' }}>
-                  <ClipboardText size={15} weight="light" style={{ color: 'var(--color-client-accent)' }} /> Mon activité
-                </h3>
-              </div>
-              <div className="p-5">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {[
-                    { label: 'Réservations', value: stats.totalBookings, color: 'var(--color-client-accent)' },
-                    { label: 'Terminées', value: stats.completedBookings, color: '#10B981' },
-                    { label: 'Avis donnés', value: stats.totalReviews, color: '#8B5CF6' },
-                    { label: 'Note moy.', value: stats.averageRating.toFixed(1), color: '#F59E0B' },
-                  ].map((s, i) => (
-                    <div key={i} className="text-center p-4 rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-client-border)' }}>
-                      <div className="text-lg font-bold" style={{ fontFamily: 'var(--font-mono)', color: s.color }}>{s.value}</div>
-                      <div className="text-[10px] uppercase tracking-[0.08em] mt-0.5" style={{ color: 'var(--color-text-muted)' }}>{s.label}</div>
+              {/* Sidebar: Sécurité & Statut */}
+              <div className="space-y-6">
+                {/* Activité Quick Stats */}
+                <div className="p-6 rounded-[2rem] bg-[#111620] border border-white/5 space-y-6">
+                  <h5 className="text-[10px] font-bold uppercase tracking-widest text-white/30">Résumé activité</h5>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+                      <p className="text-2xl font-bold text-white" style={{ fontFamily: 'var(--font-mono)' }}>{stats.totalBookings}</p>
+                      <p className="text-[9px] uppercase tracking-widest text-white/30 mt-1">Trajets</p>
                     </div>
-                  ))}
+                    <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+                      <p className="text-2xl font-bold text-emerald-500" style={{ fontFamily: 'var(--font-mono)' }}>{stats.completedBookings}</p>
+                      <p className="text-[9px] uppercase tracking-widest text-white/30 mt-1">Réussis</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            {/* Sécurité */}
-            <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
-              <div className="p-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                <h3 className="text-sm font-semibold flex items-center gap-2" style={{ color: 'var(--color-text-primary)' }}>
-                  <Eye size={15} weight="light" style={{ color: 'var(--color-client-accent)' }} /> Sécurité du compte
-                </h3>
-              </div>
-              <div className="p-5 space-y-3">
-                <div className="flex items-center justify-between p-3 rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-client-border)' }}>
-                  <div>
-                    <h4 className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>Mot de passe</h4>
-                    <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>Dernière modification il y a plus de 30 jours</p>
+                {/* Sécurité */}
+                <div className="p-6 rounded-[2rem] bg-emerald-500/5 border border-emerald-500/10 space-y-4">
+                  <div className="flex items-center gap-2 text-emerald-400">
+                    <CheckCircle size={18} weight="fill" />
+                    <h5 className="text-[10px] font-bold uppercase tracking-widest">Confiance & Sécurité</h5>
                   </div>
-                  <button className="text-xs font-medium" style={{ color: 'var(--color-client-accent)' }}>Changer</button>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-xs p-3 rounded-xl bg-black/20">
+                      <span className="text-white/50">Email vérifié</span>
+                      <span className="text-emerald-500 font-bold">OUI</span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs p-3 rounded-xl bg-black/20">
+                      <span className="text-white/50">Double Auth</span>
+                      <span className="text-white/30">NON ACTIF</span>
+                    </div>
+                  </div>
+                  <button className="w-full py-3 rounded-xl bg-white/5 border border-white/10 text-white/50 text-[10px] font-bold uppercase tracking-widest hover:bg-white/10 transition-all mt-2">
+                    Changer le mot de passe
+                  </button>
                 </div>
-                <div className="flex items-center justify-between p-3 rounded-xl" style={{ backgroundColor: 'var(--color-client-accent-bg)', border: '1px solid rgba(16,185,129,0.15)' }}>
-                  <div>
-                    <h4 className="text-sm font-medium" style={{ color: 'var(--color-client-accent)' }}>Email vérifié</h4>
-                    <p className="text-xs" style={{ color: 'var(--color-client-accent-light)' }}>Votre adresse email est confirmée</p>
+
+                {/* ID Unique */}
+                <div className="p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 flex flex-col items-center gap-4 py-8">
+                  <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center">
+                    <IdentificationCard size={32} weight="thin" className="text-white/40" />
                   </div>
-                  <span className="text-lg" style={{ color: 'var(--color-client-accent)' }}>✓</span>
+                  <div className="text-center">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-1">ID Client Unique</p>
+                    <p className="text-xs font-mono text-white/50 select-all cursor-pointer hover:text-emerald-400 transition-colors">
+                      {userProfile?.id || "N/A"}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -980,9 +1063,12 @@ function ClientDashboardContent() {
 
         {/* User Card */}
         <div className="px-5 mb-8">
-          <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.05]">
+          <button
+            onClick={() => setActiveTab('profile')}
+            className={`w-full p-4 rounded-2xl bg-white/[0.03] border border-white/[0.05] transition-all text-left group ${activeTab === 'profile' ? 'bg-[#10B981]/10 border-[#10B981]/20 shadow-[0_0_20px_rgba(16,185,129,0.05)]' : 'hover:bg-white/5'}`}
+          >
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full border-2 border-[#10B981] p-0.5 overflow-hidden">
+              <div className={`w-10 h-10 rounded-full border-2 transition-colors p-0.5 overflow-hidden ${activeTab === 'profile' ? 'border-[#10B981]' : 'border-white/10 group-hover:border-[#10B981]'}`}>
                 {session?.user?.image ? (
                   <img src={session.user.image} alt="" className="w-full h-full object-cover rounded-full" />
                 ) : (
@@ -1000,7 +1086,7 @@ function ClientDashboardContent() {
               <span className="w-1 h-1 rounded-full bg-[#10B981] animate-pulse"></span>
               En ligne
             </div>
-          </div>
+          </button>
         </div>
 
         {/* Navigation */}
@@ -1014,7 +1100,7 @@ function ClientDashboardContent() {
           ].map((item) => (
             <button
               key={item.id}
-              onClick={() => setActiveTab(item.id)}
+              onClick={() => setActiveTab(item.id as TabType)}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${activeTab === item.id
                 ? 'bg-[#10B981]/10 text-white border-l-2 border-[#10B981]'
                 : 'text-gray-500 hover:bg-white/[0.02] hover:text-gray-300 border-l-2 border-transparent'
@@ -1024,6 +1110,18 @@ function ClientDashboardContent() {
               <span className="text-sm font-medium">{item.label}</span>
             </button>
           ))}
+
+          <div className="px-4 mt-6 mb-2 text-[10px] font-semibold text-gray-600 uppercase tracking-widest">Mon Compte</div>
+          <button
+            onClick={() => setActiveTab('profile')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${activeTab === 'profile'
+              ? 'bg-[#10B981]/10 text-white border-l-2 border-[#10B981]'
+              : 'text-gray-500 hover:bg-white/[0.02] hover:text-gray-300 border-l-2 border-transparent'
+              }`}
+          >
+            <UserCircle size={18} weight={activeTab === 'profile' ? "fill" : "light"} className={activeTab === 'profile' ? 'text-[#10B981]' : 'group-hover:text-gray-300'} />
+            <span className="text-sm font-medium">Paramètres Profil</span>
+          </button>
 
           <div className="px-4 mt-6 mb-2 text-[10px] font-semibold text-gray-600 uppercase tracking-widest">Expérience</div>
           <button
@@ -1212,14 +1310,15 @@ function ClientDashboardContent() {
       <EditProfileModal
         isOpen={isEditProfileModalOpen}
         onClose={() => setIsEditProfileModalOpen(false)}
+        initialData={userProfile}
         onSuccess={() => {
           // Recharger les données après mise à jour du profil
           loadClientData()
         }}
       />
 
-      {/* Modal d'édition de réservation */}
-      <EditBookingModal
+      {/* Modal de détails et édition de réservation */}
+      <BookingDetailsModal
         isOpen={isEditBookingModalOpen}
         onClose={() => {
           setIsEditBookingModalOpen(false)
@@ -1264,11 +1363,11 @@ export default function ClientDashboard() {
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--color-client-bg)' }}>
         <div className="text-center">
           <div className="flex flex-col items-center gap-4">
-  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
-       style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
-    Navette Xpress
-  </div>
-</div>
+            <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+              style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
+              Navette Xpress
+            </div>
+          </div>
           <p className="mt-4 text-xs font-medium uppercase tracking-widest text-gray-500">Chargement de votre espace...</p>
         </div>
       </div>

@@ -19,6 +19,7 @@ import {
 } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import AdForm from './AdForm';
 
 interface Ad {
     id: string;
@@ -37,6 +38,20 @@ export default function PublicitesClient({ ads: initialAds }: { ads: Ad[] }) {
     const [ads, setAds] = useState(initialAds);
     const [loading, setLoading] = useState(false);
     const [adToDelete, setAdToDelete] = useState<string | null>(null);
+    const [showForm, setShowForm] = useState(false);
+    const [editingAd, setEditingAd] = useState<Ad | null>(null);
+
+    const fetchAds = async () => {
+        try {
+            const res = await fetch('/api/ads/all');
+            if (res.ok) {
+                const data = await res.json();
+                setAds(data);
+            }
+        } catch (error) {
+            console.error('Error fetching ads:', error);
+        }
+    };
 
     const stats = {
         total: ads.length,
@@ -100,13 +115,16 @@ export default function PublicitesClient({ ads: initialAds }: { ads: Ad[] }) {
                     </h1>
                     <p className="text-slate-500 mt-1">Créez et gérez vos campagnes publicitaires sur le site</p>
                 </div>
-                <Link
-                    href="/admin/publicites/nouvelle"
+                <button
+                    onClick={() => {
+                        setEditingAd(null);
+                        setShowForm(true);
+                    }}
                     className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-sm hover:shadow-indigo-100"
                 >
                     <Plus weight="bold" />
                     Nouvelle Publicité
-                </Link>
+                </button>
             </div>
 
             {/* Stats Cards */}
@@ -202,13 +220,16 @@ export default function PublicitesClient({ ads: initialAds }: { ads: Ad[] }) {
                                     </td>
                                     <td className="px-6 py-4 text-right">
                                         <div className="flex items-center justify-end gap-2">
-                                            <Link
-                                                href={`/admin/publicites/${ad.id}`}
+                                            <button
+                                                onClick={() => {
+                                                    setEditingAd(ad);
+                                                    setShowForm(true);
+                                                }}
                                                 className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
                                                 title="Modifier"
                                             >
                                                 <PencilSimple size={20} />
-                                            </Link>
+                                            </button>
                                             <button
                                                 onClick={() => confirmDelete(ad.id)}
                                                 disabled={loading}
@@ -226,9 +247,15 @@ export default function PublicitesClient({ ads: initialAds }: { ads: Ad[] }) {
                                         <div className="flex flex-col items-center gap-2">
                                             <Megaphone size={40} weight="thin" />
                                             <p>Aucune publicité trouvée</p>
-                                            <Link href="/admin/publicites/nouvelle" className="text-indigo-600 font-medium hover:underline">
+                                            <button
+                                                onClick={() => {
+                                                    setEditingAd(null);
+                                                    setShowForm(true);
+                                                }}
+                                                className="text-indigo-600 font-medium hover:underline"
+                                            >
                                                 Créer votre première campagne
-                                            </Link>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -267,6 +294,42 @@ export default function PublicitesClient({ ads: initialAds }: { ads: Ad[] }) {
                                 {loading && <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />}
                                 Supprimer
                             </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Ad Creation/Edition Modal */}
+            {showForm && (
+                <div className="fixed inset-0 z-50 flex items-start justify-center p-4 bg-black/60 backdrop-blur-md overflow-y-auto pt-10 animate-fadeIn">
+                    <div className="bg-slate-50 border border-white/20 rounded-3xl w-full max-w-4xl overflow-hidden shadow-2xl animate-scaleIn mb-10">
+                        <div className="p-6 border-b border-slate-200 bg-white flex justify-between items-center sticky top-0 z-50">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-indigo-600 rounded-xl text-white">
+                                    <Megaphone size={20} weight="bold" />
+                                </div>
+                                <h3 className="text-xl font-bold text-slate-900">
+                                    {editingAd ? `Modifier : ${editingAd.title}` : 'Nouvelle Publicité'}
+                                </h3>
+                            </div>
+                            <button
+                                onClick={() => setShowForm(false)}
+                                className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+                            >
+                                <XCircle size={24} className="text-slate-400" />
+                            </button>
+                        </div>
+                        <div className="p-6 md:p-8">
+                            <AdForm
+                                mode="modal"
+                                initialData={editingAd}
+                                isEditing={!!editingAd}
+                                onCancel={() => setShowForm(false)}
+                                onSuccess={() => {
+                                    setShowForm(false);
+                                    fetchAds();
+                                }}
+                            />
                         </div>
                     </div>
                 </div>

@@ -15,10 +15,14 @@ import {
     Info,
     ChartBar
 } from '@phosphor-icons/react';
+import { ImageUploader } from '@/components/ImageUploader';
 
 interface AdFormProps {
     initialData?: any;
     isEditing?: boolean;
+    onSuccess?: () => void;
+    onCancel?: () => void;
+    mode?: 'page' | 'modal';
 }
 
 const PLACEMENTS = [
@@ -46,7 +50,7 @@ const STATUSES = [
     { value: 'paused', label: 'En pause' },
 ];
 
-export default function AdForm({ initialData, isEditing = false }: AdFormProps) {
+export default function AdForm({ initialData, isEditing = false, onSuccess, onCancel, mode = 'page' }: AdFormProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
@@ -96,8 +100,12 @@ export default function AdForm({ initialData, isEditing = false }: AdFormProps) 
             });
 
             if (res.ok) {
-                router.push('/admin/dashboard?tab=ads');
-                router.refresh();
+                if (onSuccess) {
+                    onSuccess();
+                } else {
+                    router.push('/admin/dashboard?tab=ads');
+                    router.refresh();
+                }
             } else {
                 const error = await res.json();
                 alert(`Erreur: ${error.error}`);
@@ -211,14 +219,12 @@ export default function AdForm({ initialData, isEditing = false }: AdFormProps) 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {(formData.type.includes('image') || formData.type === 'card_sponsored') && (
                         <div className="space-y-1.5">
-                            <label className="text-sm font-medium text-slate-700">URL de l'image</label>
-                            <input
-                                type="text"
-                                name="imageUrl"
-                                value={formData.imageUrl}
-                                onChange={handleChange}
-                                placeholder="URL de l'image publicitaire"
-                                className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                            <ImageUploader
+                                label="Image publicitaire"
+                                currentImage={formData.imageUrl}
+                                onUploadComplete={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
+                                folder="navette-xpress/ads"
+                                required={formData.type.includes('image')}
                             />
                         </div>
                     )}
@@ -358,10 +364,10 @@ export default function AdForm({ initialData, isEditing = false }: AdFormProps) 
             </section>
 
             {/* Footer Actions */}
-            <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-slate-100 p-4 z-40 flex justify-center gap-4">
+            <div className={`${mode === 'modal' ? 'mt-8 flex justify-end' : 'fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-slate-100 p-4 z-40 flex justify-center'} gap-4`}>
                 <button
                     type="button"
-                    onClick={() => router.back()}
+                    onClick={() => onCancel ? onCancel() : router.back()}
                     className="px-6 py-2.5 rounded-xl border border-slate-200 font-medium hover:bg-slate-50 transition-all flex items-center gap-2"
                 >
                     <X weight="bold" />

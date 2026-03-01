@@ -77,7 +77,8 @@ export function BookingsManagementRedesigned() {
   const [filters, setFilters] = useState({
     status: 'pending',
     driver: 'all',
-    search: ''
+    search: '',
+    sortBy: 'date-desc'
   })
 
   const [selectedBookingIds, setSelectedBookingIds] = useState<Set<number>>(new Set())
@@ -189,6 +190,25 @@ export function BookingsManagementRedesigned() {
         b.dropoffAddress.toLowerCase().includes(searchTerm)
       )
     }
+
+    // Tri
+    filtered.sort((a, b) => {
+      // Règle spécifique: "En attente" en haut si on regarde "Tout" ou d'autres mélanges
+      if (filters.status === 'all') {
+        const priority = { 'pending': 0, 'assigned': 1, 'approved': 2, 'confirmed': 3, 'in_progress': 4, 'completed': 5, 'cancelled': 6, 'rejected': 7 };
+        const aStatusIdx = priority[a.status as keyof typeof priority] ?? 99;
+        const bStatusIdx = priority[b.status as keyof typeof priority] ?? 99;
+
+        if (aStatusIdx !== bStatusIdx) return aStatusIdx - bStatusIdx;
+      }
+
+      const dateA = new Date(a.scheduledDateTime).getTime();
+      const dateB = new Date(b.scheduledDateTime).getTime();
+
+      if (filters.sortBy === 'date-desc') return dateB - dateA;
+      if (filters.sortBy === 'date-asc') return dateA - dateB;
+      return 0;
+    });
 
     setFilteredBookings(filtered)
   }
@@ -368,6 +388,14 @@ export function BookingsManagementRedesigned() {
             {drivers.map(d => (
               <option key={d.id} value={d.id}>{d.name}</option>
             ))}
+          </select>
+
+          <select
+            value={filters.sortBy}
+            onChange={(e) => setFilters({ ...filters, sortBy: e.target.value })}
+            className="text-[10px] uppercase tracking-widest font-bold px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-400 outline-none focus:border-gold/50 cursor-pointer appearance-none min-w-[150px]">
+            <option value="date-desc">Plus Récentes</option>
+            <option value="date-asc">Plus Anciennes</option>
           </select>
         </div>
 

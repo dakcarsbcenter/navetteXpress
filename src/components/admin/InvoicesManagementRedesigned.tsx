@@ -12,7 +12,8 @@ import {
   DotsThreeVertical as MoreVertical,
   Funnel as Filter,
   FileText,
-  Trash
+  Trash,
+  X
 } from "@phosphor-icons/react"
 import jsPDF from "jspdf"
 import autoTable from "jspdf-autotable"
@@ -53,7 +54,26 @@ export default function InvoicesManagementRedesigned() {
 
   const [selectedInvoiceIds, setSelectedInvoiceIds] = useState<Set<number>>(new Set())
   const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false)
-  const { notifications, showSuccess, showError, removeNotification } = useNotification()
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [quotes, setQuotes] = useState<any[]>([])
+
+  const [formData, setFormData] = useState({
+    invoiceNumber: '',
+    quoteId: '',
+    customerName: '',
+    customerEmail: '',
+    customerPhone: '',
+    service: '',
+    amount: '',
+    taxRate: '20',
+    taxAmount: '0',
+    totalAmount: '0',
+    dueDate: '',
+    notes: ''
+  })
+
+  const { notifications, showSuccess, showError, showWarning, removeNotification } = useNotification()
 
   const fetchInvoices = async () => {
     try {
@@ -72,8 +92,23 @@ export default function InvoicesManagementRedesigned() {
     }
   }
 
+  const fetchQuotes = async () => {
+    try {
+      const response = await fetch('/api/quotes')
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success) {
+          setQuotes(data.data || [])
+        }
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des devis:', error)
+    }
+  }
+
   useEffect(() => {
     fetchInvoices()
+    fetchQuotes()
   }, [])
 
   const getStatsData = () => {
@@ -180,6 +215,110 @@ export default function InvoicesManagementRedesigned() {
     })
   }
 
+  const handleCreateInvoice = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+
+    try {
+      // Préparer les données pour l'API
+      const payload = {
+        invoiceNumber: formData.invoiceNumber,
+        quoteId: parseInt(formData.quoteId),
+        customerName: formData.customerName,
+        customerEmail: formData.customerEmail,
+        customerPhone: formData.customerPhone,
+        service: formData.service,
+        amount: formData.amount,
+        taxRate: formData.taxRate,
+        taxAmount: formData.taxAmount,
+        totalAmount: formData.totalAmount,
+        dueDate: new Date(formData.dueDate).toISOString(),
+        notes: formData.notes,
+        status: 'pending'
+      }
+
+      const response = await fetch('/api/invoices', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        showSuccess('Facture créée avec succès', 'Succès')
+        setIsCreateModalOpen(false)
+        fetchInvoices()
+      } else {
+        showError(data.error || 'Erreur lors de la création', 'Erreur')
+      }
+    } catch (error) {
+      showError('Erreur technique', 'Erreur')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const openCreateModal = () => {
+    const nextNumber = invoices.length + 1
+    const today = new Date()
+    const dueDate = new Date()
+    dueDate.setDate(today.getDate() + 15) // Échéance à 15 jours par défaut
+
+    setFormData({
+      invoiceNumber: `INV-${today.getFullYear()}-${nextNumber.toString().padStart(5, '0')}`,
+      quoteId: '',
+      customerName: '',
+      customerEmail: '',
+      customerPhone: '',
+      service: '',
+      amount: '',
+      taxRate: '20',
+      taxAmount: '0',
+      totalAmount: '0',
+      dueDate: dueDate.toISOString().split('T')[0],
+      notes: ''
+    })
+    setIsCreateModalOpen(true)
+  }
+
+  const handleQuoteSelect = (quoteId: string) => {
+    const quote = quotes.find(q => q.id.toString() === quoteId)
+    if (quote) {
+      const amount = quote.estimatedPrice || '0'
+      const taxRate = 20
+      const taxAmount = (parseFloat(amount) * taxRate) / 100
+      const totalAmount = parseFloat(amount) + taxAmount
+
+      setFormData(prev => ({
+        ...prev,
+        quoteId,
+        customerName: quote.customerName,
+        customerEmail: quote.customerEmail,
+        customerPhone: quote.customerPhone || '',
+        service: quote.service,
+        amount: amount,
+        taxAmount: taxAmount.toString(),
+        totalAmount: totalAmount.toString(),
+        notes: quote.adminNotes || ''
+      }))
+    }
+  }
+
+  const handleAmountChange = (amount: string) => {
+    const amt = parseFloat(amount) || 0
+    const rate = parseFloat(formData.taxRate) || 0
+    const tax = (amt * rate) / 100
+    const total = amt + tax
+
+    setFormData(prev => ({
+      ...prev,
+      amount,
+      taxAmount: tax.toFixed(2),
+      totalAmount: total.toFixed(2)
+    }))
+  }
+
   const handleBulkDelete = async () => {
     try {
       const response = await fetch('/api/invoices/bulk-delete', {
@@ -282,6 +421,7 @@ export default function InvoicesManagementRedesigned() {
               <span className="hidden sm:inline">Export PDF</span>
             </button>
             <button
+              onClick={openCreateModal}
               className="btn-gold flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold shadow-lg shadow-gold/10 whitespace-nowrap"
             >
               <Plus weight="bold" className="w-4 h-4" />
@@ -449,6 +589,181 @@ export default function InvoicesManagementRedesigned() {
           </div>
         </div>
       </div>
+
+      {/* Create Invoice Modal */}
+      {isCreateModalOpen && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-[#12121A] rounded-2xl border border-white/10 shadow-2xl max-w-2xl w-full p-8 max-h-[90vh] overflow-y-auto scrollbar-hide">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="text-2xl font-bold text-white tracking-tight">Nouvelle Facture</h2>
+                <p className="text-xs text-slate-500 mt-1 uppercase tracking-widest font-bold">Document financier officiel</p>
+              </div>
+              <button
+                onClick={() => setIsCreateModalOpen(false)}
+                className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-all shadow-inner"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateInvoice} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Numéro & Devis */}
+                <div className="space-y-2">
+                  <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 ml-1">Numéro de Facture</label>
+                  <input
+                    type="text"
+                    value={formData.invoiceNumber}
+                    readOnly
+                    className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-gold font-mono text-sm focus:outline-none focus:border-gold/30 transition-all opacity-70 cursor-not-allowed"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 ml-1">Lier à un Devis *</label>
+                  <select
+                    value={formData.quoteId}
+                    onChange={(e) => handleQuoteSelect(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-gold/50 transition-all cursor-pointer [&>option]:bg-[#12121A]"
+                  >
+                    <option value="">Sélectionner un devis...</option>
+                    {quotes.map(quote => (
+                      <option key={quote.id} value={quote.id}>
+                        #{quote.id} - {quote.customerName} ({quote.service})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Client Info */}
+                <div className="space-y-2">
+                  <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 ml-1">Nom du Client</label>
+                  <input
+                    type="text"
+                    value={formData.customerName}
+                    onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
+                    required
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-gold/50 transition-all placeholder-slate-600"
+                    placeholder="Ex: Jean Dupont"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 ml-1">Email</label>
+                  <input
+                    type="email"
+                    value={formData.customerEmail}
+                    onChange={(e) => setFormData({ ...formData, customerEmail: e.target.value })}
+                    required
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-gold/50 transition-all placeholder-slate-600"
+                    placeholder="jean@example.com"
+                  />
+                </div>
+
+                {/* Service & Date */}
+                <div className="space-y-2">
+                  <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 ml-1">Service</label>
+                  <input
+                    type="text"
+                    value={formData.service}
+                    onChange={(e) => setFormData({ ...formData, service: e.target.value })}
+                    required
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-gold/50 transition-all placeholder-slate-600"
+                    placeholder="Ex: Transfert Aéroport"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 ml-1">Date d'échéance</label>
+                  <input
+                    type="date"
+                    value={formData.dueDate}
+                    onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+                    required
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-gold/50 transition-all"
+                  />
+                </div>
+              </div>
+
+              {/* Finance Section */}
+              <div className="p-6 bg-white/[0.02] border border-white/5 rounded-2xl relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gold/5 blur-[40px] rounded-full" />
+
+                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gold mb-6 ml-1">Chiffrage & Taxes</h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">Montant HT (FCFA)</label>
+                    <input
+                      type="number"
+                      value={formData.amount}
+                      onChange={(e) => handleAmountChange(e.target.value)}
+                      required
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white font-mono focus:outline-none focus:border-gold/50 transition-all"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">TVA (20%)</label>
+                    <input
+                      type="text"
+                      value={formData.taxAmount}
+                      readOnly
+                      className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-slate-400 font-mono opacity-70"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">Total TTC</label>
+                    <input
+                      type="text"
+                      value={formData.totalAmount}
+                      readOnly
+                      className="w-full px-4 py-3 bg-gold/10 border border-gold/20 rounded-xl text-gold font-bold font-mono"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 ml-1">Notes Internes</label>
+                <textarea
+                  value={formData.notes}
+                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-gold/50 transition-all min-h-[100px] resize-none placeholder-slate-600"
+                  placeholder="Notes optionnelles sur la facturation..."
+                />
+              </div>
+
+              <div className="flex gap-4 pt-6 border-t border-white/5">
+                <button
+                  type="button"
+                  onClick={() => setIsCreateModalOpen(false)}
+                  className="flex-1 px-6 py-4 border border-white/10 text-slate-400 rounded-2xl hover:bg-white/5 hover:text-white transition-all text-xs font-black uppercase tracking-[0.2em]"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="flex-[2] btn-gold px-6 py-4 rounded-2xl shadow-2xl shadow-gold/20 flex items-center justify-center gap-3 disabled:opacity-50"
+                >
+                  {isSubmitting ? (
+                    <div className="w-5 h-5 border-2 border-black/30 border-t-black animate-spin rounded-full" />
+                  ) : (
+                    <>
+                      <FileText size={18} weight="bold" />
+                      Générer la Facture
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Bulk Delete Modal */}
       <BulkDeleteModal

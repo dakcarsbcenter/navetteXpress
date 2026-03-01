@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { CheckCircle, XCircle, Warning, Info } from "@phosphor-icons/react"
+import { CheckCircle, XCircle, Warning, Info, X } from "@phosphor-icons/react"
 import { motion, AnimatePresence } from "framer-motion"
 
 interface ConfirmationModalProps {
@@ -48,28 +48,44 @@ export function ConfirmationModal({
     switch (type) {
       case 'success':
         return {
-          icon: <CheckCircle size={48} weight="fill" />,
-          iconWrapper: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20 shadow-[0_0_30px_rgba(52,211,153,0.15)]',
-          buttonBg: 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-[0_0_20px_rgba(52,211,153,0.2)]',
+          icon: <CheckCircle size={56} weight="duotone" />,
+          color: 'text-emerald-400',
+          bg: 'from-emerald-500/20 to-emerald-500/5',
+          border: 'border-emerald-500/30',
+          glow: 'shadow-emerald-500/20',
+          button: 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/30',
+          accent: 'bg-emerald-500'
         }
       case 'error':
         return {
-          icon: <XCircle size={48} weight="fill" />,
-          iconWrapper: 'text-red-400 bg-red-400/10 border-red-400/20 shadow-[0_0_30px_rgba(248,113,113,0.15)]',
-          buttonBg: 'bg-red-500 hover:bg-red-600 text-white shadow-[0_0_20px_rgba(248,113,113,0.2)]',
+          icon: <XCircle size={56} weight="duotone" />,
+          color: 'text-red-400',
+          bg: 'from-red-500/20 to-red-500/5',
+          border: 'border-red-500/30',
+          glow: 'shadow-red-500/20',
+          button: 'bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/30',
+          accent: 'bg-red-500'
         }
       case 'warning':
         return {
-          icon: <Warning size={48} weight="fill" />,
-          iconWrapper: 'text-amber-400 bg-amber-400/10 border-amber-400/20 shadow-[0_0_30px_rgba(251,191,36,0.15)]',
-          buttonBg: 'bg-amber-500 hover:bg-amber-600 text-white shadow-[0_0_20px_rgba(251,191,36,0.2)]',
+          icon: <Warning size={56} weight="duotone" />,
+          color: 'text-amber-400',
+          bg: 'from-amber-500/20 to-amber-500/5',
+          border: 'border-amber-500/30',
+          glow: 'shadow-amber-500/20',
+          button: 'bg-amber-500 hover:bg-amber-600 text-white shadow-lg shadow-amber-500/30',
+          accent: 'bg-amber-500'
         }
       case 'info':
       default:
         return {
-          icon: <Info size={48} weight="fill" />,
-          iconWrapper: 'text-gold bg-gold/10 border-gold/20 shadow-[0_0_30px_rgba(201,168,76,0.15)]',
-          buttonBg: 'bg-gold hover:bg-gold/90 text-midnight shadow-[0_0_20px_rgba(201,168,76,0.2)]',
+          icon: <Info size={56} weight="duotone" />,
+          color: 'text-gold',
+          bg: 'from-gold/20 to-gold/5',
+          border: 'border-gold/30',
+          glow: 'shadow-gold/20',
+          button: 'bg-gold hover:bg-gold/90 text-midnight shadow-lg shadow-gold/30',
+          accent: 'bg-gold'
         }
     }
   }
@@ -87,68 +103,77 @@ export function ConfirmationModal({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[100] overflow-y-auto">
-          {/* Backdrop */}
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
+          {/* Backdrop avec flou progressif */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm"
+            className="absolute inset-0 bg-[#09090B]/90 backdrop-blur-xl"
             onClick={onClose}
           />
 
-          {/* Modal */}
-          <div className="flex min-h-full items-center justify-center p-4">
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0, y: 10 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: -10 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              className="relative w-full max-w-md overflow-hidden rounded-3xl bg-obsidian border border-white/10 shadow-2xl"
-            >
-              {/* Header with Background Gradient Hint */}
-              <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-white/5 to-transparent pointer-events-none" />
+          {/* Modal Container */}
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0, y: 20, rotateX: -10 }}
+            animate={{ scale: 1, opacity: 1, y: 0, rotateX: 0 }}
+            exit={{ scale: 0.9, opacity: 0, y: 20, rotateX: 10 }}
+            transition={{ type: "spring", damping: 25, stiffness: 350 }}
+            className="relative w-full max-w-md overflow-hidden"
+            style={{ perspective: "1000px" }}
+          >
+            <div className={`relative bg-[#12121A] border ${styles.border} rounded-[2.5rem] shadow-2xl p-8 overflow-hidden`}>
+              {/* Background Geometric Shapes */}
+              <div className={`absolute -top-24 -right-24 w-48 h-48 ${styles.accent} opacity-[0.03] blur-[80px] rounded-full`} />
+              <div className={`absolute -bottom-24 -left-24 w-48 h-48 ${styles.accent} opacity-[0.03] blur-[80px] rounded-full`} />
 
-              <div className="px-8 pt-10 pb-6 relative z-10">
-                <div className="flex justify-center mb-6">
-                  <div className={`shrink-0 w-24 h-24 rounded-full flex items-center justify-center border ${styles.iconWrapper}`}>
-                    {styles.icon}
-                  </div>
-                </div>
+              {/* Header Icon Section */}
+              <div className="flex flex-col items-center text-center mb-8 relative z-10">
+                <motion.div
+                  initial={{ rotate: -15, scale: 0.5 }}
+                  animate={{ rotate: 0, scale: 1 }}
+                  transition={{ delay: 0.1, type: "spring" }}
+                  className={`w-28 h-28 rounded-[2rem] bg-gradient-to-br ${styles.bg} border-2 ${styles.border} flex items-center justify-center ${styles.color} mb-6 shadow-2xl ${styles.glow}`}
+                >
+                  {styles.icon}
+                </motion.div>
 
-                <div className="text-center">
-                  <h3 className="text-2xl font-bold mb-3 text-white font-display">
-                    {title}
-                  </h3>
-                  <p className="text-[15px] text-slate-300 leading-relaxed max-w-sm mx-auto">
-                    {message}
-                  </p>
-                </div>
+                <h3 className="text-3xl font-black text-white tracking-tight mb-3 font-display leading-tight">
+                  {title}
+                </h3>
+
+                <div className={`h-1.5 w-12 ${styles.accent} rounded-full opacity-50 mb-4`} />
+
+                <p className="text-slate-400 text-lg leading-relaxed font-medium">
+                  {message}
+                </p>
               </div>
 
-              {/* Actions */}
-              <div className="px-8 pb-8 pt-2 relative z-10">
-                <div className="flex flex-col-reverse sm:flex-row sm:justify-center gap-3">
-                  {showCancel && (
-                    <button
-                      type="button"
-                      onClick={onClose}
-                      className="w-full sm:w-1/2 px-6 py-3.5 text-sm font-bold text-white bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all duration-200"
-                    >
-                      {cancelText}
-                    </button>
-                  )}
+              {/* Action Buttons */}
+              <div className="flex flex-col gap-3 relative z-10">
+                <button
+                  onClick={handleConfirm}
+                  className={`w-full py-5 rounded-2xl text-base font-bold uppercase tracking-widest transition-all active:scale-[0.98] ${styles.button}`}
+                >
+                  {confirmText}
+                </button>
+
+                {showCancel && (
                   <button
-                    type="button"
-                    onClick={handleConfirm}
-                    className={`w-full ${showCancel ? 'sm:w-1/2' : 'sm:w-3/4'} px-6 py-3.5 text-sm font-bold rounded-xl transition-all duration-200 ${styles.buttonBg}`}
+                    onClick={onClose}
+                    className="w-full py-5 rounded-2xl text-slate-500 text-base font-bold uppercase tracking-widest hover:text-white hover:bg-white/5 transition-all"
                   >
-                    {confirmText}
+                    {cancelText}
                   </button>
-                </div>
+                )}
               </div>
-            </motion.div>
-          </div>
+
+              {/* Decorative Corner */}
+              <div className={`absolute top-0 right-0 p-4 opacity-10 ${styles.color}`}>
+                <X size={120} weight="thin" className="translate-x-1/2 -translate-y-1/2 rotate-12" />
+              </div>
+            </div>
+          </motion.div>
         </div>
       )}
     </AnimatePresence>

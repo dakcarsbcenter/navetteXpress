@@ -259,12 +259,12 @@ export default function HomeClient() {
                   <div className="rounded-[2rem] overflow-hidden bg-obsidian relative">
                     <div className="relative w-full h-[500px]">
                       <Image
-                        src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=1200"
-                        alt="Véhicule de luxe premium Navette Xpress Dakar"
+                        src="/images/Chauffeur-Services-dakar-senegal-navette-xpress.jpg"
+                        alt="Services de Chauffeur d'élite Navette Xpress Dakar"
                         fill
                         priority
                         sizes="(max-width: 1024px) 100vw, 50vw"
-                        className="object-cover opacity-80 hover:scale-110 transition-transform duration-1000"
+                        className="object-cover opacity-90 transition-transform duration-1000"
                       />
                     </div>
                   </div>

@@ -35,13 +35,26 @@ export async function PUT(request: NextRequest) {
         .limit(1)
 
       if (profilePermission.length === 0) {
-        return NextResponse.json({ 
-          error: "Vous n'avez pas la permission de modifier votre profil. Contactez un administrateur." 
+        return NextResponse.json({
+          error: "Vous n'avez pas la permission de modifier votre profil. Contactez un administrateur."
         }, { status: 403 })
       }
     }
 
-    const { name, email, phone, image } = await request.json()
+    const {
+      name,
+      email,
+      phone,
+      image,
+      address,
+      isCompany,
+      companyName,
+      ninea,
+      raisonSociale,
+      companyAddress,
+      companyPhone,
+      bp
+    } = await request.json()
 
     // Validation des données
     if (!name?.trim() || !email?.trim()) {
@@ -83,7 +96,15 @@ export async function PUT(request: NextRequest) {
         name: name.trim(),
         email: email.trim(),
         phone: phone?.trim() || null,
-        image: image?.trim() || null
+        image: image?.trim() || null,
+        address: address?.trim() || null,
+        isCompany: !!isCompany,
+        companyName: companyName?.trim() || null,
+        ninea: ninea?.trim() || null,
+        raisonSociale: raisonSociale?.trim() || null,
+        companyAddress: companyAddress?.trim() || null,
+        companyPhone: companyPhone?.trim() || null,
+        bp: bp?.trim() || null
       })
       .where(eq(users.id, (session as unknown as { user: { id: string } }).user.id))
       .returning()
@@ -142,8 +163,8 @@ export async function GET() {
         .limit(1)
 
       if (profilePermission.length === 0) {
-        return NextResponse.json({ 
-          error: "Vous n'avez pas la permission de consulter votre profil." 
+        return NextResponse.json({
+          error: "Vous n'avez pas la permission de consulter votre profil."
         }, { status: 403 })
       }
     }
@@ -156,6 +177,14 @@ export async function GET() {
         email: users.email,
         phone: users.phone,
         image: users.image,
+        address: users.address,
+        isCompany: users.isCompany,
+        companyName: users.companyName,
+        ninea: users.ninea,
+        raisonSociale: users.raisonSociale,
+        companyAddress: users.companyAddress,
+        companyPhone: users.companyPhone,
+        bp: users.bp,
         role: users.role,
         createdAt: users.createdAt
       })

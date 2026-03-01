@@ -9,18 +9,20 @@ interface ImageUploaderProps {
   className?: string;
   label?: string;
   required?: boolean;
+  folder?: string;
 }
 
 /**
  * Composant pour uploader des images vers Cloudinary
  * Simple, efficace, avec preview en temps réel
  */
-export function ImageUploader({ 
-  onUploadComplete, 
-  currentImage, 
+export function ImageUploader({
+  onUploadComplete,
+  currentImage,
   className = '',
   label = 'Photo du véhicule',
-  required = false
+  required = false,
+  folder
 }: ImageUploaderProps) {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(currentImage || null);
@@ -48,7 +50,7 @@ export function ImageUploader({
       setUploading(true);
       setError(null);
       setProgress(10);
-      
+
       // Créer un preview local immédiat
       const previewUrl = URL.createObjectURL(file);
       setPreview(previewUrl);
@@ -66,8 +68,11 @@ export function ImageUploader({
       const formData = new FormData();
       formData.append('file', file);
       formData.append('upload_preset', uploadPreset);
-      formData.append('folder', label.includes('utilisateur') || label.includes('profil') ? 'navette-xpress/users' : 'navette-xpress/vehicles');
-      
+
+      // Dossier de destination intelligent
+      const targetFolder = folder || (label.includes('utilisateur') || label.includes('profil') ? 'navette-xpress/users' : 'navette-xpress/vehicles');
+      formData.append('folder', targetFolder);
+
       setProgress(50);
 
       // Upload vers Cloudinary
@@ -89,23 +94,23 @@ export function ImageUploader({
 
       const data = await response.json();
       setProgress(100);
-      
+
       // URL de l'image uploadée
       const imageUrl = data.secure_url;
-      
+
       // Nettoyer le preview local
       URL.revokeObjectURL(previewUrl);
-      
+
       // Notifier le parent
       onUploadComplete(imageUrl);
-      
+
       console.log('✅ Image uploadée:', imageUrl);
-      
+
     } catch (err) {
       console.error('Erreur upload:', err);
       setError(
-        err instanceof Error 
-          ? err.message 
+        err instanceof Error
+          ? err.message
           : '❌ Erreur lors de l\'upload. Veuillez réessayer.'
       );
       setPreview(currentImage || null);
@@ -153,7 +158,7 @@ export function ImageUploader({
             </span>
           </div>
           <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
-            <div 
+            <div
               className="bg-blue-600 h-2 rounded-full transition-all duration-300 ease-out"
               style={{ width: `${progress}%` }}
             />
@@ -182,23 +187,23 @@ export function ImageUploader({
           {uploading && (
             <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center">
               <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-2xl">
-                <svg 
-                  className="animate-spin h-10 w-10 text-blue-600" 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  fill="none" 
+                <svg
+                  className="animate-spin h-10 w-10 text-blue-600"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
                   viewBox="0 0 24 24"
                 >
-                  <circle 
-                    className="opacity-25" 
-                    cx="12" 
-                    cy="12" 
-                    r="10" 
-                    stroke="currentColor" 
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
                     strokeWidth="4"
                   />
-                  <path 
-                    className="opacity-75" 
-                    fill="currentColor" 
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   />
                 </svg>

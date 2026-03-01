@@ -25,6 +25,7 @@ import autoTable from "jspdf-autotable"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { BulkDeleteModal } from "@/components/ui/BulkDeleteModal"
 import { useNotification } from "@/hooks/useNotification"
+import { QuoteDetailModal } from "@/components/admin/QuoteDetailModal"
 
 interface Quote {
   id: number
@@ -34,7 +35,7 @@ interface Quote {
   service: string
   preferredDate: string | null
   message: string
-  status: 'new' | 'in_progress' | 'sent' | 'accepted' | 'rejected'
+  status: 'pending' | 'in_progress' | 'sent' | 'accepted' | 'rejected' | 'expired'
   adminNotes: string | null
   estimatedPrice: string | null
   assignedTo: string | null
@@ -48,7 +49,7 @@ export function QuotesManagementRedesigned() {
   const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban')
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
-
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
   const [selectedQuoteIds, setSelectedQuoteIds] = useState<Set<number>>(new Set())
   const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false)
 
@@ -89,7 +90,7 @@ export function QuotesManagementRedesigned() {
 
   const getStatsData = () => {
     const total = quotes.length
-    const pending = quotes.filter(q => q.status === 'new').length
+    const pending = quotes.filter(q => q.status === 'pending').length
     const conversion = total > 0 ? Math.round((quotes.filter(q => q.status === 'accepted').length / total) * 100) : 0
     const totalValue = quotes
       .filter(q => q.status === 'accepted' && q.estimatedPrice)
@@ -100,7 +101,7 @@ export function QuotesManagementRedesigned() {
 
   const getQuotesByStatus = (status: string) => {
     const statusMap: Record<string, string[]> = {
-      new: ['new'],
+      new: ['pending', 'new'],
       in_progress: ['in_progress'],
       sent: ['sent'],
       accepted: ['accepted']
@@ -133,6 +134,7 @@ export function QuotesManagementRedesigned() {
 
   const getStatusBadge = (status: string) => {
     const configs: Record<string, { label: string; color: string; bg: string }> = {
+      pending: { label: 'Nouveau', color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/20' },
       new: { label: 'Nouveau', color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/20' },
       in_progress: { label: 'Traitement', color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/20' },
       sent: { label: 'Envoyé', color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/20' },
@@ -170,7 +172,7 @@ export function QuotesManagementRedesigned() {
 
   const toggleSelectQuote = (e: React.MouseEvent, quoteId: number) => {
     e.stopPropagation()
-    setSelectedQuoteIds(prev => {
+    setSelectedQuoteIds((prev: Set<number>) => {
       const newSet = new Set(prev)
       if (newSet.has(quoteId)) {
         newSet.delete(quoteId)
@@ -380,6 +382,10 @@ export function QuotesManagementRedesigned() {
                       <div
                         key={quote.id}
                         className="p-4 rounded-xl border border-white/5 cursor-move hover:border-gold/30 hover:shadow-lg hover:shadow-gold/5 transition-all group relative"
+                        onClick={() => {
+                          setSelectedQuote(quote)
+                          setIsDetailModalOpen(true)
+                        }}
                         style={{ backgroundColor: 'var(--color-dash-card)' }}
                       >
                         <div className="absolute top-3 right-3 text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
@@ -403,7 +409,10 @@ export function QuotesManagementRedesigned() {
                               )}
                             </span>
                           </div>
-                          <button className="p-1 text-slate-500 hover:text-white transition-opacity">
+                          <button
+                            className="p-1 text-slate-500 hover:text-white transition-opacity"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <MoreVertical size={16} />
                           </button>
                         </div>
@@ -430,15 +439,27 @@ export function QuotesManagementRedesigned() {
                         )}
 
                         {status === 'in_progress' && (
-                          <div className="mt-4 flex items-center gap-2">
-                            <button className="flex-1 text-[10px] font-bold uppercase tracking-wider px-3 py-2 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 rounded-lg transition-colors border border-amber-500/20">
+                          <div className="mt-4 flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                            <button
+                              onClick={() => {
+                                setSelectedQuote(quote)
+                                setIsDetailModalOpen(true)
+                              }}
+                              className="flex-1 text-[10px] font-bold uppercase tracking-wider px-3 py-2 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 rounded-lg transition-colors border border-amber-500/20"
+                            >
                               Calculer
                             </button>
                           </div>
                         )}
                         {status === 'sent' && (
-                          <div className="mt-4 flex items-center gap-2">
-                            <button className="flex-1 text-[10px] font-bold uppercase tracking-wider px-3 py-2 bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 rounded-lg transition-colors border border-blue-500/20">
+                          <div className="mt-4 flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                            <button
+                              onClick={() => {
+                                setSelectedQuote(quote)
+                                setIsDetailModalOpen(true)
+                              }}
+                              className="flex-1 text-[10px] font-bold uppercase tracking-wider px-3 py-2 bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 rounded-lg transition-colors border border-blue-500/20"
+                            >
                               Relancer
                             </button>
                           </div>
@@ -500,7 +521,14 @@ export function QuotesManagementRedesigned() {
                     const statusBadge = getStatusBadge(quote.status)
 
                     return (
-                      <tr key={quote.id} className="hover:bg-white/[0.01] transition-colors group">
+                      <tr
+                        key={quote.id}
+                        className="hover:bg-white/[0.01] transition-colors group cursor-pointer"
+                        onClick={() => {
+                          setSelectedQuote(quote)
+                          setIsDetailModalOpen(true)
+                        }}
+                      >
                         <td className="pl-6 py-4" onClick={(e) => e.stopPropagation()}>
                           <input
                             type="checkbox"
@@ -553,6 +581,14 @@ export function QuotesManagementRedesigned() {
           </div>
         </div>
       )}
+
+      {/* Quote Detail Modal */}
+      <QuoteDetailModal
+        isOpen={isDetailModalOpen}
+        onClose={() => setIsDetailModalOpen(false)}
+        quote={selectedQuote as any}
+        onUpdate={fetchQuotes}
+      />
 
       {/* Bulk Delete Modal */}
       <BulkDeleteModal
