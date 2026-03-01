@@ -185,10 +185,10 @@ function SignInForm() {
             </div>
             <div>
               <p className="text-lg font-semibold"
-                style={{ color: 'var(--color-text-primary)' }}>
+                style={{ color: '#F0EDE8' }}>
                 Navette <span style={{ color: 'var(--color-gold)' }}>Xpress</span>
               </p>
-              <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
+              <p className="text-xs mt-0.5" style={{ color: '#6B6880' }}>
                 Dakar · Service Premium 24h/24
               </p>
             </div>
@@ -199,7 +199,7 @@ function SignInForm() {
             <p className="text-4xl leading-tight mb-8"
               style={{
                 fontFamily: 'var(--font-display)',
-                color: 'var(--color-text-primary)',
+                color: '#E8E4DF',
                 fontWeight: 300,
               }}>
               Votre chauffeur privé,{' '}
@@ -227,13 +227,13 @@ function SignInForm() {
                 style={{
                   fontFamily: 'var(--font-display)',
                   fontStyle: 'italic',
-                  color: 'var(--color-text-secondary)',
+                  color: '#A09CB0',
                   fontWeight: 300,
                 }}>
                 "Ponctuel, professionnel et véhicule impeccable.
                 Mon transfert AIBD s'est passé parfaitement."
               </p>
-              <p className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
+              <p className="text-xs font-medium" style={{ color: '#6B6880' }}>
                 — Aminata D., Dakar
               </p>
             </div>
@@ -253,7 +253,7 @@ function SignInForm() {
                   {stat.value}
                 </p>
                 <p className="text-[10px] uppercase tracking-[0.1em] mt-0.5"
-                  style={{ color: 'var(--color-text-muted)' }}>
+                  style={{ color: '#6B6880' }}>
                   {stat.label}
                 </p>
               </div>

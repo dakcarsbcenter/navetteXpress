@@ -11,7 +11,7 @@
   --obsidian: #F5F5F5;
   --surface: #FAFAFA;
   --surface-2: #F0F0F0;
-  
+
   --gold: #C9A84C;
   --gold-light: #E8C97A;
   --crimson: #A73B3C;
@@ -69,7 +69,7 @@
   --border: rgba(255, 255, 255, 0.08);
   --input: rgba(255, 255, 255, 0.05);
   --ring: #C9A84C;
-  
+
   --text-primary: #F0EDE8;
   --text-secondary: #8A8799;
   --text-muted: #4A4759;
@@ -187,11 +187,18 @@ html {
 }
 
 @theme {
-  /* ── Couleurs principales ── */
+  /* ── Couleurs sémantiques (thème) ── */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  /* ── Surfaces ── */
+  --color-surface-1: var(--obsidian);
+  --color-surface-2: var(--surface-2);
+
+  /* ── Couleurs principales (legacy) ── */
   --color-midnight: var(--midnight);
   --color-obsidian: var(--obsidian);
   --color-surface: var(--surface);
-  --color-surface-2: var(--surface-2);
   --color-border: var(--border);
   --color-border-hover: var(--border);
 
@@ -212,9 +219,14 @@ html {
   --color-warning: #F39C12;
 
   /* ── Typographie ── */
-  --font-display: 'Cormorant Garamond', Georgia, serif;
-  --font-body: 'DM Sans', system-ui, sans-serif;
-  --font-mono: 'DM Mono', 'Courier New', monospace;
+  --font-display: var(--font-cormorant), Georgia, serif;
+  --font-body: var(--font-dm-sans), system-ui, sans-serif;
+  --font-mono: var(--font-dm-mono), 'Courier New', monospace;
+
+  /* Tailwind font-family tokens */
+  --font-family-sans: var(--font-dm-sans), system-ui, sans-serif;
+  --font-family-display: var(--font-cormorant), Georgia, serif;
+  --font-family-mono: var(--font-dm-mono), 'Courier New', monospace;
 
   /* ── Existing tokens mapping ── */
   --color-crimson: var(--crimson);
@@ -536,10 +548,33 @@ html {
 
 /* ── Card glassmorphism ── */
 .glass-card {
-  background: rgba(255, 255, 255, 0.025);
+  background: color-mix(in srgb, var(--foreground) 3%, var(--background));
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
+}
+
+/* ── Bouton luxe (gold) ── */
+.lux-button {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-gold);
+  color: var(--background);
+  font-weight: 700;
+  padding: 1rem 2.5rem;
+  border-radius: 0.75rem;
+  transition: background-color 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+
+.lux-button:hover {
+  background-color: var(--color-gold-light);
+  box-shadow: 0 0 30px rgba(201, 168, 76, 0.4);
+}
+
+.lux-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
 }
 
 /* ── Toggle iOS ── */
@@ -575,30 +610,54 @@ html {
 
 /* ── Auth Animations ── */
 @keyframes authFadeIn {
-  from { opacity: 0; transform: translateY(20px) scale(0.98); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
+
 .auth-enter {
   animation: authFadeIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @keyframes floatOrb {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33%       { transform: translate(20px, -30px) scale(1.05); }
-  66%       { transform: translate(-15px, 15px) scale(0.97); }
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(20px, -30px) scale(1.05);
+  }
+
+  66% {
+    transform: translate(-15px, 15px) scale(0.97);
+  }
 }
-.orb-float { animation: floatOrb 12s ease-in-out infinite; }
-.orb-float-delay { animation: floatOrb 15s ease-in-out infinite reverse; }
+
+.orb-float {
+  animation: floatOrb 12s ease-in-out infinite;
+}
+
+.orb-float-delay {
+  animation: floatOrb 15s ease-in-out infinite reverse;
+}
 
 @layer base {
   * {
-    border-color: hsl(var(--border));
-    outline-color: hsl(var(--ring) / 0.5);
+    border-color: var(--border);
+    outline-color: color-mix(in srgb, var(--ring) 50%, transparent);
   }
 
   body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
+    background-color: var(--background);
+    color: var(--foreground);
   }
 
   /* Mobile-first optimizations */

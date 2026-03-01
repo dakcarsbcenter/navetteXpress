@@ -34,16 +34,16 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
 
   const headerClasses = variant === "transparent"
     ? `fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled
-      ? "bg-midnight/80 backdrop-blur-xl border-b border-white/5 py-2"
+      ? "bg-background/90 backdrop-blur-xl border-b border-border py-2 shadow-sm"
       : "bg-transparent py-4"
     }`
-    : "fixed top-0 left-0 right-0 z-50 bg-midnight border-b border-border py-2";
+    : "fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-xl border-b border-border py-2";
 
   return (
     <>
-      {/* Top Bar - Midnight */}
-      <div className="bg-midnight border-b border-white/5 text-[10px] sm:text-xs py-1.5 fixed top-0 left-0 right-0 z-[60] hidden md:block">
-        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center text-white/50">
+      {/* Top Bar */}
+      <div className="bg-surface-1 border-b border-border text-[10px] sm:text-xs py-1.5 fixed top-0 left-0 right-0 z-[60] hidden md:block">
+        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center text-text-muted">
           <div className="flex items-center gap-6">
             <a
               href="tel:+221781319191"
@@ -67,7 +67,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
               <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
               Service 24h/24
             </span>
-            <div className="h-3 w-px bg-white/10"></div>
+            <div className="h-3 w-px bg-border"></div>
             <Link href="/devenir-partenaire" className="hover:text-gold transition-colors">
               Devenir Partenaire
             </Link>
@@ -78,10 +78,11 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
       <header className={`${headerClasses} mt-0 md:mt-8`}>
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex justify-between items-center h-16">
+
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 bg-gold rounded-lg flex items-center justify-center transition-transform group-hover:rotate-12">
-                <span className="text-midnight font-bold text-xl">NX</span>
+              <div className="w-10 h-10 bg-gold rounded-lg flex items-center justify-center transition-transform group-hover:rotate-12 shrink-0">
+                <span className="text-background font-bold text-xl">NX</span>
               </div>
               <div className="flex flex-col">
                 <span className="text-foreground font-display text-xl leading-none tracking-wide">NAVETTE XPRESS</span>
@@ -95,7 +96,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-foreground/70 hover:text-gold font-body text-sm font-medium transition-colors relative group"
+                  className="text-foreground/70 hover:text-gold text-sm font-medium transition-colors relative group"
                 >
                   {link.label}
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all group-hover:w-full"></span>
@@ -103,39 +104,41 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
               ))}
             </nav>
 
+            {/* Desktop Actions */}
             <div className="hidden lg:flex items-center gap-6">
               <ThemeToggle />
 
               {!session ? (
                 <div className="flex items-center gap-3">
                   <Link href="/auth/signin" className="text-foreground text-sm font-medium hover:text-gold transition-colors">
-                    Log In
+                    Se connecter
                   </Link>
                   <Link
                     href="/reservation"
-                    className="bg-gold text-midnight px-6 py-2.5 rounded-lg text-sm font-bold shadow-[0_0_20px_rgba(201,168,76,0.2)] hover:shadow-[0_0_30px_rgba(201,168,76,0.4)] transition-all hover:-translate-y-0.5"
+                    className="bg-gold text-background px-6 py-2.5 rounded-lg text-sm font-bold shadow-[0_0_20px_rgba(201,168,76,0.2)] hover:shadow-[0_0_30px_rgba(201,168,76,0.4)] hover:bg-gold/90 transition-all hover:-translate-y-0.5"
                   >
                     Réserver
                   </Link>
                 </div>
               ) : (
                 <div className="relative group/user">
-                  <button className="flex items-center gap-2 text-white hover:text-gold transition-colors">
-                    <div className="w-8 h-8 rounded-full border border-gold/30 flex items-center justify-center bg-white/5">
+                  <button className="flex items-center gap-2 text-foreground hover:text-gold transition-colors">
+                    <div className="w-8 h-8 rounded-full border border-gold/30 flex items-center justify-center bg-surface-2/50">
                       <UserCircle size={16} weight="light" className="text-gold" />
                     </div>
                     <CaretDown size={14} weight="light" />
                   </button>
 
-                  <div className="absolute right-0 mt-2 w-56 bg-obsidian border border-white/5 rounded-xl shadow-2xl opacity-0 invisible group-hover/user:opacity-100 group-hover/user:visible transition-all duration-300 backdrop-blur-xl">
-                    <div className="p-4 border-b border-white/5">
-                      <p className="text-white text-sm font-bold truncate">{session.user.name}</p>
-                      <p className="text-white/50 text-xs truncate">{session.user.email}</p>
+                  {/* Dropdown Menu */}
+                  <div className="absolute right-0 mt-2 w-56 bg-background border border-border rounded-xl shadow-2xl opacity-0 invisible group-hover/user:opacity-100 group-hover/user:visible transition-all duration-300 backdrop-blur-xl">
+                    <div className="p-4 border-b border-border">
+                      <p className="text-foreground text-sm font-bold truncate">{session.user.name}</p>
+                      <p className="text-text-muted text-xs truncate">{session.user.email}</p>
                     </div>
                     <div className="p-2 space-y-1">
                       <Link
                         href={(session.user as any).role === 'admin' ? '/admin/dashboard' : '/client/dashboard'}
-                        className="flex items-center gap-3 px-3 py-2 text-sm text-white/70 hover:text-gold hover:bg-white/5 rounded-lg transition-colors"
+                        className="flex items-center gap-3 px-3 py-2 text-sm text-foreground/70 hover:text-gold hover:bg-surface-2/50 rounded-lg transition-colors"
                       >
                         <SquaresFour size={16} weight="regular" className="text-gold" />
                         Dashboard
@@ -155,8 +158,9 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
 
             {/* Mobile Menu Trigger */}
             <button
-              className="lg:hidden text-white"
+              className="lg:hidden text-foreground"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Menu"
             >
               {isMobileMenuOpen ? <X size={28} weight="light" /> : <List size={28} weight="regular" />}
             </button>
@@ -164,14 +168,14 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
         </div>
 
         {/* Mobile Menu */}
-        <div className={`lg:hidden fixed inset-0 z-40 bg-midnight/95 backdrop-blur-2xl transition-transform duration-500 ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-          <div className="h-full flex flex-col p-8 pt-24">
+        <div className={`lg:hidden fixed inset-0 z-40 bg-background/95 backdrop-blur-2xl transition-transform duration-500 ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+          <div className="h-full flex flex-col p-8 pt-28">
             <nav className="space-y-6">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="block text-2xl font-display text-white hover:text-gold transition-colors"
+                  className="block text-2xl font-display text-foreground hover:text-gold transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {link.label}
@@ -179,10 +183,11 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
               ))}
             </nav>
 
+            {/* Mobile Bottom Actions */}
             <div className="mt-auto space-y-4">
               <Link
                 href="/reservation"
-                className="block w-full bg-gold text-midnight text-center py-4 rounded-xl font-bold text-lg"
+                className="block w-full bg-gold text-background text-center py-4 rounded-xl font-bold text-lg hover:bg-gold/90 transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Réserver Maintenant
@@ -190,7 +195,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
               {!session ? (
                 <Link
                   href="/auth/signin"
-                  className="block w-full border border-white/10 text-white text-center py-4 rounded-xl font-medium"
+                  className="block w-full border border-border text-foreground text-center py-4 rounded-xl font-medium hover:bg-surface-2/50 transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Se connecter
@@ -198,7 +203,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
               ) : (
                 <button
                   onClick={() => signOut({ callbackUrl: '/' })}
-                  className="block w-full text-crimson text-center py-4"
+                  className="block w-full text-crimson text-center py-4 hover:opacity-80 transition-opacity"
                 >
                   Déconnexion
                 </button>
@@ -210,5 +215,3 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
     </>
   );
 }
-
-
