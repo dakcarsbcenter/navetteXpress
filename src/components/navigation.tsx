@@ -37,7 +37,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
       ? "bg-midnight/80 backdrop-blur-xl border-b border-white/5 py-2"
       : "bg-transparent py-4"
     }`
-    : "fixed top-0 left-0 right-0 z-50 bg-midnight border-b border-white/5 py-2";
+    : "fixed top-0 left-0 right-0 z-50 bg-midnight border-b border-border py-2";
 
   return (
     <>
@@ -84,7 +84,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
                 <span className="text-midnight font-bold text-xl">NX</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-white font-display text-xl leading-none tracking-wide">NAVETTE XPRESS</span>
+                <span className="text-foreground font-display text-xl leading-none tracking-wide">NAVETTE XPRESS</span>
                 <span className="text-gold text-[10px] tracking-[0.2em] font-medium leading-none mt-1 uppercase">Premium Service</span>
               </div>
             </Link>
@@ -95,7 +95,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-white/70 hover:text-gold font-body text-sm font-medium transition-colors relative group"
+                  className="text-foreground/70 hover:text-gold font-body text-sm font-medium transition-colors relative group"
                 >
                   {link.label}
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all group-hover:w-full"></span>
@@ -108,7 +108,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
 
               {!session ? (
                 <div className="flex items-center gap-3">
-                  <Link href="/auth/signin" className="text-white text-sm font-medium hover:text-gold transition-colors">
+                  <Link href="/auth/signin" className="text-foreground text-sm font-medium hover:text-gold transition-colors">
                     Log In
                   </Link>
                   <Link

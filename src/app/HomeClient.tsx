@@ -143,14 +143,14 @@ export default function HomeClient() {
   ];
 
   return (
-    <div className="min-h-screen bg-midnight font-body selection:bg-gold/30 selection:text-gold selection:text-white overflow-hidden">
+    <div className="min-h-screen bg-background font-sans selection:bg-gold/30 selection:text-gold overflow-hidden">
       <Navigation variant="transparent" />
 
       <main>
         {/* Hero Section */}
         <section className="relative min-h-[95vh] flex items-center pt-20 overflow-hidden">
           <div className="absolute inset-0 z-0">
-            <div className="absolute inset-0 bg-midnight"></div>
+            <div className="absolute inset-0 bg-background"></div>
             <motion.div
               animate={{
                 scale: [1, 1.2, 1],
@@ -168,7 +168,7 @@ export default function HomeClient() {
               transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
               className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(167,59,60,0.1),transparent_70%)]"
             ></motion.div>
-            <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]"></div>
+            <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03] dark:opacity-[0.05]"></div>
           </div>
 
           <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
@@ -180,17 +180,17 @@ export default function HomeClient() {
                   className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/10 border border-gold/20 text-gold text-xs font-bold tracking-widest uppercase"
                 >
                   <span className="w-2 h-2 rounded-full bg-gold animate-pulse"></span>
-                  L'Excellence à Dakar
+                  L&apos;Excellence à Dakar
                 </motion.div>
 
                 <div className="space-y-4">
                   <motion.h1
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-5xl md:text-7xl xl:text-8xl text-white font-display leading-[1.1] tracking-tight"
+                    className="text-5xl md:text-7xl xl:text-8xl text-foreground font-display leading-[1.1] tracking-tight"
                   >
-                    L'Art de la <br />
-                    <span className="text-transparent bg-clip-text bg-linear-to-r from-gold via-white to-gold bg-[length:200%_auto] animate-shimmer">
+                    L&apos;Art de la <br />
+                    <span className="text-transparent bg-clip-text bg-linear-to-r from-gold via-foreground to-gold bg-[length:200%_auto] animate-shimmer">
                       Mobilité Privée
                     </span>
                   </motion.h1>
@@ -212,16 +212,16 @@ export default function HomeClient() {
                 >
                   <Link
                     href="/reservation"
-                    className="px-6 py-4 bg-gold text-midnight rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all hover:scale-105 shadow-[0_0_30px_rgba(201,168,76,0.3)] hover:shadow-[0_0_50px_rgba(201,168,76,0.5)]"
+                    className="px-6 py-4 bg-gold text-background rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all hover:scale-105 shadow-[0_0_30px_rgba(201,168,76,0.3)] hover:shadow-[0_0_50px_rgba(201,168,76,0.5)]"
                   >
                     <span>Réserver Maintenant</span>
                     <ArrowRight size={20} weight="bold" />
                   </Link>
                   <Link
                     href="/devenir-partenaire"
-                    className="px-6 py-4 bg-white/5 backdrop-blur-md border border-white/10 text-white rounded-xl font-bold text-lg hover:bg-white/10 transition-all flex items-center justify-center gap-3"
+                    className="px-6 py-4 bg-surface-2/50 backdrop-blur-md border border-border text-foreground rounded-xl font-bold text-lg hover:bg-surface-2 transition-all flex items-center justify-center gap-3"
                   >
-                    <Car size={24} weight="fill" className="text-gold shadow-gold drop-shadow-lg" />
+                    <Car size={24} weight="fill" className="text-gold" />
                     <span>Devenir Partenaire</span>
                   </Link>
                 </motion.div>
@@ -233,17 +233,17 @@ export default function HomeClient() {
                   className="flex items-center gap-8 pt-6"
                 >
                   <div>
-                    <div className="text-white font-bold text-2xl font-mono">15k+</div>
+                    <div className="text-foreground font-bold text-2xl font-mono">15k+</div>
                     <div className="text-text-muted text-xs uppercase tracking-widest mt-1">Voyages</div>
                   </div>
-                  <div className="h-8 w-px bg-white/10"></div>
+                  <div className="h-8 w-px bg-border"></div>
                   <div>
-                    <div className="text-white font-bold text-2xl font-mono">4.9/5</div>
+                    <div className="text-foreground font-bold text-2xl font-mono">4.9/5</div>
                     <div className="text-text-muted text-xs uppercase tracking-widest mt-1">Note Client</div>
                   </div>
-                  <div className="h-8 w-px bg-white/10"></div>
+                  <div className="h-8 w-px bg-border"></div>
                   <div>
-                    <div className="text-white font-bold text-2xl font-mono">24/7</div>
+                    <div className="text-foreground font-bold text-2xl font-mono">24/7</div>
                     <div className="text-text-muted text-xs uppercase tracking-widest mt-1">Support</div>
                   </div>
                 </motion.div>
@@ -255,15 +255,14 @@ export default function HomeClient() {
                 transition={{ duration: 1, ease: "easeOut" }}
                 className="hidden lg:block relative"
               >
-                <div className="relative z-10 p-2 rounded-[2.5rem] bg-linear-to-br from-gold/30 to-transparent border border-white/10 backdrop-blur-2xl">
-                  <div className="rounded-[2rem] overflow-hidden bg-obsidian relative">
+                <div className="relative z-10 p-2 rounded-[2.5rem] bg-linear-to-br from-gold/30 to-transparent border border-border backdrop-blur-2xl">
+                  <div className="rounded-[2rem] overflow-hidden bg-surface-1 relative">
                     <div className="relative w-full h-[500px]">
                       <Image
                         src="/images/Chauffeur-Services-dakar-senegal-navette-xpress.jpg"
-                        alt="Services de Chauffeur d'élite Navette Xpress Dakar"
+                        alt="Services de Chauffeur d&apos;élite Navette Xpress Dakar"
                         fill
                         priority
-                        sizes="(max-width: 1024px) 100vw, 50vw"
                         className="object-cover opacity-90 transition-transform duration-1000"
                       />
                     </div>
@@ -275,14 +274,14 @@ export default function HomeClient() {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1.2, type: "spring" }}
-                  className="absolute -left-12 bottom-12 z-20 bg-[#09090F]/90 backdrop-blur-xl border border-white/10 p-5 rounded-2xl flex items-center gap-4 shadow-[0_20px_50px_rgba(0,0,0,0.5)] hover:-translate-y-2 transition-transform duration-300 cursor-pointer"
+                  className="absolute -left-12 bottom-12 z-20 bg-background/90 backdrop-blur-xl border border-border p-5 rounded-2xl flex items-center gap-4 shadow-2xl hover:-translate-y-2 transition-transform duration-300 cursor-pointer"
                   onClick={() => router.push('/devenir-partenaire')}
                 >
-                  <div className="w-14 h-14 bg-gold/10 rounded-full flex items-center justify-center border border-gold/20 shadow-inner">
+                  <div className="w-14 h-14 bg-gold/10 rounded-full flex items-center justify-center border border-gold/20">
                     <Car size={28} className="text-gold" weight="fill" />
                   </div>
                   <div>
-                    <p className="text-white font-bold text-sm tracking-wide">Propriétaire de véhicule ?</p>
+                    <p className="text-foreground font-bold text-sm tracking-wide">Propriétaire de véhicule ?</p>
                     <p className="text-gold text-xs font-semibold mt-1 flex items-center gap-1">
                       Rentabilisez votre actif <ArrowRight size={12} weight="bold" />
                     </p>
@@ -290,7 +289,6 @@ export default function HomeClient() {
                 </motion.div>
 
                 <div className="absolute -top-10 -right-10 w-40 h-40 bg-gold/20 rounded-full blur-3xl animate-pulse"></div>
-                <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-crimson/20 rounded-full blur-3xl"></div>
               </motion.div>
             </div>
           </div>
@@ -300,16 +298,16 @@ export default function HomeClient() {
         <AdSlot placement="home_hero" />
 
         {/* Services Section */}
-        <section className="py-32 relative bg-midnight overflow-hidden">
+        <section className="py-32 relative bg-background overflow-hidden border-y border-border">
           <div className="max-w-7xl mx-auto px-6 relative z-10">
             <div className="text-center mb-20">
               <motion.h2
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="text-4xl md:text-6xl text-white font-display mb-6"
+                className="text-4xl md:text-6xl text-foreground font-display mb-6"
               >
-                Services d'Exception
+                Services d&apos;Exception
               </motion.h2>
               <motion.div
                 initial={{ width: 0 }}
@@ -330,12 +328,12 @@ export default function HomeClient() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
-                  className="group p-8 rounded-3xl bg-surface border border-white/5 hover:border-gold/30 transition-all duration-500"
+                  className="group p-8 rounded-3xl bg-surface-2/50 border border-border hover:border-gold/30 transition-all duration-500"
                 >
-                  <div className="w-16 h-16 rounded-2xl bg-midnight flex items-center justify-center mb-8 border border-white/5 group-hover:bg-gold/10 transition-colors">
+                  <div className="w-16 h-16 rounded-2xl bg-surface-1 flex items-center justify-center mb-8 border border-border group-hover:bg-gold/10 transition-colors">
                     {service.icon}
                   </div>
-                  <h3 className="text-2xl text-white font-display mb-4">{service.title}</h3>
+                  <h3 className="text-2xl text-foreground font-display mb-4">{service.title}</h3>
                   <p className="text-text-muted mb-8 group-hover:text-text-secondary transition-colors">
                     {service.description}
                   </p>
@@ -352,7 +350,7 @@ export default function HomeClient() {
         <AdSlot placement="home_services" />
 
         {/* Why Choose Us */}
-        <section className="py-32 relative bg-obsidian">
+        <section className="py-32 relative bg-surface-1/30">
           <div className="max-w-7xl mx-auto px-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
               <motion.div
@@ -361,8 +359,8 @@ export default function HomeClient() {
                 viewport={{ once: true }}
               >
                 <div className="text-gold font-bold uppercase tracking-[0.2em] text-xs mb-6">Pourquoi nous ?</div>
-                <h2 className="text-4xl md:text-6xl text-white font-display mb-12 leading-tight">
-                  L'Engagement pour un Service <span className="italic text-gold">Impeccable</span>
+                <h2 className="text-4xl md:text-6xl text-foreground font-display mb-12 leading-tight">
+                  L&apos;Engagement pour un Service <span className="italic text-gold">Impeccable</span>
                 </h2>
                 <div className="space-y-10">
                   {features.map((feature, index) => (
@@ -371,7 +369,7 @@ export default function HomeClient() {
                         {feature.icon}
                       </div>
                       <div>
-                        <h3 className="text-xl text-white font-display mb-2">{feature.title}</h3>
+                        <h3 className="text-xl text-foreground font-display mb-2">{feature.title}</h3>
                         <p className="text-text-muted leading-relaxed">
                           {feature.description}
                         </p>
@@ -387,24 +385,24 @@ export default function HomeClient() {
                 viewport={{ once: true }}
                 className="relative"
               >
-                <div className="aspect-square rounded-[3rem] overflow-hidden border border-white/10">
+                <div className="aspect-square rounded-[3rem] overflow-hidden border border-border">
                   <Image
                     src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&q=80&w=1200"
-                    alt="Chauffeur privé Navette Xpress au service d'un client"
+                    alt="Chauffeur privé Navette Xpress au service d&apos;un client"
                     width={800}
                     height={800}
-                    className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
+                    className="w-full h-full object-cover filter grayscale hover:grayscale-0 transition-all duration-700"
                   />
                 </div>
                 {/* Decorative floating stats */}
-                <div className="absolute -bottom-10 -right-10 p-8 rounded-3xl bg-midnight border border-gold/30 backdrop-blur-xl shadow-2xl">
+                <div className="absolute -bottom-10 -right-10 p-8 rounded-3xl bg-background border border-gold/30 backdrop-blur-xl shadow-2xl">
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-full bg-gold flex items-center justify-center text-midnight">
+                    <div className="w-16 h-16 rounded-full bg-gold flex items-center justify-center text-background">
                       <CheckCircle size={32} weight="thin" />
                     </div>
                     <div>
                       <div className="text-gold font-bold text-3xl font-mono">100%</div>
-                      <div className="text-white text-xs uppercase tracking-widest font-bold">Satisfaction</div>
+                      <div className="text-foreground text-xs uppercase tracking-widest font-bold">Satisfaction</div>
                     </div>
                   </div>
                 </div>
@@ -414,10 +412,10 @@ export default function HomeClient() {
         </section>
 
         {/* Process Section - High End Flow */}
-        <section className="py-32 relative bg-midnight">
+        <section className="py-32 relative bg-background">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-20">
-              <h2 className="text-4xl md:text-5xl text-white font-display mb-6">Votre Voyage, en <span className="text-gold italic">3 Étapes</span></h2>
+              <h2 className="text-4xl md:text-5xl text-foreground font-display mb-6">Votre Voyage, en <span className="text-gold italic">3 Étapes</span></h2>
               <p className="text-text-muted">Simplicité, Rapidité, Excellence.</p>
             </div>
 
@@ -428,7 +426,7 @@ export default function HomeClient() {
               {[
                 { step: "01", title: "Réservation", desc: "Choisissez votre trajet et votre véhicule en quelques clics." },
                 { step: "02", title: "Confirmation", desc: "Recevez votre confirmation instantanée et les détails du chauffeur." },
-                { step: "03", title: "Détente", desc: "Profitez d'un trajet serein dans un confort absolu." }
+                { step: "03", title: "Détente", desc: "Profitez d&apos;un trajet serein dans un confort absolu." }
               ].map((item, i) => (
                 <motion.div
                   key={i}
@@ -438,10 +436,10 @@ export default function HomeClient() {
                   transition={{ delay: i * 0.2 }}
                   className="relative z-10 text-center space-y-6"
                 >
-                  <div className="w-20 h-20 rounded-2xl bg-obsidian border border-gold/30 flex items-center justify-center mx-auto text-gold font-display text-4xl shadow-[0_0_20px_rgba(201,168,76,0.1)] group-hover:shadow-[0_0_40px_rgba(201,168,76,0.3)] transition-all">
+                  <div className="w-20 h-20 rounded-2xl bg-surface-1 border border-gold/30 flex items-center justify-center mx-auto text-gold font-display text-4xl shadow-[0_0_20px_rgba(201,168,76,0.1)] group-hover:shadow-[0_0_40px_rgba(201,168,76,0.3)] transition-all">
                     {item.step}
                   </div>
-                  <h3 className="text-2xl text-white font-display">{item.title}</h3>
+                  <h3 className="text-2xl text-foreground font-display">{item.title}</h3>
                   <p className="text-text-muted max-w-[250px] mx-auto">{item.desc}</p>
                 </motion.div>
               ))}
@@ -450,27 +448,27 @@ export default function HomeClient() {
         </section>
 
         {/* Booking Widget Section - The Centerpiece */}
-        <section className="py-32 relative bg-midnight" id="booking">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(167,59,60,0.05),transparent_50%)]"></div>
+        <section className="py-32 relative bg-surface-1/30" id="booking">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(201,168,76,0.05),transparent_50%)]"></div>
           <div className="max-w-7xl mx-auto px-6 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-16 items-center">
               <div className="lg:col-span-2 space-y-8">
-                <h2 className="text-4xl md:text-6xl text-white font-display leading-[1.1]">
-                  Prêt pour l'Exceptionnel ?
+                <h2 className="text-4xl md:text-6xl text-foreground font-display leading-[1.1]">
+                  Prêt pour l&apos;Exceptionnel ?
                 </h2>
                 <p className="text-text-secondary text-lg">
                   Réservez maintenant votre transfert aéroport ou votre trajet privé avec une tarification transparente.
                 </p>
                 <div className="space-y-4">
-                  <div className="flex items-center gap-4 text-white">
+                  <div className="flex items-center gap-4 text-foreground">
                     <CheckCircle className="text-gold" size={20} weight="light" />
-                    <span>Attente gratuite à l'aéroport</span>
+                    <span>Attente gratuite à l&apos;aéroport</span>
                   </div>
-                  <div className="flex items-center gap-4 text-white">
+                  <div className="flex items-center gap-4 text-foreground">
                     <CheckCircle className="text-gold" size={20} weight="light" />
                     <span>Annulation gratuite 24h avant</span>
                   </div>
-                  <div className="flex items-center gap-4 text-white">
+                  <div className="flex items-center gap-4 text-foreground">
                     <CheckCircle className="text-gold" size={20} weight="light" />
                     <span>Paiement sécurisé à bord</span>
                   </div>
@@ -484,26 +482,26 @@ export default function HomeClient() {
                   viewport={{ once: true }}
                   className="p-1 rounded-[2.5rem] bg-linear-to-br from-gold/30 to-white/5 shadow-2xl"
                 >
-                  <div className="bg-obsidian/90 backdrop-blur-3xl rounded-[2.4rem] p-8 md:p-12">
-                    <div className="flex gap-4 mb-10 p-1 bg-midnight rounded-xl border border-white/5">
+                  <div className="bg-surface-2 backdrop-blur-3xl rounded-[2.4rem] p-8 md:p-12 border border-border">
+                    <div className="flex gap-4 mb-10 p-1 bg-background rounded-xl border border-border">
                       <button
                         onClick={() => setBookingService('transfert-aibd-dakar')}
-                        className={`flex-1 py-3 px-6 rounded-lg font-bold transition-all ${bookingService === 'transfert-aibd-dakar' ? 'bg-gold text-midnight' : 'text-white hover:bg-white/5'}`}
+                        className={`flex-1 py-3 px-6 rounded-lg font-bold transition-all ${bookingService === 'transfert-aibd-dakar' ? 'bg-gold text-background' : 'text-foreground hover:bg-surface-1'}`}
                       >
                         Transfert AIBD
                       </button>
                       <button
                         onClick={() => setBookingService('chauffeur-prive-dakar')}
-                        className={`flex-1 py-3 px-6 rounded-lg font-bold transition-all ${bookingService === 'chauffeur-prive-dakar' ? 'bg-gold text-midnight' : 'text-white hover:bg-white/5'}`}
+                        className={`flex-1 py-3 px-6 rounded-lg font-bold transition-all ${bookingService === 'chauffeur-prive-dakar' ? 'bg-gold text-background' : 'text-foreground hover:bg-surface-1'}`}
                       >
                         Ville & Régions
                       </button>
                     </div>
 
                     <div className="space-y-6">
-                      <div className="p-6 rounded-2xl bg-white/5 border border-white/10 text-center mb-4">
+                      <div className="p-6 rounded-2xl bg-background/50 border border-border text-center mb-4">
                         <p className="text-text-secondary text-lg">
-                          Simplifiez l'organisation de vos déplacements avec Navette Xpress.
+                          Simplifiez l&apos;organisation de vos déplacements avec Navette Xpress.
                         </p>
                       </div>
 
@@ -513,7 +511,7 @@ export default function HomeClient() {
                           if (bookingService) queryParams.append('service', bookingService);
                           router.push(`/reservation?${queryParams.toString()}`);
                         }}
-                        className="w-full py-5 bg-gold text-midnight font-bold text-xl rounded-2xl shadow-[0_10px_40px_rgba(201,168,76,0.3)] hover:scale-[1.02] hover:shadow-[0_10px_50px_rgba(201,168,76,0.5)] transition-all flex items-center justify-center gap-3 mt-8"
+                        className="w-full py-5 bg-gold text-background font-bold text-xl rounded-2xl shadow-[0_10px_40px_rgba(201,168,76,0.3)] hover:scale-[1.02] hover:shadow-[0_10px_50px_rgba(201,168,76,0.5)] transition-all flex items-center justify-center gap-3 mt-8"
                       >
                         Réserver mon trajet
                         <ArrowRight size={24} weight="regular" />
@@ -527,7 +525,7 @@ export default function HomeClient() {
         </section>
 
         {/* Fleet Showcase */}
-        <section className="py-32 bg-midnight">
+        <section className="py-32 bg-background border-y border-border">
           <div className="max-w-7xl mx-auto px-6">
             <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
               <div>
@@ -535,12 +533,12 @@ export default function HomeClient() {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  className="text-4xl md:text-6xl text-white font-display mb-6"
+                  className="text-4xl md:text-6xl text-foreground font-display mb-6"
                 >
                   Notre Flotte
                 </motion.h2>
                 <p className="text-text-secondary text-lg max-w-xl">
-                  Des véhicules d'exception pour des passagers exigeants. Entretien rigoureux et confort absolu.
+                  Des véhicules d&apos;exception pour des passagers exigeants. Entretien rigoureux et confort absolu.
                 </p>
               </div>
               <Link href="/flotte" className="text-gold font-bold uppercase tracking-widest text-xs border-b border-gold/30 pb-2 hover:border-gold transition-all">
@@ -551,8 +549,8 @@ export default function HomeClient() {
             {loading ? (
               <div className="flex justify-center items-center py-20">
                 <div className="flex flex-col items-center gap-4">
-                  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
-                    style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
+                  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text animate-shimmer"
+                    style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), var(--color-foreground), var(--color-gold))', backgroundSize: '200% auto', textTransform: 'uppercase' }}>
                     Navette Xpress
                   </div>
                 </div>
@@ -562,7 +560,7 @@ export default function HomeClient() {
                 ref={carouselRef}
                 onMouseEnter={() => setIsCarouselHovered(true)}
                 onMouseLeave={() => setIsCarouselHovered(false)}
-                className="flex gap-8 overflow-x-auto pb-12 pt-4 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
+                className="flex gap-8 overflow-x-auto pb-12 pt-4 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:&apos;none&apos;] [scrollbar-width:&apos;none&apos;]"
               >
                 {(vehicles.length > 0 ? vehicles : featuredVehicles.map((v: any, index) => ({
                   id: index,
@@ -579,30 +577,27 @@ export default function HomeClient() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1 }}
-                    className="group min-w-[85vw] md:min-w-[400px] flex-shrink-0 snap-center rounded-[2rem] bg-surface border border-white/5 hover:border-gold/20 transition-all [perspective:1000px] flex flex-col justify-between"
+                    className="group min-w-[85vw] md:min-w-[400px] flex-shrink-0 snap-center rounded-[2rem] bg-surface-2 border border-border hover:border-gold/20 transition-all flex flex-col justify-between overflow-hidden"
                   >
-                    <motion.div
-                      className="h-64 relative rounded-t-[2rem] overflow-hidden [transform-style:preserve-3d] transition-transform duration-700 ease-out"
-                      whileHover={{ rotateX: 5, rotateY: -5, scale: 1.02 }}
-                    >
+                    <div className="h-64 relative overflow-hidden">
                       <Image
                         src={vehicle.photo || vehicle.image || 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=800'}
                         alt={`Véhicule Navette Xpress : ${vehicle.make} ${vehicle.model}`}
                         width={600}
                         height={400}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       />
-                      <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(11,11,15,0.6),transparent)]"></div>
-                      <div className="absolute top-4 right-4 px-4 py-1 rounded-full bg-midnight/80 backdrop-blur-md border border-white/10 text-gold text-[10px] font-bold uppercase tracking-widest [transform:translateZ(30px)] shadow-xl">
+                      <div className="absolute inset-0 bg-linear-to-t from-background/80 to-transparent"></div>
+                      <div className="absolute top-4 right-4 px-4 py-1 rounded-full bg-background/80 backdrop-blur-md border border-border text-gold text-[10px] font-bold uppercase tracking-widest shadow-xl">
                         {vehicle.category || vehicle.vehicleType || "VIP"}
                       </div>
-                    </motion.div>
+                    </div>
                     <div className="p-8 pb-10">
-                      <h3 className="text-2xl text-white font-display mb-4">{vehicle.make} {vehicle.model}</h3>
+                      <h3 className="text-2xl text-foreground font-display mb-4">{vehicle.make} {vehicle.model}</h3>
                       <div className="flex items-center gap-6 mb-8 text-text-muted text-sm">
                         <div className="flex items-center gap-2">
                           <UserCircle size={16} weight="light" className="text-gold" />
-                          <span>{vehicle.capacity || 4}</span>
+                          <span>{vehicle.capacity || 4} Pax</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Van size={16} weight="light" className="text-gold" />
@@ -613,12 +608,12 @@ export default function HomeClient() {
                         <div>
                           <div className="text-text-muted text-[10px] uppercase tracking-widest mb-1">Dès</div>
                           {vehicle.price ? (
-                            <div className="text-white font-bold text-xl font-mono">{vehicle.price} <span className="text-xs text-text-muted font-normal">FCFA</span></div>
+                            <div className="text-foreground font-bold text-xl font-mono">{vehicle.price} <span className="text-xs text-text-muted font-normal">FCFA</span></div>
                           ) : (
-                            <div className="text-white font-bold text-lg">Sur devis</div>
+                            <div className="text-foreground font-bold text-lg">Sur devis</div>
                           )}
                         </div>
-                        <Link href="/reservation" className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-gold hover:text-midnight transition-colors">
+                        <Link href="/reservation" className="w-12 h-12 rounded-full bg-surface-1 border border-border flex items-center justify-center text-foreground hover:bg-gold hover:text-background transition-colors">
                           <ArrowRight size={20} weight="regular" />
                         </Link>
                       </div>
@@ -634,11 +629,11 @@ export default function HomeClient() {
         <AdSlot placement="home_fleet" />
 
         {/* Testimonials & FAQ */}
-        <section className="py-32 bg-obsidian relative">
+        <section className="py-32 bg-surface-1/30 relative">
           <div className="max-w-7xl mx-auto px-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
               <div className="space-y-12">
-                <h2 className="text-4xl text-white font-display">Témoignages</h2>
+                <h2 className="text-4xl text-foreground font-display">Témoignages</h2>
                 <div className="space-y-8">
                   {testimonials.map((t, i) => (
                     <motion.div
@@ -646,15 +641,15 @@ export default function HomeClient() {
                       initial={{ opacity: 0, x: -20 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
-                      className="p-8 rounded-3xl bg-midnight border border-white/5 relative"
+                      className="p-8 rounded-3xl bg-background border border-border relative"
                     >
                       <ChatCircle className="absolute -top-4 -left-4 text-gold/20" size={48} weight="thin" />
                       <div className="flex gap-1 mb-6">
                         {[...Array(5)].map((_, i) => <Star key={i} size={14} weight="fill" className="text-gold" />)}
                       </div>
-                      <p className="text-white text-lg italic mb-6 leading-relaxed">"{t.content}"</p>
+                      <p className="text-foreground text-lg italic mb-6 leading-relaxed">&quot;{t.content}&quot;</p>
                       <div>
-                        <div className="text-white font-bold">{t.name}</div>
+                        <div className="text-foreground font-bold">{t.name}</div>
                         <div className="text-gold text-xs uppercase tracking-widest">{t.role}</div>
                       </div>
                     </motion.div>
@@ -663,7 +658,7 @@ export default function HomeClient() {
               </div>
 
               <div className="space-y-12">
-                <h2 className="text-4xl text-white font-display">F.A.Q</h2>
+                <h2 className="text-4xl text-foreground font-display">F.A.Q</h2>
                 <div className="space-y-6">
                   {faqs.map((f, i) => (
                     <motion.div
@@ -671,9 +666,9 @@ export default function HomeClient() {
                       initial={{ opacity: 0, y: 10 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
-                      className="group p-6 rounded-2xl bg-midnight/50 border border-white/5 hover:border-gold/20 transition-all"
+                      className="group p-6 rounded-2xl bg-background/50 border border-border hover:border-gold/20 transition-all"
                     >
-                      <h3 className="text-white font-bold mb-4 flex items-center gap-3">
+                      <h3 className="text-foreground font-bold mb-4 flex items-center gap-3">
                         <Question className="text-gold" size={18} weight="light" />
                         {f.q}
                       </h3>

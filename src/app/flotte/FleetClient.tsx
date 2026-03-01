@@ -75,7 +75,7 @@ export default function FleetClient() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-midnight text-white selection:bg-gold/30">
+    <div className="min-h-screen bg-midnight text-foreground selection:bg-gold/30">
       {/* Noise Background Offset */}
       <div className="fixed inset-0 pointer-events-none z-[1] opacity-[0.03] mix-blend-overlay"
         style={{ backgroundImage: `url('/noise.png')` }}></div>
@@ -93,10 +93,10 @@ export default function FleetClient() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h1 className="font-serif text-5xl md:text-7xl mb-8 tracking-tight">
+              <h1 className="font-serif text-5xl md:text-7xl mb-8 tracking-tight text-foreground">
                 Une Flotte <span className="text-gold italic">D'Exception</span>
               </h1>
-              <p className="font-sans text-xl text-white/70 max-w-3xl mx-auto leading-relaxed">
+              <p className="font-sans text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
                 Symbole de prestige et de raffinement, notre collection de véhicules est rigoureusement sélectionnée pour vous offrir un confort inégalé lors de vos déplacements.
               </p>
             </motion.div>
@@ -117,11 +117,11 @@ export default function FleetClient() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: bIndex * 0.1 }}
-                className="bg-white/5 border border-white/10 rounded-2xl p-8 text-center backdrop-blur-sm"
+                className="bg-surface-2/50 border border-border rounded-2xl p-8 text-center backdrop-blur-sm"
               >
                 <div className="mb-6 flex justify-center">{benefit.icon}</div>
-                <h3 className="font-serif text-xl mb-3">{benefit.title}</h3>
-                <p className="text-sm text-white/50 leading-relaxed">{benefit.desc}</p>
+                <h3 className="font-serif text-xl mb-3 text-foreground">{benefit.title}</h3>
+                <p className="text-sm text-foreground/50 leading-relaxed">{benefit.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -133,11 +133,11 @@ export default function FleetClient() {
             {loading ? (
               <div className="flex flex-col items-center justify-center py-20">
                 <div className="flex flex-col items-center gap-4">
-  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
-       style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
-    Navette Xpress
-  </div>
-</div>
+                  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+                    style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
+                    Navette Xpress
+                  </div>
+                </div>
                 <p className="text-gold tracking-widest text-xs uppercase">Chargement de la collection...</p>
               </div>
             ) : (
@@ -163,7 +163,7 @@ export default function FleetClient() {
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-midnight/80 via-transparent to-transparent opacity-60"></div>
                         <div className="absolute top-6 left-6">
-                          <span className="bg-midnight/60 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-full">
+                          <span className="bg-midnight/60 backdrop-blur-md border border-border text-foreground text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-full">
                             {vehicle.category}
                           </span>
                         </div>
@@ -182,17 +182,17 @@ export default function FleetClient() {
                           </div>
                         </div>
 
-                        <h3 className="font-serif text-3xl mb-4 group-hover:text-gold transition-colors">
+                        <h3 className="font-serif text-3xl mb-4 text-foreground group-hover:text-gold transition-colors">
                           {vehicle.name}
                         </h3>
 
-                        <p className="text-sm text-white/50 leading-relaxed mb-8 flex-grow">
+                        <p className="text-sm text-foreground/50 leading-relaxed mb-8 flex-grow">
                           {vehicle.description}
                         </p>
 
                         <div className="flex flex-wrap gap-2 mb-8">
                           {vehicle.features.slice(0, 3).map((feat: string, fi: number) => (
-                            <span key={fi} className="text-[10px] bg-white/5 border border-white/10 px-2.5 py-1 rounded-md text-white/70">
+                            <span key={fi} className="text-[10px] bg-surface-2/50 border border-border px-2.5 py-1 rounded-md text-foreground/70">
                               {feat}
                             </span>
                           ))}
@@ -219,7 +219,7 @@ export default function FleetClient() {
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[300px] bg-gold/5 blur-[150px] -z-10"></div>
 
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="font-serif text-4xl md:text-6xl mb-12 leading-tight">
+            <h2 className="font-serif text-4xl md:text-6xl mb-12 leading-tight text-foreground">
               L'Expérience du Luxe <br />
               <span className="text-gold italic">N'attend que Vous</span>
             </h2>
@@ -233,7 +233,7 @@ export default function FleetClient() {
               </Link>
               <a
                 href="tel:+221781319191"
-                className="px-10 py-5 border border-white/20 text-white font-bold tracking-widest uppercase rounded-full hover:bg-white/5 transition-all text-sm"
+                className="px-10 py-5 border border-border text-foreground font-bold tracking-widest uppercase rounded-full hover:bg-surface-2/50 transition-all text-sm"
               >
                 Conseiller Flotte
               </a>

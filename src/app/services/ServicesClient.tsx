@@ -61,7 +61,7 @@ export default function ServicesClient() {
   };
 
   return (
-    <div className="min-h-screen bg-midnight text-white selection:bg-gold/30">
+    <div className="min-h-screen bg-midnight text-foreground selection:bg-gold/30">
       {/* Noise Background Overlay */}
       <div className="fixed inset-0 pointer-events-none z-[1] opacity-[0.03] mix-blend-overlay"
         style={{ backgroundImage: `url('/noise.png')` }}></div>
@@ -81,10 +81,10 @@ export default function ServicesClient() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h1 className="font-serif text-5xl md:text-7xl mb-6 tracking-tight">
+              <h1 className="font-serif text-5xl md:text-7xl mb-6 tracking-tight text-foreground">
                 L'Excellence <span className="text-gold italic">en Mouvement</span>
               </h1>
-              <p className="font-sans text-xl md:text-2xl text-white/70 max-w-3xl mx-auto leading-relaxed mb-12">
+              <p className="font-sans text-xl md:text-2xl text-foreground/70 max-w-3xl mx-auto leading-relaxed mb-12">
                 Découvrez nos solutions de mobilité premium conçues pour répondre à vos exigences les plus élevées au Sénégal.
               </p>
             </motion.div>
@@ -98,11 +98,11 @@ export default function ServicesClient() {
               {loading ? (
                 <div className="col-span-full flex flex-col items-center justify-center py-20 grayscale opacity-50">
                   <Spinner size={48} className="animate-spin text-gold mb-4" />
-                  <p className="text-white/40 tracking-widest uppercase text-xs">Chargement des services prestige...</p>
+                  <p className="text-foreground/40 tracking-widest uppercase text-xs">Chargement des services prestige...</p>
                 </div>
               ) : dbServices.length === 0 ? (
                 <div className="col-span-full text-center py-20">
-                  <p className="text-white/50">Aucun service disponible pour le moment.</p>
+                  <p className="text-foreground/50">Aucun service disponible pour le moment.</p>
                 </div>
               ) : (
                 (dbServices.length > 0 ? dbServices : serviceTypes).map((service: any, index: number) => (
@@ -114,26 +114,26 @@ export default function ServicesClient() {
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                     className="group relative"
                   >
-                    <div className="h-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 hover:border-gold/30 hover:bg-white/[0.07] transition-all duration-500 overflow-hidden">
+                    <div className="h-full bg-surface-2/50 backdrop-blur-xl border border-border rounded-2xl p-8 hover:border-gold/30 hover:bg-surface-2/70 transition-all duration-500 overflow-hidden">
                       {/* Background Shine Effect */}
                       <div className="absolute -top-24 -right-24 w-48 h-48 bg-gold/10 blur-[64px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
                       <div className="relative z-10">
-                        <div className="mb-6 p-4 bg-midnight/50 border border-white/10 rounded-xl w-fit group-hover:scale-110 transition-transform duration-500 min-w-20 min-h-20 flex items-center justify-center">
+                        <div className="mb-6 p-4 bg-midnight/50 border border-border rounded-xl w-fit group-hover:scale-110 transition-transform duration-500 min-w-20 min-h-20 flex items-center justify-center">
                           {getServiceIcon(service)}
                         </div>
 
-                        <h3 className="font-serif text-3xl mb-4 text-white group-hover:text-gold transition-colors duration-300">
+                        <h3 className="font-serif text-3xl mb-4 text-foreground group-hover:text-gold transition-colors duration-300">
                           {service.name}
                         </h3>
 
-                        <p className="font-sans text-white/60 mb-8 leading-relaxed h-20 line-clamp-3">
+                        <p className="font-sans text-foreground/60 mb-8 leading-relaxed h-20 line-clamp-3">
                           {service.description}
                         </p>
 
                         <ul className="space-y-3 mb-10 min-h-[140px]">
                           {(service.features || []).map((feature: string, fIndex: number) => (
-                            <li key={fIndex} className="flex items-center gap-3 text-sm text-white/80">
+                            <li key={fIndex} className="flex items-center gap-3 text-sm text-foreground/80">
                               <span className="w-1.5 h-1.5 bg-gold rounded-full shrink-0"></span>
                               {feature}
                             </li>
@@ -159,11 +159,11 @@ export default function ServicesClient() {
         </section>
 
         {/* Comparison Table / Value Prop */}
-        <section className="py-24 px-4 bg-white/[0.02] border-y border-white/5">
+        <section className="py-24 px-4 bg-surface-2/20 border-y border-border">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="font-serif text-4xl md:text-5xl mb-6">Pourquoi Choisir <span className="text-gold italic">Navette Xpress</span> ?</h2>
-              <p className="text-white/60 max-w-2xl mx-auto">L'alliance parfaite de la technologie moderne et de l'hospitalité sénégalaise authentique.</p>
+              <h2 className="font-serif text-4xl md:text-5xl mb-6 text-foreground">Pourquoi Choisir <span className="text-gold italic">Navette Xpress</span> ?</h2>
+              <p className="text-foreground/60 max-w-2xl mx-auto">L'alliance parfaite de la technologie moderne et de l'hospitalité sénégalaise authentique.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -174,11 +174,11 @@ export default function ServicesClient() {
                 { icon: <MapPin size={24} weight="thin" className="text-gold" />, title: "Partout au Sénégal", desc: "Des transferts AIBD aux circuits touristiques nationaux." },
               ].map((item, i) => (
                 <div key={i} className="text-center">
-                  <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <div className="w-16 h-16 bg-surface-2/50 border border-border rounded-2xl flex items-center justify-center mx-auto mb-6">
                     {item.icon}
                   </div>
-                  <h4 className="font-serif text-xl mb-2">{item.title}</h4>
-                  <p className="text-sm text-white/50 leading-relaxed">{item.desc}</p>
+                  <h4 className="font-serif text-xl mb-2 text-foreground">{item.title}</h4>
+                  <p className="text-sm text-foreground/50 leading-relaxed">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -195,7 +195,7 @@ export default function ServicesClient() {
             viewport={{ once: true }}
             className="max-w-4xl mx-auto"
           >
-            <h2 className="font-serif text-5xl md:text-6xl mb-10 leading-tight">
+            <h2 className="font-serif text-5xl md:text-6xl mb-10 leading-tight text-foreground">
               Prêt pour une Expérience <br />
               <span className="text-gold italic">Inoubliable ?</span>
             </h2>
@@ -209,7 +209,7 @@ export default function ServicesClient() {
               </Link>
               <Link
                 href="/contact"
-                className="px-10 py-5 border border-white/20 rounded-full font-bold tracking-widest uppercase hover:bg-white/5 transition-all"
+                className="px-10 py-5 border border-border rounded-full font-bold tracking-widest uppercase text-foreground hover:bg-surface-2/50 transition-all"
               >
                 Nous contacter
               </Link>

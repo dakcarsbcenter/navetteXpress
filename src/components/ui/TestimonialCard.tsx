@@ -49,8 +49,8 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
     <div
       className={cn(
         "break-inside-avoid rounded-2xl p-6 mb-5 transition-all duration-300 group select-none",
-        "bg-[var(--color-obsidian)] border border-[rgba(255,255,255,0.07)]",
-        "hover:border-[rgba(201,168,76,0.2)] hover:shadow-[0_8px_40px_rgba(0,0,0,0.3)] hover:-translate-y-0.5",
+        "bg-surface-2/50 backdrop-blur-xl border border-border",
+        "hover:border-gold/20 hover:shadow-[0_8px_40px_rgba(0,0,0,0.3)] hover:-translate-y-0.5",
         className
       )}
     >
@@ -60,7 +60,7 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
           {/* Avatar */}
           {avatar ? (
             <div
-              className="w-11 h-11 rounded-full overflow-hidden shrink-0 ring-2 ring-[rgba(201,168,76,0.3)]"
+              className="w-11 h-11 rounded-full overflow-hidden shrink-0 ring-2 ring-gold/30"
             >
               <Image
                 src={avatar}
@@ -71,26 +71,16 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
               />
             </div>
           ) : (
-            <div
-              className="w-11 h-11 rounded-full flex items-center justify-center text-sm font-semibold shrink-0"
-              style={{
-                backgroundColor: 'rgba(201,168,76,0.15)',
-                color: 'var(--color-gold)',
-                fontFamily: 'var(--font-body)',
-              }}
-            >
+            <div className="w-11 h-11 rounded-full flex items-center justify-center text-sm font-semibold shrink-0 bg-gold/15 text-gold font-sans">
               {initiales}
             </div>
           )}
 
           <div>
-            <p
-              className="font-medium text-sm"
-              style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-body)' }}
-            >
+            <p className="font-medium text-sm text-foreground font-sans">
               {name}
             </p>
-            <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
+            <p className="text-xs mt-0.5 text-foreground/40">
               {role}
             </p>
           </div>
@@ -98,14 +88,7 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
 
         {/* Badge service */}
         {service && (
-          <span className="text-[10px] px-2.5 py-1 rounded-full shrink-0"
-            style={{
-              backgroundColor: 'rgba(201,168,76,0.1)',
-              color: 'var(--color-gold)',
-              border: '1px solid rgba(201,168,76,0.2)',
-              fontFamily: 'var(--font-body)',
-              letterSpacing: '0.05em',
-            }}>
+          <span className="text-[10px] px-2.5 py-1 rounded-full shrink-0 bg-gold/10 text-gold border border-gold/20 font-sans tracking-wider">
             {service}
           </span>
         )}
@@ -114,39 +97,28 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
       {/* ÉTOILES */}
       <div className="flex items-center gap-0.5 mb-3">
         {renderStars(rating)}
-        <span className="ml-1.5 text-xs font-mono" style={{ color: 'var(--color-text-muted)' }}>
+        <span className="ml-1.5 text-xs font-mono text-foreground/40">
           {rating}/5
         </span>
       </div>
 
       {/* GUILLEMET DÉCORATIF */}
-      <p className="text-5xl leading-none mb-1 -mt-1 select-none"
-        style={{ color: 'rgba(201,168,76,0.2)', fontFamily: 'var(--font-display)', lineHeight: 1 }}>
+      <p className="text-5xl leading-none mb-1 -mt-1 select-none text-gold/20 font-serif">
         &quot;
       </p>
 
       {/* TEXTE DU TÉMOIGNAGE */}
-      <blockquote
-        className="text-sm sm:text-base leading-relaxed"
-        style={{
-          color: 'var(--color-text-secondary)',
-          fontFamily: 'var(--font-display)',
-          fontStyle: 'italic',
-          fontWeight: 300,
-        }}
-      >
+      <blockquote className="text-sm sm:text-base leading-relaxed text-foreground/70 font-serif italic font-light">
         {content}
       </blockquote>
 
       {/* PIED : Date + Vérifié */}
-      <div className="flex items-center justify-between mt-5 pt-4"
-        style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-        <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+      <div className="flex items-center justify-between mt-5 pt-4 border-t border-border/10">
+        <p className="text-xs text-foreground/40">
           {date}
         </p>
         {isVerified && (
-          <div className="flex items-center gap-1.5 text-xs"
-            style={{ color: 'var(--color-success)' }}>
+          <div className="flex items-center gap-1.5 text-xs text-emerald-500">
             <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>

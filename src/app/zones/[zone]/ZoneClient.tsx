@@ -12,7 +12,7 @@ import { Link as ScrollLink } from "react-scroll";
 
 export default function ZoneClient({ t, breadcrumbs }: { t: any, breadcrumbs: any }) {
     return (
-        <div className="min-h-screen bg-midnight font-body selection:bg-gold/30 selection:text-white">
+        <div className="min-h-screen bg-midnight font-body selection:bg-gold/30 selection:text-foreground">
             <Navigation variant="transparent" />
             <JsonLd data={schemaBreadcrumb(breadcrumbs)} />
 
@@ -25,10 +25,10 @@ export default function ZoneClient({ t, breadcrumbs }: { t: any, breadcrumbs: an
                     {/* Breadcrumb Visual */}
                     <nav className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-text-muted mb-8">
                         <Link href="/" className="hover:text-gold transition-colors">Accueil</Link>
-                        <span className="text-white/20">/</span>
+                        <span className="text-foreground/20">/</span>
                         <span className="text-gold">Zones</span>
-                        <span className="text-white/20">/</span>
-                        <span className="text-white">{t.name}</span>
+                        <span className="text-foreground/20">/</span>
+                        <span className="text-foreground">{t.name}</span>
                     </nav>
 
                     <motion.div
@@ -36,9 +36,9 @@ export default function ZoneClient({ t, breadcrumbs }: { t: any, breadcrumbs: an
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
                     >
-                        <h1 className="text-5xl md:text-7xl lg:text-8xl text-white font-display leading-[1.1] mb-8">
+                        <h1 className="text-5xl md:text-7xl lg:text-8xl text-foreground font-display leading-[1.1] mb-8">
                             Chauffeur Privé <br />
-                            <span className="text-transparent bg-clip-text bg-linear-to-r from-gold via-white to-gold bg-[length:200%_auto] animate-shimmer italic">
+                            <span className="text-transparent bg-clip-text bg-linear-to-r from-gold via-foreground to-gold bg-[length:200%_auto] animate-shimmer italic">
                                 {t.name}
                             </span>
                         </h1>
@@ -52,7 +52,7 @@ export default function ZoneClient({ t, breadcrumbs }: { t: any, breadcrumbs: an
                             <div className="space-y-12">
                                 <article
                                     className="prose prose-invert prose-gold max-w-none 
-                    prose-h3:font-display prose-h3:text-3xl prose-h3:text-white prose-h3:mb-6
+                    prose-h3:font-display prose-h3:text-3xl prose-h3:text-foreground prose-h3:mb-6
                     prose-p:text-text-secondary prose-p:leading-relaxed prose-p:mb-6
                     prose-ul:text-text-secondary prose-ul:space-y-4 prose-li:marker:text-gold
                     prose-strong:text-gold prose-strong:font-bold"
@@ -62,10 +62,10 @@ export default function ZoneClient({ t, breadcrumbs }: { t: any, breadcrumbs: an
 
                             {/* Action Side */}
                             <div className="sticky top-32 space-y-8">
-                                <div className="p-8 rounded-[2.5rem] bg-obsidian/50 border border-white/10 backdrop-blur-2xl relative overflow-hidden group">
+                                <div className="p-8 rounded-[2.5rem] bg-surface-2/50 border border-border backdrop-blur-2xl relative overflow-hidden group">
                                     <div className="absolute top-0 right-0 w-32 h-32 bg-gold/10 rounded-full blur-3xl -translate-y-16 translate-x-16 group-hover:scale-150 transition-transform duration-1000"></div>
 
-                                    <h2 className="text-2xl text-white font-display mb-6">Réserver à {t.name}</h2>
+                                    <h2 className="text-2xl text-foreground font-display mb-6">Réserver à {t.name}</h2>
 
                                     <div className="space-y-4 mb-10">
                                         <div className="flex items-center gap-4 text-sm text-text-secondary">
@@ -91,7 +91,7 @@ export default function ZoneClient({ t, breadcrumbs }: { t: any, breadcrumbs: an
                                     </Link>
                                 </div>
 
-                                <div className="p-8 rounded-[2.5rem] bg-white/5 border border-white/10">
+                                <div className="p-8 rounded-[2.5rem] bg-surface-2/50 border border-border">
                                     <div className="flex items-center gap-4 mb-6">
                                         <div className="flex -space-x-3">
                                             {[1, 2, 3].map(i => (
@@ -106,7 +106,7 @@ export default function ZoneClient({ t, breadcrumbs }: { t: any, breadcrumbs: an
                                             ))}
                                         </div>
                                         <div className="text-xs text-text-muted">
-                                            <span className="text-white font-bold">4.9/5</span> sur +100 trajets à {t.name}
+                                            <span className="text-foreground font-bold">4.9/5</span> sur +100 trajets à {t.name}
                                         </div>
                                     </div>
                                     <p className="text-xs text-text-muted italic">"Service impeccable pour mes rdv business au Plateau. Chauffeur très pro."</p>

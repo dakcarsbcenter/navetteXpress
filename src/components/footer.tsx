@@ -24,7 +24,7 @@ export function Footer() {
     ];
 
     return (
-        <footer className="bg-midnight pt-20 pb-10 border-t border-white/5 font-body">
+        <footer className="bg-midnight pt-20 pb-10 border-t border-border font-body">
             <div className="max-w-7xl mx-auto px-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
                     {/* Brand Column */}
@@ -33,7 +33,7 @@ export function Footer() {
                             <div className="w-10 h-10 bg-gold rounded-lg flex items-center justify-center transition-transform group-hover:rotate-12">
                                 <span className="text-midnight font-bold text-xl">NX</span>
                             </div>
-                            <span className="text-white font-display text-2xl tracking-wide">NAVETTE XPRESS</span>
+                            <span className="text-foreground font-display text-2xl tracking-wide">NAVETTE XPRESS</span>
                         </Link>
                         <p className="text-text-secondary text-sm leading-relaxed max-w-xs">
                             L'excellence de la mobility privée au Sénégal. Service premium de transfert aéroport, navette urbaine et mise à disposition.

@@ -115,51 +115,55 @@ export default function FaqClient() {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-midnight text-foreground selection:bg-gold/30">
       <Navigation variant="solid" />
 
       {/* Hero Section */}
-      <section className="relative bg-[#1A1A1A] text-white py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8 mt-16 sm:mt-20 overflow-hidden">
-        {/* Pattern Overlay */}
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23E5C16C' fill-opacity='1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }}></div>
+      <section className="relative pt-40 pb-20 px-4 overflow-hidden text-center">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[400px] bg-gold/5 blur-[120px] -z-10 rounded-full"></div>
 
-        <div className="relative max-w-6xl mx-auto text-center">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 leading-tight">
-            <span className="text-[#E5C16C]">Questions</span> Fréquentes
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="max-w-4xl mx-auto"
+        >
+          <h1 className="font-serif text-5xl md:text-7xl mb-8 tracking-tight text-foreground">
+            <span className="text-gold italic">Questions</span> Fréquentes
           </h1>
-          <p className="text-base sm:text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+          <p className="font-sans text-xl text-foreground/70 max-w-2xl mx-auto leading-relaxed">
             Trouvez rapidement les réponses à vos questions sur nos services de transport au Sénégal
           </p>
-        </div>
+        </motion.div>
       </section>
 
       {/* FAQ Content */}
-      <section className="py-10 sm:py-12 md:py-16 lg:py-20 px-4 sm:px-6 md:px-8 bg-[#FAFAFA]">
-        <div className="max-w-6xl mx-auto">
+      <section className="py-24 px-4 bg-transparent border-y border-border/10">
+        <div className="max-w-4xl mx-auto">
           {faqCategories.map((category, categoryIndex) => (
-            <div key={categoryIndex} className="mb-10 sm:mb-12 md:mb-16">
-              <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] mb-6 sm:mb-8 text-center">
-                <span className="text-[#A73B3C]">{category.title}</span>
+            <div key={categoryIndex} className="mb-20">
+              <h2 className="font-serif text-3xl mb-12 text-center text-foreground">
+                {category.title}
               </h2>
 
               <div className="space-y-3 sm:space-y-4">
                 {category.questions.map((faq, faqIndex) => {
                   const isOpen = openItems[`${categoryIndex}-${faqIndex}`];
                   return (
-                    <div key={faqIndex} className="bg-white dark:bg-[#252525] rounded-xl sm:rounded-2xl border-l-4 border-[#A73B3C] shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <div key={faqIndex} className="bg-surface-2/50 backdrop-blur-xl border border-border rounded-3xl overflow-hidden hover:border-gold/30 transition-all duration-500 mb-6">
                       <button
                         onClick={() => toggleItem(categoryIndex, faqIndex)}
-                        className="w-full text-left p-4 sm:p-5 md:p-6 focus:outline-none focus:ring-2 focus:ring-[#A73B3C] focus:ring-inset rounded-xl sm:rounded-2xl"
+                        className="w-full text-left p-8 focus:outline-none group"
                       >
-                        <div className="flex items-center justify-between gap-3 sm:gap-4">
-                          <h3 className="text-base sm:text-lg font-semibold text-[#1A1A1A] dark:text-white flex-1 leading-snug">
+                        <div className="flex items-center justify-between gap-6">
+                          <h3 className="font-serif text-xl text-foreground group-hover:text-gold transition-colors duration-300">
                             {faq.question}
                           </h3>
-                          <div className="shrink-0">
+                          <div className="shrink-0 w-10 h-10 rounded-full bg-midnight/50 border border-border flex items-center justify-center group-hover:border-gold transition-colors">
                             <CaretDown
-                              className={`w-5 h-5 sm:w-6 sm:h-6 text-[#A73B3C] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''
+                              className={`w-5 h-5 text-gold transition-transform duration-500 ${isOpen ? 'rotate-180' : ''
                                 }`}
-                              weight="bold"
+                              weight="regular"
                             />
                           </div>
                         </div>
@@ -169,9 +173,9 @@ export default function FaqClient() {
                         className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                           }`}
                       >
-                        <div className="px-4 sm:px-5 md:px-6 pb-4 sm:pb-5 md:pb-6">
-                          <div className="border-t border-[#E5C16C]/30 pt-3 sm:pt-4">
-                            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed">
+                        <div className="px-8 pb-8">
+                          <div className="pt-6 border-t border-border">
+                            <p className="font-sans text-foreground/60 leading-relaxed">
                               {faq.answer}
                             </p>
                           </div>
@@ -187,30 +191,35 @@ export default function FaqClient() {
       </section>
 
       {/* Contact CTA */}
-      <section className="py-10 sm:py-12 md:py-16 lg:py-20 px-4 sm:px-6 md:px-8 bg-[#A73B3C]">
+      <section className="py-32 px-4 relative overflow-hidden">
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[300px] bg-gold/5 blur-[150px] -z-10"></div>
+
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4 sm:mb-6 leading-tight">
-            Vous ne trouvez pas votre réponse ?
+          <h2 className="font-serif text-4xl md:text-6xl mb-12 leading-tight text-foreground">
+            Vous ne trouvez pas <br />
+            <span className="text-gold italic">votre réponse ?</span>
           </h2>
-          <p className="text-base sm:text-lg text-gray-100 mb-6 sm:mb-8 leading-relaxed">
+          <p className="font-sans text-xl text-foreground/70 mb-12 max-w-2xl mx-auto leading-relaxed">
             Notre équipe est là pour vous aider. Contactez-nous directement !
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center max-w-2xl mx-auto">
+
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <a
               href="tel:+221781319191"
-              className="w-full sm:w-auto bg-[#E5C16C] hover:bg-[#D4B060] text-[#1A1A1A] px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-colors text-center flex items-center justify-center gap-2"
+              className="px-10 py-5 bg-gold text-[#1A1A1A] font-bold tracking-widest uppercase rounded-full hover:scale-105 transition-all text-sm flex items-center justify-center gap-3"
             >
               <Phone weight="fill" /> +221 78 131 91 91
             </a>
             <a
               href="mailto:contact@navettexpress.com"
-              className="w-full sm:w-auto border-2 border-white text-white hover:bg-white hover:text-[#A73B3C] px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-colors text-center flex items-center justify-center gap-2"
+              className="px-10 py-5 border border-border text-foreground font-bold tracking-widest uppercase rounded-full hover:bg-surface-2/50 transition-all text-sm flex items-center justify-center gap-3"
             >
               <EnvelopeSimple weight="fill" /> Nous écrire
             </a>
           </div>
         </div>
       </section>
+      <Footer />
     </div>
   );
 }

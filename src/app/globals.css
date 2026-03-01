@@ -7,17 +7,20 @@
   --background: #FAFAFA;
   --foreground: #1A1A1A;
 
-  --color-midnight: #0A0A0F;
-  --color-obsidian: #12121A;
-  --color-surface: #1A1A26;
-  --color-gold: #C9A84C;
-  --color-gold-light: #E8C97A;
-  --color-crimson: #A73B3C;
-  --color-text-primary: #F0EDE8;
-  --color-text-secondary: #8A8799;
+  --midnight: #FFFFFF;
+  --obsidian: #F5F5F5;
+  --surface: #FAFAFA;
+  --surface-2: #F0F0F0;
+  
+  --gold: #C9A84C;
+  --gold-light: #E8C97A;
+  --crimson: #A73B3C;
+  --text-primary: #1A1A1A;
+  --text-secondary: #4A4A4A;
+  --text-muted: #71717A;
 
   --primary: #C9A84C;
-  --primary-foreground: #0A0A0F;
+  --primary-foreground: #FFFFFF;
 
   --secondary: #A73B3C;
   --secondary-foreground: #FFFFFF;
@@ -28,8 +31,8 @@
   --destructive: #ef4444;
   --destructive-foreground: #FFFFFF;
 
-  --border: rgba(255, 255, 255, 0.08);
-  --input: rgba(255, 255, 255, 0.05);
+  --border: rgba(0, 0, 0, 0.08);
+  --input: rgba(0, 0, 0, 0.05);
   --ring: #C9A84C;
 
   --radius: 0.75rem;
@@ -38,6 +41,11 @@
 .dark {
   --background: #0A0A0F;
   --foreground: #F0EDE8;
+
+  --midnight: #0A0A0F;
+  --obsidian: #12121A;
+  --surface: #1A1A26;
+  --surface-2: #22222F;
 
   --card: #12121A;
   --card-foreground: #F0EDE8;
@@ -61,7 +69,12 @@
   --border: rgba(255, 255, 255, 0.08);
   --input: rgba(255, 255, 255, 0.05);
   --ring: #C9A84C;
+  
+  --text-primary: #F0EDE8;
+  --text-secondary: #8A8799;
+  --text-muted: #4A4759;
 }
+
 
 /* Custom animations and transitions */
 @keyframes fadeInUp {
@@ -175,23 +188,23 @@ html {
 
 @theme {
   /* ── Couleurs principales ── */
-  --color-midnight: #0A0A0F;
-  --color-obsidian: #12121A;
-  --color-surface: #1A1A26;
-  --color-surface-2: #22222F;
-  --color-border: rgba(255, 255, 255, 0.07);
-  --color-border-hover: rgba(255, 255, 255, 0.15);
+  --color-midnight: var(--midnight);
+  --color-obsidian: var(--obsidian);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-border-hover: var(--border);
 
   /* ── Accent gold ── */
-  --color-gold: #C9A84C;
-  --color-gold-light: #E8C97A;
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
   --color-gold-glow: rgba(201, 168, 76, 0.25);
   --color-gold-subtle: rgba(201, 168, 76, 0.08);
 
   /* ── Textes ── */
-  --color-text-primary: #F0EDE8;
-  --color-text-secondary: #8A8799;
-  --color-text-muted: #4A4759;
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
 
   /* ── États ── */
   --color-success: #2ECC71;
@@ -204,7 +217,7 @@ html {
   --font-mono: 'DM Mono', 'Courier New', monospace;
 
   /* ── Existing tokens mapping ── */
-  --color-crimson: #A73B3C;
+  --color-crimson: var(--crimson);
 
   /* ── Tokens spécifiques dashboard ── */
   --color-dash-bg: #0D0D14;

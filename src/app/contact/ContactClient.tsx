@@ -111,7 +111,7 @@ export default function ContactClient() {
   ];
 
   return (
-    <div className="min-h-screen bg-midnight text-white selection:bg-gold/30">
+    <div className="min-h-screen bg-midnight text-foreground selection:bg-gold/30">
       {/* Noise Background Overlay */}
       <div className="fixed inset-0 pointer-events-none z-[1] opacity-[0.03] mix-blend-overlay"
         style={{ backgroundImage: `url('/noise.png')` }}></div>
@@ -129,10 +129,10 @@ export default function ContactClient() {
             transition={{ duration: 0.8 }}
             className="max-w-4xl mx-auto"
           >
-            <h1 className="font-serif text-5xl md:text-7xl mb-8 tracking-tight">
+            <h1 className="font-serif text-5xl md:text-7xl mb-8 tracking-tight text-foreground">
               Nous Sommes <span className="text-gold italic">À Votre Écoute</span>
             </h1>
-            <p className="font-sans text-xl text-white/70 max-w-2xl mx-auto leading-relaxed">
+            <p className="font-sans text-xl text-foreground/70 max-w-2xl mx-auto leading-relaxed">
               Pour toute demande spécifique ou assistance personnalisée, nos conseillers sont à votre entière disposition 24h/24 et 7j/7.
             </p>
           </motion.div>
@@ -153,16 +153,16 @@ export default function ContactClient() {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: idx * 0.1 }}
-                      className="group bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/[0.08] hover:border-gold/30 transition-all duration-300"
+                      className="group bg-surface-2/50 border border-border rounded-2xl p-6 hover:bg-surface-2/70 hover:border-gold/30 transition-all duration-300"
                     >
                       <div className="flex gap-6 items-start">
-                        <div className="w-12 h-12 bg-midnight/50 border border-white/10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                        <div className="w-12 h-12 bg-midnight/50 border border-border rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                           {method.icon}
                         </div>
                         <div>
-                          <h4 className="font-serif text-xl mb-1 text-white/90">{method.title}</h4>
+                          <h4 className="font-serif text-xl mb-1 text-foreground/90">{method.title}</h4>
                           <p className="font-sans text-gold font-medium mb-1 tracking-wide">{method.details}</p>
-                          <p className="text-xs text-white/40">{method.sub}</p>
+                          <p className="text-xs text-foreground/40">{method.sub}</p>
                         </div>
                       </div>
                     </motion.a>
@@ -181,7 +181,7 @@ export default function ContactClient() {
                     <ShieldCheck className="text-gold h-8 w-8" weight="light" />
                     <h3 className="font-serif text-2xl text-gold">Service d'Urgence</h3>
                   </div>
-                  <p className="text-white/80 text-sm leading-relaxed mb-6 italic">
+                  <p className="text-foreground/80 text-sm leading-relaxed mb-6 italic">
                     "Plus qu'un transport, une garantie de sérénité pour vos transferts de dernière minute."
                   </p>
                   <a href="tel:+221781319191" className="flex items-center gap-2 text-gold font-bold uppercase tracking-widest text-xs hover:gap-3 transition-all">
@@ -190,7 +190,7 @@ export default function ContactClient() {
                 </motion.div>
 
                 {/* Map Component */}
-                <div className="bg-white/5 border border-white/10 rounded-3xl p-4 overflow-hidden aspect-video relative group">
+                <div className="bg-surface-2/50 border border-border rounded-3xl p-4 overflow-hidden aspect-video relative group">
                   <InteractiveMap
                     center={[14.74342, -17.472408]}
                     zoom={15}
@@ -209,15 +209,15 @@ export default function ContactClient() {
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  className="bg-white/5 border border-white/10 rounded-[32px] p-8 md:p-12 backdrop-blur-xl relative overflow-hidden"
+                  className="bg-surface-2/50 border border-border rounded-[32px] p-8 md:p-12 backdrop-blur-xl relative overflow-hidden"
                 >
                   <div className="absolute top-0 right-0 p-8 opacity-5">
                     <PaperPlaneTilt size={120} weight="thin" />
                   </div>
 
                   <div className="relative z-10">
-                    <h2 className="font-serif text-4xl mb-4">Demande de <span className="text-gold italic">Declamation</span></h2>
-                    <p className="text-white/50 mb-10 max-w-lg">
+                    <h2 className="font-serif text-4xl mb-4 text-foreground">Demande de <span className="text-gold italic">Declamation</span></h2>
+                    <p className="text-foreground/50 mb-10 max-w-lg">
                       Remplissez ce formulaire d'exclusivité. Un conseiller personnel vous recontactera avec une proposition sur mesure.
                     </p>
 
@@ -233,7 +233,7 @@ export default function ContactClient() {
                             <CheckCircle className="text-gold w-8 h-8" weight="regular" />
                           </div>
                           <h3 className="font-serif text-2xl mb-2 text-gold">Message Reçu</h3>
-                          <p className="text-white/70 mb-6">Votre demande a été transmise à notre service conciergerie. Vous recevrez une réponse sous 2 heures.</p>
+                          <p className="text-foreground/70 mb-6">Votre demande a été transmise à notre service conciergerie. Vous recevrez une réponse sous 2 heures.</p>
                           <button
                             onClick={() => setSubmitStatus('idle')}
                             className="text-gold font-bold uppercase tracking-widest text-xs border-b border-gold pb-1"
@@ -245,26 +245,26 @@ export default function ContactClient() {
                         <form onSubmit={handleSubmit} className="space-y-6">
                           <div className="grid md:grid-cols-2 gap-6">
                             <div className="space-y-2">
-                              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/40 ml-4">Nom de Prestige</label>
+                              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-foreground/40 ml-4">Nom de Prestige</label>
                               <input
                                 type="text"
                                 name="name"
                                 required
                                 value={formData.name}
                                 onChange={handleInputChange}
-                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:outline-none focus:border-gold/50 focus:bg-white/[0.08] transition-all text-sm"
+                                className="w-full bg-surface-2/50 border border-border rounded-2xl px-6 py-4 focus:outline-none focus:border-gold/50 focus:bg-surface-2/70 transition-all text-sm text-foreground"
                                 placeholder="Votre nom complet"
                               />
                             </div>
                             <div className="space-y-2">
-                              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/40 ml-4">Coordonnées Email</label>
+                              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-foreground/40 ml-4">Coordonnées Email</label>
                               <input
                                 type="email"
                                 name="email"
                                 required
                                 value={formData.email}
                                 onChange={handleInputChange}
-                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:outline-none focus:border-gold/50 focus:bg-white/[0.08] transition-all text-sm"
+                                className="w-full bg-surface-2/50 border border-border rounded-2xl px-6 py-4 focus:outline-none focus:border-gold/50 focus:bg-surface-2/70 transition-all text-sm text-foreground"
                                 placeholder="votre@email.com"
                               />
                             </div>
@@ -272,42 +272,42 @@ export default function ContactClient() {
 
                           <div className="grid md:grid-cols-2 gap-6">
                             <div className="space-y-2">
-                              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/40 ml-4">Ligne Directe</label>
+                              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-foreground/40 ml-4">Ligne Directe</label>
                               <input
                                 type="tel"
                                 name="phone"
                                 value={formData.phone}
                                 onChange={handleInputChange}
-                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:outline-none focus:border-gold/50 focus:bg-white/[0.08] transition-all text-sm"
+                                className="w-full bg-surface-2/50 border border-border rounded-2xl px-6 py-4 focus:outline-none focus:border-gold/50 focus:bg-surface-2/70 transition-all text-sm text-foreground"
                                 placeholder="+221 ..."
                               />
                             </div>
                             <div className="space-y-2">
-                              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/40 ml-4">Service d'Intérêt</label>
+                              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-foreground/40 ml-4">Service d'Intérêt</label>
                               <select
                                 name="service"
                                 required
                                 value={formData.service}
                                 onChange={handleInputChange}
-                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:outline-none focus:border-gold/50 focus:bg-white/[0.08] transition-all text-sm appearance-none"
+                                className="w-full bg-surface-2/50 border border-border rounded-2xl px-6 py-4 focus:outline-none focus:border-gold/50 focus:bg-surface-2/70 transition-all text-sm appearance-none text-foreground"
                               >
-                                <option value="" className="bg-midnight text-white">Sélectionner un service</option>
+                                <option value="" className="bg-midnight text-foreground">Sélectionner un service</option>
                                 {services.map((s) => (
-                                  <option key={s} value={s} className="bg-midnight text-white">{s}</option>
+                                  <option key={s} value={s} className="bg-midnight text-foreground">{s}</option>
                                 ))}
                               </select>
                             </div>
                           </div>
 
                           <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/40 ml-4">Message & Exigences Particulières</label>
+                            <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-foreground/40 ml-4">Message & Exigences Particulières</label>
                             <textarea
                               name="message"
                               required
                               rows={4}
                               value={formData.message}
                               onChange={handleInputChange}
-                              className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:outline-none focus:border-gold/50 focus:bg-white/[0.08] transition-all text-sm resize-none"
+                              className="w-full bg-surface-2/50 border border-border rounded-2xl px-6 py-4 focus:outline-none focus:border-gold/50 focus:bg-surface-2/70 transition-all text-sm resize-none text-foreground"
                               placeholder="Faites-nous part de vos attentes..."
                             />
                           </div>
@@ -350,7 +350,7 @@ export default function ContactClient() {
         </section>
 
         {/* Brand Promise Section */}
-        <section className="py-24 px-4 bg-white/[0.02]">
+        <section className="py-24 px-4 bg-surface-2/10">
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-around gap-12 opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-700">
             <div className="flex flex-col items-center gap-2">
               <Globe className="h-10 w-10 text-gold" weight="thin" />

@@ -204,13 +204,13 @@ function ReservationForm() {
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
 
   if (!isLoaded) {
-    return <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#1A1A1A] flex items-center justify-center">
-      <div className="text-center">Chargement...</div>
+    return <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="text-center text-foreground">Chargement...</div>
     </div>;
   }
 
   return (
-    <div className="noise-bg min-h-screen relative overflow-x-hidden" style={{ backgroundColor: 'var(--color-midnight)', fontFamily: 'var(--font-body)' }}>
+    <div className="noise-bg min-h-screen relative overflow-x-hidden bg-background font-sans selection:bg-gold/30 selection:text-gold">
       <Navigation variant="transparent" />
 
       {/* Hero Section of Reservation */}
@@ -227,7 +227,7 @@ function ReservationForm() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl lg:text-6xl text-white font-display leading-tight mb-6"
+            className="text-4xl md:text-5xl lg:text-6xl text-foreground font-display leading-tight mb-6"
           >
             Planifiez votre <span className="text-gold italic">Prochain Voyage</span>
           </motion.h1>
@@ -237,7 +237,7 @@ function ReservationForm() {
         <div className="max-w-xl mx-auto mb-16 px-4">
           <div className="flex items-center justify-between relative">
             {/* Background Line */}
-            <div className="absolute top-1/2 left-0 right-0 h-[2px] bg-white/5 -translate-y-1/2 z-0" />
+            <div className="absolute top-1/2 left-0 right-0 h-[2px] bg-border/20 -translate-y-1/2 z-0" />
 
             {/* Active Progress Line */}
             <motion.div
@@ -261,8 +261,8 @@ function ReservationForm() {
                     disabled={isFuture}
                     whileHover={isPast ? { scale: 1.1 } : {}}
                     className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${isActive || isPast
-                      ? 'bg-gold text-midnight'
-                      : 'bg-obsidian text-text-muted border border-white/10'
+                      ? 'bg-gold text-background'
+                      : 'bg-surface-2 text-text-muted border border-border'
                       }`}
                     style={{
                       boxShadow: isActive ? '0 0 20px rgba(201, 168, 76, 0.4)' : 'none'
@@ -272,7 +272,7 @@ function ReservationForm() {
                       <CheckCircle size={18} />
                     ) : step}
                   </motion.button>
-                  <span className={`absolute -bottom-7 text-[10px] tracking-widest uppercase font-medium whitespace-nowrap transition-colors duration-300 ${isActive ? 'text-gold' : isPast ? 'text-white/70' : 'text-text-muted'
+                  <span className={`absolute -bottom-7 text-[10px] tracking-widest uppercase font-medium whitespace-nowrap transition-colors duration-300 ${isActive ? 'text-gold' : isPast ? 'text-foreground/70' : 'text-text-muted'
                     }`}>
                     {label}
                   </span>
@@ -297,24 +297,24 @@ function ReservationForm() {
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mb-10 p-6 rounded-2xl glass-card relative overflow-hidden group"
+                  className="mb-10 p-6 rounded-2xl glass-card relative overflow-hidden group border border-border"
                 >
                   <div className="absolute top-0 right-0 w-32 h-32 bg-gold/5 rounded-full -translate-y-16 translate-x-16 blur-3xl group-hover:bg-gold/10 transition-colors" />
                   <div className="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center shrink-0">
+                      <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center shrink-0 border border-gold/20">
                         <ShieldCheck className="text-gold" size={24} weight="light" />
                       </div>
                       <div>
-                        <h3 className="text-white font-semibold text-lg">Réservation Express</h3>
+                        <h3 className="text-foreground font-semibold text-lg">Réservation Express</h3>
                         <p className="text-text-secondary text-sm">Connectez-vous pour pré-remplir vos informations et suivre vos trajets.</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 w-full md:w-auto">
-                      <Link href="/auth/signin" className="flex-1 md:flex-none px-6 py-2.5 rounded-xl border border-white/10 text-white text-sm font-medium hover:bg-white/5 transition-colors text-center">
+                      <Link href="/auth/signin" className="flex-1 md:flex-none px-6 py-2.5 rounded-xl border border-border text-foreground text-sm font-medium hover:bg-surface-2/50 transition-colors text-center">
                         Connexion
                       </Link>
-                      <Link href="/auth/signup" className="flex-1 md:flex-none px-6 py-2.5 rounded-xl bg-gold text-midnight text-sm font-bold hover:bg-gold-light transition-colors text-center">
+                      <Link href="/auth/signup" className="flex-1 md:flex-none px-6 py-2.5 rounded-xl bg-gold text-background text-sm font-bold hover:bg-gold/80 transition-colors text-center">
                         Créer un compte
                       </Link>
                     </div>
@@ -322,7 +322,7 @@ function ReservationForm() {
                 </motion.div>
               )}
 
-              <div className="glass-card rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden">
+              <div className="glass-card rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden border border-border">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-gold/5 rounded-full -translate-y-32 translate-x-32 blur-[100px] pointer-events-none" />
 
                 {/* Étape 1: Type de service */}
@@ -336,7 +336,7 @@ function ReservationForm() {
                       >
                         Étape 1 / 3
                       </motion.p>
-                      <h2 className="text-3xl sm:text-4xl text-white font-display mb-4">
+                      <h2 className="text-3xl sm:text-4xl text-foreground font-display mb-4">
                         Choisissez votre <span className="text-gold italic">Service</span>
                       </h2>
                       <p className="text-text-secondary max-w-xl">Sélectionnez le type de prestige qui vous convient pour ce voyage.</p>
@@ -351,21 +351,21 @@ function ReservationForm() {
                           whileTap={{ scale: 0.98 }}
                           className={`group p-6 rounded-2xl cursor-pointer transition-all duration-300 relative overflow-hidden ${formData.serviceType === (service.slug || service.id)
                             ? 'bg-gold/10 border-2 border-gold/50 shadow-[0_0_30px_rgba(201,168,76,0.1)]'
-                            : 'bg-white/5 border border-white/10 hover:border-white/20'
+                            : 'bg-surface-2/50 border border-border hover:border-gold/30'
                             }`}
                         >
                           {formData.serviceType === (service.slug || service.id) && (
-                            <motion.div layoutId="activeService" className="absolute top-2 right-2 flex items-center justify-center w-6 h-6 rounded-full bg-gold text-midnight">
+                            <motion.div layoutId="activeService" className="absolute top-2 right-2 flex items-center justify-center w-6 h-6 rounded-full bg-gold text-background">
                               <CheckCircle size={14} weight="bold" />
                             </motion.div>
                           )}
                           <div className="flex items-start space-x-5">
-                            <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-3xl transition-colors duration-300 ${formData.serviceType === (service.slug || service.id) ? 'bg-gold text-midnight shadow-[0_4px_15px_rgba(201,168,76,0.3)]' : 'bg-white/5 text-gold'
+                            <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-3xl transition-colors duration-300 ${formData.serviceType === (service.slug || service.id) ? 'bg-gold text-background shadow-[0_4px_15px_rgba(201,168,76,0.3)]' : 'bg-surface-2/50 text-gold'
                               }`}>
                               {service.icon}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h3 className={`font-bold text-lg transition-colors duration-300 ${formData.serviceType === (service.slug || service.id) ? 'text-gold' : 'text-white group-hover:text-gold'
+                              <h3 className={`font-bold text-lg transition-colors duration-300 ${formData.serviceType === (service.slug || service.id) ? 'text-gold' : 'text-foreground group-hover:text-gold'
                                 }`}>
                                 {service.name}
                               </h3>
@@ -390,7 +390,7 @@ function ReservationForm() {
                           value={formData.customServiceType}
                           onChange={(e) => handleInputChange('customServiceType', e.target.value)}
                           placeholder="Ex: Transport événementiel, tournage, etc."
-                          className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all text-lg"
+                          className="w-full bg-surface-2/50 border border-border rounded-2xl p-4 text-foreground placeholder:text-foreground/20 focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all text-lg"
                         />
                       </motion.div>
                     )}
@@ -402,7 +402,7 @@ function ReservationForm() {
                   <div className="space-y-10">
                     <div className="text-center md:text-left">
                       <p className="text-[10px] tracking-[0.2em] uppercase mb-2 text-gold font-medium">Étape 2 / 3</p>
-                      <h2 className="text-3xl sm:text-4xl text-white font-display mb-4">
+                      <h2 className="text-3xl sm:text-4xl text-foreground font-display mb-4">
                         Détails du <span className="text-gold italic">Trajet</span>
                       </h2>
                       <p className="text-text-secondary">Précisez les modalités de votre déplacement.</p>
@@ -411,7 +411,7 @@ function ReservationForm() {
                     <div className="space-y-8">
                       {/* Infos Client (Guest) */}
                       {!isSignedIn && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-2xl bg-white/5 border border-white/10">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-2xl bg-surface-2/50 border border-border">
                           <div className="space-y-2">
                             <label className="text-[10px] tracking-widest uppercase text-gold font-medium block">Nom complet</label>
                             <div className="relative group">
@@ -420,9 +420,9 @@ function ReservationForm() {
                                 value={formData.clientName}
                                 onChange={(e) => handleInputChange('clientName', e.target.value)}
                                 placeholder="Alpha Oumar Sow"
-                                className="w-full bg-midnight/50 border border-white/10 rounded-xl px-10 py-4 text-white focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all"
+                                className="w-full bg-surface-1 border border-border rounded-xl px-10 py-4 text-foreground focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all"
                               />
-                              <User className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-gold transition-colors" size={18} weight="light" />
+                              <User className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/30 group-focus-within:text-gold transition-colors" size={18} weight="light" />
                             </div>
                           </div>
                           <div className="space-y-2">
@@ -433,9 +433,9 @@ function ReservationForm() {
                                 value={formData.clientEmail}
                                 onChange={(e) => handleInputChange('clientEmail', e.target.value)}
                                 placeholder="votre@email.com"
-                                className="w-full bg-midnight/50 border border-white/10 rounded-xl px-10 py-4 text-white focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all"
+                                className="w-full bg-surface-1 border border-border rounded-xl px-10 py-4 text-foreground focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all"
                               />
-                              <EnvelopeSimple className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-gold transition-colors" size={18} weight="light" />
+                              <EnvelopeSimple className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/30 group-focus-within:text-gold transition-colors" size={18} weight="light" />
                             </div>
                           </div>
                         </div>
@@ -450,13 +450,13 @@ function ReservationForm() {
                               <select
                                 value={formData.pickupAddress}
                                 onChange={(e) => handleInputChange('pickupAddress', e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-10 py-4 text-white focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all appearance-none"
+                                className="w-full bg-surface-2/50 border border-border rounded-xl px-10 py-4 text-foreground focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all appearance-none cursor-pointer"
                               >
-                                <option value="" disabled className="bg-midnight text-white/50">Sélectionnez un lieu...</option>
+                                <option value="" disabled className="bg-background text-foreground/50">Sélectionnez un lieu...</option>
                                 {locations.map(loc => (
-                                  <option key={loc.id} value={loc.name} className="bg-midnight text-white">{loc.name}</option>
+                                  <option key={loc.id} value={loc.name} className="bg-background text-foreground">{loc.name}</option>
                                 ))}
-                                <option value="Autre" className="bg-midnight text-white">Autre (préciser dans les notes)</option>
+                                <option value="Autre" className="bg-background text-foreground">Autre (préciser dans les notes)</option>
                               </select>
                             ) : (
                               <input
@@ -464,10 +464,10 @@ function ReservationForm() {
                                 value={formData.pickupAddress}
                                 onChange={(e) => handleInputChange('pickupAddress', e.target.value)}
                                 placeholder="Aéroport AIBD, Dakar..."
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-10 py-4 text-white focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all"
+                                className="w-full bg-surface-2/50 border border-border rounded-xl px-10 py-4 text-foreground focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all"
                               />
                             )}
-                            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-gold transition-colors" size={18} weight="light" />
+                            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/30 group-focus-within:text-gold transition-colors" size={18} weight="light" />
                           </div>
                         </div>
                         <div className="space-y-2">
@@ -477,13 +477,13 @@ function ReservationForm() {
                               <select
                                 value={formData.destinationAddress}
                                 onChange={(e) => handleInputChange('destinationAddress', e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-10 py-4 text-white focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all appearance-none"
+                                className="w-full bg-surface-2/50 border border-border rounded-xl px-10 py-4 text-foreground focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all appearance-none cursor-pointer"
                               >
-                                <option value="" disabled className="bg-midnight text-white/50">Sélectionnez une destination...</option>
+                                <option value="" disabled className="bg-background text-foreground/50">Sélectionnez une destination...</option>
                                 {locations.map(loc => (
-                                  <option key={loc.id} value={loc.name} className="bg-midnight text-white">{loc.name}</option>
+                                  <option key={loc.id} value={loc.name} className="bg-background text-foreground">{loc.name}</option>
                                 ))}
-                                <option value="Autre" className="bg-midnight text-white">Autre (préciser dans les notes)</option>
+                                <option value="Autre" className="bg-background text-foreground">Autre (préciser dans les notes)</option>
                               </select>
                             ) : (
                               <input
@@ -491,10 +491,10 @@ function ReservationForm() {
                                 value={formData.destinationAddress}
                                 onChange={(e) => handleInputChange('destinationAddress', e.target.value)}
                                 placeholder="Almadies, Hotel Terrou-Bi..."
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-10 py-4 text-white focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all"
+                                className="w-full bg-surface-2/50 border border-border rounded-xl px-10 py-4 text-foreground focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all"
                               />
                             )}
-                            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-gold transition-colors" size={18} weight="light" />
+                            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/30 group-focus-within:text-gold transition-colors" size={18} weight="light" />
                           </div>
                         </div>
                       </div>
@@ -508,10 +508,10 @@ function ReservationForm() {
                               type="datetime-local"
                               value={formData.datetime}
                               onChange={(e) => handleInputChange('datetime', e.target.value)}
-                              className="w-full bg-white/5 border border-white/10 rounded-xl px-10 py-4 text-white focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all [color-scheme:dark]"
+                              className="w-full bg-surface-2/50 border border-border rounded-xl px-10 py-4 text-foreground focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all dark:[color-scheme:dark]"
                               min={new Date().toISOString().slice(0, 16)}
                             />
-                            <CalendarBlank className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-gold transition-colors" size={18} weight="light" />
+                            <CalendarBlank className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/30 group-focus-within:text-gold transition-colors" size={18} weight="light" />
                           </div>
                         </div>
                         <div className="space-y-2">
@@ -522,23 +522,23 @@ function ReservationForm() {
                               value={formData.contactPhone}
                               onChange={(e) => handleInputChange('contactPhone', e.target.value)}
                               placeholder="+221 77 650 01 02"
-                              className="w-full bg-white/5 border border-white/10 rounded-xl px-10 py-4 text-white focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all"
+                              className="w-full bg-surface-2/50 border border-border rounded-xl px-10 py-4 text-foreground focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all"
                             />
-                            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-gold transition-colors" size={18} weight="light" />
+                            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/30 group-focus-within:text-gold transition-colors" size={18} weight="light" />
                           </div>
                         </div>
                         <div className="space-y-2">
                           <label className="text-[10px] tracking-widest uppercase text-gold font-medium block">Passagers & Bagages</label>
-                          <div className="flex bg-white/5 border border-white/10 rounded-xl p-1 gap-1">
-                            <div className="flex-1 flex items-center gap-2 px-3 py-3 border-r border-white/5">
+                          <div className="flex bg-surface-2/50 border border-border rounded-xl p-1 gap-1">
+                            <div className="flex-1 flex items-center gap-2 px-3 py-3 border-r border-border/50">
                               <Users size={16} weight="light" className="text-gold" />
                               <select
                                 value={formData.passengers}
                                 onChange={(e) => handleInputChange('passengers', Number(e.target.value))}
-                                className="bg-transparent text-white text-sm focus:outline-none w-full"
+                                className="bg-transparent text-foreground text-sm focus:outline-none w-full cursor-pointer"
                               >
                                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(n => (
-                                  <option key={n} value={n} className="bg-midnight text-white">{n === 11 ? '10+' : n}</option>
+                                  <option key={n} value={n} className="bg-background text-foreground">{n === 11 ? '10+' : n}</option>
                                 ))}
                               </select>
                             </div>
@@ -547,10 +547,10 @@ function ReservationForm() {
                               <select
                                 value={formData.luggage}
                                 onChange={(e) => handleInputChange('luggage', Number(e.target.value))}
-                                className="bg-transparent text-white text-sm focus:outline-none w-full"
+                                className="bg-transparent text-foreground text-sm focus:outline-none w-full cursor-pointer"
                               >
                                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(n => (
-                                  <option key={n} value={n} className="bg-midnight text-white">{n === 11 ? '10+' : n}</option>
+                                  <option key={n} value={n} className="bg-background text-foreground">{n === 11 ? '10+' : n}</option>
                                 ))}
                               </select>
                             </div>
@@ -568,8 +568,8 @@ function ReservationForm() {
                               onClick={() => handleAdditionalServiceToggle(service.id)}
                               whileTap={{ scale: 0.95 }}
                               className={`p-4 rounded-xl cursor-pointer text-center transition-all duration-300 border ${formData.additionalServices.includes(service.id)
-                                ? 'bg-gold text-midnight border-gold font-bold'
-                                : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'
+                                ? 'bg-gold text-background border-gold font-bold'
+                                : 'bg-surface-2/50 border-border text-foreground/70 hover:bg-surface-2/70'
                                 }`}
                             >
                               <span className="text-xs uppercase tracking-tighter">{service.name}</span>
@@ -586,7 +586,7 @@ function ReservationForm() {
                           onChange={(e) => handleInputChange('specialRequests', e.target.value)}
                           placeholder="Bouteille d'eau pétillante, accueil personnalisé..."
                           rows={3}
-                          className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all resize-none"
+                          className="w-full bg-surface-2/50 border border-border rounded-xl p-4 text-foreground focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all resize-none"
                         />
                       </div>
                     </div>
@@ -598,7 +598,7 @@ function ReservationForm() {
                   <div className="space-y-10">
                     <div className="text-center md:text-left">
                       <p className="text-[10px] tracking-[0.2em] uppercase mb-2 text-gold font-medium">Étape 3 / 3</p>
-                      <h2 className="text-3xl sm:text-4xl text-white font-display mb-4">
+                      <h2 className="text-3xl sm:text-4xl text-foreground font-display mb-4">
                         Finalisez votre <span className="text-gold italic">Expérience</span>
                       </h2>
                       <p className="text-text-secondary">Revoyez les détails de votre réservation avant confirmation.</p>
@@ -606,7 +606,7 @@ function ReservationForm() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
                       {/* Recap Card */}
-                      <div className="p-8 rounded-3xl bg-white/5 border border-white/10 space-y-6 relative overflow-hidden group">
+                      <div className="p-8 rounded-3xl bg-surface-2/50 border border-border space-y-6 relative overflow-hidden group">
                         <div className="absolute top-0 left-0 w-2 h-full bg-gold/50" />
 
                         <div className="space-y-1">
@@ -614,26 +614,26 @@ function ReservationForm() {
                           <div className="flex items-start gap-3 mt-4">
                             <div className="flex flex-col items-center gap-1 mt-1 shrink-0">
                               <div className="w-2.5 h-2.5 rounded-full border border-gold" />
-                              <div className="w-[1px] h-10 bg-white/10" />
+                              <div className="w-[1px] h-10 bg-border" />
                               <MapPin size={16} weight="light" className="text-gold" />
                             </div>
                             <div className="space-y-4 pt-0.5">
                               <div>
                                 <p className="text-xs text-text-muted mb-1 font-medium uppercase tracking-tighter">Départ</p>
-                                <p className="text-white font-medium">{formData.pickupAddress || 'Non définie'}</p>
+                                <p className="text-foreground font-medium">{formData.pickupAddress || 'Non définie'}</p>
                               </div>
                               <div>
                                 <p className="text-xs text-text-muted mb-1 font-medium uppercase tracking-tighter">Arrivée</p>
-                                <p className="text-white font-medium">{formData.destinationAddress || 'Non définie'}</p>
+                                <p className="text-foreground font-medium">{formData.destinationAddress || 'Non définie'}</p>
                               </div>
                             </div>
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-6 pt-4 border-t border-white/10">
+                        <div className="grid grid-cols-2 gap-6 pt-4 border-t border-border">
                           <div>
                             <p className="text-[10px] uppercase tracking-widest text-gold opacity-50 mb-1">Date & Heure</p>
-                            <div className="flex items-center gap-2 text-white">
+                            <div className="flex items-center gap-2 text-foreground">
                               <CalendarBlank size={14} weight="light" className="text-gold" />
                               <p className="font-medium text-sm">
                                 {formData.datetime ? new Date(formData.datetime).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : '--'}
@@ -646,7 +646,7 @@ function ReservationForm() {
                           </div>
                           <div>
                             <p className="text-[10px] uppercase tracking-widest text-gold opacity-50 mb-1">Type de Service</p>
-                            <p className="text-white font-medium text-sm capitalize">
+                            <p className="text-foreground font-medium text-sm capitalize">
                               {formData.serviceType === "autres" ? formData.customServiceType : (
                                 dbServices.find(s => s.slug === formData.serviceType)?.name ||
                                 serviceTypes.find(s => s.id === formData.serviceType)?.name ||
@@ -656,13 +656,13 @@ function ReservationForm() {
                           </div>
                         </div>
 
-                        <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                        <div className="flex items-center justify-between pt-4 border-t border-border">
                           <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-1.5 text-white/70">
+                            <div className="flex items-center gap-1.5 text-foreground/70">
                               <Users size={14} weight="light" className="text-gold" />
                               <span className="text-xs font-medium">{formData.passengers === 11 ? '10+' : formData.passengers} Pax</span>
                             </div>
-                            <div className="flex items-center gap-1.5 text-white/70">
+                            <div className="flex items-center gap-1.5 text-foreground/70">
                               <Bag size={14} weight="light" className="text-gold" />
                               <span className="text-xs font-medium">{formData.luggage === 11 ? '10+' : formData.luggage} Sacs</span>
                             </div>
@@ -680,7 +680,7 @@ function ReservationForm() {
                             <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center shrink-0">
                               <ShieldCheck size={20} weight="regular" className="text-gold" />
                             </div>
-                            <h4 className="text-white font-semibold">Garantie de Service</h4>
+                            <h4 className="text-foreground font-semibold">Garantie de Service</h4>
                           </div>
                           <p className="text-sm text-text-secondary leading-relaxed">
                             Votre réservation sera traitée en priorité. Un conseiller Navette Xpress prendra contact avec vous dans un délai de <strong className="text-gold">30 minutes</strong> pour confirmer les détails et le tarif.
@@ -688,18 +688,18 @@ function ReservationForm() {
                         </div>
 
                         {formData.specialRequests && (
-                          <div className="p-4 rounded-xl bg-white/5 border border-white/5">
+                          <div className="p-4 rounded-xl bg-surface-2 border border-border">
                             <div className="flex items-center gap-2 mb-2">
                               <ChatCircle size={14} weight="regular" className="text-gold" />
                               <span className="text-[10px] uppercase tracking-widest text-gold">Requêtes Spéciales</span>
                             </div>
-                            <p className="text-xs text-text-muted italic leading-relaxed">"{formData.specialRequests}"</p>
+                            <p className="text-xs text-text-secondary italic leading-relaxed">"{formData.specialRequests}"</p>
                           </div>
                         )}
 
                         <div className="flex items-center gap-3 p-4 rounded-xl bg-blue-500/5 border border-blue-500/10">
-                          <Warning size={18} weight="regular" className="text-blue-400 shrink-0" />
-                          <p className="text-xs text-blue-200/70 italic">Un SMS de confirmation avec les détails du chauffeur vous sera envoyé une fois le trajet validé.</p>
+                          <Warning size={18} weight="regular" className="text-blue-500 shrink-0" />
+                          <p className="text-xs text-foreground/60 italic">Un SMS de confirmation avec les détails du chauffeur vous sera envoyé une fois le trajet validé.</p>
                         </div>
                       </div>
                     </div>
@@ -714,14 +714,14 @@ function ReservationForm() {
                     <motion.button
                       whileHover={{ x: -4 }}
                       onClick={prevStep}
-                      className="flex items-center gap-2 text-text-muted hover:text-white transition-colors uppercase tracking-widest text-xs font-bold"
+                      className="flex items-center gap-2 text-text-muted hover:text-foreground transition-colors uppercase tracking-widest text-xs font-bold"
                     >
                       <ArrowLeft size={16} weight="light" /> Précédent
                     </motion.button>
                   ) : (
                     <button
                       onClick={() => router.push('/')}
-                      className="text-text-muted hover:text-white transition-colors uppercase tracking-widest text-xs font-bold"
+                      className="text-text-muted hover:text-foreground transition-colors uppercase tracking-widest text-xs font-bold"
                     >
                       Annuler
                     </button>
@@ -744,7 +744,7 @@ function ReservationForm() {
                           (!isSignedIn && (!formData.clientName || !formData.clientEmail))
                         ))
                       }
-                      className="lux-button w-full sm:w-auto flex items-center justify-center gap-3 px-10 py-4 font-bold uppercase tracking-[0.2em] text-sm group text-white"
+                      className="lux-button w-full sm:w-auto flex items-center justify-center gap-3 px-10 py-4 font-bold uppercase tracking-[0.2em] text-sm group text-background"
                     >
                       Suivant
                       <ArrowRight size={18} weight="regular" className="group-hover:translate-x-1 transition-transform" />
@@ -755,16 +755,16 @@ function ReservationForm() {
                       whileTap={{ scale: 0.98 }}
                       onClick={handleSubmit}
                       disabled={isSubmitting}
-                      className="lux-button w-full sm:w-auto flex items-center justify-center gap-3 px-12 py-4 font-bold uppercase tracking-[0.2em] text-sm text-white shadow-[0_10px_30px_rgba(201,168,76,0.3)]"
+                      className="lux-button w-full sm:w-auto flex items-center justify-center gap-3 px-12 py-4 font-bold uppercase tracking-[0.2em] text-sm text-background shadow-[0_10px_30px_rgba(201,168,76,0.3)]"
                     >
                       {isSubmitting ? (
                         <>
-                          <div className="w-5 h-5 border-2 border-midnight/30 border-t-midnight rounded-full animate-spin" />
+                          <div className="w-5 h-5 border-2 border-background/30 border-t-background rounded-full animate-spin" />
                           Confirmation...
                         </>
                       ) : (
                         <>
-                          <BookNowIcon size={18} color="white" />
+                          <BookNowIcon size={18} color="currentColor" />
                           Confirmer la Réservation
                         </>
                       )}
@@ -809,47 +809,36 @@ function ReservationForm() {
                   clientName: "",
                   clientEmail: ""
                 });
+                router.push('/');
               }
             }}
           />
 
-          {/* Modal d'erreur stylée */}
+          {/* Modal d'erreur */}
           <ConfirmationModal
             isOpen={errorModal.open}
-            onClose={() => setErrorModal({ open: false, title: '', message: '' })}
-            title={errorModal.title || 'Erreur'}
+            onClose={() => setErrorModal({ ...errorModal, open: false })}
+            title={errorModal.title}
             message={errorModal.message}
             type="error"
-            confirmText="Fermer"
-            onConfirm={() => setErrorModal({ open: false, title: '', message: '' })}
+            confirmText="Réessayer"
+            onConfirm={() => setErrorModal({ ...errorModal, open: false })}
           />
         </div>
       </div>
-
       <Footer />
     </div>
   );
 }
 
-// Composant principal avec Suspense boundary
 export default function ReservationClient() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-midnight flex items-center justify-center">
-        <div className="text-center">
-          <div className="flex flex-col items-center gap-4">
-            <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
-              style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
-              Navette Xpress
-            </div>
-          </div>
-          <p className="text-gold tracking-widest uppercase text-xs font-medium">Initialisation...</p>
-        </div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center text-foreground animate-pulse">Chargement de votre expérience...</div>
       </div>
     }>
       <ReservationForm />
     </Suspense>
   );
 }
-
-

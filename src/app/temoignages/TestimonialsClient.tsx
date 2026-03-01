@@ -83,7 +83,7 @@ export default function TestimonialsClient() {
   const nombreAvis = 1000;
 
   return (
-    <div className="min-h-screen noise-bg" style={{ backgroundColor: 'var(--color-midnight)' }}>
+    <div className="min-h-screen bg-midnight text-foreground selection:bg-gold/30">
       <Navigation variant="solid" />
 
       {/* SECTION HERO — Note globale + résumé */}
@@ -101,58 +101,38 @@ export default function TestimonialsClient() {
 
         <div className="relative max-w-3xl mx-auto px-4">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 animate-fade-in-up"
-            style={{
-              backgroundColor: 'rgba(201,168,76,0.1)',
-              border: '1px solid rgba(201,168,76,0.25)',
-            }}>
-            <span style={{ color: 'var(--color-gold)', fontSize: '12px' }}>✦</span>
-            <span className="text-xs tracking-[0.15em] uppercase"
-              style={{ color: 'var(--color-gold)', fontFamily: 'var(--font-body)' }}>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 animate-fade-in-up bg-gold/10 border border-gold/25">
+            <span className="text-gold text-[12px]">✦</span>
+            <span className="text-xs tracking-[0.15em] uppercase text-gold font-sans">
               Avis clients vérifiés
             </span>
           </div>
 
           {/* Titre */}
-          <h1
-            className="text-4xl sm:text-6xl leading-tight mb-4 animate-fade-in-up"
-            style={{
-              fontFamily: 'var(--font-display)',
-              color: 'var(--color-text-primary)',
-              fontWeight: 400,
-            }}>
+          <h1 className="font-serif text-4xl sm:text-6xl leading-tight mb-4 animate-fade-in-up text-foreground font-normal">
             Ils nous ont fait{' '}
-            <span style={{ color: 'var(--color-gold)', fontStyle: 'italic' }}>confiance</span>
+            <span className="text-gold italic">confiance</span>
           </h1>
 
-          <p className="text-base sm:text-lg mb-12 text-gray-400 animate-fade-in-up delay-100"
-            style={{ fontFamily: 'var(--font-body)' }}>
+          <p className="font-sans text-base sm:text-lg mb-12 text-foreground/50 animate-fade-in-up delay-100">
             Plus de 1 000 transferts réalisés à Dakar. Voici ce que nos clients disent de leur expérience.
           </p>
 
           {/* NOTE GLOBALE — bloc trophée */}
-          <div className="inline-flex flex-col sm:flex-row items-center gap-8 px-10 py-8 rounded-3xl animate-scaleIn"
-            style={{
-              backgroundColor: 'var(--color-obsidian)',
-              border: '1px solid rgba(201,168,76,0.2)',
-              boxShadow: '0 0 60px rgba(201,168,76,0.08)',
-            }}>
+          <div className="inline-flex flex-col sm:flex-row items-center gap-8 px-10 py-8 rounded-3xl animate-scaleIn bg-surface-2/50 backdrop-blur-xl border border-gold/20 shadow-[0_0_60px_rgba(201,168,76,0.08)]">
 
             {/* Note chiffre */}
             <div className="text-center">
-              <p className="text-7xl font-semibold leading-none"
-                style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-gold)' }}>
+              <p className="font-mono text-7xl font-semibold leading-none text-gold">
                 {noteGlobale}
               </p>
-              <p className="text-xs uppercase tracking-[0.15em] mt-2"
-                style={{ color: 'var(--color-text-secondary)' }}>
+              <p className="text-xs uppercase tracking-[0.15em] mt-2 text-foreground/40">
                 sur 5
               </p>
             </div>
 
             {/* Séparateur vertical */}
-            <div className="hidden sm:block w-px h-16"
-              style={{ backgroundColor: 'rgba(255,255,255,0.08)' }} />
+            <div className="hidden sm:block w-px h-16 bg-border" />
 
             {/* Étoiles + nb avis */}
             <div className="text-center">
@@ -161,33 +141,29 @@ export default function TestimonialsClient() {
                   <svg key={i} width="22" height="22" viewBox="0 0 20 20" fill="none">
                     <path
                       d="M10 1l2.39 4.84L18 6.76l-4 3.9.94 5.5L10 13.77 5.06 16.16 6 10.66 2 6.76l5.61-.92L10 1z"
-                      fill={i <= Math.round(noteGlobale) ? 'var(--color-gold)' : 'rgba(201,168,76,0.2)'}
+                      fill={i <= Math.round(noteGlobale) ? '#C9A84C' : 'rgba(201,168,76,0.2)'}
                     />
                   </svg>
                 ))}
               </div>
-              <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+              <p className="text-sm text-foreground/40">
                 {nombreAvis}+ avis vérifiés
               </p>
               <a href="#"
-                className="text-xs underline underline-offset-2 mt-1 inline-block transition-colors hover:text-white"
-                style={{ color: 'var(--color-gold)' }}>
+                className="text-gold text-xs underline underline-offset-2 mt-1 inline-block transition-colors hover:text-foreground">
                 Voir sur Google →
               </a>
             </div>
 
             {/* Séparateur vertical */}
-            <div className="hidden sm:block w-px h-16"
-              style={{ backgroundColor: 'rgba(255,255,255,0.08)' }} />
+            <div className="hidden sm:block w-px h-16 bg-border" />
 
             {/* Stats rapides */}
             <div className="text-center">
-              <p className="text-2xl font-semibold"
-                style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-text-primary)' }}>
+              <p className="font-mono text-2xl font-semibold text-foreground">
                 98%
               </p>
-              <p className="text-xs uppercase tracking-[0.12em] mt-1"
-                style={{ color: 'var(--color-text-secondary)' }}>
+              <p className="text-xs uppercase tracking-[0.12em] mt-1 text-foreground/40">
                 Clients Satisfaits
               </p>
             </div>
@@ -216,7 +192,7 @@ export default function TestimonialsClient() {
       </section>
 
       {/* SECTION CTA FINAL — "Votre avis compte" */}
-      <section className="py-20" style={{ backgroundColor: 'var(--color-obsidian)' }}>
+      <section className="py-20 bg-surface-2/30 backdrop-blur-xl border-y border-border/10">
         <div className="max-w-2xl mx-auto px-4 text-center">
           {/* Déco étoiles */}
           <div className="flex justify-center gap-1 mb-6">
@@ -228,18 +204,12 @@ export default function TestimonialsClient() {
             ))}
           </div>
 
-          <h2 className="text-3xl sm:text-4xl mb-4"
-            style={{
-              fontFamily: 'var(--font-display)',
-              color: 'var(--color-text-primary)',
-              fontWeight: 400,
-            }}>
+          <h2 className="font-serif text-3xl sm:text-4xl mb-4 text-foreground font-normal">
             Votre avis nous aide à{' '}
-            <span style={{ color: 'var(--color-gold)', fontStyle: 'italic' }}>grandir</span>
+            <span className="text-gold italic">grandir</span>
           </h2>
 
-          <p className="text-base mb-10"
-            style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}>
+          <p className="font-sans text-base mb-10 text-foreground/50">
             Vous avez voyagé avec Navette Xpress ? Partagez votre expérience sur Google et aidez d'autres voyageurs à faire le bon choix.
           </p>
 
@@ -257,17 +227,13 @@ export default function TestimonialsClient() {
 
             <a
               href="/reservation"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-medium text-base transition-all duration-200"
-              style={{
-                backgroundColor: 'transparent',
-                color: 'var(--color-text-secondary)',
-                border: '1px solid rgba(255,255,255,0.1)',
-              }}>
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-medium text-base transition-all duration-200 border border-border text-foreground/70 hover:bg-surface-2/50"
+            >
               Réserver une navette →
             </a>
           </div>
 
-          <p className="text-xs mt-8" style={{ color: 'var(--color-text-muted)' }}>
+          <p className="text-xs mt-8 text-foreground/30">
             Tous nos avis sont vérifiés et proviennent de clients ayant effectué un trajet avec nous.
           </p>
         </div>
