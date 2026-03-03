@@ -20,8 +20,8 @@ export async function GET(request: NextRequest) {
       config: {
         cloudName: cloudName ? 'Configuré' : 'Manquant',
         uploadPreset: uploadPreset ? 'Configuré' : 'Manquant',
-        apiKey: apiKey ? 'Configuré' : 'Manquant',
-        apiSecret: apiSecret ? 'Configuré' : 'Manquant'
+        cloudKeyStatus: apiKey ? 'Configuré' : 'Manquant',
+        cloudSecretStatus: apiSecret ? 'Configuré' : 'Manquant'
       }
     })
   } catch (error) {

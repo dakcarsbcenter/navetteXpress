@@ -16,7 +16,12 @@ const sql = postgres(databaseUrl, { ssl: 'require' });
 
 async function resetAdmin() {
     try {
-        const newPassword = 'Admin123!';
+        const newPassword = process.env.ADMIN_RESET_PASSWORD;
+        if (!newPassword) {
+            console.error('❌ ADMIN_RESET_PASSWORD environment variable is not set');
+            console.error('Usage: ADMIN_RESET_PASSWORD=<your-password> node reset-neon-admin.js');
+            process.exit(1);
+        }
         console.log(`🔐 Hashing new password...`);
         const hashedPassword = await bcrypt.hash(newPassword, 12);
 

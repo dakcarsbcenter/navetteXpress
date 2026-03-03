@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 /**
  * Validate and sanitize image URL to prevent SSRF attacks
  */
-function isValidImageUrl(imageUrl: string): { valid: boolean; error?: string } {
+function isValidImageUrl(imageUrl: string): { valid: boolean; sanitizedUrl?: string; error?: string } {
   try {
     // Parse the URL to validate format
     const url = new URL(imageUrl);
@@ -41,7 +41,8 @@ function isValidImageUrl(imageUrl: string): { valid: boolean; error?: string } {
       return { valid: false, error: 'URL trop grande' };
     }
 
-    return { valid: true };
+    // Return the normalized URL (via URL parsing) to prevent manipulation
+    return { valid: true, sanitizedUrl: url.toString() };
   } catch {
     return { valid: false, error: 'URL invalide' };
   }
@@ -64,12 +65,15 @@ export async function POST(request: NextRequest) {
 
     // Validate URL to prevent SSRF attacks
     const urlValidation = isValidImageUrl(imageUrl);
-    if (!urlValidation.valid) {
+    if (!urlValidation.valid || !urlValidation.sanitizedUrl) {
       return NextResponse.json(
         { success: false, error: urlValidation.error || 'URL d\'image invalide' },
         { status: 400 }
       );
     }
+
+    // Use the sanitized/normalized URL from the validator to prevent SSRF
+    const safeImageUrl = urlValidation.sanitizedUrl;
 
     // Vérifier la configuration Cloudinary
     const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
@@ -82,10 +86,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log(`📥 Téléchargement de: ${imageUrl}`);
+    console.log(`📥 Téléchargement de: ${safeImageUrl}`);
 
     // Télécharger l'image (côté serveur, pas de problème CORS)
-    const imageResponse = await fetch(imageUrl, {
+    const imageResponse = await fetch(safeImageUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
       },

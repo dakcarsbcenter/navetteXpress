@@ -6,10 +6,18 @@ import Link from "next/link"
 export default function TestServerPage() {
   const [result, setResult] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [testEmail, setTestEmail] = useState("test@example.com")
+  const [testPassword, setTestPassword] = useState("")
 
   const testServer = async () => {
     setIsLoading(true)
     setResult("")
+
+    if (!testPassword) {
+      setResult("❌ Veuillez entrer un mot de passe de test")
+      setIsLoading(false)
+      return
+    }
 
     try {
       const response = await fetch("/api/auth/register-simple", {
@@ -19,8 +27,8 @@ export default function TestServerPage() {
         },
         body: JSON.stringify({
           name: "Test User",
-          email: "test@example.com",
-          password: "password123"
+          email: testEmail,
+          password: testPassword
         }),
       })
 
@@ -46,6 +54,23 @@ export default function TestServerPage() {
           <p className="text-center text-gray-600 mt-2">
             Vérifiez que le serveur Next.js fonctionne
           </p>
+        </div>
+
+        <div className="space-y-3">
+          <input
+            type="email"
+            value={testEmail}
+            onChange={(e) => setTestEmail(e.target.value)}
+            placeholder="Email de test"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+          />
+          <input
+            type="password"
+            value={testPassword}
+            onChange={(e) => setTestPassword(e.target.value)}
+            placeholder="Mot de passe de test (requis)"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+          />
         </div>
 
         <button

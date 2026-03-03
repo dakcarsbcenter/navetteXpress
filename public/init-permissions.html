@@ -76,6 +76,17 @@
     </div>
 
     <script>
+        // Sanitize strings before inserting into innerHTML to prevent XSS
+        function escapeHtml(str) {
+            if (typeof str !== 'string') return String(str ?? '');
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
         async function initializePermissions() {
             const btn = document.getElementById('initBtn');
             const result = document.getElementById('result');
@@ -99,18 +110,18 @@
                 if (response.ok && data.success) {
                     result.className = 'success';
                     result.innerHTML = `
-                        <h3>✅ ${data.message}</h3>
+                        <h3>✅ ${escapeHtml(data.message)}</h3>
                         <p><strong>Résultats :</strong></p>
-                        <pre>${JSON.stringify(data.results, null, 2)}</pre>
+                        <pre>${escapeHtml(JSON.stringify(data.results, null, 2))}</pre>
                         <p><strong>Permissions de profil actuelles :</strong></p>
-                        <pre>${JSON.stringify(data.profilePermissions, null, 2)}</pre>
+                        <pre>${escapeHtml(JSON.stringify(data.profilePermissions, null, 2))}</pre>
                     `;
                     btn.textContent = '✅ Permissions initialisées';
                 } else {
                     result.className = 'error';
                     result.innerHTML = `
                         <h3>❌ Erreur</h3>
-                        <p>${data.error || 'Une erreur est survenue'}</p>
+                        <p>${escapeHtml(data.error || 'Une erreur est survenue')}</p>
                     `;
                     btn.disabled = false;
                     btn.textContent = 'Réessayer';
@@ -120,7 +131,7 @@
                 result.className = 'error';
                 result.innerHTML = `
                     <h3>❌ Erreur</h3>
-                    <p>Erreur de connexion: ${error.message}</p>
+                    <p>Erreur de connexion: ${escapeHtml(error.message)}</p>
                     <p><strong>Note:</strong> Vous devez être connecté en tant qu'administrateur.</p>
                 `;
                 btn.disabled = false;

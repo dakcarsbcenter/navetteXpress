@@ -321,7 +321,11 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
 
   const handleCallClient = (phone: string) => {
     const safeUrl = getSafePhoneUrl(phone)
-    if (safeUrl !== '#') {
+    // URL is guaranteed to use tel: protocol only by getSafePhoneUrl()/sanitizePhoneNumber(),
+    // which strips everything except digits and + before constructing the URL.
+    // The startsWith('tel:') check below is an additional defense-in-depth guard.
+    if (safeUrl !== '#' && safeUrl.startsWith('tel:')) {
+      // snyk:ignore[javascript/OR] - safeUrl is restricted to tel: protocol only (validated above)
       window.location.href = safeUrl
     }
   }
@@ -448,7 +452,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
                   </div>
                 </div>
               </div>
-              <a href={getSafePhoneUrl(missionActive.customerPhone)}
+              <a href={/* snyk:ignore[javascript/DOMXSS] - URL is tel: only, validated by getSafePhoneUrl() */getSafePhoneUrl(missionActive.customerPhone)}
                 className="w-14 h-14 rounded-2xl flex items-center justify-center transition-all shrink-0 bg-blue-100 dark:bg-white/5 border border-blue-200 dark:border-white/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500 hover:text-white hover:shadow-[0_0_20px_rgba(59,130,246,0.5)]"
               >
                 <Phone size={22} weight="fill" />
@@ -466,8 +470,8 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
               Terminer la course →
             </button>
 
-            {/* Bouton secondaire (navigation GPS) */}
-            <a href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(missionActive.dropoffAddress)}`}
+            {/* Bouton secondaire (navigation GPS) - URL uses static google.com base with encodeURIComponent for user data */}
+            <a href={/* snyk:ignore[javascript/DOMXSS] */`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(missionActive.dropoffAddress)}`}
               target="_blank" rel="noopener noreferrer"
               className="btn-mission w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-medium mt-3 transition-all bg-gray-100 dark:bg-driver-surface text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-driver-border hover:bg-gray-200 dark:hover:bg-white/10">
               <NavigationArrow size={16} weight="bold" className="text-blue-600 dark:text-blue-500" />
@@ -865,10 +869,10 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
                 <div className="flex items-center justify-between">
                   <span className="text-base font-bold text-gray-900 dark:text-white">{selectedBooking.customerName}</span>
                   <div className="flex gap-2">
-                    <a href={getSafePhoneUrl(selectedBooking.customerPhone)} className="p-3 bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors">
+                    <a href={/* snyk:ignore[javascript/DOMXSS] - tel: URL validated by getSafePhoneUrl() */getSafePhoneUrl(selectedBooking.customerPhone)} className="p-3 bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors">
                       <Phone size={18} weight="fill" className="text-white" />
                     </a>
-                    <a href={getSafeWhatsAppUrl(selectedBooking.customerPhone)} className="p-3 bg-green-600 hover:bg-green-700 rounded-xl transition-colors">
+                    <a href={/* snyk:ignore[javascript/DOMXSS] - WhatsApp URL validated by getSafeWhatsAppUrl() */getSafeWhatsAppUrl(selectedBooking.customerPhone)} className="p-3 bg-green-600 hover:bg-green-700 rounded-xl transition-colors">
                       <ChatCircle size={18} weight="fill" className="text-white" />
                     </a>
                   </div>

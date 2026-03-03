@@ -357,7 +357,12 @@ export function DriverPlanning({ onBack }: PlanningProps) {
                 <div className="flex justify-between items-center mt-4">
                   <div className="flex items-center gap-3">
                     <a
-                      href={`tel:${booking.phone}`}
+                      href={(() => {
+                        // Sanitize phone: allow only digits and + prefix to prevent XSS via tel: links
+                        // snyk:ignore[javascript/DOMXSS] - phone number is sanitized to digits/+ only before use in tel: URI
+                        const sanitized = (booking.phone || '').replace(/[^+\d]/g, '')
+                        return /* snyk:ignore[javascript/DOMXSS] */sanitized.length >= 7 ? `tel:${sanitized}` : '#'
+                      })()}
                       onClick={(e) => e.stopPropagation()}
                       className="p-2 rounded-lg bg-blue-100 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500 hover:text-white transition-all"
                     >

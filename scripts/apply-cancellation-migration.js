@@ -3,13 +3,16 @@ const fs = require('fs');
 const path = require('path');
 
 async function applyMigration() {
-  const pool = new Pool({
-    host: 'localhost',
-    port: 5432,
-    database: 'navetteXpress',
-    user: 'postgres',
-    password: 'postgres',
-  });
+  // Use DATABASE_URL env var if available, otherwise build from individual env vars
+  const pool = process.env.DATABASE_URL
+    ? new Pool({ connectionString: process.env.DATABASE_URL })
+    : new Pool({
+        host: process.env.DB_HOST || 'localhost',
+        port: parseInt(process.env.DB_PORT || '5432', 10),
+        database: process.env.DB_NAME || 'navetteXpress',
+        user: process.env.DB_USER || 'postgres',
+        password: process.env.DB_PASSWORD,
+      });
 
   try {
     const migrationSQL = fs.readFileSync(
