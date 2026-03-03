@@ -56,7 +56,7 @@ export default function SignUpPage() {
         },
         body: JSON.stringify({
           name: `${formData.firstName} ${formData.lastName}`.trim(),
-          email: formData.email,
+          email: formData.email.toLowerCase().trim(),
           phone: formData.phone,
           password: formData.password,
         }),
@@ -76,7 +76,7 @@ export default function SignUpPage() {
 
       // Connexion automatique après inscription réussie
       const result = await signIn("credentials", {
-        email: formData.email,
+        email: formData.email.toLowerCase().trim(),
         password: formData.password,
         redirect: false,
       })

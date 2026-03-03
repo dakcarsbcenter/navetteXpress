@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useSession, signOut } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -255,7 +255,7 @@ function ClientDashboardContent() {
       if (response.ok) {
         const data = await response.json()
         if (data.success) {
-          console.log('📋 Permissions utilisateur:', data.permissions)
+          console.log('ðŸ“‹ Permissions utilisateur:', data.permissions)
           setUserPermissions(data.permissions || {})
         }
       }
@@ -374,7 +374,7 @@ function ClientDashboardContent() {
   const canViewBookings = hasBookingsReadPermission || hasBookingsCreatePermission || hasBookingsUpdatePermission || hasBookingsDeletePermission
 
   // Debug permissions
-  console.log('🔍 Bookings Permissions Debug:', {
+  console.log('ðŸ” Bookings Permissions Debug:', {
     raw: userPermissions.bookings,
     manage: hasBookingsManagePermission,
     read: hasBookingsReadPermission,
@@ -413,20 +413,20 @@ function ClientDashboardContent() {
     userPermissions.users?.includes('update')
 
   const tabs = [
-    { id: 'overview' as TabType, label: 'Vue d\'ensemble', icon: '📊' },
-    ...(canViewBookings ? [{ id: 'bookings' as TabType, label: 'Mes réservations', icon: '📅', badge: stats.pendingBookings > 0 ? stats.pendingBookings : null }] : []),
+    { id: 'overview' as TabType, label: 'Vue d\'ensemble', icon: 'ðŸ“Š' },
+    ...(canViewBookings ? [{ id: 'bookings' as TabType, label: 'Mes réservations', icon: 'ðŸ“…', badge: stats.pendingBookings > 0 ? stats.pendingBookings : null }] : []),
     // Ajouter l'onglet devis si l'utilisateur a les permissions
-    ...(canManageQuotes ? [{ id: 'quotes' as TabType, label: 'Mes devis', icon: '📋' }] : []),
+    ...(canManageQuotes ? [{ id: 'quotes' as TabType, label: 'Mes devis', icon: 'ðŸ“‹' }] : []),
     // Ajouter l'onglet factures
-    { id: 'invoices' as TabType, label: 'Mes factures', icon: '🧾' },
-    { id: 'create-reviews' as TabType, label: 'Évaluer trajets', icon: '⭐', badge: stats.reviewableBookings > 0 ? stats.reviewableBookings : null },
+    { id: 'invoices' as TabType, label: 'Mes factures', icon: 'ðŸ§¾' },
+    { id: 'create-reviews' as TabType, label: 'Évaluer trajets', icon: '⭐', badge: stats.reviewableBookings > 0 ? stats.reviewableBookings : null },
     // Ajouter l'onglet avis si l'utilisateur a les permissions
-    ...(canManageReviews ? [{ id: 'reviews' as TabType, label: 'Mes avis', icon: '✅' }] : []),
+    ...(canManageReviews ? [{ id: 'reviews' as TabType, label: 'Mes avis', icon: 'âœ…' }] : []),
     // Ajouter l'onglet véhicules si l'utilisateur a les permissions
     ...(canManageVehicles ? [{ id: 'vehicles' as TabType, label: 'Véhicules', icon: '🚗' }] : []),
     // Ajouter l'onglet utilisateurs si l'utilisateur a les permissions
-    ...(canManageUsers ? [{ id: 'users' as TabType, label: 'Utilisateurs', icon: '👥' }] : []),
-    { id: 'profile' as TabType, label: 'Mon profil', icon: '👤' },
+    ...(canManageUsers ? [{ id: 'users' as TabType, label: 'Utilisateurs', icon: 'ðŸ‘¥' }] : []),
+    { id: 'profile' as TabType, label: 'Mon profil', icon: 'ðŸ‘¤' },
   ]
 
   const getStatusBadge = (status: string) => {
@@ -450,7 +450,7 @@ function ClientDashboardContent() {
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
-      <Star key={i} weight={i < rating ? "fill" : "regular"} className={`w-4 h-4 ${i < rating ? 'text-yellow-400' : 'text-gray-300'}`} />
+      <Star key={i} weight={i < rating ? "fill" : "regular"} className={`w-4 h-4 ${i < rating ? 'text-yellow-400' : ''}`} style={i >= rating ? { color: 'var(--color-text-secondary)' } : undefined} />
     ))
   }
 
@@ -461,25 +461,25 @@ function ClientDashboardContent() {
           <div className="space-y-6">
             {/* Hero Greeting */}
             <div className="client-card-enter relative rounded-2xl overflow-hidden"
-              style={{ background: 'linear-gradient(135deg, #111E1A 0%, var(--color-client-card) 60%)', border: '1px solid rgba(16,185,129,0.15)' }}>
+              style={{ background: 'linear-gradient(135deg, var(--color-client-accent) 0%, var(--color-client-card) 60%)', border: '1px solid var(--color-client-border)' }}>
               <div className="h-1 w-full" style={{ background: 'linear-gradient(to right, var(--color-client-accent), transparent)' }} />
               <div className="p-6 sm:p-8">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
-                    <p className="text-xs uppercase tracking-[0.15em] mb-1" style={{ color: 'var(--color-client-accent)' }}>
+                    <p className="text-xs uppercase tracking-[0.15em] mb-1" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
                       {new Date().getHours() < 12 ? 'Bonjour' : new Date().getHours() < 18 ? 'Bon après-midi' : 'Bonsoir'}
                     </p>
-                    <h1 className="text-2xl sm:text-3xl font-medium" style={{ color: 'var(--color-text-primary)' }}>
+                    <h1 className="text-2xl sm:text-3xl font-medium" style={{ color: '#ffffff' }}>
                       {session?.user?.name || 'Bienvenue'}
                     </h1>
-                    <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
+                    <p className="text-xs mt-1" style={{ color: 'rgba(255, 255, 255, 0.65)' }}>
                       {new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
                     </p>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-right hidden sm:block">
-                      <p className="text-[10px] uppercase tracking-widest" style={{ color: 'var(--color-text-muted)' }}>En attente</p>
-                      <p className="text-xl font-semibold" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-client-accent)' }}>{stats.pendingBookings}</p>
+                      <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.75)' }}>En attente</p>
+                      <p className="text-2xl font-bold" style={{ fontFamily: 'var(--font-mono)', color: '#ffffff' }}>{stats.pendingBookings}</p>
                     </div>
                     <Link href="/reservation"
                       className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all"
@@ -505,8 +505,8 @@ function ClientDashboardContent() {
                   <div className="w-8 h-8 rounded-xl flex items-center justify-center mb-3" style={{ backgroundColor: `${stat.color}18`, color: stat.color }}>
                     {stat.icon}
                   </div>
-                  <p className="text-[10px] uppercase tracking-[0.08em] mb-1" style={{ color: 'var(--color-text-muted)' }}>{stat.label}</p>
-                  <h3 className="text-xl font-bold" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-text-primary)' }}>{stat.value}</h3>
+                  <p className="text-xs font-semibold uppercase tracking-[0.06em] mb-1" style={{ color: 'rgba(255,255,255,0.6)' }}>{stat.label}</p>
+                  <h3 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-mono)', color: '#ffffff' }}>{stat.value}</h3>
                 </div>
               ))}
             </div>
@@ -516,9 +516,9 @@ function ClientDashboardContent() {
               <div className="client-card-enter rounded-2xl p-5 flex items-center justify-between"
                 style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.08em]" style={{ color: 'var(--color-text-muted)' }}>Note Moyenne</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.06em]" style={{ color: 'rgba(255,255,255,0.6)' }}>Note Moyenne</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <h3 className="text-xl font-bold" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-text-primary)' }}>
+                    <h3 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-mono)', color: '#ffffff' }}>
                       {stats.averageRating > 0 ? stats.averageRating.toFixed(1) : '0.0'}
                     </h3>
                     <div className="flex gap-0.5">
@@ -537,9 +537,9 @@ function ClientDashboardContent() {
                 onClick={() => setActiveTab('create-reviews')}
                 style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.08em]" style={{ color: 'var(--color-text-muted)' }}>Trajets à Évaluer</p>
-                  <h3 className="text-xl font-bold mt-1" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-client-accent)' }}>{stats.reviewableBookings}</h3>
-                  <p className="text-[10px] mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
+                  <p className="text-xs font-semibold uppercase tracking-[0.06em]" style={{ color: 'rgba(255,255,255,0.6)' }}>Trajets à Évaluer</p>
+                  <h3 className="text-2xl font-bold mt-1" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-client-accent)' }}>{stats.reviewableBookings}</h3>
+                  <p className="text-xs font-medium mt-0.5" style={{ color: 'rgba(255,255,255,0.55)' }}>
                     {stats.reviewableBookings > 0 ? 'Partagez votre expérience' : 'Tout est à jour'}
                   </p>
                 </div>
@@ -551,9 +551,9 @@ function ClientDashboardContent() {
               <div className="client-card-enter rounded-2xl p-5 flex items-center justify-between"
                 style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.08em]" style={{ color: 'var(--color-text-muted)' }}>Mes Avis</p>
-                  <h3 className="text-xl font-bold mt-1" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-text-primary)' }}>{stats.totalReviews}</h3>
-                  <p className="text-[10px] mt-0.5" style={{ color: 'var(--color-text-muted)' }}>Avis publiés</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.06em]" style={{ color: 'rgba(255,255,255,0.6)' }}>Mes Avis</p>
+                  <h3 className="text-2xl font-bold mt-1" style={{ fontFamily: 'var(--font-mono)', color: '#ffffff' }}>{stats.totalReviews}</h3>
+                  <p className="text-xs font-medium mt-0.5" style={{ color: 'rgba(255,255,255,0.55)' }}>Avis publiés</p>
                 </div>
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'rgba(139,92,246,0.1)', color: '#8B5CF6' }}>
                   <ChatCircle size={18} weight="light" />
@@ -565,50 +565,49 @@ function ClientDashboardContent() {
             <div className="client-card-enter rounded-2xl overflow-hidden"
               style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
               <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>Réservations récentes</h3>
-                <button onClick={() => setActiveTab('bookings')} className="text-xs transition-colors" style={{ color: 'var(--color-client-accent)' }}>
-                  Voir tout →
+                <h3 className="text-base font-bold" style={{ color: '#ffffff' }}>Réservations récentes</h3>
+                <button onClick={() => setActiveTab('bookings')} className="text-xs font-medium transition-colors flex items-center gap-1 hover:opacity-80" style={{ color: 'var(--color-client-accent)' }}>
+                  Voir tout <span className="text-base leading-none">→</span>
                 </button>
               </div>
 
               {bookings.slice(0, 5).length > 0 ? (
                 <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
                   {bookings.slice(0, 5).map((booking) => (
-                    <div key={booking.id} className="flex items-center gap-4 px-6 py-4 transition-colors duration-150 hover:bg-white/2">
-                      <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                    <div key={booking.id} className="flex items-center gap-3 px-6 py-3.5 transition-colors duration-150 hover:bg-white/[0.03] cursor-pointer" onClick={() => { setEditingBooking(booking); setIsEditBookingModalOpen(true) }}>
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
                         style={{ backgroundColor: booking.status === 'in_progress' ? 'var(--color-trip-inprogress-bg)' : booking.status === 'pending' ? 'rgba(245,158,11,0.1)' : 'rgba(255,255,255,0.04)', color: booking.status === 'in_progress' ? 'var(--color-trip-inprogress)' : booking.status === 'pending' ? '#F59E0B' : '#6B7280' }}>
-                        <MapPin size={16} weight="light" />
+                        <MapPin size={14} weight="fill" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm truncate" style={{ color: 'var(--color-text-primary)' }}>
-                          {booking.pickupAddress?.substring(0, 30)}{booking.pickupAddress?.length > 30 ? '...' : ''}
-                          <span style={{ color: 'var(--color-text-muted)', margin: '0 6px' }}>→</span>
-                          {booking.dropoffAddress?.substring(0, 30)}{booking.dropoffAddress?.length > 30 ? '...' : ''}
-                        </p>
-                        <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
+                        <div className="flex items-center gap-1 text-sm font-semibold" style={{ color: '#ffffff' }}>
+                          <span className="truncate max-w-[100px]" title={booking.pickupAddress}>{booking.pickupAddress?.substring(0, 20)}{booking.pickupAddress?.length > 20 ? '…' : ''}</span>
+                          <span className="shrink-0 text-xs" style={{ color: 'var(--color-client-accent)' }}>→</span>
+                          <span className="truncate max-w-[100px]" title={booking.dropoffAddress}>{booking.dropoffAddress?.substring(0, 20)}{booking.dropoffAddress?.length > 20 ? '…' : ''}</span>
+                        </div>
+                        <p className="text-xs mt-0.5 font-medium" style={{ color: 'rgba(255,255,255,0.55)', fontFamily: 'var(--font-mono)', letterSpacing: '0.02em' }}>
                           {new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}, {new Date(booking.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
                         </p>
                       </div>
                       <TripStatusBadge statut={booking.status} />
-                      <p className="text-sm shrink-0 hidden sm:block" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-text-secondary)' }}>
-                        {booking.price ? `${parseFloat(booking.price).toLocaleString('fr-FR')} FCFA` : 'N/A'}
+                      <p className="text-xs font-semibold shrink-0 hidden sm:block" style={{ fontFamily: 'var(--font-mono)', color: '#ffffff' }}>
+                        {booking.price ? `${parseFloat(booking.price).toLocaleString('fr-FR')} FCFA` : '—'}
                       </p>
-                      <button
-                        onClick={() => { setEditingBooking(booking); setIsEditBookingModalOpen(true) }}
-                        className="w-8 h-8 rounded-lg flex items-center justify-center transition-all shrink-0"
-                        style={{ backgroundColor: 'rgba(255,255,255,0.04)', color: 'var(--color-text-muted)' }}>
-                        <Eye size={14} weight="regular" />
-                      </button>
+                      <div
+                        className="w-7 h-7 rounded-lg flex items-center justify-center transition-all shrink-0 hover:bg-white/10"
+                        style={{ color: 'var(--color-text-secondary)' }}>
+                        <Eye size={13} weight="regular" />
+                      </div>
                     </div>
                   ))}
                 </div>
               ) : (
                 <div className="text-center py-12">
                   <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: 'rgba(255,255,255,0.03)' }}>
-                    <Calendar size={20} weight="light" style={{ color: 'var(--color-text-muted)' }} />
+                    <Calendar size={20} weight="light" style={{ color: 'var(--color-text-secondary)' }} />
                   </div>
-                  <p className="text-sm font-medium mb-1" style={{ color: 'var(--color-text-primary)' }}>Aucune réservation récente</p>
-                  <p className="text-xs mb-4" style={{ color: 'var(--color-text-muted)' }}>Commencez par réserver votre premier trajet.</p>
+                  <p className="text-sm font-semibold mb-1" style={{ color: '#ffffff' }}>Aucune réservation récente</p>
+                  <p className="text-sm mb-4" style={{ color: 'rgba(255,255,255,0.55)' }}>Commencez par réserver votre premier trajet.</p>
                   <Link href="/reservation" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium"
                     style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)', border: '1px solid rgba(16,185,129,0.2)' }}>
                     Réserver un trajet
@@ -629,8 +628,8 @@ function ClientDashboardContent() {
             <div className="client-card-enter rounded-2xl overflow-hidden" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
               <div className="flex items-center justify-between flex-wrap gap-4 px-6 py-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                 <div>
-                  <h3 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>Mes réservations</h3>
-                  <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>Gérez l'historique et le statut de vos trajets</p>
+                  <h3 className="text-lg font-bold" style={{ color: '#ffffff' }}>Mes réservations</h3>
+                  <p className="text-sm mt-0.5 font-medium" style={{ color: 'rgba(255,255,255,0.55)' }}>Gérez l'historique et le statut de vos trajets</p>
                 </div>
                 <div className="flex gap-3 items-center flex-wrap">
                   <select
@@ -669,10 +668,10 @@ function ClientDashboardContent() {
                                 <ClipboardText size={18} weight="light" />
                               </div>
                               <div>
-                                <h4 className="font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>
+                                <h4 className="font-bold text-sm" style={{ color: '#ffffff' }}>
                                   Réservation <span style={{ fontFamily: 'var(--font-mono)' }}>#{booking.id}</span>
                                 </h4>
-                                <p className="text-[10px] uppercase tracking-wider mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
+                                <p className="text-xs font-medium uppercase tracking-wider mt-0.5" style={{ color: 'rgba(255,255,255,0.5)' }}>
                                   Créée le {new Date(booking.createdAt).toLocaleDateString('fr-FR')}
                                 </p>
                               </div>
@@ -683,15 +682,15 @@ function ClientDashboardContent() {
                               <div className="flex items-start gap-3">
                                 <div className="mt-1 w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: 'var(--color-client-accent)' }} />
                                 <div>
-                                  <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color: 'var(--color-text-muted)' }}>Départ</p>
-                                  <p className="text-sm line-clamp-1" style={{ color: 'var(--color-text-secondary)' }}>{booking.pickupAddress}</p>
+                                  <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Départ</p>
+                                  <p className="text-sm font-medium line-clamp-1" style={{ color: '#ffffff' }}>{booking.pickupAddress}</p>
                                 </div>
                               </div>
                               <div className="flex items-start gap-3">
                                 <div className="mt-1 w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: '#EF4444' }} />
                                 <div>
-                                  <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color: 'var(--color-text-muted)' }}>Arrivée</p>
-                                  <p className="text-sm line-clamp-1" style={{ color: 'var(--color-text-secondary)' }}>{booking.dropoffAddress}</p>
+                                  <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Arrivée</p>
+                                  <p className="text-sm font-medium line-clamp-1" style={{ color: '#ffffff' }}>{booking.dropoffAddress}</p>
                                 </div>
                               </div>
                             </div>
@@ -699,22 +698,22 @@ function ClientDashboardContent() {
 
                           <div className="flex flex-wrap items-center gap-6 lg:gap-12 shrink-0">
                             <div>
-                              <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color: 'var(--color-text-muted)' }}>Date & Heure</p>
+                              <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Date & Heure</p>
                               <div className="flex items-center gap-2">
                                 <Calendar size={14} style={{ color: 'var(--color-client-accent)' }} />
-                                <p className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
+                                <p className="text-sm font-semibold" style={{ color: '#ffffff' }}>
                                   {new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
                                 </p>
                                 <Clock size={14} className="ml-1" style={{ color: 'var(--color-client-accent)' }} />
-                                <p className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
+                                <p className="text-sm font-semibold" style={{ color: '#ffffff' }}>
                                   {new Date(booking.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
                                 </p>
                               </div>
                             </div>
 
                             <div className="text-left lg:text-right">
-                              <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color: 'var(--color-text-muted)' }}>Montant</p>
-                              <p className="text-lg font-bold" style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-mono)' }}>
+                              <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Montant</p>
+                              <p className="text-lg font-bold" style={{ color: '#ffffff', fontFamily: 'var(--font-mono)' }}>
                                 {booking.price ? `${parseFloat(booking.price).toLocaleString('fr-FR')} FCFA` : '---'}
                               </p>
                             </div>
@@ -780,10 +779,10 @@ function ClientDashboardContent() {
                 ) : (
                   <div className="text-center py-20 px-6">
                     <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-client-border)' }}>
-                      <CalendarBlank size={28} weight="light" style={{ color: 'var(--color-text-muted)' }} />
+                      <CalendarBlank size={28} weight="light" style={{ color: 'var(--color-text-secondary)' }} />
                     </div>
-                    <h4 className="text-base font-medium mb-1" style={{ color: 'var(--color-text-primary)' }}>Aucune réservation trouvée</h4>
-                    <p className="text-xs max-w-xs mx-auto mb-6" style={{ color: 'var(--color-text-muted)' }}>
+                    <h4 className="text-base font-semibold mb-1" style={{ color: '#ffffff' }}>Aucune réservation trouvée</h4>
+                    <p className="text-sm max-w-xs mx-auto mb-6" style={{ color: 'rgba(255,255,255,0.55)' }}>
                       {bookingsFilter === 'all' ? "Vous n'avez pas encore effectué de réservation." : `Aucune réservation avec le statut "${bookingsFilter}".`}
                     </p>
                     {hasBookingsCreatePermission && (
@@ -804,8 +803,8 @@ function ClientDashboardContent() {
           <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
             <div className="p-5 flex items-center justify-between" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
               <div>
-                <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>Trajets à évaluer</h3>
-                <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>Évaluez vos trajets terminés</p>
+                <h3 className="text-base font-bold" style={{ color: '#ffffff' }}>Trajets à évaluer</h3>
+                <p className="text-sm font-medium mt-0.5" style={{ color: 'rgba(255,255,255,0.55)' }}>Évaluez vos trajets terminés</p>
               </div>
               {stats.reviewableBookings > 0 && (
                 <span className="px-2.5 py-1 rounded-full text-[11px] font-medium" style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)' }}>
@@ -824,19 +823,19 @@ function ClientDashboardContent() {
                             <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)' }}>
                               <Car size={14} weight="light" />
                             </div>
-                            <h4 className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>Trajet <span style={{ fontFamily: 'var(--font-mono)' }}>#{booking.id}</span></h4>
+                            <h4 className="text-sm font-semibold" style={{ color: '#ffffff' }}>Trajet <span style={{ fontFamily: 'var(--font-mono)' }}>#{booking.id}</span></h4>
                           </div>
-                          <p className="text-xs mb-2" style={{ color: 'var(--color-text-secondary)' }}>
-                            {booking.pickupAddress} <span style={{ color: 'var(--color-text-muted)' }}>→</span> {booking.dropoffAddress}
+                          <p className="text-sm mb-2 font-medium" style={{ color: 'rgba(255,255,255,0.75)' }}>
+                            {booking.pickupAddress} <span style={{ color: 'var(--color-client-accent)' }}>→</span> {booking.dropoffAddress}
                           </p>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                             <div>
-                              <p className="text-[10px] uppercase tracking-[0.08em]" style={{ color: 'var(--color-text-muted)' }}>Chauffeur</p>
-                              <p style={{ color: 'var(--color-text-secondary)' }}>{booking.driver.name}</p>
+                              <p className="text-[10px] font-bold uppercase tracking-[0.08em]" style={{ color: 'rgba(255,255,255,0.45)' }}>Chauffeur</p>
+                              <p className="font-medium" style={{ color: '#ffffff' }}>{booking.driver.name}</p>
                             </div>
                             <div>
-                              <p className="text-[10px] uppercase tracking-[0.08em]" style={{ color: 'var(--color-text-muted)' }}>Date du trajet</p>
-                              <p style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-mono)' }}>
+                              <p className="text-[10px] font-bold uppercase tracking-[0.08em]" style={{ color: 'rgba(255,255,255,0.45)' }}>Date du trajet</p>
+                              <p className="font-medium" style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'var(--font-mono)' }}>
                                 {new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                               </p>
                             </div>
@@ -860,8 +859,8 @@ function ClientDashboardContent() {
                   <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: 'rgba(245,158,11,0.1)' }}>
                     <Star size={20} style={{ color: '#F59E0B' }} />
                   </div>
-                  <p className="text-sm font-medium mb-1" style={{ color: 'var(--color-text-primary)' }}>Aucun trajet à évaluer</p>
-                  <p className="text-xs mb-4" style={{ color: 'var(--color-text-muted)' }}>Vous avez évalué tous vos trajets terminés !</p>
+                  <p className="text-sm font-semibold mb-1" style={{ color: '#ffffff' }}>Aucun trajet à évaluer</p>
+                  <p className="text-sm mb-4" style={{ color: 'rgba(255,255,255,0.55)' }}>Vous avez évalué tous vos trajets terminés !</p>
                   {hasBookingsCreatePermission && (
                     <Link href="/reservation" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium"
                       style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)', border: '1px solid rgba(16,185,129,0.2)' }}>
@@ -884,8 +883,8 @@ function ClientDashboardContent() {
         return (
           <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
             <div className="p-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-              <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>Mes avis publiés</h3>
-              <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>Avis que vous avez donnés sur vos trajets</p>
+              <h3 className="text-base font-bold" style={{ color: '#ffffff' }}>Mes avis publiés</h3>
+              <p className="text-sm font-medium mt-0.5" style={{ color: 'rgba(255,255,255,0.55)' }}>Avis que vous avez donnés sur vos trajets</p>
             </div>
             <div className="p-5">
               {reviews.length > 0 ? (
@@ -894,22 +893,22 @@ function ClientDashboardContent() {
                     <div key={review.id} className="rounded-xl p-4" style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-client-border)' }}>
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1">
-                          <h4 className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>Réservation <span style={{ fontFamily: 'var(--font-mono)' }}>#{review.bookingId}</span></h4>
+                          <h4 className="text-sm font-semibold" style={{ color: '#ffffff' }}>Réservation <span style={{ fontFamily: 'var(--font-mono)' }}>#{review.bookingId}</span></h4>
                           {review.booking && (
-                            <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
-                              {getSafeTextContent(review.booking.pickupAddress)} <span style={{ color: 'var(--color-text-muted)' }}>→</span> {getSafeTextContent(review.booking.dropoffAddress)}
+                            <p className="text-sm mt-0.5 font-medium" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                              {getSafeTextContent(review.booking.pickupAddress)} <span style={{ color: 'var(--color-client-accent)' }}>→</span> {getSafeTextContent(review.booking.dropoffAddress)}
                             </p>
                           )}
                         </div>
                         <div className="flex items-center gap-1">
                           {renderStars(review.rating)}
-                          <span className="text-xs ml-1" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>({review.rating}/5)</span>
+                          <span className="text-xs ml-1 font-semibold" style={{ color: 'rgba(255,255,255,0.65)', fontFamily: 'var(--font-mono)' }}>({review.rating}/5)</span>
                         </div>
                       </div>
                       {review.comment && (
-                        <p className="text-xs mb-2" style={{ color: 'var(--color-text-secondary)' }}>{getSafeTextContent(review.comment)}</p>
+                        <p className="text-sm mb-2 font-medium" style={{ color: 'rgba(255,255,255,0.75)' }}>{getSafeTextContent(review.comment)}</p>
                       )}
-                      <p className="text-[10px]" style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
+                      <p className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.45)', fontFamily: 'var(--font-mono)' }}>
                         Publié le {new Date(review.createdAt).toLocaleDateString('fr-FR')}
                       </p>
                     </div>
@@ -917,8 +916,8 @@ function ClientDashboardContent() {
                 </div>
               ) : (
                 <div className="text-center py-10">
-                  <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>Aucun avis donné pour le moment</p>
-                  <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>Vous pourrez évaluer vos trajets une fois qu&apos;ils seront terminés</p>
+                  <p className="text-sm font-semibold" style={{ color: '#ffffff' }}>Aucun avis donné pour le moment</p>
+                  <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.55)' }}>Vous pourrez évaluer vos trajets une fois qu&apos;ils seront terminés</p>
                 </div>
               )}
             </div>
@@ -929,13 +928,13 @@ function ClientDashboardContent() {
         return (
           <div className="space-y-6 animate-fadeIn">
             {/* Profil Header Card */}
-            <div className="relative rounded-[2.5rem] overflow-hidden bg-[#111E1A] border border-[#10B981]/10 px-8 py-10 shadow-2xl">
+            <div className="relative rounded-[2.5rem] overflow-hidden bg-white dark:bg-[#111E1A] border border-gray-200 dark:border-[#10B981]/10 px-8 py-10 shadow-2xl">
               <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 blur-[100px] rounded-full -mr-20 -mt-20" />
 
               <div className="relative flex flex-col md:flex-row items-center gap-10">
                 <div className="relative group shrink-0">
                   <div className="absolute inset-0 bg-emerald-500 blur-xl opacity-20 group-hover:opacity-40 transition-opacity" />
-                  <div className="relative w-32 h-32 rounded-4xl border-4 border-[#10B981] p-1 bg-[#111E1A] overflow-hidden">
+                  <div className="relative w-32 h-32 rounded-4xl border-4 border-[#10B981] p-1 bg-gray-100 dark:bg-[#111E1A] overflow-hidden">
                     {(() => {
                       const safeImageUrl = getSafeProfileImageUrl(userProfile?.image)
                       const safeAltText = getSafeTextForAttribute(userProfile?.name) || 'Profile'
@@ -959,14 +958,14 @@ function ClientDashboardContent() {
                 <div className="flex-1 text-center md:text-left space-y-4">
                   <div>
                     <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-2">
-                      <h2 className="text-3xl font-bold text-white tracking-tight">{userProfile?.name}</h2>
+                      <h2 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">{userProfile?.name}</h2>
                       {userProfile?.isCompany && (
                         <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-widest border border-emerald-500/20">
                           Compte Business
                         </span>
                       )}
                     </div>
-                    <p className="text-white/40 flex items-center justify-center md:justify-start gap-2 text-sm font-medium">
+                    <p className="text-gray-600 dark:text-white/40 flex items-center justify-center md:justify-start gap-2 text-sm font-medium">
                       <Envelope size={16} weight="duotone" /> {userProfile?.email}
                     </p>
                   </div>
@@ -974,11 +973,11 @@ function ClientDashboardContent() {
                   <div className="flex flex-wrap justify-center md:justify-start gap-4 pt-2">
                     <button
                       onClick={() => setIsEditProfileModalOpen(true)}
-                      className="px-6 py-2.5 rounded-xl bg-emerald-500 text-black font-bold text-sm hover:brightness-110 active:scale-95 transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/10"
+                      className="px-6 py-2.5 rounded-xl bg-emerald-500 text-black dark:text-black font-bold text-sm hover:brightness-110 active:scale-95 transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/10"
                     >
                       <PencilSimple size={18} weight="bold" /> Modifier mon profil
                     </button>
-                    <button className="px-6 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white/70 font-bold text-sm hover:bg-white/10 transition-all flex items-center gap-2">
+                    <button className="px-6 py-2.5 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-gray-700 dark:text-white/70 font-bold text-sm hover:bg-gray-200 dark:hover:bg-white/10 transition-all flex items-center gap-2">
                       <IdentificationCard size={18} /> Voir ma carte
                     </button>
                   </div>
@@ -989,7 +988,7 @@ function ClientDashboardContent() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Informations de contact */}
               <div className="lg:col-span-2 space-y-6">
-                <div className="p-8 rounded-4xl bg-client-card border border-white/5 space-y-8">
+                <div className="p-8 rounded-4xl bg-white dark:bg-client-card border border-gray-200 dark:border-white/5 space-y-8">
                   <div className="flex items-center gap-3 text-emerald-500/70">
                     <IdentificationCard size={20} weight="bold" />
                     <h4 className="text-xs font-bold uppercase tracking-[0.2em]">Détails du compte</h4>
@@ -997,26 +996,26 @@ function ClientDashboardContent() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-1">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Numéro de téléphone</p>
-                      <p className="text-white font-medium flex items-center gap-2">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/30">Numéro de téléphone</p>
+                      <p className="text-gray-900 dark:text-white font-medium flex items-center gap-2">
                         <Phone size={16} className="text-emerald-500" /> {userProfile?.phone || "Non renseigné"}
                       </p>
                     </div>
                     <div className="space-y-1">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Adresse de résidence</p>
-                      <p className="text-white font-medium flex items-center gap-2 line-clamp-1">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/30">Adresse de résidence</p>
+                      <p className="text-gray-900 dark:text-white font-medium flex items-center gap-2 line-clamp-1">
                         <MapPin size={16} className="text-emerald-500" /> {userProfile?.address || "Dakar, Sénégal"}
                       </p>
                     </div>
                     <div className="space-y-1">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Membre depuis</p>
-                      <p className="text-white font-medium flex items-center gap-2">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/30">Membre depuis</p>
+                      <p className="text-gray-900 dark:text-white font-medium flex items-center gap-2">
                         <CalendarBlank size={16} className="text-emerald-500" /> {userProfile?.createdAt ? new Date(userProfile.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : "---"}
                       </p>
                     </div>
                     <div className="space-y-1">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Statut du compte</p>
-                      <p className="text-white font-medium flex items-center gap-2">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/30">Statut du compte</p>
+                      <p className="text-gray-900 dark:text-white font-medium flex items-center gap-2">
                         <CheckCircle size={16} className="text-emerald-500" weight="fill" /> Vérifié & Actif
                       </p>
                     </div>
@@ -1025,7 +1024,7 @@ function ClientDashboardContent() {
 
                 {/* Section Entreprise (Si applicable) */}
                 {userProfile?.isCompany ? (
-                  <div className="p-8 rounded-4xl bg-emerald-500/3 border border-emerald-500/10 space-y-8 relative overflow-hidden group">
+                  <div className="p-8 rounded-4xl bg-emerald-50 dark:bg-emerald-500/3 border border-emerald-200 dark:border-emerald-500/10 space-y-8 relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
                       <Buildings size={120} weight="duotone" />
                     </div>
@@ -1037,45 +1036,45 @@ function ClientDashboardContent() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 relative">
                       <div className="space-y-1">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Nom de l'entreprise</p>
-                        <p className="text-white text-lg font-bold">{userProfile.companyName || "Non renseigné"}</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/30">Nom de l'entreprise</p>
+                        <p className="text-gray-900 dark:text-white text-lg font-bold">{userProfile.companyName || "Non renseigné"}</p>
                       </div>
                       <div className="space-y-1">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">NINEA</p>
-                        <p className="text-white font-mono font-medium tracking-wider">{userProfile.ninea || "Non renseigné"}</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/30">NINEA</p>
+                        <p className="text-gray-900 dark:text-white font-mono font-medium tracking-wider">{userProfile.ninea || "Non renseigné"}</p>
                       </div>
                       <div className="space-y-1">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Raison Sociale</p>
-                        <p className="text-white font-medium">{userProfile.raisonSociale || "Non renseigné"}</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/30">Raison Sociale</p>
+                        <p className="text-gray-900 dark:text-white font-medium">{userProfile.raisonSociale || "Non renseigné"}</p>
                       </div>
                       <div className="space-y-1">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Boîte Postale (BP)</p>
-                        <p className="text-white font-medium">{userProfile.bp || "Aucune"}</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/30">Boîte Postale (BP)</p>
+                        <p className="text-gray-900 dark:text-white font-medium">{userProfile.bp || "Aucune"}</p>
                       </div>
                       <div className="space-y-1 md:col-span-2">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Siège Social</p>
-                        <p className="text-white font-medium flex items-center gap-2">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/30">Siège Social</p>
+                        <p className="text-gray-900 dark:text-white font-medium flex items-center gap-2">
                           <MapPin size={16} className="text-emerald-500" /> {userProfile.companyAddress || "Non renseignée"}
                         </p>
                       </div>
                       <div className="space-y-1">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Téléphone pro</p>
-                        <p className="text-white font-medium flex items-center gap-2">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/30">Téléphone pro</p>
+                        <p className="text-gray-900 dark:text-white font-medium flex items-center gap-2">
                           <Phone size={16} className="text-emerald-500" /> {userProfile.companyPhone || "Non renseigné"}
                         </p>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="p-8 rounded-4xl bg-white/2 border border-white/5 border-dashed flex flex-col items-center justify-center text-center py-12">
-                    <Buildings size={40} weight="thin" className="text-white/20 mb-4" />
-                    <h4 className="text-sm font-bold text-white/60">Vous êtes un professionnel ?</h4>
-                    <p className="text-xs text-white/30 mt-1 max-w-xs">
+                  <div className="p-8 rounded-4xl bg-gray-50 dark:bg-white/2 border border-gray-200 dark:border-white/5 border-dashed flex flex-col items-center justify-center text-center py-12">
+                    <Buildings size={40} weight="thin" className="text-gray-400 dark:text-white/20 mb-4" />
+                    <h4 className="text-sm font-bold text-gray-700 dark:text-white/60">Vous êtes un professionnel ?</h4>
+                    <p className="text-xs text-gray-600 dark:text-white/30 mt-1 max-w-xs">
                       Activez le mode entreprise dans vos réglages pour bénéficier d'une facturation professionnelle et de services dédiés.
                     </p>
                     <button
                       onClick={() => setIsEditProfileModalOpen(true)}
-                      className="mt-6 px-5 py-2 rounded-xl bg-white/5 border border-white/10 text-white/60 text-xs font-bold hover:bg-white/10 transition-all uppercase tracking-widest"
+                      className="mt-6 px-5 py-2 rounded-xl bg-gray-200 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-gray-700 dark:text-white/60 text-xs font-bold hover:bg-gray-300 dark:hover:bg-white/10 transition-all uppercase tracking-widest"
                     >
                       Passer au compte Pro
                     </button>
@@ -1086,49 +1085,49 @@ function ClientDashboardContent() {
               {/* Sidebar: Sécurité & Statut */}
               <div className="space-y-6">
                 {/* Activité Quick Stats */}
-                <div className="p-6 rounded-4xl bg-client-card border border-white/5 space-y-6">
-                  <h5 className="text-[10px] font-bold uppercase tracking-widest text-white/30">Résumé activité</h5>
+                <div className="p-6 rounded-4xl bg-white dark:bg-client-card border border-gray-200 dark:border-white/5 space-y-6">
+                  <h5 className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/30">Résumé activité</h5>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 rounded-2xl bg-white/2 border border-white/5">
-                      <p className="text-2xl font-bold text-white" style={{ fontFamily: 'var(--font-mono)' }}>{stats.totalBookings}</p>
-                      <p className="text-[9px] uppercase tracking-widest text-white/30 mt-1">Trajets</p>
+                    <div className="p-4 rounded-2xl bg-gray-50 dark:bg-white/2 border border-gray-200 dark:border-white/5">
+                      <p className="text-2xl font-bold text-gray-900 dark:text-white" style={{ fontFamily: 'var(--font-mono)' }}>{stats.totalBookings}</p>
+                      <p className="text-[9px] uppercase tracking-widest text-gray-500 dark:text-white/30 mt-1">Trajets</p>
                     </div>
-                    <div className="p-4 rounded-2xl bg-white/2 border border-white/5">
+                    <div className="p-4 rounded-2xl bg-gray-50 dark:bg-white/2 border border-gray-200 dark:border-white/5">
                       <p className="text-2xl font-bold text-emerald-500" style={{ fontFamily: 'var(--font-mono)' }}>{stats.completedBookings}</p>
-                      <p className="text-[9px] uppercase tracking-widest text-white/30 mt-1">Réussis</p>
+                      <p className="text-[9px] uppercase tracking-widest text-gray-500 dark:text-white/30 mt-1">Réussis</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Sécurité */}
-                <div className="p-6 rounded-4xl bg-emerald-500/5 border border-emerald-500/10 space-y-4">
+                <div className="p-6 rounded-4xl bg-emerald-50 dark:bg-emerald-500/5 border border-emerald-200 dark:border-emerald-500/10 space-y-4">
                   <div className="flex items-center gap-2 text-emerald-400">
                     <CheckCircle size={18} weight="fill" />
                     <h5 className="text-[10px] font-bold uppercase tracking-widest">Confiance & Sécurité</h5>
                   </div>
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between text-xs p-3 rounded-xl bg-black/20">
-                      <span className="text-white/50">Email vérifié</span>
+                    <div className="flex items-center justify-between text-xs p-3 rounded-xl bg-white/50 dark:bg-black/20">
+                      <span className="text-gray-600 dark:text-white/50">Email vérifié</span>
                       <span className="text-emerald-500 font-bold">OUI</span>
                     </div>
-                    <div className="flex items-center justify-between text-xs p-3 rounded-xl bg-black/20">
-                      <span className="text-white/50">Double Auth</span>
-                      <span className="text-white/30">NON ACTIF</span>
+                    <div className="flex items-center justify-between text-xs p-3 rounded-xl bg-white/50 dark:bg-black/20">
+                      <span className="text-gray-600 dark:text-white/50">Double Auth</span>
+                      <span className="text-gray-500 dark:text-white/30">NON ACTIF</span>
                     </div>
                   </div>
-                  <button className="w-full py-3 rounded-xl bg-white/5 border border-white/10 text-white/50 text-[10px] font-bold uppercase tracking-widest hover:bg-white/10 transition-all mt-2">
+                  <button className="w-full py-3 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-gray-700 dark:text-white/50 text-[10px] font-bold uppercase tracking-widest hover:bg-gray-200 dark:hover:bg-white/10 transition-all mt-2">
                     Changer le mot de passe
                   </button>
                 </div>
 
                 {/* ID Unique */}
-                <div className="p-6 rounded-4xl bg-white/2 border border-white/5 flex flex-col items-center gap-4 py-8">
-                  <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center">
-                    <IdentificationCard size={32} weight="thin" className="text-white/40" />
+                <div className="p-6 rounded-4xl bg-gray-50 dark:bg-white/2 border border-gray-200 dark:border-white/5 flex flex-col items-center gap-4 py-8">
+                  <div className="w-16 h-16 rounded-2xl bg-gray-100 dark:bg-white/5 flex items-center justify-center">
+                    <IdentificationCard size={32} weight="thin" className="text-gray-400 dark:text-white/40" />
                   </div>
                   <div className="text-center">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-1">ID Client Unique</p>
-                    <p className="text-xs font-mono text-white/50 select-all cursor-pointer hover:text-emerald-400 transition-colors">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/30 mb-1">ID Client Unique</p>
+                    <p className="text-xs font-mono text-gray-600 dark:text-white/50 select-all cursor-pointer hover:text-emerald-400 transition-colors">
                       {userProfile?.id || "N/A"}
                     </p>
                   </div>
@@ -1152,15 +1151,15 @@ function ClientDashboardContent() {
   return (
     <div className="flex h-screen overflow-hidden bg-[#F3F4F6] dark:bg-[#1A1A1A]">
       {/* SIDEBAR - Navigation Latérale Style Professionnel */}
-      <aside className="hidden md:flex flex-col w-64 shadow-2xl z-20 fixed left-0 top-0 h-screen overflow-y-auto" style={{ backgroundColor: '#090D12', borderRight: '1px solid var(--color-client-border)' }}>
+      <aside className="hidden md:flex flex-col w-64 shadow-2xl z-20 fixed left-0 top-0 h-screen overflow-y-auto bg-white dark:bg-[#090D12] border-r border-gray-200 dark:border-[var(--color-client-border)]">
         {/* Logo Area */}
         <div className="h-24 flex items-center px-6 mb-2">
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-[#090D12] font-bold text-lg shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-transform group-hover:scale-105">
+            <div className="w-10 h-10 rounded-xl bg-gray-900 dark:bg-white flex items-center justify-center text-white dark:text-[#090D12] font-bold text-lg shadow-[0_0_20px_rgba(0,0,0,0.1)] dark:shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-transform group-hover:scale-105">
               NX
             </div>
             <div className="flex flex-col">
-              <span className="text-sm font-bold tracking-tight text-white leading-tight">NAVETTE</span>
+              <span className="text-sm font-bold tracking-tight text-gray-900 dark:text-white leading-tight">NAVETTE</span>
               <span className="text-[10px] font-medium tracking-[0.2em] text-[#10B981] leading-tight">XPRESS</span>
             </div>
           </Link>
@@ -1170,10 +1169,10 @@ function ClientDashboardContent() {
         <div className="px-5 mb-8">
           <button
             onClick={() => setActiveTab('profile')}
-            className={`w-full p-4 rounded-2xl bg-white/3 border border-white/5 transition-all text-left group ${activeTab === 'profile' ? 'bg-[#10B981]/10 border-[#10B981]/20 shadow-[0_0_20px_rgba(16,185,129,0.05)]' : 'hover:bg-white/5'}`}
+            className={`w-full p-4 rounded-2xl bg-gray-100 dark:bg-white/3 border border-gray-200 dark:border-white/5 transition-all text-left group ${activeTab === 'profile' ? 'bg-emerald-50 dark:bg-[#10B981]/10 border-emerald-200 dark:border-[#10B981]/20 shadow-[0_0_20px_rgba(16,185,129,0.05)]' : 'hover:bg-gray-200 dark:hover:bg-white/5'}`}
           >
             <div className="flex items-center gap-3 mb-3">
-              <div className={`w-10 h-10 rounded-full border-2 transition-colors p-0.5 overflow-hidden ${activeTab === 'profile' ? 'border-[#10B981]' : 'border-white/10 group-hover:border-[#10B981]'}`}>
+              <div className={`w-10 h-10 rounded-full border-2 transition-colors p-0.5 overflow-hidden ${activeTab === 'profile' ? 'border-[#10B981]' : 'border-gray-300 dark:border-white/10 group-hover:border-[#10B981]'}`}>
                 {session?.user?.image ? (
                   <img src={session.user.image} alt="" className="w-full h-full object-cover rounded-full" />
                 ) : (
@@ -1183,8 +1182,8 @@ function ClientDashboardContent() {
                 )}
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="text-xs font-semibold text-white truncate">{session?.user?.name || 'Client'}</span>
-                <span className="text-[10px] text-gray-500 font-medium">Membre Premium</span>
+                <span className="text-xs font-semibold text-gray-900 dark:text-white truncate">{session?.user?.name || 'Client'}</span>
+                <span className="text-[10px] font-medium text-gray-600 dark:text-gray-400">Membre Premium</span>
               </div>
             </div>
             <div className="flex items-center gap-1.5 text-[10px] text-[#10B981]">
@@ -1196,7 +1195,7 @@ function ClientDashboardContent() {
 
         {/* Navigation */}
         <nav className="flex-1 px-3 space-y-1">
-          <div className="px-4 mb-2 text-[10px] font-semibold text-gray-600 uppercase tracking-widest">Navigation</div>
+          <div className="px-4 mb-2 text-[10px] font-semibold uppercase tracking-widest text-gray-600 dark:text-gray-400">Navigation</div>
           {[
             { id: 'overview', label: 'Vue d\'ensemble', icon: SquaresFour },
             { id: 'bookings', label: 'Mes Réservations', icon: CalendarBlank },
@@ -1206,40 +1205,40 @@ function ClientDashboardContent() {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id as TabType)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${activeTab === item.id
-                ? 'bg-[#10B981]/10 text-white border-l-2 border-[#10B981]'
-                : 'text-gray-500 hover:bg-white/2 hover:text-gray-300 border-l-2 border-transparent'
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group text-gray-700 dark:text-gray-300 ${activeTab === item.id
+                ? 'bg-emerald-50 dark:bg-[#10B981]/10 text-gray-900 dark:text-white border-l-2 border-[#10B981]'
+                : 'hover:bg-gray-100 dark:hover:bg-white/2 border-l-2 border-transparent'
                 }`}
             >
-              <item.icon size={18} weight={activeTab === item.id ? "fill" : "light"} className={activeTab === item.id ? 'text-[#10B981]' : 'group-hover:text-gray-300'} />
+              <item.icon size={18} weight={activeTab === item.id ? "fill" : "light"} className={activeTab === item.id ? 'text-[#10B981]' : ''} />
               <span className="text-sm font-medium">{item.label}</span>
             </button>
           ))}
 
-          <div className="px-4 mt-6 mb-2 text-[10px] font-semibold text-gray-600 uppercase tracking-widest">Mon Compte</div>
+          <div className="px-4 mt-6 mb-2 text-[10px] font-semibold uppercase tracking-widest text-gray-600 dark:text-gray-400">Mon Compte</div>
           <button
             onClick={() => setActiveTab('profile')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${activeTab === 'profile'
-              ? 'bg-[#10B981]/10 text-white border-l-2 border-[#10B981]'
-              : 'text-gray-500 hover:bg-white/2 hover:text-gray-300 border-l-2 border-transparent'
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group text-gray-700 dark:text-gray-300 ${activeTab === 'profile'
+              ? 'bg-emerald-50 dark:bg-[#10B981]/10 text-gray-900 dark:text-white border-l-2 border-[#10B981]'
+              : 'hover:bg-gray-100 dark:hover:bg-white/2 border-l-2 border-transparent'
               }`}
           >
-            <UserCircle size={18} weight={activeTab === 'profile' ? "fill" : "light"} className={activeTab === 'profile' ? 'text-[#10B981]' : 'group-hover:text-gray-300'} />
+            <UserCircle size={18} weight={activeTab === 'profile' ? "fill" : "light"} className={activeTab === 'profile' ? 'text-[#10B981]' : ''} />
             <span className="text-sm font-medium">Paramètres Profil</span>
           </button>
 
-          <div className="px-4 mt-6 mb-2 text-[10px] font-semibold text-gray-600 uppercase tracking-widest">Expérience</div>
+          <div className="px-4 mt-6 mb-2 text-[10px] font-semibold uppercase tracking-widest text-gray-600 dark:text-gray-400">Expérience</div>
           <button
             onClick={() => setActiveTab('create-reviews')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${activeTab === 'create-reviews'
-              ? 'bg-[#10B981]/10 text-white border-l-2 border-[#10B981]'
-              : 'text-gray-500 hover:bg-white/2 hover:text-gray-300 border-l-2 border-transparent'
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group text-gray-700 dark:text-gray-300 ${activeTab === 'create-reviews'
+              ? 'bg-emerald-50 dark:bg-[#10B981]/10 text-gray-900 dark:text-white border-l-2 border-[#10B981]'
+              : 'hover:bg-gray-100 dark:hover:bg-white/2 border-l-2 border-transparent'
               }`}
           >
-            <Star size={18} weight={activeTab === 'create-reviews' ? "fill" : "light"} className={activeTab === 'create-reviews' ? 'text-[#10B981]' : 'group-hover:text-gray-300'} />
+            <Star size={18} weight={activeTab === 'create-reviews' ? "fill" : "light"} className={activeTab === 'create-reviews' ? 'text-[#10B981]' : ''} />
             <span className="flex-1 text-left text-sm font-medium">Évaluer trajets</span>
             {stats.reviewableBookings > 0 && (
-              <span className="bg-[#10B981] text-black text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
+              <span className="bg-[#10B981] text-black dark:text-black text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
                 {stats.reviewableBookings}
               </span>
             )}
@@ -1248,40 +1247,40 @@ function ClientDashboardContent() {
           {canManageReviews && (
             <button
               onClick={() => setActiveTab('reviews')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${activeTab === 'reviews'
-                ? 'bg-[#10B981]/10 text-white border-l-2 border-[#10B981]'
-                : 'text-gray-500 hover:bg-white/2 hover:text-gray-300 border-l-2 border-transparent'
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group text-gray-700 dark:text-gray-300 ${activeTab === 'reviews'
+                ? 'bg-emerald-50 dark:bg-[#10B981]/10 text-gray-900 dark:text-white border-l-2 border-[#10B981]'
+                : 'hover:bg-gray-100 dark:hover:bg-white/2 border-l-2 border-transparent'
                 }`}
             >
-              <ChatCircle size={18} weight={activeTab === 'reviews' ? "fill" : "light"} className={activeTab === 'reviews' ? 'text-[#10B981]' : 'group-hover:text-gray-300'} />
+              <ChatCircle size={18} weight={activeTab === 'reviews' ? "fill" : "light"} className={activeTab === 'reviews' ? 'text-[#10B981]' : ''} />
               <span className="text-sm font-medium">Mes avis</span>
             </button>
           )}
 
           {(canManageVehicles || canManageUsers) && (
             <>
-              <div className="px-4 mt-6 mb-2 text-[10px] font-semibold text-gray-600 uppercase tracking-widest">Gestion</div>
+              <div className="px-4 mt-6 mb-2 text-[10px] font-semibold uppercase tracking-widest text-gray-600 dark:text-gray-400">Gestion</div>
               {canManageVehicles && (
                 <button
                   onClick={() => setActiveTab('vehicles')}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${activeTab === 'vehicles'
-                    ? 'bg-[#10B981]/10 text-white border-l-2 border-[#10B981]'
-                    : 'text-gray-500 hover:bg-white/2 hover:text-gray-300 border-l-2 border-transparent'
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group text-gray-700 dark:text-gray-300 ${activeTab === 'vehicles'
+                    ? 'bg-emerald-50 dark:bg-[#10B981]/10 text-gray-900 dark:text-white border-l-2 border-[#10B981]'
+                    : 'hover:bg-gray-100 dark:hover:bg-white/2 border-l-2 border-transparent'
                     }`}
                 >
-                  <Car size={18} weight={activeTab === 'vehicles' ? "fill" : "light"} className={activeTab === 'vehicles' ? 'text-[#10B981]' : 'group-hover:text-gray-300'} />
+                  <Car size={18} weight={activeTab === 'vehicles' ? "fill" : "light"} className={activeTab === 'vehicles' ? 'text-[#10B981]' : ''} />
                   <span className="text-sm font-medium">Véhicules</span>
                 </button>
               )}
               {canManageUsers && (
                 <button
                   onClick={() => setActiveTab('users')}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${activeTab === 'users'
-                    ? 'bg-[#10B981]/10 text-white border-l-2 border-[#10B981]'
-                    : 'text-gray-500 hover:bg-white/2 hover:text-gray-300 border-l-2 border-transparent'
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group text-gray-700 dark:text-gray-300 ${activeTab === 'users'
+                    ? 'bg-emerald-50 dark:bg-[#10B981]/10 text-gray-900 dark:text-white border-l-2 border-[#10B981]'
+                    : 'hover:bg-gray-100 dark:hover:bg-white/2 border-l-2 border-transparent'
                     }`}
                 >
-                  <Users size={18} weight={activeTab === 'users' ? "fill" : "light"} className={activeTab === 'users' ? 'text-[#10B981]' : 'group-hover:text-gray-300'} />
+                  <Users size={18} weight={activeTab === 'users' ? "fill" : "light"} className={activeTab === 'users' ? 'text-[#10B981]' : ''} />
                   <span className="text-sm font-medium">Utilisateurs</span>
                 </button>
               )}
@@ -1291,16 +1290,16 @@ function ClientDashboardContent() {
 
         {/* CTA Sidebar */}
         <div className="p-4 mt-4">
-          <Link href="/reservation" className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-linear-to-r from-[#10B981] to-[#059669] text-black font-bold text-sm shadow-[0_4px_20_rgba(16,185,129,0.2)] transition-transform hover:scale-[1.02] active:scale-[0.98]">
+          <Link href="/reservation" className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-gradient-to-r from-[#10B981] to-[#059669] text-black dark:text-black font-bold text-sm shadow-[0_4px_20_rgba(16,185,129,0.2)] transition-transform hover:scale-[1.02] active:scale-[0.98]">
             <Plus size={16} weight="bold" /> Réserver un trajet
           </Link>
         </div>
 
         {/* Footer Sidebar */}
-        <div className="p-4 mt-auto border-t border-white/5">
+        <div className="p-4 mt-auto border-t border-gray-200 dark:border-white/5">
           <button
             onClick={async () => { await signOut({ callbackUrl: '/', redirect: true }) }}
-            className="w-full flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-red-400 hover:bg-red-400/5 rounded-xl transition-all"
+            className="w-full flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-400 hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-400/5 rounded-xl transition-all"
           >
             <SignOut size={18} weight="light" />
             <span className="text-sm font-medium">Déconnexion</span>
@@ -1316,32 +1315,33 @@ function ClientDashboardContent() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 text-gray-400"
+            className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-white/5"
+            style={{ color: 'var(--color-text-secondary)' }}
           >
             {mobileMenuOpen ? <X size={20} weight="light" /> : <List size={20} weight="light" />}
           </button>
 
           {/* Dynamic Greeting */}
           <div className="hidden md:block">
-            <h2 className="text-lg font-bold text-white tracking-tight">
-              {new Date().getHours() < 12 ? 'Bonjour' : new Date().getHours() < 18 ? 'Bon après-midi' : 'Bonsoir'}, <span style={{ color: 'var(--color-client-accent)' }}>{session?.user?.name?.split(' ')[0] || 'Voyageur'}</span>
+            <h2 className="text-lg font-bold tracking-tight" style={{ color: '#ffffff' }}>
+              {new Date().getHours() < 12 ? 'Bonjour' : new Date().getHours() < 18 ? 'Bon après-midi' : 'Bonsoir'}, <span style={{ color: '#ffffff' }}>{session?.user?.name?.split(' ')[0] || 'Voyageur'}</span>
             </h2>
-            <p className="text-[10px] text-gray-500 font-medium uppercase tracking-[0.15em]">Où allons-nous aujourd'hui ?</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.15em]" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>Où allons-nous aujourd'hui ?</p>
           </div>
 
           {/* Right Actions */}
           <div className="flex items-center gap-3 md:gap-5">
-            <button className="relative w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 text-gray-400 hover:text-[#10B981] transition group" title="Notifications">
+            <button className="relative w-10 h-10 flex items-center justify-center rounded-xl bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-400 hover:text-[#10B981] transition group" title="Notifications">
               <Bell size={20} weight="light" className="group-hover:scale-110 transition-transform" />
               {stats.reviewableBookings > 0 && (
-                <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-[#10B981] rounded-full ring-[3px] ring-client-bg"></span>
+                <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-[#10B981] rounded-full ring-[3px] ring-white dark:ring-client-bg"></span>
               )}
             </button>
 
             {/* CTA Header mobile only or secondary */}
             <Link
               href="/reservation"
-              className="px-4 py-2.5 rounded-xl bg-[#E5C16C] text-black font-bold text-xs shadow-lg hover:shadow-[#E5C16C]/10 transition-all active:scale-95"
+              className="px-4 py-2.5 rounded-xl bg-[#E5C16C] text-black dark:text-black font-bold text-xs shadow-lg hover:shadow-[#E5C16C]/10 transition-all active:scale-95"
             >
               Réserver
             </Link>
@@ -1350,7 +1350,7 @@ function ClientDashboardContent() {
 
         {/* Mobile Menu Dropdown */}
         {mobileMenuOpen && (
-          <div className="md:hidden overflow-hidden transition-all duration-300" style={{ backgroundColor: '#090D12', borderBottom: '1px solid var(--color-client-border)' }}>
+          <div className="md:hidden overflow-hidden transition-all duration-300 bg-white dark:bg-[#090D12] border-b border-gray-200 dark:border-[var(--color-client-border)]">
             <nav className="px-4 py-4 space-y-1">
               {tabs.map((tab) => {
                 const Icon = {
@@ -1372,15 +1372,15 @@ function ClientDashboardContent() {
                       setActiveTab(tab.id)
                       setMobileMenuOpen(false)
                     }}
-                    className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${activeTab === tab.id
-                      ? 'bg-[#10B981]/10 text-[#10B981]'
-                      : 'text-gray-400 hover:bg-white/5'
+                    className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium text-gray-700 dark:text-gray-300 ${activeTab === tab.id
+                      ? 'bg-emerald-50 dark:bg-[#10B981]/10 text-[#10B981]'
+                      : 'hover:bg-gray-100 dark:hover:bg-white/5'
                       }`}
                   >
                     <Icon size={20} weight={activeTab === tab.id ? "fill" : "light"} />
                     <span className="flex-1 text-left text-sm">{tab.label}</span>
                     {tab.badge && (
-                      <span className="bg-[#10B981] text-black text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
+                      <span className="bg-[#10B981] text-black dark:text-black text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
                         {tab.badge}
                       </span>
                     )}
@@ -1473,7 +1473,7 @@ export default function ClientDashboard() {
               Navette Xpress
             </div>
           </div>
-          <p className="mt-4 text-xs font-medium uppercase tracking-widest text-gray-500">Chargement de votre espace...</p>
+          <p className="mt-4 text-xs font-medium uppercase tracking-widest" style={{ color: 'var(--color-text-secondary)' }}>Chargement de votre espace...</p>
         </div>
       </div>
     }>
@@ -1481,6 +1481,8 @@ export default function ClientDashboard() {
     </Suspense>
   )
 }
+
+
 
 
 

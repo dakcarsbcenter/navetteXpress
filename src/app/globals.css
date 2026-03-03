@@ -36,6 +36,35 @@
   --ring: #C9A84C;
 
   --radius: 0.75rem;
+
+  /* ── Light mode: Tokens spécifiques dashboard CHAUFFEUR ── */
+  --color-driver-bg: #F5F3F0;
+  /* Fond clair avec teinte chaleureuse */
+  --color-driver-card: #FFFFFF;
+  /* Cards blanches */
+  --color-driver-surface: #FAF8F5;
+  /* Surfaces secondaires claires */
+  --color-driver-border: rgba(0, 0, 0, 0.08);
+  --color-driver-text-primary: #1A1A1A;
+  --color-driver-text-secondary: #4A4A4A;
+
+  /* Accent chauffeur : bleu électrique — autorité, route */
+  --color-driver-accent: #2563EB;
+  --color-driver-accent-light: #3B82F6;
+  --color-driver-accent-bg: rgba(37, 99, 235, 0.08);
+  --color-driver-accent-glow: rgba(37, 99, 235, 0.15);
+
+  /* Statuts mission (light mode) */
+  --color-mission-new: #D97706;
+  --color-mission-new-bg: rgba(217, 119, 6, 0.08);
+  --color-mission-accepted: #2563EB;
+  --color-mission-accepted-bg: rgba(37, 99, 235, 0.08);
+  --color-mission-enroute: #7C3AED;
+  --color-mission-enroute-bg: rgba(124, 58, 237, 0.08);
+  --color-mission-inprogress: #059669;
+  --color-mission-inprogress-bg: rgba(5, 150, 105, 0.08);
+  --color-mission-done: #6B7280;
+  --color-mission-done-bg: rgba(107, 114, 128, 0.07);
 }
 
 .dark {
@@ -73,6 +102,35 @@
   --text-primary: #F0EDE8;
   --text-secondary: #8A8799;
   --text-muted: #4A4759;
+
+  /* ── Dark mode: Tokens spécifiques dashboard CHAUFFEUR ── */
+  --color-driver-bg: #080C10;
+  /* Fond — quasi noir avec teinte bleue froide */
+  --color-driver-card: #0F1318;
+  /* Cards */
+  --color-driver-surface: #151B22;
+  /* Surfaces secondaires */
+  --color-driver-border: rgba(255, 255, 255, 0.06);
+  --color-driver-text-primary: #F0EDE8;
+  --color-driver-text-secondary: #B0B9CC;
+
+  /* Accent chauffeur : bleu électrique — autorité, route, nuit */
+  --color-driver-accent: #3B82F6;
+  --color-driver-accent-light: #60A5FA;
+  --color-driver-accent-bg: rgba(59, 130, 246, 0.08);
+  --color-driver-accent-glow: rgba(59, 130, 246, 0.2);
+
+  /* Statuts mission (dark mode) */
+  --color-mission-new: #F59E0B;
+  --color-mission-new-bg: rgba(245, 158, 11, 0.08);
+  --color-mission-accepted: #3B82F6;
+  --color-mission-accepted-bg: rgba(59, 130, 246, 0.08);
+  --color-mission-enroute: #8B5CF6;
+  --color-mission-enroute-bg: rgba(139, 92, 246, 0.08);
+  --color-mission-inprogress: #10B981;
+  --color-mission-inprogress-bg: rgba(16, 185, 129, 0.08);
+  --color-mission-done: #6B7280;
+  --color-mission-done-bg: rgba(107, 114, 128, 0.07);
 }
 
 
@@ -153,6 +211,10 @@
 
 .animate-pulse-slow {
   animation: pulse 2s ease-in-out infinite;
+}
+
+.animate-slideUp {
+  animation: fadeSlideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* Smooth scrolling */
@@ -292,43 +354,6 @@ html {
   --color-trip-completed-bg: rgba(107, 114, 128, 0.07);
   --color-trip-cancelled: #EF4444;
   --color-trip-cancelled-bg: rgba(239, 68, 68, 0.08);
-
-  /* ── Tokens spécifiques dashboard CHAUFFEUR ── */
-  --color-driver-bg: #080C10;
-  /* Fond — quasi noir avec teinte bleue froide */
-  --color-driver-card: #0F1318;
-  /* Cards */
-  --color-driver-surface: #151B22;
-  /* Surfaces secondaires */
-  --color-driver-border: rgba(255, 255, 255, 0.06);
-
-  /* Accent chauffeur : bleu électrique — autorité, route, nuit */
-  --color-driver-accent: #3B82F6;
-  --color-driver-accent-light: #60A5FA;
-  --color-driver-accent-bg: rgba(59, 130, 246, 0.08);
-  --color-driver-accent-glow: rgba(59, 130, 246, 0.2);
-
-  /* Statuts mission */
-  --color-mission-new: #F59E0B;
-  --color-mission-new-bg: rgba(245, 158, 11, 0.08);
-  --color-mission-accepted: #3B82F6;
-  --color-mission-accepted-bg: rgba(59, 130, 246, 0.08);
-  --color-mission-enroute: #8B5CF6;
-  --color-mission-enroute-bg: rgba(139, 92, 246, 0.08);
-  --color-mission-inprogress: #10B981;
-  --color-mission-inprogress-bg: rgba(16, 185, 129, 0.08);
-  --color-mission-done: #6B7280;
-  --color-mission-done-bg: rgba(107, 114, 128, 0.07);
-
-  /* ── Tokens spécifiques dashboard CHAUFFEUR ── */
-  --color-driver-bg: var(--color-driver-bg);
-  --color-driver-card: var(--color-driver-card);
-  --color-driver-surface: var(--color-driver-surface);
-  --color-driver-border: var(--color-driver-border);
-  --color-driver-accent: var(--color-driver-accent);
-  --color-driver-accent-light: var(--color-driver-accent-light);
-  --color-driver-accent-bg: var(--color-driver-accent-bg);
-  --color-driver-accent-glow: var(--color-driver-accent-glow);
 }
 
 /* ── Animation entrée des cards client ── */

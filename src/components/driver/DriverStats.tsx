@@ -3,7 +3,6 @@ import { useSession } from 'next-auth/react'
 import {
   ChartBar,
   CaretLeft,
-  Car,
   TrendUp as TrendingUp,
   CreditCard,
   Star,
@@ -153,9 +152,6 @@ export function DriverStats({ onBack }: DriverStatsProps) {
         {/* Total Courses */}
         <div className="driver-card-enter rounded-2xl p-6 relative overflow-hidden group"
           style={{ backgroundColor: 'var(--color-driver-card)', border: '1px solid var(--color-driver-border)' }}>
-          <div className="absolute -right-4 -top-4 text-blue-500/10 group-hover:scale-110 transition-transform duration-500">
-            <Car size={100} weight="light" />
-          </div>
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center"
               style={{ backgroundColor: 'rgba(59,130,246,0.1)', color: 'var(--color-driver-accent)' }}>
@@ -175,9 +171,6 @@ export function DriverStats({ onBack }: DriverStatsProps) {
         {/* Revenus Totaux */}
         <div className="driver-card-enter rounded-2xl p-6 relative overflow-hidden group"
           style={{ backgroundColor: 'var(--color-driver-card)', border: '1px solid var(--color-driver-border)', animationDelay: '0.1s' }}>
-          <div className="absolute -right-4 -top-4 text-emerald-500/10 group-hover:scale-110 transition-transform duration-500">
-            <TrendingUp size={100} weight="light" />
-          </div>
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center text-emerald-500"
               style={{ backgroundColor: 'rgba(16,185,129,0.1)' }}>
@@ -196,9 +189,6 @@ export function DriverStats({ onBack }: DriverStatsProps) {
         {/* Revenus par Course */}
         <div className="driver-card-enter rounded-2xl p-6 relative overflow-hidden group"
           style={{ backgroundColor: 'var(--color-driver-card)', border: '1px solid var(--color-driver-border)', animationDelay: '0.2s' }}>
-          <div className="absolute -right-4 -top-4 text-blue-500/10 group-hover:scale-110 transition-transform duration-500">
-            <CreditCard size={100} weight="light" />
-          </div>
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center text-blue-400"
               style={{ backgroundColor: 'rgba(59,130,246,0.1)' }}>
@@ -217,9 +207,6 @@ export function DriverStats({ onBack }: DriverStatsProps) {
         {/* Note Moyenne */}
         <div className="driver-card-enter rounded-2xl p-6 relative overflow-hidden group"
           style={{ backgroundColor: 'var(--color-driver-card)', border: '1px solid var(--color-driver-border)', animationDelay: '0.3s' }}>
-          <div className="absolute -right-4 -top-4 text-yellow-500/10 group-hover:scale-110 transition-transform duration-500">
-            <Star size={100} weight="fill" />
-          </div>
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center text-yellow-500"
               style={{ backgroundColor: 'rgba(234,179,8,0.1)' }}>
@@ -255,8 +242,8 @@ export function DriverStats({ onBack }: DriverStatsProps) {
                 <div className="flex justify-between items-end">
                   <span className="text-xs font-bold uppercase tracking-widest text-gray-500">{month.month}</span>
                   <div className="text-right">
-                    <span className="block text-sm font-bold text-white">{month.rides} courses</span>
-                    <span className="block text-[10px] font-mono text-emerald-500">{month.earnings.toLocaleString()} FCFA</span>
+                      <span className="block text-sm font-bold text-gray-900 dark:text-white">{month.rides} courses</span>
+                      <span className="block text-[10px] font-mono text-emerald-600 dark:text-emerald-500">{month.earnings.toLocaleString()} FCFA</span>
                   </div>
                 </div>
                 <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
@@ -287,7 +274,7 @@ export function DriverStats({ onBack }: DriverStatsProps) {
               return (
                 <div key={stars} className="flex items-center gap-4">
                   <div className="flex items-center gap-1 w-12 shrink-0">
-                    <span className="text-xs font-bold text-white">{stars}</span>
+                    <span className="text-xs font-bold text-gray-900 dark:text-white">{stars}</span>
                     <Star size={12} weight="fill" className="text-yellow-500" />
                   </div>
                   <div className="flex-1 h-3 bg-white/5 rounded-full overflow-hidden">
@@ -308,7 +295,7 @@ export function DriverStats({ onBack }: DriverStatsProps) {
           </div>
           <div className="mt-8 pt-6 border-t border-white/5 flex justify-around text-center">
             <div>
-              <p className="text-lg font-bold text-white">{stats.totalRatings}</p>
+              <p className="text-lg font-bold text-gray-900 dark:text-white">{stats.totalRatings}</p>
               <p className="text-[9px] uppercase font-bold text-gray-500 tracking-tighter">Total Avis</p>
             </div>
             <div>
@@ -342,7 +329,7 @@ export function DriverStats({ onBack }: DriverStatsProps) {
                     }}
                   />
                   {/* Tooltip on hover */}
-                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[10px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
+                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-blue-600 text-white dark:text-white text-[10px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
                     {hourData.rides} runs
                   </div>
                 </div>
@@ -364,7 +351,7 @@ export function DriverStats({ onBack }: DriverStatsProps) {
               <div key={idx} className="p-4 rounded-xl transition-all hover:bg-white/5 border border-white/[0.03]"
                 style={{ backgroundColor: 'rgba(255,255,255,0.02)' }}>
                 <div className="flex justify-between items-center mb-2">
-                  <div className="flex items-center gap-2 text-xs font-bold text-white truncate max-w-[70%]">
+                  <div className="flex items-center gap-2 text-xs font-bold text-gray-900 dark:text-white truncate max-w-[70%]">
                     {route.from.split(',')[0]} <CaretRight size={10} weight="bold" className="text-gray-500" /> {route.to.split(',')[0]}
                   </div>
                   <span className="text-[10px] font-mono text-blue-400">{route.count} x</span>
@@ -390,7 +377,7 @@ export function DriverStats({ onBack }: DriverStatsProps) {
           background: 'linear-gradient(135deg, rgba(59,130,246,0.05) 0%, rgba(10:15:25,1) 100%)',
           border: '1px solid rgba(59,130,246,0.1)'
         }}>
-        <h3 className="text-lg font-bold text-white mb-8 flex items-center gap-2">
+        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-8 flex items-center gap-2">
           <Lightbulb className="text-yellow-500" size={20} weight="fill" />
           Analyses & Conseils Personnalisés
         </h3>
@@ -401,7 +388,7 @@ export function DriverStats({ onBack }: DriverStatsProps) {
               style={{ backgroundColor: 'rgba(59,130,246,0.1)' }}>
               <Trophy size={24} weight="fill" />
             </div>
-            <h4 className="text-sm font-bold text-white">Performance</h4>
+            <h4 className="text-sm font-bold text-gray-900 dark:text-white">Performance</h4>
             <p className="text-xs leading-relaxed text-gray-400">
               Votre taux de complétion de <span className="text-emerald-500 font-bold">{getCompletionRate()}%</span> est exceptionnel. Vous faites partie de nos meilleurs chauffeurs.
             </p>
@@ -412,7 +399,7 @@ export function DriverStats({ onBack }: DriverStatsProps) {
               style={{ backgroundColor: 'rgba(16,185,129,0.1)' }}>
               <TrendingUp size={24} weight="bold" />
             </div>
-            <h4 className="text-sm font-bold text-white">Optimisation</h4>
+            <h4 className="text-sm font-bold text-gray-900 dark:text-white">Optimisation</h4>
             <p className="text-xs leading-relaxed text-gray-400">
               Les créneaux de fin de journée semblent les plus rentables pour vous. Maximisez vos sorties entre <span className="text-blue-400 font-bold">17h et 20h</span>.
             </p>
@@ -423,7 +410,7 @@ export function DriverStats({ onBack }: DriverStatsProps) {
               style={{ backgroundColor: 'rgba(244,63,94,0.1)' }}>
               <Heart size={24} weight="fill" />
             </div>
-            <h4 className="text-sm font-bold text-white">Relation Client</h4>
+            <h4 className="text-sm font-bold text-gray-900 dark:text-white">Relation Client</h4>
             <p className="text-xs leading-relaxed text-gray-400">
               Votre note de <span className="text-yellow-500 font-bold">{stats.averageRating}/5</span> est stable. Les passagers apprécient votre ponctualité.
             </p>
@@ -441,7 +428,7 @@ export function DriverStats({ onBack }: DriverStatsProps) {
     Navette Xpress
   </div>
 </div>
-            <p className="text-white font-bold animate-pulse">Analyse des données...</p>
+            <p className="text-gray-900 dark:text-white font-bold animate-pulse">Analyse des données...</p>
           </div>
         </div>
       )}

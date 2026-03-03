@@ -3,41 +3,36 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import GoogleProvider from "next-auth/providers/google"
 import { db } from "@/db"
 import { users } from "@/schema"
-import { eq } from "drizzle-orm"
+import { eq, sql } from "drizzle-orm"
 import bcrypt from "bcryptjs"
 import { sendAccountLockedEmail } from "./email"
+import type { NextAuthOptions } from "next-auth"
 
-// Lazy getter pour les variables d'environnement
-function getEnvConfig() {
-  const { NEXTAUTH_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = process.env
-  
-  if (!NEXTAUTH_SECRET) {
-    throw new Error("NEXTAUTH_SECRET n'est pas défini. Veuillez le configurer dans votre environnement.")
-  }
-  
-  if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
-    console.warn("Google OAuth credentials manquantes. L'authentification Google ne sera pas disponible.")
-  }
-  
-  return { NEXTAUTH_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET }
+// Vérifier les variables d'environnement au démarrage
+const { NEXTAUTH_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, NEXTAUTH_URL } = process.env
+
+if (!NEXTAUTH_SECRET) {
+  throw new Error("NEXTAUTH_SECRET n'est pas défini. Veuillez le configurer dans votre environnement.")
 }
 
-export const authOptions = {
-  get secret() {
-    return getEnvConfig().NEXTAUTH_SECRET
-  },
-  get providers() {
-    const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = getEnvConfig()
-    
-    return [
-      // Google Provider (conditionnel)
-      ...(GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET ? [
-        GoogleProvider({
-          clientId: GOOGLE_CLIENT_ID,
-          clientSecret: GOOGLE_CLIENT_SECRET,
-        })
-      ] : []),
-    // Credentials Provider
+if (!NEXTAUTH_URL) {
+  console.warn("⚠️ NEXTAUTH_URL n'est pas défini. Utilisation de la valeur par défaut.")
+}
+
+if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
+  console.warn("Google OAuth credentials manquantes. L'authentification Google ne sera pas disponible.")
+}
+
+// Configuration des providers
+const providers = [
+  // Google Provider (conditionnel)
+  ...(GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET ? [
+    GoogleProvider({
+      clientId: GOOGLE_CLIENT_ID,
+      clientSecret: GOOGLE_CLIENT_SECRET,
+    })
+  ] : []),
+  // Credentials Provider
     CredentialsProvider({
       name: "credentials",
       credentials: {
@@ -49,28 +44,39 @@ export const authOptions = {
         console.log("📧 Email:", credentials?.email)
         console.log("🔑 Mot de passe fourni:", credentials?.password ? "✅" : "❌")
         
+        // Throw error instead of returning null to provide specific error message
         if (!credentials?.email || !credentials?.password) {
           console.log("❌ [NextAuth] Credentials manquantes")
           throw new Error("CredentialsMissing")
         }
 
+        // Normalize email: lowercase + trim to avoid case-sensitivity mismatches
+        const normalizedEmail = credentials.email.toLowerCase().trim()
+
         try {
-          console.log("🔍 [NextAuth] Recherche utilisateur:", credentials.email)
+          console.log("🔍 [NextAuth] Recherche utilisateur:", normalizedEmail)
           
           // Rechercher l'utilisateur dans la base de données
+          // Use case-insensitive comparison to handle emails stored with mixed case
           const userResult = await db
             .select()
             .from(users)
-            .where(eq(users.email, credentials.email))
+            .where(sql`lower(${users.email}) = ${normalizedEmail}`)
             .limit(1)
 
           if (userResult.length === 0) {
-            console.log("❌ [NextAuth] Utilisateur non trouvé:", credentials.email)
+            console.log("❌ [NextAuth] Utilisateur non trouvé:", normalizedEmail)
             throw new Error("UserNotFound")
           }
 
           const user = userResult[0]
-          console.log("✅ [NextAuth] Utilisateur trouvé:", user.email, "- Rôle:", user.role)
+          console.log("✅ [NextAuth] Utilisateur trouvé:", user.email, "- Rôle:", user.role, "- Actif:", user.isActive)
+
+          // Vérifier si le compte est désactivé par un administrateur
+          if (user.isActive === false) {
+            console.log("🚫 [NextAuth] Compte désactivé:", user.email)
+            throw new Error("AccountDisabled")
+          }
 
           // Vérifier si le compte est bloqué
           if (user.accountLockedUntil) {
@@ -185,8 +191,11 @@ export const authOptions = {
         }
       }
     })
-    ]
-  },
+]
+
+export const authOptions: NextAuthOptions = {
+  secret: NEXTAUTH_SECRET,
+  providers,
   session: {
     strategy: "jwt" as const,
   },
@@ -201,10 +210,11 @@ export const authOptions = {
       // Pour les utilisateurs Google, récupérer les informations depuis la DB
       if (account?.provider === "google" && user?.email) {
         try {
+          const googleEmail = user.email.toLowerCase().trim()
           const dbUser = await db
             .select()
             .from(users)
-            .where(eq(users.email, user.email))
+            .where(sql`lower(${users.email}) = ${googleEmail}`)
             .limit(1)
           
           if (dbUser.length > 0) {
@@ -231,16 +241,17 @@ export const authOptions = {
       // Si c'est une connexion Google
       if (account?.provider === "google") {
         try {
+          const googleEmail = (user.email || "").toLowerCase().trim()
           // Vérifier si l'utilisateur existe déjà
           const existingUser = await db
             .select()
             .from(users)
-            .where(eq(users.email, user.email!))
+            .where(sql`lower(${users.email}) = ${googleEmail}`)
             .limit(1)
 
           // Si l'utilisateur existe et a un mot de passe, refuser la connexion Google
           if (existingUser.length > 0 && existingUser[0].password) {
-            console.warn("Connexion Google refusée: email déjà créé par mot de passe.", user.email)
+            console.warn("Connexion Google refusée: email déjà créé par mot de passe.", googleEmail)
             return false
           }
 
@@ -249,7 +260,7 @@ export const authOptions = {
             const newUser = {
               id: user.id!,
               name: user.name || "",
-              email: user.email!,
+              email: googleEmail,
               image: user.image || null,
               role: "customer" as const, // Par défaut, les utilisateurs Google sont des clients
               password: null, // Pas de mot de passe pour les utilisateurs Google

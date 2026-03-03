@@ -115,13 +115,13 @@ export function DriverProfile({ onBack }: DriverProfileProps) {
         <div className="flex items-center gap-4">
           <button
             onClick={onBack}
-            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] text-[var(--color-text-secondary)] hover:text-white"
+            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-white dark:bg-[var(--color-driver-card)] border border-gray-300 dark:border-[var(--color-driver-border)] text-gray-600 dark:text-[var(--color-text-secondary)] hover:text-gray-900 dark:hover:text-white"
           >
             <CaretLeft size={20} weight="bold" />
           </button>
           <div>
-            <h1 className="text-xl font-bold text-[var(--color-text-primary)]">Mon Profil Chauffeur</h1>
-            <p className="text-sm font-mono text-[var(--color-text-muted)]">Poste de contrôle • Identité Vérifiée</p>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-[var(--color-text-primary)]">Mon Profil Chauffeur</h1>
+            <p className="text-sm font-mono text-gray-600 dark:text-[var(--color-text-muted)]">Poste de contrôle • Identité Vérifiée</p>
           </div>
         </div>
 
@@ -140,7 +140,7 @@ export function DriverProfile({ onBack }: DriverProfileProps) {
 
         {/* COLONNE GAUCHE - PHOTO & QUICK INFO */}
         <div className="space-y-6">
-          <div className="bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] rounded-3xl p-8 text-center relative overflow-hidden">
+          <div className="bg-white dark:bg-[var(--color-driver-card)] border border-gray-300 dark:border-[var(--color-driver-border)] rounded-3xl p-8 text-center relative overflow-hidden">
             {/* Background Glow */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-indigo-600" />
 
@@ -153,35 +153,35 @@ export function DriverProfile({ onBack }: DriverProfileProps) {
                 onSuccess={() => fetchDriverData()}
                 onError={(err) => console.error(err)}
               />
-              <div className="absolute bottom-2 right-2 p-2 bg-blue-600 rounded-lg text-white border-2 border-[var(--color-driver-bg)]">
+              <div className="absolute bottom-2 right-2 p-2 bg-blue-600 rounded-lg text-white border-2 border-white dark:border-[var(--color-driver-bg)]">
                 <Camera size={14} weight="fill" />
               </div>
             </div>
 
-            <h2 className="text-2xl font-bold text-white tracking-tight">{driverData?.name}</h2>
-            <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold uppercase tracking-widest border border-emerald-500/20">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">{driverData?.name}</h2>
+            <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold uppercase tracking-widest border border-emerald-300 dark:border-emerald-500/20">
               <ShieldCheck size={12} weight="fill" /> Chauffeur Certifié
             </div>
 
-            <div className="mt-8 pt-8 border-t border-white/5 space-y-4">
+            <div className="mt-8 pt-8 border-t border-gray-300 dark:border-white/5 space-y-4">
               <div className="flex justify-between items-center text-xs">
                 <span className="text-gray-500 font-bold uppercase tracking-tighter">Statut Compte</span>
-                <span className="text-emerald-500 font-bold">ACTIF</span>
+                <span className="text-emerald-700 dark:text-emerald-500 font-bold">ACTIF</span>
               </div>
               <div className="flex justify-between items-center text-xs">
                 <span className="text-gray-500 font-bold uppercase tracking-tighter">Depuis le</span>
-                <span className="text-white font-mono">
+                <span className="text-gray-900 dark:text-white font-mono">
                   {driverData?.createdAt ? new Date(driverData.createdAt).toLocaleDateString('fr-FR') : '--'}
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] rounded-3xl p-6">
+          <div className="bg-white dark:bg-[var(--color-driver-card)] border border-gray-300 dark:border-[var(--color-driver-border)] rounded-3xl p-6">
             <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6 flex items-center gap-2">
-              <Lock size={14} weight="bold" className="text-blue-500" /> Sécurité
+              <Lock size={14} weight="bold" className="text-blue-600 dark:text-blue-500" /> Sécurité
             </h3>
-            <button className="w-full py-3 px-4 rounded-xl bg-white/5 border border-white/10 text-sm font-bold text-white hover:bg-white/10 transition-all text-left">
+            <button className="w-full py-3 px-4 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-sm font-bold text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-all text-left">
               Réinitialiser le mot de passe
             </button>
           </div>
@@ -190,14 +190,14 @@ export function DriverProfile({ onBack }: DriverProfileProps) {
         {/* COLONNE DROITE - FORMULAIRE & DETAILS */}
         <div className="lg:col-span-2 space-y-6">
 
-          <div className="bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] rounded-3xl overflow-hidden shadow-2xl">
-            <div className="px-8 py-6 bg-white/5 flex items-center justify-between border-b border-white/5">
+          <div className="bg-white dark:bg-[var(--color-driver-card)] border border-gray-300 dark:border-[var(--color-driver-border)] rounded-3xl overflow-hidden shadow-2xl">
+            <div className="px-8 py-6 bg-gray-50 dark:bg-white/5 flex items-center justify-between border-b border-gray-300 dark:border-white/5">
               <div className="flex items-center gap-3">
-                <User size={18} weight="bold" className="text-blue-500" />
-                <h3 className="font-bold text-white text-lg">Informations État-Civil</h3>
+                <User size={18} weight="bold" className="text-blue-600 dark:text-blue-500" />
+                <h3 className="font-bold text-gray-900 dark:text-white text-lg">Informations État-Civil</h3>
               </div>
               {isEditing && (
-                <button onClick={() => setIsEditing(false)} className="text-gray-500 hover:text-white transition-colors">
+                <button onClick={() => setIsEditing(false)} className="text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">
                   <X size={20} weight="bold" />
                 </button>
               )}
@@ -214,10 +214,10 @@ export function DriverProfile({ onBack }: DriverProfileProps) {
                     type="text"
                     value={editFormData.name}
                     onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-blue-500 transition-all"
+                    className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white text-sm outline-none focus:border-blue-500 transition-all"
                   />
                 ) : (
-                  <div className="px-4 py-3 rounded-xl bg-white/[0.02] border border-white/5 text-white font-medium">
+                  <div className="px-4 py-3 rounded-xl bg-gray-50 dark:bg-white/[0.02] border border-gray-300 dark:border-white/5 text-gray-900 dark:text-white font-medium">
                     {driverData?.name}
                   </div>
                 )}
@@ -227,9 +227,9 @@ export function DriverProfile({ onBack }: DriverProfileProps) {
                 <label className="text-[10px] font-bold uppercase text-gray-500 tracking-widest flex items-center gap-1.5 px-1">
                   <Envelope size={10} weight="bold" /> Adresse Email
                 </label>
-                <div className="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-gray-500 font-mono text-sm flex items-center justify-between">
+                <div className="px-4 py-3 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-gray-600 dark:text-gray-500 font-mono text-sm flex items-center justify-between">
                   {driverData?.email}
-                  <ShieldCheck size={14} weight="fill" className="text-emerald-500" />
+                  <ShieldCheck size={14} weight="fill" className="text-emerald-600 dark:text-emerald-500" />
                 </div>
               </div>
 
@@ -242,10 +242,10 @@ export function DriverProfile({ onBack }: DriverProfileProps) {
                     type="tel"
                     value={editFormData.phone}
                     onChange={(e) => setEditFormData({ ...editFormData, phone: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-blue-500 transition-all"
+                    className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white text-sm outline-none focus:border-blue-500 transition-all"
                   />
                 ) : (
-                  <div className="px-4 py-3 rounded-xl bg-white/[0.02] border border-white/5 text-white font-mono">
+                  <div className="px-4 py-3 rounded-xl bg-gray-50 dark:bg-white/[0.02] border border-gray-300 dark:border-white/5 text-gray-900 dark:text-white font-mono">
                     {driverData?.phone || 'Non renseigné'}
                   </div>
                 )}
@@ -260,10 +260,10 @@ export function DriverProfile({ onBack }: DriverProfileProps) {
                     type="text"
                     value={editFormData.licenseNumber}
                     onChange={(e) => setEditFormData({ ...editFormData, licenseNumber: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-blue-500 transition-all"
+                    className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white text-sm outline-none focus:border-blue-500 transition-all"
                   />
                 ) : (
-                  <div className="px-4 py-3 rounded-xl bg-white/[0.02] border border-white/5 text-white font-mono">
+                  <div className="px-4 py-3 rounded-xl bg-gray-50 dark:bg-white/[0.02] border border-gray-300 dark:border-white/5 text-gray-900 dark:text-white font-mono">
                     {driverData?.licenseNumber || 'Non renseigné'}
                   </div>
                 )}
@@ -272,17 +272,17 @@ export function DriverProfile({ onBack }: DriverProfileProps) {
             </div>
           </div>
 
-          <div className="bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] rounded-3xl p-8 flex items-center gap-6">
-            <div className="w-16 h-16 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-400 border border-blue-500/20">
+          <div className="bg-white dark:bg-[var(--color-driver-card)] border border-gray-300 dark:border-[var(--color-driver-border)] rounded-3xl p-8 flex items-center gap-6">
+            <div className="w-16 h-16 rounded-2xl bg-blue-100 dark:bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400 border border-blue-300 dark:border-blue-500/20">
               <Calendar size={24} weight="light" />
             </div>
             <div className="flex-1">
-              <h4 className="text-white font-bold tracking-tight">Vérification de Conformité</h4>
-              <p className="text-xs text-gray-500 mt-1">
+              <h4 className="text-gray-900 dark:text-white font-bold tracking-tight">Vérification de Conformité</h4>
+              <p className="text-xs text-gray-600 dark:text-gray-500 mt-1">
                 Vos documents sont à jour. Prochaine vérification prévue dans 6 mois.
               </p>
             </div>
-            <div className="shrink-0 text-emerald-500 font-bold text-xs uppercase tracking-widest">
+            <div className="shrink-0 text-emerald-700 dark:text-emerald-500 font-bold text-xs uppercase tracking-widest">
               OK
             </div>
           </div>

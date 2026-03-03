@@ -40,40 +40,29 @@ export default function DriverSidebar(props: Props) {
 
   return (
     <aside
-      className="w-[220px] hidden lg:flex flex-col shrink-0 h-screen sticky top-0"
-      style={{
-        backgroundColor: '#060A0D',
-        borderRight: '1px solid rgba(255,255,255,0.05)',
-      }}>
+      className="w-[220px] hidden lg:flex flex-col shrink-0 h-screen sticky top-0 bg-gray-900 dark:bg-[#060A0D] border-r border-gray-700 dark:border-white/5">
 
       {/* ── LOGO ── */}
-      <div className="px-5 py-5 flex items-center gap-2.5"
-        style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+      <div className="px-5 py-5 flex items-center gap-2.5 border-b border-gray-700 dark:border-white/5">
         <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-          <span className="text-white font-bold text-sm">NX</span>
+          <span className="text-white dark:text-white font-bold text-sm">NX</span>
         </div>
         <div>
-          <p className="text-sm font-semibold" style={{ color: '#FFFFFF' }}>
-            Navette <span style={{ color: 'var(--color-gold)' }}>Xpress</span>
+          <p className="text-sm font-semibold text-gray-900 dark:text-white">
+            Navette <span className="text-amber-500 dark:text-gold">Xpress</span>
           </p>
-          <p className="text-[10px] mt-0.5" style={{ color: '#FFFFFF' }}>
+          <p className="text-[10px] mt-0.5 text-gray-300 dark:text-gray-400">
             Espace chauffeur
           </p>
         </div>
       </div>
 
       {/* ── PROFIL CHAUFFEUR ── */}
-      <div className="px-4 py-5"
-        style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+      <div className="px-4 py-5 border-b border-gray-700 dark:border-white/5">
 
         <div className="flex items-center gap-3 mb-4">
           <div className="relative shrink-0">
-            <div className="w-11 h-11 rounded-2xl flex items-center justify-center text-sm font-semibold"
-              style={{
-                background: 'linear-gradient(135deg, rgba(59,130,246,0.25), rgba(59,130,246,0.08))',
-                color: 'var(--color-driver-accent)',
-                border: '1px solid rgba(59,130,246,0.2)',
-              }}>
+            <div className="w-11 h-11 rounded-2xl flex items-center justify-center text-sm font-semibold bg-gradient-to-br from-blue-500/25 to-blue-500/10 text-blue-400 dark:text-blue-400 border border-blue-500/20">
               {getInitials(session?.user?.name)}
             </div>
             <span
@@ -85,8 +74,7 @@ export default function DriverSidebar(props: Props) {
             />
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-semibold truncate"
-              style={{ color: '#FFFFFF' }}>
+            <p className="text-sm font-semibold truncate text-gray-900 dark:text-white">
               {session?.user?.name || 'Chauffeur'}
             </p>
             <p className="text-[10px]" style={{ color: isOnline ? 'var(--color-success)' : 'var(--color-text-muted)' }}>
@@ -119,8 +107,7 @@ export default function DriverSidebar(props: Props) {
       {/* ── NAVIGATION ── */}
       <nav className="flex-1 px-3 py-3 space-y-0.5 overflow-y-auto dash-scroll">
 
-        <p className="px-3 pb-2 pt-1 text-[10px] tracking-[0.15em] uppercase"
-          style={{ color: 'var(--color-text-muted)' }}>
+        <p className="px-3 pb-2 pt-1 text-[10px] tracking-[0.15em] uppercase text-gray-500 dark:text-gray-400">
           Navigation
         </p>
 
@@ -128,22 +115,20 @@ export default function DriverSidebar(props: Props) {
           <button
             key={item.id}
             onClick={() => setCurrentView(item.id)}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-150 group"
-            style={{
-              backgroundColor: currentView === item.id ? 'var(--color-driver-accent-bg)' : 'transparent',
-              color: currentView === item.id ? 'var(--color-driver-accent)' : 'var(--color-dash-nav-text)',
-              borderLeft: currentView === item.id ? '2px solid var(--color-driver-accent)' : '2px solid transparent',
-            }}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-150 group ${
+              currentView === item.id 
+                ? 'bg-blue-600/10 dark:bg-driver-accent-bg text-blue-600 dark:text-driver-accent border-l-2 border-blue-600 dark:border-driver-accent' 
+                : 'border-l-2 border-transparent text-gray-300 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+            }`}
           >
-            <span className={`${currentView === item.id ? 'text-blue-500' : 'text-gray-500 group-hover:text-gray-300'}`}>
+            <span className={currentView === item.id ? 'text-blue-600 dark:text-blue-500' : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-300'}>
               {item.icon}
             </span>
-            <span className={currentView === item.id ? 'font-medium' : 'group-hover:text-white'}>
+            <span className={currentView === item.id ? 'font-medium' : 'group-hover:text-gray-900 dark:group-hover:text-white'}>
               {item.label}
             </span>
             {item.badge && (
-              <span className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full"
-                style={{ backgroundColor: 'var(--color-driver-accent)', color: '#fff' }}>
+              <span className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-600 dark:bg-driver-accent text-white">
                 {item.badge}
               </span>
             )}
@@ -153,7 +138,7 @@ export default function DriverSidebar(props: Props) {
       </nav>
 
       {/* ── DÉCONNEXION ── */}
-      <div className="p-3" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+      <div className="p-3 border-t border-gray-700 dark:border-white/5">
         <button
           onClick={() => signOut({ callbackUrl: '/' })}
           className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs transition-all text-gray-400 hover:text-red-500 hover:bg-red-500/10"

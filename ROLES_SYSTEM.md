@@ -157,8 +157,8 @@ if (session?.user?.role !== 'admin') {
 
 ### Middleware de Protection
 ```typescript
-// middleware.ts
-export function middleware(request: NextRequest) {
+// proxy.ts
+export function proxy(request: NextRequest) {
   // Protection des routes selon les rôles
 }
 ```

@@ -159,15 +159,15 @@ export function VehicleReport({ onBack }: VehicleReportProps) {
         <div className="flex items-center gap-4">
           <button
             onClick={onBack}
-            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] text-[var(--color-text-secondary)] hover:text-white"
+            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-white dark:bg-driver-card border border-gray-300 dark:border-driver-border text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
           >
             <CaretLeft size={20} weight="bold" />
           </button>
           <div>
-            <h1 className="text-xl font-bold text-[var(--color-text-primary)]">
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">
               Rapport d'État Véhicule
             </h1>
-            <p className="text-sm font-mono text-[var(--color-text-muted)]">
+            <p className="text-sm font-mono text-gray-600 dark:text-gray-400">
               Gestion de la flotte • {reports.length} signalements
             </p>
           </div>
@@ -182,41 +182,41 @@ export function VehicleReport({ onBack }: VehicleReportProps) {
 
       {/* ── QUICK STATS ── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="p-5 rounded-2xl bg-[var(--color-driver-card)] border border-[var(--color-driver-border)]">
+        <div className="p-5 rounded-2xl bg-white dark:bg-driver-card border border-gray-200 dark:border-driver-border">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500">
               <FileText size={16} weight="fill" />
             </div>
-            <span className="text-[10px] uppercase font-bold text-gray-500 tracking-wider">Ouverts</span>
+            <span className="text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400 tracking-wider">Ouverts</span>
           </div>
-          <p className="text-2xl font-bold text-white font-mono">{reports.filter(r => r.status === 'open').length}</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-white font-mono">{reports.filter(r => r.status === 'open').length}</p>
         </div>
-        <div className="p-5 rounded-2xl bg-[var(--color-driver-card)] border border-[var(--color-driver-border)]">
+        <div className="p-5 rounded-2xl bg-white dark:bg-driver-card border border-gray-200 dark:border-driver-border">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-500">
               <ClockCounterClockwise size={16} weight="bold" />
             </div>
-            <span className="text-[10px] uppercase font-bold text-gray-500 tracking-wider">En cours</span>
+            <span className="text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400 tracking-wider">En cours</span>
           </div>
-          <p className="text-2xl font-bold text-white font-mono">{reports.filter(r => r.status === 'in_progress').length}</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-white font-mono">{reports.filter(r => r.status === 'in_progress').length}</p>
         </div>
-        <div className="p-5 rounded-2xl bg-[var(--color-driver-card)] border border-[var(--color-driver-border)]">
+        <div className="p-5 rounded-2xl bg-white dark:bg-driver-card border border-gray-200 dark:border-driver-border">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500">
               <CheckCircle size={16} weight="fill" />
             </div>
-            <span className="text-[10px] uppercase font-bold text-gray-500 tracking-wider">Résolus</span>
+            <span className="text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400 tracking-wider">Résolus</span>
           </div>
-          <p className="text-2xl font-bold text-white font-mono">{reports.filter(r => r.status === 'resolved').length}</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-white font-mono">{reports.filter(r => r.status === 'resolved').length}</p>
         </div>
-        <div className="p-5 rounded-2xl bg-[var(--color-driver-card)] border border-[var(--color-driver-border)]">
+        <div className="p-5 rounded-2xl bg-white dark:bg-driver-card border border-gray-200 dark:border-driver-border">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center text-red-500">
               <ShieldWarning size={16} weight="fill" />
             </div>
-            <span className="text-[10px] uppercase font-bold text-gray-500 tracking-wider">Urgents</span>
+            <span className="text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400 tracking-wider">Urgents</span>
           </div>
-          <p className="text-2xl font-bold text-white font-mono">{reports.filter(r => r.severity === 'urgent').length}</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-white font-mono">{reports.filter(r => r.severity === 'urgent').length}</p>
         </div>
       </div>
 
@@ -224,11 +224,11 @@ export function VehicleReport({ onBack }: VehicleReportProps) {
       <div className="space-y-4">
         {reports.length > 0 ? (
           reports.map((report) => (
-            <div key={report.id} className="driver-card-enter p-6 rounded-2xl bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] hover:border-gray-700 transition-all">
+            <div key={report.id} className="driver-card-enter p-6 rounded-2xl bg-white dark:bg-driver-card border border-gray-200 dark:border-driver-border hover:border-gray-400 dark:hover:border-gray-700 transition-all">
               <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                 <div className="flex-1 space-y-4">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="text-lg font-bold text-white tracking-tight">{report.title}</h3>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight">{report.title}</h3>
                     <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${statuses[report.status].bg} ${statuses[report.status].color}`}>
                       {statuses[report.status].icon} {statuses[report.status].label}
                     </div>
@@ -237,29 +237,29 @@ export function VehicleReport({ onBack }: VehicleReportProps) {
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs font-medium text-gray-500">
+                  <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs font-medium text-gray-500 dark:text-gray-400">
                     <div className="flex items-center gap-2">
-                      {categories[report.category].icon} <span className="text-gray-400">{categories[report.category].label}</span>
+                      {categories[report.category].icon} <span className="text-gray-600 dark:text-gray-400">{categories[report.category].label}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Car size={14} weight="light" /> <span className="text-gray-400">{report.vehicleInfo.make} {report.vehicleInfo.model} ({report.vehicleInfo.plateNumber})</span>
+                      <Car size={14} weight="light" /> <span className="text-gray-600 dark:text-gray-400">{report.vehicleInfo.make} {report.vehicleInfo.model} ({report.vehicleInfo.plateNumber})</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Clock size={14} weight="bold" /> <span className="font-mono">{formatDate(report.reportedAt)}</span>
+                      <Clock size={14} weight="bold" /> <span className="font-mono text-gray-600 dark:text-gray-400">{formatDate(report.reportedAt)}</span>
                     </div>
                   </div>
 
-                  <p className="text-sm text-gray-400 leading-relaxed max-w-3xl">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed max-w-3xl">
                     {report.description}
                   </p>
                 </div>
 
                 <div className="flex md:flex-col gap-2 shrink-0">
-                  <button className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-bold text-gray-300 hover:text-white hover:bg-white/10 transition-all">
+                  <button className="px-4 py-2 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs font-bold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-white/10 transition-all">
                     Détails
                   </button>
                   {report.status === 'open' && (
-                    <button className="px-4 py-2 rounded-xl bg-red-500/5 border border-red-500/10 text-xs font-bold text-red-500 hover:bg-red-500/20 transition-all">
+                    <button className="px-4 py-2 rounded-xl bg-red-50 dark:bg-red-500/5 border border-red-200 dark:border-red-500/10 text-xs font-bold text-red-600 dark:text-red-500 hover:bg-red-100 dark:hover:bg-red-500/20 transition-all">
                       Modifier
                     </button>
                   )}
@@ -268,12 +268,12 @@ export function VehicleReport({ onBack }: VehicleReportProps) {
             </div>
           ))
         ) : (
-          <div className="py-20 text-center rounded-3xl border-2 border-dashed border-white/5 bg-[var(--color-driver-card)]">
-            <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Car size={32} weight="light" className="text-gray-700" />
+          <div className="py-20 text-center rounded-3xl border-2 border-dashed border-gray-300 dark:border-white/5 bg-gray-50 dark:bg-driver-card">
+            <div className="w-16 h-16 bg-gray-200 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Car size={32} weight="light" className="text-gray-500 dark:text-gray-700" />
             </div>
-            <h3 className="text-lg font-bold text-gray-500">Aucun rapport actif</h3>
-            <p className="text-sm text-gray-600 mb-6">Tout semble en ordre avec la flotte.</p>
+            <h3 className="text-lg font-bold text-gray-600 dark:text-gray-500">Aucun rapport actif</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-600 mb-6">Tout semble en ordre avec la flotte.</p>
             <button
               onClick={() => setShowReportForm(true)}
               className="px-6 py-3 rounded-xl bg-orange-600 text-white font-bold hover:bg-orange-500 transition-all"
@@ -290,8 +290,8 @@ export function VehicleReport({ onBack }: VehicleReportProps) {
           <div className="w-full max-w-2xl bg-[var(--color-driver-bg)] border border-[var(--color-driver-border)] rounded-3xl shadow-2xl overflow-hidden animate-slide-up">
 
             <div className="h-24 bg-gradient-to-br from-orange-600 to-amber-700 p-6 flex flex-col justify-end relative">
-              <button onClick={() => setShowReportForm(false)} className="absolute top-4 right-4 p-2 bg-black/20 rounded-full text-white/80"><X size={20} weight="bold" /></button>
-              <h2 className="text-xl font-bold text-white uppercase tracking-tight">Signalement de Problème</h2>
+              <button onClick={() => setShowReportForm(false)} className="absolute top-4 right-4 p-2 bg-black/20 rounded-full text-gray-700 dark:text-white/80"><X size={20} weight="bold" /></button>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white uppercase tracking-tight">Signalement de Problème</h2>
             </div>
 
             <form onSubmit={handleSubmit} className="p-8 space-y-6">
@@ -301,7 +301,7 @@ export function VehicleReport({ onBack }: VehicleReportProps) {
                   <select
                     value={formData.vehicleId}
                     onChange={(e) => setFormData({ ...formData, vehicleId: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-orange-500 transition-all appearance-none"
+                    className="w-full px-4 py-3 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white text-sm outline-none focus:border-orange-500 transition-all appearance-none"
                   >
                     {vehicles.map(v => <option key={v.id} value={v.id}>{v.make} {v.model} ({v.plateNumber})</option>)}
                   </select>
@@ -311,7 +311,7 @@ export function VehicleReport({ onBack }: VehicleReportProps) {
                   <select
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-orange-500 transition-all appearance-none"
+                    className="w-full px-4 py-3 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white text-sm outline-none focus:border-orange-500 transition-all appearance-none"
                   >
                     {Object.entries(categories).map(([key, { label }]) => <option key={key} value={key}>{label}</option>)}
                   </select>
@@ -342,7 +342,7 @@ export function VehicleReport({ onBack }: VehicleReportProps) {
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   placeholder="Bruit suspect, voyant allumé..."
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-orange-500 transition-all"
+                  className="w-full px-4 py-3 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white text-sm outline-none focus:border-orange-500 transition-all"
                 />
               </div>
 
@@ -353,7 +353,7 @@ export function VehicleReport({ onBack }: VehicleReportProps) {
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows={3}
                   placeholder="Détaillez les circonstances..."
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-orange-500 transition-all resize-none"
+                  className="w-full px-4 py-3 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white text-sm outline-none focus:border-orange-500 transition-all resize-none"
                 />
               </div>
 

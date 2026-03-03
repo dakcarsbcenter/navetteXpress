@@ -5,7 +5,7 @@ export const revalidate = 0;
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/db"
 import { users } from "@/schema"
-import { eq } from "drizzle-orm"
+import { eq, sql } from "drizzle-orm"
 import { randomUUID } from "crypto"
 import bcrypt from "bcryptjs"
 import { z } from "zod"
@@ -36,14 +36,16 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { name, email, password, phone } = validation.data
+    const { name, email: rawEmail, password, phone } = validation.data
+    // Normalize email to lowercase to prevent case-sensitivity mismatches at login
+    const email = rawEmail.toLowerCase().trim()
     console.log("Données validées:", { name, email, phone })
 
-    // Vérifier si l'utilisateur existe déjà
+    // Vérifier si l'utilisateur existe déjà (case-insensitive)
     const existingUser = await db
       .select()
       .from(users)
-      .where(eq(users.email, email))
+      .where(sql`lower(${users.email}) = ${email}`)
       .limit(1)
 
     if (existingUser.length > 0) {

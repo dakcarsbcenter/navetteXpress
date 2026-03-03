@@ -1,6 +1,26 @@
 "use client"
 
 import React, { useState, useEffect } from 'react'
+import {
+  User,
+  Envelope,
+  Phone,
+  MapPin,
+  CarSimple,
+  CalendarDots,
+  UsersThree,
+  Suitcase,
+  CurrencyDollar,
+  NotePencil,
+  Warning,
+  Clock,
+  CheckCircle,
+  XCircle,
+  FloppyDisk,
+  PencilSimple,
+  X,
+  MapPinLine
+} from "@phosphor-icons/react"
 
 interface Booking {
   id: number
@@ -86,51 +106,59 @@ export function BookingDetailsModal({
     const configs = {
       pending: { 
         label: 'En attente', 
-        color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
-        icon: '⏳',
-        dot: 'bg-yellow-500'
+        color: '#F59E0B',
+        bgColor: 'rgba(245, 158, 11, 0.1)',
+        borderColor: 'rgba(245, 158, 11, 0.2)',
+        icon: <Clock size={16} weight="fill" />
       },
       assigned: { 
         label: 'Assignée', 
-        color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-        icon: '👤',
-        dot: 'bg-blue-500'
+        color: '#3B82F6',
+        bgColor: 'rgba(59, 130, 246, 0.1)',
+        borderColor: 'rgba(59, 130, 246, 0.2)',
+        icon: <User size={16} weight="fill" />
       },
       confirmed: { 
         label: 'Confirmée', 
-        color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
-        icon: '✅',
-        dot: 'bg-green-500'
+        color: '#10B981',
+        bgColor: 'rgba(16, 185, 129, 0.1)',
+        borderColor: 'rgba(16, 185, 129, 0.2)',
+        icon: <CheckCircle size={16} weight="fill" />
       },
       in_progress: { 
         label: 'En cours', 
-        color: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
-        icon: '🚗',
-        dot: 'bg-purple-500'
+        color: '#8B5CF6',
+        bgColor: 'rgba(139, 92, 246, 0.1)',
+        borderColor: 'rgba(139, 92, 246, 0.2)',
+        icon: <CarSimple size={16} weight="fill" />
       },
       completed: { 
         label: 'Terminée', 
-        color: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300',
-        icon: '🎉',
-        dot: 'bg-emerald-500'
+        color: '#10B981',
+        bgColor: 'rgba(16, 185, 129, 0.1)',
+        borderColor: 'rgba(16, 185, 129, 0.2)',
+        icon: <CheckCircle size={16} weight="fill" />
       },
       cancelled: { 
         label: 'Annulée', 
-        color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
-        icon: '❌',
-        dot: 'bg-red-500'
+        color: '#EF4444',
+        bgColor: 'rgba(239, 68, 68, 0.1)',
+        borderColor: 'rgba(239, 68, 68, 0.2)',
+        icon: <XCircle size={16} weight="fill" />
       },
       approved: { 
         label: 'Approuvée', 
-        color: 'bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300',
-        icon: '👍',
-        dot: 'bg-teal-500'
+        color: '#14B8A6',
+        bgColor: 'rgba(20, 184, 166, 0.1)',
+        borderColor: 'rgba(20, 184, 166, 0.2)',
+        icon: <CheckCircle size={16} weight="fill" />
       },
       rejected: { 
         label: 'Rejetée', 
-        color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
-        icon: '👎',
-        dot: 'bg-red-500'
+        color: '#EF4444',
+        bgColor: 'rgba(239, 68, 68, 0.1)',
+        borderColor: 'rgba(239, 68, 68, 0.2)',
+        icon: <XCircle size={16} weight="fill" />
       }
     }
     return configs[status as keyof typeof configs] || configs.pending
@@ -172,269 +200,410 @@ export function BookingDetailsModal({
 
   return (
     <div 
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           onClose()
         }
       }}
     >
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700">
-          <div className="flex items-center gap-2 sm:gap-4">
-            <h2 className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-white">
-              Réservation #{booking.id}
-            </h2>
-            <span className={`inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${statusConfig.color}`}>
-              {statusConfig.icon} {statusConfig.label}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            {isEditing ? (
-              <>
-                <button
-                  onClick={handleSave}
-                  disabled={isLoading}
-                  className="px-3 sm:px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
-                >
-                  {isLoading ? 'Sauvegarde...' : 'Sauvegarder'}
-                </button>
-                <button
-                  onClick={() => {
-                    setEditedBooking({ ...booking })
-                    setIsEditing(false)
+      <div 
+        className="rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden border animate-slideUp"
+        style={{ 
+          backgroundColor: 'var(--color-dash-card)',
+          borderColor: 'rgba(255,255,255,0.1)'
+        }}
+      >
+        {/* Header avec gradient gold */}
+        <div 
+          className="relative p-6 border-b overflow-hidden"
+          style={{ 
+            borderColor: 'rgba(255,255,255,0.05)',
+            background: 'linear-gradient(135deg, rgba(201,168,76,0.05) 0%, transparent 100%)'
+          }}
+        >
+          {/* Ambient glow */}
+          <div 
+            className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-[0.03] pointer-events-none"
+            style={{ background: 'radial-gradient(circle, var(--color-gold) 0%, transparent 70%)' }}
+          />
+
+          <div className="relative flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-3">
+                <h2 className="text-2xl font-bold text-white">
+                  Réservation <span style={{ color: 'var(--color-gold)' }}>#{booking.id}</span>
+                </h2>
+                <div 
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg font-medium text-sm border"
+                  style={{ 
+                    backgroundColor: statusConfig.bgColor,
+                    color: statusConfig.color,
+                    borderColor: statusConfig.borderColor
                   }}
-                  className="px-3 sm:px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg text-sm font-medium transition-colors"
                 >
-                  Annuler
+                  {statusConfig.icon}
+                  {statusConfig.label}
+                </div>
+              </div>
+              <p className="text-xs text-slate-500 uppercase tracking-widest">
+                Créée le {new Date(booking.createdAt).toLocaleDateString('fr-FR', {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {isEditing ? (
+                <>
+                  <button
+                    onClick={handleSave}
+                    disabled={isLoading}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-50 hover:-translate-y-0.5"
+                    style={{
+                      backgroundColor: '#10B981',
+                      color: '#000'
+                    }}
+                  >
+                    <FloppyDisk size={16} weight="fill" />
+                    {isLoading ? 'Sauvegarde...' : 'Sauvegarder'}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEditedBooking({ ...booking })
+                      setIsEditing(false)
+                    }}
+                    className="px-4 py-2.5 rounded-xl text-sm font-bold transition-all hover:bg-white/10"
+                    style={{ color: 'var(--color-gold)', border: '1px solid rgba(201,168,76,0.3)' }}
+                  >
+                    Annuler
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all hover:-translate-y-0.5"
+                  style={{
+                    backgroundColor: 'rgba(201,168,76,0.15)',
+                    color: 'var(--color-gold)',
+                    border: '1px solid rgba(201,168,76,0.3)'
+                  }}
+                >
+                  <PencilSimple size={16} weight="fill" />
+                  Modifier
                 </button>
-              </>
-            ) : (
+              )}
+              
               <button
-                onClick={() => setIsEditing(true)}
-                className="px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
+                onClick={onClose}
+                className="p-2.5 text-slate-400 hover:text-white transition-all rounded-xl hover:bg-white/5"
               >
-                ✏️ Modifier
+                <X size={24} weight="bold" />
               </button>
-            )}
-            <button
-              onClick={onClose}
-              type="button"
-              className="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+            </div>
           </div>
         </div>
 
-        {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Informations Client */}
+        {/* Content avec scroll moderne */}
+        <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)] dash-scroll">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            {/* COLONNE GAUCHE - Informations Client & Trajet */}
             <div className="space-y-6">
-              <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                  👤 Informations Client
+              
+              {/* Informations Client */}
+              <div 
+                className="rounded-2xl p-5 border"
+                style={{ 
+                  backgroundColor: 'rgba(255,255,255,0.02)',
+                  borderColor: 'rgba(255,255,255,0.05)'
+                }}
+              >
+                <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2 uppercase tracking-widest">
+                  <div 
+                    className="w-8 h-8 rounded-lg flex items-center justify-center"
+                    style={{ backgroundColor: 'rgba(59, 130, 246, 0.15)' }}
+                  >
+                    <User size={16} weight="fill" style={{ color: '#3B82F6' }} />
+                  </div>
+                  <span className="text-[11px] text-slate-500">Informations Client</span>
                 </h3>
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
-                      Nom complet
-                    </label>
-                    <p className="text-slate-900 dark:text-white font-medium">{booking.customerName}</p>
+                
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <div 
+                      className="w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold shrink-0"
+                      style={{ 
+                        backgroundColor: 'var(--color-gold)',
+                        color: '#000'
+                      }}
+                    >
+                      {booking.customerName.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Nom complet</p>
+                      <p className="text-white font-bold truncate">{booking.customerName}</p>
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
-                      Email
-                    </label>
-                    <p className="text-slate-900 dark:text-white">{booking.customerEmail}</p>
+
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/2 border border-white/5">
+                    <Envelope size={16} style={{ color: 'var(--color-gold)' }} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-0.5">Email</p>
+                      <p className="text-white text-sm truncate">{booking.customerEmail}</p>
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
-                      Téléphone
-                    </label>
-                    <p className="text-slate-900 dark:text-white">{booking.customerPhone}</p>
+
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/2 border border-white/5">
+                    <Phone size={16} style={{ color: 'var(--color-gold)' }} />
+                    <div className="flex-1">
+                      <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-0.5">Téléphone</p>
+                      <p className="text-white text-sm font-mono">{booking.customerPhone}</p>
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Détails du Trajet */}
-              <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                  🛣️ Détails du Trajet
+              <div 
+                className="rounded-2xl p-5 border"
+                style={{ 
+                  backgroundColor: 'rgba(255,255,255,0.02)',
+                  borderColor: 'rgba(255,255,255,0.05)'
+                }}
+              >
+                <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2 uppercase tracking-widest">
+                  <div 
+                    className="w-8 h-8 rounded-lg flex items-center justify-center"
+                    style={{ backgroundColor: 'rgba(139, 92, 246, 0.15)' }}
+                  >
+                    <MapPinLine size={16} weight="fill" style={{ color: '#8B5CF6' }} />
+                  </div>
+                  <span className="text-[11px] text-slate-500">Détails du Trajet</span>
                 </h3>
+                
                 <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">
-                      📍 Adresse de départ
-                    </label>
-                    <p className="text-slate-900 dark:text-white bg-white dark:bg-slate-600 p-3 rounded-lg border">
-                      {booking.pickupAddress}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">
-                      🎯 Adresse de destination
-                    </label>
-                    <p className="text-slate-900 dark:text-white bg-white dark:bg-slate-600 p-3 rounded-lg border">
-                      {booking.dropoffAddress}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
-                      📅 Date et heure programmées
-                    </label>
-                    <p className="text-slate-900 dark:text-white font-medium">
-                      {new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR', {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </p>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
-                        👥 Passagers
-                      </label>
-                      <p className="text-slate-900 dark:text-white font-medium">
-                        {booking.passengers || 1} {(booking.passengers || 1) > 1 ? 'personnes' : 'personne'}
-                      </p>
+                  {/* Itinéraire */}
+                  <div className="relative">
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className="flex flex-col items-center gap-1 pt-1">
+                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: 'var(--color-gold)' }} />
+                        <div className="w-0.5 h-8 bg-white/10" />
+                      </div>
+                      <div className="flex-1 p-3 rounded-xl border" style={{ backgroundColor: 'rgba(201,168,76,0.05)', borderColor: 'rgba(201,168,76,0.2)' }}>
+                        <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Départ</p>
+                        <p className="text-white text-sm">{booking.pickupAddress}</p>
+                      </div>
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
-                        🧳 Bagages
-                      </label>
-                      <p className="text-slate-900 dark:text-white font-medium">
-                        {booking.luggage || 1} {(booking.luggage || 1) > 1 ? 'valises' : 'valise'}
+
+                    <div className="flex items-start gap-3">
+                      <div className="flex flex-col items-center pt-1">
+                        <MapPin size={12} weight="fill" style={{ color: '#EF4444' }} />
+                      </div>
+                      <div className="flex-1 p-3 rounded-xl border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.05)', borderColor: 'rgba(239, 68, 68, 0.2)' }}>
+                        <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Destination</p>
+                        <p className="text-white text-sm">{booking.dropoffAddress}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Date et heure */}
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/2 border border-white/5">
+                    <CalendarDots size={20} weight="fill" style={{ color: 'var(--color-gold)' }} />
+                    <div className="flex-1">
+                      <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-0.5">Date programmée</p>
+                      <p className="text-white text-sm font-medium">
+                        {new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR', {
+                          weekday: 'long',
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric'
+                        })}
+                      </p>
+                      <p className="text-xs font-mono mt-0.5" style={{ color: 'var(--color-gold)' }}>
+                        {new Date(booking.scheduledDateTime).toLocaleTimeString('fr-FR', {
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
                       </p>
                     </div>
                   </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
-                      🕒 Créée le
-                    </label>
-                    <p className="text-slate-600 dark:text-slate-400">
-                      {new Date(booking.createdAt).toLocaleDateString('fr-FR', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </p>
+
+                  {/* Passagers et bagages */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="p-3 rounded-xl border" style={{ backgroundColor: 'rgba(16, 185, 129, 0.05)', borderColor: 'rgba(16, 185, 129, 0.2)' }}>
+                      <div className="flex items-center gap-2 mb-2">
+                        <UsersThree size={16} weight="fill" style={{ color: '#10B981' }} />
+                        <p className="text-[10px] text-slate-500 uppercase tracking-widest">Passagers</p>
+                      </div>
+                      <p className="text-white font-bold text-lg">{booking.passengers || 1}</p>
+                    </div>
+
+                    <div className="p-3 rounded-xl border" style={{ backgroundColor: 'rgba(245, 158, 11, 0.05)', borderColor: 'rgba(245, 158, 11, 0.2)' }}>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Suitcase size={16} weight="fill" style={{ color: '#F59E0B' }} />
+                        <p className="text-[10px] text-slate-500 uppercase tracking-widest">Bagages</p>
+                      </div>
+                      <p className="text-white font-bold text-lg">{booking.luggage || 1}</p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Informations Opérationnelles */}
+            {/* COLONNE DROITE - Gestion & Notes */}
             <div className="space-y-6">
-              {/* Statut et Assignation */}
-              <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                  ⚙️ Gestion
+              
+              {/* Gestion */}
+              <div 
+                className="rounded-2xl p-5 border"
+                style={{ 
+                  backgroundColor: 'rgba(255,255,255,0.02)',
+                  borderColor: 'rgba(255,255,255,0.05)'
+                }}
+              >
+                <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2 uppercase tracking-widest">
+                  <div 
+                    className="w-8 h-8 rounded-lg flex items-center justify-center"
+                    style={{ backgroundColor: 'rgba(201, 168, 76, 0.15)' }}
+                  >
+                    <NotePencil size={16} weight="fill" style={{ color: 'var(--color-gold)' }} />
+                  </div>
+                  <span className="text-[11px] text-slate-500">Gestion Opérationnelle</span>
                 </h3>
+                
                 <div className="space-y-4">
+                  {/* Statut */}
                   <div>
-                    <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">
-                      Statut
+                    <label className="block text-[10px] text-slate-500 uppercase tracking-widest mb-2">
+                      Statut de la réservation
                     </label>
                     {isEditing ? (
                       <select
                         value={editedBooking.status}
                         onChange={(e) => setEditedBooking(prev => prev ? { ...prev, status: e.target.value as any } : null)}
-                        className="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-600 text-slate-900 dark:text-white"
+                        className="w-full p-3 rounded-xl border bg-white/5 text-white text-sm focus:outline-none focus:border-gold/50 transition-colors"
+                        style={{ borderColor: 'rgba(255,255,255,0.1)' }}
                       >
-                        <option value="pending">En attente</option>
-                        <option value="assigned">Assignée</option>
-                        <option value="confirmed">Confirmée</option>
-                        <option value="in_progress">En cours</option>
-                        <option value="completed">Terminée</option>
-                        <option value="cancelled">Annulée</option>
+                        <option value="pending" className="bg-slate-800">En attente</option>
+                        <option value="assigned" className="bg-slate-800">Assignée</option>
+                        <option value="confirmed" className="bg-slate-800">Confirmée</option>
+                        <option value="in_progress" className="bg-slate-800">En cours</option>
+                        <option value="completed" className="bg-slate-800">Terminée</option>
+                        <option value="cancelled" className="bg-slate-800">Annulée</option>
                       </select>
                     ) : (
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusConfig.color}`}>
-                        {statusConfig.icon} {statusConfig.label}
-                      </span>
+                      <div 
+                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm border"
+                        style={{ 
+                          backgroundColor: statusConfig.bgColor,
+                          color: statusConfig.color,
+                          borderColor: statusConfig.borderColor
+                        }}
+                      >
+                        {statusConfig.icon}
+                        {statusConfig.label}
+                      </div>
                     )}
                   </div>
 
+                  {/* Chauffeur */}
                   <div>
-                    <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">
+                    <label className="block text-[10px] text-slate-500 uppercase tracking-widest mb-2">
                       Chauffeur assigné
                     </label>
                     {isEditing ? (
                       <select
                         value={editedBooking.driverId || ''}
                         onChange={(e) => setEditedBooking(prev => prev ? { ...prev, driverId: e.target.value || null } : null)}
-                        className="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-600 text-slate-900 dark:text-white"
+                        className="w-full p-3 rounded-xl border bg-white/5 text-white text-sm focus:outline-none focus:border-gold/50 transition-colors"
+                        style={{ borderColor: 'rgba(255,255,255,0.1)' }}
                       >
-                        <option value="">Non assigné</option>
+                        <option value="" className="bg-slate-800">Non assigné</option>
                         {drivers.map((driver) => (
-                          <option key={driver.id} value={driver.id}>
+                          <option key={driver.id} value={driver.id} className="bg-slate-800">
                             {driver.name} - {driver.email}
                           </option>
                         ))}
                       </select>
                     ) : (
-                      <div className="text-slate-900 dark:text-white">
+                      <div>
                         {booking.driver ? (
-                          <span className="flex items-center gap-2">
-                            <div className="w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-                              <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
-                                {booking.driver.name.charAt(0)}
-                              </span>
+                          <div className="flex items-center gap-3 p-3 rounded-xl bg-white/2 border border-white/5">
+                            <div 
+                              className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold"
+                              style={{ backgroundColor: '#3B82F6', color: '#fff' }}
+                            >
+                              {booking.driver.name.charAt(0).toUpperCase()}
                             </div>
-                            {booking.driver.name} ({booking.driver.email})
-                          </span>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-white font-medium truncate">{booking.driver.name}</p>
+                              <p className="text-xs text-slate-500 truncate">{booking.driver.email}</p>
+                            </div>
+                          </div>
                         ) : (
-                          <span className="text-slate-400 dark:text-slate-500">Non assigné</span>
+                          <p className="text-slate-500 text-sm italic p-3 rounded-xl bg-white/2 border border-white/5">
+                            Non assigné
+                          </p>
                         )}
                       </div>
                     )}
                   </div>
 
+                  {/* Véhicule */}
                   <div>
-                    <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">
+                    <label className="block text-[10px] text-slate-500 uppercase tracking-widest mb-2">
                       Véhicule assigné
                     </label>
                     {isEditing ? (
                       <select
                         value={editedBooking.vehicleId || ''}
                         onChange={(e) => setEditedBooking(prev => prev ? { ...prev, vehicleId: e.target.value ? Number(e.target.value) : null } : null)}
-                        className="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-600 text-slate-900 dark:text-white"
+                        className="w-full p-3 rounded-xl border bg-white/5 text-white text-sm focus:outline-none focus:border-gold/50 transition-colors"
+                        style={{ borderColor: 'rgba(255,255,255,0.1)' }}
                       >
-                        <option value="">Non assigné</option>
+                        <option value="" className="bg-slate-800">Non assigné</option>
                         {vehicles.map((vehicle) => (
-                          <option key={vehicle.id} value={vehicle.id}>
+                          <option key={vehicle.id} value={vehicle.id} className="bg-slate-800">
                             {vehicle.make} {vehicle.model} - {vehicle.plateNumber}
                           </option>
                         ))}
                       </select>
                     ) : (
-                      <p className="text-slate-900 dark:text-white">
+                      <div>
                         {booking.vehicle ? (
-                          <span className="flex items-center gap-2">
-                            🚗 {booking.vehicle.make} {booking.vehicle.model} ({booking.vehicle.plateNumber})
-                          </span>
+                          <div className="flex items-center gap-3 p-3 rounded-xl bg-white/2 border border-white/5">
+                            <div 
+                              className="w-10 h-10 rounded-xl flex items-center justify-center"
+                              style={{ backgroundColor: 'rgba(16, 185, 129, 0.15)' }}
+                            >
+                              <CarSimple size={20} weight="fill" style={{ color: '#10B981' }} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-white font-medium truncate">
+                                {booking.vehicle.make} {booking.vehicle.model}
+                              </p>
+                              <p className="text-xs font-mono" style={{ color: 'var(--color-gold)' }}>
+                                {booking.vehicle.plateNumber}
+                              </p>
+                            </div>
+                          </div>
                         ) : (
-                          <span className="text-slate-400 dark:text-slate-500">Non assigné</span>
+                          <p className="text-slate-500 text-sm italic p-3 rounded-xl bg-white/2 border border-white/5">
+                            Non assigné
+                          </p>
                         )}
-                      </p>
+                      </div>
                     )}
                   </div>
 
+                  {/* Prix */}
                   <div>
-                    <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">
+                    <label className="block text-[10px] text-slate-500 uppercase tracking-widest mb-2">
                       Prix (FCFA)
                     </label>
                     {isEditing ? (
@@ -442,24 +611,40 @@ export function BookingDetailsModal({
                         type="text"
                         value={editedBooking.price || ''}
                         onChange={(e) => setEditedBooking(prev => prev ? { ...prev, price: e.target.value } : null)}
-                        placeholder="Exemple: 15000"
-                        className="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-600 text-slate-900 dark:text-white"
+                        placeholder="Ex: 15000"
+                        className="w-full p-3 rounded-xl border bg-white/5 text-white text-sm focus:outline-none focus:border-gold/50 transition-colors font-mono"
+                        style={{ borderColor: 'rgba(255,255,255,0.1)' }}
                       />
                     ) : (
-                      <p className="text-slate-900 dark:text-white font-medium">
-                        {booking.price ? `${booking.price} FCFA` : (
-                          <span className="text-slate-400 dark:text-slate-500">Non défini</span>
-                        )}
-                      </p>
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-white/2 border border-white/5">
+                        <CurrencyDollar size={20} weight="fill" style={{ color: 'var(--color-gold)' }} />
+                        <p className="text-white font-bold text-lg font-mono">
+                          {booking.price ? `${parseFloat(booking.price).toLocaleString('fr-FR')} F` : (
+                            <span className="text-slate-500 text-sm italic font-sans">Non défini</span>
+                          )}
+                        </p>
+                      </div>
                     )}
                   </div>
                 </div>
               </div>
 
               {/* Notes */}
-              <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                  📝 Notes
+              <div 
+                className="rounded-2xl p-5 border"
+                style={{ 
+                  backgroundColor: 'rgba(255,255,255,0.02)',
+                  borderColor: 'rgba(255,255,255,0.05)'
+                }}
+              >
+                <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2 uppercase tracking-widest">
+                  <div 
+                    className="w-8 h-8 rounded-lg flex items-center justify-center"
+                    style={{ backgroundColor: 'rgba(245, 158, 11, 0.15)' }}
+                  >
+                    <NotePencil size={16} weight="fill" style={{ color: '#F59E0B' }} />
+                  </div>
+                  <span className="text-[11px] text-slate-500">Notes & Remarques</span>
                 </h3>
                 {isEditing ? (
                   <textarea
@@ -467,42 +652,49 @@ export function BookingDetailsModal({
                     onChange={(e) => setEditedBooking(prev => prev ? { ...prev, notes: e.target.value } : null)}
                     placeholder="Ajouter des notes sur cette réservation..."
                     rows={4}
-                    className="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-600 text-slate-900 dark:text-white resize-none"
+                    className="w-full p-3 rounded-xl border bg-white/5 text-white text-sm focus:outline-none focus:border-gold/50 transition-colors resize-none"
+                    style={{ borderColor: 'rgba(255,255,255,0.1)' }}
                   />
                 ) : (
-                  <p className="text-slate-900 dark:text-white">
+                  <p className="text-white text-sm leading-relaxed">
                     {booking.notes ? (
                       <span className="whitespace-pre-wrap">{booking.notes}</span>
                     ) : (
-                      <span className="text-slate-400 dark:text-slate-500 italic">Aucune note</span>
+                      <span className="text-slate-500 italic">Aucune note</span>
                     )}
                   </p>
                 )}
               </div>
 
-              {/* Informations d'annulation (si applicable) */}
+              {/* Informations d'annulation */}
               {booking.status === 'cancelled' && booking.cancellationReason && (
-                <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-4 border border-red-200 dark:border-red-800">
-                  <h3 className="text-lg font-semibold text-red-800 dark:text-red-200 mb-4 flex items-center gap-2">
-                    🚫 Informations d'Annulation
+                <div 
+                  className="rounded-2xl p-5 border"
+                  style={{ 
+                    backgroundColor: 'rgba(239, 68, 68, 0.05)',
+                    borderColor: 'rgba(239, 68, 68, 0.2)'
+                  }}
+                >
+                  <h3 className="text-sm font-bold mb-4 flex items-center gap-2 uppercase tracking-widest" style={{ color: '#EF4444' }}>
+                    <div 
+                      className="w-8 h-8 rounded-lg flex items-center justify-center"
+                      style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)' }}
+                    >
+                      <Warning size={16} weight="fill" style={{ color: '#EF4444' }} />
+                    </div>
+                    <span className="text-[11px]">Informations d'Annulation</span>
                   </h3>
                   <div className="space-y-3">
-                    <div>
-                      <label className="block text-sm font-medium text-red-700 dark:text-red-300 mb-1">
-                        Motif d'annulation
-                      </label>
-                      <p className="text-red-900 dark:text-red-100 bg-white dark:bg-red-800/20 p-3 rounded-lg border">
-                        {booking.cancellationReason}
-                      </p>
+                    <div className="p-3 rounded-xl bg-white/2 border border-white/5">
+                      <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-1.5">Motif</p>
+                      <p className="text-white text-sm">{booking.cancellationReason}</p>
                     </div>
                     {booking.cancelledByUser && (
-                      <div>
-                        <label className="block text-sm font-medium text-red-700 dark:text-red-300 mb-1">
-                          Annulée par
-                        </label>
-                        <p className="text-red-900 dark:text-red-100">
+                      <div className="p-3 rounded-xl bg-white/2 border border-white/5">
+                        <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-1.5">Annulée par</p>
+                        <p className="text-white text-sm">
                           <span className="font-medium">{booking.cancelledByUser.name}</span>
-                          <span className="text-red-600 dark:text-red-400 ml-2">
+                          <span className="text-slate-500 ml-2">
                             ({booking.cancelledByUser.role === 'driver' ? 'Chauffeur' : 
                               booking.cancelledByUser.role === 'admin' ? 'Administrateur' : 'Client'})
                           </span>
@@ -510,16 +702,14 @@ export function BookingDetailsModal({
                       </div>
                     )}
                     {booking.cancelledAt && (
-                      <div>
-                        <label className="block text-sm font-medium text-red-700 dark:text-red-300 mb-1">
-                          Date d'annulation
-                        </label>
-                        <p className="text-red-900 dark:text-red-100">
+                      <div className="p-3 rounded-xl bg-white/2 border border-white/5">
+                        <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-1.5">Date d'annulation</p>
+                        <p className="text-white text-sm">
                           {new Date(booking.cancelledAt).toLocaleDateString('fr-FR', {
                             weekday: 'long',
-                            year: 'numeric',
-                            month: 'long',
                             day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
                             hour: '2-digit',
                             minute: '2-digit'
                           })}

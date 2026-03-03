@@ -21,7 +21,7 @@ switch (userRole) {
 }
 ```
 
-### 2. **Middleware de Protection** (`/src/middleware.ts`)
+### 2. **Proxy de Protection** (`/src/proxy.ts`)
 - ✅ Protection des routes par rôle
 - ✅ Redirection automatique depuis `/dashboard`
 - ✅ Vérification des autorisations d'accès
@@ -89,7 +89,7 @@ graph TD
 ## 📁 Fichiers Modifiés
 
 1. **`/src/app/dashboard/page.tsx`** - Page de redirection principale
-2. **`/src/middleware.ts`** - Middleware de protection et redirection
+2. **`/src/proxy.ts`** - Proxy de protection et redirection
 3. **`/src/types/next-auth.d.ts`** - Types TypeScript pour les rôles
 4. **`/src/app/test-role-redirections/page.tsx`** - Page de test (nouveau)
 

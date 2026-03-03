@@ -135,7 +135,7 @@ export function ClientInvoicesView() {
     return (
       <div className="flex flex-col items-center justify-center h-64">
         <div className="w-10 h-10 rounded-full border-2 border-transparent border-t-[var(--color-client-accent)] animate-spin mb-4" />
-        <p className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>Chargement de vos factures...</p>
+        <p className="text-xs font-medium" style={{ color: 'var(--color-text-secondary)' }}>Chargement de vos factures...</p>
       </div>
     )
   }
@@ -153,8 +153,8 @@ export function ClientInvoicesView() {
                 <Receipt size={28} weight="duotone" style={{ color: 'var(--color-client-accent)' }} />
               </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold mb-1" style={{ color: 'var(--color-text-primary)' }}>Mes Factures</h1>
-                <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
+                <h1 className="text-2xl sm:text-3xl font-bold mb-1" style={{ color: '#ffffff' }}>Mes Factures</h1>
+                <p className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.65)' }}>
                   Suivez vos paiements et téléchargez vos justificatifs fiscaux.
                 </p>
               </div>
@@ -162,16 +162,16 @@ export function ClientInvoicesView() {
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div className="text-center px-4 py-3 bg-white/[0.03] rounded-xl border border-white/[0.05]">
-                <div className="text-xl font-bold" style={{ color: 'var(--color-text-primary)' }}>{stats.total}</div>
-                <div className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--color-text-muted)' }}>Total</div>
+                <div className="text-xl font-bold" style={{ color: '#ffffff' }}>{stats.total}</div>
+                <div className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.6)' }}>Total</div>
               </div>
               <div className="text-center px-4 py-3 bg-white/[0.03] rounded-xl border border-white/[0.05]">
                 <div className="text-xl font-bold text-yellow-500">{stats.pending}</div>
-                <div className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--color-text-muted)' }}>À payer</div>
+                <div className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.6)' }}>À payer</div>
               </div>
               <div className="text-center px-4 py-3 bg-white/[0.03] rounded-xl border border-white/[0.05]">
                 <div className="text-xl font-bold" style={{ color: 'var(--color-client-accent)' }}>{stats.paid}</div>
-                <div className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--color-text-muted)' }}>Payées</div>
+                <div className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.6)' }}>Payées</div>
               </div>
               <div className="text-center px-4 py-3 bg-[var(--color-client-accent-bg)] rounded-xl border border-[var(--color-client-accent-glow)]">
                 <div className="text-lg font-bold" style={{ color: 'var(--color-client-accent)', fontFamily: 'var(--font-mono)' }}>{stats.totalPaid.toLocaleString()}</div>
@@ -195,8 +195,9 @@ export function ClientInvoicesView() {
             onClick={() => setFilter(item.id as any)}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold transition-all ${filter === item.id
                 ? 'bg-[var(--color-client-accent)] text-[#000]'
-                : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] hover:bg-white/[0.03]'
+                : 'hover:text-[var(--color-text-primary)] hover:bg-white/[0.03]'
               }`}
+            style={filter !== item.id ? { color: 'var(--color-text-secondary)' } : undefined}
           >
             {item.icon} {item.label}
           </button>
@@ -209,10 +210,10 @@ export function ClientInvoicesView() {
           style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
           <div className="w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl"
             style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-client-border)' }}>
-            <Receipt size={40} weight="light" style={{ color: 'var(--color-text-muted)' }} />
+            <Receipt size={40} weight="light" style={{ color: 'var(--color-text-secondary)' }} />
           </div>
-          <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--color-text-primary)' }}>Aucune facture trouvée</h3>
-          <p className="text-sm max-w-sm mx-auto mb-8" style={{ color: 'var(--color-text-muted)' }}>
+          <h3 className="text-xl font-bold mb-2" style={{ color: '#ffffff' }}>Aucune facture pour le moment</h3>
+          <p className="text-sm font-medium max-w-sm mx-auto mb-8" style={{ color: 'rgba(255,255,255,0.6)' }}>
             Vos factures seront générées automatiquement dès la confirmation de vos prestations de transport.
           </p>
         </div>
@@ -227,7 +228,7 @@ export function ClientInvoicesView() {
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-6">
                     <div>
-                      <h3 className="text-lg font-black italic tracking-tighter" style={{ color: 'var(--color-text-primary)' }}>
+                      <h3 className="text-lg font-black italic tracking-tighter" style={{ color: '#ffffff' }}>
                         {invoice.invoiceNumber}
                       </h3>
                       <p className="text-[10px] uppercase tracking-widest mt-1 font-bold" style={{ color: 'var(--color-client-accent)' }}>
@@ -243,14 +244,14 @@ export function ClientInvoicesView() {
 
                   <div className="grid grid-cols-3 gap-4 mb-6">
                     <div className="col-span-1 p-3 rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
-                      <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color: 'var(--color-text-muted)' }}>Émission</p>
-                      <p className="text-xs font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Émission</p>
+                      <p className="text-sm font-semibold" style={{ color: '#ffffff' }}>
                         {new Date(invoice.issueDate).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })}
                       </p>
                     </div>
                     <div className="col-span-1 p-3 rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
-                      <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color: 'var(--color-text-muted)' }}>Échéance</p>
-                      <p className="text-xs font-semibold" style={{ color: invoice.status === 'overdue' ? '#EF4444' : 'var(--color-text-primary)' }}>
+                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Échéance</p>
+                      <p className="text-sm font-semibold" style={{ color: invoice.status === 'overdue' ? '#EF4444' : '#ffffff' }}>
                         {new Date(invoice.dueDate).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })}
                       </p>
                     </div>
@@ -265,7 +266,7 @@ export function ClientInvoicesView() {
                   {invoice.paidDate && (
                     <div className="mb-6 p-3 rounded-xl flex items-center gap-3" style={{ backgroundColor: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.1)' }}>
                       <CheckCircle size={16} className="text-[var(--color-client-accent)]" weight="fill" />
-                      <p className="text-[11px]" style={{ color: 'var(--color-text-secondary)' }}>
+                      <p className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.75)' }}>
                         Réglée le {new Date(invoice.paidDate).toLocaleDateString('fr-FR')} {invoice.paymentMethod && `par ${invoice.paymentMethod}`}
                       </p>
                     </div>
@@ -298,7 +299,7 @@ export function ClientInvoicesView() {
               <h3 className="text-2xl font-bold mb-2" style={{ color: 'var(--color-text-primary)' }}>
                 {modalType === 'success' ? 'Opération réussie' : 'Erreur technique'}
               </h3>
-              <p className="text-sm leading-relaxed mb-8" style={{ color: 'var(--color-text-muted)' }}>
+              <p className="text-sm font-medium leading-relaxed mb-8" style={{ color: 'rgba(255,255,255,0.7)' }}>
                 {modalMessage}
               </p>
               <button

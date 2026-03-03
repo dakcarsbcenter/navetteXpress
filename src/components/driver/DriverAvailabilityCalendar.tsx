@@ -471,7 +471,7 @@ export function DriverAvailabilityCalendar() {
       <div className="space-y-6">
         <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6">
           <div className="text-center mb-6">
-            <h3 className="text-2xl font-bold text-slate-800 dark:text-white">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
               {format(currentDate, 'EEEE d MMMM yyyy', { locale: fr })}
             </h3>
           </div>
@@ -485,8 +485,8 @@ export function DriverAvailabilityCalendar() {
                 <div
                   key={time}
                   className={`p-4 rounded-2xl font-mono text-xs font-bold transition-all duration-300 border ${isSelected
-                    ? 'bg-blue-600/20 border-blue-500 text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.2)]'
-                    : 'bg-white/5 border-white/10 text-gray-500'
+                    ? 'bg-blue-100 dark:bg-blue-600/20 border-blue-500 text-blue-700 dark:text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.2)]'
+                    : 'bg-gray-50 dark:bg-white/5 border-gray-300 dark:border-white/10 text-gray-600 dark:text-gray-500'
                     }`}
                 >
                   {time}
@@ -509,7 +509,7 @@ export function DriverAvailabilityCalendar() {
                 delete newAvailability[key]
                 setAvailability(newAvailability)
               }}
-              className="flex-1 py-4 px-6 bg-white/5 border border-white/10 text-white rounded-2xl font-bold hover:bg-red-500/20 hover:border-red-500/50 hover:text-red-400 transition-all flex items-center justify-center gap-3"
+              className="flex-1 py-4 px-6 bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white rounded-2xl font-bold hover:bg-red-100 dark:hover:bg-red-500/20 hover:border-red-300 dark:hover:border-red-500/50 hover:text-red-700 dark:hover:text-red-400 transition-all flex items-center justify-center gap-3"
             >
               <X size={20} weight="bold" /> Marquer Indisponible
             </button>
@@ -518,7 +518,7 @@ export function DriverAvailabilityCalendar() {
 
         {/* Gestion des créneaux horaires */}
         <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6">
-          <h4 className="text-lg font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
+          <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
             <span>⏱️</span>
             Créneaux horaires
           </h4>
@@ -529,13 +529,13 @@ export function DriverAvailabilityCalendar() {
                 <div key={idx} className="flex items-center gap-3 p-4 bg-linear-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl">
                   <div className="flex-1 grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">
+                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-400 mb-1">
                         Début
                       </label>
                       <select
                         value={slot.start}
                         onChange={(e) => updateSlotTime(dateKey, idx, 'start', e.target.value)}
-                        className="w-full px-3 py-2 bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-lg font-semibold text-slate-800 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                        className="w-full px-3 py-2 bg-white dark:bg-slate-700 border-2 border-gray-300 dark:border-slate-600 rounded-lg font-semibold text-gray-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                       >
                         {TIME_SLOTS.map((time) => (
                           <option key={time} value={time}>{time}</option>
@@ -543,13 +543,13 @@ export function DriverAvailabilityCalendar() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">
+                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-400 mb-1">
                         Fin
                       </label>
                       <select
                         value={slot.end}
                         onChange={(e) => updateSlotTime(dateKey, idx, 'end', e.target.value)}
-                        className="w-full px-3 py-2 bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-lg font-semibold text-slate-800 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                        className="w-full px-3 py-2 bg-white dark:bg-slate-700 border-2 border-gray-300 dark:border-slate-600 rounded-lg font-semibold text-gray-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                       >
                         {TIME_SLOTS.map((time) => (
                           <option key={time} value={time}>{time}</option>
@@ -584,7 +584,7 @@ export function DriverAvailabilityCalendar() {
             </div>
           ) : (
             <div className="text-center py-8">
-              <p className="text-slate-500 dark:text-slate-400 mb-4">
+              <p className="text-gray-600 dark:text-slate-400 mb-4">
                 Aucun créneau défini pour cette journée
               </p>
               <button
@@ -605,8 +605,8 @@ export function DriverAvailabilityCalendar() {
     const weekDays = eachDayOfInterval({ start: weekStart, end: addDays(weekStart, 6) })
 
     return (
-      <div className="bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] rounded-3xl overflow-hidden shadow-2xl">
-        <div className="grid grid-cols-7 gap-px bg-white/5">
+      <div className="bg-white dark:bg-[var(--color-driver-card)] border border-gray-300 dark:border-[var(--color-driver-border)] rounded-3xl overflow-hidden shadow-2xl">
+        <div className="grid grid-cols-7 gap-px bg-gray-300 dark:bg-white/5">
           {weekDays.map((day, index) => {
             const dateKey = format(day, 'yyyy-MM-dd')
             const dayAvailability = availability[dateKey]
@@ -615,7 +615,7 @@ export function DriverAvailabilityCalendar() {
             return (
               <div
                 key={index}
-                className="bg-[var(--color-driver-card)] min-h-[250px] p-5 relative overflow-hidden"
+                className="bg-white dark:bg-[var(--color-driver-card)] min-h-[250px] p-5 relative overflow-hidden"
               >
                 {isCurrentDay && <div className="absolute top-0 left-0 right-0 h-1 bg-blue-500" />}
                 <div className="text-center mb-6">
@@ -623,8 +623,8 @@ export function DriverAvailabilityCalendar() {
                     {WEEKDAY_NAMES[index]}
                   </div>
                   <div className={`text-2xl font-black font-mono ${isCurrentDay
-                    ? 'text-blue-500'
-                    : 'text-white'
+                    ? 'text-blue-600 dark:text-blue-500'
+                    : 'text-gray-900 dark:text-white'
                     }`}>
                     {format(day, 'd')}
                   </div>
@@ -634,8 +634,8 @@ export function DriverAvailabilityCalendar() {
                   <button
                     onClick={() => toggleDayAvailability(day, true)}
                     className={`w-full flex items-center gap-2 p-2.5 rounded-xl text-[10px] font-bold uppercase tracking-tight transition-all border ${dayAvailability?.isFullDay
-                      ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-500'
-                      : 'bg-white/5 border-white/5 text-gray-500 hover:border-white/20'
+                      ? 'bg-emerald-100 dark:bg-emerald-500/10 border-emerald-300 dark:border-emerald-500/50 text-emerald-700 dark:text-emerald-500'
+                      : 'bg-gray-50 dark:bg-white/5 border-gray-300 dark:border-white/5 text-gray-600 dark:text-gray-500 hover:border-gray-400 dark:hover:border-white/20'
                       }`}
                   >
                     <CheckCircle size={14} weight="bold" /> 24h/24
@@ -645,9 +645,9 @@ export function DriverAvailabilityCalendar() {
                     {dayAvailability && !dayAvailability.isFullDay && (
                       <div className="space-y-2">
                         {dayAvailability.slots.map((slot, idx) => (
-                          <div key={idx} className="bg-blue-500/5 border border-blue-500/20 rounded-xl p-2.5">
+                          <div key={idx} className="bg-blue-50 dark:bg-blue-500/5 border border-blue-300 dark:border-blue-500/20 rounded-xl p-2.5">
                             <div className="flex items-center justify-between gap-1 mb-2">
-                              <span className="text-[10px] font-mono text-blue-400 font-bold">{slot.start} - {slot.end}</span>
+                              <span className="text-[10px] font-mono text-blue-700 dark:text-blue-400 font-bold">{slot.start} - {slot.end}</span>
                               <button
                                 onClick={() => removeSlot(dateKey, idx)}
                                 className="text-red-500/50 hover:text-red-500"
@@ -662,9 +662,9 @@ export function DriverAvailabilityCalendar() {
 
                     <button
                       onClick={() => dayAvailability?.isFullDay ? toggleDayAvailability(day, true) : addSlot(dateKey)}
-                      className="w-full py-2 px-2 bg-white/5 text-gray-400 rounded-xl text-[10px] font-bold uppercase hover:bg-white/10 transition-all flex items-center justify-center gap-1 border border-white/5"
+                      className="w-full py-3 px-4 bg-linear-to-r from-blue-50 to-blue-100 dark:from-blue-500/10 dark:to-blue-600/10 text-blue-700 dark:text-blue-400 rounded-xl text-xs font-bold uppercase hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-500/20 dark:hover:to-blue-600/20 transition-all flex items-center justify-center gap-2 border-2 border-blue-300 dark:border-blue-500/30 shadow-sm hover:shadow-md hover:shadow-blue-500/20"
                     >
-                      <Plus size={12} weight="bold" /> Shift Modulé
+                      <Plus size={14} weight="bold" /> Créneau Modulé
                     </button>
                   </div>
                 </div>
@@ -692,48 +692,48 @@ export function DriverAvailabilityCalendar() {
     return (
       <div className="space-y-6">
         {/* Actions rapides pour le mois */}
-        <div className="bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] rounded-3xl p-6">
+        <div className="bg-white dark:bg-[var(--color-driver-card)] border border-gray-300 dark:border-[var(--color-driver-border)] rounded-3xl p-6">
           <div className="flex flex-wrap items-center gap-4">
             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Contrôle Mensuel :</span>
             <button
               onClick={() => selectAllMonth(true)}
-              className="px-4 py-2.5 bg-emerald-500/10 border border-emerald-500/50 text-emerald-500 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-emerald-500/20 transition-all"
+              className="px-4 py-2.5 bg-emerald-100 dark:bg-emerald-500/10 border border-emerald-300 dark:border-emerald-500/50 text-emerald-700 dark:text-emerald-500 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-emerald-200 dark:hover:bg-emerald-500/20 transition-all"
             >
               24h/24 Partout
             </button>
             <button
               onClick={() => selectAllMonth(false)}
-              className="px-4 py-2.5 bg-blue-500/10 border border-blue-500/50 text-blue-500 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-blue-500/20 transition-all"
+              className="px-4 py-2.5 bg-blue-100 dark:bg-blue-500/10 border border-blue-300 dark:border-blue-500/50 text-blue-700 dark:text-blue-500 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-blue-200 dark:hover:bg-blue-500/20 transition-all"
             >
               Slots Standard ({selectedTimeStart}-{selectedTimeEnd})
             </button>
             <button
               onClick={() => selectMonthWeekends(true)}
-              className="px-4 py-2.5 bg-purple-500/10 border border-purple-500/50 text-purple-500 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-purple-500/20 transition-all"
+              className="px-4 py-2.5 bg-purple-100 dark:bg-purple-500/10 border border-purple-300 dark:border-purple-500/50 text-purple-700 dark:text-purple-500 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-purple-200 dark:hover:bg-purple-500/20 transition-all"
             >
               Week-ends 24h/24
             </button>
             <button
               onClick={deselectAllMonth}
-              className="px-4 py-2.5 bg-red-500/10 border border-red-500/50 text-red-500 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-red-500/20 transition-all"
+              className="px-4 py-2.5 bg-red-100 dark:bg-red-500/10 border border-red-300 dark:border-red-500/50 text-red-700 dark:text-red-500 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-red-200 dark:hover:bg-red-500/20 transition-all"
             >
               Reset Mois
             </button>
           </div>
         </div>
 
-        <div className="bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] rounded-3xl overflow-hidden shadow-2xl">
-          <div className="grid grid-cols-7 gap-px bg-white/5">
+        <div className="bg-white dark:bg-[var(--color-driver-card)] border border-gray-300 dark:border-[var(--color-driver-border)] rounded-3xl overflow-hidden shadow-2xl">
+          <div className="grid grid-cols-7 gap-px bg-gray-300 dark:bg-white/5">
             {WEEKDAY_NAMES.map((day) => (
-              <div key={day} className="bg-white/5 p-4 text-center">
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">
+              <div key={day} className="bg-gray-50 dark:bg-white/5 p-4 text-center">
+                <span className="text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-[0.2em]">
                   {day}
                 </span>
               </div>
             ))}
           </div>
 
-          <div className="grid grid-cols-7 gap-px bg-white/5">
+          <div className="grid grid-cols-7 gap-px bg-gray-300 dark:bg-white/5">
             {days.map((day, index) => {
               const dateKey = format(day, 'yyyy-MM-dd')
               const dayAvailability = availability[dateKey]
@@ -743,14 +743,14 @@ export function DriverAvailabilityCalendar() {
               return (
                 <div
                   key={index}
-                  className={`bg-[var(--color-driver-card)] min-h-[120px] p-4 group transition-all ${!isCurrentMonth ? 'opacity-10' : ''
+                  className={`bg-white dark:bg-[var(--color-driver-card)] min-h-[120px] p-4 group transition-all ${!isCurrentMonth ? 'opacity-10' : ''
                     }`}
                 >
                   <div className="flex items-center justify-between mb-3">
                     <span className={`text-sm font-bold font-mono ${isCurrentDay
-                      ? 'text-blue-500'
+                      ? 'text-blue-600 dark:text-blue-500'
                       : isCurrentMonth
-                        ? 'text-white'
+                        ? 'text-gray-900 dark:text-white'
                         : 'text-gray-600'
                       }`}>
                       {format(day, 'd')}
@@ -761,7 +761,7 @@ export function DriverAvailabilityCalendar() {
                         onClick={() => toggleDayAvailability(day, false)}
                         className={`w-6 h-6 rounded-lg flex items-center justify-center transition-all border ${dayAvailability
                           ? 'bg-blue-600 border-blue-500 text-white shadow-[0_0_10px_rgba(59,130,246,0.5)]'
-                          : 'bg-white/5 border-white/5 text-gray-600 hover:border-white/20'
+                          : 'bg-gray-50 dark:bg-white/5 border-gray-300 dark:border-white/5 text-gray-600 dark:text-gray-600 hover:border-gray-400 dark:hover:border-white/20'
                           }`}
                       >
                         {dayAvailability ? <Check size={14} weight="bold" /> : <Plus size={14} weight="bold" />}
@@ -772,14 +772,14 @@ export function DriverAvailabilityCalendar() {
                   {dayAvailability && isCurrentMonth && (
                     <div className="space-y-1">
                       {dayAvailability.isFullDay ? (
-                        <div className="text-[8px] font-bold text-emerald-500 bg-emerald-500/10 rounded-md px-1.5 py-0.5 uppercase tracking-tighter">
+                        <div className="text-[8px] font-bold text-emerald-700 dark:text-emerald-500 bg-emerald-100 dark:bg-emerald-500/10 rounded-md px-1.5 py-0.5 uppercase tracking-tighter">
                           24h/24
                         </div>
                       ) : (
                         dayAvailability.slots.map((slot, idx) => (
                           <div
                             key={idx}
-                            className="group/slot text-[8px] font-bold text-blue-400 bg-blue-500/10 rounded-md px-1.5 py-0.5 flex items-center justify-between gap-1 hover:bg-blue-500/20 cursor-pointer"
+                            className="group/slot text-[8px] font-bold text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-500/10 rounded-md px-1.5 py-0.5 flex items-center justify-between gap-1 hover:bg-blue-200 dark:hover:bg-blue-500/20 cursor-pointer"
                             onClick={(e) => {
                               e.stopPropagation()
                               setEditingSlot({ dateKey, slotIndex: idx })
@@ -808,18 +808,18 @@ export function DriverAvailabilityCalendar() {
     return (
       <div className="space-y-6">
         {/* Actions rapides pour l'année */}
-        <div className="bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] rounded-3xl p-6">
+        <div className="bg-white dark:bg-[var(--color-driver-card)] border border-gray-300 dark:border-[var(--color-driver-border)] rounded-3xl p-6">
           <div className="flex flex-wrap items-center gap-4">
             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Planification Annuelle :</span>
             <button
               onClick={() => selectAllYear(true)}
-              className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/50 text-emerald-500 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-emerald-500/20"
+              className="px-4 py-2 bg-emerald-100 dark:bg-emerald-500/10 border border-emerald-300 dark:border-emerald-500/50 text-emerald-700 dark:text-emerald-500 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-emerald-200 dark:hover:bg-emerald-500/20"
             >
               7j/7 - 24h/24
             </button>
             <button
               onClick={deselectAllYear}
-              className="px-4 py-2 bg-red-500/10 border border-red-500/50 text-red-500 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-red-500/20"
+              className="px-4 py-2 bg-red-100 dark:bg-red-500/10 border border-red-300 dark:border-red-500/50 text-red-700 dark:text-red-500 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-red-200 dark:hover:bg-red-500/20"
             >
               Reset Annee
             </button>
@@ -840,14 +840,14 @@ export function DriverAvailabilityCalendar() {
             return (
               <div
                 key={index}
-                className="bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] rounded-3xl p-6 hover:border-blue-500/30 transition-all cursor-pointer group"
+                className="bg-white dark:bg-[var(--color-driver-card)] border border-gray-300 dark:border-[var(--color-driver-border)] rounded-3xl p-6 hover:border-blue-500/30 transition-all cursor-pointer group"
                 onClick={() => {
                   setCurrentDate(month)
                   setViewMode('month')
                 }}
               >
                 <div className="text-center mb-6">
-                  <h4 className="text-lg font-bold text-white group-hover:text-blue-500 transition-colors">
+                  <h4 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-500 transition-colors">
                     {MONTH_NAMES[index]}
                   </h4>
                   <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">
@@ -857,13 +857,13 @@ export function DriverAvailabilityCalendar() {
 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-gray-400 font-medium">Taux d'activité</span>
-                    <span className="font-bold text-white font-mono">
+                    <span className="text-gray-600 dark:text-gray-400 font-medium">Taux d'activité</span>
+                    <span className="font-bold text-gray-900 dark:text-white font-mono">
                       {availableDaysCount}/{daysInMonth.length} J
                     </span>
                   </div>
 
-                  <div className="w-full bg-white/5 rounded-full h-1.5 overflow-hidden">
+                  <div className="w-full bg-gray-300 dark:bg-white/5 rounded-full h-1.5 overflow-hidden">
                     <div
                       className="bg-blue-500 h-1.5 transition-all duration-700 shadow-[0_0_8px_rgba(59,130,246,0.6)]"
                       style={{ width: `${(availableDaysCount / daysInMonth.length) * 100}%` }}
@@ -871,7 +871,7 @@ export function DriverAvailabilityCalendar() {
                   </div>
                 </div>
 
-                <button className="w-full mt-6 py-2.5 px-3 bg-white/5 border border-white/5 text-gray-400 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-white/10 group-hover:text-white transition-all">
+                <button className="w-full mt-6 py-2.5 px-3 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/5 text-gray-600 dark:text-gray-400 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-gray-100 dark:hover:bg-white/10 group-hover:text-gray-900 dark:group-hover:text-white transition-all">
                   Ouvrir le mois
                 </button>
               </div>
@@ -1022,15 +1022,15 @@ export function DriverAvailabilityCalendar() {
 
       {/* Presets */}
       {showPresets && (
-        <div className="bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] rounded-3xl shadow-xl p-8">
+        <div className="bg-white dark:bg-[var(--color-driver-card)] border border-gray-300 dark:border-[var(--color-driver-border)] rounded-3xl shadow-xl p-8">
           <div className="flex items-center justify-between mb-8">
-            <h3 className="text-lg font-bold text-white flex items-center gap-3">
-              <Lightning size={18} weight="fill" className="text-blue-500" />
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-3">
+              <Lightning size={18} weight="fill" className="text-blue-600 dark:text-blue-500" />
               Modèles d'activité rapides
             </h3>
             <button
               onClick={() => setShowPresets(false)}
-              className="p-2 bg-white/5 hover:bg-white/10 rounded-xl text-gray-400 transition-all"
+              className="p-2 bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 rounded-xl text-gray-600 dark:text-gray-400 transition-all"
             >
               <X size={20} weight="bold" />
             </button>
@@ -1041,14 +1041,14 @@ export function DriverAvailabilityCalendar() {
               <button
                 key={preset.id}
                 onClick={() => applyPreset(preset)}
-                className="p-5 bg-white/[0.02] border border-white/5 rounded-2xl hover:border-blue-500/50 hover:bg-blue-500/5 transition-all duration-300 text-left group"
+                className="p-5 bg-gray-50 dark:bg-white/[0.02] border border-gray-300 dark:border-white/5 rounded-2xl hover:border-blue-500/50 hover:bg-blue-100 dark:hover:bg-blue-500/5 transition-all duration-300 text-left group"
               >
                 <div className="flex items-start gap-4">
                   <span className="text-3xl group-hover:scale-110 transition-transform">
                     {preset.icon}
                   </span>
                   <div className="flex-1">
-                    <h4 className="font-bold text-white mb-1 tracking-tight">
+                    <h4 className="font-bold text-gray-900 dark:text-white mb-1 tracking-tight">
                       {preset.label}
                     </h4>
                     <p className="text-[11px] text-gray-500 leading-normal">
@@ -1065,16 +1065,16 @@ export function DriverAvailabilityCalendar() {
       {!showPresets && (
         <button
           onClick={() => setShowPresets(true)}
-          className="w-full py-4 px-6 bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] text-white/70 rounded-2xl font-bold hover:bg-white/5 transition-all flex items-center justify-center gap-3"
+          className="w-full py-4 px-6 bg-white dark:bg-[var(--color-driver-card)] border border-gray-300 dark:border-[var(--color-driver-border)] text-gray-600 dark:text-white/70 rounded-2xl font-bold hover:bg-gray-50 dark:hover:bg-white/5 transition-all flex items-center justify-center gap-3"
         >
-          <Lightning size={18} weight="fill" className="text-blue-500" /> Afficher les modèles de travail rapides
+          <Lightning size={18} weight="fill" className="text-blue-600 dark:text-blue-500" /> Afficher les modèles de travail rapides
         </button>
       )}
 
       {/* Time selection for custom hours */}
-      <div className="bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] rounded-3xl p-8">
-        <h3 className="text-sm font-bold text-white mb-6 flex items-center gap-3">
-          <Clock size={16} weight="bold" className="text-blue-500" />
+      <div className="bg-white dark:bg-[var(--color-driver-card)] border border-gray-300 dark:border-[var(--color-driver-border)] rounded-3xl p-8">
+        <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
+          <Clock size={16} weight="bold" className="text-blue-600 dark:text-blue-500" />
           Plage horaire par défaut
         </h3>
         <div className="flex flex-col sm:flex-row gap-6">
@@ -1084,10 +1084,10 @@ export function DriverAvailabilityCalendar() {
               <select
                 value={selectedTimeStart}
                 onChange={(e) => setSelectedTimeStart(e.target.value)}
-                className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-white font-mono text-sm outline-none focus:border-blue-500 transition-all appearance-none"
+                className="w-full px-4 py-3.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-2xl text-gray-900 dark:text-white font-mono text-sm outline-none focus:border-blue-500 transition-all appearance-none"
               >
                 {TIME_SLOTS.map((time) => (
-                  <option key={time} value={time} className="bg-[#0A0F14]">{time}</option>
+                  <option key={time} value={time} className="bg-white dark:bg-[#0A0F14]">{time}</option>
                 ))}
               </select>
             </div>
@@ -1098,10 +1098,10 @@ export function DriverAvailabilityCalendar() {
               <select
                 value={selectedTimeEnd}
                 onChange={(e) => setSelectedTimeEnd(e.target.value)}
-                className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-white font-mono text-sm outline-none focus:border-blue-500 transition-all appearance-none"
+                className="w-full px-4 py-3.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-2xl text-gray-900 dark:text-white font-mono text-sm outline-none focus:border-blue-500 transition-all appearance-none"
               >
                 {TIME_SLOTS.map((time) => (
-                  <option key={time} value={time} className="bg-[#0A0F14]">{time}</option>
+                  <option key={time} value={time} className="bg-white dark:bg-[#0A0F14]">{time}</option>
                 ))}
               </select>
             </div>
@@ -1110,16 +1110,16 @@ export function DriverAvailabilityCalendar() {
       </div>
 
       {/* Navigation */}
-      <div className="flex items-center justify-between bg-[var(--color-driver-card)] border border-[var(--color-driver-border)] rounded-3xl p-6 shadow-xl">
+      <div className="flex items-center justify-between bg-white dark:bg-[var(--color-driver-card)] border border-gray-300 dark:border-[var(--color-driver-border)] rounded-3xl p-6 shadow-xl">
         <button
           onClick={navigatePrevious}
-          className="w-12 h-12 flex items-center justify-center bg-white/5 border border-white/10 text-gray-400 rounded-2xl hover:text-white hover:bg-white/10 transition-all"
+          className="w-12 h-12 flex items-center justify-center bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-gray-600 dark:text-gray-400 rounded-2xl hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-all"
         >
           <ChevronLeft size={24} weight="bold" />
         </button>
 
         <div className="text-center group">
-          <h3 className="text-2xl font-black text-white tracking-tight uppercase font-mono">
+          <h3 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight uppercase font-mono">
             {viewMode === 'day' && format(currentDate, 'd MMMM yyyy', { locale: fr })}
             {viewMode === 'week' && `Du ${format(startOfWeek(currentDate, { weekStartsOn: 1 }), 'd MMM', { locale: fr })}`}
             {viewMode === 'month' && format(currentDate, 'MMMM yyyy', { locale: fr })}
@@ -1127,7 +1127,7 @@ export function DriverAvailabilityCalendar() {
           </h3>
           <button
             onClick={goToToday}
-            className="mt-2 text-[10px] font-bold text-blue-400 uppercase tracking-[0.3em] hover:text-blue-300 transition-colors"
+            className="mt-2 text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-[0.3em] hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
           >
             Revenir à aujourd'hui
           </button>
@@ -1135,7 +1135,7 @@ export function DriverAvailabilityCalendar() {
 
         <button
           onClick={navigateNext}
-          className="w-12 h-12 flex items-center justify-center bg-white/5 border border-white/10 text-gray-400 rounded-2xl hover:text-white hover:bg-white/10 transition-all"
+          className="w-12 h-12 flex items-center justify-center bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-gray-600 dark:text-gray-400 rounded-2xl hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-all"
         >
           <ChevronRight size={24} weight="bold" />
         </button>

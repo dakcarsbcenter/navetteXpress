@@ -43,6 +43,8 @@ function SignInForm() {
       case 'AccountLockedAfter3Attempts':
         setShowResetOption(true)
         return "Compte bloqué après 3 tentatives échouées. Veuillez réinitialiser votre mot de passe ou réessayer dans 15 minutes."
+      case 'AccountDisabled':
+        return "Votre compte a été désactivé. Veuillez contacter le support."
       case 'CredentialsSignin':
       case 'UserNotFound':
       case 'InvalidPassword':
@@ -59,7 +61,9 @@ function SignInForm() {
       case 'Verification':
         return "Email non vérifié"
       default:
-        return "Une erreur de connexion s'est produite"
+        // Pour le debugging, afficher le type d'erreur exact en développement
+        console.warn("⚠️ [SignIn] Type d'erreur non géré:", errorType)
+        return `Erreur de connexion${process.env.NODE_ENV === 'development' ? ` (${errorType})` : ''}`
     }
   }
 
@@ -83,14 +87,17 @@ function SignInForm() {
 
     try {
       const result = await signIn("credentials", {
-        email: email.trim(),
+        email: email.trim().toLowerCase(),
         password,
         redirect: false,
       })
 
       if (result?.error) {
-        console.error("Erreur NextAuth:", result.error)
-        setError(getErrorMessage(result.error))
+        console.error("❌ Erreur NextAuth détectée:", result.error)
+        console.error("   Type d'erreur:", result.error)
+        const mappedError = getErrorMessage(result.error)
+        console.error("   Message mappé:", mappedError)
+        setError(mappedError)
 
         // Incrémenter le compteur de tentatives échouées
         const newAttempts = failedAttempts + 1

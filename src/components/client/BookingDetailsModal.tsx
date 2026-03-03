@@ -121,7 +121,7 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
             case 'in_progress': return 'var(--color-status-inprogress)'
             case 'completed': return 'var(--color-status-completed)'
             case 'cancelled': return 'var(--color-status-cancelled)'
-            default: return 'var(--color-text-muted)'
+            default: return 'var(--color-text-secondary)'
         }
     }
 

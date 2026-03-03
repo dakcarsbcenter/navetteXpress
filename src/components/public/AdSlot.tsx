@@ -19,6 +19,23 @@ interface Ad {
     height?: number;
 }
 
+/**
+ * Validates and sanitizes URLs to prevent XSS attacks
+ * Only allows http, https, and relative URLs
+ */
+function isValidUrl(url?: string): boolean {
+    if (!url) return false;
+    try {
+        // Relative URLs
+        if (url.startsWith('/')) return true;
+        // Absolute URLs with http/https
+        const urlObj = new URL(url);
+        return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+    } catch {
+        return false;
+    }
+}
+
 interface AdSlotProps {
     placement: string;
     className?: string;
@@ -90,7 +107,7 @@ export default function AdSlot({ placement, className = "" }: AdSlotProps) {
                                 className="block overflow-hidden rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all"
                             >
                                 {/* Render by type */}
-                                {ad.type === 'banner_image' && ad.imageUrl && (
+                                {ad.type === 'banner_image' && ad.imageUrl && isValidUrl(ad.imageUrl) && (
                                     <div className="relative w-full aspect-21/9 md:aspect-3/1">
                                         <img
                                             src={ad.imageUrl}
@@ -102,7 +119,7 @@ export default function AdSlot({ placement, className = "" }: AdSlotProps) {
 
                                 {ad.type === 'banner_animated' && (ad.videoUrl || ad.imageUrl) && (
                                     <div className="relative w-full aspect-21/9 md:aspect-3/1 bg-slate-900">
-                                        {ad.videoUrl ? (
+                                        {ad.videoUrl && isValidUrl(ad.videoUrl) ? (
                                             <video
                                                 src={ad.videoUrl}
                                                 autoPlay
@@ -111,13 +128,13 @@ export default function AdSlot({ placement, className = "" }: AdSlotProps) {
                                                 playsInline
                                                 className="w-full h-full object-cover"
                                             />
-                                        ) : (
+                                        ) : ad.imageUrl && isValidUrl(ad.imageUrl) ? (
                                             <img
                                                 src={ad.imageUrl}
                                                 alt={ad.altText || ad.title}
                                                 className="w-full h-full object-cover"
                                             />
-                                        )}
+                                        ) : null}
                                     </div>
                                 )}
 
@@ -142,7 +159,7 @@ export default function AdSlot({ placement, className = "" }: AdSlotProps) {
 
                                 {ad.type === 'card_sponsored' && (
                                     <div className="flex flex-col md:flex-row bg-white overflow-hidden">
-                                        {ad.imageUrl && (
+                                        {ad.imageUrl && isValidUrl(ad.imageUrl) && (
                                             <div className="md:w-1/3 aspect-video md:aspect-square shrink-0">
                                                 <img
                                                     src={ad.imageUrl}

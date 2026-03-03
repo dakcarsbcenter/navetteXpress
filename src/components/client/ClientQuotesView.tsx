@@ -130,7 +130,7 @@ export function ClientQuotesView() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px]">
         <div className="w-12 h-12 rounded-full border-2 border-transparent border-t-[var(--color-client-accent)] animate-spin mb-4" />
-        <p className="text-sm font-medium" style={{ color: 'var(--color-text-muted)' }}>Chargement de vos devis...</p>
+        <p className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>Chargement de vos devis...</p>
       </div>
     )
   }
@@ -148,8 +148,8 @@ export function ClientQuotesView() {
                 <FileText size={28} weight="duotone" style={{ color: 'var(--color-client-accent)' }} />
               </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold mb-1" style={{ color: 'var(--color-text-primary)' }}>Mes Devis</h1>
-                <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
+                <h1 className="text-2xl sm:text-3xl font-bold mb-1" style={{ color: '#ffffff' }}>Mes Devis</h1>
+                <p className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.65)' }}>
                   Gérez vos demandes de transport personnalisé et suivez vos propositions de prix.
                 </p>
               </div>
@@ -157,8 +157,12 @@ export function ClientQuotesView() {
 
             <div className="flex items-center gap-4">
               <div className="text-center px-6 py-3 bg-white/[0.03] rounded-xl border border-white/[0.05]">
-                <div className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>{quotes.length}</div>
-                <div className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--color-text-muted)' }}>Total</div>
+                <div className="text-2xl font-bold" style={{ color: '#ffffff' }}>{quotes.length}</div>
+                <div className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.6)' }}>Total</div>
+              </div>
+              <div className="text-center px-6 py-3 bg-[var(--color-client-accent-bg)] rounded-xl border border-[var(--color-client-accent-glow)]">
+                <div className="text-2xl font-bold" style={{ color: 'var(--color-client-accent)' }}>{quotes.filter(q => q.status === 'accepted').length}</div>
+                <div className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--color-client-accent)' }}>Acceptés</div>
               </div>
               <div className="text-center px-6 py-3 bg-[var(--color-client-accent-bg)] rounded-xl border border-[var(--color-client-accent-glow)]">
                 <div className="text-2xl font-bold" style={{ color: 'var(--color-client-accent)' }}>{quotes.filter(q => q.status === 'accepted').length}</div>
@@ -180,10 +184,10 @@ export function ClientQuotesView() {
           style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
           <div className="w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl"
             style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-client-border)' }}>
-            <FileText size={40} weight="light" style={{ color: 'var(--color-text-muted)' }} />
+            <FileText size={40} weight="light" style={{ color: 'var(--color-text-secondary)' }} />
           </div>
-          <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--color-text-primary)' }}>Aucun devis pour le moment</h3>
-          <p className="text-sm max-w-sm mx-auto mb-8" style={{ color: 'var(--color-text-muted)' }}>
+          <h3 className="text-xl font-bold mb-2" style={{ color: '#ffffff' }}>Aucun devis pour le moment</h3>
+          <p className="text-sm font-medium max-w-sm mx-auto mb-8" style={{ color: 'rgba(255,255,255,0.6)' }}>
             Dès que vous effectuerez une demande de devis personnalisé, elle apparaîtra ici avec son statut en temps réel.
           </p>
           <Link href="/quote-request"
@@ -208,7 +212,7 @@ export function ClientQuotesView() {
                         <ClipboardText size={24} weight="duotone" />
                       </div>
                       <div>
-                        <h3 className="font-bold text-lg" style={{ color: 'var(--color-text-primary)' }}>
+                        <h3 className="font-bold text-lg" style={{ color: '#ffffff' }}>
                           Devis <span style={{ fontFamily: 'var(--font-mono)' }}>#{quote.id}</span>
                         </h3>
                         <p className="text-xs font-medium uppercase tracking-wider mt-0.5" style={{ color: 'var(--color-client-accent)' }}>
@@ -225,19 +229,19 @@ export function ClientQuotesView() {
 
                   <div className="grid grid-cols-2 gap-4 mb-6">
                     <div className="p-3.5 rounded-xl border border-white/[0.03]" style={{ backgroundColor: 'rgba(255,255,255,0.015)' }}>
-                      <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color: 'var(--color-text-muted)' }}>Date souhaitée</p>
-                      <div className="flex items-center gap-2">
-                        <Calendar size={14} style={{ color: 'var(--color-client-accent)' }} />
-                        <span className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Date souhaitée</p>
+                        <div className="flex items-center gap-2">
+                          <Calendar size={14} style={{ color: 'var(--color-client-accent)' }} />
+                          <span className="text-sm font-semibold" style={{ color: '#ffffff' }}>
                           {quote.preferredDate ? new Date(quote.preferredDate).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }) : 'À définir'}
                         </span>
                       </div>
                     </div>
                     <div className="p-3.5 rounded-xl border border-white/[0.03]" style={{ backgroundColor: 'rgba(255,255,255,0.015)' }}>
-                      <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color: 'var(--color-text-muted)' }}>Prix estimé</p>
-                      <div className="flex items-center gap-2">
-                        <Tag size={14} style={{ color: 'var(--color-client-accent)' }} />
-                        <span className="text-sm font-bold" style={{ color: quote.estimatedPrice ? 'var(--color-text-primary)' : 'var(--color-text-muted)' }}>
+                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Prix estimé</p>
+                        <div className="flex items-center gap-2">
+                          <Tag size={14} style={{ color: 'var(--color-client-accent)' }} />
+                          <span className="text-sm font-bold" style={{ color: quote.estimatedPrice ? '#ffffff' : 'rgba(255,255,255,0.45)' }}>
                           {quote.estimatedPrice ? `${parseFloat(quote.estimatedPrice).toLocaleString('fr-FR')} FCFA` : 'En attente'}
                         </span>
                       </div>
@@ -245,8 +249,8 @@ export function ClientQuotesView() {
                   </div>
 
                   <div className="mb-6">
-                    <p className="text-[10px] uppercase tracking-wider mb-2" style={{ color: 'var(--color-text-muted)' }}>Détails de la demande</p>
-                    <p className="text-sm leading-relaxed text-slate-400 line-clamp-2" style={{ color: 'var(--color-text-secondary)' }}>
+                    <p className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: 'rgba(255,255,255,0.5)' }}>Détails de la demande</p>
+                    <p className="text-sm font-medium leading-relaxed line-clamp-2" style={{ color: 'rgba(255,255,255,0.75)' }}>
                       {quote.message}
                     </p>
                   </div>
@@ -294,10 +298,10 @@ export function ClientQuotesView() {
                   <h2 className="text-xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
                     Détails du Devis <span style={{ fontFamily: 'var(--font-mono)' }}>#{selectedQuote.id}</span>
                   </h2>
-                  <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>Mise à jour le {new Date(selectedQuote.updatedAt).toLocaleDateString('fr-FR')}</p>
+                  <p className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.5)' }}>Mise à jour le {new Date(selectedQuote.updatedAt).toLocaleDateString('fr-FR')}</p>
                 </div>
               </div>
-              <button onClick={() => setShowDetails(false)} className="w-10 h-10 rounded-full flex items-center justify-center transition-colors hover:bg-white/[0.05]" style={{ color: 'var(--color-text-muted)' }}>
+              <button onClick={() => setShowDetails(false)} className="w-10 h-10 rounded-full flex items-center justify-center transition-colors hover:bg-white/[0.05]" style={{ color: 'var(--color-text-secondary)' }}>
                 <XCircle size={24} />
               </button>
             </div>
@@ -308,7 +312,7 @@ export function ClientQuotesView() {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl"
                   style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-client-border)' }}>
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-muted)' }}>Statut actuel :</span>
+                    <span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.65)' }}>Statut actuel :</span>
                     <span className="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-2"
                       style={{ backgroundColor: getStatusConfig(selectedQuote.status).bg, color: getStatusConfig(selectedQuote.status).color }}>
                       {getStatusConfig(selectedQuote.status).icon}
@@ -317,7 +321,7 @@ export function ClientQuotesView() {
                   </div>
                   {selectedQuote.estimatedPrice && (
                     <div className="flex items-center gap-3">
-                      <span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-muted)' }}>Prix proposé :</span>
+                      <span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.65)' }}>Prix proposé :</span>
                       <span className="text-xl font-black italic" style={{ color: 'var(--color-client-accent)', fontFamily: 'var(--font-mono)' }}>
                         {parseFloat(selectedQuote.estimatedPrice).toLocaleString()} FCFA
                       </span>
@@ -351,8 +355,8 @@ export function ClientQuotesView() {
                   <h3 className="text-[10px] uppercase tracking-widest font-bold mb-3 flex items-center gap-2" style={{ color: 'var(--color-client-accent)' }}>
                     <ChatCircle size={12} weight="fill" /> Détails de la demande
                   </h3>
-                  <div className="p-6 rounded-2xl leading-relaxed text-sm italic"
-                    style={{ backgroundColor: 'rgba(255,255,255,0.015)', border: '1px solid rgba(255,255,255,0.03)', color: 'var(--color-text-secondary)' }}>
+                  <div className="p-6 rounded-2xl leading-relaxed text-sm font-medium"
+                    style={{ backgroundColor: 'rgba(255,255,255,0.015)', border: '1px solid rgba(255,255,255,0.03)', color: 'rgba(255,255,255,0.8)' }}>
                     {selectedQuote.message}
                   </div>
                 </div>
@@ -423,7 +427,7 @@ export function ClientQuotesView() {
                 {pendingAction.action === 'reject' && 'Confirmer le rejet'}
                 {pendingAction.action === 'negotiate' && 'Demande de négociation'}
               </h3>
-              <p className="text-sm leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
+              <p className="text-sm font-medium leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)' }}>
                 {pendingAction.action === 'accept' && 'En confirmant, vous acceptez le prix proposé et les termes du devis.'}
                 {pendingAction.action === 'reject' && 'Attention, cette action marquera ce devis comme refusé de votre part.'}
                 {pendingAction.action === 'negotiate' && 'Précisez ci-dessous vos attentes ou votre contre-proposition.'}
@@ -431,7 +435,7 @@ export function ClientQuotesView() {
             </div>
 
             <div className="mb-8">
-              <label className="block text-[10px] uppercase tracking-widest font-bold mb-3" style={{ color: 'var(--color-text-muted)' }}>
+              <label className="block text-[10px] uppercase tracking-widest font-bold mb-3" style={{ color: 'rgba(255,255,255,0.6)' }}>
                 {pendingAction.action === 'accept' ? 'Laissez un petit mot (optionnel)' : 'Votre message'}
               </label>
               <textarea
@@ -447,7 +451,7 @@ export function ClientQuotesView() {
             <div className="flex gap-4">
               <button onClick={() => { setShowActionModal(false); setPendingAction(null) }}
                 className="flex-1 py-4 rounded-2xl text-sm font-bold transition-all hover:bg-white/[0.05]"
-                style={{ color: 'var(--color-text-muted)', border: '1px solid var(--color-client-border)' }}>
+                style={{ color: 'var(--color-text-secondary)', border: '1px solid var(--color-client-border)' }}>
                 Annuler
               </button>
               <button onClick={confirmAction} disabled={isProcessing}
