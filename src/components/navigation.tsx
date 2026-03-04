@@ -64,7 +64,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
           </div>
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+              <span className="w-1.5 h-1.5 bg-[#22C55E] rounded-full animate-pulse"></span>
               Service 24h/24
             </span>
             <div className="h-3 w-px bg-border"></div>

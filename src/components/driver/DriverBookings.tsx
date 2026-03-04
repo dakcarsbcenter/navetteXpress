@@ -157,9 +157,9 @@ export function DriverBookings() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'assigned': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-200'
-      case 'approved': return 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200'
+      case 'approved': return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-200'
       case 'rejected': return 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200'
-      case 'confirmed': return 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200'
+      case 'confirmed': return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-200'
       case 'in_progress': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200'
       case 'completed': return 'bg-gray-100 text-gray-800 dark:bg-gray-900/50 dark:text-gray-200'
       case 'cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200'

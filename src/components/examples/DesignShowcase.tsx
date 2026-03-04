@@ -39,7 +39,7 @@ const DesignShowcase: React.FC = () => {
                 <div className="w-full h-12 bg-orange-500 rounded-lg flex items-center justify-center text-white font-semibold">
                   Orange Accent
                 </div>
-                <div className="w-full h-12 bg-green-600 rounded-lg flex items-center justify-center text-white font-semibold">
+                <div className="w-full h-12 bg-emerald-600 rounded-lg flex items-center justify-center text-white font-semibold">
                   Vert Sénégal
                 </div>
               </div>
@@ -48,7 +48,7 @@ const DesignShowcase: React.FC = () => {
             <div className="space-y-3">
               <h3 className="font-semibold text-slate-700 dark:text-slate-300">États</h3>
               <div className="space-y-2">
-                <div className="w-full h-12 bg-green-500 rounded-lg flex items-center justify-center text-white font-semibold">
+                <div className="w-full h-12 bg-emerald-500 rounded-lg flex items-center justify-center text-white font-semibold">
                   Succès
                 </div>
                 <div className="w-full h-12 bg-red-500 rounded-lg flex items-center justify-center text-white font-semibold">

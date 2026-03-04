@@ -147,7 +147,7 @@ const DesignGuidelines: React.FC = () => {
             </Card>
 
             <Card className="p-6 text-center">
-              <div className="w-16 h-16 bg-green-100 dark:bg-green-900/50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/50 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">🧳</span>
               </div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
@@ -212,7 +212,7 @@ const DesignGuidelines: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-green-600 rounded-lg"></div>
+                  <div className="w-12 h-12 bg-emerald-600 rounded-lg"></div>
                   <div>
                     <h4 className="font-semibold text-slate-900 dark:text-white">Vert Sénégal</h4>
                     <p className="text-sm text-slate-600 dark:text-slate-300">Nature et croissance</p>

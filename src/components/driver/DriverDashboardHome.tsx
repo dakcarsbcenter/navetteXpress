@@ -218,7 +218,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'in_progress': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-      case 'confirmed': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+      case 'confirmed': return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300'
       case 'assigned': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
       case 'completed': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
       case 'cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
@@ -742,7 +742,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
                 icon: <CheckCircle size={18} />,
                 color: 'var(--color-success)',
                 bg: 'rgba(16,185,129,0.08)',
-                textColor: '#10B981',
+                textColor: '#22C55E',
               },
               {
                 label: 'Revenus',
@@ -855,7 +855,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
                 </div>
                 <div className="ml-2 w-px h-8 bg-blue-300 dark:bg-blue-500/30" />
                 <div className="flex items-start gap-4">
-                  <div className="w-4 h-4 rounded-full bg-green-600 dark:bg-green-500 mt-1 shrink-0" />
+                  <div className="w-4 h-4 rounded-full bg-emerald-600 dark:bg-emerald-500 mt-1 shrink-0" />
                   <div>
                     <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase font-bold tracking-widest mb-1">Arrivée</p>
                     <p className="text-sm font-medium text-gray-900 dark:text-white">{selectedBooking.dropoffAddress}</p>
@@ -872,7 +872,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
                     <a href={/* snyk:ignore[javascript/DOMXSS] - tel: URL validated by getSafePhoneUrl() */getSafePhoneUrl(selectedBooking.customerPhone)} className="p-3 bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors">
                       <Phone size={18} weight="fill" className="text-white" />
                     </a>
-                    <a href={/* snyk:ignore[javascript/DOMXSS] - WhatsApp URL validated by getSafeWhatsAppUrl() */getSafeWhatsAppUrl(selectedBooking.customerPhone)} className="p-3 bg-green-600 hover:bg-green-700 rounded-xl transition-colors">
+                    <a href={/* snyk:ignore[javascript/DOMXSS] - WhatsApp URL validated by getSafeWhatsAppUrl() */getSafeWhatsAppUrl(selectedBooking.customerPhone)} className="p-3 bg-emerald-600 hover:bg-emerald-700 rounded-xl transition-colors">
                       <ChatCircle size={18} weight="fill" className="text-white" />
                     </a>
                   </div>

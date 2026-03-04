@@ -1,24 +1,32 @@
 // Palette de couleurs optimisée pour NavetteXpress
 export const colors = {
-  // Couleurs principales
+  // Couleurs principales — ROUGE PASSION
   primary: {
-    main: '#FF7E38',      // Orange moderne principal
-    hover: '#E6682F',     // Orange hover
-    light: '#FFB885',     // Orange clair pour backgrounds
-    dark: '#D4571F',      // Orange sombre
+    main: '#FF2C2C',      // Rouge passion principal
+    hover: '#E01F1F',     // Rouge hover (contraste light mode)
+    light: '#FF5555',     // Rouge clair pour dark mode
+    dark: '#CC1515',      // Rouge sombre
   },
   
-  // Couleur secondaire (confiance & fiabilité)
+  // Identité dorée (Landing Page)
+  gold: {
+    main: '#C9A84C',      // Or principal
+    hover: '#B8962E',     // Or hover
+    light: '#E2C06A',     // Or clair
+    dark: '#A68835',      // Or sombre
+  },
+  
+  // Couleur secondaire bleu (Driver Dashboard)
   secondary: {
-    main: '#0F5B8A',      // Bleu océan
-    hover: '#0A4B73',     // Bleu hover
-    light: '#B8D5E8',     // Bleu clair
-    dark: '#083A5C',      // Bleu sombre
+    main: '#3B82F6',      // Bleu électrique
+    hover: '#2563EB',     // Bleu hover
+    light: '#60A5FA',     // Bleu clair
+    dark: '#1E40AF',      // Bleu sombre
   },
   
   // Couleurs neutres améliorées
   neutral: {
-    charcoal: '#1E293B',    // Charbon principal (plus chaleureux)
+    charcoal: '#1E293B',    // Charbon principal
     charcoalLight: '#334155', // Charbon léger
     gray: '#64748B',        // Gris moderne
     whiteOff: '#FAFBFC',    // Blanc cassé
@@ -26,19 +34,30 @@ export const colors = {
     grayLight: '#E2E8F0',   // Gris léger
   },
   
-  // Couleurs d'état
+  // Couleurs d'état — sémantiques préservées
   status: {
-    success: '#10B981',     // Succès
-    warning: '#F59E0B',     // Attention
+    success: '#22C55E',     // Succès (vert sémantique)
+    warning: '#F59E0B',     // Attention/En attente (or)
     error: '#EF4444',       // Erreur
-    info: '#3B82F6',        // Information
+    info: '#3B82F6',        // Information (bleu)
+    online: '#22C55E',      // En ligne (chevauche success)
+    offline: '#94A3B8',     // Hors ligne
   },
   
   // Couleurs thématiques transport
   transport: {
     taxi: '#FCD34D',        // Jaune taxi
-    route: '#059669',       // Vert route
-    sunset: '#FB923C',      // Orange sunset Dakar
+    accent: '#FF2C2C',      // Accent transport (rouge passion)
+    sunset: '#E01F1F',      // Sunset Dakar (rouge sombre)
+  },
+  
+  // Tokens d'accent rouge (NOUVEAU SYSTÈME)
+  accent: {
+    main: '#FF2C2C',
+    hover: '#E01F1F',
+    light: '#FF5555',
+    subtle: 'rgba(255, 44, 44, 0.12)',
+    border: 'rgba(255, 44, 44, 0.35)',
   }
 } as const;
 

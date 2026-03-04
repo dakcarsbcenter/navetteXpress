@@ -59,9 +59,9 @@ export function AdvancedNotification({
         return {
           bg: 'bg-linear-to-r from-green-500 to-green-600',
           icon: '✅',
-          iconBg: 'bg-green-100',
-          iconColor: 'text-green-600',
-          border: 'border-green-200',
+          iconBg: 'bg-emerald-100',
+          iconColor: 'text-emerald-600',
+          border: 'border-emerald-200',
           shadow: 'shadow-green-200/50'
         }
       case 'error':

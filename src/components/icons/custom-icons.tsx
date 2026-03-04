@@ -13,7 +13,7 @@ interface IconProps {
 }
 
 const colorMap = {
-  primary: '#FF7E38',
+  primary: '#FF2C2C',
   secondary: '#0F5B8A', 
   neutral: '#1E293B',
   white: '#FFFFFF'
@@ -316,7 +316,7 @@ export const LiveStatusIcon: React.FC<{
   size?: number;
 }> = ({ status, className = "", size = 12 }) => {
   const colors = {
-    online: '#10B981',
+    online: '#22C55E',
     busy: '#F59E0B', 
     offline: '#64748B'
   };

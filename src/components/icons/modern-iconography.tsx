@@ -69,7 +69,7 @@ export const StyledLucideIcons = {
   Menu: ({ className = "", variant = "default" }: { className?: string; variant?: "default" | "primary" | "secondary" }) => {
     const variants = {
       default: "text-slate-600 dark:text-slate-300",
-      primary: "text-[#FF7E38]",
+      primary: "text-[#FF2C2C]",
       secondary: "text-[#0F5B8A]"
     };
     return <Menu className={`${variants[variant]} ${className}`} />;
@@ -79,8 +79,8 @@ export const StyledLucideIcons = {
   Phone: ({ className = "", variant = "default" }: { className?: string; variant?: "default" | "success" | "primary" }) => {
     const variants = {
       default: "text-slate-600 dark:text-slate-300",
-      success: "text-[#10B981]",
-      primary: "text-[#FF7E38]"
+      success: "text-[#22C55E]",
+      primary: "text-[#FF2C2C]"
     };
     return <Phone className={`${variants[variant]} ${className}`} />;
   }
@@ -182,11 +182,11 @@ export const ModernUIIcons = {
   // Indicateurs de statut animés
   LiveStatus: ({ status = "online" }) => (
     <div className="relative">
-      <div className={`w-3 h-3 rounded-full ${status === 'online' ? 'bg-[#10B981]' :
+      <div className={`w-3 h-3 rounded-full ${status === 'online' ? 'bg-[#22C55E]' :
           status === 'busy' ? 'bg-[#F59E0B]' : 'bg-slate-400'
         }`}>
         {status === 'online' && (
-          <div className="absolute inset-0 rounded-full bg-[#10B981] animate-ping opacity-75" />
+          <div className="absolute inset-0 rounded-full bg-[#22C55E] animate-ping opacity-75" />
         )}
       </div>
     </div>

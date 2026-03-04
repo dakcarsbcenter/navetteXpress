@@ -427,8 +427,8 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                 </details>
 
                 {/* ⚙️ Équipements (optionnel) */}
-                <details className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
-                  <summary className="text-sm font-medium text-green-700 dark:text-green-300 cursor-pointer">
+                <details className="bg-emerald-50 dark:bg-emerald-900/20 p-3 rounded-lg">
+                  <summary className="text-sm font-medium text-emerald-700 dark:text-emerald-300 cursor-pointer">
                     ⚙️ Équipements et services (optionnel)
                   </summary>
                   <div className="mt-3 space-y-2">
@@ -444,7 +444,7 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                       <button
                         type="button"
                         onClick={handleAddFeature}
-                        className="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded text-sm font-medium"
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-sm font-medium"
                       >
                         + Ajouter
                       </button>
@@ -455,7 +455,7 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                         {featuresList.map((feature, index) => (
                           <span
                             key={index}
-                            className="bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200 px-2 py-1 rounded text-xs flex items-center gap-1"
+                            className="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-200 px-2 py-1 rounded text-xs flex items-center gap-1"
                           >
                             {feature}
                             <button

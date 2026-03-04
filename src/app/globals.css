@@ -12,6 +12,14 @@
   --surface: #FAFAFA;
   --surface-2: #F0F0F0;
 
+  /* ─── ACCENT PRINCIPAL (rouge passion) ─── */
+  --color-accent: #FF2C2C;
+  --color-accent-hover: #E01F1F;
+  --color-accent-light: #FF5555;
+  --color-accent-subtle: rgba(255, 44, 44, 0.12);
+  --color-accent-border: rgba(255, 44, 44, 0.35);
+
+  /* ─── IDENTITÉ DORÉE (Landing Page) ─── */
   --gold: #C9A84C;
   --gold-light: #E8C97A;
   --crimson: #A73B3C;
@@ -22,18 +30,18 @@
   --primary: #C9A84C;
   --primary-foreground: #FFFFFF;
 
-  --secondary: #A73B3C;
+  --secondary: #0F5B8A;
   --secondary-foreground: #FFFFFF;
 
-  --accent: #E8C97A;
-  --accent-foreground: #1A1A1A;
+  --accent: #FF2C2C;
+  --accent-foreground: #FFFFFF;
 
   --destructive: #ef4444;
   --destructive-foreground: #FFFFFF;
 
   --border: rgba(0, 0, 0, 0.08);
   --input: rgba(0, 0, 0, 0.05);
-  --ring: #C9A84C;
+  --ring: #FF2C2C;
 
   --radius: 0.75rem;
 
@@ -61,47 +69,49 @@
   --color-mission-accepted-bg: rgba(37, 99, 235, 0.08);
   --color-mission-enroute: #7C3AED;
   --color-mission-enroute-bg: rgba(124, 58, 237, 0.08);
-  --color-mission-inprogress: #059669;
-  --color-mission-inprogress-bg: rgba(5, 150, 105, 0.08);
+  --color-mission-inprogress: #22C55E;
+  --color-mission-inprogress-bg: rgba(34, 197, 94, 0.08);
   --color-mission-done: #6B7280;
   --color-mission-done-bg: rgba(107, 114, 128, 0.07);
 }
 
 .dark {
-  --background: #0A0A0F;
-  --foreground: #F0EDE8;
+  --background: #0D0D0D;
+  --foreground: #F5F5F5;
 
-  --midnight: #0A0A0F;
-  --obsidian: #12121A;
-  --surface: #1A1A26;
-  --surface-2: #22222F;
+  --midnight: #0D0D0D;
+  --obsidian: #141414;
+  --surface: #1A1A1A;
+  --surface-2: #1F1F1F;
 
-  --card: #12121A;
-  --card-foreground: #F0EDE8;
+  --card: #1A1A1A;
+  --card-foreground: #F5F5F5;
 
-  --popover: #12121A;
-  --popover-foreground: #F0EDE8;
+  --popover: #1A1A1A;
+  --popover-foreground: #F5F5F5;
 
   --primary: #C9A84C;
-  --primary-foreground: #0A0A0F;
+  --primary-foreground: #0D0D0D;
 
-  --secondary: #A73B3C;
+  --secondary: #3B82F6;
   --secondary-foreground: #FFFFFF;
 
-  --muted: #1A1A26;
-  --muted-foreground: #8A8799;
+  --muted: #1A1A1A;
+  --muted-foreground: #A0A0A0;
 
-  --accent: #1A1A26;
-  --accent-foreground: #C9A84C;
+  --accent: #FF2C2C;
+  --accent-foreground: #FFFFFF;
 
   --destructive: #ef4444;
-  --border: rgba(255, 255, 255, 0.08);
+  --border: rgba(255, 255, 255, 0.07);
   --input: rgba(255, 255, 255, 0.05);
-  --ring: #C9A84C;
+  --ring: #FF2C2C;
 
-  --text-primary: #F0EDE8;
-  --text-secondary: #8A8799;
-  --text-muted: #4A4759;
+  --text-primary: #F5F5F5;
+  --text-secondary: #A0A0A0;
+  --text-muted: #5A5A5A;
+  --text-on-accent: #FFFFFF;
+  --shadow-accent: 0 4px 20px rgba(255, 44, 44, 0.25);
 
   /* ── Dark mode: Tokens spécifiques dashboard CHAUFFEUR ── */
   --color-driver-bg: #080C10;
@@ -111,8 +121,8 @@
   --color-driver-surface: #151B22;
   /* Surfaces secondaires */
   --color-driver-border: rgba(255, 255, 255, 0.06);
-  --color-driver-text-primary: #F0EDE8;
-  --color-driver-text-secondary: #B0B9CC;
+  --color-driver-text-primary: #F5F5F5;
+  --color-driver-text-secondary: #A0A0A0;
 
   /* Accent chauffeur : bleu électrique — autorité, route, nuit */
   --color-driver-accent: #3B82F6;
@@ -127,8 +137,8 @@
   --color-mission-accepted-bg: rgba(59, 130, 246, 0.08);
   --color-mission-enroute: #8B5CF6;
   --color-mission-enroute-bg: rgba(139, 92, 246, 0.08);
-  --color-mission-inprogress: #10B981;
-  --color-mission-inprogress-bg: rgba(16, 185, 129, 0.08);
+  --color-mission-inprogress: #22C55E;
+  --color-mission-inprogress-bg: rgba(34, 197, 94, 0.08);
   --color-mission-done: #6B7280;
   --color-mission-done-bg: rgba(107, 114, 128, 0.07);
 }
@@ -270,13 +280,21 @@ html {
   --color-gold-glow: rgba(201, 168, 76, 0.25);
   --color-gold-subtle: rgba(201, 168, 76, 0.08);
 
+  /* ── Accent ROUGE PASSION (principal) ── */
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-accent-light: var(--color-accent-light);
+  --color-accent-subtle: var(--color-accent-subtle);
+  --color-accent-border: var(--color-accent-border);
+  --shadow-accent: var(--shadow-accent);
+
   /* ── Textes ── */
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
   --color-text-muted: var(--text-muted);
 
   /* ── États ── */
-  --color-success: #2ECC71;
+  --color-success: #22C55E;
   --color-error: #E74C3C;
   --color-warning: #F39C12;
 
@@ -315,13 +333,13 @@ html {
   --color-dash-nav-active-bg: rgba(201, 168, 76, 0.09);
   --color-dash-nav-active-border: #C9A84C;
 
-  /* Statuts réservations */
+  /* Statuts réservations — semantic colors preservées */
   --color-status-pending: #F59E0B;
   --color-status-pending-bg: rgba(245, 158, 11, 0.1);
   --color-status-assigned: #3B82F6;
   --color-status-assigned-bg: rgba(59, 130, 246, 0.1);
-  --color-status-confirmed: #10B981;
-  --color-status-confirmed-bg: rgba(16, 185, 129, 0.1);
+  --color-status-confirmed: #3B82F6;
+  --color-status-confirmed-bg: rgba(59, 130, 246, 0.1);
   --color-status-inprogress: #8B5CF6;
   --color-status-inprogress-bg: rgba(139, 92, 246, 0.1);
   --color-status-completed: #6B7280;
@@ -333,23 +351,27 @@ html {
   --color-status-expired: #94A3B8;
   --color-status-expired-bg: rgba(148, 163, 184, 0.1);
 
+  /* Statuts sémantiques positifs */
+  --status-online: #22C55E;
+  --status-offline: #94A3B8;
+
   /* ── Tokens spécifiques dashboard CLIENT ── */
   --color-client-bg: #0B0F14;
   --color-client-card: #111620;
   --color-client-surface: #181E2A;
   --color-client-border: rgba(255, 255, 255, 0.06);
 
-  /* Accent client : vert émeraude */
-  --color-client-accent: #10B981;
-  --color-client-accent-light: #34D399;
-  --color-client-accent-bg: rgba(16, 185, 129, 0.08);
-  --color-client-accent-glow: rgba(16, 185, 129, 0.2);
+  /* Accent client : ROUGE PASSION (remplacé de l'émeraude) */
+  --color-client-accent: #FF2C2C;
+  --color-client-accent-light: #FF5555;
+  --color-client-accent-bg: rgba(255, 44, 44, 0.08);
+  --color-client-accent-glow: rgba(255, 44, 44, 0.2);
 
   /* Statuts trajets client */
   --color-trip-upcoming: #3B82F6;
   --color-trip-upcoming-bg: rgba(59, 130, 246, 0.08);
-  --color-trip-inprogress: #10B981;
-  --color-trip-inprogress-bg: rgba(16, 185, 129, 0.08);
+  --color-trip-inprogress: #22C55E;
+  --color-trip-inprogress-bg: rgba(34, 197, 94, 0.08);
   --color-trip-completed: #6B7280;
   --color-trip-completed-bg: rgba(107, 114, 128, 0.07);
   --color-trip-cancelled: #EF4444;
@@ -397,21 +419,21 @@ html {
   top: 40px;
   bottom: 0;
   width: 1px;
-  background: linear-gradient(to bottom, rgba(16, 185, 129, 0.3), transparent);
+  background: linear-gradient(to bottom, rgba(34, 197, 94, 0.3), transparent);
 }
 
 /* ── Badge "En cours" pulsant ── */
 @keyframes liveRing {
   0% {
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
   }
 
   70% {
-    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
   }
 
   100% {
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
   }
 }
 
@@ -478,11 +500,11 @@ html {
 
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
   }
 
   50% {
-    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+    box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
   }
 }
 

@@ -282,7 +282,7 @@ export function DriverStats({ onBack }: DriverStatsProps) {
                       className="h-full rounded-full transition-all duration-1000"
                       style={{
                         width: `${(rating.count / maxCount) * 100}%`,
-                        backgroundColor: stars >= 4 ? '#10B981' : stars >= 3 ? '#F59E0B' : '#EF4444'
+                        backgroundColor: stars >= 4 ? '#22C55E' : stars >= 3 ? '#F59E0B' : '#EF4444'
                       }}
                     />
                   </div>
