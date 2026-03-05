@@ -69,7 +69,7 @@ export function ClientQuotesView() {
       case 'sent':
         return { label: 'Proposition reçue', color: 'var(--color-client-accent)', bg: 'rgba(16,185,129,0.1)', icon: <Tag size={12} /> }
       case 'accepted':
-        return { label: 'Accepté', color: '#10B981', bg: 'rgba(16,185,129,0.1)', icon: <CheckCircle size={12} /> }
+        return { label: 'Accepté', color: 'var(--color-client-accent)', bg: 'var(--color-client-accent-bg)', icon: <CheckCircle size={12} /> }
       case 'rejected':
         return { label: 'Refusé', color: '#EF4444', bg: 'rgba(239,68,68,0.1)', icon: <XCircle size={12} /> }
       case 'expired':
@@ -139,7 +139,7 @@ export function ClientQuotesView() {
     <div className="space-y-6">
       {/* Header Premium */}
       <div className="client-card-enter relative rounded-2xl overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #111E1A 0%, var(--color-client-card) 60%)', border: '1px solid rgba(16,185,129,0.15)' }}>
+        style={{ background: 'linear-gradient(135deg, #111E1A 0%, var(--color-client-card) 60%)', border: '1px solid var(--color-client-accent-border)' }}>
         <div className="h-1 w-full" style={{ background: 'linear-gradient(to right, var(--color-client-accent), transparent)' }} />
         <div className="p-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -170,7 +170,7 @@ export function ClientQuotesView() {
               </div>
               <Link href="/quote-request"
                 className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold transition-all hover:brightness-110"
-                style={{ backgroundColor: 'var(--color-client-accent)', color: '#000' }}>
+                style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}>
                 <Plus size={16} weight="bold" /> Nouvelle demande
               </Link>
             </div>
@@ -230,18 +230,18 @@ export function ClientQuotesView() {
                   <div className="grid grid-cols-2 gap-4 mb-6">
                     <div className="p-3.5 rounded-xl border border-white/[0.03]" style={{ backgroundColor: 'rgba(255,255,255,0.015)' }}>
                       <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Date souhaitée</p>
-                        <div className="flex items-center gap-2">
-                          <Calendar size={14} style={{ color: 'var(--color-client-accent)' }} />
-                          <span className="text-sm font-semibold" style={{ color: '#ffffff' }}>
+                      <div className="flex items-center gap-2">
+                        <Calendar size={14} style={{ color: 'var(--color-client-accent)' }} />
+                        <span className="text-sm font-semibold" style={{ color: '#ffffff' }}>
                           {quote.preferredDate ? new Date(quote.preferredDate).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }) : 'À définir'}
                         </span>
                       </div>
                     </div>
                     <div className="p-3.5 rounded-xl border border-white/[0.03]" style={{ backgroundColor: 'rgba(255,255,255,0.015)' }}>
                       <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Prix estimé</p>
-                        <div className="flex items-center gap-2">
-                          <Tag size={14} style={{ color: 'var(--color-client-accent)' }} />
-                          <span className="text-sm font-bold" style={{ color: quote.estimatedPrice ? '#ffffff' : 'rgba(255,255,255,0.45)' }}>
+                      <div className="flex items-center gap-2">
+                        <Tag size={14} style={{ color: 'var(--color-client-accent)' }} />
+                        <span className="text-sm font-bold" style={{ color: quote.estimatedPrice ? '#ffffff' : 'rgba(255,255,255,0.45)' }}>
                           {quote.estimatedPrice ? `${parseFloat(quote.estimatedPrice).toLocaleString('fr-FR')} FCFA` : 'En attente'}
                         </span>
                       </div>
@@ -269,7 +269,7 @@ export function ClientQuotesView() {
                         onClick={() => openActionModal('accept', quote.id)}
                         disabled={isProcessing}
                         className="px-6 py-3 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-lg hover:shadow-[var(--color-client-accent-glow)]"
-                        style={{ backgroundColor: 'var(--color-client-accent)', color: '#000' }}
+                        style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}
                       >
                         Accepter <CaretRight size={14} weight="bold" />
                       </button>
@@ -374,13 +374,13 @@ export function ClientQuotesView() {
 
                 {/* Quick Actions Panel */}
                 {selectedQuote.status === 'sent' && (
-                  <div className="p-8 rounded-3xl space-y-6" style={{ background: 'linear-gradient(to bottom right, rgba(16,185,129,0.05), rgba(16,185,129,0.02))', border: '1px solid rgba(16,185,129,0.15)' }}>
+                  <div className="p-8 rounded-3xl space-y-6" style={{ background: 'linear-gradient(to bottom right, var(--color-client-accent-bg), rgba(255,44,44,0.02))', border: '1px solid var(--color-client-accent-border)' }}>
                     <h4 className="font-bold text-center text-sm" style={{ color: 'var(--color-text-primary)' }}>
                       Cette proposition vous convient-elle ?
                     </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <button onClick={() => openActionModal('accept', selectedQuote.id)} className="group flex flex-col items-center gap-2 p-4 rounded-2xl transition-all hover:bg-[var(--color-client-accent-glow)] border border-transparent hover:border-[var(--color-client-accent-glow)]">
-                        <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center text-green-500 group-hover:scale-110 transition-transform">
+                        <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform">
                           <CheckCircle size={28} weight="fill" />
                         </div>
                         <span className="text-xs font-bold" style={{ color: 'var(--color-text-primary)' }}>Accepter</span>
@@ -414,9 +414,9 @@ export function ClientQuotesView() {
             <div className="text-center mb-8">
               <div className="mx-auto w-20 h-20 rounded-3xl flex items-center justify-center mb-6 shadow-lg"
                 style={{
-                  backgroundColor: pendingAction.action === 'accept' ? 'rgba(16,185,129,0.1)' : pendingAction.action === 'reject' ? 'rgba(239,68,68,0.1)' : 'rgba(59,130,246,0.1)',
+                  backgroundColor: pendingAction.action === 'accept' ? 'var(--color-client-accent-bg)' : pendingAction.action === 'reject' ? 'rgba(239,68,68,0.1)' : 'rgba(59,130,246,0.1)',
                   color: pendingAction.action === 'accept' ? 'var(--color-client-accent)' : pendingAction.action === 'reject' ? '#EF4444' : '#3B82F6',
-                  border: `1px solid ${pendingAction.action === 'accept' ? 'var(--color-client-accent-glow)' : pendingAction.action === 'reject' ? 'rgba(239,68,68,0.2)' : 'rgba(59,130,246,0.2)'}`
+                  border: `1px solid ${pendingAction.action === 'accept' ? 'var(--color-client-accent-border)' : pendingAction.action === 'reject' ? 'rgba(239,68,68,0.2)' : 'rgba(59,130,246,0.2)'}`
                 }}>
                 {pendingAction.action === 'accept' && <CheckCircle size={40} weight="duotone" />}
                 {pendingAction.action === 'reject' && <XCircle size={40} weight="duotone" />}
@@ -458,7 +458,7 @@ export function ClientQuotesView() {
                 className="flex-1 py-4 rounded-2xl text-sm font-bold transition-all shadow-lg hover:brightness-110 disabled:opacity-50"
                 style={{
                   backgroundColor: pendingAction.action === 'accept' ? 'var(--color-client-accent)' : pendingAction.action === 'reject' ? '#EF4444' : '#3B82F6',
-                  color: pendingAction.action === 'accept' ? '#000' : '#FFF'
+                  color: pendingAction.action === 'accept' ? '#fff' : '#FFF'
                 }}>
                 {isProcessing ? 'Envoi...' : 'Confirmer'}
               </button>

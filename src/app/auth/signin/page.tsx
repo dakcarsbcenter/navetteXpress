@@ -46,9 +46,8 @@ function SignInForm() {
       case 'AccountDisabled':
         return "Votre compte a été désactivé. Veuillez contacter le support."
       case 'CredentialsSignin':
-      case 'UserNotFound':
-      case 'InvalidPassword':
-      case 'NoPassword':
+      case 'NoEmail':
+      case 'NoCredentials':
         return "Votre email ou mot de passe est incorrect"
       case 'CredentialsMissing':
         return "Veuillez remplir tous les champs"
@@ -57,9 +56,15 @@ function SignInForm() {
       case 'Configuration':
         return "Erreur de configuration du système"
       case 'AccessDenied':
-        return "Accès refusé"
+        return "Accès refusé. Veuillez vérifier vos accès ou contacter l'administrateur."
       case 'Verification':
-        return "Email non vérifié"
+        return "Email non vérifié. Veuillez consulter votre boîte de réception pour valider votre compte."
+      case 'UserNotFound':
+        return "Aucun compte n'a été trouvé avec cette adresse email. Voulez-vous créer un compte ?"
+      case 'InvalidPassword':
+        return "Le mot de passe saisi est incorrect. Veuillez réessayer."
+      case 'NoPassword':
+        return "Ce compte est associé à une connexion Google. Veuillez vous connecter avec Google."
       default:
         // Pour le debugging, afficher le type d'erreur exact en développement
         console.warn("⚠️ [SignIn] Type d'erreur non géré:", errorType)
@@ -93,11 +98,14 @@ function SignInForm() {
       })
 
       if (result?.error) {
-        console.error("❌ Erreur NextAuth détectée:", result.error)
-        console.error("   Type d'erreur:", result.error)
-        const mappedError = getErrorMessage(result.error)
-        console.error("   Message mappé:", mappedError)
-        setError(mappedError)
+        if (process.env.NODE_ENV === 'development') {
+          console.group("🔍 [DEBUG] Échec de connexion NextAuth")
+          console.error("Type d'erreur brut:", result.error)
+          const mappedError = getErrorMessage(result.error)
+          console.info("Message affiché à l'utilisateur:", mappedError)
+          console.groupEnd()
+        }
+        setError(getErrorMessage(result.error))
 
         // Incrémenter le compteur de tentatives échouées
         const newAttempts = failedAttempts + 1

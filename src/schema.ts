@@ -249,21 +249,27 @@ export type SelectInvoice = typeof invoicesTable.$inferSelect;
 export type InsertDriver = InsertUser;
 export type SelectDriver = SelectUser;
 
-// Types pour les rapports de véhicules
-export type VehicleReport = {
-  id: number;
-  title: string;
-  description: string;
-  category: 'mechanical' | 'electrical' | 'bodywork' | 'interior' | 'other';
-  severity: 'low' | 'medium' | 'high' | 'urgent';
-  reportedAt: string;
-  vehicleInfo: {
-    make: string;
-    model: string;
-    year: number;
-    plateNumber: string;
-  };
-};
+// Types pour les rapports de véhicules (définis par la table ci-dessous)
+export const reportCategoryEnum = pgEnum('report_category', ['mechanical', 'electrical', 'bodywork', 'interior', 'other']);
+export const reportSeverityEnum = pgEnum('report_severity', ['low', 'medium', 'high', 'urgent']);
+export const reportStatusEnum = pgEnum('report_status', ['open', 'in_progress', 'resolved', 'closed']);
+
+// Table des rapports de véhicules
+export const vehicleReportsTable = pgTable('vehicle_reports', {
+  id: serial('id').primaryKey(),
+  vehicleTableId: integer('vehicle_table_id').references(() => vehiclesTable.id, { onDelete: 'cascade' }),
+  driverId: text('driver_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  category: reportCategoryEnum('category').notNull().default('mechanical'),
+  severity: reportSeverityEnum('severity').notNull().default('medium'),
+  title: text('title').notNull(),
+  description: text('description').notNull(),
+  status: reportStatusEnum('status').notNull().default('open'),
+  reportedAt: timestamp('reported_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
+});
+
+export type InsertVehicleReport = typeof vehicleReportsTable.$inferInsert;
+export type SelectVehicleReport = typeof vehicleReportsTable.$inferSelect;
 
 // Rôles personnalisés
 export const customRolesTable = pgTable('custom_roles', {

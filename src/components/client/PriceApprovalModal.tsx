@@ -34,7 +34,7 @@ export function PriceApprovalModal({
   const handleAccept = async () => {
     try {
       setIsLoading(true);
-      
+
       const response = await fetch(`/api/client/bookings/${bookingId}/respond-price`, {
         method: 'POST',
         headers: {
@@ -71,7 +71,7 @@ export function PriceApprovalModal({
 
     try {
       setIsLoading(true);
-      
+
       const response = await fetch(`/api/client/bookings/${bookingId}/respond-price`, {
         method: 'POST',
         headers: {
@@ -140,9 +140,9 @@ export function PriceApprovalModal({
           </div>
 
           {/* Prix proposé */}
-          <div className="bg-linear-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-300 dark:border-green-700 rounded-lg p-6 text-center">
+          <div className="bg-linear-to-r from-red-50 to-red-50 dark:from-red-900/20 dark:to-red-900/20 border-2 border-red-300 dark:border-red-700 rounded-lg p-6 text-center">
             <p className="text-slate-600 dark:text-slate-400 mb-2">Prix proposé par l'administrateur</p>
-            <p className="text-5xl font-bold text-green-600 dark:text-green-400">{price} FCFA</p>
+            <p className="text-5xl font-bold text-red-600 dark:text-red-400">{price} FCFA</p>
           </div>
 
           {/* Message optionnel */}
@@ -200,7 +200,7 @@ export function PriceApprovalModal({
               <button
                 onClick={handleAccept}
                 disabled={isLoading}
-                className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors disabled:opacity-50"
+                className="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors disabled:opacity-50"
               >
                 {isLoading ? 'Traitement...' : '✅ Accepter'}
               </button>

@@ -150,8 +150,8 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
 
                     {/* Header Image/Pattern */}
                     <div className="h-32 w-full relative overflow-hidden shrink-0">
-                        <div className="absolute inset-0 bg-linear-to-br from-[#10B981]/20 to-transparent" />
-                        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2310B981' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
+                        <div className="absolute inset-0 bg-linear-to-br from-red-500/20 to-transparent" />
+                        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23EF4444' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
 
                         <button
                             onClick={onClose}
@@ -161,12 +161,12 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                         </button>
 
                         <div className="absolute bottom-6 left-8 flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 text-[#10B981]">
+                            <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 text-red-500">
                                 <Car size={28} weight="duotone" />
                             </div>
                             <div>
                                 <h3 className="text-xl font-bold text-white leading-tight">
-                                    Réservation <span className="text-[#10B981]">#{booking.id}</span>
+                                    Réservation <span className="text-red-500">#{booking.id}</span>
                                 </h3>
                                 <div className="flex items-center gap-2 mt-1">
                                     <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: getStatusColor(booking.status) }} />
@@ -186,13 +186,13 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                                 <div className="relative grid grid-cols-1 gap-6">
                                     <div className="flex gap-4">
                                         <div className="flex flex-col items-center gap-1 shrink-0">
-                                            <div className="w-5 h-5 rounded-full border-4 border-[#10B981] bg-slate-900 z-10" />
-                                            <div className="w-0.5 flex-1 bg-linear-to-b from-[#10B981] to-red-500/50 border-dashed border-l border-white/20" />
+                                            <div className="w-5 h-5 rounded-full border-4 border-red-500 bg-slate-900 z-10" />
+                                            <div className="w-0.5 flex-1 bg-linear-to-b from-red-500 to-red-500/50 border-dashed border-l border-white/20" />
                                             <div className="w-5 h-5 rounded-full border-4 border-red-500 bg-slate-900 z-10" />
                                         </div>
                                         <div className="flex flex-col justify-between py-0.5 gap-8">
                                             <div>
-                                                <p className="text-[10px] font-bold uppercase tracking-widest text-[#10B981] mb-1">Départ</p>
+                                                <p className="text-[10px] font-bold uppercase tracking-widest text-red-500 mb-1">Départ</p>
                                                 <p className="text-base text-white/90 font-medium">{booking.pickupAddress}</p>
                                             </div>
                                             <div>
@@ -206,7 +206,7 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                                 {/* Info Grid */}
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-1">
-                                        <div className="flex items-center gap-2 text-[#10B981]">
+                                        <div className="flex items-center gap-2 text-red-500">
                                             <Calendar size={18} />
                                             <span className="text-[10px] font-bold uppercase tracking-widest opacity-70">Date</span>
                                         </div>
@@ -215,7 +215,7 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                                         </p>
                                     </div>
                                     <div className="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-1">
-                                        <div className="flex items-center gap-2 text-[#10B981]">
+                                        <div className="flex items-center gap-2 text-red-500">
                                             <Clock size={18} />
                                             <span className="text-[10px] font-bold uppercase tracking-widest opacity-70">Heure</span>
                                         </div>
@@ -233,12 +233,12 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
 
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         {booking.price && (
-                                            <div className="flex items-center gap-3 p-3 rounded-xl bg-[#10B981]/5 border border-[#10B981]/10">
-                                                <div className="w-10 h-10 rounded-lg bg-[#10B981]/20 flex items-center justify-center text-[#10B981]">
+                                            <div className="flex items-center gap-3 p-3 rounded-xl bg-red-500/5 border border-red-500/10">
+                                                <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center text-red-500">
                                                     <Wallet size={20} />
                                                 </div>
                                                 <div>
-                                                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#10B981] opacity-70">Tarif</p>
+                                                    <p className="text-[10px] font-bold uppercase tracking-widest text-red-500 opacity-70">Tarif</p>
                                                     <p className="text-lg font-bold text-white" style={{ fontFamily: 'var(--font-mono)' }}>
                                                         {parseFloat(booking.price).toLocaleString('fr-FR')} FCFA
                                                     </p>
@@ -297,14 +297,14 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                             <form onSubmit={handleSubmit} className="space-y-6 animate-fadeIn">
                                 <div className="grid grid-cols-1 gap-5">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-bold uppercase tracking-widest text-[#10B981] ml-1">Adresse de départ</label>
+                                        <label className="text-[10px] font-bold uppercase tracking-widest text-red-500 ml-1">Adresse de départ</label>
                                         <div className="relative group">
-                                            <MapPin size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-[#10B981] transition-colors" />
+                                            <MapPin size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-red-500 transition-colors" />
                                             <input
                                                 type="text"
                                                 value={formData.pickupAddress}
                                                 onChange={(e) => setFormData({ ...formData, pickupAddress: e.target.value })}
-                                                className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-[#10B981]/50 focus:bg-white/[0.08] transition-all"
+                                                className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 focus:bg-white/[0.08] transition-all"
                                                 placeholder="Lieu de départ..."
                                                 required
                                             />
@@ -333,7 +333,7 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                                                 type="datetime-local"
                                                 value={formData.scheduledDateTime}
                                                 onChange={(e) => setFormData({ ...formData, scheduledDateTime: e.target.value })}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-[#10B981]/50 focus:bg-white/[0.08] transition-all [color-scheme:dark]"
+                                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 focus:bg-white/[0.08] transition-all [color-scheme:dark]"
                                                 required
                                             />
                                         </div>
@@ -343,7 +343,7 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                                                 type="tel"
                                                 value={formData.customerPhone}
                                                 onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-[#10B981]/50 focus:bg-white/[0.08] transition-all"
+                                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 focus:bg-white/[0.08] transition-all"
                                                 placeholder="Ex: 77 000 00 00"
                                             />
                                         </div>
@@ -354,7 +354,7 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                                         <textarea
                                             value={formData.notes}
                                             onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-[#10B981]/50 focus:bg-white/[0.08] transition-all min-h-[100px] resize-none"
+                                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 focus:bg-white/[0.08] transition-all min-h-[100px] resize-none"
                                             placeholder="Une précision à apporter ?"
                                         />
                                     </div>
@@ -371,7 +371,7 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                                     <button
                                         type="submit"
                                         disabled={isSubmitting}
-                                        className="flex-[1.5] px-6 py-3.5 rounded-xl bg-[#10B981] text-black font-bold hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-2 text-sm shadow-lg shadow-[#10B981]/20"
+                                        className="flex-[1.5] px-6 py-3.5 rounded-xl bg-red-600 text-white font-bold hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-2 text-sm shadow-lg shadow-red-500/20"
                                     >
                                         {isSubmitting ? (
                                             <Clock size={20} className="animate-spin" />

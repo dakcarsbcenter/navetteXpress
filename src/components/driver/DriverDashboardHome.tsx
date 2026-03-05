@@ -384,16 +384,13 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
   return (
     <div className="max-w-5xl mx-auto space-y-6 pb-12">
 
-      {/* ── SECTION HERO : MISSION ACTIVE OU PROCHAINE ── */}
+      {/* ── SECTION HERO : MISSION ACTIVE ── */}
       {missionActive && (
-        <div className="driver-card-enter rounded-4xl overflow-hidden mb-8 relative border-2 border-emerald-500/20 shadow-[0_0_50px_rgba(16,185,129,0.1)] group bg-linear-to-br from-emerald-50 to-white dark:from-[#0A1520] dark:to-driver-card">
+        <div className="driver-card-enter glass-card-premium rounded-[2.5rem] overflow-hidden mb-8 relative group">
+          {/* Animated glow effect in background */}
+          <div className="absolute -top-24 -right-24 w-64 h-64 bg-emerald-500/10 dark:bg-emerald-500/5 blur-[80px] rounded-full group-hover:bg-emerald-500/20 transition-all duration-700" />
 
-          {/* Barre de progression colorée en haut */}
-          <div className="h-1"
-            style={{ background: 'linear-gradient(to right, var(--color-success), rgba(16,185,129,0.2))' }} />
-
-          <div className="p-5 sm:p-7">
-
+          <div className="relative p-6 sm:p-8">
             {/* En-tête mission */}
             <div className="flex items-start justify-between mb-6">
               <div>
@@ -582,36 +579,43 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
       )}
 
       {!missionActive && !prochaineMission && isOnline && (
-        <div className="driver-card-enter rounded-2xl p-8 text-center mb-6 bg-linear-to-br from-blue-50 to-blue-100/50 dark:from-blue-500/10 dark:to-blue-500/5 border-2 border-blue-200 dark:border-blue-500/30">
-          {/* Icône Radar ou Navigation animée */}
-          <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 bg-blue-200 dark:bg-blue-500/15 shadow-lg dark:shadow-[0_0_20px_rgba(59,130,246,0.2)]">
-            <NavigationArrow size={28} weight="light" className="text-blue-600 dark:text-blue-400" />
+        <div className="driver-card-enter glass-card rounded-[2rem] p-10 text-center mb-6 relative overflow-hidden group">
+          <div className="absolute inset-0 bg-blue-500/5 dark:bg-blue-400/5 animate-pulse-slow" />
+          <div className="relative">
+            <div className="w-20 h-20 rounded-[2rem] flex items-center justify-center mx-auto mb-6 bg-blue-500/10 text-blue-600 dark:text-blue-400">
+              <NavigationArrow size={32} weight="light" className="animate-bounce" />
+            </div>
+            <h3 className="text-xl font-black mb-3 text-gray-900 dark:text-white uppercase tracking-tighter">
+              En attente de mission
+            </h3>
+            <p className="max-w-xs mx-auto text-sm text-gray-500 dark:text-gray-400 font-medium leading-relaxed">
+              Votre radar est actif. Nous vous informerons dès qu'une mission correspondra à votre profil.
+            </p>
           </div>
-          <p className="text-lg font-bold mb-2 text-gray-900 dark:text-white">
-            En attente de mission
-          </p>
-          <p className="text-sm text-gray-600 dark:text-gray-300">
-            Vous serez notifié dès qu'une mission vous sera assignée.
-          </p>
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
         {/* ── FILE D'ATTENTE ── */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className="driver-card-enter rounded-2xl overflow-hidden bg-white dark:bg-driver-card border border-gray-200 dark:border-driver-border">
+        <div className="lg:col-span-2 space-y-6">
+          <div className="driver-card-enter glass-card rounded-[2rem] overflow-hidden">
 
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-white/5">
-              <h3 className="text-base font-semibold text-gray-900 dark:text-white">
-                Missions à venir
-              </h3>
+            <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100 dark:border-white/5">
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-blue-500" />
+                <h3 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-widest">
+                  Missions à venir
+                </h3>
+              </div>
               {missionsAVenir.length > 0 && (
-                <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-blue-100 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400">
-                  {missionsAVenir.length} assignée{missionsAVenir.length > 1 ? 's' : ''}
+                <span className="text-[10px] px-3 py-1 rounded-full font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 uppercase tracking-tighter">
+                  {missionsAVenir.length} Course{missionsAVenir.length > 1 ? 's' : ''}
                 </span>
               )}
             </div>
+
 
             <div className="divide-y divide-gray-200 dark:divide-white/5">
               {missionsAVenir.map((mission, i) => (
@@ -747,46 +751,44 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
               {
                 label: 'Revenus',
                 value: `${stats.earnings.toLocaleString('fr-FR')} FCFA`,
-                icon: <Banknote size={18} />,
-                color: 'var(--color-gold)',
-                bg: 'rgba(201,168,76,0.08)',
-                textColor: '#C9A84C',
+                value: `${stats.earnings.toLocaleString('fr-FR')} F`,
+                icon: <Banknote size={20} weight="duotone" />,
+                color: '#F59E0B',
+                bg: 'rgba(245,158,11,0.08)',
               },
               {
                 label: 'Km parcourus',
-                value: '42 km', // Mock value
-                icon: <Route size={18} />,
-                color: 'var(--color-driver-accent)',
+                value: '42 km',
+                icon: <Route size={20} weight="duotone" />,
+                color: '#3B82F6',
                 bg: 'rgba(59,130,246,0.08)',
-                textColor: '#3B82F6',
               },
               {
-                label: 'Note moyenne',
+                label: 'Note',
                 value: '4.9/5',
-                icon: <Star size={18} weight="fill" />,
-                color: '#F59E0B',
-                bg: 'rgba(245,158,11,0.08)',
-                textColor: '#FBBF24',
+                icon: <Star size={20} weight="fill" />,
+                color: '#EF4444',
+                bg: 'rgba(239,68,68,0.08)',
               },
             ].map(stat => (
               <div key={stat.label}
-                className="flex items-center gap-4 px-4 py-5 rounded-2xl transition-all hover:shadow-lg bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10">
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+                className="group flex items-center gap-4 p-5 rounded-3xl glass-card transition-all hover:translate-x-1 duration-300">
+                <div className="w-12 h-12 rounded-[1.25rem] flex items-center justify-center shrink-0 transition-transform group-hover:scale-110"
                   style={{ backgroundColor: stat.bg, color: stat.color }}>
                   {stat.icon}
                 </div>
                 <div className="flex-1">
-                  <p className="text-[9px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
                     {stat.label}
                   </p>
-                  <p className="text-xl font-bold mt-1.5"
-                    style={{ fontFamily: 'var(--font-mono)', color: stat.textColor }}>
+                  <p className="text-xl font-black text-gray-900 dark:text-white font-mono mt-0.5">
                     {stat.value}
                   </p>
                 </div>
               </div>
             ))}
           </div>
+
 
           {/* Quick Actions (Optional but good for mobile) */}
           <div className="driver-card-enter rounded-2xl p-5 space-y-3 bg-gray-50 dark:bg-driver-surface border border-gray-200 dark:border-driver-border">

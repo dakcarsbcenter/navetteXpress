@@ -46,21 +46,19 @@
   --radius: 0.75rem;
 
   /* ── Light mode: Tokens spécifiques dashboard CHAUFFEUR ── */
-  --color-driver-bg: #F5F3F0;
-  /* Fond clair avec teinte chaleureuse */
+  --color-driver-bg: #F8F9FA;
   --color-driver-card: #FFFFFF;
-  /* Cards blanches */
-  --color-driver-surface: #FAF8F5;
-  /* Surfaces secondaires claires */
-  --color-driver-border: rgba(0, 0, 0, 0.08);
-  --color-driver-text-primary: #1A1A1A;
-  --color-driver-text-secondary: #4A4A4A;
+  --color-driver-surface: #FFFFFF;
+  --color-driver-border: rgba(0, 0, 0, 0.04);
+  --color-driver-text-primary: #111827;
+  --color-driver-text-secondary: #4B5563;
 
   /* Accent chauffeur : bleu électrique — autorité, route */
   --color-driver-accent: #2563EB;
   --color-driver-accent-light: #3B82F6;
-  --color-driver-accent-bg: rgba(37, 99, 235, 0.08);
-  --color-driver-accent-glow: rgba(37, 99, 235, 0.15);
+  --color-driver-accent-bg: rgba(37, 99, 235, 0.05);
+  --color-driver-accent-glow: rgba(37, 99, 235, 0.1);
+
 
   /* Statuts mission (light mode) */
   --color-mission-new: #D97706;
@@ -114,21 +112,19 @@
   --shadow-accent: 0 4px 20px rgba(255, 44, 44, 0.25);
 
   /* ── Dark mode: Tokens spécifiques dashboard CHAUFFEUR ── */
-  --color-driver-bg: #080C10;
-  /* Fond — quasi noir avec teinte bleue froide */
-  --color-driver-card: #0F1318;
-  /* Cards */
-  --color-driver-surface: #151B22;
-  /* Surfaces secondaires */
-  --color-driver-border: rgba(255, 255, 255, 0.06);
-  --color-driver-text-primary: #F5F5F5;
-  --color-driver-text-secondary: #A0A0A0;
+  --color-driver-bg: #05070A;
+  --color-driver-card: #0C1117;
+  --color-driver-surface: #121820;
+  --color-driver-border: rgba(255, 255, 255, 0.05);
+  --color-driver-text-primary: #F9FAFB;
+  --color-driver-text-secondary: #9CA3AF;
 
   /* Accent chauffeur : bleu électrique — autorité, route, nuit */
   --color-driver-accent: #3B82F6;
   --color-driver-accent-light: #60A5FA;
-  --color-driver-accent-bg: rgba(59, 130, 246, 0.08);
-  --color-driver-accent-glow: rgba(59, 130, 246, 0.2);
+  --color-driver-accent-bg: rgba(59, 130, 246, 0.06);
+  --color-driver-accent-glow: rgba(59, 130, 246, 0.15);
+
 
   /* Statuts mission (dark mode) */
   --color-mission-new: #F59E0B;
@@ -370,8 +366,8 @@ html {
   /* Statuts trajets client */
   --color-trip-upcoming: #3B82F6;
   --color-trip-upcoming-bg: rgba(59, 130, 246, 0.08);
-  --color-trip-inprogress: #22C55E;
-  --color-trip-inprogress-bg: rgba(34, 197, 94, 0.08);
+  --color-trip-inprogress: #FF2C2C;
+  --color-trip-inprogress-bg: rgba(255, 44, 44, 0.08);
   --color-trip-completed: #6B7280;
   --color-trip-completed-bg: rgba(107, 114, 128, 0.07);
   --color-trip-cancelled: #EF4444;
@@ -605,11 +601,33 @@ html {
 
 /* ── Card glassmorphism ── */
 .glass-card {
-  background: color-mix(in srgb, var(--foreground) 3%, var(--background));
+  background: rgba(255, 255, 255, 1);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.dark .glass-card {
+  background: rgba(15, 20, 28, 0.7);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
 }
+
+.glass-card-premium {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 1) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+}
+
+.dark .glass-card-premium {
+  background: linear-gradient(135deg, rgba(16, 24, 39, 0.8) 0%, rgba(10, 15, 25, 0.9) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
+}
+
 
 /* ── Bouton luxe (gold) ── */
 .lux-button {

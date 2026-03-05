@@ -173,7 +173,7 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
 
   const handleImageUpload = (url: string) => {
     if (editingVehicle) {
-      setEditingVehicle({...editingVehicle, photo: url})
+      setEditingVehicle({ ...editingVehicle, photo: url })
     }
   }
 
@@ -199,13 +199,13 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
   }
 
   const filteredVehicles = vehicles.filter(vehicle => {
-    const matchesSearch = 
+    const matchesSearch =
       vehicle.make.toLowerCase().includes(searchTerm.toLowerCase()) ||
       vehicle.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
       vehicle.plateNumber.toLowerCase().includes(searchTerm.toLowerCase())
-    
+
     const matchesType = filterType === "all" || vehicle.type === filterType
-    const matchesStatus = 
+    const matchesStatus =
       filterStatus === "all" ||
       (filterStatus === "active" && vehicle.isActive) ||
       (filterStatus === "inactive" && !vehicle.isActive)
@@ -239,11 +239,11 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="flex flex-col items-center gap-4">
-  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
-       style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
-    Navette Xpress
-  </div>
-</div>
+          <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+            style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
+            Navette Xpress
+          </div>
+        </div>
       </div>
     )
   }
@@ -292,7 +292,7 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
               <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
                 ✏️ Modifier le véhicule
               </h3>
-              
+
               <form onSubmit={handleSaveVehicle} className="space-y-6">
                 {/* 📋 Informations essentielles */}
                 <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg">
@@ -305,7 +305,7 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                       <input
                         type="text"
                         value={editingVehicle.make}
-                        onChange={(e) => setEditingVehicle({...editingVehicle, make: e.target.value})}
+                        onChange={(e) => setEditingVehicle({ ...editingVehicle, make: e.target.value })}
                         className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                         required
                       />
@@ -315,7 +315,7 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                       <input
                         type="text"
                         value={editingVehicle.model}
-                        onChange={(e) => setEditingVehicle({...editingVehicle, model: e.target.value})}
+                        onChange={(e) => setEditingVehicle({ ...editingVehicle, model: e.target.value })}
                         className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                         required
                       />
@@ -325,7 +325,7 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                       <input
                         type="number"
                         value={editingVehicle.year}
-                        onChange={(e) => setEditingVehicle({...editingVehicle, year: parseInt(e.target.value)})}
+                        onChange={(e) => setEditingVehicle({ ...editingVehicle, year: parseInt(e.target.value) })}
                         className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                         required
                         min="1900"
@@ -336,7 +336,7 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                       <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">🏷️ Type *</label>
                       <select
                         value={editingVehicle.type}
-                        onChange={(e) => setEditingVehicle({...editingVehicle, type: e.target.value})}
+                        onChange={(e) => setEditingVehicle({ ...editingVehicle, type: e.target.value })}
                         className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                       >
                         <option value="sedan">Berline</option>
@@ -350,7 +350,7 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                       <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">👥 Capacité *</label>
                       <select
                         value={editingVehicle.capacity}
-                        onChange={(e) => setEditingVehicle({...editingVehicle, capacity: parseInt(e.target.value)})}
+                        onChange={(e) => setEditingVehicle({ ...editingVehicle, capacity: parseInt(e.target.value) })}
                         className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                       >
                         <option value={2}>2 places</option>
@@ -364,7 +364,7 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                       <input
                         type="text"
                         value={editingVehicle.plateNumber}
-                        onChange={(e) => setEditingVehicle({...editingVehicle, plateNumber: e.target.value.toUpperCase()})}
+                        onChange={(e) => setEditingVehicle({ ...editingVehicle, plateNumber: e.target.value.toUpperCase() })}
                         className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white font-mono"
                         placeholder="AB-123-CD"
                         required
@@ -376,7 +376,7 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                 {/* 📸 Photo */}
                 <div>
                   <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">📸 Photo du véhicule *</h4>
-                  <ImageUploader 
+                  <ImageUploader
                     onUploadComplete={handleImageUpload}
                     currentImage={editingVehicle.photo}
                     className="mb-2"
@@ -386,7 +386,7 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                     <input
                       type="url"
                       value={editingVehicle.photo || ''}
-                      onChange={(e) => setEditingVehicle({...editingVehicle, photo: e.target.value})}
+                      onChange={(e) => setEditingVehicle({ ...editingVehicle, photo: e.target.value })}
                       placeholder="https://..."
                       className="w-full px-2 py-1 mt-1 text-xs border rounded dark:bg-gray-700 dark:text-white"
                     />
@@ -406,7 +406,7 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                       <input
                         type="text"
                         value={editingVehicle.category || ''}
-                        onChange={(e) => setEditingVehicle({...editingVehicle, category: e.target.value})}
+                        onChange={(e) => setEditingVehicle({ ...editingVehicle, category: e.target.value })}
                         placeholder="Ex: Berline Executive, SUV Premium..."
                         className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                       />
@@ -417,7 +417,7 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                       </label>
                       <textarea
                         value={editingVehicle.description || ''}
-                        onChange={(e) => setEditingVehicle({...editingVehicle, description: e.target.value})}
+                        onChange={(e) => setEditingVehicle({ ...editingVehicle, description: e.target.value })}
                         placeholder="Description pour la page publique..."
                         rows={2}
                         className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
@@ -427,8 +427,8 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                 </details>
 
                 {/* ⚙️ Équipements (optionnel) */}
-                <details className="bg-emerald-50 dark:bg-emerald-900/20 p-3 rounded-lg">
-                  <summary className="text-sm font-medium text-emerald-700 dark:text-emerald-300 cursor-pointer">
+                <details className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg">
+                  <summary className="text-sm font-medium text-red-700 dark:text-red-300 cursor-pointer">
                     ⚙️ Équipements et services (optionnel)
                   </summary>
                   <div className="mt-3 space-y-2">
@@ -439,29 +439,29 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                         onChange={(e) => setNewFeature(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddFeature())}
                         placeholder="Ex: Wi-Fi, Climatisation..."
-                        className="flex-1 px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-green-500 dark:bg-gray-700 dark:text-white"
+                        className="flex-1 px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-red-500 dark:bg-gray-700 dark:text-white"
                       />
                       <button
                         type="button"
                         onClick={handleAddFeature}
-                        className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-sm font-medium"
+                        className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded text-sm font-medium"
                       >
                         + Ajouter
                       </button>
                     </div>
-                    
+
                     {featuresList.length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-2">
                         {featuresList.map((feature, index) => (
                           <span
                             key={index}
-                            className="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-200 px-2 py-1 rounded text-xs flex items-center gap-1"
+                            className="bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200 px-2 py-1 rounded text-xs flex items-center gap-1"
                           >
                             {feature}
                             <button
                               type="button"
                               onClick={() => handleRemoveFeature(index)}
-                              className="text-green-600 dark:text-green-300 hover:text-green-800 text-sm font-bold"
+                              className="text-red-600 dark:text-red-300 hover:text-red-800 text-sm font-bold"
                             >
                               ×
                             </button>
@@ -478,7 +478,7 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                     type="checkbox"
                     id="isActiveEdit"
                     checked={editingVehicle.isActive}
-                    onChange={(e) => setEditingVehicle({...editingVehicle, isActive: e.target.checked})}
+                    onChange={(e) => setEditingVehicle({ ...editingVehicle, isActive: e.target.checked })}
                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
                   <label htmlFor="isActiveEdit" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
@@ -536,7 +536,7 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
               <p className="text-slate-700 dark:text-slate-300 mb-4">
                 Êtes-vous sûr de vouloir supprimer ce véhicule ?
               </p>
-              
+
               {/* Card du véhicule */}
               <div className="bg-slate-50 dark:bg-slate-900/50 rounded-xl p-4 border-2 border-red-200 dark:border-red-800">
                 <div className="flex items-center gap-4">
@@ -554,7 +554,7 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                       <span className="text-3xl">{getVehicleTypeIcon(deletingVehicle.type)}</span>
                     </div>
                   )}
-                  
+
                   <div className="flex-1 min-w-0">
                     <h4 className="font-bold text-slate-900 dark:text-white text-lg truncate">
                       {deletingVehicle.make} {deletingVehicle.model}
@@ -684,31 +684,30 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                   />
                   {/* Badge Cloudinary */}
                   {vehicle.photo.includes('cloudinary.com') && (
-                    <div 
-                      className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1"
+                    <div
+                      className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1"
                       title="Image optimisée par Cloudinary"
                     >
                       <span>📸</span>
                     </div>
                   )}
                   {/* Badge Statut */}
-                  <div className={`absolute top-2 left-2 px-3 py-1 rounded-full text-xs font-medium ${
-                    vehicle.isActive
-                      ? 'bg-green-500 text-white'
-                      : 'bg-red-500 text-white'
-                  }`}>
+                  <div className={`absolute top-2 left-2 px-3 py-1 rounded-full text-xs font-medium ${vehicle.isActive
+                      ? 'bg-red-500 text-white'
+                      : 'bg-slate-500 text-white'
+                    }`}>
                     {vehicle.isActive ? '✅ Actif' : '🚫 Inactif'}
                   </div>
                 </div>
               )}
-              
+
               {/* Placeholder si pas d'image */}
               {!vehicle.photo && (
                 <div className="relative w-full h-48 bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
                   <span className="text-6xl">{getVehicleTypeIcon(vehicle.type)}</span>
                 </div>
               )}
-              
+
               <div className="p-6">
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4">

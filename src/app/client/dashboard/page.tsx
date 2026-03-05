@@ -99,15 +99,15 @@ type TabType = 'overview' | 'bookings' | 'quotes' | 'invoices' | 'reviews' | 'cr
 // URL validation helper to prevent XSS attacks
 function isValidImageUrl(url: string): boolean {
   if (!url) return false
-  
+
   try {
     // Allow data URLs for base64 images
     if (url.startsWith('data:image/')) return true
-    
+
     // Parse and validate URL
     const parsedUrl = new URL(url)
     const hostname = parsedUrl.hostname.toLowerCase()
-    
+
     // Allow trusted domains (Cloudinary, common CDNs, and relative URLs)
     const trustedDomains = [
       'res.cloudinary.com',
@@ -117,9 +117,9 @@ function isValidImageUrl(url: string): boolean {
       'lh3.googleusercontent.com', // Google profile images
       'avatars.githubusercontent.com', // GitHub avatars
     ]
-    
-    return trustedDomains.some(domain => hostname.endsWith(domain)) || 
-           parsedUrl.protocol === 'https:' && hostname !== ''
+
+    return trustedDomains.some(domain => hostname.endsWith(domain)) ||
+      parsedUrl.protocol === 'https:' && hostname !== ''
   } catch {
     // Invalid URL
     return false
@@ -134,22 +134,22 @@ function getSafeProfileImageUrl(imageUrl: string | undefined): string | null {
   if (!imageUrl || typeof imageUrl !== 'string') {
     return null
   }
-  
+
   // Trim whitespace
   const trimmedUrl = imageUrl.trim()
-  
+
   // Explicitly validate before returning
   if (!isValidImageUrl(trimmedUrl)) {
     return null
   }
-  
+
   // Additional safety: ensure URL is properly formatted
   try {
     if (trimmedUrl.startsWith('data:image/')) {
       // Data URLs are safe if they start with data:image/
       return trimmedUrl
     }
-    
+
     // For http/https URLs, validate and return as string
     const urlObj = new URL(trimmedUrl)
     return urlObj.href  // Return the normalized URL string
@@ -167,7 +167,7 @@ function getSafeTextForAttribute(text: string | undefined): string {
   if (!text || typeof text !== 'string') {
     return ''
   }
-  
+
   // Escape HTML special characters
   return text
     .replace(/&/g, '&amp;')
@@ -185,7 +185,7 @@ function getSafeTextContent(text: string | undefined | null): string {
   if (!text || typeof text !== 'string') {
     return ''
   }
-  
+
   // Trim and ensure proper encoding
   return String(text).trim()
 }
@@ -434,7 +434,7 @@ function ClientDashboardContent() {
       pending: { label: 'En attente', color: 'bg-yellow-100 text-yellow-800' },
       confirmed: { label: 'Confirmée', color: 'bg-[#A73B3C]/20 text-[#A73B3C]' },
       in_progress: { label: 'En cours', color: 'bg-purple-100 text-purple-800' },
-      completed: { label: 'Terminée', color: 'bg-green-100 text-green-800' },
+      completed: { label: 'Terminée', color: 'bg-red-100 text-red-800' },
       cancelled: { label: 'Annulée', color: 'bg-red-100 text-red-800' },
     }
 
@@ -483,7 +483,7 @@ function ClientDashboardContent() {
                     </div>
                     <Link href="/reservation"
                       className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all"
-                      style={{ backgroundColor: 'var(--color-client-accent)', color: '#000' }}>
+                      style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}>
                       <Plus size={15} weight="bold" /> Nouveau trajet
                     </Link>
                   </div>
@@ -495,7 +495,7 @@ function ClientDashboardContent() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {[
                 { label: 'Total Réservations', value: stats.totalBookings, icon: <CalendarBlank size={16} weight="light" />, color: 'var(--color-client-accent)' },
-                { label: 'Terminées', value: stats.completedBookings, icon: <MapPin size={16} weight="light" />, color: '#10B981' },
+                { label: 'Terminées', value: stats.completedBookings, icon: <MapPin size={16} weight="light" />, color: 'var(--color-client-accent)' },
                 { label: 'En Attente', value: stats.pendingBookings, icon: <Clock size={16} weight="light" />, color: '#F59E0B' },
                 { label: 'Total Devis', value: stats.totalQuotes, icon: <FileText size={16} weight="light" />, color: '#8B5CF6' },
               ].map((stat, i) => (
@@ -609,7 +609,7 @@ function ClientDashboardContent() {
                   <p className="text-sm font-semibold mb-1" style={{ color: '#ffffff' }}>Aucune réservation récente</p>
                   <p className="text-sm mb-4" style={{ color: 'rgba(255,255,255,0.55)' }}>Commencez par réserver votre premier trajet.</p>
                   <Link href="/reservation" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium"
-                    style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)', border: '1px solid rgba(16,185,129,0.2)' }}>
+                    style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)', border: '1px solid var(--color-client-accent-border)' }}>
                     Réserver un trajet
                   </Link>
                 </div>
@@ -648,7 +648,7 @@ function ClientDashboardContent() {
                   {hasBookingsCreatePermission && (
                     <Link href="/reservation"
                       className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all hover:brightness-110"
-                      style={{ backgroundColor: 'var(--color-client-accent)', color: '#000' }}>
+                      style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}>
                       <Plus size={14} weight="bold" /> Nouvelle réservation
                     </Link>
                   )}
@@ -724,7 +724,7 @@ function ClientDashboardContent() {
                                 <button
                                   onClick={() => { setBookingForPriceApproval(booking); setIsPriceApprovalModalOpen(true) }}
                                   className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold transition-all live-badge"
-                                  style={{ backgroundColor: 'var(--color-client-accent)', color: '#000' }}
+                                  style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}
                                 >
                                   <Wallet size={14} weight="bold" /> Accepter le prix
                                 </button>
@@ -763,7 +763,7 @@ function ClientDashboardContent() {
                             </span>
                           )}
                           {booking.clientResponse === 'accepted' && (
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-medium" style={{ backgroundColor: 'rgba(16,185,129,0.1)', color: 'var(--color-client-accent)', border: '1px solid rgba(16,185,129,0.2)' }}>
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-medium" style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)', border: '1px solid var(--color-client-accent-border)' }}>
                               <CheckCircle size={12} weight="fill" /> Prix accepté
                             </span>
                           )}
@@ -933,8 +933,8 @@ function ClientDashboardContent() {
 
               <div className="relative flex flex-col md:flex-row items-center gap-10">
                 <div className="relative group shrink-0">
-                  <div className="absolute inset-0 bg-emerald-500 blur-xl opacity-20 group-hover:opacity-40 transition-opacity" />
-                  <div className="relative w-32 h-32 rounded-4xl border-4 border-[#10B981] p-1 bg-gray-100 dark:bg-[#111E1A] overflow-hidden">
+                  <div className="absolute inset-0 bg-red-500 blur-xl opacity-20 group-hover:opacity-40 transition-opacity" />
+                  <div className="relative w-32 h-32 rounded-4xl border-4 border-red-500 p-1 bg-gray-100 dark:bg-[#111E1A] overflow-hidden">
                     {(() => {
                       const safeImageUrl = getSafeProfileImageUrl(userProfile?.image)
                       const safeAltText = getSafeTextForAttribute(userProfile?.name) || 'Profile'
@@ -958,7 +958,7 @@ function ClientDashboardContent() {
                     <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-2">
                       <h2 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">{userProfile?.name}</h2>
                       {userProfile?.isCompany && (
-                        <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-widest border border-emerald-500/20">
+                        <span className="px-3 py-1 rounded-full bg-red-500/20 text-red-500 text-[10px] font-bold uppercase tracking-widest border border-red-500/20">
                           Compte Business
                         </span>
                       )}
@@ -971,7 +971,7 @@ function ClientDashboardContent() {
                   <div className="flex flex-wrap justify-center md:justify-start gap-4 pt-2">
                     <button
                       onClick={() => setIsEditProfileModalOpen(true)}
-                      className="px-6 py-2.5 rounded-xl bg-emerald-500 text-black dark:text-black font-bold text-sm hover:brightness-110 active:scale-95 transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/10"
+                      className="px-6 py-2.5 rounded-xl bg-red-600 text-white font-bold text-sm hover:brightness-110 active:scale-95 transition-all flex items-center gap-2 shadow-lg shadow-red-500/10"
                     >
                       <PencilSimple size={18} weight="bold" /> Modifier mon profil
                     </button>
@@ -987,34 +987,34 @@ function ClientDashboardContent() {
               {/* Informations de contact */}
               <div className="lg:col-span-2 space-y-6">
                 <div className="p-8 rounded-4xl bg-white dark:bg-client-card border border-gray-200 dark:border-white/5 space-y-8">
-                  <div className="flex items-center gap-3 text-emerald-500/70">
+                  <div className="flex items-center gap-3 text-black dark:text-white">
                     <IdentificationCard size={20} weight="bold" />
-                    <h4 className="text-xs font-bold uppercase tracking-[0.2em]">Détails du compte</h4>
+                    <h4 className="text-xs font-black uppercase tracking-[0.2em]">Détails du compte</h4>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-1">
                       <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/30">Numéro de téléphone</p>
                       <p className="text-gray-900 dark:text-white font-medium flex items-center gap-2">
-                        <Phone size={16} className="text-emerald-500" /> {userProfile?.phone || "Non renseigné"}
+                        <Phone size={16} className="text-red-500" /> {userProfile?.phone || "Non renseigné"}
                       </p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/30">Adresse de résidence</p>
                       <p className="text-gray-900 dark:text-white font-medium flex items-center gap-2 line-clamp-1">
-                        <MapPin size={16} className="text-emerald-500" /> {userProfile?.address || "Dakar, Sénégal"}
+                        <MapPin size={16} className="text-red-500" /> {userProfile?.address || "Dakar, Sénégal"}
                       </p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/30">Membre depuis</p>
                       <p className="text-gray-900 dark:text-white font-medium flex items-center gap-2">
-                        <CalendarBlank size={16} className="text-emerald-500" /> {userProfile?.createdAt ? new Date(userProfile.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : "---"}
+                        <CalendarBlank size={16} className="text-red-500" /> {userProfile?.createdAt ? new Date(userProfile.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : "---"}
                       </p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/30">Statut du compte</p>
                       <p className="text-gray-900 dark:text-white font-medium flex items-center gap-2">
-                        <CheckCircle size={16} className="text-emerald-500" weight="fill" /> Vérifié & Actif
+                        <CheckCircle size={16} className="text-red-500" weight="fill" /> Vérifié & Actif
                       </p>
                     </div>
                   </div>
@@ -1027,9 +1027,9 @@ function ClientDashboardContent() {
                       <Buildings size={120} weight="duotone" />
                     </div>
 
-                    <div className="flex items-center gap-3 text-emerald-500">
+                    <div className="flex items-center gap-3 text-red-500">
                       <Buildings size={20} weight="bold" />
-                      <h4 className="text-xs font-bold uppercase tracking-[0.2em]">Informations Entreprise</h4>
+                      <h4 className="text-xs font-black uppercase tracking-[0.2em]">Informations Entreprise</h4>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 relative">
@@ -1052,13 +1052,13 @@ function ClientDashboardContent() {
                       <div className="space-y-1 md:col-span-2">
                         <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/30">Siège Social</p>
                         <p className="text-gray-900 dark:text-white font-medium flex items-center gap-2">
-                          <MapPin size={16} className="text-emerald-500" /> {userProfile.companyAddress || "Non renseignée"}
+                          <MapPin size={16} className="text-red-500" /> {userProfile.companyAddress || "Non renseignée"}
                         </p>
                       </div>
                       <div className="space-y-1">
                         <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/30">Téléphone pro</p>
                         <p className="text-gray-900 dark:text-white font-medium flex items-center gap-2">
-                          <Phone size={16} className="text-emerald-500" /> {userProfile.companyPhone || "Non renseigné"}
+                          <Phone size={16} className="text-red-500" /> {userProfile.companyPhone || "Non renseigné"}
                         </p>
                       </div>
                     </div>
@@ -1091,7 +1091,7 @@ function ClientDashboardContent() {
                       <p className="text-[9px] uppercase tracking-widest text-gray-500 dark:text-white/30 mt-1">Trajets</p>
                     </div>
                     <div className="p-4 rounded-2xl bg-gray-50 dark:bg-white/2 border border-gray-200 dark:border-white/5">
-                      <p className="text-2xl font-bold text-emerald-500" style={{ fontFamily: 'var(--font-mono)' }}>{stats.completedBookings}</p>
+                      <p className="text-2xl font-bold text-red-500" style={{ fontFamily: 'var(--font-mono)' }}>{stats.completedBookings}</p>
                       <p className="text-[9px] uppercase tracking-widest text-gray-500 dark:text-white/30 mt-1">Réussis</p>
                     </div>
                   </div>
@@ -1099,14 +1099,14 @@ function ClientDashboardContent() {
 
                 {/* Sécurité */}
                 <div className="p-6 rounded-4xl bg-emerald-50 dark:bg-emerald-500/5 border border-emerald-200 dark:border-emerald-500/10 space-y-4">
-                  <div className="flex items-center gap-2 text-emerald-400">
-                    <CheckCircle size={18} weight="fill" />
-                    <h5 className="text-[10px] font-bold uppercase tracking-widest">Confiance & Sécurité</h5>
+                  <div className="flex items-center gap-2 text-black dark:text-white">
+                    <CheckCircle size={18} weight="fill" className="text-red-500" />
+                    <h5 className="text-[10px] font-black uppercase tracking-widest">Confiance & Sécurité</h5>
                   </div>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between text-xs p-3 rounded-xl bg-white/50 dark:bg-black/20">
                       <span className="text-gray-600 dark:text-white/50">Email vérifié</span>
-                      <span className="text-emerald-500 font-bold">OUI</span>
+                      <span className="text-red-500 font-bold">OUI</span>
                     </div>
                     <div className="flex items-center justify-between text-xs p-3 rounded-xl bg-white/50 dark:bg-black/20">
                       <span className="text-gray-600 dark:text-white/50">Double Auth</span>
@@ -1158,7 +1158,7 @@ function ClientDashboardContent() {
             </div>
             <div className="flex flex-col">
               <span className="text-sm font-bold tracking-tight text-gray-900 dark:text-white leading-tight">NAVETTE</span>
-              <span className="text-[10px] font-medium tracking-[0.2em] text-[#10B981] leading-tight">XPRESS</span>
+              <span className="text-[10px] font-medium tracking-[0.2em] text-red-500 leading-tight">XPRESS</span>
             </div>
           </Link>
         </div>
@@ -1167,14 +1167,14 @@ function ClientDashboardContent() {
         <div className="px-5 mb-8">
           <button
             onClick={() => setActiveTab('profile')}
-            className={`w-full p-4 rounded-2xl bg-gray-100 dark:bg-white/3 border border-gray-200 dark:border-white/5 transition-all text-left group ${activeTab === 'profile' ? 'bg-emerald-50 dark:bg-[#10B981]/10 border-emerald-200 dark:border-[#10B981]/20 shadow-[0_0_20px_rgba(16,185,129,0.05)]' : 'hover:bg-gray-200 dark:hover:bg-white/5'}`}
+            className={`w-full p-4 rounded-2xl bg-gray-100 dark:bg-white/3 border border-gray-200 dark:border-white/5 transition-all text-left group ${activeTab === 'profile' ? 'bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20 shadow-[0_4px_20px_rgba(255,44,44,0.1)]' : 'hover:bg-gray-200 dark:hover:bg-white/5'}`}
           >
             <div className="flex items-center gap-3 mb-3">
-              <div className={`w-10 h-10 rounded-full border-2 transition-colors p-0.5 overflow-hidden ${activeTab === 'profile' ? 'border-[#10B981]' : 'border-gray-300 dark:border-white/10 group-hover:border-[#10B981]'}`}>
+              <div className={`w-10 h-10 rounded-full border-2 transition-colors p-0.5 overflow-hidden ${activeTab === 'profile' ? 'border-red-500' : 'border-gray-300 dark:border-white/10 group-hover:border-red-500'}`}>
                 {session?.user?.image ? (
                   <img src={session.user.image} alt="" className="w-full h-full object-cover rounded-full" />
                 ) : (
-                  <div className="w-full h-full bg-slate-800 flex items-center justify-center text-xs font-bold text-[#10B981]">
+                  <div className="w-full h-full bg-slate-800 flex items-center justify-center text-xs font-bold text-red-500">
                     {session?.user?.name?.slice(0, 2).toUpperCase() || 'CX'}
                   </div>
                 )}
@@ -1184,8 +1184,8 @@ function ClientDashboardContent() {
                 <span className="text-[10px] font-medium text-gray-600 dark:text-gray-400">Membre Premium</span>
               </div>
             </div>
-            <div className="flex items-center gap-1.5 text-[10px] text-[#10B981]">
-              <span className="w-1 h-1 rounded-full bg-[#10B981] animate-pulse"></span>
+            <div className="flex items-center gap-1.5 text-[10px] text-[#22C55E]">
+              <span className="w-1 h-1 rounded-full bg-[#22C55E] animate-pulse"></span>
               En ligne
             </div>
           </button>
@@ -1204,11 +1204,11 @@ function ClientDashboardContent() {
               key={item.id}
               onClick={() => setActiveTab(item.id as TabType)}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group text-gray-700 dark:text-gray-300 ${activeTab === item.id
-                ? 'bg-emerald-50 dark:bg-[#10B981]/10 text-gray-900 dark:text-white border-l-2 border-[#10B981]'
+                ? 'bg-red-50 dark:bg-red-500/10 text-gray-900 dark:text-white border-l-2 border-red-500 shadow-[0_0_15px_rgba(255,44,44,0.05)]'
                 : 'hover:bg-gray-100 dark:hover:bg-white/2 border-l-2 border-transparent'
                 }`}
             >
-              <item.icon size={18} weight={activeTab === item.id ? "fill" : "light"} className={activeTab === item.id ? 'text-[#10B981]' : ''} />
+              <item.icon size={18} weight={activeTab === item.id ? "fill" : "light"} className={activeTab === item.id ? 'text-red-500' : ''} />
               <span className="text-sm font-medium">{item.label}</span>
             </button>
           ))}
@@ -1217,11 +1217,11 @@ function ClientDashboardContent() {
           <button
             onClick={() => setActiveTab('profile')}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group text-gray-700 dark:text-gray-300 ${activeTab === 'profile'
-              ? 'bg-emerald-50 dark:bg-[#10B981]/10 text-gray-900 dark:text-white border-l-2 border-[#10B981]'
+              ? 'bg-red-50 dark:bg-red-500/10 text-gray-900 dark:text-white border-l-2 border-red-500 shadow-[0_0_15px_rgba(255,44,44,0.05)]'
               : 'hover:bg-gray-100 dark:hover:bg-white/2 border-l-2 border-transparent'
               }`}
           >
-            <UserCircle size={18} weight={activeTab === 'profile' ? "fill" : "light"} className={activeTab === 'profile' ? 'text-[#10B981]' : ''} />
+            <UserCircle size={18} weight={activeTab === 'profile' ? "fill" : "light"} className={activeTab === 'profile' ? 'text-red-500' : ''} />
             <span className="text-sm font-medium">Paramètres Profil</span>
           </button>
 
@@ -1229,14 +1229,14 @@ function ClientDashboardContent() {
           <button
             onClick={() => setActiveTab('create-reviews')}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group text-gray-700 dark:text-gray-300 ${activeTab === 'create-reviews'
-              ? 'bg-emerald-50 dark:bg-[#10B981]/10 text-gray-900 dark:text-white border-l-2 border-[#10B981]'
+              ? 'bg-red-50 dark:bg-red-500/10 text-gray-900 dark:text-white border-l-2 border-red-500 shadow-[0_0_15px_rgba(255,44,44,0.05)]'
               : 'hover:bg-gray-100 dark:hover:bg-white/2 border-l-2 border-transparent'
               }`}
           >
-            <Star size={18} weight={activeTab === 'create-reviews' ? "fill" : "light"} className={activeTab === 'create-reviews' ? 'text-[#10B981]' : ''} />
+            <Star size={18} weight={activeTab === 'create-reviews' ? "fill" : "light"} className={activeTab === 'create-reviews' ? 'text-red-500' : ''} />
             <span className="flex-1 text-left text-sm font-medium">Évaluer trajets</span>
             {stats.reviewableBookings > 0 && (
-              <span className="bg-[#10B981] text-black dark:text-black text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
+              <span className="bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
                 {stats.reviewableBookings}
               </span>
             )}
@@ -1246,11 +1246,11 @@ function ClientDashboardContent() {
             <button
               onClick={() => setActiveTab('reviews')}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group text-gray-700 dark:text-gray-300 ${activeTab === 'reviews'
-                ? 'bg-emerald-50 dark:bg-[#10B981]/10 text-gray-900 dark:text-white border-l-2 border-[#10B981]'
+                ? 'bg-red-50 dark:bg-red-500/10 text-gray-900 dark:text-white border-l-2 border-red-500 shadow-[0_0_15px_rgba(255,44,44,0.05)]'
                 : 'hover:bg-gray-100 dark:hover:bg-white/2 border-l-2 border-transparent'
                 }`}
             >
-              <ChatCircle size={18} weight={activeTab === 'reviews' ? "fill" : "light"} className={activeTab === 'reviews' ? 'text-[#10B981]' : ''} />
+              <ChatCircle size={18} weight={activeTab === 'reviews' ? "fill" : "light"} className={activeTab === 'reviews' ? 'text-red-500' : ''} />
               <span className="text-sm font-medium">Mes avis</span>
             </button>
           )}
@@ -1262,11 +1262,11 @@ function ClientDashboardContent() {
                 <button
                   onClick={() => setActiveTab('vehicles')}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group text-gray-700 dark:text-gray-300 ${activeTab === 'vehicles'
-                    ? 'bg-emerald-50 dark:bg-[#10B981]/10 text-gray-900 dark:text-white border-l-2 border-[#10B981]'
+                    ? 'bg-red-50 dark:bg-red-500/10 text-gray-900 dark:text-white border-l-2 border-red-500 shadow-[0_0_15px_rgba(255,44,44,0.05)]'
                     : 'hover:bg-gray-100 dark:hover:bg-white/2 border-l-2 border-transparent'
                     }`}
                 >
-                  <Car size={18} weight={activeTab === 'vehicles' ? "fill" : "light"} className={activeTab === 'vehicles' ? 'text-[#10B981]' : ''} />
+                  <Car size={18} weight={activeTab === 'vehicles' ? "fill" : "light"} className={activeTab === 'vehicles' ? 'text-red-500' : ''} />
                   <span className="text-sm font-medium">Véhicules</span>
                 </button>
               )}
@@ -1274,11 +1274,11 @@ function ClientDashboardContent() {
                 <button
                   onClick={() => setActiveTab('users')}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group text-gray-700 dark:text-gray-300 ${activeTab === 'users'
-                    ? 'bg-emerald-50 dark:bg-[#10B981]/10 text-gray-900 dark:text-white border-l-2 border-[#10B981]'
+                    ? 'bg-red-50 dark:bg-red-500/10 text-gray-900 dark:text-white border-l-2 border-red-500 shadow-[0_0_15px_rgba(255,44,44,0.05)]'
                     : 'hover:bg-gray-100 dark:hover:bg-white/2 border-l-2 border-transparent'
                     }`}
                 >
-                  <Users size={18} weight={activeTab === 'users' ? "fill" : "light"} className={activeTab === 'users' ? 'text-[#10B981]' : ''} />
+                  <Users size={18} weight={activeTab === 'users' ? "fill" : "light"} className={activeTab === 'users' ? 'text-red-500' : ''} />
                   <span className="text-sm font-medium">Utilisateurs</span>
                 </button>
               )}
@@ -1288,7 +1288,7 @@ function ClientDashboardContent() {
 
         {/* CTA Sidebar */}
         <div className="p-4 mt-4">
-          <Link href="/reservation" className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-gradient-to-r from-[#10B981] to-[#059669] text-black dark:text-black font-bold text-sm shadow-[0_4px_20_rgba(16,185,129,0.2)] transition-transform hover:scale-[1.02] active:scale-[0.98]">
+          <Link href="/reservation" className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-gradient-to-r from-red-600 to-red-800 text-white font-bold text-sm shadow-[0_4px_20px_rgba(255,44,44,0.2)] transition-transform hover:scale-[1.02] active:scale-[0.98]">
             <Plus size={16} weight="bold" /> Réserver un trajet
           </Link>
         </div>
@@ -1329,17 +1329,17 @@ function ClientDashboardContent() {
 
           {/* Right Actions */}
           <div className="flex items-center gap-3 md:gap-5">
-            <button className="relative w-10 h-10 flex items-center justify-center rounded-xl bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-400 hover:text-[#10B981] transition group" title="Notifications">
+            <button className="relative w-10 h-10 flex items-center justify-center rounded-xl bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-400 hover:text-red-500 transition group" title="Notifications">
               <Bell size={20} weight="light" className="group-hover:scale-110 transition-transform" />
               {stats.reviewableBookings > 0 && (
-                <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-[#10B981] rounded-full ring-[3px] ring-white dark:ring-client-bg"></span>
+                <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full ring-[3px] ring-white dark:ring-client-bg"></span>
               )}
             </button>
 
             {/* CTA Header mobile only or secondary */}
             <Link
               href="/reservation"
-              className="px-4 py-2.5 rounded-xl bg-[#E5C16C] text-black dark:text-black font-bold text-xs shadow-lg hover:shadow-[#E5C16C]/10 transition-all active:scale-95"
+              className="px-4 py-2.5 rounded-xl bg-red-600 text-white font-bold text-xs shadow-lg hover:shadow-red-500/20 transition-all active:scale-95"
             >
               Réserver
             </Link>
@@ -1371,14 +1371,14 @@ function ClientDashboardContent() {
                       setMobileMenuOpen(false)
                     }}
                     className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium text-gray-700 dark:text-gray-300 ${activeTab === tab.id
-                      ? 'bg-emerald-50 dark:bg-[#10B981]/10 text-[#10B981]'
+                      ? 'bg-red-50 dark:bg-red-500/10 text-red-500'
                       : 'hover:bg-gray-100 dark:hover:bg-white/5'
                       }`}
                   >
                     <Icon size={20} weight={activeTab === tab.id ? "fill" : "light"} />
                     <span className="flex-1 text-left text-sm">{tab.label}</span>
                     {tab.badge && (
-                      <span className="bg-[#10B981] text-black dark:text-black text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
+                      <span className="bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
                         {tab.badge}
                       </span>
                     )}

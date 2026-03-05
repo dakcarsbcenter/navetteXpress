@@ -48,7 +48,7 @@ export default function DriverSidebar(props: Props) {
           <span className="text-white dark:text-white font-bold text-sm">NX</span>
         </div>
         <div>
-          <p className="text-sm font-semibold text-gray-900 dark:text-white">
+          <p className="text-sm font-semibold text-white">
             Navette <span className="text-amber-500 dark:text-gold">Xpress</span>
           </p>
           <p className="text-[10px] mt-0.5 text-gray-300 dark:text-gray-400">
@@ -105,30 +105,32 @@ export default function DriverSidebar(props: Props) {
       </div>
 
       {/* ── NAVIGATION ── */}
-      <nav className="flex-1 px-3 py-3 space-y-0.5 overflow-y-auto dash-scroll">
+      <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto dash-scroll">
 
-        <p className="px-3 pb-2 pt-1 text-[10px] tracking-[0.15em] uppercase text-gray-500 dark:text-gray-400">
-          Navigation
+        <p className="px-3 pb-3 pt-1 text-[10px] font-black tracking-[0.2em] uppercase text-gray-500 dark:text-gray-600">
+          Menu
         </p>
 
         {menuItems.map((item) => (
           <button
             key={item.id}
             onClick={() => setCurrentView(item.id)}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-150 group ${
-              currentView === item.id 
-                ? 'bg-blue-600/10 dark:bg-driver-accent-bg text-blue-600 dark:text-driver-accent border-l-2 border-blue-600 dark:border-driver-accent' 
-                : 'border-l-2 border-transparent text-gray-300 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-            }`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs transition-all duration-300 group relative ${currentView === item.id
+              ? 'bg-blue-600/10 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold'
+              : 'text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'
+              }`}
           >
-            <span className={currentView === item.id ? 'text-blue-600 dark:text-blue-500' : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-300'}>
+            {currentView === item.id && (
+              <span className="absolute left-0 w-1 h-5 bg-blue-600 dark:bg-blue-500 rounded-full" />
+            )}
+            <span className={`transition-colors ${currentView === item.id ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-600 group-hover:text-gray-900 dark:group-hover:text-white'}`}>
               {item.icon}
             </span>
-            <span className={currentView === item.id ? 'font-medium' : 'group-hover:text-gray-900 dark:group-hover:text-white'}>
+            <span className="uppercase tracking-wider">
               {item.label}
             </span>
             {item.badge && (
-              <span className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-600 dark:bg-driver-accent text-white">
+              <span className="ml-auto text-[9px] font-black px-2 py-0.5 rounded-lg bg-blue-600 dark:bg-blue-500 text-white shadow-lg shadow-blue-500/20">
                 {item.badge}
               </span>
             )}
@@ -138,15 +140,16 @@ export default function DriverSidebar(props: Props) {
       </nav>
 
       {/* ── DÉCONNEXION ── */}
-      <div className="p-3 border-t border-gray-700 dark:border-white/5">
+      <div className="p-4 border-t border-gray-100 dark:border-white/5">
         <button
           onClick={() => signOut({ callbackUrl: '/' })}
-          className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs transition-all text-gray-400 hover:text-red-500 hover:bg-red-500/10"
+          className="w-full h-11 flex items-center gap-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all text-gray-400 hover:text-red-500 hover:bg-red-500/5 group"
         >
-          <SignOut size={16} weight="bold" />
+          <SignOut size={16} weight="bold" className="group-hover:scale-110 transition-transform" />
           Déconnexion
         </button>
       </div>
+
 
     </aside>
   )

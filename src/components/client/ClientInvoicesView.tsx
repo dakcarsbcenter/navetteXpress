@@ -110,7 +110,7 @@ export function ClientInvoicesView() {
   const getStatusConfig = (status: string) => {
     const configs = {
       pending: { label: 'En attente', color: '#F59E0B', bg: 'rgba(245,158,11,0.1)' },
-      paid: { label: 'Payée', color: 'var(--color-client-accent)', bg: 'rgba(16,185,129,0.1)' },
+      paid: { label: 'Payée', color: 'var(--color-client-accent)', bg: 'var(--color-client-accent-bg)' },
       cancelled: { label: 'Annulée', color: '#EF4444', bg: 'rgba(239,68,68,0.1)' },
       overdue: { label: 'En retard', color: '#EF4444', bg: 'rgba(239,68,68,0.1)' },
       draft: { label: 'Brouillon', color: '#6B7280', bg: 'rgba(107,114,128,0.1)' }
@@ -144,7 +144,7 @@ export function ClientInvoicesView() {
     <div className="space-y-6">
       {/* Header Premium */}
       <div className="client-card-enter relative rounded-2xl overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #111E1A 0%, var(--color-client-card) 60%)', border: '1px solid rgba(16,185,129,0.15)' }}>
+        style={{ background: 'linear-gradient(135deg, #111E1A 0%, var(--color-client-card) 60%)', border: '1px solid var(--color-client-accent-border)' }}>
         <div className="h-1 w-full" style={{ background: 'linear-gradient(to right, var(--color-client-accent), transparent)' }} />
         <div className="p-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -194,8 +194,8 @@ export function ClientInvoicesView() {
             key={item.id}
             onClick={() => setFilter(item.id as any)}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold transition-all ${filter === item.id
-                ? 'bg-[var(--color-client-accent)] text-[#000]'
-                : 'hover:text-[var(--color-text-primary)] hover:bg-white/[0.03]'
+              ? 'bg-[var(--color-client-accent)] text-[#000]'
+              : 'hover:text-[var(--color-text-primary)] hover:bg-white/[0.03]'
               }`}
             style={filter !== item.id ? { color: 'var(--color-text-secondary)' } : undefined}
           >
@@ -264,7 +264,7 @@ export function ClientInvoicesView() {
                   </div>
 
                   {invoice.paidDate && (
-                    <div className="mb-6 p-3 rounded-xl flex items-center gap-3" style={{ backgroundColor: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.1)' }}>
+                    <div className="mb-6 p-3 rounded-xl flex items-center gap-3" style={{ backgroundColor: 'var(--color-client-accent-bg)', border: '1px solid var(--color-client-accent-border)' }}>
                       <CheckCircle size={16} className="text-[var(--color-client-accent)]" weight="fill" />
                       <p className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.75)' }}>
                         Réglée le {new Date(invoice.paidDate).toLocaleDateString('fr-FR')} {invoice.paymentMethod && `par ${invoice.paymentMethod}`}

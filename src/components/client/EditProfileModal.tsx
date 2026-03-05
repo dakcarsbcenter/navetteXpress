@@ -119,9 +119,9 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
       <div className="relative w-full max-w-3xl max-h-[90vh] overflow-hidden rounded-[2.5rem] bg-[#0F172A] border border-white/10 shadow-2xl flex flex-col animate-scaleIn">
 
         {/* Header Section */}
-        <div className="p-8 pb-4 shrink-0 border-b border-white/5 flex items-center justify-between bg-linear-to-r from-emerald-500/10 to-transparent">
+        <div className="p-8 pb-4 shrink-0 border-b border-white/5 flex items-center justify-between bg-linear-to-r from-red-500/10 to-transparent">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 border border-emerald-500/20">
+            <div className="w-12 h-12 rounded-2xl bg-red-500/20 flex items-center justify-center text-red-400 border border-red-500/20">
               <User size={28} weight="duotone" />
             </div>
             <div>
@@ -141,7 +141,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
 
           {/* Section: Identité de base */}
           <section className="space-y-6">
-            <div className="flex items-center gap-3 text-emerald-400/80 mb-2">
+            <div className="flex items-center gap-3 text-red-400/80 mb-2">
               <IdentificationCard size={20} weight="bold" />
               <h4 className="text-xs font-bold uppercase tracking-[0.2em]">Identité & Contact</h4>
             </div>
@@ -155,7 +155,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
                     type="text"
                     value={formData.name}
                     onChange={e => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:border-emerald-500/50 transition-all"
+                    className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:border-red-500/50 transition-all"
                     placeholder="Votre nom..."
                     required
                   />
@@ -170,7 +170,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
                     type="email"
                     value={formData.email}
                     onChange={e => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:border-emerald-500/50 transition-all"
+                    className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:border-red-500/50 transition-all"
                     placeholder="votre.email@exemple.com"
                     required
                   />
@@ -185,7 +185,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
                     type="tel"
                     value={formData.phone}
                     onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:border-emerald-500/50 transition-all"
+                    className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:border-red-500/50 transition-all"
                     placeholder="+221 77 000 00 00"
                   />
                 </div>
@@ -199,7 +199,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
                     type="text"
                     value={formData.address}
                     onChange={e => setFormData({ ...formData, address: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:border-emerald-500/50 transition-all"
+                    className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:border-red-500/50 transition-all"
                     placeholder="Dakar, Sénégal..."
                   />
                 </div>
@@ -231,9 +231,9 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
 
           {/* Section: Entreprise Toggle */}
           <section className="space-y-8">
-            <div className="flex items-center justify-between p-6 rounded-3xl bg-emerald-500/5 border border-emerald-500/20">
+            <div className="flex items-center justify-between p-6 rounded-3xl bg-red-500/5 border border-red-500/20">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center text-red-400">
                   <Buildings size={20} weight="fill" />
                 </div>
                 <div>
@@ -244,7 +244,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, isCompany: !formData.isCompany })}
-                className={`relative w-14 h-8 rounded-full transition-all duration-300 ${formData.isCompany ? 'bg-emerald-500' : 'bg-white/10'}`}
+                className={`relative w-14 h-8 rounded-full transition-all duration-300 ${formData.isCompany ? 'bg-red-500' : 'bg-white/10'}`}
               >
                 <div className={`absolute top-1 left-1 w-6 h-6 rounded-full bg-white shadow-lg transition-transform duration-300 ${formData.isCompany ? 'translate-x-6' : 'translate-x-0'}`} />
               </button>
@@ -258,7 +258,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
                     type="text"
                     value={formData.companyName}
                     onChange={e => setFormData({ ...formData, companyName: e.target.value })}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-emerald-500/50 transition-all"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 transition-all"
                     placeholder="E Corp..."
                   />
                 </div>
@@ -268,7 +268,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
                     type="text"
                     value={formData.ninea}
                     onChange={e => setFormData({ ...formData, ninea: e.target.value })}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-emerald-500/50 transition-all"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 transition-all"
                     placeholder="XX-XXXXX-X..."
                   />
                 </div>
@@ -278,7 +278,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
                     type="text"
                     value={formData.raisonSociale}
                     onChange={e => setFormData({ ...formData, raisonSociale: e.target.value })}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-emerald-500/50 transition-all"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 transition-all"
                     placeholder="SARL, SA..."
                   />
                 </div>
@@ -288,7 +288,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
                     type="text"
                     value={formData.bp}
                     onChange={e => setFormData({ ...formData, bp: e.target.value })}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-emerald-500/50 transition-all"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 transition-all"
                     placeholder="BP 00000..."
                   />
                 </div>
@@ -298,7 +298,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
                     type="text"
                     value={formData.companyAddress}
                     onChange={e => setFormData({ ...formData, companyAddress: e.target.value })}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-emerald-500/50 transition-all"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 transition-all"
                     placeholder="Siège social..."
                   />
                 </div>
@@ -308,7 +308,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
                     type="tel"
                     value={formData.companyPhone}
                     onChange={e => setFormData({ ...formData, companyPhone: e.target.value })}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-emerald-500/50 transition-all"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 transition-all"
                     placeholder="+221 33 000 00 00"
                   />
                 </div>
@@ -337,7 +337,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
           <button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="flex-[1.5] px-6 py-4 rounded-2xl bg-emerald-500 text-[#0F172A] font-bold hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-3 shadow-lg shadow-emerald-500/20"
+            className="flex-[1.5] px-6 py-4 rounded-2xl bg-red-600 text-white font-bold hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-3 shadow-lg shadow-red-500/20"
           >
             {isSubmitting ? (
               <div className="w-5 h-5 border-2 border-[#0F172A] border-t-transparent rounded-full animate-spin" />

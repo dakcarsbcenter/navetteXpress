@@ -97,11 +97,11 @@ export function DriverProfile({ onBack }: DriverProfileProps) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
         <div className="flex flex-col items-center gap-4">
-  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
-       style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
-    Navette Xpress
-  </div>
-</div>
+          <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+            style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
+            Navette Xpress
+          </div>
+        </div>
         <p className="text-blue-400 font-mono text-xs animate-pulse">CHARGEMENT DU PROFIL...</p>
       </div>
     )
@@ -153,9 +153,6 @@ export function DriverProfile({ onBack }: DriverProfileProps) {
                 onSuccess={() => fetchDriverData()}
                 onError={(err) => console.error(err)}
               />
-              <div className="absolute bottom-2 right-2 p-2 bg-blue-600 rounded-lg text-white border-2 border-white dark:border-[var(--color-driver-bg)]">
-                <Camera size={14} weight="fill" />
-              </div>
             </div>
 
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">{driverData?.name}</h2>
