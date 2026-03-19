@@ -260,7 +260,7 @@ export default function PermissionsManagementRedesigned() {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="flex flex-col items-center gap-4">
-  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-linear-to-r from-gold via-white to-gold animate-pulse"
        style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
     Navette Xpress
   </div>
@@ -340,7 +340,7 @@ export default function PermissionsManagementRedesigned() {
           <table className="w-full text-left border-collapse">
             {/* Column Headers */}
             <thead>
-              <tr className="bg-white/[0.02] border-b border-white/5">
+              <tr className="bg-white/2 border-b border-white/5">
                 <th className="px-6 py-4 w-1/4">
                   <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Ressources & Accès</h3>
                 </th>
@@ -368,11 +368,11 @@ export default function PermissionsManagementRedesigned() {
             </thead>
 
             {/* Permission Rows */}
-            <tbody className="divide-y divide-white/[0.02]">
+            <tbody className="divide-y divide-white/2">
               {RESOURCES.map((resource) => (
                 <React.Fragment key={resource.name}>
                   {/* Module Header Row */}
-                  <tr className="bg-white/[0.01]">
+                  <tr className="bg-white/1">
                     <td colSpan={2} className="px-6 py-3 border-b border-white/5 border-t border-t-white/10">
                       <div className="flex items-center gap-2 text-gold">
                         <span className="opacity-90">{resource.icon}</span>
@@ -385,7 +385,7 @@ export default function PermissionsManagementRedesigned() {
 
                   {/* Permissions for this resource */}
                   {resource.permissions.map((perm) => (
-                    <tr key={`${resource.name}-${perm.key}`} className="hover:bg-white/[0.01] transition-colors group border-b border-white/5">
+                    <tr key={`${resource.name}-${perm.key}`} className="hover:bg-white/1 transition-colors group border-b border-white/5">
                       <td className="px-6 py-4">
                         <div className="flex items-start gap-3">
                           <div className="mt-0.5 text-slate-400 group-hover:text-gold transition-colors">

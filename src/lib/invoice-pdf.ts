@@ -1,6 +1,3 @@
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-
 interface InvoiceData {
   invoiceNumber: string;
   customerName: string;
@@ -51,7 +48,13 @@ const LOGO_BASE64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAA
 export function generateInvoicePDF(
   invoiceData: InvoiceData,
   companyInfo: CompanyInfo = DEFAULT_COMPANY_INFO
-): jsPDF {
+): Promise<any> {
+  return (async () => {
+  const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+    import('jspdf/dist/jspdf.es.min.js'),
+    import('jspdf-autotable')
+  ]);
+
   const doc = new jsPDF();
   
   // Couleurs basées sur le design minimaliste de la facture
@@ -235,22 +238,27 @@ export function generateInvoicePDF(
   });
 
   return doc;
+  })();
 }
 
 export function downloadInvoicePDF(
   invoiceData: InvoiceData,
   companyInfo?: CompanyInfo
-): void {
-  const doc = generateInvoicePDF(invoiceData, companyInfo);
+): Promise<void> {
+  return (async () => {
+  const doc = await generateInvoicePDF(invoiceData, companyInfo);
   doc.save(`${invoiceData.invoiceNumber}.pdf`);
+  })();
 }
 
 export function previewInvoicePDF(
   invoiceData: InvoiceData,
   companyInfo?: CompanyInfo
-): void {
-  const doc = generateInvoicePDF(invoiceData, companyInfo);
+): Promise<void> {
+  return (async () => {
+  const doc = await generateInvoicePDF(invoiceData, companyInfo);
   const blob = doc.output('blob');
   const url = URL.createObjectURL(blob);
   window.open(url, '_blank');
+  })();
 }

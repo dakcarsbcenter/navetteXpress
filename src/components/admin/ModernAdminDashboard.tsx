@@ -226,7 +226,7 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="flex flex-col items-center gap-4">
-          <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+          <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-linear-to-r from-gold via-white to-gold animate-pulse"
             style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
             Navette Xpress
           </div>
@@ -308,7 +308,7 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
               </p>
             </div>
             <div className="hidden md:flex w-px h-10 bg-white/5" />
-            <div className="hidden md:flex flex-col items-center gap-1 px-4 py-2 rounded-xl bg-white/[0.02] border border-white/5">
+            <div className="hidden md:flex flex-col items-center gap-1 px-4 py-2 rounded-xl bg-white/2 border border-white/5">
               <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">En attente</span>
               <span className="text-xl font-bold font-mono" style={{ color: 'var(--color-gold)' }}>
                 {stats.pendingBookings}
@@ -330,7 +330,7 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
             }}
           >
             {/* Top accent line */}
-            <div className="absolute top-0 left-0 right-0 h-[2px] opacity-60 group-hover:opacity-100 transition-opacity"
+            <div className="absolute top-0 left-0 right-0 h-0.5 opacity-60 group-hover:opacity-100 transition-opacity"
               style={{ backgroundColor: kpi.color }} />
 
             <div className="flex justify-between items-start mb-4">
@@ -382,7 +382,7 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
           <div className="h-[260px] flex items-end gap-2 px-2 pt-4 pb-2 relative">
             {/* Horizontal guide lines */}
             {[0, 1, 2, 3].map(i => (
-              <div key={i} className="absolute left-0 right-0 border-t border-white/[0.03]"
+              <div key={i} className="absolute left-0 right-0 border-t border-white/3"
                 style={{ top: `${20 + i * 20}%` }} />
             ))}
 
@@ -403,7 +403,7 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
                       background: `linear-gradient(to top, ${i === 3 ? 'var(--color-gold)' : 'rgba(201,168,76,0.3)'}, transparent)`,
                     }}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-t from-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="absolute inset-0 bg-linear-to-t from-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                   <span className="text-[9px] text-slate-600 font-bold uppercase tracking-widest">{day}</span>
                 </div>
@@ -416,7 +416,7 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
         <div className="lg:col-span-2 flex flex-col rounded-2xl border border-white/5 overflow-hidden"
           style={{ backgroundColor: 'var(--color-dash-card)' }}>
 
-          <div className="p-5 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
+          <div className="p-5 border-b border-white/5 flex items-center justify-between bg-white/1">
             <h4 className="text-sm font-bold text-white flex items-center gap-2">
               <Clock size={14} style={{ color: 'var(--color-gold)' }} />
               Flux Récents
@@ -435,10 +435,10 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
                 <p className="text-[11px] text-slate-600 italic">Aucune donnée récente</p>
               </div>
             ) : (
-              <div className="divide-y divide-white/[0.02]">
+              <div className="divide-y divide-white/2">
                 {recentBookings.map((booking, i) => (
                   <div key={booking.id || i}
-                    className="flex items-center gap-3 px-5 py-3.5 hover:bg-white/[0.02] transition-colors group cursor-pointer"
+                    className="flex items-center gap-3 px-5 py-3.5 hover:bg-white/2 transition-colors group cursor-pointer"
                     onClick={() => onNavigate('bookings')}>
 
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold bg-white/5 border border-white/10 text-slate-500 shrink-0 group-hover:bg-gold group-hover:text-black group-hover:border-gold transition-all">
@@ -466,7 +466,7 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
             )}
           </div>
 
-          <div className="p-4 border-t border-white/5 bg-white/[0.01]">
+          <div className="p-4 border-t border-white/5 bg-white/1">
             <button
               onClick={() => onNavigate('bookings')}
               className="w-full py-2.5 flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest font-bold rounded-xl border border-white/5 transition-all hover:bg-gold/5"
@@ -491,7 +491,7 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
             <button
               key={action.id}
               onClick={action.onClick}
-              className="group flex flex-col items-center gap-3 p-5 rounded-2xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all duration-200 hover:-translate-y-0.5 text-center"
+              className="group flex flex-col items-center gap-3 p-5 rounded-2xl border border-white/5 bg-white/1 hover:bg-white/3 transition-all duration-200 hover:-translate-y-0.5 text-center"
             >
               <div className="w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200 group-hover:scale-110"
                 style={{ backgroundColor: `${action.color}12`, color: action.color }}>

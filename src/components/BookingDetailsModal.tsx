@@ -123,7 +123,7 @@ export function BookingDetailsModal({ bookingId, onClose }: BookingDetailsModalP
           {loading && (
             <div className="flex items-center justify-center py-8">
               <div className="flex flex-col items-center gap-4">
-  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-linear-to-r from-gold via-white to-gold animate-pulse"
        style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
     Navette Xpress
   </div>

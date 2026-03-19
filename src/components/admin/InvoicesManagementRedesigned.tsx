@@ -15,8 +15,6 @@ import {
   Trash,
   X
 } from "@phosphor-icons/react"
-import jsPDF from "jspdf"
-import autoTable from "jspdf-autotable"
 import { downloadInvoicePDF } from '@/lib/invoice-pdf'
 import { BulkDeleteModal } from '@/components/ui/BulkDeleteModal'
 import { NotificationCenter } from '@/components/ui/NotificationCenter'
@@ -188,7 +186,7 @@ export default function InvoicesManagementRedesigned() {
         notes: invoice.notes || invoice.quote?.adminNotes || undefined
       }
 
-      downloadInvoicePDF(invoiceData)
+      await downloadInvoicePDF(invoiceData)
     } catch (error) {
       console.error('Erreur lors du téléchargement du PDF:', error)
     }
@@ -341,8 +339,13 @@ export default function InvoicesManagementRedesigned() {
     }
   }
 
-  const exportToPDF = () => {
+  const exportToPDF = async () => {
     try {
+      const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+        import('jspdf/dist/jspdf.es.min.js'),
+        import('jspdf-autotable')
+      ])
+
       const doc = new jsPDF()
       doc.text("Liste des Factures - Navette Xpress", 14, 15)
 
@@ -380,7 +383,7 @@ export default function InvoicesManagementRedesigned() {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="flex flex-col items-center gap-4">
-          <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+          <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-linear-to-r from-gold via-white to-gold animate-pulse"
             style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
             Navette Xpress
           </div>
@@ -479,7 +482,7 @@ export default function InvoicesManagementRedesigned() {
       <div className="rounded-2xl border border-white/5 overflow-hidden" style={{ backgroundColor: 'var(--color-dash-card)' }}>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
-            <thead className="bg-white/[0.02] border-b border-white/5">
+            <thead className="bg-white/2 border-b border-white/5">
               <tr>
                 <th className="pl-6 w-12 py-4">
                   <input
@@ -497,7 +500,7 @@ export default function InvoicesManagementRedesigned() {
                 <th className="px-6 py-4 text-[10px] uppercase tracking-widest font-bold text-slate-500">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/[0.02]">
+            <tbody className="divide-y divide-white/2">
               {filteredInvoices.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
@@ -509,7 +512,7 @@ export default function InvoicesManagementRedesigned() {
                   const statusBadge = getStatusBadge(invoice.status)
 
                   return (
-                    <tr key={invoice.id} className="hover:bg-white/[0.01] transition-colors group">
+                    <tr key={invoice.id} className="hover:bg-white/1 transition-colors group">
                       <td className="pl-6 py-4" onClick={(e) => e.stopPropagation()}>
                         <input
                           type="checkbox"
@@ -616,7 +619,7 @@ export default function InvoicesManagementRedesigned() {
                     type="text"
                     value={formData.invoiceNumber}
                     readOnly
-                    className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-gold font-mono text-sm focus:outline-none focus:border-gold/30 transition-all opacity-70 cursor-not-allowed"
+                    className="w-full px-4 py-3 bg-white/3 border border-white/10 rounded-xl text-gold font-mono text-sm focus:outline-none focus:border-gold/30 transition-all opacity-70 cursor-not-allowed"
                   />
                 </div>
 
@@ -688,8 +691,8 @@ export default function InvoicesManagementRedesigned() {
               </div>
 
               {/* Finance Section */}
-              <div className="p-6 bg-white/[0.02] border border-white/5 rounded-2xl relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gold/5 blur-[40px] rounded-full" />
+              <div className="p-6 bg-white/2 border border-white/5 rounded-2xl relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gold/5 blur-2xl rounded-full" />
 
                 <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gold mb-6 ml-1">Chiffrage & Taxes</h3>
 
@@ -711,7 +714,7 @@ export default function InvoicesManagementRedesigned() {
                       type="text"
                       value={formData.taxAmount}
                       readOnly
-                      className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-slate-400 font-mono opacity-70"
+                      className="w-full px-4 py-3 bg-white/3 border border-white/10 rounded-xl text-slate-400 font-mono opacity-70"
                     />
                   </div>
 
@@ -748,7 +751,7 @@ export default function InvoicesManagementRedesigned() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-[2] btn-gold px-6 py-4 rounded-2xl shadow-2xl shadow-gold/20 flex items-center justify-center gap-3 disabled:opacity-50"
+                  className="flex-2 btn-gold px-6 py-4 rounded-2xl shadow-2xl shadow-gold/20 flex items-center justify-center gap-3 disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <div className="w-5 h-5 border-2 border-black/30 border-t-black animate-spin rounded-full" />

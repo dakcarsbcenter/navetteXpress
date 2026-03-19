@@ -105,9 +105,9 @@ export function EpicNotification({
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95, y: -10 }}
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed top-6 right-6 z-[100] w-full max-w-sm"
+          className="fixed top-6 right-6 z-100 w-full max-w-sm"
         >
-          <div className={`overflow-hidden rounded-2xl backdrop-blur-xl border ${styles.border} bg-gradient-to-br ${styles.wrapperBg} ${styles.glow}`}>
+          <div className={`overflow-hidden rounded-2xl backdrop-blur-xl border ${styles.border} bg-linear-to-br ${styles.wrapperBg} ${styles.glow}`}>
             <div className="p-5 flex items-start gap-4">
               <div className="shrink-0 animate-pulse-slow">
                 {styles.icon}

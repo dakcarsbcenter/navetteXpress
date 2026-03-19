@@ -579,10 +579,10 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
       )}
 
       {!missionActive && !prochaineMission && isOnline && (
-        <div className="driver-card-enter glass-card rounded-[2rem] p-10 text-center mb-6 relative overflow-hidden group">
+        <div className="driver-card-enter glass-card rounded-4xl p-10 text-center mb-6 relative overflow-hidden group">
           <div className="absolute inset-0 bg-blue-500/5 dark:bg-blue-400/5 animate-pulse-slow" />
           <div className="relative">
-            <div className="w-20 h-20 rounded-[2rem] flex items-center justify-center mx-auto mb-6 bg-blue-500/10 text-blue-600 dark:text-blue-400">
+            <div className="w-20 h-20 rounded-4xl flex items-center justify-center mx-auto mb-6 bg-blue-500/10 text-blue-600 dark:text-blue-400">
               <NavigationArrow size={32} weight="light" className="animate-bounce" />
             </div>
             <h3 className="text-xl font-black mb-3 text-gray-900 dark:text-white uppercase tracking-tighter">
@@ -600,7 +600,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
 
         {/* ── FILE D'ATTENTE ── */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="driver-card-enter glass-card rounded-[2rem] overflow-hidden">
+          <div className="driver-card-enter glass-card rounded-4xl overflow-hidden">
 
             <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100 dark:border-white/5">
               <div className="flex items-center gap-3">

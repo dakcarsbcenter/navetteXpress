@@ -95,7 +95,7 @@ export function ClientInvoicesView() {
         notes: invoice.notes || invoice.quote?.clientNotes || undefined
       }
 
-      downloadInvoicePDF(invoiceData)
+      await downloadInvoicePDF(invoiceData)
       setModalType('success')
       setModalMessage('Facture téléchargée avec succès !')
       setShowModal(true)

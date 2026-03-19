@@ -141,12 +141,12 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
             <div className="fixed inset-0 z-50 overflow-y-auto px-4 py-6 sm:py-12 flex items-center justify-center">
                 {/* Backdrop */}
                 <div
-                    className="fixed inset-0 bg-[#000]/80 backdrop-blur-sm transition-opacity animate-fadeIn"
+                    className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity animate-fadeIn"
                     onClick={onClose}
                 />
 
                 {/* Modal */}
-                <div className="relative w-full max-w-2xl transform overflow-hidden rounded-[2rem] bg-slate-900 border border-white/10 shadow-2xl transition-all animate-scaleIn flex flex-col max-h-[90vh]">
+                <div className="relative w-full max-w-2xl transform overflow-hidden rounded-4xl bg-slate-900 border border-white/10 shadow-2xl transition-all animate-scaleIn flex flex-col max-h-[90vh]">
 
                     {/* Header Image/Pattern */}
                     <div className="h-32 w-full relative overflow-hidden shrink-0">
@@ -304,7 +304,7 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                                                 type="text"
                                                 value={formData.pickupAddress}
                                                 onChange={(e) => setFormData({ ...formData, pickupAddress: e.target.value })}
-                                                className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 focus:bg-white/[0.08] transition-all"
+                                                className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 focus:bg-white/8 transition-all"
                                                 placeholder="Lieu de départ..."
                                                 required
                                             />
@@ -319,7 +319,7 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                                                 type="text"
                                                 value={formData.dropoffAddress}
                                                 onChange={(e) => setFormData({ ...formData, dropoffAddress: e.target.value })}
-                                                className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 focus:bg-white/[0.08] transition-all"
+                                                className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 focus:bg-white/8 transition-all"
                                                 placeholder="Lieu de destination..."
                                                 required
                                             />
@@ -333,7 +333,7 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                                                 type="datetime-local"
                                                 value={formData.scheduledDateTime}
                                                 onChange={(e) => setFormData({ ...formData, scheduledDateTime: e.target.value })}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 focus:bg-white/[0.08] transition-all [color-scheme:dark]"
+                                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 focus:bg-white/8 transition-all scheme-dark"
                                                 required
                                             />
                                         </div>
@@ -343,7 +343,7 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                                                 type="tel"
                                                 value={formData.customerPhone}
                                                 onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 focus:bg-white/[0.08] transition-all"
+                                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 focus:bg-white/8 transition-all"
                                                 placeholder="Ex: 77 000 00 00"
                                             />
                                         </div>
@@ -354,7 +354,7 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                                         <textarea
                                             value={formData.notes}
                                             onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 focus:bg-white/[0.08] transition-all min-h-[100px] resize-none"
+                                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 focus:bg-white/8 transition-all min-h-[100px] resize-none"
                                             placeholder="Une précision à apporter ?"
                                         />
                                     </div>
@@ -387,7 +387,7 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                     </div>
 
                     {!isEditing && (
-                        <div className="p-8 pt-4 pb-8 shrink-0 bg-white/[0.02] border-t border-white/5">
+                        <div className="p-8 pt-4 pb-8 shrink-0 bg-white/2 border-t border-white/5">
                             <div className="flex items-center justify-between gap-4">
                                 <button
                                     onClick={onClose}

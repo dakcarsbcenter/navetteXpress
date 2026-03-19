@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, DM_Sans, DM_Mono } from "next/font/google";
+import { Cormorant_Garamond, DM_Sans, DM_Mono, Syne } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
@@ -25,6 +25,13 @@ const dmMono = DM_Mono({
   variable: "--font-dm-mono",
   subsets: ["latin"],
   weight: ["400", "500"],
+  display: "swap",
+});
+
+const syne = Syne({
+  variable: "--font-syne",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -148,14 +155,15 @@ export default function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning className="scroll-smooth">
       <head />
-      <body className={`${cormorant.variable} ${dmSans.variable} ${dmMono.variable} antialiased font-body bg-background text-foreground`}>
+      <body className={`${cormorant.variable} ${dmSans.variable} ${dmMono.variable} ${syne.variable} antialiased font-body bg-background text-foreground`}>
         <JsonLd data={schemaLocalBusiness} />
         <JsonLd data={schemaWebSite} />
         <AuthSessionProvider>
           <ThemeProvider
-            attribute="class"
+            attribute="data-theme"
             defaultTheme="dark"
-            enableSystem
+            storageKey="nx-theme"
+            enableSystem={false}
             disableTransitionOnChange
           >
             {children}

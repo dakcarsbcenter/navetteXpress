@@ -4,6 +4,14 @@
 @import "leaflet/dist/leaflet.css";
 
 :root {
+  --bg-primary: #0f0f13;
+  --bg-secondary: #1a1a24;
+  --bg-card: #1e1e2e;
+  --accent-purple: #6c63ff;
+  --success: #22c55e;
+  --danger: #ef4444;
+  --transition: 200ms ease;
+
   --background: #FAFAFA;
   --foreground: #1A1A1A;
 
@@ -73,6 +81,19 @@
   --color-mission-done-bg: rgba(107, 114, 128, 0.07);
 }
 
+[data-theme="light"] {
+  --bg-primary: #f4f6fb;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --border: #e2e8f0;
+  --accent: #d4a800;
+  --accent-purple: #6c63ff;
+  --text-primary: #1a1a2e;
+  --text-muted: #64748b;
+  --success: #16a34a;
+  --danger: #dc2626;
+}
+
 .dark {
   --background: #0D0D0D;
   --foreground: #F5F5F5;
@@ -137,6 +158,19 @@
   --color-mission-inprogress-bg: rgba(34, 197, 94, 0.08);
   --color-mission-done: #6B7280;
   --color-mission-done-bg: rgba(107, 114, 128, 0.07);
+}
+
+[data-theme="dark"] {
+  --bg-primary: #0f0f13;
+  --bg-secondary: #1a1a24;
+  --bg-card: #1e1e2e;
+  --border: #2a2a3d;
+  --accent: #f5c842;
+  --accent-purple: #6c63ff;
+  --text-primary: #ffffff;
+  --text-muted: #8888aa;
+  --success: #22c55e;
+  --danger: #ef4444;
 }
 
 
@@ -296,6 +330,7 @@ html {
 
   /* ── Typographie ── */
   --font-display: var(--font-cormorant), Georgia, serif;
+  --font-heading: var(--font-syne), var(--font-dm-sans), system-ui, sans-serif;
   --font-body: var(--font-dm-sans), system-ui, sans-serif;
   --font-mono: var(--font-dm-mono), 'Courier New', monospace;
 
@@ -374,6 +409,43 @@ html {
   --color-trip-cancelled-bg: rgba(239, 68, 68, 0.08);
 }
 
+body {
+  transition: background-color var(--transition), color var(--transition);
+}
+
+.driver-dashboard-card {
+  transition: background-color var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.driver-metric-card,
+.driver-content-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  padding: 20px 24px;
+}
+
+.driver-fade-in-up {
+  animation: driverFadeInUp 200ms ease-out both;
+}
+
+.driver-fade-delay-0 {
+  animation-delay: 0ms;
+}
+
+.driver-fade-delay-1 {
+  animation-delay: 50ms;
+}
+
+.driver-fade-delay-2 {
+  animation-delay: 100ms;
+}
+
+.driver-fade-delay-3 {
+  animation-delay: 150ms;
+}
+
 /* ── Animation entrée des cards client ── */
 @keyframes clientCardEnter {
   from {
@@ -447,6 +519,18 @@ html {
   to {
     opacity: 1;
     transform: translateX(0);
+  }
+}
+
+@keyframes driverFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

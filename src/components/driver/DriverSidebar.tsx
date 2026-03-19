@@ -2,36 +2,49 @@
 
 import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
-import React, { useState } from 'react'
-import { Power, SignOut, SquaresFour, Calendar, Clock, Wrench, ChartBar, User } from "@phosphor-icons/react"
-import { useDriverView } from '@/context/DriverViewContext'
+import { usePathname } from 'next/navigation'
+import { Calendar, ChartNoAxesColumn, Clock3, LayoutDashboard, LogOut, User, Wrench, Circle } from 'lucide-react'
+import { ThemeToggle } from '@/app/driver/dashboard/components/ThemeToggle'
 
-type ViewType = 'home' | 'planning' | 'availability' | 'vehicle-report' | 'stats' | 'profile'
-
-interface Props {
-  currentView?: ViewType
-  setCurrentView?: (v: ViewType) => void
-  pendingBookingsCount?: number
+interface NavItem {
+  href: string
+  label: string
+  icon: React.ComponentType<{ size?: number; className?: string }>
 }
 
-export default function DriverSidebar(props: Props) {
+const principalItems: NavItem[] = [
+  { href: '/driver/dashboard', label: 'Tableau de bord', icon: LayoutDashboard },
+  { href: '/driver/planning', label: 'Planning', icon: Calendar },
+]
+
+const managementItems: NavItem[] = [
+  { href: '/driver/disponibilites', label: 'Disponibilités', icon: Clock3 },
+  { href: '/driver/rapport', label: 'Rapport Véhicule', icon: Wrench },
+  { href: '/driver/statistiques', label: 'Statistiques', icon: ChartNoAxesColumn },
+  { href: '/driver/profil', label: 'Profil', icon: User },
+]
+
+function SidebarLink({ item, active }: { item: NavItem; active: boolean }) {
+  const Icon = item.icon
+
+  return (
+    <Link
+      href={item.href}
+      className={`driver-dashboard-card relative flex items-center gap-3 rounded-xl border px-3 py-2.5 text-sm transition-colors ${active
+        ? 'border-(--accent) bg-[color-mix(in_srgb,var(--accent)_10%,transparent)] text-(--accent)'
+        : 'border-transparent text-(--text-muted) hover:border-(--border) hover:bg-[color-mix(in_srgb,var(--bg-card)_75%,transparent)] hover:text-(--text-primary)'
+      }`}
+    >
+      {active && <span className="absolute -left-3 top-2 h-7 w-1 rounded-full bg-(--accent)" />}
+      <Icon size={16} />
+      <span>{item.label}</span>
+    </Link>
+  )
+}
+
+export default function DriverSidebar() {
+  const pathname = usePathname()
   const { data: session } = useSession()
-  const [isOnline, setIsOnline] = useState(true) // Mock state for availability
-
-  // Use context if props are missing
-  const context = useDriverView()
-  const currentView = props.currentView || context.currentView
-  const setCurrentView = props.setCurrentView || context.setCurrentView
-  const pendingBookingsCount = props.pendingBookingsCount ?? context.pendingBookingsCount
-
-  const menuItems: { id: ViewType; label: string; icon: React.ReactNode; badge?: number | null }[] = [
-    { id: 'home', label: 'Tableau de Bord', icon: <SquaresFour size={18} weight={currentView === 'home' ? "fill" : "regular"} />, badge: pendingBookingsCount > 0 ? pendingBookingsCount : null },
-    { id: 'planning', label: 'Planning', icon: <Calendar size={18} weight={currentView === 'planning' ? "fill" : "regular"} /> },
-    { id: 'availability', label: 'Disponibilités', icon: <Clock size={18} weight={currentView === 'availability' ? "fill" : "regular"} /> },
-    { id: 'vehicle-report', label: 'Rapport Véhicule', icon: <Wrench size={18} weight={currentView === 'vehicle-report' ? "fill" : "regular"} /> },
-    { id: 'stats', label: 'Statistiques', icon: <ChartBar size={18} weight={currentView === 'stats' ? "fill" : "regular"} /> },
-    { id: 'profile', label: 'Profil', icon: <User size={18} weight={currentView === 'profile' ? "fill" : "regular"} /> },
-  ]
 
   const getInitials = (name?: string | null) => {
     if (!name) return 'CH'
@@ -39,118 +52,85 @@ export default function DriverSidebar(props: Props) {
   }
 
   return (
-    <aside
-      className="w-[220px] hidden lg:flex flex-col shrink-0 h-screen sticky top-0 bg-gray-900 dark:bg-[#060A0D] border-r border-gray-700 dark:border-white/5">
-
-      {/* ── LOGO ── */}
-      <div className="px-5 py-5 flex items-center gap-2.5 border-b border-gray-700 dark:border-white/5">
-        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-          <span className="text-white dark:text-white font-bold text-sm">NX</span>
+    <>
+      <aside className="hidden w-60 shrink-0 flex-col border-r border-(--border) bg-(--bg-secondary) md:flex">
+        <div className="border-b border-(--border) px-5 py-5">
+          <div className="flex items-center gap-2.5">
+            <div className="grid h-8 w-8 place-items-center rounded-lg bg-(--accent)">
+              <span className="text-xs font-bold text-black">NX</span>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-(--text-primary)">
+                Navette <span className="text-(--accent)">Xpress</span>
+              </p>
+              <p className="text-[10px] text-(--text-muted)">Espace chauffeur</p>
+            </div>
+          </div>
         </div>
-        <div>
-          <p className="text-sm font-semibold text-white">
-            Navette <span className="text-amber-500 dark:text-gold">Xpress</span>
-          </p>
-          <p className="text-[10px] mt-0.5 text-gray-300 dark:text-gray-400">
-            Espace chauffeur
-          </p>
-        </div>
-      </div>
 
-      {/* ── PROFIL CHAUFFEUR ── */}
-      <div className="px-4 py-5 border-b border-gray-700 dark:border-white/5">
-
-        <div className="flex items-center gap-3 mb-4">
-          <div className="relative shrink-0">
-            <div className="w-11 h-11 rounded-2xl flex items-center justify-center text-sm font-semibold bg-gradient-to-br from-blue-500/25 to-blue-500/10 text-blue-400 dark:text-blue-400 border border-blue-500/20">
+        <div className="border-b border-(--border) px-4 py-4">
+          <div className="flex items-center gap-3">
+            <div className="grid h-10 w-10 place-items-center rounded-xl border border-(--border) bg-(--bg-card) text-xs font-bold text-(--text-primary)">
               {getInitials(session?.user?.name)}
             </div>
-            <span
-              className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 transition-colors"
-              style={{
-                backgroundColor: isOnline ? 'var(--color-success)' : '#4B5563',
-                borderColor: '#060A0D',
-              }}
-            />
-          </div>
-          <div className="min-w-0">
-            <p className="text-sm font-semibold truncate text-gray-900 dark:text-white">
-              {session?.user?.name || 'Chauffeur'}
-            </p>
-            <p className="text-[10px]" style={{ color: isOnline ? 'var(--color-success)' : 'var(--color-text-muted)' }}>
-              {isOnline ? 'En service' : 'Hors service'}
-            </p>
+            <div>
+              <p className="text-sm font-semibold text-(--text-primary)">{session?.user?.name ?? 'Chauffeur'}</p>
+              <div className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-[color-mix(in_srgb,var(--success)_15%,transparent)] px-2 py-0.5 text-[11px] text-(--success)">
+                <Circle size={8} fill="currentColor" />
+                Disponible
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Toggle disponibilité */}
-        <button
-          onClick={() => setIsOnline(!isOnline)}
-          className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200"
-          style={{
-            backgroundColor: isOnline ? 'rgba(16,185,129,0.1)' : 'rgba(255,255,255,0.04)',
-            border: `1px solid ${isOnline ? 'rgba(16,185,129,0.25)' : 'rgba(255,255,255,0.08)'}`,
-            color: isOnline ? 'var(--color-success)' : 'var(--color-text-secondary)',
-          }}>
-          <span className="flex items-center gap-2">
-            <span
-              className={`w-2 h-2 rounded-full ${isOnline ? 'avail-online' : ''}`}
-              style={{ backgroundColor: isOnline ? 'var(--color-success)' : '#4B5563' }}
-            />
-            {isOnline ? 'Disponible' : 'Indisponible'}
-          </span>
-          <Power size={14} weight="bold" />
-        </button>
+        <nav className="flex-1 space-y-6 overflow-y-auto px-4 py-5">
+          <div className="space-y-2">
+            <p className="px-2 text-[10px] font-bold uppercase tracking-[0.2em] text-(--text-muted)">Principal</p>
+            {principalItems.map((item) => (
+              <SidebarLink key={item.href} item={item} active={pathname === item.href} />
+            ))}
+          </div>
 
-      </div>
+          <div className="space-y-2">
+            <p className="px-2 text-[10px] font-bold uppercase tracking-[0.2em] text-(--text-muted)">Gestion</p>
+            {managementItems.map((item) => (
+              <SidebarLink key={item.href} item={item} active={pathname === item.href} />
+            ))}
+          </div>
 
-      {/* ── NAVIGATION ── */}
-      <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto dash-scroll">
+        </nav>
 
-        <p className="px-3 pb-3 pt-1 text-[10px] font-black tracking-[0.2em] uppercase text-gray-500 dark:text-gray-600">
-          Menu
-        </p>
-
-        {menuItems.map((item) => (
+        <div className="space-y-3 border-t border-(--border) p-4">
+          <ThemeToggle />
           <button
-            key={item.id}
-            onClick={() => setCurrentView(item.id)}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs transition-all duration-300 group relative ${currentView === item.id
-              ? 'bg-blue-600/10 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold'
-              : 'text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'
-              }`}
+            onClick={() => signOut({ callbackUrl: '/' })}
+            className="driver-dashboard-card inline-flex h-11 w-full items-center gap-2 rounded-xl border border-(--border) bg-(--bg-card) px-3 text-sm text-(--text-muted) hover:text-(--danger)"
           >
-            {currentView === item.id && (
-              <span className="absolute left-0 w-1 h-5 bg-blue-600 dark:bg-blue-500 rounded-full" />
-            )}
-            <span className={`transition-colors ${currentView === item.id ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-600 group-hover:text-gray-900 dark:group-hover:text-white'}`}>
-              {item.icon}
-            </span>
-            <span className="uppercase tracking-wider">
-              {item.label}
-            </span>
-            {item.badge && (
-              <span className="ml-auto text-[9px] font-black px-2 py-0.5 rounded-lg bg-blue-600 dark:bg-blue-500 text-white shadow-lg shadow-blue-500/20">
-                {item.badge}
-              </span>
-            )}
+            <LogOut size={16} />
+            Déconnexion
           </button>
-        ))}
+        </div>
+      </aside>
 
+      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-(--border) bg-(--bg-secondary)/95 px-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] pt-2 backdrop-blur md:hidden">
+        <div className="grid grid-cols-6 gap-1">
+          {[...principalItems, ...managementItems].map((item) => {
+            const Icon = item.icon
+            const active = pathname === item.href
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex flex-col items-center gap-1 rounded-lg px-2 py-2 text-[11px] ${active ? 'bg-[color-mix(in_srgb,var(--accent)_12%,transparent)] text-(--accent)' : 'text-(--text-muted)'}`}
+              >
+                <Icon size={16} />
+                <span>{item.label.split(' ')[0]}</span>
+              </Link>
+            )
+          })}
+        </div>
       </nav>
-
-      {/* ── DÉCONNEXION ── */}
-      <div className="p-4 border-t border-gray-100 dark:border-white/5">
-        <button
-          onClick={() => signOut({ callbackUrl: '/' })}
-          className="w-full h-11 flex items-center gap-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all text-gray-400 hover:text-red-500 hover:bg-red-500/5 group"
-        >
-          <SignOut size={16} weight="bold" className="group-hover:scale-110 transition-transform" />
-          Déconnexion
-        </button>
-      </div>
-
-
-    </aside>
+    </>
   )
 }

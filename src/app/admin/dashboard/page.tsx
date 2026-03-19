@@ -199,7 +199,7 @@ export default function AdminDashboard() {
       return (
         <div className="flex items-center justify-center p-12">
           <div className="flex flex-col items-center gap-4">
-            <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+            <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-linear-to-r from-gold via-white to-gold animate-pulse"
               style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
               Navette Xpress
             </div>
@@ -419,7 +419,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* MOBILE OVERLAY (Simplified for now) */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-[#09090F] border-b border-white/5 p-4 flex justify-between items-center h-16">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-dash-sidebar border-b border-white/5 p-4 flex justify-between items-center h-16">
         <div className="flex items-center gap-2">
           <span>Navette</span> <span>Xpress</span>
         </div>
@@ -430,8 +430,8 @@ export default function AdminDashboard() {
         </button>
       </div>
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-[60] bg-black/80 flex justify-end">
-          <div className="w-64 bg-[#09090F] h-full p-6">
+        <div className="lg:hidden fixed inset-0 z-60 bg-black/80 flex justify-end">
+          <div className="w-64 bg-dash-sidebar h-full p-6">
             <button onClick={() => setMobileMenuOpen(false)} className="text-white mb-8">Fermer</button>
             <div className="space-y-4">
               {tabs.map(tab => (

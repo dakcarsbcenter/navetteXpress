@@ -79,7 +79,7 @@ export function DeleteUserModal({
   }
 
   return (
-    <div className="fixed inset-0 z-[9999] overflow-y-auto">
+    <div className="fixed inset-0 z-9999 overflow-y-auto">
       {/* Backdrop amélioré avec effet blur */}
       <div
         className={`fixed inset-0 backdrop-blur-sm transition-all duration-300 ${isVisible ? 'bg-black/70' : 'bg-black/0'
@@ -96,7 +96,7 @@ export function DeleteUserModal({
             }`}
         >
           {/* Header avec gradient rouge */}
-          <div className="relative bg-gradient-to-br from-red-50 to-red-100 dark:from-red-950/40 dark:to-red-900/40 px-6 pt-6 pb-4">
+          <div className="relative bg-linear-to-br from-red-50 to-red-100 dark:from-red-950/40 dark:to-red-900/40 px-6 pt-6 pb-4">
             <button
               onClick={onClose}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
@@ -211,7 +211,7 @@ export function DeleteUserModal({
                 onClick={handleConfirm}
                 disabled={!isConfirmValid || isConfirming}
                 className={`flex-1 px-6 py-3 text-sm font-bold text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed ${isConfirmValid
-                  ? 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 transform hover:scale-105'
+                  ? 'bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 transform hover:scale-105'
                   : 'bg-gray-400 dark:bg-gray-600'
                   }`}
               >

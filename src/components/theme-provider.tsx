@@ -8,7 +8,7 @@ type ThemeProviderProps = {
   children: React.ReactNode
   defaultTheme?: Theme
   storageKey?: string
-  attribute?: string
+  attribute?: "class" | "data-theme"
   enableSystem?: boolean
   disableTransitionOnChange?: boolean
 }
@@ -27,9 +27,9 @@ const ThemeProviderContext = React.createContext<ThemeProviderState>(initialStat
 
 export function ThemeProvider({
   children,
-  defaultTheme = "system",
-  storageKey = "ui-theme",
-  enableSystem = true,
+  defaultTheme = "dark",
+  storageKey = "nx-theme",
+  enableSystem = false,
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = React.useState<Theme>(defaultTheme)
@@ -54,8 +54,7 @@ export function ThemeProvider({
     if (!mounted) return
 
     const root = window.document.documentElement
-
-    root.classList.remove("light", "dark")
+    const appliedAttribute = props.attribute ?? "class"
 
     if (theme === "system" && enableSystem) {
       const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
@@ -63,12 +62,24 @@ export function ThemeProvider({
         ? "dark"
         : "light"
 
+      root.classList.remove("light", "dark")
       root.classList.add(systemTheme)
+      root.setAttribute("data-theme", systemTheme)
+
+      if (appliedAttribute === "data-theme") {
+        root.setAttribute("data-theme", systemTheme)
+      }
       return
     }
 
+    root.classList.remove("light", "dark")
     root.classList.add(theme)
-  }, [theme, enableSystem, mounted])
+    root.setAttribute("data-theme", theme)
+
+    if (appliedAttribute === "data-theme") {
+      root.setAttribute("data-theme", theme)
+    }
+  }, [theme, enableSystem, mounted, props.attribute])
 
   const value = {
     theme,

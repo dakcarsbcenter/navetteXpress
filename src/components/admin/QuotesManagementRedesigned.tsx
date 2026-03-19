@@ -20,8 +20,6 @@ import {
   Confetti,
   Download
 } from "@phosphor-icons/react"
-import jsPDF from "jspdf"
-import autoTable from "jspdf-autotable"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { BulkDeleteModal } from "@/components/ui/BulkDeleteModal"
 import { useNotification } from "@/hooks/useNotification"
@@ -205,8 +203,13 @@ export function QuotesManagementRedesigned() {
     }
   }
 
-  const exportToPDF = () => {
+  const exportToPDF = async () => {
     try {
+      const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+        import('jspdf/dist/jspdf.es.min.js'),
+        import('jspdf-autotable')
+      ])
+
       const doc = new jsPDF()
       doc.text("Liste des Devis - Navette Xpress", 14, 15)
 
@@ -244,7 +247,7 @@ export function QuotesManagementRedesigned() {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="flex flex-col items-center gap-4">
-          <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+          <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-linear-to-r from-gold via-white to-gold animate-pulse"
             style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
             Navette Xpress
           </div>
@@ -374,7 +377,7 @@ export function QuotesManagementRedesigned() {
 
                 <div className="flex flex-col gap-3 max-h-[calc(100vh-400px)] overflow-y-auto pr-2 custom-scrollbar">
                   {statusQuotes.length === 0 ? (
-                    <div className="text-center py-8 text-slate-500 text-sm border border-dashed border-white/10 rounded-xl bg-white/[0.02]">
+                    <div className="text-center py-8 text-slate-500 text-sm border border-dashed border-white/10 rounded-xl bg-white/2">
                       Aucun devis
                     </div>
                   ) : (
@@ -491,7 +494,7 @@ export function QuotesManagementRedesigned() {
         <div className="rounded-2xl border border-white/5 overflow-hidden" style={{ backgroundColor: 'var(--color-dash-card)' }}>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
-              <thead className="bg-white/[0.02] border-b border-white/5">
+              <thead className="bg-white/2 border-b border-white/5">
                 <tr>
                   <th className="pl-6 w-12 py-4">
                     <input
@@ -509,7 +512,7 @@ export function QuotesManagementRedesigned() {
                   <th className="px-6 py-4 text-[10px] uppercase tracking-widest font-bold text-slate-500">Date</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/[0.02]">
+              <tbody className="divide-y divide-white/2">
                 {quotes.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="px-6 py-12 text-center text-slate-500 text-sm">
@@ -523,7 +526,7 @@ export function QuotesManagementRedesigned() {
                     return (
                       <tr
                         key={quote.id}
-                        className="hover:bg-white/[0.01] transition-colors group cursor-pointer"
+                        className="hover:bg-white/1 transition-colors group cursor-pointer"
                         onClick={() => {
                           setSelectedQuote(quote)
                           setIsDetailModalOpen(true)

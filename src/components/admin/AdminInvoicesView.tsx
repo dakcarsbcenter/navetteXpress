@@ -102,7 +102,7 @@ export default function AdminInvoicesView() {
       }
 
       // Télécharger le PDF
-      downloadInvoicePDF(invoiceData)
+      await downloadInvoicePDF(invoiceData)
 
       // Notification de succès
       setModalType('success')
@@ -187,7 +187,7 @@ export default function AdminInvoicesView() {
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
           <div className="flex flex-col items-center gap-4">
-  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
+  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-linear-to-r from-gold via-white to-gold animate-pulse"
        style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
     Navette Xpress
   </div>

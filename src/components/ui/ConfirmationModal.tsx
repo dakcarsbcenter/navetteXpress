@@ -103,7 +103,7 @@ export function ConfirmationModal({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-120 flex items-center justify-center p-4">
           {/* Backdrop avec flou progressif */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -133,7 +133,7 @@ export function ConfirmationModal({
                   initial={{ rotate: -15, scale: 0.5 }}
                   animate={{ rotate: 0, scale: 1 }}
                   transition={{ delay: 0.1, type: "spring" }}
-                  className={`w-28 h-28 rounded-[2rem] bg-gradient-to-br ${styles.bg} border-2 ${styles.border} flex items-center justify-center ${styles.color} mb-6 shadow-2xl ${styles.glow}`}
+                  className={`w-28 h-28 rounded-4xl bg-linear-to-br ${styles.bg} border-2 ${styles.border} flex items-center justify-center ${styles.color} mb-6 shadow-2xl ${styles.glow}`}
                 >
                   {styles.icon}
                 </motion.div>
