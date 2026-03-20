@@ -262,6 +262,7 @@ export default function HomeClient() {
                         src="/images/Chauffeur-Services-dakar-senegal-navette-xpress.jpg"
                         alt="Services de Chauffeur d&apos;élite Navette Xpress Dakar"
                         fill
+                        sizes="(min-width: 1024px) 50vw, 100vw"
                         priority
                         className="object-cover opacity-90 transition-transform duration-1000"
                       />

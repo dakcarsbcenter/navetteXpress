@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
 
+  // Autoriser l'acces aux ressources de dev (HMR) depuis les hosts locaux/docker
+  allowedDevOrigins: ['172.21.0.1', 'localhost', '127.0.0.1'],
+
   // Configuration pour Docker
   output: 'standalone',
 
