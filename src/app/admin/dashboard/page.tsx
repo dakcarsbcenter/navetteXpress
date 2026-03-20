@@ -331,6 +331,29 @@ export default function AdminDashboard() {
               <span>{tab.label}</span>
             </button>
           ))}
+
+          <p className="px-3 pt-4 pb-2 text-[10px] tracking-[0.15em] uppercase font-bold"
+            style={{ color: 'var(--color-text-muted)' }}>
+            Assistant IA
+          </p>
+          {tabs.filter(t => ['agent'].includes(t.id)).map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 relative"
+              style={activeTab === tab.id ? {
+                backgroundColor: 'var(--color-dash-nav-active-bg)',
+                color: 'var(--color-dash-nav-active-text)',
+                borderLeft: '2px solid var(--color-dash-nav-active-border)',
+                borderRadius: '0 12px 12px 0'
+              } : {
+                color: 'var(--color-dash-nav-text)'
+              }}
+            >
+              <span className="text-lg">{tab.icon}</span>
+              <span>{tab.label}</span>
+            </button>
+          ))}
         </nav>
 
         {/* ── PROFIL UTILISATEUR ── */}
