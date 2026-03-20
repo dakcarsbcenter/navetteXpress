@@ -20,8 +20,9 @@ import InvoicesManagementRedesigned from "@/components/admin/InvoicesManagementR
 import { LocationsManagementRedesigned } from "@/components/admin/LocationsManagementRedesigned"
 import PublicitesClient from "@/components/admin/ads/PublicitesClient"
 import { ServicesManager } from "@/components/admin/ServicesManager"
+import { AgentAdminPanel } from "@/components/admin/AgentAdminPanel"
 
-type TabType = 'modern' | 'users' | 'vehicles' | 'bookings' | 'quotes' | 'invoices' | 'permissions' | 'reviews' | 'stats' | 'ads' | 'locations' | 'services'
+type TabType = 'modern' | 'users' | 'vehicles' | 'bookings' | 'quotes' | 'invoices' | 'permissions' | 'reviews' | 'stats' | 'ads' | 'locations' | 'services' | 'agent'
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession()
@@ -112,6 +113,7 @@ export default function AdminDashboard() {
     { id: 'locations' as TabType, label: 'Lieux', shortLabel: 'Lieux', icon: '📍', resource: '', always: true, adminOnly: true },
     { id: 'ads' as TabType, label: 'Publicités', shortLabel: 'Pubs', icon: '📢', resource: '', always: true },
     { id: 'services' as TabType, label: 'Services', shortLabel: 'Services', icon: '🛎️', resource: '', always: true, adminOnly: true },
+    { id: 'agent' as TabType, label: 'Agent IA', shortLabel: 'Agent IA', icon: '🤖', resource: '', always: true, adminOnly: true },
   ]
 
   // Filtrer les onglets selon les permissions
@@ -168,6 +170,8 @@ export default function AdminDashboard() {
         return <ServicesManager />
       case 'ads':
         return <AdsManagementWrapper />
+      case 'agent':
+        return <AgentAdminPanel />
       default:
         return <ModernAdminDashboard onNavigate={(section: string) => setActiveTab(section as TabType)} />
     }

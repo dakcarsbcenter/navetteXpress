@@ -23,6 +23,13 @@ if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
   console.warn("Google OAuth credentials manquantes. L'authentification Google ne sera pas disponible.")
 }
 
+async function resetLoginAttempts(userId: string) {
+  await db
+    .update(users)
+    .set({ loginAttempts: 0, accountLockedUntil: null, lastFailedLogin: null, updatedAt: new Date() })
+    .where(eq(users.id, userId))
+}
+
 // Configuration des providers
 const providers = [
   // Google Provider (conditionnel)
@@ -108,15 +115,7 @@ const providers = [
             throw new Error(`AccountLocked:${minutesRemaining}`)
           } else {
             // Le blocage est expiré, réinitialiser les tentatives
-            await db
-              .update(users)
-              .set({
-                loginAttempts: 0,
-                accountLockedUntil: null,
-                lastFailedLogin: null,
-                updatedAt: new Date()
-              })
-              .where(eq(users.id, user.id))
+            await resetLoginAttempts(user.id)
             console.log("✅ [NextAuth] Blocage expiré, compte débloqué")
           }
         }
@@ -181,15 +180,7 @@ const providers = [
 
         // Connexion réussie : réinitialiser les tentatives
         if (user.loginAttempts && user.loginAttempts > 0) {
-          await db
-            .update(users)
-            .set({
-              loginAttempts: 0,
-              accountLockedUntil: null,
-              lastFailedLogin: null,
-              updatedAt: new Date()
-            })
-            .where(eq(users.id, user.id))
+          await resetLoginAttempts(user.id)
         }
 
         console.log("🎉 [NextAuth] Authentification réussie pour:", user.email)
@@ -233,7 +224,7 @@ export const authOptions: NextAuthOptions = {
           const dbUser = await db
             .select()
             .from(users)
-            .where(sql`lower(${users.email}) = ${googleEmail}`)
+            .where(sql`trim(lower(${users.email})) = ${googleEmail}`)
             .limit(1)
 
           if (dbUser.length > 0) {
@@ -265,7 +256,7 @@ export const authOptions: NextAuthOptions = {
           const existingUser = await db
             .select()
             .from(users)
-            .where(sql`lower(${users.email}) = ${googleEmail}`)
+            .where(sql`trim(lower(${users.email})) = ${googleEmail}`)
             .limit(1)
 
           // Si l'utilisateur existe et a un mot de passe, refuser la connexion Google

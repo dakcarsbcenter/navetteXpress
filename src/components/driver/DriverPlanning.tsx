@@ -4,28 +4,14 @@ import { useEffect, useMemo, useState } from "react"
 import { CalendarDays, Clock3, Coins, Car, ListChecks } from "lucide-react"
 import { UpcomingMissions } from "@/app/driver/dashboard/components/UpcomingMissions"
 import { ContentCard, EmptyState, MetricCard, SectionHeader } from "@/components/driver/shared"
+import type { DriverBookingsApiResponse } from "@/types/dashboard"
 
 type BookingStatus = "confirmed" | "pending" | "in_progress" | "completed" | "cancelled" | "assigned"
 
+const VALID_BOOKING_STATUSES = new Set<string>(["assigned", "pending", "in_progress", "completed", "cancelled", "confirmed"])
+
 interface PlanningProps {
   onBack: () => void
-}
-
-interface BookingData {
-  id: number
-  customerName: string
-  pickupAddress: string
-  dropoffAddress: string
-  scheduledDateTime: string
-  status: string
-  price: string | number
-}
-
-interface DriverBookingsApiResponse {
-  success: boolean
-  data: Array<{
-    booking: BookingData
-  }>
 }
 
 interface PlanningMission {
@@ -50,10 +36,7 @@ function getWeekStart(input: Date): Date {
 }
 
 function normalizeStatus(status: string): BookingStatus {
-  if (status === "assigned" || status === "pending" || status === "in_progress" || status === "completed" || status === "cancelled") {
-    return status
-  }
-  return "confirmed"
+  return VALID_BOOKING_STATUSES.has(status) ? (status as BookingStatus) : "confirmed"
 }
 
 export function DriverPlanning({ onBack }: PlanningProps) {
@@ -102,7 +85,7 @@ export function DriverPlanning({ onBack }: PlanningProps) {
     fetchDriverBookings()
   }, [])
 
-  const now = new Date()
+  const now = useMemo(() => new Date(), [])
   const weekStart = useMemo(() => getWeekStart(now), [now])
   const weekDays = useMemo(() => WEEK_DAYS.map((label, index) => ({ label, date: new Date(weekStart.getTime() + index * 86400000) })), [weekStart])
 
@@ -111,6 +94,18 @@ export function DriverPlanning({ onBack }: PlanningProps) {
     weekEnd.setDate(weekStart.getDate() + 7)
     return missions.filter((mission) => mission.date >= weekStart && mission.date < weekEnd)
   }, [missions, weekStart])
+
+  // Pre-compute day→missions map for O(1) calendar column lookup instead of O(N) filter per column
+  const missionsByDay = useMemo(() => {
+    const map = new Map<string, PlanningMission[]>()
+    for (const mission of weekMissions) {
+      const key = `${mission.date.getFullYear()}-${mission.date.getMonth()}-${mission.date.getDate()}`
+      const list = map.get(key) ?? []
+      list.push(mission)
+      map.set(key, list)
+    }
+    return map
+  }, [weekMissions])
 
   const upcomingMissions = useMemo(() => {
     return missions
@@ -174,9 +169,8 @@ export function DriverPlanning({ onBack }: PlanningProps) {
               </div>
 
               {weekDays.map((day, columnIndex) => {
-                const dayMissions = weekMissions.filter((mission) => {
-                  return mission.date.getDate() === day.date.getDate() && mission.date.getMonth() === day.date.getMonth() && mission.date.getFullYear() === day.date.getFullYear()
-                })
+                const dayKey = `${day.date.getFullYear()}-${day.date.getMonth()}-${day.date.getDate()}`
+                const dayMissions = missionsByDay.get(dayKey) ?? []
 
                 return (
                   <div key={day.label + columnIndex} className="relative min-h-[310px] rounded-xl border border-(--border) bg-[color-mix(in_srgb,var(--bg-primary)_55%,transparent)] p-2">

@@ -81,10 +81,19 @@ export function VehicleReport({ onBack }: VehicleReportProps) {
 
       if (!response.ok) return
 
-      const refresh = await fetch("/api/vehicle-reports")
-      const refreshData = await refresh.json()
-      if (refreshData?.success) {
-        setReports(Array.isArray(refreshData.data) ? refreshData.data : [])
+      const newReport = await response.json()
+      if (newReport?.success) {
+        const issue: VehicleIssue = {
+          id: newReport.id,
+          title: newReport.title,
+          description: newReport.description,
+          category: newReport.category,
+          severity: newReport.severity,
+          status: newReport.status,
+          reportedAt: newReport.reportedAt,
+          vehicleInfo: newReport.vehicleInfo,
+        }
+        setReports((current) => [issue, ...current])
       }
 
       setForm((current) => ({ ...current, title: "", description: "" }))

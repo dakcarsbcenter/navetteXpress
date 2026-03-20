@@ -1,15 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { advertisements } from '@/schema';
+import { adPlacementEnum, advertisements } from '@/schema';
 import { eq, and, lte, gte } from 'drizzle-orm';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+type AdPlacement = (typeof adPlacementEnum.enumValues)[number];
+const adPlacements = new Set<string>(adPlacementEnum.enumValues);
+
+function isAdPlacement(value: string): value is AdPlacement {
+    return adPlacements.has(value);
+}
+
 // GET /api/ads?placement=... — Récupérer les pubs actives pour un emplacement
 export async function GET(req: NextRequest) {
-    const placement = req.nextUrl.searchParams.get('placement');
-    if (!placement) {
+    const placementParam = req.nextUrl.searchParams.get('placement');
+    if (!placementParam) {
         return NextResponse.json({ error: 'placement requis' }, { status: 400 });
+    }
+
+    if (!isAdPlacement(placementParam)) {
+        return NextResponse.json({ error: 'placement invalide' }, { status: 400 });
     }
 
     const now = new Date();
@@ -20,7 +35,7 @@ export async function GET(req: NextRequest) {
             .from(advertisements)
             .where(
                 and(
-                    eq(advertisements.placement, placement as any),
+                    eq(advertisements.placement, placementParam),
                     eq(advertisements.status, 'active'),
                     lte(advertisements.startDate, now),
                     gte(advertisements.endDate, now),
@@ -39,7 +54,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
     // Vérifier auth admin
     const session = await getServerSession(authOptions);
-    if (!session || (session.user as any).role !== 'admin' && (session.user as any).role !== 'manager') {
+    if (!session || (session.user.role !== 'admin' && session.user.role !== 'manager')) {
         return NextResponse.json({ error: 'Non autorisé' }, { status: 403 });
     }
 
@@ -63,7 +78,7 @@ export async function POST(req: NextRequest) {
             ...body,
             startDate: new Date(body.startDate),
             endDate: new Date(body.endDate),
-            createdBy: (session.user as any).id,
+            createdBy: session.user.id,
             status: body.status ?? 'draft',
         };
 

@@ -109,25 +109,16 @@ export default function DriverDashboardPage() {
 
   const revenueData = useMemo<RevenuePoint[]>(() => {
     const days = ["LUN", "MAR", "MER", "JEU", "VEN", "SAM", "DIM"]
-    return days.map((dayLabel, index) => {
-      const dayRevenue = bookings
-        .filter((item) => {
-          const date = new Date(item.booking.scheduledDateTime)
-          const dayIndex = date.getDay() === 0 ? 6 : date.getDay() - 1
-          return dayIndex === index && item.booking.status === "completed"
-        })
-        .reduce((sum, item) => {
-          const currentPrice = typeof item.booking.price === "string"
-            ? Number.parseFloat(item.booking.price)
-            : Number(item.booking.price ?? 0)
-          return Number.isFinite(currentPrice) ? sum + currentPrice : sum
-        }, 0)
-
-      return {
-        day: dayLabel,
-        value: dayRevenue,
-      }
-    })
+    const revenueByDay = new Array(7).fill(0)
+    for (const item of bookings) {
+      if (item.booking.status !== "completed") continue
+      const date = new Date(item.booking.scheduledDateTime)
+      const dayIndex = date.getDay() === 0 ? 6 : date.getDay() - 1
+      const rawPrice = item.booking.price
+      const price = typeof rawPrice === "string" ? Number.parseFloat(rawPrice) : Number(rawPrice ?? 0)
+      if (Number.isFinite(price)) revenueByDay[dayIndex] += price
+    }
+    return days.map((day, index) => ({ day, value: revenueByDay[index] }))
   }, [bookings])
 
   return (
