@@ -6,6 +6,7 @@ import { AuthSessionProvider } from "@/components/providers/session-provider";
 import { GoogleAnalytics } from "./google-analytics";
 import { JsonLd } from '@/components/seo/JsonLd';
 import { schemaLocalBusiness, schemaWebSite } from '@/lib/schema';
+import { CapacitorAppUrlListener } from '@/components/mobile/CapacitorAppUrlListener';
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -143,7 +144,7 @@ export const metadata: Metadata = {
   },
 
   // ── Manifest PWA ──
-  manifest: '/manifest.json',
+  manifest: '/manifest.webmanifest',
 };
 
 
@@ -158,6 +159,7 @@ export default function RootLayout({
       <body className={`${cormorant.variable} ${dmSans.variable} ${dmMono.variable} ${syne.variable} antialiased font-body bg-background text-foreground`}>
         <JsonLd data={schemaLocalBusiness} />
         <JsonLd data={schemaWebSite} />
+        <CapacitorAppUrlListener />
         <AuthSessionProvider>
           <ThemeProvider
             attribute="data-theme"
