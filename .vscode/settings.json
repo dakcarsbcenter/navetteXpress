@@ -1,4 +1,6 @@
 {
   "css.customData": [".vscode/css_custom_data.json"],
-  "java.jdt.ls.java.home": "C:/Program Files/Eclipse Adoptium/jdk-17.0.18.8-hotspot"
+  "java.jdt.ls.java.home": "C:/Program Files/Eclipse Adoptium/jdk-17.0.18.8-hotspot",
+  "snyk.advanced.organization": "fd1390ed-6062-4eee-ad83-28c8e1c431d3",
+  "snyk.advanced.autoSelectOrganization": true
 }
