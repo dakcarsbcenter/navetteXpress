@@ -40,6 +40,13 @@ function SignInForm() {
     }
 
     switch (errorType) {
+      case 'OAuthCallbackFailed':
+        return "Le retour OAuth mobile a echoue. Veuillez reessayer la connexion Google."
+      case 'OAuthSignin':
+      case 'OAuthCallback':
+        return "Erreur lors de la connexion OAuth Google. Veuillez reessayer."
+      case 'OAuthAccountNotLinked':
+        return "Un compte existe deja avec cet email via un autre mode de connexion."
       case 'AccountLockedAfter3Attempts':
         setShowResetOption(true)
         return "Compte bloqué après 3 tentatives échouées. Veuillez réinitialiser votre mot de passe ou réessayer dans 15 minutes."
@@ -141,18 +148,27 @@ function SignInForm() {
   const handleGoogleSignIn = async () => {
     setIsLoading(true)
     setError("")
-    try {
-      const result = await signIn("google", {
-        callbackUrl: "/dashboard",
-        redirect: false
-      })
 
-      if (result?.error) {
-        console.error("Erreur Google SignIn:", result.error)
-        setError("Erreur lors de la connexion avec Google. Veuillez réessayer.")
-      } else if (result?.ok) {
-        router.push("/dashboard")
+    const getGoogleCallbackUrl = async (): Promise<string> => {
+      try {
+        const { Capacitor } = await import('@capacitor/core')
+
+        if (Capacitor.isNativePlatform()) {
+          return '/auth/mobile-callback?next=/dashboard'
+        }
+      } catch {
+        // Ignore platform detection issues and fallback to web callback.
       }
+
+      return '/dashboard'
+    }
+
+    try {
+      const callbackUrl = await getGoogleCallbackUrl()
+      await signIn("google", {
+        callbackUrl,
+        redirect: true,
+      })
     } catch (error) {
       console.error("Erreur Google SignIn:", error)
       setError("Erreur lors de la connexion avec Google. Veuillez réessayer.")

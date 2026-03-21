@@ -19,14 +19,18 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }
 
 repositories {
-    flatDir{
-        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    def cordovaPluginLibsDir = file('../capacitor-cordova-android-plugins/src/main/libs')
+    def appLibsDir = file('libs')
+    if (cordovaPluginLibsDir.exists() || appLibsDir.exists()) {
+        flatDir {
+            dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+        }
     }
 }
 

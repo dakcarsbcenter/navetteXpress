@@ -23,8 +23,13 @@ export function CapacitorAppUrlListener() {
 
           try {
             const url = new URL(event.url)
-            const path = `${url.pathname}${url.search}${url.hash}`
-            window.location.assign(path || '/')
+            const isHttpProtocol = url.protocol === 'http:' || url.protocol === 'https:'
+            const rawPath = isHttpProtocol
+              ? `${url.pathname}${url.search}${url.hash}`
+              : `/${url.host}${url.pathname}${url.search}${url.hash}`
+            const normalizedPath = rawPath.startsWith('/') ? rawPath : `/${rawPath}`
+
+            window.location.assign(normalizedPath || '/')
           } catch {
             window.location.assign('/')
           }

@@ -1,0 +1,60 @@
+name: Lint Guardrails
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  lint-guardrails:
+    name: Mobile + Changed Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint mobile scope
+        run: npm run lint:mobile
+
+      - name: Lint changed files
+        run: npm run lint:changed -- ${{ github.event.pull_request.base.sha }}
+
+  lint-debt-report:
+    name: Global Lint Debt Report (non-blocking)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate lint JSON report
+        run: npx eslint . -f json -o lint-report.json
+
+      - name: Upload lint report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-report-pr-${{ github.event.pull_request.number }}
+          path: lint-report.json
+          if-no-files-found: warn

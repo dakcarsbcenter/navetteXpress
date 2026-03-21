@@ -7,6 +7,8 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
+    "lint:mobile": "eslint --no-error-on-unmatched-pattern \"android/**/*.{js,jsx,ts,tsx,mjs,cjs}\" capacitor.config.ts",
+    "lint:changed": "node scripts/lint-changed.mjs",
     "mobile:android:init": "npx cap add android",
     "mobile:sync": "npx cap sync android",
     "mobile:open:android": "npx cap open android",

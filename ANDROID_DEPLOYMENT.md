@@ -53,6 +53,20 @@ Notes:
 - Register OAuth redirect URIs for Android flow
 - Validate login with credentials and Google OAuth on real device
 
+## 3.1) Mobile OAuth callback strategy (implemented)
+
+- Google sign-in now uses a dedicated callback path on native Android:
+   - `/auth/mobile-callback?next=/dashboard`
+- Callback route validates session state and redirects safely:
+   - authenticated => `next` path (default `/dashboard`)
+   - unauthenticated or OAuth error => `/auth/signin?error=...`
+- Capacitor URL listener handles:
+   - HTTPS app links (ex: `https://navettexpress.com/...`)
+   - Custom scheme links (ex: `navettexpress://auth/callback?...`)
+
+See full validation steps in:
+- `ANDROID_OAUTH_E2E_CHECKLIST.md`
+
 ## 4) Internal testing release flow
 
 1. Generate signed AAB in Android Studio.
