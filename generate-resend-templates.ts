@@ -127,7 +127,12 @@ ${accountLockedHtml}
   try {
     console.log('\n📧 Génération du template Welcome...');
     
-    const welcomeHtml = await render(WelcomeEmail());
+    const welcomeHtml = await render(
+      WelcomeEmail({
+        userName: '{{userName}}',
+        dashboardUrl: '{{dashboardUrl}}',
+      })
+    );
 
     const templateInfo = `
 <!--

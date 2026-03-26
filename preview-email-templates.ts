@@ -75,7 +75,12 @@ async function previewTemplates() {
   try {
     console.log('\n📧 Génération de WelcomeEmail...');
     
-    const welcomeHtml = await render(WelcomeEmail());
+    const welcomeHtml = await render(
+      WelcomeEmail({
+        userName: 'Awa Ndiaye',
+        dashboardUrl: 'http://localhost:3000/client/dashboard',
+      })
+    );
 
     fs.writeFileSync(
       path.join(outputDir, 'WelcomeEmail.html'),

@@ -51,8 +51,8 @@ async function generateAllResendTemplates() {
     {
       name: 'welcome',
       subject: '🎉 Bienvenue chez NavetteXpress !',
-      component: WelcomeEmail(),
-      variables: [],
+      component: WelcomeEmail({ userName: '{{userName}}', dashboardUrl: '{{dashboardUrl}}' }),
+      variables: ['userName', 'dashboardUrl'],
       category: 'Authentification'
     },
     {

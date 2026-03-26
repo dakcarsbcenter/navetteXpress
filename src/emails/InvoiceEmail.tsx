@@ -10,6 +10,7 @@ import {
   Section,
   Text,
 } from '@react-email/components';
+import { brand, fonts, shellStyles } from './brand';
 
 interface InvoiceEmailProps {
   invoiceNumber: string;
@@ -26,374 +27,152 @@ interface InvoiceEmailProps {
 export default function InvoiceEmail({
   invoiceNumber = 'INV-2025-00001',
   customerName = 'Jean Dupont',
-  service = 'Transfert Aéroport - Hôtel',
-  amountHT = '120,000 FCFA',
-  vatAmount = '24,000 FCFA',
-  amountTTC = '144,000 FCFA',
+  service = 'Transfert Aeroport - Hotel',
+  amountHT = '120 000 FCFA',
+  vatAmount = '24 000 FCFA',
+  amountTTC = '144 000 FCFA',
   issueDate = '15/11/2025',
   dueDate = '15/12/2025',
-  invoiceUrl = 'https://navettexpress.com/invoices/{{invoiceNumber}}',
+  invoiceUrl = 'https://navettexpress.com/invoices/INV-2025-00001',
 }: InvoiceEmailProps) {
   return (
     <Html lang="fr" dir="ltr">
       <Head />
       <Preview>Nouvelle facture NavetteXpress - {invoiceNumber}</Preview>
-      <Body style={main}>
-        <Container style={container}>
-          {/* Header bordeaux NavetteXpress */}
-          <Section style={header}>
-            <Heading style={headerText}>Navette Express</Heading>
-          </Section>
+      <Body style={shellStyles.body}>
+        <Section style={{ backgroundColor: brand.background, padding: '40px 16px 60px' }}>
+          <Container style={shellStyles.container}>
+            <Section
+              style={{
+                height: '4px',
+                background: `linear-gradient(to right, ${brand.gold}, ${brand.goldLight}, transparent)`,
+                fontSize: '0',
+                lineHeight: '0',
+              }}
+            />
 
-          <Heading style={h1}>🧾 Nouvelle Facture</Heading>
-
-          <Text style={text}>Bonjour {customerName},</Text>
-
-          <Text style={text}>
-            Nous vous remercions pour votre confiance. Veuillez trouver ci-dessous les détails de votre facture :
-          </Text>
-
-          {/* Informations de la facture */}
-          <Section style={invoiceBox}>
-            <Text style={invoiceTitle}>📄 Facture {invoiceNumber}</Text>
-            
-            <Section style={invoiceDetails}>
-              <Text style={detailRow}>
-                <span style={detailLabel}>Service :</span>
-                <span style={detailValue}>{service}</span>
+            <Section style={{ padding: '36px 40px 20px', textAlign: 'center' }}>
+              <Text style={{ fontFamily: fonts.heading, fontSize: '22px', fontWeight: 700, letterSpacing: '0.04em', color: brand.textPrimary, margin: '0' }}>
+                Navette <span style={{ color: brand.gold }}>Xpress</span>
               </Text>
-              
-              <Text style={detailRow}>
-                <span style={detailLabel}>Date d&apos;émission :</span>
-                <span style={detailValue}>{issueDate}</span>
-              </Text>
-              
-              <Text style={detailRow}>
-                <span style={detailLabel}>Date d&apos;échéance :</span>
-                <span style={detailValue}>{dueDate}</span>
+              <Text style={{ fontFamily: fonts.body, fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: brand.textMuted, margin: '6px 0 0' }}>
+                Facturation · Service premium
               </Text>
             </Section>
-          </Section>
 
-          {/* Détails des montants */}
-          <Section style={amountBox}>
-            <Text style={amountTitle}>💰 Détails des montants</Text>
-            
-            <Section style={amountDetails}>
-              <Text style={amountRow}>
-                <span style={amountLabel}>Montant HT :</span>
-                <span style={amountValue}>{amountHT}</span>
-              </Text>
-              
-              <Text style={amountRow}>
-                <span style={amountLabel}>TVA (20%) :</span>
-                <span style={amountValue}>{vatAmount}</span>
-              </Text>
-              
-              <Section style={divider} />
-              
-              <Text style={totalRow}>
-                <span style={totalLabel}>Montant TTC :</span>
-                <span style={totalValue}>{amountTTC}</span>
+            <Section style={{ padding: '28px 40px 16px', textAlign: 'center' }}>
+              <Text style={{ fontSize: '32px', margin: '0 0 18px', color: brand.gold }}>🧾</Text>
+              <Heading style={shellStyles.heading}>Nouvelle facture</Heading>
+            </Section>
+
+            <Section style={{ padding: '24px 40px 0' }}>
+              <Text style={{ ...shellStyles.text, color: brand.textPrimary, fontSize: '16px', lineHeight: '28px' }}>Bonjour {customerName},</Text>
+              <Text style={{ ...shellStyles.text, marginTop: '16px' }}>
+                Merci pour votre confiance. Retrouvez ci-dessous le recapitulatif de votre facture.
               </Text>
             </Section>
-          </Section>
 
-          {/* Bouton de téléchargement */}
-          <Section style={buttonContainer}>
-            <Button style={button} href={invoiceUrl}>
-              📥 Télécharger la facture
-            </Button>
-          </Section>
+            <Section style={{ padding: '24px 40px 0' }}>
+              <Section style={{ backgroundColor: brand.panel, border: `1px solid ${brand.border}`, borderRadius: '12px', padding: '20px' }}>
+                <Text style={{ fontFamily: fonts.body, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', color: brand.textMuted, margin: '0 0 8px' }}>
+                  Facture
+                </Text>
+                <Text style={{ fontFamily: fonts.heading, fontSize: '24px', color: brand.gold, margin: '0 0 18px' }}>{invoiceNumber}</Text>
+                <Text style={rowLabel}>Service</Text>
+                <Text style={rowValue}>{service}</Text>
+                <Text style={rowLabel}>Date d&apos;emission</Text>
+                <Text style={rowValue}>{issueDate}</Text>
+                <Text style={rowLabel}>Date d&apos;echeance</Text>
+                <Text style={rowValue}>{dueDate}</Text>
+              </Section>
+            </Section>
 
-          {/* Informations de paiement */}
-          <Section style={infoBox}>
-            <Text style={infoTitle}>💳 Modalités de paiement</Text>
-            <Text style={infoItem}>• Paiement par virement bancaire</Text>
-            <Text style={infoItem}>• Paiement par carte bancaire</Text>
-            <Text style={infoItem}>• Paiement en espèces</Text>
-            <Text style={infoItem}>• Paiement par Mobile Money</Text>
-          </Section>
+            <Section style={{ padding: '20px 40px 0' }}>
+              <Section style={{ backgroundColor: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.25)', borderRadius: '12px', padding: '20px' }}>
+                <Text style={{ fontFamily: fonts.body, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', color: brand.gold, margin: '0 0 12px' }}>
+                  Details des montants
+                </Text>
+                <Text style={priceLine}><span style={priceLabel}>Montant HT</span><span style={priceValue}>{amountHT}</span></Text>
+                <Text style={priceLine}><span style={priceLabel}>TVA</span><span style={priceValue}>{vatAmount}</span></Text>
+                <Section style={{ height: '1px', backgroundColor: 'rgba(201,168,76,0.25)', margin: '10px 0' }} />
+                <Text style={totalLine}><span style={totalLabel}>Montant TTC</span><span style={totalValue}>{amountTTC}</span></Text>
+              </Section>
+            </Section>
 
-          {/* Note importante */}
-          <Section style={alertBox}>
-            <Text style={alertText}>
-              ⚠️ Cette facture est à régler avant le <strong>{dueDate}</strong>
-            </Text>
-          </Section>
+            <Section style={{ textAlign: 'center', padding: '34px 40px 30px' }}>
+              <Button href={invoiceUrl} style={shellStyles.cta}>Telecharger la facture</Button>
+            </Section>
 
-          {/* Signature */}
-          <Section style={hr} />
-          <Text style={footer}>
-            Cordialement,<br />
-            <strong>L&apos;équipe NavetteXpress</strong>
-          </Text>
+            <Section style={{ padding: '0 40px 24px' }}>
+              <Section style={{ backgroundColor: 'rgba(239,68,68,0.08)', border: '1px dashed rgba(239,68,68,0.35)', borderRadius: '10px', padding: '14px 16px' }}>
+                <Text style={{ ...shellStyles.text, fontSize: '13px', lineHeight: '21px', color: '#f3b3b3' }}>
+                  ⚠️ Cette facture est a regler avant le <strong>{dueDate}</strong>.
+                </Text>
+              </Section>
+            </Section>
 
-          <Text style={footerSmall}>
-            Pour toute question concernant cette facture, n&apos;hésitez pas à nous contacter.
-          </Text>
-
-          {/* Footer final */}
-          <Section style={finalFooter}>
-            <Text style={finalFooterText}>
-              © 2025 NavetteXpress. Tous droits réservés.
-            </Text>
-            <Text style={finalFooterSmall}>
-              [NavetteXpress SAS, 123 Rue de la Mobilité, 75001 Paris, France]
-            </Text>
-          </Section>
-        </Container>
+            <Section style={{ padding: '0 40px 40px', textAlign: 'center' }}>
+              <Text style={{ fontFamily: fonts.heading, fontSize: '15px', color: brand.gold, margin: '0 0 10px', fontStyle: 'italic' }}>
+                L&apos;equipe NavetteXpress
+              </Text>
+              <Text style={{ fontFamily: fonts.body, fontSize: '11px', lineHeight: '18px', color: brand.textMuted, margin: '0' }}>
+                Pour toute question concernant cette facture, contactez notre support.
+              </Text>
+            </Section>
+          </Container>
+        </Section>
       </Body>
     </Html>
   );
 }
 
-// Styles
-const main = {
-  backgroundColor: '#e8f0f8',
-  fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
+const rowLabel = {
+  fontFamily: fonts.body,
+  fontSize: '11px',
+  textTransform: 'uppercase' as const,
+  letterSpacing: '0.1em',
+  color: brand.textMuted,
+  margin: '0 0 2px',
 };
 
-const container = {
-  backgroundColor: '#ffffff',
-  margin: '0 auto',
-  padding: '0',
-  maxWidth: '600px',
-  border: '2px solid #93374d',
-  borderRadius: '8px',
-  overflow: 'hidden',
-};
-
-const header = {
-  backgroundColor: '#93374d',
-  padding: '32px 20px',
-  textAlign: 'center' as const,
-  margin: '0',
-};
-
-const headerText = {
-  color: '#ffffff',
-  fontSize: '28px',
-  fontWeight: 'bold',
-  margin: '0',
-  padding: '0',
-};
-
-const h1 = {
-  color: '#2c3e50',
-  fontSize: '24px',
-  fontWeight: 'bold',
-  margin: '32px 24px 24px',
-  padding: '0',
-  textAlign: 'center' as const,
-};
-
-const text = {
-  color: '#4a5568',
-  fontSize: '16px',
-  lineHeight: '26px',
-  margin: '16px 24px',
-};
-
-const invoiceBox = {
-  backgroundColor: '#f8f9fa',
-  border: '2px solid #93374d',
-  borderRadius: '8px',
-  padding: '20px',
-  margin: '24px 12px',
-};
-
-const invoiceTitle = {
-  color: '#93374d',
-  fontSize: '18px',
-  fontWeight: 'bold',
-  margin: '0 0 16px 0',
-  textAlign: 'center' as const,
-};
-
-const invoiceDetails = {
-  margin: '0',
-};
-
-const detailRow = {
+const rowValue = {
+  fontFamily: fonts.body,
   fontSize: '15px',
-  lineHeight: '28px',
-  color: '#2c3e50',
-  margin: '8px 0',
+  lineHeight: '22px',
+  color: brand.textPrimary,
+  margin: '0 0 10px',
+};
+
+const priceLine = {
+  fontFamily: fonts.body,
+  fontSize: '15px',
+  lineHeight: '24px',
+  color: brand.textPrimary,
+  margin: '0 0 6px',
   display: 'flex',
   justifyContent: 'space-between',
 };
 
-const detailLabel = {
-  fontWeight: '600',
-  color: '#4a5568',
-};
-
-const detailValue = {
-  color: '#2c3e50',
-  fontWeight: 'normal',
-};
-
-const amountBox = {
-  backgroundColor: '#dbeafe',
-  border: '2px solid #3b82f6',
-  borderRadius: '8px',
-  padding: '20px',
-  margin: '24px 12px',
-};
-
-const amountTitle = {
-  color: '#1e3a8a',
+const totalLine = {
+  ...priceLine,
   fontSize: '18px',
-  fontWeight: 'bold',
-  margin: '0 0 16px 0',
-  textAlign: 'center' as const,
-};
-
-const amountDetails = {
   margin: '0',
 };
 
-const amountRow = {
-  fontSize: '15px',
-  lineHeight: '28px',
-  color: '#1e3a8a',
-  margin: '8px 0',
-  display: 'flex',
-  justifyContent: 'space-between',
+const priceLabel = {
+  color: brand.textSecondary,
 };
 
-const amountLabel = {
-  fontWeight: '500',
-  color: '#1e3a8a',
-};
-
-const amountValue = {
-  color: '#1e3a8a',
-  fontWeight: 'normal',
-};
-
-const divider = {
-  borderTop: '1px solid #93c5fd',
-  margin: '12px 0',
-};
-
-const totalRow = {
-  fontSize: '18px',
-  lineHeight: '32px',
-  color: '#93374d',
-  margin: '12px 0 0 0',
-  display: 'flex',
-  justifyContent: 'space-between',
-  fontWeight: 'bold',
+const priceValue = {
+  color: brand.textPrimary,
 };
 
 const totalLabel = {
-  fontWeight: 'bold',
-  color: '#93374d',
+  color: brand.gold,
+  fontWeight: 700,
 };
 
 const totalValue = {
-  color: '#93374d',
-  fontWeight: 'bold',
-};
-
-const buttonContainer = {
-  margin: '32px 24px',
-  textAlign: 'center' as const,
-};
-
-const button = {
-  backgroundColor: '#93374d',
-  borderRadius: '5px',
-  color: '#fff',
-  fontSize: '16px',
-  fontWeight: 'bold',
-  textDecoration: 'none',
-  textAlign: 'center' as const,
-  display: 'inline-block',
-  padding: '14px 40px',
-};
-
-const infoBox = {
-  backgroundColor: '#f0fdf4',
-  border: '2px solid #22c55e',
-  borderRadius: '8px',
-  padding: '16px',
-  margin: '24px 12px',
-  fontSize: '15px',
-  color: '#166534',
-};
-
-const infoTitle = {
-  color: '#166534',
-  fontSize: '16px',
-  fontWeight: 'bold',
-  margin: '0 0 12px',
-};
-
-const infoItem = {
-  color: '#166534',
-  fontSize: '14px',
-  lineHeight: '22px',
-  margin: '4px 0',
-};
-
-const alertBox = {
-  backgroundColor: '#fef3c7',
-  border: '2px solid #f59e0b',
-  borderRadius: '8px',
-  padding: '20px',
-  margin: '24px 12px',
-  textAlign: 'center' as const,
-};
-
-const alertText = {
-  color: '#92400e',
-  fontSize: '16px',
-  fontWeight: '600',
-  lineHeight: '24px',
-  margin: '0',
-};
-
-const hr = {
-  borderTop: '1px solid #e5e7eb',
-  margin: '32px 24px',
-};
-
-const footer = {
-  color: '#6b7280',
-  fontSize: '14px',
-  lineHeight: '24px',
-  margin: '24px',
-  textAlign: 'center' as const,
-};
-
-const footerSmall = {
-  color: '#9ca3af',
-  fontSize: '12px',
-  lineHeight: '20px',
-  margin: '16px 24px',
-  textAlign: 'center' as const,
-};
-
-const finalFooter = {
-  backgroundColor: '#f3f4f6',
-  padding: '24px',
-  textAlign: 'center' as const,
-  margin: '0',
-};
-
-const finalFooterText = {
-  color: '#6b7280',
-  fontSize: '13px',
-  lineHeight: '20px',
-  margin: '0 0 8px 0',
-};
-
-const finalFooterSmall = {
-  color: '#9ca3af',
-  fontSize: '11px',
-  lineHeight: '16px',
-  margin: '0',
+  color: brand.gold,
+  fontWeight: 700,
 };

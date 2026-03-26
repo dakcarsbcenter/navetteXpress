@@ -1,5 +1,6 @@
 import {
   Body,
+  Button,
   Container,
   Head,
   Heading,
@@ -7,146 +8,82 @@ import {
   Preview,
   Section,
   Text,
-  Button,
 } from '@react-email/components';
 import * as React from 'react';
+import { brand, fonts, shellStyles } from './brand';
 
-export default function WelcomeEmail() {
+interface WelcomeEmailProps {
+  userName?: string;
+  dashboardUrl?: string;
+}
+
+export default function WelcomeEmail({
+  userName = 'Utilisateur',
+  dashboardUrl = '{{dashboardUrl}}',
+}: WelcomeEmailProps) {
   return (
-    <Html>
+    <Html lang="fr" dir="ltr">
       <Head />
-      <Preview>Bienvenue chez NavetteXpress !</Preview>
-      <Body style={main}>
-        <Container style={container}>
-          <Heading style={h1}>🎉 Bienvenue chez NavetteXpress !</Heading>
-          
-          <Text style={text}>
-            Bonjour et bienvenue !
-          </Text>
-          
-          <Text style={text}>
-            Nous sommes ravis de vous compter parmi nos utilisateurs. 
-            NavetteXpress est votre solution de transport professionnel.
-          </Text>
+      <Preview>Bienvenue chez NavetteXpress</Preview>
+      <Body style={shellStyles.body}>
+        <Section style={{ backgroundColor: brand.background, padding: '40px 16px 60px' }}>
+          <Container style={shellStyles.container}>
+            <Section
+              style={{
+                height: '4px',
+                background: `linear-gradient(to right, ${brand.gold}, ${brand.goldLight}, transparent)`,
+                fontSize: '0',
+                lineHeight: '0',
+              }}
+            />
 
-          <Section style={buttonContainer}>
-            <Button style={button} href="http://localhost:3000">
-              Accéder à mon compte
-            </Button>
-          </Section>
+            <Section style={{ padding: '36px 40px 20px', textAlign: 'center' }}>
+              <Text style={{ fontFamily: fonts.heading, fontSize: '22px', fontWeight: 700, color: brand.textPrimary, margin: '0', letterSpacing: '0.04em' }}>
+                Navette <span style={{ color: brand.gold }}>Xpress</span>
+              </Text>
+              <Text style={{ fontFamily: fonts.body, fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: brand.textMuted, margin: '6px 0 0' }}>
+                Premium · Mobilite
+              </Text>
+            </Section>
 
-          <Section style={featuresBox}>
-            <Text style={featureTitle}>✨ Ce que vous pouvez faire :</Text>
-            <Text style={featureItem}>🚗 Réserver des courses facilement</Text>
-            <Text style={featureItem}>📱 Suivre vos réservations en temps réel</Text>
-            <Text style={featureItem}>💳 Gérer vos paiements</Text>
-            <Text style={featureItem}>⭐ Noter vos chauffeurs</Text>
-          </Section>
+            <Section style={{ padding: '34px 40px 14px', textAlign: 'center' }}>
+              <Text style={{ fontSize: '32px', margin: '0 0 16px', color: brand.gold }}>🎉</Text>
+              <Heading style={shellStyles.heading}>Bienvenue chez NavetteXpress</Heading>
+            </Section>
 
-          <Text style={text}>
-            Si vous avez des questions, n&apos;hésitez pas à nous contacter.
-          </Text>
+            <Section style={{ padding: '24px 40px 0' }}>
+              <Text style={{ ...shellStyles.text, color: brand.textPrimary, fontSize: '16px', lineHeight: '28px' }}>Bonjour {userName},</Text>
+              <Text style={{ ...shellStyles.text, marginTop: '16px' }}>
+                Votre compte est maintenant actif. Vous pouvez reserver vos trajets premium, suivre vos demandes et gerer vos informations depuis votre espace client.
+              </Text>
+            </Section>
 
-          <Section style={divider} />
+            <Section style={{ textAlign: 'center', padding: '36px 40px 28px' }}>
+              <Button href={dashboardUrl} style={shellStyles.cta}>Acceder a mon espace</Button>
+            </Section>
 
-          <Text style={footer}>
-            Cordialement,<br />
-            <strong>L&apos;équipe NavetteXpress</strong>
-          </Text>
+            <Section style={{ padding: '0 40px 34px' }}>
+              <Section style={{ backgroundColor: brand.panel, border: `1px solid ${brand.border}`, borderRadius: '12px', padding: '20px' }}>
+                <Text style={{ fontFamily: fonts.heading, fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.15em', color: brand.gold, margin: '0 0 12px' }}>
+                  Vos avantages
+                </Text>
+                <Text style={{ ...shellStyles.text, fontSize: '14px', lineHeight: '22px', marginBottom: '8px' }}>• Reservation rapide et suivi temps reel</Text>
+                <Text style={{ ...shellStyles.text, fontSize: '14px', lineHeight: '22px', marginBottom: '8px' }}>• Espace client pour vos factures et devis</Text>
+                <Text style={{ ...shellStyles.text, fontSize: '14px', lineHeight: '22px' }}>• Support reactif 24/7</Text>
+              </Section>
+            </Section>
 
-          <Text style={footerSmall}>
-            Cet email a été envoyé automatiquement. Merci de ne pas répondre à ce message.
-          </Text>
-        </Container>
+            <Section style={{ padding: '0 40px 40px', textAlign: 'center' }}>
+              <Text style={{ fontFamily: fonts.heading, fontSize: '15px', color: brand.gold, margin: '0 0 10px', fontStyle: 'italic' }}>
+                L&apos;equipe NavetteXpress
+              </Text>
+              <Text style={{ fontFamily: fonts.body, fontSize: '11px', lineHeight: '18px', color: brand.textMuted, margin: '0' }}>
+                Besoin d&apos;aide ? Repondez simplement a cet email.
+              </Text>
+            </Section>
+          </Container>
+        </Section>
       </Body>
     </Html>
   );
 }
-
-const main = {
-  backgroundColor: '#f6f9fc',
-  fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
-};
-
-const container = {
-  backgroundColor: '#ffffff',
-  margin: '0 auto',
-  padding: '20px 0 48px',
-  marginBottom: '64px',
-  maxWidth: '600px',
-  borderRadius: '8px',
-};
-
-const h1 = {
-  color: '#333',
-  fontSize: '24px',
-  fontWeight: 'bold',
-  margin: '40px 0 30px',
-  padding: '0',
-  textAlign: 'center' as const,
-};
-
-const text = {
-  color: '#333',
-  fontSize: '16px',
-  lineHeight: '26px',
-  margin: '16px 24px',
-};
-
-const buttonContainer = {
-  textAlign: 'center' as const,
-  margin: '32px 0',
-};
-
-const button = {
-  backgroundColor: '#0070f3',
-  borderRadius: '5px',
-  color: '#fff',
-  fontSize: '16px',
-  fontWeight: 'bold',
-  textDecoration: 'none',
-  textAlign: 'center' as const,
-  display: 'inline-block',
-  padding: '12px 24px',
-};
-
-const featuresBox = {
-  backgroundColor: '#f8f9fa',
-  border: '2px solid #e74c3c',
-  borderRadius: '5px',
-  margin: '24px 12px',
-  padding: '20px',
-};
-
-const featureTitle = {
-  color: '#333',
-  fontSize: '16px',
-  fontWeight: 'bold',
-  margin: '0 0 12px',
-};
-
-const featureItem = {
-  color: '#333',
-  fontSize: '14px',
-  lineHeight: '22px',
-  margin: '4px 0',
-};
-
-const divider = {
-  borderTop: '1px solid #e6ebf1',
-  margin: '32px 24px',
-};
-
-const footer = {
-  color: '#525f7f',
-  fontSize: '16px',
-  lineHeight: '24px',
-  margin: '24px 24px 8px',
-};
-
-const footerSmall = {
-  color: '#8898aa',
-  fontSize: '12px',
-  lineHeight: '20px',
-  margin: '0 24px 32px',
-};

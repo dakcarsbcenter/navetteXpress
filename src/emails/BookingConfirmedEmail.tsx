@@ -5,12 +5,12 @@ import {
   Head,
   Heading,
   Html,
-  Hr,
   Preview,
   Section,
   Text,
 } from '@react-email/components';
 import * as React from 'react';
+import { brand, fonts, shellStyles } from './brand';
 
 interface BookingConfirmedEmailProps {
   customerName: string;
@@ -19,303 +19,119 @@ interface BookingConfirmedEmailProps {
   dropoffLocation: string;
   pickupDate: string;
   pickupTime: string;
+  passengers: number;
+  vehicleType: string;
   driverName?: string;
-  vehicleType?: string;
-  totalPrice: string;
   dashboardUrl: string;
 }
 
 export default function BookingConfirmedEmail({
   customerName = 'Client',
   bookingId = 'RES-001',
-  pickupLocation = 'Aéroport Charles de Gaulle',
+  pickupLocation = 'Aeroport Charles de Gaulle',
   dropoffLocation = 'Paris Centre',
   pickupDate = '20 novembre 2025',
   pickupTime = '14:30',
-  driverName,
+  passengers = 2,
   vehicleType = 'Berline',
-  totalPrice = '75,00 €',
+  driverName,
   dashboardUrl = 'https://example.com/dashboard/bookings',
 }: BookingConfirmedEmailProps) {
   return (
     <Html lang="fr" dir="ltr">
       <Head />
-      <Preview>Réservation confirmée - {bookingId}</Preview>
-      <Body style={main}>
-        <Container style={container}>
-          {/* Header bordeaux NavetteXpress */}
-          <Section style={header}>
-            <Heading style={headerText}>Navette Express</Heading>
-          </Section>
+      <Preview>Reservation confirmee - {bookingId}</Preview>
+      <Body style={shellStyles.body}>
+        <Section style={{ backgroundColor: brand.background, padding: '40px 16px 60px' }}>
+          <Container style={shellStyles.container}>
+            <Section style={{ height: '4px', background: `linear-gradient(to right, ${brand.gold}, ${brand.goldLight}, transparent)` }} />
 
-          {/* Titre principal */}
-          <Heading style={h1}>✅ Réservation confirmée</Heading>
+            <Section style={{ padding: '36px 40px 20px', textAlign: 'center' }}>
+              <Text style={title}>Navette <span style={{ color: brand.gold }}>Xpress</span></Text>
+              <Text style={subtitle}>Service Premium</Text>
+            </Section>
 
-          {/* Contenu */}
-          <Text style={text}>Bonjour {customerName},</Text>
+            <Section style={{ padding: '34px 40px 14px', textAlign: 'center' }}>
+              <Text style={icon}>✅</Text>
+              <Heading style={shellStyles.heading}>Reservation confirmee</Heading>
+              <Text style={chip}>Ref: {bookingId}</Text>
+            </Section>
 
-          <Text style={text}>
-            Votre réservation a été confirmée ! Voici le récapitulatif de votre course.
-          </Text>
+            <Section style={{ padding: '24px 40px 0' }}>
+              <Text style={{ ...shellStyles.text, color: brand.textPrimary, fontSize: '16px', lineHeight: '28px' }}>Bonjour {customerName},</Text>
+            </Section>
 
-          {/* Info box */}
-          <Section style={successBox}>
-            <Text style={successIcon}>✅</Text>
-            <Text style={successText}>Réservation confirmée</Text>
-            <Text style={successRef}>Référence : {bookingId}</Text>
-          </Section>
+            <Section style={{ padding: '24px 40px 0' }}>
+              <Section style={panel}>
+                <Text style={row}><strong>Depart:</strong> {pickupLocation}</Text>
+                <Text style={row}><strong>Arrivee:</strong> {dropoffLocation}</Text>
+                <Text style={row}><strong>Date:</strong> {pickupDate}</Text>
+                <Text style={row}><strong>Heure:</strong> {pickupTime}</Text>
+                <Text style={row}><strong>Passagers:</strong> {passengers}</Text>
+                <Text style={row}><strong>Vehicule:</strong> {vehicleType}</Text>
+                {driverName ? <Text style={{ ...row, marginBottom: '0' }}><strong>Chauffeur:</strong> {driverName}</Text> : null}
+              </Section>
+            </Section>
 
-          {/* Détails de la réservation */}
-          <Section style={detailsSection}>
-            <Text style={detailTitle}>Détails de votre course :</Text>
-            
-            <Text style={detailItem}>
-              <strong>Départ :</strong> {pickupLocation}
-            </Text>
-            <Text style={detailItem}>
-              <strong>Arrivée :</strong> {dropoffLocation}
-            </Text>
-            <Text style={detailItem}>
-              <strong>Date :</strong> {pickupDate}
-            </Text>
-            <Text style={detailItem}>
-              <strong>Heure de prise en charge :</strong> {pickupTime}
-            </Text>
-            <Text style={detailItem}>
-              <strong>Type de véhicule :</strong> {vehicleType}
-            </Text>
-            {driverName && (
-              <Text style={detailItem}>
-                <strong>Chauffeur :</strong> {driverName}
-              </Text>
-            )}
-            <Text style={detailItemPrice}>
-              <strong>Prix total :</strong> <span style={priceHighlight}>{totalPrice}</span>
-            </Text>
-          </Section>
-
-          {/* Info importante */}
-          <Section style={infoBox}>
-            <Text style={infoText}>
-              💡 Votre chauffeur vous contactera 30 minutes avant l&apos;heure prévue
-            </Text>
-          </Section>
-
-          {/* Bouton principal */}
-          <Section style={buttonContainer}>
-            <Button style={button} href={dashboardUrl}>
-              Voir ma réservation
-            </Button>
-          </Section>
-
-          {/* Signature */}
-          <Hr style={hr} />
-          <Text style={footer}>
-            Merci de votre confiance,<br />
-            <strong>L&apos;équipe NavetteXpress</strong>
-          </Text>
-
-          <Text style={footerSmall}>
-            Des questions ? Contactez-nous au [Numéro de téléphone] ou répondez à cet email.
-          </Text>
-
-          {/* Footer final */}
-          <Section style={finalFooter}>
-            <Text style={finalFooterText}>
-              © 2025 NavetteXpress. Tous droits réservés.
-            </Text>
-            <Text style={finalFooterSmall}>
-              [NavetteXpress SAS, 123 Rue de la Mobilité, 75001 Paris, France]
-            </Text>
-          </Section>
-        </Container>
+            <Section style={{ textAlign: 'center', padding: '34px 40px 40px' }}>
+              <Button style={shellStyles.cta} href={dashboardUrl}>Gerer ma reservation</Button>
+            </Section>
+          </Container>
+        </Section>
       </Body>
     </Html>
   );
 }
 
-// Styles
-const main = {
-  backgroundColor: '#e8f0f8',
-  fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
-};
-
-const container = {
-  backgroundColor: '#ffffff',
-  margin: '0 auto',
-  padding: '0',
-  maxWidth: '600px',
-  border: '2px solid #93374d',
-  borderRadius: '8px',
-  overflow: 'hidden',
-};
-
-const header = {
-  backgroundColor: '#93374d',
-  padding: '32px 20px',
-  textAlign: 'center' as const,
+const title = {
+  fontFamily: fonts.heading,
+  fontSize: '22px',
+  fontWeight: 700,
+  color: brand.textPrimary,
   margin: '0',
+  letterSpacing: '0.04em',
 };
 
-const headerText = {
-  color: '#ffffff',
-  fontSize: '28px',
-  fontWeight: 'bold',
-  margin: '0',
-  padding: '0',
+const subtitle = {
+  fontFamily: fonts.body,
+  fontSize: '10px',
+  letterSpacing: '0.18em',
+  textTransform: 'uppercase' as const,
+  color: brand.textMuted,
+  margin: '6px 0 0',
 };
 
-const h1 = {
-  color: '#2c3e50',
-  fontSize: '24px',
-  fontWeight: 'bold',
-  margin: '32px 24px 24px',
-  padding: '0',
-  textAlign: 'center' as const,
+const icon = {
+  fontSize: '32px',
+  margin: '0 0 16px',
+  color: brand.gold,
 };
 
-const text = {
-  color: '#4a5568',
-  fontSize: '16px',
-  lineHeight: '26px',
-  margin: '16px 24px',
+const chip = {
+  fontFamily: fonts.body,
+  fontSize: '11px',
+  color: brand.gold,
+  border: '1px solid rgba(201,168,76,0.25)',
+  backgroundColor: 'rgba(201,168,76,0.10)',
+  borderRadius: '20px',
+  margin: '12px auto 0',
+  display: 'inline-block',
+  padding: '5px 16px',
+  letterSpacing: '0.15em',
+  textTransform: 'uppercase' as const,
 };
 
-const successBox = {
-  backgroundColor: '#d4edda',
-  border: '2px solid #28a745',
-  borderRadius: '5px',
-  margin: '24px 12px',
-  padding: '24px',
-  textAlign: 'center' as const,
-};
-
-const successIcon = {
-  fontSize: '48px',
-  margin: '0 0 12px',
-};
-
-const successText = {
-  color: '#155724',
-  fontSize: '20px',
-  fontWeight: 'bold',
-  margin: '0 0 8px',
-};
-
-const successRef = {
-  color: '#155724',
-  fontSize: '14px',
-  margin: '0',
-};
-
-const detailsSection = {
-  backgroundColor: '#f8f9fa',
-  border: '1px solid #e6ebf1',
-  borderRadius: '5px',
-  margin: '24px 12px',
+const panel = {
+  backgroundColor: brand.panel,
+  border: `1px solid ${brand.border}`,
+  borderRadius: '12px',
   padding: '20px',
 };
 
-const detailTitle = {
-  color: '#2c3e50',
-  fontSize: '16px',
-  fontWeight: 'bold',
-  margin: '0 0 16px',
-  borderBottom: '2px solid #93374d',
-  paddingBottom: '8px',
-};
-
-const detailItem = {
-  color: '#4a5568',
-  fontSize: '15px',
-  lineHeight: '24px',
-  margin: '8px 0',
-};
-
-const detailItemPrice = {
-  color: '#4a5568',
-  fontSize: '16px',
-  lineHeight: '24px',
-  margin: '16px 0 0',
-  paddingTop: '12px',
-  borderTop: '1px solid #e6ebf1',
-};
-
-const priceHighlight = {
-  color: '#93374d',
-  fontSize: '20px',
-  fontWeight: 'bold',
-};
-
-const infoBox = {
-  backgroundColor: '#e7f3ff',
-  border: '1px solid #93374d',
-  borderRadius: '5px',
-  margin: '24px',
-  padding: '16px',
-  textAlign: 'center' as const,
-};
-
-const infoText = {
-  color: '#2c3e50',
+const row = {
+  fontFamily: fonts.body,
   fontSize: '14px',
   lineHeight: '22px',
-  margin: '0',
-};
-
-const buttonContainer = {
-  textAlign: 'center' as const,
-  margin: '32px 0',
-};
-
-const button = {
-  backgroundColor: '#93374d',
-  borderRadius: '5px',
-  color: '#fff',
-  fontSize: '16px',
-  fontWeight: 'bold',
-  textDecoration: 'none',
-  textAlign: 'center' as const,
-  display: 'inline-block',
-  padding: '12px 32px',
-};
-
-const hr = {
-  borderColor: '#e6ebf1',
-  margin: '32px 24px',
-};
-
-const footer = {
-  color: '#525f7f',
-  fontSize: '16px',
-  lineHeight: '24px',
-  margin: '24px 24px 8px',
-};
-
-const footerSmall = {
-  color: '#8898aa',
-  fontSize: '12px',
-  lineHeight: '20px',
-  margin: '0 24px 32px',
-};
-
-const finalFooter = {
-  backgroundColor: '#f6f9fc',
-  padding: '24px',
-  textAlign: 'center' as const,
-  borderTop: '1px solid #e6ebf1',
-};
-
-const finalFooterText = {
-  color: '#8898aa',
-  fontSize: '12px',
-  lineHeight: '18px',
-  margin: '4px 0',
-};
-
-const finalFooterSmall = {
-  color: '#a0aec0',
-  fontSize: '11px',
-  lineHeight: '16px',
-  margin: '4px 0',
+  color: brand.textSecondary,
+  margin: '0 0 8px',
 };

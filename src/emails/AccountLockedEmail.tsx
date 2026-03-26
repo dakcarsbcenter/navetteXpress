@@ -10,6 +10,7 @@ import {
   Button,
 } from '@react-email/components';
 import * as React from 'react';
+import { brand, fonts, shellStyles } from './brand';
 
 interface AccountLockedEmailProps {
   userName: string;
@@ -26,238 +27,103 @@ export default function AccountLockedEmail({
     <Html lang="fr" dir="ltr">
       <Head />
       <Preview>Votre compte NavetteXpress a été temporairement bloqué</Preview>
-      <Body style={main}>
-        <Container style={container}>
-          {/* Header bordeaux NavetteXpress */}
-          <Section style={header}>
-            <Heading style={headerText}>Navette Express</Heading>
-          </Section>
+      <Body style={shellStyles.body}>
+        <Section style={{ backgroundColor: brand.background, padding: '40px 16px 60px' }}>
+          <Container style={shellStyles.container}>
+            <Section
+              style={{
+                height: '4px',
+                background: `linear-gradient(to right, ${brand.danger}, ${brand.gold}, transparent)`,
+                fontSize: '0',
+                lineHeight: '0',
+              }}
+            />
 
-          {/* Titre principal */}
-          <Heading style={h1}>🔒 Compte temporairement bloqué</Heading>
-          
-          {/* Contenu */}
-          <Text style={text}>Bonjour {userName},</Text>
-          
-          <Section style={alertBox}>
-            <Text style={alertText}>
-              ⚠️ Votre compte a été temporairement bloqué suite à <strong>3 tentatives de connexion échouées</strong>.
+            <Section style={{ padding: '36px 40px 20px', textAlign: 'center' }}>
+              <Text style={{ fontFamily: fonts.heading, fontSize: '22px', color: brand.textPrimary, margin: '0', letterSpacing: '0.04em' }}>
+                Navette <span style={{ color: brand.gold }}>Xpress</span>
+              </Text>
+              <Text style={{ fontFamily: fonts.body, fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: brand.textMuted, margin: '6px 0 0' }}>
+                Alerte Securite
+              </Text>
+            </Section>
+
+            <Section style={{ padding: '40px 40px 16px', textAlign: 'center' }}>
+              <Text style={{ fontSize: '32px', margin: '0 0 20px', color: brand.danger }}>🔒</Text>
+              <Heading style={shellStyles.heading}>Acces temporairement restreint</Heading>
+              <Text style={{ fontFamily: fonts.body, fontSize: '11px', color: brand.danger, border: `1px solid rgba(239,68,68,0.25)`, backgroundColor: 'rgba(239,68,68,0.1)', borderRadius: '20px', margin: '12px auto 0', display: 'inline-block', padding: '5px 16px', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+                Compte Bloque
+              </Text>
+            </Section>
+
+            <Section style={{ padding: '28px 40px 0' }}>
+              <Text style={{ ...shellStyles.text, color: brand.textPrimary, fontSize: '16px', lineHeight: '28px' }}>Bonjour {userName},</Text>
+              <Text style={{ ...shellStyles.text, marginTop: '16px' }}>
+                Par mesure de securite, nous avons temporairement suspendu l&apos;acces a votre compte suite a <span style={{ color: brand.textPrimary, fontWeight: 600 }}>3 tentatives de connexion echouees</span>.
+              </Text>
+            </Section>
+
+            <Section style={{ padding: '24px 40px' }}>
+              <Section style={{ backgroundColor: brand.panel, border: `1px solid ${brand.border}`, borderRadius: '12px' }}>
+                <Text style={{ fontFamily: fonts.body, fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.1em', color: brand.textMuted, margin: '0 0 8px', textAlign: 'center', padding: '20px 20px 0' }}>
+                  Reactivation automatique prevue le
+                </Text>
+                <Text style={{ fontFamily: fonts.mono, fontSize: '18px', fontWeight: 'bold', color: brand.gold, margin: '0', textAlign: 'center', padding: '0 20px 20px' }}>
+                  {unlockTime}
+                </Text>
+              </Section>
+            </Section>
+
+            <Section style={{ padding: '0 40px 10px' }}>
+              <Text style={shellStyles.text}>
+                Si vous n&apos;etes pas a l&apos;origine de ces tentatives, nous vous recommandons de reinitialiser votre mot de passe immediatement.
+              </Text>
+            </Section>
+
+            <Section style={{ textAlign: 'center', padding: '36px 40px' }}>
+              <Button href={resetUrl} style={shellStyles.cta}>Reinitialiser mon mot de passe</Button>
+            </Section>
+
+            <Section style={{ padding: '0 40px' }}>
+              <Section style={{ height: '1px', backgroundColor: brand.border }} />
+            </Section>
+
+            <Section style={{ padding: '36px 40px' }}>
+              <Text style={{ fontFamily: fonts.heading, fontSize: '13px', letterSpacing: '0.15em', textTransform: 'uppercase', color: brand.gold, margin: '0 0 16px' }}>
+                Conseils de securite
+              </Text>
+              <Text style={tipStyle}>• Utilisez un mot de passe unique et complexe</Text>
+              <Text style={tipStyle}>• Ne partagez jamais votre mot de passe</Text>
+              <Text style={{ ...tipStyle, marginBottom: '0' }}>• Activez l&apos;authentification a deux facteurs</Text>
+            </Section>
+
+            <Section style={{ padding: '0 40px 40px', textAlign: 'center' }}>
+              <Text style={{ fontFamily: fonts.heading, fontSize: '15px', color: brand.gold, margin: '0 0 20px', fontStyle: 'italic' }}>
+                L&apos;equipe NavetteXpress
+              </Text>
+              <Text style={{ fontFamily: fonts.body, fontSize: '11px', lineHeight: '18px', color: brand.textMuted, margin: '0' }}>
+                Si vous avez des questions, contactez-nous immediatement.
+              </Text>
+            </Section>
+          </Container>
+
+          <Container style={{ maxWidth: '600px', margin: '24px auto 0' }}>
+            <Text style={{ fontFamily: fonts.body, fontSize: '11px', color: brand.textMuted, margin: '0', textAlign: 'center', lineHeight: '18px' }}>
+              © 2025 NavetteXpress · Dakar, Senegal
             </Text>
-          </Section>
-
-          <Text style={text}>
-            Par mesure de sécurité, votre compte sera automatiquement débloqué le :
-          </Text>
-
-          <Section style={timeBox}>
-            <Text style={timeText}>{unlockTime}</Text>
-          </Section>
-
-          <Text style={text}>
-            Si vous n&apos;êtes pas à l&apos;origine de ces tentatives, nous vous recommandons 
-            vivement de <strong>réinitialiser votre mot de passe immédiatement</strong>.
-          </Text>
-
-          <Section style={buttonContainer}>
-            <Button style={button} href={resetUrl}>
-              Réinitialiser mon mot de passe
-            </Button>
-          </Section>
-
-          <Section style={infoBox}>
-            <Text style={infoTitle}>💡 Conseils de sécurité :</Text>
-            <Text style={infoItem}>• Utilisez un mot de passe unique et complexe</Text>
-            <Text style={infoItem}>• Ne partagez jamais votre mot de passe</Text>
-            <Text style={infoItem}>• Activez l&apos;authentification à deux facteurs si disponible</Text>
-          </Section>
-
-          {/* Signature */}
-          <Section style={hr} />
-          <Text style={footer}>
-            Cordialement,<br />
-            <strong>L&apos;équipe NavetteXpress</strong>
-          </Text>
-
-          <Text style={footerSmall}>
-            Si vous avez des questions, contactez-nous immédiatement.
-          </Text>
-
-          {/* Footer final */}
-          <Section style={finalFooter}>
-            <Text style={finalFooterText}>
-              © 2025 NavetteXpress. Tous droits réservés.
-            </Text>
-            <Text style={finalFooterSmall}>
-              [NavetteXpress SAS, 123 Rue de la Mobilité, 75001 Paris, France]
-            </Text>
-          </Section>
-        </Container>
+          </Container>
+        </Section>
       </Body>
     </Html>
   );
 }
 
-// Styles
-const main = {
-  backgroundColor: '#e8f0f8',
-  fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
-};
-
-const container = {
-  backgroundColor: '#ffffff',
-  margin: '0 auto',
-  padding: '0',
-  maxWidth: '600px',
-  border: '2px solid #93374d',
-  borderRadius: '8px',
-  overflow: 'hidden',
-};
-
-const header = {
-  backgroundColor: '#93374d',
-  padding: '32px 20px',
-  textAlign: 'center' as const,
-  margin: '0',
-};
-
-const headerText = {
-  color: '#ffffff',
-  fontSize: '28px',
-  fontWeight: 'bold',
-  margin: '0',
-  padding: '0',
-};
-
-const h1 = {
-  color: '#2c3e50',
-  fontSize: '24px',
-  fontWeight: 'bold',
-  margin: '32px 24px 24px',
-  padding: '0',
-  textAlign: 'center' as const,
-};
-
-const text = {
-  color: '#4a5568',
-  fontSize: '16px',
-  lineHeight: '26px',
-  margin: '16px 24px',
-};
-
-const alertBox = {
-  backgroundColor: '#fee2e2',
-  border: '2px solid #ef4444',
-  borderRadius: '8px',
-  padding: '20px',
-  margin: '24px 12px',
-  textAlign: 'center' as const,
-};
-
-const alertText = {
-  color: '#991b1b',
-  fontSize: '16px',
-  fontWeight: '600',
-  lineHeight: '24px',
-  margin: '0',
-};
-
-const timeBox = {
-  backgroundColor: '#fff3cd',
-  border: '1px solid #856404',
-  borderRadius: '8px',
-  padding: '16px',
-  margin: '24px 12px',
+const tipStyle = {
+  backgroundColor: 'rgba(255,255,255,0.02)',
+  borderRadius: '10px',
+  padding: '12px 16px',
+  fontFamily: fonts.body,
   fontSize: '14px',
-  color: '#856404',
-};
-
-const timeText = {
-  color: '#856404',
-  fontSize: '14px',
-  fontWeight: 'bold',
-  margin: '0',
-  textAlign: 'center' as const,
-};
-
-const buttonContainer = {
-  margin: '32px 24px',
-  textAlign: 'center' as const,
-};
-
-const button = {
-  backgroundColor: '#93374d',
-  borderRadius: '5px',
-  color: '#fff',
-  fontSize: '16px',
-  fontWeight: 'bold',
-  textDecoration: 'none',
-  textAlign: 'center' as const,
-  display: 'inline-block',
-  padding: '14px 40px',
-};
-
-const infoBox = {
-  backgroundColor: '#dbeafe',
-  border: '2px solid #3b82f6',
-  borderRadius: '8px',
-  padding: '16px',
-  margin: '24px 12px',
-  fontSize: '15px',
-  color: '#1e3a8a',
-};
-
-const infoTitle = {
-  color: '#1e3a8a',
-  fontSize: '16px',
-  fontWeight: 'bold',
-  margin: '0 0 12px',
-};
-
-const infoItem = {
-  color: '#1e3a8a',
-  fontSize: '14px',
-  lineHeight: '22px',
-  margin: '4px 0',
-};
-
-const hr = {
-  borderTop: '1px solid #e5e7eb',
-  margin: '32px 24px',
-};
-
-const footer = {
-  color: '#6b7280',
-  fontSize: '14px',
-  lineHeight: '24px',
-  margin: '24px',
-  textAlign: 'center' as const,
-};
-
-const footerSmall = {
-  color: '#9ca3af',
-  fontSize: '12px',
-  lineHeight: '20px',
-  margin: '16px 24px',
-  textAlign: 'center' as const,
-};
-
-const finalFooter = {
-  backgroundColor: '#f3f4f6',
-  padding: '24px',
-  textAlign: 'center' as const,
-  margin: '0',
-};
-
-const finalFooterText = {
-  color: '#6b7280',
-  fontSize: '13px',
-  lineHeight: '20px',
-  margin: '0 0 8px 0',
-};
-
-const finalFooterSmall = {
-  color: '#9ca3af',
-  fontSize: '11px',
-  lineHeight: '16px',
-  margin: '0',
+  color: brand.textSecondary,
+  margin: '0 0 8px',
 };

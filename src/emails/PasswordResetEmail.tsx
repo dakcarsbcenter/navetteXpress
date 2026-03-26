@@ -5,12 +5,12 @@ import {
   Head,
   Heading,
   Html,
-  Hr,
   Preview,
   Section,
   Text,
 } from '@react-email/components';
 import * as React from 'react';
+import { brand, fonts, shellStyles } from './brand';
 
 interface PasswordResetEmailProps {
   userName: string;
@@ -26,220 +26,69 @@ export default function PasswordResetEmail({
   return (
     <Html lang="fr" dir="ltr">
       <Head />
-      <Preview>Réinitialisez votre mot de passe NavetteXpress</Preview>
-      <Body style={main}>
-        <Container style={container}>
-          {/* Header bordeaux NavetteXpress */}
-          <Section style={header}>
-            <Heading style={headerText}>Navette Express</Heading>
-          </Section>
+      <Preview>Recuperez l&apos;acces a votre compte NavetteXpress</Preview>
+      <Body style={shellStyles.body}>
+        <Section style={{ backgroundColor: brand.background, padding: '40px 16px 60px' }}>
+          <Container style={shellStyles.container}>
+            <Section
+              style={{
+                height: '4px',
+                background: `linear-gradient(to right, ${brand.gold}, ${brand.goldLight}, transparent)`,
+                fontSize: '0',
+                lineHeight: '0',
+              }}
+            />
 
-          {/* Titre principal */}
-          <Heading style={h1}>Réinitialisation de mot de passe</Heading>
+            <Section style={{ padding: '36px 40px 20px', textAlign: 'center' }}>
+              <Text style={{ fontFamily: fonts.heading, fontSize: '22px', fontWeight: 700, letterSpacing: '0.04em', color: brand.textPrimary, margin: '0' }}>
+                Navette <span style={{ color: brand.gold }}>Xpress</span>
+              </Text>
+              <Text style={{ fontFamily: fonts.body, fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: brand.textMuted, margin: '6px 0 0' }}>
+                Surete · Assistance
+              </Text>
+            </Section>
 
-          {/* Contenu */}
-          <Text style={text}>Bonjour {userName},</Text>
+            <Section style={{ padding: '20px 40px 16px', textAlign: 'center' }}>
+              <Text style={{ fontSize: '32px', margin: '0 0 16px', color: brand.gold }}>🔑</Text>
+              <Heading style={shellStyles.heading}>Reinitialisation de mot de passe</Heading>
+            </Section>
 
-          <Text style={text}>
-            Vous avez demandé à réinitialiser votre mot de passe NavetteXpress. 
-            Cliquez sur le bouton ci-dessous pour créer un nouveau mot de passe :
-          </Text>
+            <Section style={{ padding: '28px 40px 0' }}>
+              <Text style={{ ...shellStyles.text, color: brand.textPrimary, fontSize: '16px', lineHeight: '28px' }}>Bonjour {userName},</Text>
+              <Text style={{ ...shellStyles.text, marginTop: '16px' }}>
+                Nous avons recu une demande de reinitialisation de mot de passe pour votre compte NavetteXpress. Si vous n&apos;etes pas a l&apos;origine de cette demande, vous pouvez ignorer cet email en toute securite.
+              </Text>
+            </Section>
 
-          {/* Bouton principal */}
-          <Section style={buttonContainer}>
-            <Button style={button} href={resetUrl}>
-              Réinitialiser mon mot de passe
-            </Button>
-          </Section>
+            <Section style={{ textAlign: 'center', padding: '40px 40px' }}>
+              <Button href={resetUrl} style={shellStyles.cta}>Changer mon mot de passe</Button>
+              <Text style={{ fontFamily: fonts.body, fontSize: '12px', color: brand.textMuted, margin: '24px 0 0' }}>
+                Ce lien expirera dans {expiresIn}.
+              </Text>
+            </Section>
 
-          {/* Info expiration */}
-          <Section style={infoBox}>
-            <Text style={infoText}>
-              Ce lien est valide pendant <strong>{expiresIn}</strong>.
-            </Text>
-          </Section>
+            <Section style={{ padding: '0 40px 40px' }}>
+              <Section style={{ backgroundColor: 'rgba(201,168,76,0.05)', borderRadius: '12px', padding: '20px', border: '1px dashed rgba(201,168,76,0.3)' }}>
+                <Text style={{ ...shellStyles.text, fontSize: '13px', lineHeight: '20px' }}>
+                  🛡️ <strong>Conseil :</strong> Choisissez un mot de passe unique contenant des lettres, des chiffres et des symboles pour une securite maximale.
+                </Text>
+              </Section>
+            </Section>
 
-          <Text style={text}>
-            Si vous n&apos;êtes pas à l&apos;origine de cette demande, vous pouvez 
-            ignorer cet email. Votre mot de passe actuel restera inchangé.
-          </Text>
-
-          {/* Lien de secours */}
-          <Section style={fallbackSection}>
-            <Text style={fallbackText}>
-              Vous ne pouvez pas cliquer sur le bouton ? Copiez et collez ce lien 
-              dans votre navigateur :
-            </Text>
-            <Text style={linkText}>{resetUrl}</Text>
-          </Section>
-
-          {/* Signature */}
-          <Hr style={hr} />
-          <Text style={footer}>
-            Cordialement,<br />
-            <strong>L&apos;équipe NavetteXpress</strong>
-          </Text>
-
-          <Text style={footerSmall}>
-            Cet email a été envoyé automatiquement. Merci de ne pas répondre à ce message.
-          </Text>
-
-          {/* Footer final */}
-          <Section style={finalFooter}>
-            <Text style={finalFooterText}>
-              © 2025 NavetteXpress. Tous droits réservés.
-            </Text>
-            <Text style={finalFooterSmall}>
-              [NavetteXpress SAS, 123 Rue de la Mobilité, 75001 Paris, France]
-            </Text>
-            <Text style={finalFooterSmall}>
-              Vous recevez cet email car une action est requise sur votre compte.
-            </Text>
-          </Section>
-        </Container>
+            <Section style={{ padding: '0 40px 40px', textAlign: 'center' }}>
+              <Section style={{ height: '1px', backgroundColor: brand.border, marginBottom: '32px' }} />
+              <Text style={{ fontFamily: fonts.heading, fontSize: '15px', color: brand.gold, margin: '0 0 10px', fontStyle: 'italic' }}>
+                Navette Xpress
+              </Text>
+              <Text style={{ fontFamily: fonts.body, fontSize: '11px', lineHeight: '18px', color: brand.textMuted, margin: '0' }}>
+                Pour toute assistance, contactez notre support client.
+                <br />
+                © 2025 NavetteXpress. Tous droits reserves.
+              </Text>
+            </Section>
+          </Container>
+        </Section>
       </Body>
     </Html>
   );
 }
-
-// Styles
-const main = {
-  backgroundColor: '#e8f0f8',
-  fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
-};
-
-const container = {
-  backgroundColor: '#ffffff',
-  margin: '0 auto',
-  padding: '0',
-  maxWidth: '600px',
-  border: '2px solid #93374d',
-  borderRadius: '8px',
-  overflow: 'hidden',
-};
-
-const header = {
-  backgroundColor: '#93374d',
-  padding: '32px 20px',
-  textAlign: 'center' as const,
-  margin: '0',
-};
-
-const headerText = {
-  color: '#ffffff',
-  fontSize: '28px',
-  fontWeight: 'bold',
-  margin: '0',
-  padding: '0',
-};
-
-const h1 = {
-  color: '#2c3e50',
-  fontSize: '24px',
-  fontWeight: 'bold',
-  margin: '32px 24px 24px',
-  padding: '0',
-  textAlign: 'center' as const,
-};
-
-const text = {
-  color: '#4a5568',
-  fontSize: '16px',
-  lineHeight: '26px',
-  margin: '16px 24px',
-};
-
-const buttonContainer = {
-  textAlign: 'center' as const,
-  margin: '32px 12px',
-};
-
-const button = {
-  backgroundColor: '#93374d',
-  borderRadius: '5px',
-  color: '#fff',
-  fontSize: '16px',
-  fontWeight: 'bold',
-  textDecoration: 'none',
-  textAlign: 'center' as const,
-  display: 'inline-block',
-  padding: '12px 32px',
-};
-
-const infoBox = {
-  backgroundColor: '#e7f3ff',
-  border: '2px solid #93374d',
-  borderRadius: '5px',
-  margin: '24px 12px',
-  padding: '20px',
-  textAlign: 'center' as const,
-};
-
-const infoText = {
-  color: '#2c3e50',
-  fontSize: '14px',
-  lineHeight: '22px',
-  margin: '0',
-};
-
-const fallbackSection = {
-  margin: '32px 24px',
-  padding: '16px',
-  backgroundColor: '#f8f9fa',
-  borderRadius: '5px',
-};
-
-const fallbackText = {
-  color: '#6c757d',
-  fontSize: '13px',
-  lineHeight: '20px',
-  margin: '0 0 8px',
-};
-
-const linkText = {
-  color: '#93374d',
-  fontSize: '12px',
-  lineHeight: '18px',
-  margin: '0',
-  wordBreak: 'break-all' as const,
-};
-
-const hr = {
-  borderColor: '#e6ebf1',
-  margin: '32px 24px',
-};
-
-const footer = {
-  color: '#525f7f',
-  fontSize: '16px',
-  lineHeight: '24px',
-  margin: '24px 24px 8px',
-};
-
-const footerSmall = {
-  color: '#8898aa',
-  fontSize: '12px',
-  lineHeight: '20px',
-  margin: '0 24px 32px',
-};
-
-const finalFooter = {
-  backgroundColor: '#f6f9fc',
-  padding: '24px',
-  textAlign: 'center' as const,
-  borderTop: '1px solid #e6ebf1',
-};
-
-const finalFooterText = {
-  color: '#8898aa',
-  fontSize: '12px',
-  lineHeight: '18px',
-  margin: '4px 0',
-};
-
-const finalFooterSmall = {
-  color: '#a0aec0',
-  fontSize: '11px',
-  lineHeight: '16px',
-  margin: '4px 0',
-};
