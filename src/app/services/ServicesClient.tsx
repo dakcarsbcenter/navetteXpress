@@ -63,7 +63,7 @@ export default function ServicesClient() {
   return (
     <div className="min-h-screen bg-midnight text-foreground selection:bg-gold/30">
       {/* Noise Background Overlay */}
-      <div className="fixed inset-0 pointer-events-none z-[1] opacity-[0.03] mix-blend-overlay"
+      <div className="fixed inset-0 pointer-events-none z-1 opacity-[0.03] mix-blend-overlay"
         style={{ backgroundImage: `url('/noise.png')` }}></div>
 
       <Navigation variant="transparent" />
@@ -116,7 +116,7 @@ export default function ServicesClient() {
                   >
                     <div className="h-full bg-surface-2/50 backdrop-blur-xl border border-border rounded-2xl p-8 hover:border-gold/30 hover:bg-surface-2/70 transition-all duration-500 overflow-hidden">
                       {/* Background Shine Effect */}
-                      <div className="absolute -top-24 -right-24 w-48 h-48 bg-gold/10 blur-[64px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                      <div className="absolute -top-24 -right-24 w-48 h-48 bg-gold/10 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
                       <div className="relative z-10">
                         <div className="mb-6 p-4 bg-midnight/50 border border-border rounded-xl w-fit group-hover:scale-110 transition-transform duration-500 min-w-20 min-h-20 flex items-center justify-center">
@@ -147,7 +147,7 @@ export default function ServicesClient() {
                           <span className="border-b border-transparent group-hover/link:border-gold transition-all duration-300">
                             Réserver maintenant
                           </span>
-                          <CaretRight size={18} weight="light" className="translate-y-[1px] group-hover/link:translate-x-1 transition-transform" />
+                          <CaretRight size={18} weight="light" className="translate-y-px group-hover/link:translate-x-1 transition-transform" />
                         </Link>
                       </div>
                     </div>

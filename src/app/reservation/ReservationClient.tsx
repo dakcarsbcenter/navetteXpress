@@ -12,6 +12,101 @@ import { MapPin, CalendarBlank, Clock, Users, Bag, Phone, EnvelopeSimple, ArrowR
 import { serviceTypes, additionalServices, getServiceById } from "@/lib/services";
 import Link from "next/link";
 
+type LocationOption = { id: string; name: string };
+
+const ROUTES_ALLOWED_NODES = {
+  DAKAR: ['DAKAR'],
+  AIBD: ['AIBD', 'AEROPORT AIBD', 'AEROPORT INTERNATIONAL BLAISE DIAGNE'],
+  MBOUR: ['MBOUR'],
+  SALY: ['SALY', 'SALLY', 'SALY PORTUDAL', 'SALLY PORTUDAL'],
+  NGAPAROU: ['NGAPAROU'],
+  THIES: ['THIES', 'THIÈS'],
+  NIANING: ['NIANING'],
+  POINTE_SARRENE: ['POINTE SARRENE', 'POINTE SARENE', 'POINTE SARENNE'],
+  SOMONE: ['SOMONE'],
+} as const;
+
+const ROUTES_LOCATION_FALLBACK: LocationOption[] = [
+  { id: 'dakar', name: 'DAKAR' },
+  { id: 'aibd', name: 'AEROPORT AIBD' },
+  { id: 'mbour', name: 'MBOUR' },
+  { id: 'saly', name: 'SALY PORTUDAL' },
+  { id: 'ngaparou', name: 'NGAPAROU' },
+  { id: 'thies', name: 'THIES' },
+  { id: 'nianing', name: 'NIANING' },
+  { id: 'pointe-sarrene', name: 'POINTE SARRENE' },
+  { id: 'somone', name: 'SOMONE' },
+];
+
+const normalizeLocationName = (value: string): string =>
+  value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^A-Za-z0-9 ]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toUpperCase();
+
+const getRouteNodeFromName = (name: string): keyof typeof ROUTES_ALLOWED_NODES | null => {
+  const normalized = normalizeLocationName(name);
+  const entries = Object.entries(ROUTES_ALLOWED_NODES) as [keyof typeof ROUTES_ALLOWED_NODES, readonly string[]][];
+  for (const [node, aliases] of entries) {
+    if (aliases.some((alias) => normalizeLocationName(alias) === normalized)) {
+      return node;
+    }
+  }
+  return null;
+};
+
+const ROUTES_ALLOWED_PAIRS = new Set<string>([
+  'DAKAR|AIBD',
+  'AIBD|DAKAR',
+  'DAKAR|MBOUR',
+  'MBOUR|DAKAR',
+  'DAKAR|SALY',
+  'SALY|DAKAR',
+  'DAKAR|NGAPAROU',
+  'NGAPAROU|DAKAR',
+  'DAKAR|THIES',
+  'THIES|DAKAR',
+  'DAKAR|NIANING',
+  'NIANING|DAKAR',
+  'DAKAR|POINTE_SARRENE',
+  'POINTE_SARRENE|DAKAR',
+  'DAKAR|SOMONE',
+  'SOMONE|DAKAR',
+]);
+
+const isRouteCombinationAllowed = (pickup: string, destination: string): boolean => {
+  const pickupNode = getRouteNodeFromName(pickup);
+  const destinationNode = getRouteNodeFromName(destination);
+  if (!pickupNode || !destinationNode) {
+    return false;
+  }
+  return ROUTES_ALLOWED_PAIRS.has(`${pickupNode}|${destinationNode}`);
+};
+
+const toAllowedRouteLocations = (locations: LocationOption[]): LocationOption[] => {
+  const filtered = locations.filter((loc) => Boolean(getRouteNodeFromName(loc.name)));
+  if (filtered.length === 0) {
+    return ROUTES_LOCATION_FALLBACK;
+  }
+
+  const seen = new Set<string>();
+  const deduped: LocationOption[] = [];
+
+  for (const loc of filtered) {
+    const node = getRouteNodeFromName(loc.name);
+    if (!node || seen.has(node)) {
+      continue;
+    }
+    seen.add(node);
+    deduped.push(loc);
+  }
+
+  return deduped;
+};
+
 interface FormData {
   serviceType: string;
   customServiceType: string;
@@ -63,7 +158,7 @@ function ReservationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [errorModal, setErrorModal] = useState<{ open: boolean; title: string; message: string }>({ open: false, title: '', message: '' });
-  const [locations, setLocations] = useState<{ id: string; name: string }[]>([]);
+  const [locations, setLocations] = useState<LocationOption[]>([]);
   const [dbServices, setDbServices] = useState<any[]>([]);
 
   // Fetch services from DB
@@ -89,10 +184,11 @@ function ReservationForm() {
         const response = await fetch('/api/locations');
         const data = await response.json();
         if (data.success) {
-          setLocations(data.data || []);
+          setLocations(toAllowedRouteLocations(data.data || []));
         }
       } catch (error) {
         console.error("Erreur lors de la récupération des lieux:", error);
+        setLocations(ROUTES_LOCATION_FALLBACK);
       }
     };
     fetchLocations();
@@ -112,10 +208,14 @@ function ReservationForm() {
       if (serviceParam && getServiceById(serviceParam)) {
         newData.serviceType = serviceParam;
       }
-      if (pickupParam) newData.pickupAddress = pickupParam;
-      if (destinationParam) newData.destinationAddress = destinationParam;
+      if (pickupParam && getRouteNodeFromName(pickupParam)) newData.pickupAddress = pickupParam;
+      if (destinationParam && getRouteNodeFromName(destinationParam)) newData.destinationAddress = destinationParam;
       if (datetimeParam) newData.datetime = datetimeParam;
       if (passengersParam) newData.passengers = parseInt(passengersParam, 10) || 1;
+
+      if (newData.pickupAddress && newData.destinationAddress && !isRouteCombinationAllowed(newData.pickupAddress, newData.destinationAddress)) {
+        newData.destinationAddress = "";
+      }
 
       return newData;
     });
@@ -128,6 +228,20 @@ function ReservationForm() {
         return { ...prev, [field]: value as string, customServiceType: '' };
       }
       return { ...prev, [field]: value as string | number | boolean | string[] };
+    });
+  };
+
+  const handleLocationChange = (field: 'pickupAddress' | 'destinationAddress', value: string) => {
+    setFormData((prev) => {
+      const next = { ...prev, [field]: value };
+      if (next.pickupAddress && next.destinationAddress && !isRouteCombinationAllowed(next.pickupAddress, next.destinationAddress)) {
+        if (field === 'pickupAddress') {
+          next.destinationAddress = '';
+        } else {
+          next.pickupAddress = '';
+        }
+      }
+      return next;
     });
   };
 
@@ -203,6 +317,24 @@ function ReservationForm() {
   const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 3));
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
 
+  const pickupOptions = locations.filter((loc) => {
+    if (!formData.destinationAddress) {
+      return true;
+    }
+    return isRouteCombinationAllowed(loc.name, formData.destinationAddress);
+  });
+
+  const destinationOptions = locations.filter((loc) => {
+    if (!formData.pickupAddress) {
+      return true;
+    }
+    return isRouteCombinationAllowed(formData.pickupAddress, loc.name);
+  });
+
+  const isInvalidCombination = Boolean(
+    formData.pickupAddress && formData.destinationAddress && !isRouteCombinationAllowed(formData.pickupAddress, formData.destinationAddress)
+  );
+
   if (!isLoaded) {
     return <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="text-center text-foreground">Chargement...</div>
@@ -237,11 +369,11 @@ function ReservationForm() {
         <div className="max-w-xl mx-auto mb-16 px-4">
           <div className="flex items-center justify-between relative">
             {/* Background Line */}
-            <div className="absolute top-1/2 left-0 right-0 h-[2px] bg-border/20 -translate-y-1/2 z-0" />
+            <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-border/20 -translate-y-1/2 z-0" />
 
             {/* Active Progress Line */}
             <motion.div
-              className="absolute top-1/2 left-0 h-[2px] bg-gold -translate-y-1/2 z-0 origin-left"
+              className="absolute top-1/2 left-0 h-0.5 bg-gold -translate-y-1/2 z-0 origin-left"
               initial={{ scaleX: 0 }}
               animate={{ scaleX: (currentStep - 1) / 2 }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
@@ -449,14 +581,13 @@ function ReservationForm() {
                             {locations.length > 0 ? (
                               <select
                                 value={formData.pickupAddress}
-                                onChange={(e) => handleInputChange('pickupAddress', e.target.value)}
+                                onChange={(e) => handleLocationChange('pickupAddress', e.target.value)}
                                 className="w-full bg-surface-2/50 border border-border rounded-xl px-10 py-4 text-foreground focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all appearance-none cursor-pointer"
                               >
                                 <option value="" disabled className="bg-background text-foreground/50">Sélectionnez un lieu...</option>
-                                {locations.map(loc => (
+                                {pickupOptions.map(loc => (
                                   <option key={loc.id} value={loc.name} className="bg-background text-foreground">{loc.name}</option>
                                 ))}
-                                <option value="Autre" className="bg-background text-foreground">Autre (préciser dans les notes)</option>
                               </select>
                             ) : (
                               <input
@@ -476,14 +607,13 @@ function ReservationForm() {
                             {locations.length > 0 ? (
                               <select
                                 value={formData.destinationAddress}
-                                onChange={(e) => handleInputChange('destinationAddress', e.target.value)}
+                                onChange={(e) => handleLocationChange('destinationAddress', e.target.value)}
                                 className="w-full bg-surface-2/50 border border-border rounded-xl px-10 py-4 text-foreground focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all appearance-none cursor-pointer"
                               >
                                 <option value="" disabled className="bg-background text-foreground/50">Sélectionnez une destination...</option>
-                                {locations.map(loc => (
+                                {destinationOptions.map(loc => (
                                   <option key={loc.id} value={loc.name} className="bg-background text-foreground">{loc.name}</option>
                                 ))}
-                                <option value="Autre" className="bg-background text-foreground">Autre (préciser dans les notes)</option>
                               </select>
                             ) : (
                               <input
@@ -499,6 +629,12 @@ function ReservationForm() {
                         </div>
                       </div>
 
+                      {isInvalidCombination && (
+                        <p className="text-xs text-red-400">
+                          Combinaison non autorisée. Veuillez choisir uniquement DAKAR vers AIBD, MBOUR, SALY, NGAPAROU, THIES, NIANING, POINTE SARRENE, SOMONE (et inverse).
+                        </p>
+                      )}
+
                       {/* Date, Time, Phone */}
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                         <div className="space-y-2">
@@ -508,7 +644,7 @@ function ReservationForm() {
                               type="datetime-local"
                               value={formData.datetime}
                               onChange={(e) => handleInputChange('datetime', e.target.value)}
-                              className="w-full bg-surface-2/50 border border-border rounded-xl px-10 py-4 text-foreground focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all dark:[color-scheme:dark]"
+                              className="w-full bg-surface-2/50 border border-border rounded-xl px-10 py-4 text-foreground focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all dark:scheme-dark"
                               min={new Date().toISOString().slice(0, 16)}
                             />
                             <CalendarBlank className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/30 group-focus-within:text-gold transition-colors" size={18} weight="light" />
@@ -614,7 +750,7 @@ function ReservationForm() {
                           <div className="flex items-start gap-3 mt-4">
                             <div className="flex flex-col items-center gap-1 mt-1 shrink-0">
                               <div className="w-2.5 h-2.5 rounded-full border border-gold" />
-                              <div className="w-[1px] h-10 bg-border" />
+                              <div className="w-px h-10 bg-border" />
                               <MapPin size={16} weight="light" className="text-gold" />
                             </div>
                             <div className="space-y-4 pt-0.5">
@@ -740,6 +876,7 @@ function ReservationForm() {
                           !formData.datetime ||
                           !formData.pickupAddress ||
                           !formData.destinationAddress ||
+                          isInvalidCombination ||
                           !formData.contactPhone ||
                           (!isSignedIn && (!formData.clientName || !formData.clientEmail))
                         ))
@@ -754,7 +891,7 @@ function ReservationForm() {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={handleSubmit}
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || isInvalidCombination}
                       className="lux-button w-full sm:w-auto flex items-center justify-center gap-3 px-12 py-4 font-bold uppercase tracking-[0.2em] text-sm text-background shadow-[0_10px_30px_rgba(201,168,76,0.3)]"
                     >
                       {isSubmitting ? (
@@ -764,7 +901,7 @@ function ReservationForm() {
                         </>
                       ) : (
                         <>
-                          <BookNowIcon size={18} color="currentColor" />
+                          <BookNowIcon size={18} color="white" />
                           Confirmer la Réservation
                         </>
                       )}
