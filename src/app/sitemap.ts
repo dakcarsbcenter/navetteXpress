@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next';
+import { allMoneyPages } from '@/lib/seo-money-pages';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://navettexpress.com';
@@ -16,6 +17,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/routes`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/en`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
     },
     {
       url: `${baseUrl}/flotte`,
@@ -75,5 +88,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  return [...staticPages, ...zonePages];
+  const moneyPages = allMoneyPages.map((page) => ({
+    url: `${baseUrl}${page.canonicalPath}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.85,
+  }));
+
+  return [...staticPages, ...zonePages, ...moneyPages];
 }

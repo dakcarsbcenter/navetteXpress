@@ -30,6 +30,66 @@ const nextConfig: NextConfig = {
         destination: '/transfert-aeroport-dakar',
         permanent: true,
       },
+      {
+        source: '/navette-aeroport-aibd',
+        destination: '/services/transfert-aeroport-aibd',
+        permanent: true,
+      },
+      {
+        source: '/chauffeur-prive-dakar',
+        destination: '/services/chauffeur-prive-dakar',
+        permanent: true,
+      },
+      {
+        source: '/trajet/aibd-vers-dakar',
+        destination: '/routes/aibd-dakar',
+        permanent: true,
+      },
+      {
+        source: '/trajet/aibd-vers-saly',
+        destination: '/routes/aibd-saly',
+        permanent: true,
+      },
+      {
+        source: '/trajet/aibd-vers-ngaparou',
+        destination: '/routes/aibd-ngaparou',
+        permanent: true,
+      },
+      {
+        source: '/trajet/aibd-vers-nianing',
+        destination: '/routes/aibd-nianing',
+        permanent: true,
+      },
+      {
+        source: '/trajet/dakar-vers-aibd',
+        destination: '/routes/dakar-aibd',
+        permanent: true,
+      },
+      {
+        source: '/tarifs-transferts-aibd',
+        destination: '/services/transfert-aeroport-aibd',
+        permanent: true,
+      },
+      {
+        source: '/service/transfert-business-dakar',
+        destination: '/services/chauffeur-affaires-dakar',
+        permanent: true,
+      },
+      {
+        source: '/service/transfert-famille-vip',
+        destination: '/services/transfert-famille-vip-dakar',
+        permanent: true,
+      },
+      {
+        source: '/guide/taxi-vs-transfert-prive-dakar',
+        destination: '/faq',
+        permanent: true,
+      },
+      {
+        source: '/en/airport-transfer-dakar-aibd',
+        destination: '/en',
+        permanent: true,
+      },
     ];
   },
 

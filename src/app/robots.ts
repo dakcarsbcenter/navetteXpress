@@ -15,7 +15,11 @@ export default function robots(): MetadataRoute.Robots {
           '/api/',
           '/auth/',
           '/_next/',
-          '/reservation', // Page transactionnelle
+          '/test-',
+          '/palette',
+          '/iconographie',
+          '/migration',
+          '/init-admin',
         ],
       },
     ],

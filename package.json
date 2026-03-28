@@ -24,7 +24,8 @@
     "email:test": "npx tsx test-resend-templates.ts",
     "email:resend": "npx tsx generate-resend-templates.ts",
     "email:all": "npx tsx generate-all-resend-templates.ts",
-    "email:generate-all": "npx tsx generate-all-resend-templates.ts"
+    "email:generate-all": "npx tsx generate-all-resend-templates.ts",
+    "seo:refresh:monthly": "npx tsx scripts/seo-monthly-refresh.ts"
   },
   "dependencies": {
     "@capacitor/app": "^7.0.1",

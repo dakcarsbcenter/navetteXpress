@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { Navigation } from "@/components/navigation";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
+import Link from "next/link";
 
 export default async function AdminPage() {
   await requireAdminRole();
@@ -34,6 +35,14 @@ export default async function AdminPage() {
           <p className="text-slate-600 dark:text-slate-300">
             Interface d&apos;administration Navette Xpress - Accès complet système
           </p>
+          <div className="pt-4">
+            <Link
+              href="/admin/seo-dashboard"
+              className="inline-flex items-center px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 text-sm font-medium hover:border-amber-500 hover:text-amber-600 transition-colors"
+            >
+              Ouvrir dashboard hebdo SEO (GSC + GA4 + CRM)
+            </Link>
+          </div>
         </div>
 
         <AdminDashboard />

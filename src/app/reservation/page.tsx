@@ -5,9 +5,9 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { schemaBreadcrumb } from '@/lib/schema';
 
 export const metadata: Metadata = {
-    title: 'Réserver Votre Chauffeur Privé à Dakar | Navette Xpress',
+    title: 'Reservation Chauffeur Prive Dakar et Transfert AIBD Prix Fixe | Navette Xpress',
     description:
-        'Réservez en ligne votre transfert aéroport AIBD, navette urbaine ou chauffeur privé au Sénégal. Confirmation rapide, prix transparent et service premium garanti.',
+        'Reservez en ligne votre transfert aeroport AIBD ou chauffeur prive a Dakar. Confirmation rapide, prix fixe, service disponible 24/7.',
     alternates: { canonical: 'https://navettexpress.com/reservation' },
     robots: {
         index: true,

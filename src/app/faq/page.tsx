@@ -24,9 +24,9 @@ const faqs = [
 ];
 
 export const metadata: Metadata = {
-    title: 'FAQ Navette Xpress — Réservation, Tarifs & Chauffeurs Dakar',
+    title: 'FAQ Transfert AIBD, Tarifs et Reservation Chauffeur Prive Dakar | Navette Xpress',
     description:
-        'Trouvez les réponses à vos questions : comment réserver, prix des transferts AIBD, types de véhicules, suivi de vol et services 24h/24 au Sénégal.',
+        'Questions frequentes sur les transferts AIBD, prix fixes, process d accueil aeroport, reservation en ligne et service chauffeur prive 24/7.',
     alternates: { canonical: 'https://navettexpress.com/faq' },
 };
 
@@ -40,6 +40,14 @@ export default function Page() {
         <>
             <JsonLd data={schemaFAQ(faqs)} />
             <JsonLd data={schemaBreadcrumb(breadcrumbs)} />
+            <section className="max-w-6xl mx-auto px-6 pt-28 pb-8 space-y-4">
+                <h2 className="text-3xl font-display">Avant de reserver</h2>
+                <div className="flex flex-wrap gap-3 text-sm">
+                    <a href="/routes" className="px-3 py-2 rounded-lg border border-border hover:border-gold hover:text-gold transition-colors">Hub routes</a>
+                    <a href="/services" className="px-3 py-2 rounded-lg border border-border hover:border-gold hover:text-gold transition-colors">Hub services</a>
+                    <a href="/reservation" className="px-3 py-2 rounded-lg border border-border hover:border-gold hover:text-gold transition-colors">Reservation</a>
+                </div>
+            </section>
             <FaqClient />
         </>
     );

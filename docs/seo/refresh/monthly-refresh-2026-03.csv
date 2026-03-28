@@ -1,0 +1,17 @@
+priority,page_type,page_path,intent_keyword,focus_block,status
+P2,service,/services/transfert-aeroport-aibd,transfert aeroport aibd dakar,FAQ + maillage interne + preuves sociales,todo
+P2,service,/services/chauffeur-prive-dakar,chauffeur prive dakar,FAQ + maillage interne + preuves sociales,todo
+P2,service,/services/mise-a-disposition-chauffeur,mise a disposition chauffeur dakar,FAQ + maillage interne + preuves sociales,todo
+P2,service,/services/navette-evenementielle,navette evenementielle dakar,FAQ + maillage interne + preuves sociales,todo
+P2,service,/services/transfert-hotel-aibd,transfert hotel aibd,FAQ + maillage interne + preuves sociales,todo
+P2,service,/services/chauffeur-affaires-dakar,chauffeur affaires dakar,FAQ + maillage interne + preuves sociales,todo
+P2,service,/services/transfert-famille-vip-dakar,transfert famille vip dakar,FAQ + maillage interne + preuves sociales,todo
+P2,route,/routes/aibd-dakar,transfert aibd dakar,FAQ + maillage interne + preuves sociales,todo
+P1,route,/routes/dakar-aibd,dakar aibd transfert,Title/H1 + FAQ objections + CTA reservation,todo
+P1,route,/routes/aibd-saly,aibd saly transfert,Title/H1 + FAQ objections + CTA reservation,todo
+P1,route,/routes/aibd-somone,aibd somone chauffeur prive,Title/H1 + FAQ objections + CTA reservation,todo
+P2,route,/routes/aibd-mbour,aibd mbour transfert prive,FAQ + maillage interne + preuves sociales,todo
+P2,route,/routes/aibd-thies,aibd thies chauffeur prive,FAQ + maillage interne + preuves sociales,todo
+P2,route,/routes/aibd-saint-louis,aibd saint louis transfert,FAQ + maillage interne + preuves sociales,todo
+P2,route,/routes/aibd-ngaparou,transfert aibd ngaparou,FAQ + maillage interne + preuves sociales,todo
+P2,route,/routes/aibd-nianing,transfert aibd nianing,FAQ + maillage interne + preuves sociales,todo

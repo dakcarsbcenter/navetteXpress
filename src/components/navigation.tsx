@@ -19,6 +19,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
   const navLinks = [
     { href: "/", label: "Accueil" },
     { href: "/services", label: "Services" },
+    { href: "/routes", label: "Routes" },
     { href: "/flotte", label: "Flotte" },
     { href: "/temoignages", label: "Avis" },
     { href: "/contact", label: "Contact" },
@@ -42,7 +43,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
   return (
     <>
       {/* Top Bar */}
-      <div className="bg-surface-1 border-b border-border text-[10px] sm:text-xs py-1.5 fixed top-0 left-0 right-0 z-[60] hidden md:block">
+      <div className="bg-surface-1 border-b border-border text-[10px] sm:text-xs py-1.5 fixed top-0 left-0 right-0 z-60 hidden md:block">
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center text-text-muted">
           <div className="flex items-center gap-6">
             <a
@@ -64,7 +65,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
           </div>
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 bg-[#22C55E] rounded-full animate-pulse"></span>
+              <span className="w-1.5 h-1.5 bg-success rounded-full animate-pulse"></span>
               Service 24h/24
             </span>
             <div className="h-3 w-px bg-border"></div>

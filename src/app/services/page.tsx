@@ -6,11 +6,11 @@ import { schemaService, schemaBreadcrumb } from '@/lib/schema';
 import { serviceTypes } from '@/lib/services';
 
 export const metadata: Metadata = {
-    title: 'Nos Services de Transport VIP & Transfert Aéroport Dakar | Navette Xpress',
+    title: 'Services Chauffeur Prive Dakar, Transfert AIBD et Mise a Disposition | Navette Xpress',
     description:
-        'Découvrez nos services premium au Sénégal : transfert aéroport AIBD 24h/24, chauffeur privé à Dakar, mise à disposition de luxe, et excursions touristiques sur mesure.',
+        'Comparez nos services a forte intention: transfert aeroport AIBD, chauffeur prive Dakar, mise a disposition, navette evenementielle et transport hotel.',
     alternates: { canonical: 'https://navettexpress.com/services' },
-    keywords: ['transfert aéroport Dakar', 'chauffeur privé Sénégal', 'VTC Dakar', 'navette AIBD', 'location voiture avec chauffeur Dakar'],
+    keywords: ['transfert aeroport Dakar', 'chauffeur prive Senegal', 'VTC Dakar', 'navette AIBD', 'location voiture avec chauffeur Dakar'],
 };
 
 export default function Page() {
@@ -30,6 +30,19 @@ export default function Page() {
         <>
             <JsonLd data={schemaService(schemaServices[0])} /> {/* Main service focus */}
             <JsonLd data={schemaBreadcrumb(breadcrumbs)} />
+            <section className="max-w-6xl mx-auto px-6 pt-28 pb-8 space-y-4">
+                <h2 className="text-3xl font-display">Pages services prioritaires</h2>
+                <p className="text-text-secondary max-w-3xl">
+                    Explorez nos pages a forte intention et poursuivez vers les routes les plus demandees.
+                </p>
+                <div className="flex flex-wrap gap-3 text-sm">
+                    <a href="/services/transfert-aeroport-aibd" className="px-3 py-2 rounded-lg border border-border hover:border-gold hover:text-gold transition-colors">Transfert aeroport AIBD</a>
+                    <a href="/services/chauffeur-prive-dakar" className="px-3 py-2 rounded-lg border border-border hover:border-gold hover:text-gold transition-colors">Chauffeur prive Dakar</a>
+                    <a href="/services/mise-a-disposition-chauffeur" className="px-3 py-2 rounded-lg border border-border hover:border-gold hover:text-gold transition-colors">Mise a disposition</a>
+                    <a href="/routes" className="px-3 py-2 rounded-lg border border-border hover:border-gold hover:text-gold transition-colors">Hub routes</a>
+                    <a href="/faq" className="px-3 py-2 rounded-lg border border-border hover:border-gold hover:text-gold transition-colors">FAQ</a>
+                </div>
+            </section>
             <ServicesClient />
         </>
     );
