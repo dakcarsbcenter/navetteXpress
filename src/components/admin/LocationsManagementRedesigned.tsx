@@ -156,10 +156,10 @@ export function LocationsManagementRedesigned() {
                                 <th className="px-6 py-4 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/5 bg-midnight font-medium">
+                        <tbody className="divide-y divide-white/5 font-medium" style={{ backgroundColor: 'var(--color-dash-bg)' }}>
                             {locations.map((loc) => (
                                 <tr key={loc.id} className="hover:bg-white/5 transition-colors">
-                                    <td className="px-6 py-4 flex items-center gap-3">
+                                    <td className="px-6 py-4 flex items-center gap-3 text-white">
                                         <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center text-gold border border-gold/20">
                                             <MapPin size={20} weight="light" />
                                         </div>
