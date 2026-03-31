@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { Plus, Minus, CalendarRange, Save, Clock3, ToggleLeft, ToggleRight } from 'lucide-react'
+import { Plus, Minus, CalendarBlank, FloppyDisk, Clock, ToggleLeft, ToggleRight } from '@phosphor-icons/react'
 import { ContentCard, EmptyState, SectionHeader } from '@/components/driver/shared'
 
 interface AvailabilityRow {
@@ -161,7 +161,7 @@ export function DriverAvailabilityCalendar() {
       </ContentCard>
 
       {isLoading ? (
-        <EmptyState icon={<Clock3 size={30} />} title="CHARGEMENT" description="Récupération des disponibilités" />
+        <EmptyState icon={<Clock size={30} />} title="CHARGEMENT" description="Récupération des disponibilités" />
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">
           {days.map((day, dayIndex) => (
@@ -174,7 +174,7 @@ export function DriverAvailabilityCalendar() {
               </button>
             }>
               {day.slots.length === 0 ? (
-                <EmptyState icon={<CalendarRange size={22} />} title="AUCUN CRÉNEAU" description="Ajoutez un créneau avec le bouton +" />
+                <EmptyState icon={<CalendarBlank size={22} />} title="AUCUN CRÉNEAU" description="Ajoutez un créneau avec le bouton +" />
               ) : (
                 <div className="flex flex-wrap gap-2">
                   {day.slots.map((slot, slotIndex) => (
@@ -209,7 +209,7 @@ export function DriverAvailabilityCalendar() {
         disabled={isSaving}
         className="inline-flex items-center gap-2 rounded-lg border border-[color-mix(in_srgb,var(--accent)_45%,transparent)] bg-(--accent) px-4 py-2 text-sm font-bold text-black transition hover:brightness-110 disabled:opacity-70"
       >
-        <Save size={16} /> {isSaving ? 'Enregistrement...' : `Enregistrer les disponibilités (${totalSlots})`}
+        <FloppyDisk size={16} /> {isSaving ? 'Enregistrement...' : `Enregistrer les disponibilités (${totalSlots})`}
       </button>
     </div>
   )

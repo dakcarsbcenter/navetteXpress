@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef } from "react"
-import { Bot, Play, CheckCircle, XCircle, Loader2, AlertTriangle, Star, Car } from "lucide-react"
+import { Robot, Play, CheckCircle, XCircle, CircleNotch, Warning, Star, Car } from "@phosphor-icons/react"
 import type { AgentProposal, AssignmentProposal, ReviewProposal, StreamEvent } from "@/lib/agent/admin-agent"
 
 type ProposalState = "pending" | "approved" | "rejected"
@@ -95,7 +95,7 @@ function AssignmentCard({
             disabled={item.loading}
             className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-(--accent) px-3 py-2 text-xs font-bold text-black hover:brightness-110 disabled:opacity-50"
           >
-            {item.loading ? <Loader2 size={13} className="animate-spin" /> : <CheckCircle size={13} />}
+            {item.loading ? <CircleNotch size={13} className="animate-spin" /> : <CheckCircle size={13} />}
             Approuver
           </button>
           <button
@@ -165,7 +165,7 @@ function ReviewCard({
             disabled={item.loading}
             className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-(--accent) px-3 py-2 text-xs font-bold text-black hover:brightness-110 disabled:opacity-50"
           >
-            {item.loading ? <Loader2 size={13} className="animate-spin" /> : <CheckCircle size={13} />}
+            {item.loading ? <CircleNotch size={13} className="animate-spin" /> : <CheckCircle size={13} />}
             Publier
           </button>
           <button
@@ -315,7 +315,7 @@ export function AgentAdminPanel() {
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-(--border) bg-[color-mix(in_srgb,var(--accent)_12%,transparent)]">
-            <Bot size={20} className="text-(--accent)" />
+            <Robot size={20} className="text-(--accent)" />
           </div>
           <div>
             <h2 className="text-sm font-bold text-(--text-primary)">Agent Admin IA</h2>
@@ -328,7 +328,7 @@ export function AgentAdminPanel() {
           className="flex items-center gap-2 rounded-xl bg-(--accent) px-4 py-2.5 text-sm font-bold text-black hover:brightness-110 disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {isRunning ? (
-            <Loader2 size={15} className="animate-spin" />
+            <CircleNotch size={15} className="animate-spin" />
           ) : (
             <Play size={15} />
           )}
@@ -339,7 +339,7 @@ export function AgentAdminPanel() {
       {/* Error */}
       {error && (
         <div className="flex items-start gap-2 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
-          <AlertTriangle size={16} className="mt-0.5 shrink-0" />
+          <Warning size={16} className="mt-0.5 shrink-0" />
           {error}
         </div>
       )}
@@ -417,7 +417,7 @@ export function AgentAdminPanel() {
       {/* Empty state */}
       {!isRunning && proposals.length === 0 && logs.length === 0 && (
         <div className="rounded-xl border border-dashed border-(--border) p-8 text-center">
-          <Bot size={32} className="mx-auto mb-3 text-(--text-muted)" />
+          <Robot size={32} className="mx-auto mb-3 text-(--text-muted)" />
           <p className="text-sm font-semibold text-(--text-secondary)">Aucune analyse effectuée</p>
           <p className="mt-1 text-xs text-(--text-muted)">
             Cliquez sur &ldquo;Lancer l&apos;analyse&rdquo; pour que l&apos;agent vérifie les réservations en attente et les avis sans réponse.

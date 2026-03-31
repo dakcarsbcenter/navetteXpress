@@ -750,7 +750,6 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
               },
               {
                 label: 'Revenus',
-                value: `${stats.earnings.toLocaleString('fr-FR')} FCFA`,
                 value: `${stats.earnings.toLocaleString('fr-FR')} F`,
                 icon: <Banknote size={20} weight="duotone" />,
                 color: '#F59E0B',

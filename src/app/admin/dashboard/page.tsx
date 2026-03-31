@@ -5,6 +5,7 @@ import { useSession, signOut } from "next-auth/react"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { usePermissions } from "@/hooks/usePermissions"
+import { HouseLine, TrendUp, Users as PhosphorUsers, Van, CalendarBlank, Money, Receipt, LockSimple, Star, MapPin, Megaphone, Bell as PhosphorBell, Robot, SignOut as PhosphorSignOut, Plus as PhosphorPlus, List as PhosphorList, BellSimple } from '@phosphor-icons/react'
 
 // Composants pour chaque section
 import { VehiclesManagementRedesigned } from "@/components/admin/VehiclesManagementRedesigned"
@@ -100,20 +101,31 @@ export default function AdminDashboard() {
     )
   }
 
-  const allTabs = [
-    { id: 'modern' as TabType, label: 'Dashboard', shortLabel: 'Dashboard', icon: '🏠', resource: '', always: true },
-    { id: 'stats' as TabType, label: 'Statistiques', shortLabel: 'Stats', icon: '📈', resource: '', adminOnly: true },
-    { id: 'users' as TabType, label: 'Utilisateurs', shortLabel: 'Users', icon: '👥', resource: 'users' },
-    { id: 'vehicles' as TabType, label: 'Véhicules', shortLabel: 'Véhicules', icon: '🚗', resource: 'vehicles' },
-    { id: 'bookings' as TabType, label: 'Réservations', shortLabel: 'Réserv.', icon: '📅', resource: 'bookings' },
-    { id: 'quotes' as TabType, label: 'Devis', shortLabel: 'Devis', icon: '💰', resource: 'quotes' },
-    { id: 'invoices' as TabType, label: 'Factures', shortLabel: 'Factures', icon: '🧾', resource: '', always: true },
-    { id: 'permissions' as TabType, label: 'Permissions', shortLabel: 'Perms', icon: '🔐', resource: 'users', requireManage: true, adminOnly: true },
-    { id: 'reviews' as TabType, label: 'Avis', shortLabel: 'Avis', icon: '⭐', resource: 'reviews' },
-    { id: 'locations' as TabType, label: 'Lieux', shortLabel: 'Lieux', icon: '📍', resource: '', always: true, adminOnly: true },
-    { id: 'ads' as TabType, label: 'Publicités', shortLabel: 'Pubs', icon: '📢', resource: '', always: true },
-    { id: 'services' as TabType, label: 'Services', shortLabel: 'Services', icon: '🛎️', resource: '', always: true, adminOnly: true },
-    { id: 'agent' as TabType, label: 'Agent IA', shortLabel: 'Agent IA', icon: '🤖', resource: '', always: true, adminOnly: true },
+  type TabIconType = React.ComponentType<{ size?: number; weight?: "thin" | "light" | "regular" | "bold" | "fill" | "duotone"; className?: string }>
+
+  const allTabs: Array<{
+    id: TabType;
+    label: string;
+    shortLabel: string;
+    Icon: TabIconType;
+    resource?: string;
+    always?: boolean;
+    adminOnly?: boolean;
+    requireManage?: boolean;
+  }> = [
+    { id: 'modern', label: 'Dashboard', shortLabel: 'Dashboard', Icon: HouseLine, always: true },
+    { id: 'stats', label: 'Statistiques', shortLabel: 'Stats', Icon: TrendUp, adminOnly: true },
+    { id: 'users', label: 'Utilisateurs', shortLabel: 'Users', Icon: PhosphorUsers, resource: 'users' },
+    { id: 'vehicles', label: 'Véhicules', shortLabel: 'Véhicules', Icon: Van, resource: 'vehicles' },
+    { id: 'bookings', label: 'Réservations', shortLabel: 'Réserv.', Icon: CalendarBlank, resource: 'bookings' },
+    { id: 'quotes', label: 'Devis', shortLabel: 'Devis', Icon: Money, resource: 'quotes' },
+    { id: 'invoices', label: 'Factures', shortLabel: 'Factures', Icon: Receipt, always: true },
+    { id: 'permissions', label: 'Permissions', shortLabel: 'Perms', Icon: LockSimple, resource: 'users', requireManage: true, adminOnly: true },
+    { id: 'reviews', label: 'Avis', shortLabel: 'Avis', Icon: Star, resource: 'reviews' },
+    { id: 'locations', label: 'Lieux', shortLabel: 'Lieux', Icon: MapPin, always: true, adminOnly: true },
+    { id: 'ads', label: 'Publicités', shortLabel: 'Pubs', Icon: Megaphone, always: true },
+    { id: 'services', label: 'Services', shortLabel: 'Services', Icon: PhosphorBell, always: true, adminOnly: true },
+    { id: 'agent', label: 'Agent IA', shortLabel: 'Agent IA', Icon: Robot, always: true, adminOnly: true },
   ]
 
   // Filtrer les onglets selon les permissions
@@ -275,7 +287,7 @@ export default function AdminDashboard() {
                 color: 'var(--color-dash-nav-text)'
               }}
             >
-              <span className="text-lg">{tab.icon}</span>
+              <tab.Icon size={16} weight={activeTab === tab.id ? "fill" : "regular"} />
               <span>{tab.label}</span>
               {tab.id === 'bookings' && pendingBookingsCount > 0 && (
                 <span className="ml-auto text-[10px] font-semibold px-2 py-0.5 rounded-full"
@@ -304,7 +316,7 @@ export default function AdminDashboard() {
                 color: 'var(--color-dash-nav-text)'
               }}
             >
-              <span className="text-lg">{tab.icon}</span>
+              <tab.Icon size={16} weight={activeTab === tab.id ? "fill" : "regular"} />
               <span>{tab.label}</span>
             </button>
           ))}
@@ -327,7 +339,7 @@ export default function AdminDashboard() {
                 color: 'var(--color-dash-nav-text)'
               }}
             >
-              <span className="text-lg">{tab.icon}</span>
+              <tab.Icon size={16} weight={activeTab === tab.id ? "fill" : "regular"} />
               <span>{tab.label}</span>
             </button>
           ))}
@@ -350,7 +362,7 @@ export default function AdminDashboard() {
                 color: 'var(--color-dash-nav-text)'
               }}
             >
-              <span className="text-lg">{tab.icon}</span>
+              <tab.Icon size={16} weight={activeTab === tab.id ? "fill" : "regular"} />
               <span>{tab.label}</span>
             </button>
           ))}
@@ -382,9 +394,7 @@ export default function AdminDashboard() {
             className="w-full flex items-center gap-2 px-3 py-2 mt-1 rounded-xl text-xs transition-all duration-150 hover:bg-red-500/10 hover:text-red-500"
             style={{ color: 'var(--color-text-muted)' }}
           >
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
+            <PhosphorSignOut size={14} />
             Déconnexion
           </button>
         </div>
@@ -417,9 +427,7 @@ export default function AdminDashboard() {
                 border: '1px solid rgba(255,255,255,0.07)',
                 color: 'var(--color-text-secondary)',
               }}>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-              </svg>
+              <BellSimple size={16} />
               {pendingBookingsCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[9px] font-bold flex items-center justify-center"
                   style={{ backgroundColor: 'var(--color-gold)', color: '#000' }}>
@@ -431,9 +439,7 @@ export default function AdminDashboard() {
             <button
               onClick={() => setActiveTab('bookings')}
               className="btn-gold flex items-center gap-2 px-4 py-2 rounded-xl text-sm">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
+              <PhosphorPlus size={16} />
               <span className="hidden sm:inline">Nouveau</span>
             </button>
           </div>
@@ -451,9 +457,7 @@ export default function AdminDashboard() {
           <span>Navette</span> <span>Xpress</span>
         </div>
         <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-white">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
+          <PhosphorList size={24} />
         </button>
       </div>
       {mobileMenuOpen && (
@@ -467,7 +471,7 @@ export default function AdminDashboard() {
                   onClick={() => { setActiveTab(tab.id); setMobileMenuOpen(false); }}
                   className="w-full text-left text-white py-2 flex items-center gap-3"
                 >
-                  <span>{tab.icon}</span>
+                  <tab.Icon size={16} weight="regular" />
                   <span>{tab.label}</span>
                 </button>
               ))}

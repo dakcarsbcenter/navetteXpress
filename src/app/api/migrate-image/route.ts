@@ -18,10 +18,11 @@ function isValidImageUrl(imageUrl: string): { valid: boolean; sanitizedUrl?: str
     const privatePatterns = [
       /^localhost$/,
       /^127\./, // 127.x.x.x
+      /^0\.0\.0\.0$/, // 0.0.0.0 maps to localhost on most systems
       /^192\.168\./, // 192.168.x.x
       /^10\./, // 10.x.x.x
       /^172\.(1[6-9]|2[0-9]|3[01])\./, // 172.16-31.x.x
-      /^169\.254\./, // 169.254.x.x (link-local)
+      /^169\.254\./, // 169.254.x.x (link-local / cloud metadata)
       /^::1$/, // IPv6 localhost
       /^fc[0-9a-f]{2}:/i, // IPv6 private
       /^fe[89a-f][0-9a-f]:/i, // IPv6 link-local
@@ -89,7 +90,9 @@ export async function POST(request: NextRequest) {
     console.log(`📥 Téléchargement de: ${safeImageUrl}`);
 
     // Télécharger l'image (côté serveur, pas de problème CORS)
+    // redirect: 'error' prevents SSRF via open redirects to internal IPs
     const imageResponse = await fetch(safeImageUrl, {
+      redirect: 'error',
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
       },

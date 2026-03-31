@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Bell } from 'lucide-react'
+import { Bell } from '@phosphor-icons/react'
 import { usePathname } from 'next/navigation'
 
 const titleMap: Record<string, string> = {

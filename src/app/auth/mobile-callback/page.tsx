@@ -1,9 +1,9 @@
 'use client'
 
-import { Loader2 } from 'lucide-react'
+import { CircleNotch } from '@phosphor-icons/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
-import { useEffect } from 'react'
+import { useEffect, Suspense } from 'react'
 
 function getSafeNextPath(rawNext: string | null): string {
   if (!rawNext) {
@@ -17,7 +17,7 @@ function getSafeNextPath(rawNext: string | null): string {
   return rawNext
 }
 
-export default function MobileOAuthCallbackPage() {
+function MobileOAuthCallbackContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { status } = useSession()
@@ -44,9 +44,21 @@ export default function MobileOAuthCallbackPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0A0A0F]">
       <div className="text-center">
-        <Loader2 className="animate-spin h-10 w-10 text-dash-nav-active-border mx-auto" />
+        <CircleNotch className="animate-spin h-10 w-10 text-dash-nav-active-border mx-auto" weight="bold" />
         <p className="mt-4 text-[#8A8799] animate-pulse">Verification de la connexion...</p>
       </div>
     </div>
+  )
+}
+
+export default function MobileOAuthCallbackPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-[#0A0A0F]">
+        <CircleNotch className="animate-spin h-10 w-10 text-[#8A8799]" weight="bold" />
+      </div>
+    }>
+      <MobileOAuthCallbackContent />
+    </Suspense>
   )
 }

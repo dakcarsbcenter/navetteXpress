@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
-import { Car, Coins, Star, Users, FileText, User } from "lucide-react"
+import { Car, Coins, Star, Users, FileText, User } from "@phosphor-icons/react"
 import { StatCard } from "@/app/driver/dashboard/components/StatCard"
 import { MissionRadar } from "@/app/driver/dashboard/components/MissionRadar"
 import { UpcomingMissions } from "@/app/driver/dashboard/components/UpcomingMissions"

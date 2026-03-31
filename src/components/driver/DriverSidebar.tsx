@@ -3,24 +3,24 @@
 import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
-import { Calendar, ChartNoAxesColumn, Clock3, LayoutDashboard, LogOut, User, Wrench, Circle } from 'lucide-react'
+import { SquaresFour, CalendarBlank, Clock, ChartBar, SignOut, User, Wrench, Circle } from '@phosphor-icons/react'
 import { ThemeToggle } from '@/app/driver/dashboard/components/ThemeToggle'
 
 interface NavItem {
   href: string
   label: string
-  icon: React.ComponentType<{ size?: number; className?: string }>
+  icon: React.ComponentType<{ size?: number; className?: string; weight?: "thin" | "light" | "regular" | "bold" | "fill" | "duotone" }>
 }
 
 const principalItems: NavItem[] = [
-  { href: '/driver/dashboard', label: 'Tableau de bord', icon: LayoutDashboard },
-  { href: '/driver/planning', label: 'Planning', icon: Calendar },
+  { href: '/driver/dashboard', label: 'Tableau de bord', icon: SquaresFour },
+  { href: '/driver/planning', label: 'Planning', icon: CalendarBlank },
 ]
 
 const managementItems: NavItem[] = [
-  { href: '/driver/disponibilites', label: 'Disponibilités', icon: Clock3 },
+  { href: '/driver/disponibilites', label: 'Disponibilités', icon: Clock },
   { href: '/driver/rapport', label: 'Rapport Véhicule', icon: Wrench },
-  { href: '/driver/statistiques', label: 'Statistiques', icon: ChartNoAxesColumn },
+  { href: '/driver/statistiques', label: 'Statistiques', icon: ChartBar },
   { href: '/driver/profil', label: 'Profil', icon: User },
 ]
 
@@ -36,7 +36,7 @@ function SidebarLink({ item, active }: { item: NavItem; active: boolean }) {
       }`}
     >
       {active && <span className="absolute -left-3 top-2 h-7 w-1 rounded-full bg-(--accent)" />}
-      <Icon size={16} />
+      <Icon size={16} weight={active ? "fill" : "regular"} />
       <span>{item.label}</span>
     </Link>
   )
@@ -76,7 +76,7 @@ export default function DriverSidebar() {
             <div>
               <p className="text-sm font-semibold text-(--text-primary)">{session?.user?.name ?? 'Chauffeur'}</p>
               <div className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-[color-mix(in_srgb,var(--success)_15%,transparent)] px-2 py-0.5 text-[11px] text-(--success)">
-                <Circle size={8} fill="currentColor" />
+                <Circle size={8} weight="fill" />
                 Disponible
               </div>
             </div>
@@ -106,7 +106,7 @@ export default function DriverSidebar() {
             onClick={() => signOut({ callbackUrl: '/' })}
             className="driver-dashboard-card inline-flex h-11 w-full items-center gap-2 rounded-xl border border-(--border) bg-(--bg-card) px-3 text-sm text-(--text-muted) hover:text-(--danger)"
           >
-            <LogOut size={16} />
+            <SignOut size={16} />
             Déconnexion
           </button>
         </div>
@@ -124,7 +124,7 @@ export default function DriverSidebar() {
                 href={item.href}
                 className={`flex flex-col items-center gap-1 rounded-lg px-2 py-2 text-[11px] ${active ? 'bg-[color-mix(in_srgb,var(--accent)_12%,transparent)] text-(--accent)' : 'text-(--text-muted)'}`}
               >
-                <Icon size={16} />
+                <Icon size={18} weight={active ? "fill" : "regular"} />
                 <span>{item.label.split(' ')[0]}</span>
               </Link>
             )

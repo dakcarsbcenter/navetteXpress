@@ -76,25 +76,30 @@
     </div>
 
     <script>
-        // Sanitize strings before inserting into innerHTML to prevent XSS
-        function escapeHtml(str) {
-            if (typeof str !== 'string') return String(str ?? '');
-            return str
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
+        function setResult(el, className, nodes) {
+            el.className = className;
+            el.replaceChildren(...nodes);
+            el.style.display = 'block';
+        }
+
+        function el(tag, textOrNodes) {
+            const node = document.createElement(tag);
+            if (typeof textOrNodes === 'string') {
+                node.textContent = textOrNodes;
+            } else if (Array.isArray(textOrNodes)) {
+                node.append(...textOrNodes);
+            }
+            return node;
         }
 
         async function initializePermissions() {
             const btn = document.getElementById('initBtn');
             const result = document.getElementById('result');
-            
+
             btn.disabled = true;
             btn.textContent = 'Initialisation en cours...';
             result.style.display = 'none';
-            
+
             try {
                 const response = await fetch('/api/admin/init-profile-permissions', {
                     method: 'POST',
@@ -102,38 +107,38 @@
                         'Content-Type': 'application/json'
                     }
                 });
-                
+
                 const data = await response.json();
-                
-                result.style.display = 'block';
-                
+
                 if (response.ok && data.success) {
-                    result.className = 'success';
-                    result.innerHTML = `
-                        <h3>✅ ${escapeHtml(data.message)}</h3>
-                        <p><strong>Résultats :</strong></p>
-                        <pre>${escapeHtml(JSON.stringify(data.results, null, 2))}</pre>
-                        <p><strong>Permissions de profil actuelles :</strong></p>
-                        <pre>${escapeHtml(JSON.stringify(data.profilePermissions, null, 2))}</pre>
-                    `;
+                    const labelResults = el('p');
+                    labelResults.append(el('strong', 'Résultats :'));
+                    const labelPerms = el('p');
+                    labelPerms.append(el('strong', 'Permissions de profil actuelles :'));
+                    setResult(result, 'success', [
+                        el('h3', '✅ ' + data.message),
+                        labelResults,
+                        el('pre', JSON.stringify(data.results, null, 2)),
+                        labelPerms,
+                        el('pre', JSON.stringify(data.profilePermissions, null, 2)),
+                    ]);
                     btn.textContent = '✅ Permissions initialisées';
                 } else {
-                    result.className = 'error';
-                    result.innerHTML = `
-                        <h3>❌ Erreur</h3>
-                        <p>${escapeHtml(data.error || 'Une erreur est survenue')}</p>
-                    `;
+                    setResult(result, 'error', [
+                        el('h3', '❌ Erreur'),
+                        el('p', data.error || 'Une erreur est survenue'),
+                    ]);
                     btn.disabled = false;
                     btn.textContent = 'Réessayer';
                 }
             } catch (error) {
-                result.style.display = 'block';
-                result.className = 'error';
-                result.innerHTML = `
-                    <h3>❌ Erreur</h3>
-                    <p>Erreur de connexion: ${escapeHtml(error.message)}</p>
-                    <p><strong>Note:</strong> Vous devez être connecté en tant qu'administrateur.</p>
-                `;
+                const note = el('p');
+                note.append(el('strong', 'Note:'), ' Vous devez être connecté en tant qu\'administrateur.');
+                setResult(result, 'error', [
+                    el('h3', '❌ Erreur'),
+                    el('p', 'Erreur de connexion: ' + error.message),
+                    note,
+                ]);
                 btn.disabled = false;
                 btn.textContent = 'Réessayer';
             }

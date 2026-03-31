@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { signOut, useSession } from "next-auth/react"
-import { LogOut, Lock, Save, ShieldCheck, UserCircle2, CarFront } from "lucide-react"
+import { SignOut, Lock, FloppyDisk, ShieldCheck, UserCircle, Car } from "@phosphor-icons/react"
 import UniversalProfilePhotoUpload from "@/components/ui/UniversalProfilePhotoUpload"
 import { ContentCard, DriverStatusBadge, SectionHeader } from "@/components/driver/shared"
 
@@ -173,7 +173,7 @@ export function DriverProfile({ onBack }: DriverProfileProps) {
               onClick={() => signOut({ callbackUrl: "/" })}
               className="flex w-full items-center gap-2 rounded-lg border border-[color-mix(in_srgb,var(--danger)_35%,transparent)] bg-[color-mix(in_srgb,var(--danger)_15%,transparent)] px-3 py-2 text-sm text-(--danger)"
             >
-              <LogOut size={15} /> Déconnexion
+              <SignOut size={15} /> Déconnexion
             </button>
           </div>
         </ContentCard>
@@ -184,7 +184,7 @@ export function DriverProfile({ onBack }: DriverProfileProps) {
         disabled={isSaving}
         className="inline-flex items-center gap-2 rounded-lg bg-(--accent) px-4 py-2 text-sm font-bold text-black hover:brightness-110 disabled:opacity-70"
       >
-        <Save size={15} /> {isSaving ? "Enregistrement..." : "Enregistrer les modifications"}
+        <FloppyDisk size={15} /> {isSaving ? "Enregistrement..." : "Enregistrer les modifications"}
       </button>
     </div>
   )

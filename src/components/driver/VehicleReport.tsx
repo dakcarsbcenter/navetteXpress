@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { AlertTriangle, Car, Fuel, Gauge, ShieldCheck, Wrench, FileClock, Send } from "lucide-react"
+import { Warning, Car, Gauge, ShieldCheck, Wrench, ClockCountdown, PaperPlaneTilt } from "@phosphor-icons/react"
 import { ContentCard, DriverStatusBadge, EmptyState, MetricCard, SectionHeader } from "@/components/driver/shared"
 
 interface VehicleReportProps {
@@ -181,16 +181,16 @@ export function VehicleReport({ onBack }: VehicleReportProps) {
           />
 
           <button className="inline-flex items-center gap-2 rounded-lg bg-(--accent) px-4 py-2 text-sm font-bold text-black hover:brightness-110">
-            <Send size={15} /> Envoyer le signalement
+            <PaperPlaneTilt size={15} /> Envoyer le signalement
           </button>
         </form>
       </ContentCard>
 
       <ContentCard title="Derniers rapports" indicator={incidentsOpen > 0 ? 'gold' : 'green'}>
         {loading ? (
-          <EmptyState icon={<FileClock size={26} />} title="CHARGEMENT DES RAPPORTS" />
+          <EmptyState icon={<ClockCountdown size={26} />} title="CHARGEMENT DES RAPPORTS" />
         ) : rows.length === 0 ? (
-          <EmptyState icon={<AlertTriangle size={26} />} title="AUCUN RAPPORT" description="Aucun incident signalé" />
+          <EmptyState icon={<Warning size={26} />} title="AUCUN RAPPORT" description="Aucun incident signalé" />
         ) : (
           <div className="space-y-2">
             {rows.map((report) => (

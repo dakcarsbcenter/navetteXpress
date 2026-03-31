@@ -154,7 +154,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" suppressHydrationWarning className="scroll-smooth">
+    <html lang="fr" suppressHydrationWarning className="scroll-smooth" data-scroll-behavior="smooth">
       <head />
       <body className={`${cormorant.variable} ${dmSans.variable} ${dmMono.variable} ${syne.variable} antialiased font-body bg-background text-foreground`}>
         <JsonLd data={schemaLocalBusiness} />

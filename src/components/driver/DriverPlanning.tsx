@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { CalendarDays, Clock3, Coins, Car, ListChecks } from "lucide-react"
+import { CalendarBlank, Clock, Coins, Car, ListChecks } from "@phosphor-icons/react"
 import { UpcomingMissions } from "@/app/driver/dashboard/components/UpcomingMissions"
 import { ContentCard, EmptyState, MetricCard, SectionHeader } from "@/components/driver/shared"
 import type { DriverBookingsApiResponse } from "@/types/dashboard"
@@ -146,9 +146,9 @@ export function DriverPlanning({ onBack }: PlanningProps) {
 
       <ContentCard title="Vue hebdomadaire" indicator="gold" className="overflow-x-auto">
         {isLoading ? (
-          <EmptyState icon={<Clock3 size={28} />} title="CHARGEMENT DU PLANNING" description="Synchronisation des missions en cours" />
+          <EmptyState icon={<Clock size={28} />} title="CHARGEMENT DU PLANNING" description="Synchronisation des missions en cours" />
         ) : weekMissions.length === 0 ? (
-          <EmptyState icon={<CalendarDays size={28} />} title="EN ATTENTE DE MISSION" description="Aucune mission planifiée cette semaine" />
+          <EmptyState icon={<CalendarBlank size={28} />} title="EN ATTENTE DE MISSION" description="Aucune mission planifiée cette semaine" />
         ) : (
           <div className="min-w-[860px]">
             <div className="grid grid-cols-[90px_repeat(7,minmax(0,1fr))] border-b border-(--border) pb-2">
@@ -207,7 +207,7 @@ export function DriverPlanning({ onBack }: PlanningProps) {
         </div>
         <div className="space-y-4">
           <MetricCard icon={ListChecks} label="Missions planifiées" value={summary.total} badge={summary.total > 0 ? "Active" : "Neutre"} delay={0} />
-          <MetricCard icon={Clock3} label="Heures de conduite" value={`${summary.hours}h`} badge="Stable" iconTone="green" delay={50} />
+          <MetricCard icon={Clock} label="Heures de conduite" value={`${summary.hours}h`} badge="Stable" iconTone="green" delay={50} />
           <MetricCard icon={Coins} label="Revenus estimés" value={`${Math.round(summary.revenue).toLocaleString("fr-FR")} F`} badge="En attente" delay={100} />
         </div>
       </div>

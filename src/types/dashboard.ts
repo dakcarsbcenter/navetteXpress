@@ -1,11 +1,13 @@
-import type { LucideIcon } from "lucide-react"
+import type React from "react"
 
 export type TrendType = "up" | "down" | "neutral"
 export type MissionStatus = "À l'heure" | "Confirmée" | "Retard" | "Annulée"
 export type HistoryStatus = "Terminé" | "En cours" | "Annulé"
 
+type PhosphorIcon = React.ComponentType<{ size?: number; className?: string; weight?: "thin" | "light" | "regular" | "bold" | "fill" | "duotone" }>
+
 export interface StatCardProps {
-  icon: LucideIcon
+  icon: PhosphorIcon
   label: string
   value: string | number
   trend?: string

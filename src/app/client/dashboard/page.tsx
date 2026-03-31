@@ -101,8 +101,17 @@ function isValidImageUrl(url: string): boolean {
   if (!url) return false
 
   try {
-    // Allow data URLs for base64 images
-    if (url.startsWith('data:image/')) return true
+    // Allow data URLs for safe raster formats only — SVG is excluded because
+    // data:image/svg+xml can embed <script> tags that execute in browsers.
+    const safeDataPrefixes = [
+      'data:image/png;base64,',
+      'data:image/jpeg;base64,',
+      'data:image/gif;base64,',
+      'data:image/webp;base64,',
+    ]
+    if (url.startsWith('data:')) {
+      return safeDataPrefixes.some(prefix => url.startsWith(prefix))
+    }
 
     // Parse and validate URL
     const parsedUrl = new URL(url)
@@ -145,8 +154,8 @@ function getSafeProfileImageUrl(imageUrl: string | undefined): string | null {
 
   // Additional safety: ensure URL is properly formatted
   try {
-    if (trimmedUrl.startsWith('data:image/')) {
-      // Data URLs are safe if they start with data:image/
+    if (trimmedUrl.startsWith('data:')) {
+      // Only safe raster data: URIs pass isValidImageUrl — return as-is
       return trimmedUrl
     }
 
@@ -574,7 +583,7 @@ function ClientDashboardContent() {
               {bookings.slice(0, 5).length > 0 ? (
                 <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
                   {bookings.slice(0, 5).map((booking) => (
-                    <div key={booking.id} className="flex items-center gap-3 px-6 py-3.5 transition-colors duration-150 hover:bg-white/[0.03] cursor-pointer" onClick={() => { setEditingBooking(booking); setIsEditBookingModalOpen(true) }}>
+                    <div key={booking.id} className="flex items-center gap-3 px-6 py-3.5 transition-colors duration-150 hover:bg-white/3 cursor-pointer" onClick={() => { setEditingBooking(booking); setIsEditBookingModalOpen(true) }}>
                       <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
                         style={{ backgroundColor: booking.status === 'in_progress' ? 'var(--color-trip-inprogress-bg)' : booking.status === 'pending' ? 'rgba(245,158,11,0.1)' : 'rgba(255,255,255,0.04)', color: booking.status === 'in_progress' ? 'var(--color-trip-inprogress)' : booking.status === 'pending' ? '#F59E0B' : '#6B7280' }}>
                         <MapPin size={14} weight="fill" />
@@ -1149,7 +1158,7 @@ function ClientDashboardContent() {
   return (
     <div className="flex h-screen overflow-hidden bg-[#F3F4F6] dark:bg-[#1A1A1A]">
       {/* SIDEBAR - Navigation Latérale Style Professionnel */}
-      <aside className="hidden md:flex flex-col w-64 shadow-2xl z-20 fixed left-0 top-0 h-screen overflow-y-auto bg-white dark:bg-[#090D12] border-r border-gray-200 dark:border-[var(--color-client-border)]">
+      <aside className="hidden md:flex flex-col w-64 shadow-2xl z-20 fixed left-0 top-0 h-screen overflow-y-auto bg-white dark:bg-[#090D12] border-r border-gray-200 dark:border-client-border">
         {/* Logo Area */}
         <div className="h-24 flex items-center px-6 mb-2">
           <Link href="/" className="flex items-center gap-2.5 group">
@@ -1184,8 +1193,8 @@ function ClientDashboardContent() {
                 <span className="text-[10px] font-medium text-gray-600 dark:text-gray-400">Membre Premium</span>
               </div>
             </div>
-            <div className="flex items-center gap-1.5 text-[10px] text-[#22C55E]">
-              <span className="w-1 h-1 rounded-full bg-[#22C55E] animate-pulse"></span>
+            <div className="flex items-center gap-1.5 text-[10px] text-success">
+              <span className="w-1 h-1 rounded-full bg-success animate-pulse"></span>
               En ligne
             </div>
           </button>
@@ -1288,7 +1297,7 @@ function ClientDashboardContent() {
 
         {/* CTA Sidebar */}
         <div className="p-4 mt-4">
-          <Link href="/reservation" className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-gradient-to-r from-red-600 to-red-800 text-white font-bold text-sm shadow-[0_4px_20px_rgba(255,44,44,0.2)] transition-transform hover:scale-[1.02] active:scale-[0.98]">
+          <Link href="/reservation" className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-linear-to-r from-red-600 to-red-800 text-white font-bold text-sm shadow-[0_4px_20px_rgba(255,44,44,0.2)] transition-transform hover:scale-[1.02] active:scale-[0.98]">
             <Plus size={16} weight="bold" /> Réserver un trajet
           </Link>
         </div>
@@ -1348,7 +1357,7 @@ function ClientDashboardContent() {
 
         {/* Mobile Menu Dropdown */}
         {mobileMenuOpen && (
-          <div className="md:hidden overflow-hidden transition-all duration-300 bg-white dark:bg-[#090D12] border-b border-gray-200 dark:border-[var(--color-client-border)]">
+          <div className="md:hidden overflow-hidden transition-all duration-300 bg-white dark:bg-[#090D12] border-b border-gray-200 dark:border-client-border">
             <nav className="px-4 py-4 space-y-1">
               {tabs.map((tab) => {
                 const Icon = {

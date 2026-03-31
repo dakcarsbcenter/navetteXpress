@@ -20,9 +20,13 @@ const sql = neon(DATABASE_URL);
 const db = drizzle({ client: sql });
 
 async function createAdminUser() {
-  const email = "admin@taxi-service.com";
-  const password = "Admin123!"; // Changez ce mot de passe!
-  const name = "Admin Principal";
+  const email = process.env.ADMIN_EMAIL ?? "admin@taxi-service.com";
+  const password = process.env.ADMIN_PASSWORD;
+  const name = process.env.ADMIN_NAME ?? "Admin Principal";
+
+  if (!password) {
+    throw new Error("ADMIN_PASSWORD environment variable is required");
+  }
 
   try {
     console.log("🔐 Création de l'utilisateur admin...");

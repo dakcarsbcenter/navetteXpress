@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { BarChart3, Coins, Star, Target } from "lucide-react"
+import { ChartBar, Coins, Star, Target } from "@phosphor-icons/react"
 import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 import { ContentCard, EmptyState, MetricCard, SectionHeader } from "@/components/driver/shared"
 
@@ -104,7 +104,7 @@ export function DriverStats({ onBack }: DriverStatsProps) {
       />
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <MetricCard icon={BarChart3} label="Total courses" value={stats.totalRides} badge="Active" />
+        <MetricCard icon={ChartBar} label="Total courses" value={stats.totalRides} badge="Active" />
         <MetricCard icon={Coins} label="Revenus" value={`${Math.round(stats.totalEarnings).toLocaleString("fr-FR")} F`} badge="Stable" iconTone="green" delay={50} />
         <MetricCard icon={Star} label="Note moyenne" value={`${stats.averageRating.toFixed(1)}/5`} badge="Confirmée" delay={100} />
         <MetricCard icon={Target} label="Taux d'acceptation" value={acceptance} badge="Disponible" delay={150} />
@@ -140,7 +140,7 @@ export function DriverStats({ onBack }: DriverStatsProps) {
       <div className="grid gap-4 lg:grid-cols-2">
         <ContentCard title="Courses par jour" indicator="gold">
           {ridesBarData.length === 0 ? (
-            <EmptyState icon={<BarChart3 size={22} />} title="AUCUNE COURSE" description="Aucune donnée de course disponible" />
+            <EmptyState icon={<ChartBar size={22} />} title="AUCUNE COURSE" description="Aucune donnée de course disponible" />
           ) : (
             <div className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">

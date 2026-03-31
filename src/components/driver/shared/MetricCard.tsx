@@ -1,8 +1,9 @@
-import type { LucideIcon } from "lucide-react"
 import { DriverStatusBadge } from "@/components/driver/shared/StatusBadge"
 
+type PhosphorIcon = React.ComponentType<{ size?: number; className?: string; weight?: "thin" | "light" | "regular" | "bold" | "fill" | "duotone" }>
+
 interface MetricCardProps {
-  icon: LucideIcon
+  icon: PhosphorIcon
   label: string
   value: string | number
   badge?: string
