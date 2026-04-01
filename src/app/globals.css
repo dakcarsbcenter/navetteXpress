@@ -20,6 +20,19 @@
   --surface: #FAFAFA;
   --surface-2: #F0F0F0;
 
+  /* ─── Client dashboard tokens (default / dark) ─── */
+  --color-client-bg: #0B0F14;
+  --color-client-card: #111620;
+  --color-client-surface: #181E2A;
+  --color-client-border: rgba(255, 255, 255, 0.06);
+  --color-client-accent: #FF2C2C;
+  --color-client-accent-light: #FF5555;
+  --color-client-accent-bg: rgba(255, 44, 44, 0.08);
+  --color-client-accent-glow: rgba(255, 44, 44, 0.2);
+  --color-client-text-primary: #F9FAFB;
+  --color-client-text-secondary: #9CA3AF;
+  --color-trip-inprogress-bg: rgba(255, 44, 44, 0.08);
+
   /* ─── ACCENT PRINCIPAL (rouge passion) ─── */
   --color-accent: #FF2C2C;
   --color-accent-hover: #E01F1F;
@@ -92,6 +105,19 @@
   --text-muted: #64748b;
   --success: #16a34a;
   --danger: #dc2626;
+
+  /* Client dashboard tokens — light mode */
+  --color-client-bg: #F4F6FB;
+  --color-client-card: #FFFFFF;
+  --color-client-surface: #F8F9FA;
+  --color-client-border: rgba(0, 0, 0, 0.08);
+  --color-client-accent: #E01F1F;
+  --color-client-accent-light: #FF2C2C;
+  --color-client-accent-bg: rgba(224, 31, 31, 0.07);
+  --color-client-accent-glow: rgba(224, 31, 31, 0.15);
+  --color-client-text-primary: #111827;
+  --color-client-text-secondary: #6B7280;
+  --color-trip-inprogress-bg: rgba(255, 44, 44, 0.08);
 }
 
 .dark {
@@ -180,6 +206,19 @@
   --obsidian: #141414;
   --surface: #1A1A1A;
   --surface-2: #1F1F1F;
+
+  /* Client dashboard tokens — dark mode */
+  --color-client-bg: #0B0F14;
+  --color-client-card: #111620;
+  --color-client-surface: #181E2A;
+  --color-client-border: rgba(255, 255, 255, 0.06);
+  --color-client-accent: #FF2C2C;
+  --color-client-accent-light: #FF5555;
+  --color-client-accent-bg: rgba(255, 44, 44, 0.08);
+  --color-client-accent-glow: rgba(255, 44, 44, 0.2);
+  --color-client-text-primary: #F9FAFB;
+  --color-client-text-secondary: #9CA3AF;
+  --color-trip-inprogress-bg: rgba(255, 44, 44, 0.08);
 }
 
 
