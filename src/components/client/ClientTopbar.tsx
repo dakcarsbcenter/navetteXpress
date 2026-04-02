@@ -19,10 +19,11 @@ const tabTitleMap: Record<string, string> = {
 function ClientTopbarInner() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const [currentDateTime, setCurrentDateTime] = useState(new Date())
+  const [currentDateTime, setCurrentDateTime] = useState<Date | null>(null)
   const [notifCount] = useState(0)
 
   useEffect(() => {
+    setCurrentDateTime(new Date())
     const timer = setInterval(() => {
       setCurrentDateTime(new Date())
     }, 60000)
@@ -76,10 +77,14 @@ function ClientTopbarInner() {
           className="mt-1.5 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wide sm:text-[11px] sm:tracking-wider"
           style={{ color: 'var(--text-muted)' }}
         >
-          <p className="hidden sm:block">{formatDate(currentDateTime)}</p>
-          <p className="sm:hidden">{formatDateShort(currentDateTime)}</p>
-          <span>—</span>
-          <p>{formatTime(currentDateTime)}</p>
+          {currentDateTime && (
+            <>
+              <p className="hidden sm:block">{formatDate(currentDateTime)}</p>
+              <p className="sm:hidden">{formatDateShort(currentDateTime)}</p>
+              <span>—</span>
+              <p>{formatTime(currentDateTime)}</p>
+            </>
+          )}
         </div>
       </div>
 

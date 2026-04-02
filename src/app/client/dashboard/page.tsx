@@ -3,8 +3,8 @@
 import { useSession } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState, Suspense } from "react"
-import Link from "next/link"
 import { CreateReviewModal } from "@/components/client/CreateReviewModal"
+import { ReservationForm } from "@/app/reservation/ReservationClient"
 import { EditProfileModal } from "@/components/client/EditProfileModal"
 import { BookingDetailsModal } from "@/components/client/BookingDetailsModal"
 import { PriceApprovalModal } from "@/components/client/PriceApprovalModal"
@@ -219,6 +219,7 @@ function ClientDashboardContent() {
   const [bookingForPriceApproval, setBookingForPriceApproval] = useState<Booking | null>(null)
   const [isPriceApprovalModalOpen, setIsPriceApprovalModalOpen] = useState(false)
   const [bookingsFilter, setBookingsFilter] = useState('pending')
+  const [showReservationModal, setShowReservationModal] = useState(false)
   const [stats, setStats] = useState({
     totalBookings: 0,
     completedBookings: 0,
@@ -488,11 +489,12 @@ function ClientDashboardContent() {
                       <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--color-client-text-secondary)' }}>En attente</p>
                       <p className="text-2xl font-bold" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-client-text-primary)' }}>{stats.pendingBookings}</p>
                     </div>
-                    <Link href="/reservation"
+                    <button
+                      onClick={() => setShowReservationModal(true)}
                       className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all"
                       style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}>
                       <Plus size={15} weight="bold" /> Nouveau trajet
-                    </Link>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -615,10 +617,12 @@ function ClientDashboardContent() {
                   </div>
                   <p className="text-sm font-semibold mb-1" style={{ color: 'var(--color-client-text-primary)' }}>Aucune réservation récente</p>
                   <p className="text-sm mb-4" style={{ color: 'var(--color-client-text-secondary)' }}>Commencez par réserver votre premier trajet.</p>
-                  <Link href="/reservation" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium"
+                  <button
+                    onClick={() => setShowReservationModal(true)}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium"
                     style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)', border: '1px solid var(--color-client-accent-border)' }}>
                     Réserver un trajet
-                  </Link>
+                  </button>
                 </div>
               )}
             </div>
@@ -653,11 +657,12 @@ function ClientDashboardContent() {
                     <option value="all">Toutes</option>
                   </select>
                   {hasBookingsCreatePermission && (
-                    <Link href="/reservation"
+                    <button
+                      onClick={() => setShowReservationModal(true)}
                       className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all hover:brightness-110"
                       style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}>
                       <Plus size={14} weight="bold" /> Nouvelle réservation
-                    </Link>
+                    </button>
                   )}
                 </div>
               </div>
@@ -793,10 +798,12 @@ function ClientDashboardContent() {
                       {bookingsFilter === 'all' ? "Vous n'avez pas encore effectué de réservation." : `Aucune réservation avec le statut "${bookingsFilter}".`}
                     </p>
                     {hasBookingsCreatePermission && (
-                      <Link href="/reservation" className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-medium transition-all"
+                      <button
+                        onClick={() => setShowReservationModal(true)}
+                        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-medium transition-all"
                         style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)', border: '1px solid var(--color-client-accent-glow)' }}>
                         <Plus size={16} weight="bold" /> Réserver un trajet
-                      </Link>
+                      </button>
                     )}
                   </div>
                 )}
@@ -869,10 +876,12 @@ function ClientDashboardContent() {
                   <p className="text-sm font-semibold mb-1" style={{ color: 'var(--color-client-text-primary)' }}>Aucun trajet à évaluer</p>
                   <p className="text-sm mb-4" style={{ color: 'var(--color-client-text-secondary)' }}>Vous avez évalué tous vos trajets terminés !</p>
                   {hasBookingsCreatePermission && (
-                    <Link href="/reservation" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium"
+                    <button
+                      onClick={() => setShowReservationModal(true)}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium"
                       style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)', border: '1px solid rgba(16,185,129,0.2)' }}>
                       Faire une nouvelle réservation
-                    </Link>
+                    </button>
                   )}
                 </div>
               )}
@@ -1192,6 +1201,35 @@ function ClientDashboardContent() {
           loadClientData()
         }}
       />
+
+      {/* Modal formulaire nouvelle réservation */}
+      {showReservationModal && (
+        <div className="fixed inset-0 z-[80] flex flex-col" style={{ backgroundColor: 'var(--color-client-bg)' }}>
+          <div className="flex items-center justify-between px-6 py-4 shrink-0" style={{ borderBottom: '1px solid var(--color-client-border)', backgroundColor: 'var(--color-client-card)' }}>
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)' }}>
+                <CalendarBlank size={16} weight="duotone" />
+              </div>
+              <h2 className="text-base font-bold" style={{ color: 'var(--color-client-text-primary)' }}>Nouvelle réservation</h2>
+            </div>
+            <button
+              onClick={() => setShowReservationModal(false)}
+              className="w-9 h-9 rounded-xl flex items-center justify-center transition-all hover:bg-white/10"
+              style={{ color: 'var(--color-text-secondary)' }}
+            >
+              <X size={18} weight="bold" />
+            </button>
+          </div>
+          <div className="flex-1 overflow-y-auto">
+            <Suspense fallback={<div className="flex items-center justify-center min-h-[400px]"><div className="w-8 h-8 rounded-full border-2 border-transparent animate-spin" style={{ borderTopColor: 'var(--color-client-accent)' }} /></div>}>
+              <ReservationForm
+                isEmbedded
+                onClose={() => { setShowReservationModal(false); loadClientData() }}
+              />
+            </Suspense>
+          </div>
+        </div>
+      )}
 
       {/* Modal d'approbation de prix */}
       {bookingForPriceApproval && (

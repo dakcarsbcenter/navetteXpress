@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useNotification } from '@/hooks/useNotification'
 import { NotificationCenter } from '@/components/ui/NotificationCenter'
-import { FileText, Calendar, Clock, CurrencyDollar, CheckCircle, XCircle, ChatCircle, Eye, MagnifyingGlass, Plus, CaretRight, Tag, ClipboardText } from "@phosphor-icons/react"
-import Link from 'next/link'
+import { FileText, Calendar, Clock, CurrencyDollar, CheckCircle, XCircle, ChatCircle, Eye, MagnifyingGlass, Plus, CaretRight, Tag, ClipboardText, X } from "@phosphor-icons/react"
+import { QuoteRequestForm } from '@/components/client/QuoteRequestForm'
 
 interface Quote {
   id: number
@@ -28,6 +28,7 @@ export function ClientQuotesView() {
   const { data: session } = useSession()
   const [quotes, setQuotes] = useState<Quote[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [showNewQuoteForm, setShowNewQuoteForm] = useState(false)
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null)
   const [showDetails, setShowDetails] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
@@ -168,11 +169,12 @@ export function ClientQuotesView() {
                 <div className="text-2xl font-bold" style={{ color: 'var(--color-client-accent)' }}>{quotes.filter(q => q.status === 'accepted').length}</div>
                 <div className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--color-client-accent)' }}>Acceptés</div>
               </div>
-              <Link href="/quote-request"
+              <button
+                onClick={() => setShowNewQuoteForm(true)}
                 className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold transition-all hover:brightness-110"
                 style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}>
                 <Plus size={16} weight="bold" /> Nouvelle demande
-              </Link>
+              </button>
             </div>
           </div>
         </div>
@@ -190,11 +192,12 @@ export function ClientQuotesView() {
           <p className="text-sm font-medium max-w-sm mx-auto mb-8" style={{ color: 'rgba(255,255,255,0.6)' }}>
             Dès que vous effectuerez une demande de devis personnalisé, elle apparaîtra ici avec son statut en temps réel.
           </p>
-          <Link href="/quote-request"
+          <button
+            onClick={() => setShowNewQuoteForm(true)}
             className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold transition-all"
             style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)', border: '1px solid var(--color-client-accent-glow)' }}>
             Demander un devis
-          </Link>
+          </button>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -463,6 +466,30 @@ export function ClientQuotesView() {
                 {isProcessing ? 'Envoi...' : 'Confirmer'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal formulaire nouveau devis */}
+      {showNewQuoteForm && (
+        <div className="fixed inset-0 z-[80] flex flex-col" style={{ backgroundColor: 'var(--color-client-bg)' }}>
+          <div className="flex items-center justify-between px-6 py-4 shrink-0" style={{ borderBottom: '1px solid var(--color-client-border)', backgroundColor: 'var(--color-client-card)' }}>
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)' }}>
+                <FileText size={16} weight="duotone" />
+              </div>
+              <h2 className="text-base font-bold" style={{ color: 'var(--color-client-text-primary)' }}>Nouvelle demande de devis</h2>
+            </div>
+            <button
+              onClick={() => setShowNewQuoteForm(false)}
+              className="w-9 h-9 rounded-xl flex items-center justify-center transition-all hover:bg-white/10"
+              style={{ color: 'var(--color-text-secondary)' }}
+            >
+              <X size={18} weight="bold" />
+            </button>
+          </div>
+          <div className="flex-1 overflow-y-auto">
+            <QuoteRequestForm onClose={() => { setShowNewQuoteForm(false); fetchQuotes() }} />
           </div>
         </div>
       )}

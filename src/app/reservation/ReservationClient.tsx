@@ -104,6 +104,15 @@ const toAllowedRouteLocations = (locations: LocationOption[]): LocationOption[] 
     deduped.push(loc);
   }
 
+  // Ensure all fallback nodes are present (e.g. DAKAR may be missing from DB)
+  for (const fallback of ROUTES_LOCATION_FALLBACK) {
+    const node = getRouteNodeFromName(fallback.name);
+    if (node && !seen.has(node)) {
+      seen.add(node);
+      deduped.push(fallback);
+    }
+  }
+
   return deduped;
 };
 
@@ -127,7 +136,12 @@ interface FormData {
 }
 
 // Composant interne qui utilise useSearchParams
-function ReservationForm() {
+interface ReservationFormProps {
+  onClose?: () => void;
+  isEmbedded?: boolean;
+}
+
+export function ReservationForm({ onClose, isEmbedded = false }: ReservationFormProps = {}) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -342,11 +356,11 @@ function ReservationForm() {
   }
 
   return (
-    <div className="noise-bg min-h-screen relative overflow-x-hidden bg-background font-sans selection:bg-gold/30 selection:text-gold">
-      <Navigation variant="transparent" />
+    <div className={isEmbedded ? "relative overflow-x-hidden font-sans" : "noise-bg min-h-screen relative overflow-x-hidden bg-background font-sans selection:bg-gold/30 selection:text-gold"}>
+      {!isEmbedded && <Navigation variant="transparent" />}
 
       {/* Hero Section of Reservation */}
-      <div className="pt-32 pb-12 px-6">
+      <div className={`${isEmbedded ? 'pt-8' : 'pt-32'} pb-12 px-6`}>
         <div className="max-w-4xl mx-auto text-center mb-12">
           <motion.p
             initial={{ opacity: 0, y: 10 }}
@@ -856,7 +870,7 @@ function ReservationForm() {
                     </motion.button>
                   ) : (
                     <button
-                      onClick={() => router.push('/')}
+                      onClick={() => isEmbedded && onClose ? onClose() : router.push('/')}
                       className="text-text-muted hover:text-foreground transition-colors uppercase tracking-widest text-xs font-bold"
                     >
                       Annuler
@@ -923,11 +937,11 @@ function ReservationForm() {
             onConfirm={() => {
               setShowSuccessModal(false);
 
-              // Rediriger les clients connectés vers leur tableau de bord
-              if (isSignedIn && user?.role === 'customer') {
+              if (isEmbedded && onClose) {
+                onClose();
+              } else if (isSignedIn && user?.role === 'customer') {
                 router.push('/client/dashboard?tab=bookings');
               } else {
-                // Pour les utilisateurs non connectés, réinitialiser le formulaire
                 setCurrentStep(1);
                 setFormData({
                   serviceType: "",
@@ -963,7 +977,7 @@ function ReservationForm() {
           />
         </div>
       </div>
-      <Footer />
+      {!isEmbedded && <Footer />}
     </div>
   );
 }

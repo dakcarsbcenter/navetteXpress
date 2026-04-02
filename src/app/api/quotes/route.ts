@@ -120,10 +120,15 @@ export async function POST(request: NextRequest) {
     console.error('❌ Erreur lors de la création de la demande de devis:', error);
     console.error('❌ Stack trace:', error instanceof Error ? error.stack : 'Pas de stack trace');
     console.error('❌ Détails de l\'erreur:', error instanceof Error ? error.message : String(error));
-    return NextResponse.json({ 
-      success: false, 
+    // Log the underlying DB cause (e.g. PostgreSQL constraint violation)
+    const cause = error instanceof Error ? (error as Error & { cause?: unknown }).cause : undefined;
+    if (cause) console.error('❌ Cause DB:', cause);
+    const causeMessage = cause instanceof Error ? cause.message : (cause ? String(cause) : undefined);
+    return NextResponse.json({
+      success: false,
       error: 'Erreur interne du serveur',
-      details: error instanceof Error ? error.message : String(error)
+      details: error instanceof Error ? error.message : String(error),
+      cause: causeMessage
     }, { status: 500 });
   }
 }
