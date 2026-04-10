@@ -1,5 +1,5 @@
-import { db } from './src/db';
-import { rolePermissionsTable } from './src/schema';
+import { db } from '../src/db';
+import { rolePermissionsTable } from '../src/schema';
 import { eq, and } from 'drizzle-orm';
 
 async function addProfilePermissions() {

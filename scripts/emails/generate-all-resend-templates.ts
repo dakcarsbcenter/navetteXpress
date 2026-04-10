@@ -8,17 +8,17 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 // Import des templates
-import PasswordResetEmail from './src/emails/PasswordResetEmail';
-import AccountLockedEmail from './src/emails/AccountLockedEmail';
-import WelcomeEmail from './src/emails/WelcomeEmail';
-import NewBookingRequestEmail from './src/emails/NewBookingRequestEmail';
-import BookingAssignedEmail from './src/emails/BookingAssignedEmail';
-import BookingConfirmedEmail from './src/emails/BookingConfirmedEmail';
-import NewQuoteRequestEmail from './src/emails/NewQuoteRequestEmail';
-import QuoteConfirmedEmail from './src/emails/QuoteConfirmedEmail';
-import QuoteAcceptedEmail from './src/emails/QuoteAcceptedEmail';
-import QuoteRejectedEmail from './src/emails/QuoteRejectedEmail';
-import InvoiceEmail from './src/emails/InvoiceEmail';
+import PasswordResetEmail from '../src/emails/PasswordResetEmail';
+import AccountLockedEmail from '../src/emails/AccountLockedEmail';
+import WelcomeEmail from '../src/emails/WelcomeEmail';
+import NewBookingRequestEmail from '../src/emails/NewBookingRequestEmail';
+import BookingAssignedEmail from '../src/emails/BookingAssignedEmail';
+import BookingConfirmedEmail from '../src/emails/BookingConfirmedEmail';
+import NewQuoteRequestEmail from '../src/emails/NewQuoteRequestEmail';
+import QuoteConfirmedEmail from '../src/emails/QuoteConfirmedEmail';
+import QuoteAcceptedEmail from '../src/emails/QuoteAcceptedEmail';
+import QuoteRejectedEmail from '../src/emails/QuoteRejectedEmail';
+import InvoiceEmail from '../src/emails/InvoiceEmail';
 
 async function generateAllResendTemplates() {
   console.log('\n🎨 Génération de TOUS les templates pour Resend Dashboard\n');

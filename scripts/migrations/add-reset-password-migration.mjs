@@ -1,4 +1,4 @@
-import { db } from './src/db.ts'
+import { db } from '../src/db.ts'
 import { sql } from 'drizzle-orm'
 
 async function addResetPasswordColumns() {

@@ -6,9 +6,9 @@
 import { render } from '@react-email/components';
 import * as fs from 'fs';
 import * as path from 'path';
-import PasswordResetEmail from './src/emails/PasswordResetEmail';
-import AccountLockedEmail from './src/emails/AccountLockedEmail';
-import WelcomeEmail from './src/emails/WelcomeEmail';
+import PasswordResetEmail from '../src/emails/PasswordResetEmail';
+import AccountLockedEmail from '../src/emails/AccountLockedEmail';
+import WelcomeEmail from '../src/emails/WelcomeEmail';
 
 async function previewTemplates() {
   console.log('🎨 Prévisualisation des templates d\'emails\n');

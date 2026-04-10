@@ -1,5 +1,5 @@
 import { config } from 'dotenv'
-import { db } from './src/db'
+import { db } from '../src/db'
 import { sql } from 'drizzle-orm'
 import fs from 'fs'
 import path from 'path'
