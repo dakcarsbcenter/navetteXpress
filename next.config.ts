@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
+
+  // Fixe la racine du workspace pour éviter le warning de lockfiles multiples (worktrees git)
+  outputFileTracingRoot: path.resolve(__dirname),
 
   // Autoriser l'acces aux ressources de dev (HMR) depuis les hosts locaux/docker
   allowedDevOrigins: ['172.21.0.1', 'localhost', '127.0.0.1'],
