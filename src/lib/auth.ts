@@ -12,7 +12,7 @@ import type { NextAuthOptions } from "next-auth"
 const { NEXTAUTH_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, NEXTAUTH_URL } = process.env
 
 if (!NEXTAUTH_SECRET) {
-  throw new Error("NEXTAUTH_SECRET n'est pas défini. Veuillez le configurer dans votre environnement.")
+  console.error("❌ NEXTAUTH_SECRET n'est pas défini. Veuillez le configurer dans votre environnement.")
 }
 
 if (!NEXTAUTH_URL) {

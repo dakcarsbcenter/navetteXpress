@@ -2,8 +2,14 @@ import { Resend } from 'resend';
 import PasswordResetEmail from '@/emails/PasswordResetEmail';
 import AccountLockedEmail from '@/emails/AccountLockedEmail';
 
-// Initialisation de Resend avec la clé API
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Initialisation lazy du client Resend (évite un crash au démarrage si RESEND_API_KEY est absent)
+let _resend: Resend | null = null;
+function getResendClient(): Resend {
+  if (!_resend) {
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
 
 // Email par défaut de l'expéditeur
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'NavetteXpress <onboarding@resend.dev>';
@@ -25,7 +31,7 @@ export async function sendPasswordResetEmail(
   try {
     console.log('📧 [EMAIL] Envoi email de réinitialisation à:', email);
 
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResendClient().emails.send({
       from: FROM_EMAIL,
       to: [email],
       subject: '🔐 Réinitialisation de votre mot de passe - NavetteXpress',
@@ -72,7 +78,7 @@ export async function sendAccountLockedEmail(
   try {
     console.log('🔒 [EMAIL] Envoi notification de blocage à:', email);
 
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResendClient().emails.send({
       from: FROM_EMAIL,
       to: [email],
       subject: '🔒 Alerte sécurité - Votre compte a été temporairement bloqué - NavetteXpress',
@@ -109,7 +115,7 @@ export async function sendPasswordChangedEmail(
   try {
     console.log('✅ [EMAIL] Envoi confirmation de changement de mot de passe à:', email);
 
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResendClient().emails.send({
       from: FROM_EMAIL,
       to: [email],
       subject: '✅ Votre mot de passe a été modifié - NavetteXpress',
