@@ -14,7 +14,7 @@ import {
   sendPasswordChangedEmail,
   sendWelcomeEmail,
   testResendConfiguration
-} from './src/lib/email-resend-templates';
+} from '../src/lib/email-resend-templates';
 
 async function main() {
   const testEmail = process.argv[2];

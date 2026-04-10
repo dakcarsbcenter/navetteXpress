@@ -1,7 +1,7 @@
 
 import "dotenv/config";
-import { db } from "./src/db";
-import { users } from "./src/schema";
+import { db } from "../src/db";
+import { users } from "../src/schema";
 import { isNotNull } from "drizzle-orm";
 
 async function unlockAll() {

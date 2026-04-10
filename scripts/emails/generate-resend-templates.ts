@@ -8,15 +8,15 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 // Import all email templates
-import PasswordResetEmail from './src/emails/PasswordResetEmail';
-import AccountLockedEmail from './src/emails/AccountLockedEmail';
-import WelcomeEmail from './src/emails/WelcomeEmail';
-import NewBookingRequestEmail from './src/emails/NewBookingRequestEmail';
-import BookingAssignedEmail from './src/emails/BookingAssignedEmail';
-import BookingConfirmedEmail from './src/emails/BookingConfirmedEmail';
-import NewQuoteRequestEmail from './src/emails/NewQuoteRequestEmail';
-import QuoteConfirmedEmail from './src/emails/QuoteConfirmedEmail';
-import QuoteRejectedEmail from './src/emails/QuoteRejectedEmail';
+import PasswordResetEmail from '../src/emails/PasswordResetEmail';
+import AccountLockedEmail from '../src/emails/AccountLockedEmail';
+import WelcomeEmail from '../src/emails/WelcomeEmail';
+import NewBookingRequestEmail from '../src/emails/NewBookingRequestEmail';
+import BookingAssignedEmail from '../src/emails/BookingAssignedEmail';
+import BookingConfirmedEmail from '../src/emails/BookingConfirmedEmail';
+import NewQuoteRequestEmail from '../src/emails/NewQuoteRequestEmail';
+import QuoteConfirmedEmail from '../src/emails/QuoteConfirmedEmail';
+import QuoteRejectedEmail from '../src/emails/QuoteRejectedEmail';
 
 async function generateResendTemplates() {
   console.log('🎨 Génération des templates pour Resend Dashboard\n');

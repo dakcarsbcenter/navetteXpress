@@ -1,8 +1,8 @@
 // Script de test pour vérifier la création automatique de réservation
 // lors de l'acceptation d'un devis
 
-import { db } from './src/db/index.js'
-import { quotes, bookingsTable, invoicesTable } from './src/schema.js'
+import { db } from '../src/db/index.js'
+import { quotes, bookingsTable, invoicesTable } from '../src/schema.js'
 import { eq } from 'drizzle-orm'
 
 async function testAutoBookingCreation() {

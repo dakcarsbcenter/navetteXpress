@@ -19,12 +19,12 @@
     "migrate:coolify": "ts-node --project tsconfig.json scripts/migrate-to-coolify.ts",
     "test:email": "node scripts/test-email.js",
     "test:email:help": "node scripts/test-email.js --help",
-    "email:preview": "npx tsx preview-email-templates.ts",
-    "email:build": "npx tsx preview-email-templates.ts",
-    "email:test": "npx tsx test-resend-templates.ts",
-    "email:resend": "npx tsx generate-resend-templates.ts",
-    "email:all": "npx tsx generate-all-resend-templates.ts",
-    "email:generate-all": "npx tsx generate-all-resend-templates.ts",
+    "email:preview": "npx tsx scripts/emails/preview-email-templates.ts",
+    "email:build": "npx tsx scripts/emails/preview-email-templates.ts",
+    "email:test": "npx tsx scripts/tests/test-resend-templates.ts",
+    "email:resend": "npx tsx scripts/emails/generate-resend-templates.ts",
+    "email:all": "npx tsx scripts/emails/generate-all-resend-templates.ts",
+    "email:generate-all": "npx tsx scripts/emails/generate-all-resend-templates.ts",
     "seo:refresh:monthly": "npx tsx scripts/seo-monthly-refresh.ts"
   },
   "dependencies": {
