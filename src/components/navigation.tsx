@@ -201,12 +201,22 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
                   Se connecter
                 </Link>
               ) : (
-                <button
-                  onClick={() => signOut({ callbackUrl: '/' })}
-                  className="block w-full text-crimson text-center py-4 hover:opacity-80 transition-opacity"
-                >
-                  Déconnexion
-                </button>
+                <>
+                  <Link
+                    href={(session.user as any).role === 'admin' ? '/admin/dashboard' : '/client/dashboard'}
+                    className="flex items-center justify-center gap-2 w-full border border-border text-foreground text-center py-4 rounded-xl font-medium hover:bg-surface-2/50 transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <SquaresFour size={18} weight="regular" className="text-gold" />
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={() => signOut({ callbackUrl: '/' })}
+                    className="block w-full text-crimson text-center py-4 hover:opacity-80 transition-opacity"
+                  >
+                    Déconnexion
+                  </button>
+                </>
               )}
             </div>
           </div>

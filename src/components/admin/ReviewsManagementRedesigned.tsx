@@ -9,6 +9,7 @@ import {
   Trash
 } from "@phosphor-icons/react"
 import { BulkDeleteModal } from "@/components/ui/BulkDeleteModal"
+import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { useNotification } from "@/hooks/useNotification"
 
 interface Review {
@@ -43,7 +44,7 @@ export default function ReviewsManagementRedesigned() {
 
   const [selectedReviewIds, setSelectedReviewIds] = useState<Set<number>>(new Set())
   const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false)
-  const { showSuccess, showError } = useNotification()
+  const { notifications, removeNotification, showSuccess, showError } = useNotification()
 
   useEffect(() => {
     fetchReviews()

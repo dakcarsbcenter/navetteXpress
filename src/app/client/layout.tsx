@@ -1,10 +1,27 @@
+"use client"
+
 import ClientSidebar from "@/components/client/ClientSidebar"
 import { ClientTopbar } from "@/components/client/ClientTopbar"
 import { Suspense } from "react"
+import { useTheme } from "@/components/theme-provider"
+import { useEffect, useState } from "react"
 
-export default function ClientLayout({ children }: { children: React.ReactNode }) {
+function ClientLayoutInner({ children }: { children: React.ReactNode }) {
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  // Force light theme as default for client dashboard if no preference saved
+  useEffect(() => {
+    setMounted(true)
+    const stored = localStorage.getItem('nx-theme')
+    if (!stored) {
+      setTheme('light')
+    }
+  }, [])
+
   return (
     <div
+      data-theme={mounted ? theme : 'light'}
       className="flex h-screen overflow-hidden"
       style={{ backgroundColor: 'var(--color-client-bg)', fontFamily: 'var(--font-body)' }}
     >
@@ -21,4 +38,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       </div>
     </div>
   )
+}
+
+export default function ClientLayout({ children }: { children: React.ReactNode }) {
+  return <ClientLayoutInner>{children}</ClientLayoutInner>
 }

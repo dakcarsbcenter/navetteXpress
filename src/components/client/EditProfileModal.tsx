@@ -116,10 +116,10 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
         onClick={onClose}
       />
 
-      <div className="relative w-full max-w-3xl max-h-[90vh] overflow-hidden rounded-[2.5rem] bg-[#0F172A] border border-white/10 shadow-2xl flex flex-col animate-scaleIn">
+      <div className="relative w-[95vw] max-w-3xl max-h-[90vh] overflow-hidden rounded-2xl sm:rounded-[2.5rem] bg-[#0F172A] border border-white/10 shadow-2xl flex flex-col animate-scaleIn">
 
         {/* Header Section */}
-        <div className="p-8 pb-4 shrink-0 border-b border-white/5 flex items-center justify-between bg-linear-to-r from-red-500/10 to-transparent">
+        <div className="p-4 sm:p-6 lg:p-8 pb-4 shrink-0 border-b border-white/5 flex items-center justify-between bg-linear-to-r from-red-500/10 to-transparent">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-red-500/20 flex items-center justify-center text-red-400 border border-red-500/20">
               <User size={28} weight="duotone" />
@@ -137,7 +137,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-10">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-10">
 
           {/* Section: Identité de base */}
           <section className="space-y-6">
@@ -146,7 +146,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
               <h4 className="text-xs font-bold uppercase tracking-[0.2em]">Identité & Contact</h4>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               <div className="space-y-2">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 ml-1">Nom Complet</label>
                 <div className="relative">
@@ -209,7 +209,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
 
           {/* Section: Photo de profil */}
           <section className="p-6 rounded-3xl bg-white/[0.02] border border-white/5">
-            <div className="flex flex-col md:flex-row items-center gap-8">
+            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
               <div className="shrink-0">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-3 text-center md:text-left">Photo de profil</p>
                 <UniversalProfilePhotoUpload
@@ -251,7 +251,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
             </div>
 
             {formData.isCompany && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fadeIn">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 animate-fadeIn">
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 ml-1">Nom de l'entreprise</label>
                   <input
@@ -325,11 +325,11 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
         </form>
 
         {/* Footer Actions */}
-        <div className="p-8 shrink-0 bg-white/[0.02] border-t border-white/5 flex gap-4">
+        <div className="p-4 sm:p-6 lg:p-8 shrink-0 bg-white/[0.02] border-t border-white/5 flex gap-3 sm:gap-4">
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 px-6 py-4 rounded-2xl border border-white/10 text-white font-semibold hover:bg-white/5 transition-all"
+            className="flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-2xl border border-white/10 text-white font-semibold hover:bg-white/5 transition-all min-h-[44px]"
             disabled={isSubmitting}
           >
             Annuler
@@ -337,7 +337,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
           <button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="flex-[1.5] px-6 py-4 rounded-2xl bg-red-600 text-white font-bold hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-3 shadow-lg shadow-red-500/20"
+            className="flex-[1.5] px-4 sm:px-6 py-3 sm:py-4 rounded-2xl bg-red-600 text-white font-bold hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-3 shadow-lg shadow-red-500/20 min-h-[44px]"
           >
             {isSubmitting ? (
               <div className="w-5 h-5 border-2 border-[#0F172A] border-t-transparent rounded-full animate-spin" />

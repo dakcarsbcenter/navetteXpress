@@ -28,6 +28,9 @@ interface AdminStats {
   courseDistribution?: Array<{ type: string; count: number; percentage: number }>
 }
 
+const getInitials = (name: string) =>
+  name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+
 const AdminGlobalStats = () => {
   const { data: session } = useSession()
   const [period, setPeriod] = useState<Period>('week')

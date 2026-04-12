@@ -108,7 +108,7 @@ export function CreateReviewModal({ isOpen, onClose, booking, onSuccess }: Creat
         <button
           key={i}
           type="button"
-          className={`text-3xl transition-colors ${
+          className={`text-3xl transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center ${
             isActive ? 'text-yellow-400' : 'text-gray-300'
           } hover:text-yellow-400`}
           onClick={() => setRating(starValue)}
@@ -133,7 +133,7 @@ export function CreateReviewModal({ isOpen, onClose, booking, onSuccess }: Creat
       
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
-        <div className="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800 p-6 text-left shadow-xl transition-all">
+        <div className="relative w-[95vw] max-w-lg transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800 p-4 sm:p-6 text-left shadow-xl transition-all">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
@@ -232,7 +232,7 @@ export function CreateReviewModal({ isOpen, onClose, booking, onSuccess }: Creat
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 px-4 py-2 text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg font-medium transition-colors"
+                className="flex-1 px-4 py-3 text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg font-medium transition-colors min-h-[44px]"
                 disabled={isSubmitting}
               >
                 Annuler
@@ -240,7 +240,7 @@ export function CreateReviewModal({ isOpen, onClose, booking, onSuccess }: Creat
               <button
                 type="submit"
                 disabled={isSubmitting || rating === 0}
-                className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 min-h-[44px]"
               >
                 {isSubmitting ? (
                   <>

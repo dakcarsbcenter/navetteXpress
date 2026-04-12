@@ -105,14 +105,14 @@ function SignInForm() {
       })
 
       if (result?.error) {
+        const mappedError = getErrorMessage(result.error)
         if (process.env.NODE_ENV === 'development') {
           console.group("🔍 [DEBUG] Échec de connexion NextAuth")
-          console.error("Type d'erreur brut:", result.error)
-          const mappedError = getErrorMessage(result.error)
-          console.info("Message affiché à l'utilisateur:", mappedError)
+          console.log("Type d'erreur brut:", result.error)
+          console.log("Message affiché à l'utilisateur:", mappedError)
           console.groupEnd()
         }
-        setError(getErrorMessage(result.error))
+        setError(mappedError)
 
         // Incrémenter le compteur de tentatives échouées
         const newAttempts = failedAttempts + 1

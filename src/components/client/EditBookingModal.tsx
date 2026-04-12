@@ -111,9 +111,9 @@ export function EditBookingModal({ isOpen, onClose, booking, onSuccess }: EditBo
         
         {/* Modal */}
         <div className="flex min-h-full items-center justify-center p-4">
-          <div className="relative transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800 shadow-2xl transition-all w-full max-w-2xl">
+          <div className="relative transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800 shadow-2xl transition-all w-[95vw] max-w-2xl">
             {/* Header */}
-            <div className="px-6 pt-6 pb-4 border-b border-slate-200 dark:border-slate-700">
+            <div className="px-4 sm:px-6 pt-4 sm:pt-6 pb-4 border-b border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-xl font-bold text-slate-900 dark:text-white">
@@ -135,7 +135,7 @@ export function EditBookingModal({ isOpen, onClose, booking, onSuccess }: EditBo
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="px-6 py-6 space-y-4">
+            <form onSubmit={handleSubmit} className="px-4 sm:px-6 py-4 sm:py-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                   Adresse de départ *
@@ -212,18 +212,18 @@ export function EditBookingModal({ isOpen, onClose, booking, onSuccess }: EditBo
               </div>
 
               {/* Actions */}
-              <div className="flex gap-3 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 pt-4">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 px-4 py-3 text-sm font-semibold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-all"
+                  className="flex-1 px-4 py-3 text-sm font-semibold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-all min-h-[44px]"
                 >
                   Annuler
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-3 text-sm font-bold text-white bg-linear-to-r from-blue-600 to-blue-700 rounded-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  className="flex-1 px-4 py-3 text-sm font-bold text-white bg-linear-to-r from-blue-600 to-blue-700 rounded-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all min-h-[44px]"
                 >
                   {isSubmitting ? (
                     <span className="flex items-center justify-center gap-2">

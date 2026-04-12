@@ -469,31 +469,31 @@ function ClientDashboardContent() {
           <div className="space-y-6">
             {/* Hero Greeting */}
             <div className="client-card-enter relative rounded-2xl overflow-hidden"
-              style={{ background: 'linear-gradient(135deg, var(--color-client-accent) 0%, var(--color-client-card) 60%)', border: '1px solid var(--color-client-border)' }}>
+              style={{ background: 'linear-gradient(135deg, #f1f5f9 0%, #ffffff 100%)', border: '1px solid #e2e8f0' }}>
               <div className="h-1 w-full" style={{ background: 'linear-gradient(to right, var(--color-client-accent), transparent)' }} />
-              <div className="p-6 sm:p-8">
+              <div className="p-4 sm:p-6 lg:p-8">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
-                    <p className="text-xs uppercase tracking-[0.15em] mb-1" style={{ color: 'var(--color-client-text-secondary)' }}>
+                    <p className="text-xs uppercase tracking-[0.15em] mb-1" style={{ color: '#64748b' }}>
                       {new Date().getHours() < 12 ? 'Bonjour' : new Date().getHours() < 18 ? 'Bon après-midi' : 'Bonsoir'}
                     </p>
-                    <h1 className="text-2xl sm:text-3xl font-medium" style={{ color: 'var(--color-client-text-primary)' }}>
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-medium truncate" style={{ color: '#0f172a' }}>
                       {session?.user?.name || 'Bienvenue'}
                     </h1>
-                    <p className="text-xs mt-1" style={{ color: 'var(--color-client-text-secondary)' }}>
+                    <p className="text-xs mt-1" style={{ color: '#64748b' }}>
                       {new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
                     </p>
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3 sm:gap-4">
                     <div className="text-right hidden sm:block">
-                      <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--color-client-text-secondary)' }}>En attente</p>
-                      <p className="text-2xl font-bold" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-client-text-primary)' }}>{stats.pendingBookings}</p>
+                      <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#64748b' }}>En attente</p>
+                      <p className="text-2xl font-bold" style={{ fontFamily: 'var(--font-mono)', color: '#0f172a' }}>{stats.pendingBookings}</p>
                     </div>
                     <button
                       onClick={() => setShowReservationModal(true)}
-                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all"
+                      className="flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl text-sm font-medium transition-all min-h-[44px]"
                       style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}>
-                      <Plus size={15} weight="bold" /> Nouveau trajet
+                      <Plus size={15} weight="bold" /> <span className="hidden xs:inline">Nouveau</span> trajet
                     </button>
                   </div>
                 </div>
@@ -501,21 +501,22 @@ function ClientDashboardContent() {
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               {[
                 { label: 'Total Réservations', value: stats.totalBookings, icon: <CalendarBlank size={16} weight="light" />, color: 'var(--color-client-accent)' },
                 { label: 'Terminées', value: stats.completedBookings, icon: <MapPin size={16} weight="light" />, color: 'var(--color-client-accent)' },
                 { label: 'En Attente', value: stats.pendingBookings, icon: <Clock size={16} weight="light" />, color: '#F59E0B' },
                 { label: 'Total Devis', value: stats.totalQuotes, icon: <FileText size={16} weight="light" />, color: '#8B5CF6' },
               ].map((stat, i) => (
-                <div key={i} className="client-card-enter group p-5 rounded-2xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden"
+                <div key={i} className="client-card-enter group p-3 sm:p-5 rounded-2xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden"
                   style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
                   <div className="absolute top-0 left-0 right-0 h-0.5 opacity-60 group-hover:opacity-100 transition-opacity" style={{ backgroundColor: stat.color }} />
-                  <div className="w-8 h-8 rounded-xl flex items-center justify-center mb-3" style={{ backgroundColor: `${stat.color}18`, color: stat.color }}>
+                  <div className="w-8 h-8 rounded-xl flex items-center justify-center mb-2 sm:mb-3" style={{ backgroundColor: `${stat.color}18`, color: stat.color }}>
                     {stat.icon}
                   </div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.06em] mb-1" style={{ color: 'var(--color-client-text-secondary)' }}>{stat.label}</p>
-                  <h3 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-client-text-primary)' }}>{stat.value}</h3>
+                  {/* truncate prevents text overflow on narrow 2-col mobile grid */}
+                  <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.06em] mb-1 truncate" style={{ color: 'var(--color-client-text-secondary)' }}>{stat.label}</p>
+                  <h3 className="text-lg sm:text-2xl font-bold" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-client-text-primary)' }}>{stat.value}</h3>
                 </div>
               ))}
             </div>
@@ -583,16 +584,16 @@ function ClientDashboardContent() {
               {bookings.slice(0, 5).length > 0 ? (
                 <div className="divide-y" style={{ borderColor: 'var(--color-client-border)' }}>
                   {bookings.slice(0, 5).map((booking) => (
-                    <div key={booking.id} className="flex items-center gap-3 px-6 py-3.5 transition-colors duration-150 hover:bg-white/3 cursor-pointer" onClick={() => { setEditingBooking(booking); setIsEditBookingModalOpen(true) }}>
+                    <div key={booking.id} className="flex items-center gap-2 sm:gap-3 px-3 sm:px-6 py-3 sm:py-3.5 transition-colors duration-150 hover:bg-white/3 cursor-pointer" onClick={() => { setEditingBooking(booking); setIsEditBookingModalOpen(true) }}>
                       <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
                         style={{ backgroundColor: booking.status === 'in_progress' ? 'var(--color-trip-inprogress-bg)' : booking.status === 'pending' ? 'rgba(245,158,11,0.1)' : 'var(--color-client-border)', color: booking.status === 'in_progress' ? 'var(--color-trip-inprogress)' : booking.status === 'pending' ? '#F59E0B' : '#6B7280' }}>
                         <MapPin size={14} weight="fill" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1 text-sm font-semibold" style={{ color: 'var(--color-client-text-primary)' }}>
-                          <span className="truncate max-w-[100px]" title={booking.pickupAddress}>{booking.pickupAddress?.substring(0, 20)}{booking.pickupAddress?.length > 20 ? '…' : ''}</span>
+                        <div className="flex items-center gap-1 text-xs sm:text-sm font-semibold" style={{ color: 'var(--color-client-text-primary)' }}>
+                          <span className="truncate" title={booking.pickupAddress}>{booking.pickupAddress}</span>
                           <span className="shrink-0 text-xs" style={{ color: 'var(--color-client-accent)' }}>→</span>
-                          <span className="truncate max-w-[100px]" title={booking.dropoffAddress}>{booking.dropoffAddress?.substring(0, 20)}{booking.dropoffAddress?.length > 20 ? '…' : ''}</span>
+                          <span className="truncate" title={booking.dropoffAddress}>{booking.dropoffAddress}</span>
                         </div>
                         <p className="text-xs mt-0.5 font-medium" style={{ color: 'var(--color-client-text-secondary)', fontFamily: 'var(--font-mono)', letterSpacing: '0.02em' }}>
                           {new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}, {new Date(booking.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
@@ -637,16 +638,16 @@ function ClientDashboardContent() {
         return (
           <div className="space-y-6">
             <div className="client-card-enter rounded-2xl overflow-hidden" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
-              <div className="flex items-center justify-between flex-wrap gap-4 px-6 py-5" style={{ borderBottom: '1px solid var(--color-client-border)' }}>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 sm:px-6 py-4 sm:py-5" style={{ borderBottom: '1px solid var(--color-client-border)' }}>
                 <div>
-                  <h3 className="text-lg font-bold" style={{ color: 'var(--color-client-text-primary)' }}>Mes réservations</h3>
-                  <p className="text-sm mt-0.5 font-medium" style={{ color: 'var(--color-client-text-secondary)' }}>Gérez l'historique et le statut de vos trajets</p>
+                  <h3 className="text-base sm:text-lg font-bold" style={{ color: 'var(--color-client-text-primary)' }}>Mes réservations</h3>
+                  <p className="text-xs sm:text-sm mt-0.5 font-medium" style={{ color: 'var(--color-client-text-secondary)' }}>Gérez l'historique et le statut de vos trajets</p>
                 </div>
                 <div className="flex gap-3 items-center flex-wrap">
                   <select
                     value={bookingsFilter}
                     onChange={(e) => setBookingsFilter(e.target.value)}
-                    className="px-4 py-2 rounded-xl text-xs outline-none transition-all hover:border-(--color-client-accent)"
+                    className="flex-1 sm:flex-none px-3 sm:px-4 py-2.5 rounded-xl text-xs outline-none transition-all min-h-[44px]"
                     style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-text-primary)' }}
                   >
                     <option value="pending">En attente</option>
@@ -659,7 +660,7 @@ function ClientDashboardContent() {
                   {hasBookingsCreatePermission && (
                     <button
                       onClick={() => setShowReservationModal(true)}
-                      className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all hover:brightness-110"
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-medium transition-all hover:brightness-110 min-h-[44px]"
                       style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}>
                       <Plus size={14} weight="bold" /> Nouvelle réservation
                     </button>
@@ -671,15 +672,15 @@ function ClientDashboardContent() {
                 {filteredClientBookings.length > 0 ? (
                   <div className="divide-y" style={{ borderColor: 'var(--color-client-border)' }}>
                     {filteredClientBookings.map((booking) => (
-                      <div key={booking.id} className="p-6 transition-colors duration-150 hover:bg-white/1">
-                        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                      <div key={booking.id} className="p-4 sm:p-6 transition-colors duration-150 hover:bg-white/1">
+                        <div className="flex flex-col gap-4">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-3 mb-3">
-                              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0"
                                 style={{ backgroundColor: 'var(--color-client-surface)', color: 'var(--color-text-secondary)' }}>
                                 <ClipboardText size={18} weight="light" />
                               </div>
-                              <div>
+                              <div className="min-w-0 flex-1">
                                 <h4 className="font-bold text-sm" style={{ color: 'var(--color-client-text-primary)' }}>
                                   Réservation <span style={{ fontFamily: 'var(--font-mono)' }}>#{booking.id}</span>
                                 </h4>
@@ -690,17 +691,17 @@ function ClientDashboardContent() {
                               <TripStatusBadge statut={booking.status} />
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ml-0 lg:ml-13">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                               <div className="flex items-start gap-3">
                                 <div className="mt-1 w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: 'var(--color-client-accent)' }} />
-                                <div>
+                                <div className="min-w-0">
                                   <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--color-client-text-secondary)' }}>Départ</p>
                                   <p className="text-sm font-medium line-clamp-1" style={{ color: 'var(--color-client-text-primary)' }}>{booking.pickupAddress}</p>
                                 </div>
                               </div>
                               <div className="flex items-start gap-3">
                                 <div className="mt-1 w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: '#EF4444' }} />
-                                <div>
+                                <div className="min-w-0">
                                   <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--color-client-text-secondary)' }}>Arrivée</p>
                                   <p className="text-sm font-medium line-clamp-1" style={{ color: 'var(--color-client-text-primary)' }}>{booking.dropoffAddress}</p>
                                 </div>
@@ -708,34 +709,36 @@ function ClientDashboardContent() {
                             </div>
                           </div>
 
-                          <div className="flex flex-wrap items-center gap-6 lg:gap-12 shrink-0">
-                            <div>
-                              <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--color-client-text-secondary)' }}>Date & Heure</p>
-                              <div className="flex items-center gap-2">
-                                <Calendar size={14} style={{ color: 'var(--color-client-accent)' }} />
-                                <p className="text-sm font-semibold" style={{ color: 'var(--color-client-text-primary)' }}>
-                                  {new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
-                                </p>
-                                <Clock size={14} className="ml-1" style={{ color: 'var(--color-client-accent)' }} />
-                                <p className="text-sm font-semibold" style={{ color: 'var(--color-client-text-primary)' }}>
-                                  {new Date(booking.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <div className="flex flex-wrap gap-4 sm:gap-6">
+                              <div>
+                                <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--color-client-text-secondary)' }}>Date & Heure</p>
+                                <div className="flex items-center gap-1.5 sm:gap-2">
+                                  <Calendar size={13} style={{ color: 'var(--color-client-accent)' }} />
+                                  <p className="text-xs sm:text-sm font-semibold" style={{ color: 'var(--color-client-text-primary)' }}>
+                                    {new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
+                                  </p>
+                                  <Clock size={13} className="ml-0.5" style={{ color: 'var(--color-client-accent)' }} />
+                                  <p className="text-xs sm:text-sm font-semibold" style={{ color: 'var(--color-client-text-primary)' }}>
+                                    {new Date(booking.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div>
+                                <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--color-client-text-secondary)' }}>Montant</p>
+                                <p className="text-base sm:text-lg font-bold" style={{ color: 'var(--color-client-text-primary)', fontFamily: 'var(--font-mono)' }}>
+                                  {booking.price ? `${parseFloat(booking.price).toLocaleString('fr-FR')} FCFA` : '---'}
                                 </p>
                               </div>
                             </div>
 
-                            <div className="text-left lg:text-right">
-                              <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--color-client-text-secondary)' }}>Montant</p>
-                              <p className="text-lg font-bold" style={{ color: 'var(--color-client-text-primary)', fontFamily: 'var(--font-mono)' }}>
-                                {booking.price ? `${parseFloat(booking.price).toLocaleString('fr-FR')} FCFA` : '---'}
-                              </p>
-                            </div>
-
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 flex-wrap">
                               {/* Price Approval Action */}
                               {booking.clientResponse === 'pending' && booking.price && parseFloat(booking.price) > 0 && (
                                 <button
                                   onClick={() => { setBookingForPriceApproval(booking); setIsPriceApprovalModalOpen(true) }}
-                                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold transition-all live-badge"
+                                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold transition-all live-badge min-h-[44px]"
                                   style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}
                                 >
                                   <Wallet size={14} weight="bold" /> Accepter le prix
@@ -746,7 +749,7 @@ function ClientDashboardContent() {
                               {hasBookingsUpdatePermission && !['confirmed', 'in_progress', 'completed', 'cancelled'].includes(booking.status) && (
                                 <button
                                   onClick={() => { setEditingBooking(booking); setIsEditBookingModalOpen(true) }}
-                                  className="w-9 h-9 rounded-xl flex items-center justify-center transition-all"
+                                  className="w-10 h-10 rounded-xl flex items-center justify-center transition-all min-h-[44px]"
                                   style={{ backgroundColor: 'var(--color-client-border)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-client-border)' }}
                                   title="Modifier"
                                 >
@@ -757,7 +760,7 @@ function ClientDashboardContent() {
                               {/* View Details */}
                               <button
                                 onClick={() => { setEditingBooking(booking); setIsEditBookingModalOpen(true) }}
-                                className="w-9 h-9 rounded-xl flex items-center justify-center transition-all hover:bg-(--color-client-accent-bg) hover:text-(--color-client-accent)"
+                                className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:bg-(--color-client-accent-bg) hover:text-(--color-client-accent) min-h-[44px]"
                                 style={{ backgroundColor: 'var(--color-client-border)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-client-border)' }}
                                 title="Voir détails"
                               >
@@ -944,10 +947,10 @@ function ClientDashboardContent() {
         return (
           <div className="space-y-6 animate-fadeIn">
             {/* Profil Header Card */}
-            <div className="relative rounded-[2.5rem] overflow-hidden bg-white dark:bg-[#111E1A] border border-gray-200 dark:border-[#10B981]/10 px-8 py-10 shadow-2xl">
+            <div className="relative rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden bg-white dark:bg-[#111E1A] border border-gray-200 dark:border-[#10B981]/10 px-4 py-6 sm:px-8 sm:py-10 shadow-2xl">
               <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 blur-[100px] rounded-full -mr-20 -mt-20" />
 
-              <div className="relative flex flex-col md:flex-row items-center gap-10">
+              <div className="relative flex flex-col md:flex-row items-center gap-6 sm:gap-10">
                 <div className="relative group shrink-0">
                   <div className="absolute inset-0 bg-red-500 blur-xl opacity-20 group-hover:opacity-40 transition-opacity" />
                   <div className="relative w-32 h-32 rounded-4xl border-4 border-red-500 p-1 bg-gray-100 dark:bg-[#111E1A] overflow-hidden">
@@ -984,14 +987,14 @@ function ClientDashboardContent() {
                     </p>
                   </div>
 
-                  <div className="flex flex-wrap justify-center md:justify-start gap-4 pt-2">
+                  <div className="flex flex-wrap justify-center md:justify-start gap-3 pt-2">
                     <button
                       onClick={() => setIsEditProfileModalOpen(true)}
-                      className="px-6 py-2.5 rounded-xl bg-red-600 text-white font-bold text-sm hover:brightness-110 active:scale-95 transition-all flex items-center gap-2 shadow-lg shadow-red-500/10"
+                      className="flex-1 sm:flex-none px-4 sm:px-6 py-2.5 rounded-xl bg-red-600 text-white font-bold text-sm hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg shadow-red-500/10 min-h-[44px]"
                     >
                       <PencilSimple size={18} weight="bold" /> Modifier mon profil
                     </button>
-                    <button className="px-6 py-2.5 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-gray-700 dark:text-white/70 font-bold text-sm hover:bg-gray-200 dark:hover:bg-white/10 transition-all flex items-center gap-2">
+                    <button className="flex-1 sm:flex-none px-4 sm:px-6 py-2.5 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-gray-700 dark:text-white/70 font-bold text-sm hover:bg-gray-200 dark:hover:bg-white/10 transition-all flex items-center justify-center gap-2 min-h-[44px]">
                       <IdentificationCard size={18} /> Voir ma carte
                     </button>
                   </div>
@@ -1002,7 +1005,7 @@ function ClientDashboardContent() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Informations de contact */}
               <div className="lg:col-span-2 space-y-6">
-                <div className="p-8 rounded-4xl bg-white dark:bg-client-card border border-gray-200 dark:border-white/5 space-y-8">
+                <div className="p-4 sm:p-8 rounded-3xl sm:rounded-4xl bg-white dark:bg-client-card border border-gray-200 dark:border-white/5 space-y-6 sm:space-y-8">
                   <div className="flex items-center gap-3 text-black dark:text-white">
                     <IdentificationCard size={20} weight="bold" />
                     <h4 className="text-xs font-black uppercase tracking-[0.2em]">Détails du compte</h4>

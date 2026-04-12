@@ -221,7 +221,7 @@ Description: ${formData.description}`,
 
         {/* ── Section 1 : Vos informations ── */}
         <section className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-          <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
+          <div className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
             <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400">
               <User size={18} weight="bold" />
             </span>
@@ -230,7 +230,7 @@ Description: ${formData.description}`,
             </h2>
           </div>
 
-          <div className="p-6 space-y-5">
+          <div className="p-4 sm:p-6 space-y-5">
             {user && (
               <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
                 <Info size={18} weight="fill" className="mt-0.5 shrink-0 text-blue-500 dark:text-blue-400" />
@@ -240,7 +240,7 @@ Description: ${formData.description}`,
               </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Nom complet */}
               <div className="space-y-1.5">
                 <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
@@ -327,7 +327,7 @@ Description: ${formData.description}`,
 
         {/* ── Section 2 : Services souhaités ── */}
         <section className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-          <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
+          <div className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
             <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-violet-100 dark:bg-violet-900/40 text-violet-600 dark:text-violet-400">
               <SealCheck size={18} weight="bold" />
             </span>
@@ -336,8 +336,8 @@ Description: ${formData.description}`,
             </h2>
           </div>
 
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="p-4 sm:p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {availableServices.map((service) => {
                 const isSelected = formData.services.includes(service.id)
                 return (
@@ -389,7 +389,7 @@ Description: ${formData.description}`,
 
         {/* ── Section 3 : Planning et durée ── */}
         <section className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-          <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
+          <div className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
             <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400">
               <CalendarBlank size={18} weight="bold" />
             </span>
@@ -398,8 +398,8 @@ Description: ${formData.description}`,
             </h2>
           </div>
 
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="p-4 sm:p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Durée */}
               <div className="space-y-1.5">
                 <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
@@ -445,7 +445,7 @@ Description: ${formData.description}`,
 
         {/* ── Section 4 : Itinéraire ── */}
         <section className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-          <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
+          <div className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
             <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400">
               <MapPin size={18} weight="bold" />
             </span>
@@ -454,8 +454,8 @@ Description: ${formData.description}`,
             </h2>
           </div>
 
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="p-4 sm:p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Départ */}
               <div className="space-y-1.5">
                 <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
@@ -510,7 +510,7 @@ Description: ${formData.description}`,
 
         {/* ── Section 5 : Informations complémentaires ── */}
         <section className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-          <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
+          <div className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
             <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-sky-100 dark:bg-sky-900/40 text-sky-600 dark:text-sky-400">
               <CreditCard size={18} weight="bold" />
             </span>
@@ -519,7 +519,7 @@ Description: ${formData.description}`,
             </h2>
           </div>
 
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <div className="max-w-sm space-y-1.5">
               <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
                 Mode de paiement préféré
@@ -542,7 +542,7 @@ Description: ${formData.description}`,
 
         {/* ── Section 6 : Description ── */}
         <section className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-          <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
+          <div className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
             <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400">
               <TextAlignLeft size={18} weight="bold" />
             </span>
@@ -551,7 +551,7 @@ Description: ${formData.description}`,
             </h2>
           </div>
 
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <div className="space-y-1.5">
               <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
                 Demandes spécifiques ou informations utiles
@@ -572,7 +572,7 @@ Description: ${formData.description}`,
           <button
             type="button"
             onClick={handleCancel}
-            className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors min-h-[44px]"
           >
             <X size={16} />
             Annuler
@@ -581,7 +581,7 @@ Description: ${formData.description}`,
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-blue-400 disabled:to-indigo-400 dark:disabled:from-blue-700 dark:disabled:to-indigo-700 text-white text-sm font-semibold shadow-sm hover:shadow-md transition-all disabled:cursor-not-allowed"
+            className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-blue-400 disabled:to-indigo-400 dark:disabled:from-blue-700 dark:disabled:to-indigo-700 text-white text-sm font-semibold shadow-sm hover:shadow-md transition-all disabled:cursor-not-allowed min-h-[44px]"
           >
             {isSubmitting ? (
               <>

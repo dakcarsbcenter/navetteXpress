@@ -21,6 +21,7 @@ import { ThemeToggle } from '@/app/driver/dashboard/components/ThemeToggle'
 interface NavItem {
   href: string
   label: string
+  mobileLabel: string
   icon: React.ComponentType<{
     size?: number
     className?: string
@@ -30,19 +31,19 @@ interface NavItem {
 }
 
 const principalItems: NavItem[] = [
-  { href: '/client/dashboard', label: "Vue d'ensemble", icon: SquaresFour, tab: 'overview' },
-  { href: '/client/dashboard?tab=bookings', label: 'Mes Réservations', icon: CalendarBlank, tab: 'bookings' },
+  { href: '/client/dashboard', label: "Vue d'ensemble", mobileLabel: 'Accueil', icon: SquaresFour, tab: 'overview' },
+  { href: '/client/dashboard?tab=bookings', label: 'Mes Réservations', mobileLabel: 'Trajets', icon: CalendarBlank, tab: 'bookings' },
 ]
 
 const serviceItems: NavItem[] = [
-  { href: '/client/dashboard?tab=quotes', label: 'Mes Devis', icon: FileText, tab: 'quotes' },
-  { href: '/client/dashboard?tab=invoices', label: 'Mes Factures', icon: Receipt, tab: 'invoices' },
+  { href: '/client/dashboard?tab=quotes', label: 'Mes Devis', mobileLabel: 'Devis', icon: FileText, tab: 'quotes' },
+  { href: '/client/dashboard?tab=invoices', label: 'Mes Factures', mobileLabel: 'Factures', icon: Receipt, tab: 'invoices' },
 ]
 
 const accountItems: NavItem[] = [
-  { href: '/client/dashboard?tab=create-reviews', label: 'Évaluer trajets', icon: PencilSimple, tab: 'create-reviews' },
-  { href: '/client/dashboard?tab=reviews', label: 'Mes Avis', icon: Star, tab: 'reviews' },
-  { href: '/client/dashboard?tab=profile', label: 'Mon Profil', icon: User, tab: 'profile' },
+  { href: '/client/dashboard?tab=create-reviews', label: 'Évaluer trajets', mobileLabel: 'Évaluer', icon: PencilSimple, tab: 'create-reviews' },
+  { href: '/client/dashboard?tab=reviews', label: 'Mes Avis', mobileLabel: 'Avis', icon: Star, tab: 'reviews' },
+  { href: '/client/dashboard?tab=profile', label: 'Mon Profil', mobileLabel: 'Profil', icon: User, tab: 'profile' },
 ]
 
 function SidebarLink({ item, active }: { item: NavItem; active: boolean }) {
@@ -218,8 +219,8 @@ function ClientSidebarInner() {
           backgroundColor: 'color-mix(in srgb, var(--color-client-card) 95%, transparent)',
         }}
       >
-        <div className="grid grid-cols-5 gap-1">
-          {allMobileItems.slice(0, 5).map((item) => {
+        <div className="grid grid-cols-7 gap-0.5">
+          {allMobileItems.map((item) => {
             const Icon = item.icon
             const active = isActive(item)
 
@@ -227,7 +228,7 @@ function ClientSidebarInner() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex flex-col items-center gap-1 rounded-lg px-2 py-2 text-[11px] transition-colors"
+                className="flex flex-col items-center gap-0.5 rounded-lg px-1 py-2 transition-colors"
                 style={{
                   backgroundColor: active
                     ? 'color-mix(in srgb, var(--color-client-accent) 12%, transparent)'
@@ -236,7 +237,7 @@ function ClientSidebarInner() {
                 }}
               >
                 <Icon size={18} weight={active ? 'fill' : 'regular'} />
-                <span>{item.label.split(' ')[0]}</span>
+                <span className="text-[9px] leading-tight text-center truncate w-full">{item.mobileLabel}</span>
               </Link>
             )
           })}

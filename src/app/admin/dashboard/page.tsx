@@ -291,7 +291,7 @@ export default function AdminDashboard() {
               <span>{tab.label}</span>
               {tab.id === 'bookings' && pendingBookingsCount > 0 && (
                 <span className="ml-auto text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                  style={{ backgroundColor: 'var(--color-gold)', color: '#000' }}>
+                  style={{ backgroundColor: 'var(--color-gold)', color: '#fff' }}>
                   {pendingBookingsCount}
                 </span>
               )}
@@ -411,10 +411,10 @@ export default function AdminDashboard() {
           }}>
           <div>
             <h1 className="text-xl font-semibold"
-              style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-body)' }}>
+              style={{ color: '#F0EDE8', fontFamily: 'var(--font-body)' }}>
               {tabs.find(t => t.id === activeTab)?.label || 'Dashboard'}
             </h1>
-            <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
+            <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>
               Navette Xpress Admin
             </p>
           </div>
@@ -430,7 +430,7 @@ export default function AdminDashboard() {
               <BellSimple size={16} />
               {pendingBookingsCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[9px] font-bold flex items-center justify-center"
-                  style={{ backgroundColor: 'var(--color-gold)', color: '#000' }}>
+                  style={{ backgroundColor: 'var(--color-gold)', color: '#fff' }}>
                   {pendingBookingsCount > 9 ? '9+' : pendingBookingsCount}
                 </span>
               )}

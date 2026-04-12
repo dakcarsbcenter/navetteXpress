@@ -142,36 +142,32 @@ export function ClientQuotesView() {
       <div className="client-card-enter relative rounded-2xl overflow-hidden"
         style={{ background: 'linear-gradient(135deg, #111E1A 0%, var(--color-client-card) 60%)', border: '1px solid var(--color-client-accent-border)' }}>
         <div className="h-1 w-full" style={{ background: 'linear-gradient(to right, var(--color-client-accent), transparent)' }} />
-        <div className="p-8">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="flex items-center gap-5">
-              <div className="w-14 h-14 bg-[var(--color-client-accent-bg)] rounded-2xl flex items-center justify-center shadow-lg border border-[var(--color-client-accent-glow)]">
-                <FileText size={28} weight="duotone" style={{ color: 'var(--color-client-accent)' }} />
+        <div className="p-4 sm:p-6 lg:p-8">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6">
+            <div className="flex items-center gap-4 sm:gap-5">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[var(--color-client-accent-bg)] rounded-2xl flex items-center justify-center shadow-lg border border-[var(--color-client-accent-glow)] shrink-0">
+                <FileText size={24} weight="duotone" style={{ color: 'var(--color-client-accent)' }} />
               </div>
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-bold mb-1" style={{ color: '#ffffff' }}>Mes Devis</h1>
-                <p className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.65)' }}>
+              <div className="min-w-0">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 truncate" style={{ color: '#ffffff' }}>Mes Devis</h1>
+                <p className="text-xs sm:text-sm font-medium" style={{ color: 'rgba(255,255,255,0.65)' }}>
                   Gérez vos demandes de transport personnalisé et suivez vos propositions de prix.
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
-              <div className="text-center px-6 py-3 bg-white/[0.03] rounded-xl border border-white/[0.05]">
-                <div className="text-2xl font-bold" style={{ color: '#ffffff' }}>{quotes.length}</div>
-                <div className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.6)' }}>Total</div>
+            <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
+              <div className="text-center px-3 sm:px-6 py-2 sm:py-3 bg-white/[0.03] rounded-xl border border-white/[0.05]">
+                <div className="text-xl sm:text-2xl font-bold" style={{ color: '#ffffff' }}>{quotes.length}</div>
+                <div className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.6)' }}>Total</div>
               </div>
-              <div className="text-center px-6 py-3 bg-[var(--color-client-accent-bg)] rounded-xl border border-[var(--color-client-accent-glow)]">
-                <div className="text-2xl font-bold" style={{ color: 'var(--color-client-accent)' }}>{quotes.filter(q => q.status === 'accepted').length}</div>
-                <div className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--color-client-accent)' }}>Acceptés</div>
-              </div>
-              <div className="text-center px-6 py-3 bg-[var(--color-client-accent-bg)] rounded-xl border border-[var(--color-client-accent-glow)]">
-                <div className="text-2xl font-bold" style={{ color: 'var(--color-client-accent)' }}>{quotes.filter(q => q.status === 'accepted').length}</div>
+              <div className="text-center px-3 sm:px-6 py-2 sm:py-3 bg-[var(--color-client-accent-bg)] rounded-xl border border-[var(--color-client-accent-glow)]">
+                <div className="text-xl sm:text-2xl font-bold" style={{ color: 'var(--color-client-accent)' }}>{quotes.filter(q => q.status === 'accepted').length}</div>
                 <div className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--color-client-accent)' }}>Acceptés</div>
               </div>
               <button
                 onClick={() => setShowNewQuoteForm(true)}
-                className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold transition-all hover:brightness-110"
+                className="flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl text-sm font-semibold transition-all hover:brightness-110 min-h-[44px]"
                 style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}>
                 <Plus size={16} weight="bold" /> Nouvelle demande
               </button>
@@ -207,8 +203,8 @@ export function ClientQuotesView() {
               <div key={quote.id} className="client-card-enter group rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1"
                 style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
 
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-5">
+                <div className="px-3 py-3 sm:px-6 sm:py-4">
+                  <div className="flex items-start justify-between mb-4 sm:mb-5">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg border border-white/[0.05]"
                         style={{ backgroundColor: 'rgba(255,255,255,0.03)', color: 'var(--color-text-primary)' }}>
@@ -258,10 +254,10 @@ export function ClientQuotesView() {
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <button
                       onClick={() => { setSelectedQuote(quote); setShowDetails(true) }}
-                      className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold transition-all shadow-md group-hover:brightness-110"
+                      className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold transition-all shadow-md group-hover:brightness-110 min-h-[44px]"
                       style={{ backgroundColor: 'var(--color-client-surface)', color: 'var(--color-text-primary)', border: '1px solid var(--color-client-border)' }}
                     >
                       <Eye size={16} /> Voir les détails
@@ -271,7 +267,7 @@ export function ClientQuotesView() {
                       <button
                         onClick={() => openActionModal('accept', quote.id)}
                         disabled={isProcessing}
-                        className="px-6 py-3 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-lg hover:shadow-[var(--color-client-accent-glow)]"
+                        className="w-full sm:w-auto px-6 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-[var(--color-client-accent-glow)] min-h-[44px]"
                         style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}
                       >
                         Accepter <CaretRight size={14} weight="bold" />
@@ -288,11 +284,11 @@ export function ClientQuotesView() {
       {/* Modal Détails Premium */}
       {showDetails && selectedQuote && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[60] p-4 animate-fadeIn">
-          <div className="rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden animate-scaleIn"
+          <div className="rounded-3xl shadow-2xl w-[95vw] max-w-2xl max-h-[90vh] overflow-hidden animate-scaleIn"
             style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
 
             {/* Modal Header */}
-            <div className="p-6 sm:p-8 flex items-center justify-between border-b border-white/[0.05]">
+            <div className="p-4 sm:p-6 lg:p-8 flex items-center justify-between border-b border-white/[0.05]">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-[var(--color-client-accent-bg)] flex items-center justify-center border border-[var(--color-client-accent-glow)]">
                   <FileText size={24} style={{ color: 'var(--color-client-accent)' }} />
@@ -309,7 +305,7 @@ export function ClientQuotesView() {
               </button>
             </div>
 
-            <div className="p-6 sm:p-8 overflow-y-auto max-h-[calc(90vh-100px)] custom-scrollbar">
+            <div className="p-4 sm:p-6 lg:p-8 overflow-y-auto max-h-[calc(90vh-100px)] custom-scrollbar">
               <div className="space-y-8">
                 {/* Status and Price Highlight */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl"
@@ -412,7 +408,7 @@ export function ClientQuotesView() {
       {/* Confirmation Modal */}
       {showActionModal && pendingAction && (
         <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-[70] p-4">
-          <div className="rounded-3xl max-w-md w-full p-8 shadow-2xl animate-scaleIn"
+          <div className="rounded-3xl w-[95vw] max-w-md p-4 sm:p-6 lg:p-8 shadow-2xl animate-scaleIn"
             style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
             <div className="text-center mb-8">
               <div className="mx-auto w-20 h-20 rounded-3xl flex items-center justify-center mb-6 shadow-lg"

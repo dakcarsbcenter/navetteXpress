@@ -146,8 +146,8 @@ export function ClientInvoicesView() {
       <div className="client-card-enter relative rounded-2xl overflow-hidden"
         style={{ background: 'linear-gradient(135deg, #111E1A 0%, var(--color-client-card) 60%)', border: '1px solid var(--color-client-accent-border)' }}>
         <div className="h-1 w-full" style={{ background: 'linear-gradient(to right, var(--color-client-accent), transparent)' }} />
-        <div className="p-8">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="p-4 sm:p-6 lg:p-8">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6">
             <div className="flex items-center gap-5">
               <div className="w-14 h-14 bg-[var(--color-client-accent-bg)] rounded-2xl flex items-center justify-center shadow-lg border border-[var(--color-client-accent-glow)]">
                 <Receipt size={28} weight="duotone" style={{ color: 'var(--color-client-accent)' }} />
@@ -182,8 +182,9 @@ export function ClientInvoicesView() {
         </div>
       </div>
 
-      {/* Filtres Navigation */}
-      <div className="flex items-center gap-2 p-1 rounded-2xl w-fit" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
+      {/* Filtres Navigation — scrollable on mobile */}
+      <div className="overflow-x-auto scrollbar-none">
+      <div className="flex items-center gap-2 p-1 rounded-2xl w-max min-w-full sm:w-fit" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
         {[
           { id: 'all', label: 'Toutes', icon: <Funnel size={14} /> },
           { id: 'pending', label: 'En attente', icon: <Clock size={14} /> },
@@ -193,7 +194,7 @@ export function ClientInvoicesView() {
           <button
             key={item.id}
             onClick={() => setFilter(item.id as any)}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold transition-all ${filter === item.id
+            className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap min-h-[44px] ${filter === item.id
               ? 'bg-[var(--color-client-accent)] text-[#000]'
               : 'hover:text-[var(--color-text-primary)] hover:bg-white/[0.03]'
               }`}
@@ -202,6 +203,7 @@ export function ClientInvoicesView() {
             {item.icon} {item.label}
           </button>
         ))}
+      </div>
       </div>
 
       {/* Liste des Factures */}
@@ -225,8 +227,8 @@ export function ClientInvoicesView() {
               <div key={invoice.id} className="client-card-enter group rounded-2xl overflow-hidden transition-all duration-300 hover:border-[var(--color-client-accent-glow)]"
                 style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
 
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-6">
+                <div className="px-3 py-3 sm:px-6 sm:py-4">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-4 sm:mb-6">
                     <div>
                       <h3 className="text-lg font-black italic tracking-tighter" style={{ color: '#ffffff' }}>
                         {invoice.invoiceNumber}
