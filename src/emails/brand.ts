@@ -6,8 +6,8 @@ export const brand = {
   textPrimary: '#F0EDE8',
   textSecondary: '#8A8799',
   textMuted: '#4A4759',
-  gold: '#C9A84C',
-  goldLight: '#E8C97A',
+  gold: '#9B1B30',
+  goldLight: '#C23B55',
   danger: '#ef4444',
 };
 

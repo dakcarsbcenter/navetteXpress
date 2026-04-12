@@ -219,7 +219,7 @@ export function BookingDetailsModal({
           className="relative p-6 border-b overflow-hidden"
           style={{ 
             borderColor: 'rgba(255,255,255,0.05)',
-            background: 'linear-gradient(135deg, rgba(201,168,76,0.05) 0%, transparent 100%)'
+            background: 'linear-gradient(135deg, rgba(155,27,48,0.05) 0%, transparent 100%)'
           }}
         >
           {/* Ambient glow */}
@@ -278,7 +278,7 @@ export function BookingDetailsModal({
                       setIsEditing(false)
                     }}
                     className="px-4 py-2.5 rounded-xl text-sm font-bold transition-all hover:bg-white/10"
-                    style={{ color: 'var(--color-gold)', border: '1px solid rgba(201,168,76,0.3)' }}
+                    style={{ color: 'var(--color-gold)', border: '1px solid rgba(155,27,48,0.3)' }}
                   >
                     Annuler
                   </button>
@@ -288,9 +288,9 @@ export function BookingDetailsModal({
                   onClick={() => setIsEditing(true)}
                   className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all hover:-translate-y-0.5"
                   style={{
-                    backgroundColor: 'rgba(201,168,76,0.15)',
+                    backgroundColor: 'rgba(155,27,48,0.15)',
                     color: 'var(--color-gold)',
-                    border: '1px solid rgba(201,168,76,0.3)'
+                    border: '1px solid rgba(155,27,48,0.3)'
                   }}
                 >
                   <PencilSimple size={16} weight="fill" />
@@ -394,7 +394,7 @@ export function BookingDetailsModal({
                         <div className="w-3 h-3 rounded-full" style={{ backgroundColor: 'var(--color-gold)' }} />
                         <div className="w-0.5 h-8 bg-white/10" />
                       </div>
-                      <div className="flex-1 p-3 rounded-xl border" style={{ backgroundColor: 'rgba(201,168,76,0.05)', borderColor: 'rgba(201,168,76,0.2)' }}>
+                      <div className="flex-1 p-3 rounded-xl border" style={{ backgroundColor: 'rgba(155,27,48,0.05)', borderColor: 'rgba(155,27,48,0.2)' }}>
                         <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Départ</p>
                         <p className="text-white text-sm">{booking.pickupAddress}</p>
                       </div>
@@ -469,7 +469,7 @@ export function BookingDetailsModal({
                 <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2 uppercase tracking-widest">
                   <div 
                     className="w-8 h-8 rounded-lg flex items-center justify-center"
-                    style={{ backgroundColor: 'rgba(201, 168, 76, 0.15)' }}
+                    style={{ backgroundColor: 'rgba(155, 27, 48, 0.15)' }}
                   >
                     <NotePencil size={16} weight="fill" style={{ color: 'var(--color-gold)' }} />
                   </div>

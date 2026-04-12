@@ -411,7 +411,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                       : 'bg-surface-2 text-text-muted border border-border'
                       }`}
                     style={{
-                      boxShadow: isActive ? '0 0 20px rgba(201, 168, 76, 0.4)' : 'none'
+                      boxShadow: isActive ? '0 0 20px rgba(155, 27, 48, 0.4)' : 'none'
                     }}
                   >
                     {isPast ? (
@@ -496,7 +496,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           className={`group p-6 rounded-2xl cursor-pointer transition-all duration-300 relative overflow-hidden ${formData.serviceType === (service.slug || service.id)
-                            ? 'bg-gold/10 border-2 border-gold/50 shadow-[0_0_30px_rgba(201,168,76,0.1)]'
+                            ? 'bg-gold/10 border-2 border-gold/50 shadow-[0_0_30px_rgba(155,27,48,0.1)]'
                             : 'bg-surface-2/50 border border-border hover:border-gold/30'
                             }`}
                         >
@@ -506,7 +506,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                             </motion.div>
                           )}
                           <div className="flex items-start space-x-5">
-                            <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-3xl transition-colors duration-300 ${formData.serviceType === (service.slug || service.id) ? 'bg-gold text-background shadow-[0_4px_15px_rgba(201,168,76,0.3)]' : 'bg-surface-2/50 text-gold'
+                            <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-3xl transition-colors duration-300 ${formData.serviceType === (service.slug || service.id) ? 'bg-gold text-background shadow-[0_4px_15px_rgba(155,27,48,0.3)]' : 'bg-surface-2/50 text-gold'
                               }`}>
                               {service.icon}
                             </div>
@@ -906,7 +906,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                       whileTap={{ scale: 0.98 }}
                       onClick={handleSubmit}
                       disabled={isSubmitting || isInvalidCombination}
-                      className="lux-button w-full sm:w-auto flex items-center justify-center gap-3 px-12 py-4 font-bold uppercase tracking-[0.2em] text-sm text-background shadow-[0_10px_30px_rgba(201,168,76,0.3)]"
+                      className="lux-button w-full sm:w-auto flex items-center justify-center gap-3 px-12 py-4 font-bold uppercase tracking-[0.2em] text-sm text-background shadow-[0_10px_30px_rgba(155,27,48,0.3)]"
                     >
                       {isSubmitting ? (
                         <>

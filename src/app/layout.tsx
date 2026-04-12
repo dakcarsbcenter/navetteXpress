@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, DM_Sans, DM_Mono, Syne } from "next/font/google";
+import { Plus_Jakarta_Sans, Lora, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
@@ -8,38 +8,31 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { schemaLocalBusiness, schemaWebSite } from '@/lib/schema';
 import { CapacitorAppUrlListener } from '@/components/mobile/CapacitorAppUrlListener';
 
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
+const jakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-jakarta",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700", "800"],
   display: "swap",
 });
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+const lora = Lora({
+  variable: "--font-lora",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
-const dmMono = DM_Mono({
-  variable: "--font-dm-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains",
   subsets: ["latin"],
   weight: ["400", "500"],
-  display: "swap",
-});
-
-const syne = Syne({
-  variable: "--font-syne",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#C9A84C',
+  themeColor: '#9B1B30',
 };
 
 export const metadata: Metadata = {
@@ -154,16 +147,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" suppressHydrationWarning className="scroll-smooth" data-scroll-behavior="smooth">
+    <html lang="fr" suppressHydrationWarning className={`scroll-smooth ${jakartaSans.variable} ${lora.variable} ${jetbrainsMono.variable}`} data-scroll-behavior="smooth">
       <head />
-      <body className={`${cormorant.variable} ${dmSans.variable} ${dmMono.variable} ${syne.variable} antialiased font-body bg-background text-foreground`}>
+      <body className="antialiased font-body bg-background text-foreground">
         <JsonLd data={schemaLocalBusiness} />
         <JsonLd data={schemaWebSite} />
         <CapacitorAppUrlListener />
         <AuthSessionProvider>
           <ThemeProvider
             attribute="data-theme"
-            defaultTheme="dark"
+            defaultTheme="light"
             storageKey="nx-theme"
             enableSystem={false}
             disableTransitionOnChange

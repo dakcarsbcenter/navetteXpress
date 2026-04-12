@@ -13,7 +13,7 @@ interface IconProps {
 }
 
 const colorMap = {
-  primary: '#FF2C2C',
+  primary: '#9B1B30',
   secondary: '#0F5B8A', 
   neutral: '#1E293B',
   white: '#FFFFFF'

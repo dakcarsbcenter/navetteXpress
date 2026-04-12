@@ -7,9 +7,9 @@
   --primary-blue-light: #3b82f6;
   --primary-blue-dark: #1e3a8a;
 
-  --accent-orange: #f97316;
-  --accent-orange-light: #fb923c;
-  --accent-orange-dark: #ea580c;
+  --accent-orange: #9B1B30;
+  --accent-orange-light: #C23B55;
+  --accent-orange-dark: #821528;
 
   --senegal-green: #059669;
   --senegal-green-light: #10b981;
@@ -44,7 +44,7 @@
   --info-dark: #1d4ed8;
 
   /* === TYPOGRAPHIE === */
-  --font-primary: 'Poppins', sans-serif;
+  --font-primary: var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
 
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
@@ -112,7 +112,7 @@
   font-weight: var(--font-semibold);
   font-family: var(--font-primary);
   transition: all var(--transition-base);
-  box-shadow: 0 4px 14px 0 rgba(249, 115, 22, 0.3);
+  box-shadow: 0 4px 14px 0 rgba(155, 27, 48, 0.3);
   border: none;
   cursor: pointer;
   display: inline-flex;
@@ -123,7 +123,7 @@
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px 0 rgba(249, 115, 22, 0.4);
+  box-shadow: 0 8px 25px 0 rgba(155, 27, 48, 0.4);
 }
 
 .btn-primary:active {
@@ -351,7 +351,7 @@
 }
 
 .shadow-glow-orange {
-  box-shadow: 0 0 20px rgba(249, 115, 22, 0.3);
+  box-shadow: 0 0 20px rgba(155, 27, 48, 0.3);
 }
 
 /* Responsive Design */

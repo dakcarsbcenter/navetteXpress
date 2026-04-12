@@ -241,7 +241,7 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
       label: 'Revenu Total',
       value: `${stats.totalRevenue.toLocaleString('fr-FR')} F`,
       growth: stats.monthlyGrowth?.revenue,
-      color: '#C9A84C',
+      color: '#9B1B30',
       icon: <DollarSign size={18} />
     },
     {
@@ -400,7 +400,7 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
                     className="w-full rounded-t-lg transition-all duration-500 group-hover:brightness-125 relative overflow-hidden"
                     style={{
                       height: `${barHeights[i]}%`,
-                      background: `linear-gradient(to top, ${i === 3 ? 'var(--color-gold)' : 'rgba(201,168,76,0.3)'}, transparent)`,
+                      background: `linear-gradient(to top, ${i === 3 ? 'var(--color-gold)' : 'rgba(155,27,48,0.3)'}, transparent)`,
                     }}
                   >
                     <div className="absolute inset-0 bg-linear-to-t from-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />

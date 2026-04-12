@@ -69,7 +69,7 @@ export const StyledLucideIcons = {
   Menu: ({ className = "", variant = "default" }: { className?: string; variant?: "default" | "primary" | "secondary" }) => {
     const variants = {
       default: "text-slate-600 dark:text-slate-300",
-      primary: "text-[#FF2C2C]",
+      primary: "text-[#9B1B30]",
       secondary: "text-[#0F5B8A]"
     };
     return <Menu className={`${variants[variant]} ${className}`} />;
@@ -80,7 +80,7 @@ export const StyledLucideIcons = {
     const variants = {
       default: "text-slate-600 dark:text-slate-300",
       success: "text-[#22C55E]",
-      primary: "text-[#FF2C2C]"
+      primary: "text-[#9B1B30]"
     };
     return <Phone className={`${variants[variant]} ${className}`} />;
   }

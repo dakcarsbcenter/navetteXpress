@@ -1,19 +1,19 @@
 // Palette de couleurs optimisée pour NavetteXpress
 export const colors = {
-  // Couleurs principales — ROUGE PASSION
+  // Couleurs principales — ROUGE POURPRE
   primary: {
-    main: '#FF2C2C',      // Rouge passion principal
-    hover: '#E01F1F',     // Rouge hover (contraste light mode)
-    light: '#FF5555',     // Rouge clair pour dark mode
-    dark: '#CC1515',      // Rouge sombre
+    main: '#9B1B30',      // Rouge pourpre principal
+    hover: '#821528',     // Rouge pourpre hover
+    light: '#C23B55',     // Rouge pourpre clair
+    dark: '#7A1228',      // Rouge pourpre sombre
   },
-  
-  // Identité dorée (Landing Page)
+
+  // Identité pourpre (Landing Page)
   gold: {
-    main: '#C9A84C',      // Or principal
-    hover: '#B8962E',     // Or hover
-    light: '#E2C06A',     // Or clair
-    dark: '#A68835',      // Or sombre
+    main: '#9B1B30',      // Rouge pourpre principal
+    hover: '#821528',     // Rouge pourpre hover
+    light: '#C23B55',     // Rouge pourpre clair
+    dark: '#7A1228',      // Rouge pourpre sombre
   },
   
   // Couleur secondaire bleu (Driver Dashboard)
@@ -47,17 +47,17 @@ export const colors = {
   // Couleurs thématiques transport
   transport: {
     taxi: '#FCD34D',        // Jaune taxi
-    accent: '#FF2C2C',      // Accent transport (rouge passion)
-    sunset: '#E01F1F',      // Sunset Dakar (rouge sombre)
+    accent: '#9B1B30',      // Accent transport (rouge pourpre)
+    sunset: '#821528',      // Sunset Dakar (rouge pourpre sombre)
   },
-  
-  // Tokens d'accent rouge (NOUVEAU SYSTÈME)
+
+  // Tokens d'accent pourpre
   accent: {
-    main: '#FF2C2C',
-    hover: '#E01F1F',
-    light: '#FF5555',
-    subtle: 'rgba(255, 44, 44, 0.12)',
-    border: 'rgba(255, 44, 44, 0.35)',
+    main: '#9B1B30',
+    hover: '#821528',
+    light: '#C23B55',
+    subtle: 'rgba(155, 27, 48, 0.12)',
+    border: 'rgba(155, 27, 48, 0.35)',
   }
 } as const;
 

@@ -19,7 +19,6 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
   const navLinks = [
     { href: "/", label: "Accueil" },
     { href: "/services", label: "Services" },
-    { href: "/routes", label: "Routes" },
     { href: "/flotte", label: "Flotte" },
     { href: "/temoignages", label: "Avis" },
     { href: "/contact", label: "Contact" },

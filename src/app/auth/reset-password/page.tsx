@@ -58,20 +58,20 @@ export default function ResetPasswordPage() {
         <div className="orb-float absolute w-[400px] h-[400px] rounded-full pointer-events-none"
           style={{
             top: '-10%', left: '-15%',
-            background: 'radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 65%)',
+            background: 'radial-gradient(circle, rgba(155,27,48,0.12) 0%, transparent 65%)',
             filter: 'blur(40px)',
           }} />
         <div className="orb-float-delay absolute w-[350px] h-[350px] rounded-full pointer-events-none"
           style={{
             bottom: '5%', right: '-20%',
-            background: 'radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 65%)',
+            background: 'radial-gradient(circle, rgba(155,27,48,0.08) 0%, transparent 65%)',
             filter: 'blur(50px)',
           }} />
 
         {/* Motif géométrique discret */}
         <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
           style={{
-            backgroundImage: 'radial-gradient(circle, #C9A84C 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(circle, #9B1B30 1px, transparent 1px)',
             backgroundSize: '32px 32px',
           }} />
 
@@ -132,7 +132,7 @@ export default function ResetPasswordPage() {
         {/* Orbe subtile mobile */}
         <div className="lg:hidden absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none"
           style={{
-            background: 'radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(155,27,48,0.06) 0%, transparent 70%)',
             filter: 'blur(40px)',
           }} />
 

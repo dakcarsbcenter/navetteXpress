@@ -225,7 +225,7 @@ const AdminGlobalStats = () => {
           {/* Main Stats Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { label: 'Total Courses', value: filteredStats.globalStats.totalRides.toLocaleString(), icon: '🚗', color: '#C9A84C', growth: '+2%' },
+              { label: 'Total Courses', value: filteredStats.globalStats.totalRides.toLocaleString(), icon: '🚗', color: '#9B1B30', growth: '+2%' },
               { label: 'Chauffeurs', value: `${filteredStats.globalStats.activeDrivers || filteredStats.globalStats.totalDrivers}/${filteredStats.globalStats.totalDrivers}`, icon: '👤', color: '#8B5CF6', growth: 'Actifs' },
               { label: 'Revenus', value: `${(filteredStats.globalStats.totalEarnings / 1000).toLocaleString()}k F`, icon: '💰', color: '#10B981', growth: '+12%' },
               { label: 'Complétion', value: `${filteredStats.globalStats.completionRate.toFixed(1)}%`, icon: '📈', color: '#F59E0B', growth: 'Taux' },
@@ -250,7 +250,7 @@ const AdminGlobalStats = () => {
                 <svg className="w-full h-full" viewBox="0 0 800 250" preserveAspectRatio="none">
                   <path
                     d="M 0 150 L 114 130 L 228 140 L 342 110 L 456 125 L 570 95 L 684 120 L 800 85 L 800 250 L 0 250 Z"
-                    fill="rgba(201,168,76,0.05)"
+                    fill="rgba(155,27,48,0.05)"
                   />
                   <path
                     d="M 0 150 L 114 130 L 228 140 L 342 110 L 456 125 L 570 95 L 684 120 L 800 85"

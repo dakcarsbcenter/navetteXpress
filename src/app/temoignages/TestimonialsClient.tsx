@@ -94,7 +94,7 @@ export default function TestimonialsClient() {
         <div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full pointer-events-none"
           style={{
-            background: 'radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(155,27,48,0.07) 0%, transparent 70%)',
             filter: 'blur(40px)',
           }}
         />
@@ -119,7 +119,7 @@ export default function TestimonialsClient() {
           </p>
 
           {/* NOTE GLOBALE — bloc trophée */}
-          <div className="inline-flex flex-col sm:flex-row items-center gap-8 px-10 py-8 rounded-3xl animate-scaleIn bg-surface-2/50 backdrop-blur-xl border border-gold/20 shadow-[0_0_60px_rgba(201,168,76,0.08)]">
+          <div className="inline-flex flex-col sm:flex-row items-center gap-8 px-10 py-8 rounded-3xl animate-scaleIn bg-surface-2/50 backdrop-blur-xl border border-gold/20 shadow-[0_0_60px_rgba(155,27,48,0.08)]">
 
             {/* Note chiffre */}
             <div className="text-center">
@@ -141,7 +141,7 @@ export default function TestimonialsClient() {
                   <svg key={i} width="22" height="22" viewBox="0 0 20 20" fill="none">
                     <path
                       d="M10 1l2.39 4.84L18 6.76l-4 3.9.94 5.5L10 13.77 5.06 16.16 6 10.66 2 6.76l5.61-.92L10 1z"
-                      fill={i <= Math.round(noteGlobale) ? '#C9A84C' : 'rgba(201,168,76,0.2)'}
+                      fill={i <= Math.round(noteGlobale) ? '#9B1B30' : 'rgba(155,27,48,0.2)'}
                     />
                   </svg>
                 ))}

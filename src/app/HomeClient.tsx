@@ -158,7 +158,7 @@ export default function HomeClient() {
                 opacity: [0.3, 0.5, 0.3]
               }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="absolute -top-1/2 -left-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(201,168,76,0.15),transparent_70%)]"
+              className="absolute -top-1/2 -left-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(155,27,48,0.08),transparent_70%)]"
             ></motion.div>
             <motion.div
               animate={{
@@ -212,7 +212,7 @@ export default function HomeClient() {
                 >
                   <Link
                     href="/reservation"
-                    className="px-6 py-4 bg-gold text-background rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all hover:scale-105 shadow-[0_0_30px_rgba(201,168,76,0.3)] hover:shadow-[0_0_50px_rgba(201,168,76,0.5)]"
+                    className="px-6 py-4 bg-gold text-background rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all hover:scale-105 shadow-[0_0_30px_rgba(155,27,48,0.25)] hover:shadow-[0_0_50px_rgba(155,27,48,0.4)]"
                   >
                     <span>Réserver Maintenant</span>
                     <ArrowRight size={20} weight="bold" />
@@ -437,7 +437,7 @@ export default function HomeClient() {
                   transition={{ delay: i * 0.2 }}
                   className="relative z-10 text-center space-y-6"
                 >
-                  <div className="w-20 h-20 rounded-2xl bg-surface-1 border border-gold/30 flex items-center justify-center mx-auto text-gold font-display text-4xl shadow-[0_0_20px_rgba(201,168,76,0.1)] group-hover:shadow-[0_0_40px_rgba(201,168,76,0.3)] transition-all">
+                  <div className="w-20 h-20 rounded-2xl bg-surface-1 border border-gold/30 flex items-center justify-center mx-auto text-gold font-display text-4xl shadow-[0_0_20px_rgba(155,27,48,0.08)] group-hover:shadow-[0_0_40px_rgba(155,27,48,0.2)] transition-all">
                     {item.step}
                   </div>
                   <h3 className="text-2xl text-foreground font-display">{item.title}</h3>
@@ -450,7 +450,7 @@ export default function HomeClient() {
 
         {/* Booking Widget Section - The Centerpiece */}
         <section className="py-32 relative bg-surface-1/30" id="booking">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(201,168,76,0.05),transparent_50%)]"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(155,27,48,0.04),transparent_50%)]"></div>
           <div className="max-w-7xl mx-auto px-6 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-16 items-center">
               <div className="lg:col-span-2 space-y-8">
@@ -512,7 +512,7 @@ export default function HomeClient() {
                           if (bookingService) queryParams.append('service', bookingService);
                           router.push(`/reservation?${queryParams.toString()}`);
                         }}
-                        className="w-full py-5 bg-gold text-background font-bold text-xl rounded-2xl shadow-[0_10px_40px_rgba(201,168,76,0.3)] hover:scale-[1.02] hover:shadow-[0_10px_50px_rgba(201,168,76,0.5)] transition-all flex items-center justify-center gap-3 mt-8"
+                        className="w-full py-5 bg-gold text-background font-bold text-xl rounded-2xl shadow-[0_10px_40px_rgba(155,27,48,0.25)] hover:scale-[1.02] hover:shadow-[0_10px_50px_rgba(155,27,48,0.4)] transition-all flex items-center justify-center gap-3 mt-8"
                       >
                         Réserver mon trajet
                         <ArrowRight size={24} weight="regular" />

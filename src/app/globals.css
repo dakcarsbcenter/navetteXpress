@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+/* Fonts managed via next/font/google in layout.tsx */
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "leaflet/dist/leaflet.css";
@@ -25,36 +25,36 @@
   --color-client-card: #111620;
   --color-client-surface: #181E2A;
   --color-client-border: rgba(255, 255, 255, 0.06);
-  --color-client-accent: #FF2C2C;
-  --color-client-accent-light: #FF5555;
-  --color-client-accent-bg: rgba(255, 44, 44, 0.08);
-  --color-client-accent-glow: rgba(255, 44, 44, 0.2);
+  --color-client-accent: #9B1B30;
+  --color-client-accent-light: #C23B55;
+  --color-client-accent-bg: rgba(155, 27, 48, 0.08);
+  --color-client-accent-glow: rgba(155, 27, 48, 0.2);
   --color-client-text-primary: #F9FAFB;
   --color-client-text-secondary: #9CA3AF;
-  --color-trip-inprogress-bg: rgba(255, 44, 44, 0.08);
+  --color-trip-inprogress-bg: rgba(155, 27, 48, 0.08);
 
-  /* ─── ACCENT PRINCIPAL (rouge passion) ─── */
-  --color-accent: #FF2C2C;
-  --color-accent-hover: #E01F1F;
-  --color-accent-light: #FF5555;
-  --color-accent-subtle: rgba(255, 44, 44, 0.12);
-  --color-accent-border: rgba(255, 44, 44, 0.35);
+  /* ─── ACCENT PRINCIPAL (rouge pourpre) ─── */
+  --color-accent: #9B1B30;
+  --color-accent-hover: #821528;
+  --color-accent-light: #C23B55;
+  --color-accent-subtle: rgba(155, 27, 48, 0.12);
+  --color-accent-border: rgba(155, 27, 48, 0.35);
 
-  /* ─── IDENTITÉ DORÉE (Landing Page) ─── */
-  --gold: #C9A84C;
-  --gold-light: #E8C97A;
-  --crimson: #A73B3C;
+  /* ─── IDENTITÉ POURPRE (Landing Page) ─── */
+  --gold: #9B1B30;
+  --gold-light: #C23B55;
+  --crimson: #9B1B30;
   --text-primary: #1A1A1A;
   --text-secondary: #4A4A4A;
   --text-muted: #71717A;
 
-  --primary: #C9A84C;
+  --primary: #9B1B30;
   --primary-foreground: #FFFFFF;
 
   --secondary: #0F5B8A;
   --secondary-foreground: #FFFFFF;
 
-  --accent: #FF2C2C;
+  --accent: #9B1B30;
   --accent-foreground: #FFFFFF;
 
   --destructive: #ef4444;
@@ -62,7 +62,7 @@
 
   --border: rgba(0, 0, 0, 0.08);
   --input: rgba(0, 0, 0, 0.05);
-  --ring: #FF2C2C;
+  --ring: #9B1B30;
 
   --radius: 0.75rem;
 
@@ -99,7 +99,7 @@
   --bg-secondary: #ffffff;
   --bg-card: #ffffff;
   --border: #e2e8f0;
-  --accent: #d4a800;
+  --accent: #9B1B30;
   --accent-purple: #6c63ff;
   --text-primary: #1a1a2e;
   --text-muted: #64748b;
@@ -111,13 +111,13 @@
   --color-client-card: #FFFFFF;
   --color-client-surface: #F8F9FA;
   --color-client-border: rgba(0, 0, 0, 0.08);
-  --color-client-accent: #E01F1F;
-  --color-client-accent-light: #FF2C2C;
-  --color-client-accent-bg: rgba(224, 31, 31, 0.07);
-  --color-client-accent-glow: rgba(224, 31, 31, 0.15);
+  --color-client-accent: #9B1B30;
+  --color-client-accent-light: #C23B55;
+  --color-client-accent-bg: rgba(155, 27, 48, 0.07);
+  --color-client-accent-glow: rgba(155, 27, 48, 0.15);
   --color-client-text-primary: #111827;
   --color-client-text-secondary: #6B7280;
-  --color-trip-inprogress-bg: rgba(255, 44, 44, 0.08);
+  --color-trip-inprogress-bg: rgba(155, 27, 48, 0.08);
 }
 
 .dark {
@@ -135,8 +135,8 @@
   --popover: #1A1A1A;
   --popover-foreground: #F5F5F5;
 
-  --primary: #C9A84C;
-  --primary-foreground: #0D0D0D;
+  --primary: #9B1B30;
+  --primary-foreground: #FFFFFF;
 
   --secondary: #3B82F6;
   --secondary-foreground: #FFFFFF;
@@ -144,19 +144,19 @@
   --muted: #1A1A1A;
   --muted-foreground: #A0A0A0;
 
-  --accent: #FF2C2C;
+  --accent: #9B1B30;
   --accent-foreground: #FFFFFF;
 
   --destructive: #ef4444;
   --border: rgba(255, 255, 255, 0.07);
   --input: rgba(255, 255, 255, 0.05);
-  --ring: #FF2C2C;
+  --ring: #9B1B30;
 
   --text-primary: #F5F5F5;
   --text-secondary: #A0A0A0;
   --text-muted: #5A5A5A;
   --text-on-accent: #FFFFFF;
-  --shadow-accent: 0 4px 20px rgba(255, 44, 44, 0.25);
+  --shadow-accent: 0 4px 20px rgba(155, 27, 48, 0.25);
 
   /* ── Dark mode: Tokens spécifiques dashboard CHAUFFEUR ── */
   --color-driver-bg: #05070A;
@@ -191,7 +191,7 @@
   --bg-secondary: #1a1a24;
   --bg-card: #1e1e2e;
   --border: rgba(255, 255, 255, 0.07);
-  --accent: #f5c842;
+  --accent: #9B1B30;
   --accent-purple: #6c63ff;
   --text-primary: #F5F5F5;
   --text-secondary: #A0A0A0;
@@ -212,13 +212,13 @@
   --color-client-card: #111620;
   --color-client-surface: #181E2A;
   --color-client-border: rgba(255, 255, 255, 0.06);
-  --color-client-accent: #FF2C2C;
-  --color-client-accent-light: #FF5555;
-  --color-client-accent-bg: rgba(255, 44, 44, 0.08);
-  --color-client-accent-glow: rgba(255, 44, 44, 0.2);
+  --color-client-accent: #9B1B30;
+  --color-client-accent-light: #C23B55;
+  --color-client-accent-bg: rgba(155, 27, 48, 0.08);
+  --color-client-accent-glow: rgba(155, 27, 48, 0.2);
   --color-client-text-primary: #F9FAFB;
   --color-client-text-secondary: #9CA3AF;
-  --color-trip-inprogress-bg: rgba(255, 44, 44, 0.08);
+  --color-trip-inprogress-bg: rgba(155, 27, 48, 0.08);
 }
 
 
@@ -352,11 +352,11 @@ html {
   --color-border: var(--border);
   --color-border-hover: var(--border);
 
-  /* ── Accent gold ── */
+  /* ── Accent pourpre ── */
   --color-gold: var(--gold);
   --color-gold-light: var(--gold-light);
-  --color-gold-glow: rgba(201, 168, 76, 0.25);
-  --color-gold-subtle: rgba(201, 168, 76, 0.08);
+  --color-gold-glow: rgba(155, 27, 48, 0.25);
+  --color-gold-subtle: rgba(155, 27, 48, 0.08);
 
   /* ── Accent ROUGE PASSION (principal) ── */
   --color-accent: var(--color-accent);
@@ -377,15 +377,15 @@ html {
   --color-warning: #F39C12;
 
   /* ── Typographie ── */
-  --font-display: var(--font-cormorant), Georgia, serif;
-  --font-heading: var(--font-syne), var(--font-dm-sans), system-ui, sans-serif;
-  --font-body: var(--font-dm-sans), system-ui, sans-serif;
-  --font-mono: var(--font-dm-mono), 'Courier New', monospace;
+  --font-display: var(--font-lora), Georgia, serif;
+  --font-heading: var(--font-jakarta), system-ui, sans-serif;
+  --font-body: var(--font-jakarta), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), 'Courier New', monospace;
 
   /* Tailwind font-family tokens */
-  --font-family-sans: var(--font-dm-sans), system-ui, sans-serif;
-  --font-family-display: var(--font-cormorant), Georgia, serif;
-  --font-family-mono: var(--font-dm-mono), 'Courier New', monospace;
+  --font-family-sans: var(--font-jakarta), system-ui, sans-serif;
+  --font-family-display: var(--font-lora), Georgia, serif;
+  --font-family-mono: var(--font-jetbrains), 'Courier New', monospace;
 
   /* ── Existing tokens mapping ── */
   --color-crimson: var(--crimson);
@@ -404,13 +404,13 @@ html {
   /* Hover card */
   --color-dash-row: #10101800;
   /* Ligne tableau */
-  --color-dash-row-hover: rgba(201, 168, 76, 0.04);
+  --color-dash-row-hover: rgba(155, 27, 48, 0.04);
 
   /* Sidebar navigation */
   --color-dash-nav-text: #6B6880;
   --color-dash-nav-active-text: #F0EDE8;
-  --color-dash-nav-active-bg: rgba(201, 168, 76, 0.09);
-  --color-dash-nav-active-border: #C9A84C;
+  --color-dash-nav-active-bg: rgba(155, 27, 48, 0.09);
+  --color-dash-nav-active-border: #9B1B30;
 
   /* Statuts réservations — semantic colors preservées */
   --color-status-pending: #F59E0B;
@@ -440,17 +440,17 @@ html {
   --color-client-surface: #181E2A;
   --color-client-border: rgba(255, 255, 255, 0.06);
 
-  /* Accent client : ROUGE PASSION (remplacé de l'émeraude) */
-  --color-client-accent: #FF2C2C;
-  --color-client-accent-light: #FF5555;
-  --color-client-accent-bg: rgba(255, 44, 44, 0.08);
-  --color-client-accent-glow: rgba(255, 44, 44, 0.2);
+  /* Accent client : ROUGE POURPRE */
+  --color-client-accent: #9B1B30;
+  --color-client-accent-light: #C23B55;
+  --color-client-accent-bg: rgba(155, 27, 48, 0.08);
+  --color-client-accent-glow: rgba(155, 27, 48, 0.2);
 
   /* Statuts trajets client */
   --color-trip-upcoming: #3B82F6;
   --color-trip-upcoming-bg: rgba(59, 130, 246, 0.08);
-  --color-trip-inprogress: #FF2C2C;
-  --color-trip-inprogress-bg: rgba(255, 44, 44, 0.08);
+  --color-trip-inprogress: #9B1B30;
+  --color-trip-inprogress-bg: rgba(155, 27, 48, 0.08);
   --color-trip-completed: #6B7280;
   --color-trip-completed-bg: rgba(107, 114, 128, 0.07);
   --color-trip-cancelled: #EF4444;
@@ -666,11 +666,11 @@ body {
 
   0%,
   100% {
-    box-shadow: 0 0 25px rgba(201, 168, 76, 0.3);
+    box-shadow: 0 0 25px rgba(155, 27, 48, 0.3);
   }
 
   50% {
-    box-shadow: 0 0 55px rgba(201, 168, 76, 0.6);
+    box-shadow: 0 0 55px rgba(155, 27, 48, 0.6);
   }
 }
 
@@ -691,7 +691,7 @@ body {
   position: relative;
   overflow: hidden;
   background-color: var(--color-gold);
-  color: #000;
+  color: #FFFFFF;
   font-weight: 600;
   transition: background-color 0.2s, box-shadow 0.2s;
 }
@@ -706,7 +706,7 @@ body {
 
 .btn-gold:hover {
   background-color: var(--color-gold-light);
-  box-shadow: 0 0 30px rgba(201, 168, 76, 0.4);
+  box-shadow: 0 0 30px rgba(155, 27, 48, 0.4);
 }
 
 .btn-gold:hover::after {
@@ -775,7 +775,7 @@ body {
 
 .lux-button:hover {
   background-color: var(--color-gold-light);
-  box-shadow: 0 0 30px rgba(201, 168, 76, 0.4);
+  box-shadow: 0 0 30px rgba(155, 27, 48, 0.4);
 }
 
 .lux-button:disabled {
@@ -865,6 +865,7 @@ body {
   body {
     background-color: var(--background);
     color: var(--foreground);
+    font-family: var(--font-jakarta), system-ui, sans-serif;
   }
 
   /* Mobile-first optimizations */
@@ -1184,8 +1185,8 @@ select option {
 }
 
 select option:checked {
-  background-color: #C9A84C;
-  color: #0A0A0F;
+  background-color: #9B1B30;
+  color: #FFFFFF;
 }
 
 select option:hover {

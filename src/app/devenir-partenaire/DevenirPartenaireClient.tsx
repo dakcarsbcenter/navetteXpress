@@ -221,13 +221,13 @@ export default function DevenirPartenaireClient() {
               <div className="orb-float absolute w-[500px] h-[500px] rounded-full pointer-events-none opacity-40"
                 style={{
                   top: '-15%', left: '-10%',
-                  background: 'radial-gradient(circle, rgba(201,168,76,0.15) 0%, transparent 70%)',
+                  background: 'radial-gradient(circle, rgba(155,27,48,0.15) 0%, transparent 70%)',
                   filter: 'blur(60px)',
                 }} />
               <div className="orb-float-delay absolute w-[400px] h-[400px] rounded-full pointer-events-none opacity-30"
                 style={{
                   bottom: '10%', right: '-15%',
-                  background: 'radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%)',
+                  background: 'radial-gradient(circle, rgba(155,27,48,0.1) 0%, transparent 70%)',
                   filter: 'blur(50px)',
                 }} />
 
@@ -236,7 +236,7 @@ export default function DevenirPartenaireClient() {
                 {/* Logo & Back Link */}
                 <div className="flex items-center justify-between mb-20">
                   <Link href="/" className="flex items-center gap-3 transition-transform hover:scale-105">
-                    <div className="w-10 h-10 bg-gold rounded-lg flex items-center justify-center shadow-[0_0_20px_rgba(201,168,76,0.3)]">
+                    <div className="w-10 h-10 bg-gold rounded-lg flex items-center justify-center shadow-[0_0_20px_rgba(155,27,48,0.3)]">
                       <span className="text-background font-bold text-xl">NX</span>
                     </div>
                     <div>
@@ -294,7 +294,7 @@ export default function DevenirPartenaireClient() {
                     className="p-6 rounded-2xl bg-surface-2/50 border border-border backdrop-blur-sm shadow-2xl"
                   >
                     <div className="flex gap-1 mb-3">
-                      {[1, 2, 3, 4, 5].map(i => <Star key={i} size={12} fill="#C9A84C" stroke="#C9A84C" />)}
+                      {[1, 2, 3, 4, 5].map(i => <Star key={i} size={12} fill="#9B1B30" stroke="#9B1B30" />)}
                     </div>
                     <p className="text-foreground/70 italic text-sm leading-relaxed mb-4">
                       &quot;Être partenaire avec Navette Xpress, c&apos;est choisir l&apos;excellence. Je gère mon activité avec des clients premium dans un cadre respectueux et professionnel.&quot;
@@ -512,7 +512,7 @@ export default function DevenirPartenaireClient() {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="group relative w-full py-5 bg-gold hover:bg-gold/80 text-background rounded-2xl font-bold text-lg transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none shadow-[0_10px_30px_rgba(201,168,76,0.3)]"
+                      className="group relative w-full py-5 bg-gold hover:bg-gold/80 text-background rounded-2xl font-bold text-lg transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none shadow-[0_10px_30px_rgba(155,27,48,0.3)]"
                     >
                       <div className="relative flex items-center justify-center gap-2">
                         {isSubmitting ? (
