@@ -14,6 +14,7 @@
     "mobile:open:android": "npx cap open android",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:migrate:runtime": "node scripts/run-migrations.mjs",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "migrate:coolify": "ts-node --project tsconfig.json scripts/migrate-to-coolify.ts",

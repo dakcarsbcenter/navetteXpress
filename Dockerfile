@@ -67,11 +67,8 @@ RUN chmod +x start.sh
 
 # Copier les fichiers de migration pour Drizzle
 COPY --chown=nextjs:nodejs migrations ./migrations
-COPY --chown=nextjs:nodejs drizzle.config.ts ./
-COPY --chown=nextjs:nodejs package.json ./
-
-# Installer drizzle-kit pour les migrations
-RUN npm install drizzle-kit
+RUN mkdir -p scripts
+COPY --from=builder --chown=nextjs:nodejs /app/scripts/run-migrations.mjs ./scripts/run-migrations.mjs
 
 # Changer vers l'utilisateur non-root
 USER nextjs
@@ -82,6 +79,10 @@ EXPOSE 3000
 # Variables d'environnement
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Vérification de santé HTTP de l'application
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 CMD wget -qO- http://127.0.0.1:3000/api/health >/dev/null || exit 1
 
 # Commande de démarrage
 CMD ["./start.sh"]
