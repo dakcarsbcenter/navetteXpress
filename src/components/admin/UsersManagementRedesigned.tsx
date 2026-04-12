@@ -37,9 +37,10 @@ interface UsersManagementRedesignedProps {
   userPermissions?: {
     [resource: string]: string[]
   }
+  openCreate?: number
 }
 
-export function UsersManagementRedesigned({ userPermissions }: UsersManagementRedesignedProps = {}) {
+export function UsersManagementRedesigned({ userPermissions, openCreate }: UsersManagementRedesignedProps = {}) {
   const [users, setUsers] = useState<User[]>([])
   const [filteredUsers, setFilteredUsers] = useState<User[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -75,6 +76,14 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
     fetchUsers()
     fetchCurrentUserRole()
   }, [])
+
+  useEffect(() => {
+    if (openCreate && openCreate > 0) {
+      setEditingUser(null)
+      setFormData({ name: '', email: '', role: 'customer', phone: '', licenseNumber: '', isActive: true, password: '' })
+      setIsModalOpen(true)
+    }
+  }, [openCreate])
 
   useEffect(() => {
     applyFilters()
@@ -636,6 +645,17 @@ export function UsersManagementRedesigned({ userPermissions }: UsersManagementRe
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white focus:border-gold/50 outline-none transition-all font-mono"
+                  />
+                </div>
+
+                <div className="col-span-2">
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Numéro de permis</label>
+                  <input
+                    type="text"
+                    value={formData.licenseNumber}
+                    onChange={(e) => setFormData({ ...formData, licenseNumber: e.target.value })}
+                    className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white focus:border-gold/50 outline-none transition-all font-mono"
+                    placeholder="Ex: SN-123456"
                   />
                 </div>
 

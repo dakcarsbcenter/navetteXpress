@@ -225,7 +225,7 @@ export async function POST(request: NextRequest) {
       name,
       email,
       phone: phone || null,
-      licenseNumber: licenseNumber || null,
+      licenseNumber: licenseNumber || (normalizedRole === 'driver' ? '' : null),
       isActive,
       password: hashedPassword,
       role: normalizedRole,

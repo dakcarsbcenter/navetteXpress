@@ -43,6 +43,7 @@ export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [pendingBookingsCount, setPendingBookingsCount] = useState(0)
+  const [openUserCreateTrigger, setOpenUserCreateTrigger] = useState(0)
 
   // Récupérer le nombre de réservations en attente
   useEffect(() => {
@@ -163,7 +164,7 @@ export default function AdminDashboard() {
       case 'stats':
         return <AdminGlobalStats />
       case 'users':
-        return <UsersManagementRedesigned userPermissions={permissions} />
+        return <UsersManagementRedesigned userPermissions={permissions} openCreate={openUserCreateTrigger} />
       case 'vehicles':
         return <VehiclesManagementRedesigned />
       case 'bookings':
@@ -437,7 +438,13 @@ export default function AdminDashboard() {
             </button>
 
             <button
-              onClick={() => setActiveTab('bookings')}
+              onClick={() => {
+                if (activeTab === 'users') {
+                  setOpenUserCreateTrigger(t => t + 1)
+                } else {
+                  setActiveTab('bookings')
+                }
+              }}
               className="btn-gold flex items-center gap-2 px-4 py-2 rounded-xl text-sm">
               <PhosphorPlus size={16} />
               <span className="hidden sm:inline">Nouveau</span>

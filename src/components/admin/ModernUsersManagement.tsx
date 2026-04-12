@@ -1051,7 +1051,7 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Numéro de permis
+                  Numéro de permis {formData.role === 'driver' && <span className="text-red-500">*</span>}
                 </label>
                 <input
                   type="text"
