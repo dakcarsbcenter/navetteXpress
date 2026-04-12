@@ -7,6 +7,7 @@ import { eq, sql } from "drizzle-orm"
 import bcrypt from "bcryptjs"
 import { sendAccountLockedEmail } from "./email"
 import type { NextAuthOptions } from "next-auth"
+import { decode as defaultDecode } from "next-auth/jwt"
 
 // Vérifier les variables d'environnement au démarrage
 const { NEXTAUTH_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, NEXTAUTH_URL } = process.env
@@ -305,5 +306,15 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/auth/signin",
     error: "/auth/signin", // Rediriger vers la page de connexion en cas d'erreur
+  },
+  jwt: {
+    // Gracefully handle malformed/expired JWT cookies instead of crashing
+    async decode(params) {
+      try {
+        return await defaultDecode(params)
+      } catch {
+        return null
+      }
+    },
   },
 }
