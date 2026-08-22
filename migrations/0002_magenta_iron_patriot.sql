@@ -1,4 +1,5 @@
 -- Mettre à jour les rôles existants avant de modifier l'enum
+ALTER TYPE "public"."user_role" ADD VALUE IF NOT EXISTS 'chauffeur';--> statement-breakpoint
 UPDATE users SET role = 'chauffeur' WHERE role = 'driver';--> statement-breakpoint
 UPDATE permissions SET role = 'chauffeur' WHERE role = 'driver';--> statement-breakpoint
 
