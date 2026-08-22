@@ -1,7 +1,26 @@
 import { Resend } from 'resend'
 
-// Initialiser Resend avec la clé API
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Init paresseuse : évite de lever une erreur au chargement du module quand
+// RESEND_API_KEY est absent (ex: au build Next.js, où les env vars runtime
+// ne sont pas encore injectées).
+let _resend: Resend | null = null
+
+function getResendClient(): Resend {
+  if (_resend) return _resend
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error('RESEND_API_KEY is not defined in environment variables')
+  }
+  _resend = new Resend(process.env.RESEND_API_KEY)
+  return _resend
+}
+
+const resend = new Proxy({} as Resend, {
+  get(_target, prop, receiver) {
+    const client = getResendClient()
+    const value = Reflect.get(client, prop, client)
+    return typeof value === 'function' ? value.bind(client) : value
+  },
+})
 
 // Email de l'expéditeur (doit être vérifié dans Resend)
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'

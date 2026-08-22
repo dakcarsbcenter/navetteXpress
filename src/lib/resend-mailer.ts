@@ -5,52 +5,29 @@
 
 import { Resend } from 'resend';
 
-if (!process.env.RESEND_API_KEY) {
-  throw new Error('RESEND_API_KEY is not defined in environment variables');
-}
+// Init paresseuse : évite de lever une erreur au chargement du module quand
+// RESEND_API_KEY est absent (ex: au build Next.js, où les env vars runtime
+// ne sont pas encore injectées).
+let _resend: Resend | null = null;
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'NavetteXpress <onboarding@resend.dev>';
-
-/**
- * Envoie un email de réinitialisation de mot de passe
- */
-export async function sendPasswordResetEmail(
-  to: string,
-  userName: string,
-  resetToken: string
-) {
-  const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password/confirm?token=${resetToken}`;
-
-  try {
-    const { data, error } = await resend.emails.send({
-      from: FROM_EMAIL,
-      to: [to],
-      subject: '🔐 Réinitialisation de votre mot de passe - NavetteXpress',
-      html: `
-        <!DOCTYPE html>
-        <html>
-          <body>
-            <p>Bonjour ${userName},</p>
-            <p>Cliquez sur le lien pour réinitialiser votre mot de passe :</p>
-            <a href="${resetUrl}">Réinitialiser mon mot de passe</a>
-          </body>
-        </html>
-      `,
-    });
-
-    if (error) {
-      console.error('❌ Erreur envoi email:', error);
-      throw error;
-    }
-
-    console.log('✅ Email envoyé:', data?.id);
-    return data;
-  } catch (error) {
-    console.error('❌ Erreur:', error);
-    throw error;
+function getResendClient(): Resend {
+  if (_resend) return _resend;
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error('RESEND_API_KEY is not defined in environment variables');
   }
+  _resend = new Resend(process.env.RESEND_API_KEY);
+  return _resend;
 }
+
+const resend = new Proxy({} as Resend, {
+  get(_target, prop, receiver) {
+    const client = getResendClient();
+    const value = Reflect.get(client, prop, client);
+    return typeof value === 'function' ? value.bind(client) : value;
+  },
+});
+
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'NavetteXpress <onboarding@resend.dev>';
 
 /**
  * Envoie un email de nouvelle facture
@@ -129,62 +106,6 @@ export async function sendInvoiceEmail(
 }
 
 /**
- * Envoie un email de nouvelle réservation
- */
-export async function sendNewBookingEmail(
-  to: string,
-  bookingData: {
-    customerName: string;
-    bookingId: string;
-    pickupLocation: string;
-    dropoffLocation: string;
-    pickupDate: string;
-    pickupTime: string;
-  }
-) {
-  try {
-    const { data, error } = await resend.emails.send({
-      from: FROM_EMAIL,
-      to: [to],
-      subject: `🚗 Nouvelle demande de réservation ${bookingData.bookingId}`,
-      html: `
-        <!DOCTYPE html>
-        <html>
-          <body>
-            <h2>🚗 Nouvelle Demande de Réservation</h2>
-            <p>Bonjour ${bookingData.customerName},</p>
-            
-            <p>Votre demande de réservation a bien été reçue :</p>
-            
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
-              <p><strong>Réservation :</strong> ${bookingData.bookingId}</p>
-              <p><strong>Départ :</strong> ${bookingData.pickupLocation}</p>
-              <p><strong>Arrivée :</strong> ${bookingData.dropoffLocation}</p>
-              <p><strong>Date :</strong> ${bookingData.pickupDate} à ${bookingData.pickupTime}</p>
-            </div>
-            
-            <p>Nous traitons votre demande et vous contacterons rapidement.</p>
-            
-            <p>Cordialement,<br><strong>L'équipe NavetteXpress</strong></p>
-          </body>
-        </html>
-      `,
-    });
-
-    if (error) {
-      console.error('❌ Erreur envoi réservation:', error);
-      throw error;
-    }
-
-    console.log('✅ Email réservation envoyé:', data?.id);
-    return data;
-  } catch (error) {
-    console.error('❌ Erreur:', error);
-    throw error;
-  }
-}
-
-/**
  * Envoie un email de devis confirmé
  */
 export async function sendQuoteConfirmedEmail(
@@ -250,81 +171,6 @@ export async function sendQuoteConfirmedEmail(
     }
 
     console.log('✅ Email devis envoyé:', data?.id);
-    return data;
-  } catch (error) {
-    console.error('❌ Erreur:', error);
-    throw error;
-  }
-}
-
-/**
- * Envoie un email au chauffeur quand une réservation lui est assignée
- */
-export async function sendBookingAssignedEmailToDriver(
-  to: string,
-  bookingData: {
-    bookingId: string;
-    customerName: string;
-    pickupLocation: string;
-    dropoffLocation: string;
-    pickupDate: string;
-    pickupTime: string;
-    passengers?: number;
-  },
-  driverData: {
-    driverName: string;
-  }
-) {
-  try {
-    const { data, error } = await resend.emails.send({
-      from: FROM_EMAIL,
-      to: [to],
-      subject: `🚗 Nouvelle réservation assignée - ${bookingData.bookingId}`,
-      html: `
-        <!DOCTYPE html>
-        <html>
-          <body style="font-family: Arial, sans-serif; background: #e8f0f8; padding: 20px;">
-            <div style="max-width: 600px; margin: 0 auto; background: white; border: 2px solid #93374d; border-radius: 8px; overflow: hidden;">
-              <div style="background: #93374d; padding: 32px 20px; text-align: center;">
-                <h1 style="color: white; margin: 0;">Navette Express</h1>
-              </div>
-              <div style="padding: 32px 24px;">
-                <h2 style="color: #2c3e50; text-align: center;">🚗 Nouvelle Réservation Assignée</h2>
-                <p>Bonjour <strong>${driverData.driverName}</strong>,</p>
-                <p>Une nouvelle réservation vous a été assignée :</p>
-                <div style="background: #f8f9fa; border: 2px solid #93374d; border-radius: 8px; padding: 20px; margin: 20px 0;">
-                  <h3 style="color: #93374d; margin-top: 0;">📋 Réservation ${bookingData.bookingId}</h3>
-                  <p><strong>Client :</strong> ${bookingData.customerName}</p>
-                  <p><strong>📍 Départ :</strong> ${bookingData.pickupLocation}</p>
-                  <p><strong>📍 Arrivée :</strong> ${bookingData.dropoffLocation}</p>
-                  <p><strong>📅 Date :</strong> ${bookingData.pickupDate}</p>
-                  <p><strong>🕐 Heure :</strong> ${bookingData.pickupTime}</p>
-                  ${bookingData.passengers ? `<p><strong>👥 Passagers :</strong> ${bookingData.passengers}</p>` : ''}
-                </div>
-                <div style="text-align: center; margin: 30px 0;">
-                  <a href="${process.env.NEXT_PUBLIC_APP_URL}/driver/dashboard" 
-                     style="background: #93374d; color: white; padding: 14px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
-                    📱 Voir dans mon dashboard
-                  </a>
-                </div>
-                <div style="background: #fef3c7; border: 2px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
-                  <p style="color: #92400e; margin: 0;">⚠️ Pensez à confirmer ou refuser cette réservation depuis votre dashboard</p>
-                </div>
-                <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;">
-                <p style="text-align: center; color: #6b7280;">Cordialement,<br><strong>L'équipe NavetteXpress</strong></p>
-              </div>
-            </div>
-          </body>
-        </html>
-      `,
-    });
-
-    if (error) {
-      console.error('❌ Erreur envoi email assignation chauffeur:', error);
-      throw error;
-    }
-
-    console.log('✅ Email assignation chauffeur envoyé:', data?.id);
     return data;
   } catch (error) {
     console.error('❌ Erreur:', error);
@@ -435,7 +281,7 @@ export async function sendNewBookingRequestEmail(
                 <div style="text-align: left; margin-bottom: 30px;">
                   <div style="display: inline-block; background: white; padding: 8px 16px; border-radius: 4px;">
                     <span style="font-size: 40px; vertical-align: middle;">📋</span>
-                    <span style="color: #1e40af; font-size: 24px; font-weight: bold; margin-left: 10px; vertical-align: middle;">Nouvelle demande de réservation</span>
+                    <span style="color: #123B4D; font-size: 24px; font-weight: bold; margin-left: 10px; vertical-align: middle;">Nouvelle demande de réservation</span>
                   </div>
                 </div>
                 

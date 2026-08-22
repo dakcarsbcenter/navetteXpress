@@ -5,15 +5,19 @@ import { db } from "@/db"
 import { users } from "@/schema"
 import { eq, sql } from "drizzle-orm"
 import bcrypt from "bcryptjs"
-import { sendAccountLockedEmail } from "./email"
+import { sendWithRetry } from "./notification-queue"
 import type { NextAuthOptions } from "next-auth"
 import { decode as defaultDecode } from "next-auth/jwt"
 
 // Vérifier les variables d'environnement au démarrage
 const { NEXTAUTH_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, NEXTAUTH_URL } = process.env
 
+// Pas de throw ici : ce module est importé par des routes évaluées au build
+// Next.js (ex: /api/ads/[id]), où les env vars runtime ne sont pas encore
+// injectées. NextAuth échouera lui-même au runtime si le secret manque
+// vraiment à ce moment-là.
 if (!NEXTAUTH_SECRET) {
-  throw new Error("NEXTAUTH_SECRET n'est pas défini. Veuillez le configurer dans votre environnement.")
+  console.warn("⚠️ NEXTAUTH_SECRET n'est pas défini. À configurer avant le premier déploiement.")
 }
 
 if (!NEXTAUTH_URL) {
@@ -151,17 +155,12 @@ const providers = [
 
             console.log("🔒 [NextAuth] Compte bloqué pour 15 minutes après 3 tentatives")
 
-            // Envoyer un email de notification de blocage
-            try {
-              await sendAccountLockedEmail(
-                user.email,
-                user.name || 'Utilisateur',
-                lockedUntil
-              )
-            } catch (emailError) {
-              console.error("❌ [NextAuth] Erreur lors de l'envoi de l'email de blocage:", emailError)
-              // On continue quand même, le compte est bloqué
-            }
+            // Envoyer un email de notification de blocage (retry automatique en cas d'échec)
+            await sendWithRetry('email', 'email.sendAccountLockedEmail', [
+              user.email,
+              user.name || 'Utilisateur',
+              lockedUntil.toISOString()
+            ])
 
             throw new Error("AccountLockedAfter3Attempts")
           } else {
