@@ -95,9 +95,10 @@ CREATE TABLE "vehicles" (
 	"updated_at" timestamp NOT NULL,
 	CONSTRAINT "vehicles_plate_number_unique" UNIQUE("plate_number"),
 	CONSTRAINT "vehicle_photo_image_check" CHECK (
-    "vehicles"."photo" IS NULL OR 
+    "vehicles"."photo" IS NULL OR
     "vehicles"."photo" ~ '^https?://.*\.(jpg|jpeg|png|gif|webp|bmp|svg)$' OR
-    "vehicles"."photo" ~ '^data:image/(jpeg|jpg|png|gif|webp|bmp|svg\+xml)),
+    "vehicles"."photo" ~ '^data:image/(jpeg|jpg|png|gif|webp|bmp|svg\+xml);base64,'
+  ),
 	CONSTRAINT "year_check" CHECK ("vehicles"."year" >= 1900 AND "vehicles"."year" <= EXTRACT(YEAR FROM NOW()) + 2),
 	CONSTRAINT "capacity_check" CHECK ("vehicles"."capacity" > 0 AND "vehicles"."capacity" <= 50)
 );
