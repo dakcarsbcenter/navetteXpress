@@ -55,8 +55,8 @@ services:
       dockerfile: Dockerfile
     container_name: navettexpress_app
     restart: unless-stopped
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"
     env_file:
       - .env.docker
     depends_on:
@@ -65,9 +65,28 @@ services:
     networks:
       - navettexpress_network
 
+  # Reverse proxy HTTPS (Let's Encrypt automatique)
+  caddy:
+    image: caddy:2-alpine
+    container_name: navettexpress_caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+    networks:
+      - navettexpress_network
+
 volumes:
   postgres_data:
   openwa_data:
+  caddy_data:
+  caddy_config:
 
 networks:
   navettexpress_network:
