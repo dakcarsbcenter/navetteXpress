@@ -8,7 +8,7 @@ import { authOptions } from '@/lib/auth'
 import { db } from '@/db'
 import { bookingsTable, users } from '@/schema'
 import { eq, and } from 'drizzle-orm'
-import { sendBookingConfirmedByDriverEmail } from '@/lib/resend-mailer'
+import { sendWithRetry } from '@/lib/notification-queue'
 
 export async function PATCH(
   request: NextRequest,
@@ -77,7 +77,7 @@ export async function PATCH(
     }
 
     // Mettre à jour le statut
-    const updateData: any = { 
+    const updateData: Partial<typeof bookingsTable.$inferInsert> = {
       status,
       updatedAt: new Date()
     }
@@ -95,21 +95,20 @@ export async function PATCH(
 
     // Envoyer email au client si le chauffeur confirme la réservation
     if (status === 'confirmed') {
-      try {
-        console.log(`📧 Envoi email de confirmation au client pour réservation #${bookingId}...`);
-        
-        // Récupérer les informations du chauffeur
-        const driverInfo = await db.select({
-          name: users.name,
-          phone: users.phone
-        })
-          .from(users)
-          .where(eq(users.id, session.user.id))
-          .limit(1);
+      // Récupérer les informations du chauffeur
+      const driverInfo = await db.select({
+        name: users.name,
+        phone: users.phone
+      })
+        .from(users)
+        .where(eq(users.id, session.user.id))
+        .limit(1);
 
-        const booking = existingBooking[0];
-        
-        await sendBookingConfirmedByDriverEmail(booking.customerEmail, {
+      const booking = existingBooking[0];
+
+      await sendWithRetry('email', 'resend-mailer.sendBookingConfirmedByDriverEmail', [
+        booking.customerEmail,
+        {
           bookingId: `BOOK-${bookingId}`,
           customerName: booking.customerName,
           driverName: driverInfo[0]?.name || 'Votre chauffeur',
@@ -118,13 +117,8 @@ export async function PATCH(
           dropoffLocation: booking.dropoffAddress,
           pickupDate: new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR'),
           pickupTime: new Date(booking.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
-        });
-
-        console.log(`✅ Email de confirmation envoyé au client`);
-      } catch (emailError) {
-        console.error('❌ Erreur lors de l\'envoi de l\'email au client:', emailError);
-        // On continue même si l'email échoue
-      }
+        }
+      ]);
     }
 
     return NextResponse.json({ 

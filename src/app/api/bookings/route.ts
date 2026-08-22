@@ -8,8 +8,7 @@ import { bookingsTable, rolePermissionsTable } from '@/schema';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { eq, desc, and } from 'drizzle-orm';
-import { sendBookingNotificationToAdmin } from '@/lib/resend-email';
-import { sendNewBookingRequestEmail } from '@/lib/resend-mailer';
+import { sendWithRetry } from '@/lib/notification-queue';
 
 // Fonction pour vérifier les permissions dynamiques des bookings
 async function hasBookingsPermission(userRole: string, action: 'read' | 'create' | 'update' | 'delete'): Promise<boolean> {
@@ -162,12 +161,13 @@ export async function POST(request: NextRequest) {
     console.log(`✅ Réservation #${createdBooking.id} créée pour ${finalClientName}`);
 
     // Envoyer notification uniquement à l'admin (pas au client)
-    try {
-      console.log(`📧 Envoi notification admin pour nouvelle réservation #${createdBooking.id}...`);
-      
-      const adminEmail = process.env.ADMIN_EMAIL || 'onboarding@resend.dev';
-      
-      await sendNewBookingRequestEmail(adminEmail, {
+    // sendWithRetry ne lève jamais : en cas d'échec immédiat, le job est mis
+    // en file et rejoué plus tard par le worker (src/lib/notification-queue.ts)
+    const adminEmail = process.env.ADMIN_EMAIL || 'onboarding@resend.dev';
+
+    await sendWithRetry('email', 'resend-mailer.sendNewBookingRequestEmail', [
+      adminEmail,
+      {
         bookingId: `BOOK-${createdBooking.id}`,
         customerName: createdBooking.customerName,
         pickupLocation: createdBooking.pickupAddress,
@@ -176,15 +176,21 @@ export async function POST(request: NextRequest) {
         pickupTime: new Date(createdBooking.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
         passengers: passengers || 1,
         luggage: createdBooking.luggage || 1
-      });
+      }
+    ]);
 
-      console.log(`✅ Notification admin envoyée avec succès`);
-    } catch (emailError) {
-      console.error('❌ Erreur lors de l\'envoi de la notification admin:', emailError);
-      // On continue même si l'email échoue
-    }
+    await sendWithRetry('whatsapp', 'whatsapp.sendBookingWhatsAppToAdmin', [
+      {
+        id: createdBooking.id,
+        customerName: createdBooking.customerName,
+        pickupAddress: createdBooking.pickupAddress,
+        dropoffAddress: createdBooking.dropoffAddress,
+        scheduledDateTime: createdBooking.scheduledDateTime.toISOString(),
+        passengers: passengers || 1,
+      }
+    ]);
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true, 
       data: createdBooking,
       message: 'Réservation créée avec succès et notification admin envoyée'

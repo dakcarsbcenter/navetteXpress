@@ -9,7 +9,7 @@ import { db } from '@/db'
 import { quotes, invoicesTable, bookingsTable } from '@/schema'
 import { eq, and } from 'drizzle-orm'
 import { generateInvoiceNumber, calculateInvoiceAmounts, calculateDueDate } from '@/lib/invoice-utils'
-import { sendInvoiceEmail, sendQuoteAcceptedEmail, sendQuoteRejectedEmail } from '@/lib/resend-mailer'
+import { sendWithRetry } from '@/lib/notification-queue'
 
 export async function POST(request: NextRequest) {
   try {
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    let newStatus: string
+    let newStatus: 'accepted' | 'rejected' | 'pending'
     let clientNotes = currentQuote.clientNotes || ''
 
     switch (action) {
@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
     
     await db.update(quotes)
       .set({
-        status: newStatus as any,
+        status: newStatus,
         clientNotes,
         updatedAt: new Date()
       })
@@ -180,11 +180,10 @@ export async function POST(request: NextRequest) {
           dueDate: newInvoice.dueDate
         }
 
-        // Envoyer l'email de notification de facture au client
-        try {
-          console.log('📧 Envoi de l\'email de facture à:', newInvoice.customerEmail)
-          
-          await sendInvoiceEmail(newInvoice.customerEmail, {
+        // Envoyer l'email de notification de facture au client (retry automatique en cas d'échec)
+        await sendWithRetry('email', 'resend-mailer.sendInvoiceEmail', [
+          newInvoice.customerEmail,
+          {
             invoiceNumber: newInvoice.invoiceNumber,
             customerName: newInvoice.customerName,
             service: newInvoice.service,
@@ -194,13 +193,8 @@ export async function POST(request: NextRequest) {
             issueDate: new Date(newInvoice.issueDate).toLocaleDateString('fr-FR'),
             dueDate: new Date(newInvoice.dueDate).toLocaleDateString('fr-FR'),
             invoiceUrl: `${process.env.NEXT_PUBLIC_APP_URL}/client/factures/${newInvoice.id}`
-          })
-          
-          console.log('✅ Email de facture envoyé avec succès')
-        } catch (emailError) {
-          console.error('❌ Erreur lors de l\'envoi de l\'email de facture:', emailError)
-          // Ne pas bloquer si l'email échoue
-        }
+          }
+        ])
 
       } catch (invoiceError) {
         console.error('❌ Erreur lors de la génération de la facture:', invoiceError)
@@ -311,41 +305,25 @@ export async function POST(request: NextRequest) {
         // On ne bloque pas l'acceptation du devis même si la création de réservation échoue
       }
 
-      // Envoyer email à l'admin pour notifier l'acceptation du devis
-      try {
-        console.log('📧 Envoi notification admin pour devis accepté #' + String(currentQuote.id) + '...');
-        
-        await sendQuoteAcceptedEmail({
-          quoteId: `QUOTE-${currentQuote.id}`,
-          customerName: currentQuote.customerName,
-          customerEmail: currentQuote.customerEmail,
-          service: currentQuote.service,
-          price: parseFloat(currentQuote.estimatedPrice || '0')
-        });
-
-        console.log(`✅ Notification admin devis accepté envoyée`);
-      } catch (emailError) {
-        console.error('❌ Erreur lors de l\'envoi de la notification admin:', emailError);
-      }
+      // Envoyer email à l'admin pour notifier l'acceptation du devis (retry automatique en cas d'échec)
+      await sendWithRetry('email', 'resend-mailer.sendQuoteAcceptedEmail', [{
+        quoteId: `QUOTE-${currentQuote.id}`,
+        customerName: currentQuote.customerName,
+        customerEmail: currentQuote.customerEmail,
+        service: currentQuote.service,
+        price: parseFloat(currentQuote.estimatedPrice || '0')
+      }]);
     }
 
     // Si le devis est rejeté, envoyer email à l'admin
     if (action === 'reject') {
-      try {
-        console.log('📧 Envoi notification admin pour devis rejeté #' + String(currentQuote.id) + '...');
-        
-        await sendQuoteRejectedEmail({
-          quoteId: `QUOTE-${currentQuote.id}`,
-          customerName: currentQuote.customerName,
-          customerEmail: currentQuote.customerEmail,
-          service: currentQuote.service,
-          rejectionReason: sanitizedMessage
-        });
-
-        console.log(`✅ Notification admin devis rejeté envoyée`);
-      } catch (emailError) {
-        console.error('❌ Erreur lors de l\'envoi de la notification admin:', emailError);
-      }
+      await sendWithRetry('email', 'resend-mailer.sendQuoteRejectedEmail', [{
+        quoteId: `QUOTE-${currentQuote.id}`,
+        customerName: currentQuote.customerName,
+        customerEmail: currentQuote.customerEmail,
+        service: currentQuote.service,
+        rejectionReason: sanitizedMessage
+      }]);
     }
 
     return NextResponse.json({ 

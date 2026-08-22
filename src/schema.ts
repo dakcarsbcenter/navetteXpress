@@ -20,6 +20,9 @@ export const adStatusEnum = pgEnum('ad_status', [
   'expired',  // Expirée automatiquement (date dépassée)
 ]);
 
+export const notificationChannelEnum = pgEnum('notification_channel', ['email', 'whatsapp']);
+export const notificationQueueStatusEnum = pgEnum('notification_queue_status', ['pending', 'sent', 'failed']);
+
 export const adPlacementEnum = pgEnum('ad_placement', [
   'home_hero',          // Page accueil — après la section hero
   'home_services',      // Page accueil — après la section services
@@ -392,6 +395,25 @@ export const servicesTable = pgTable('services', {
 
 export type InsertService = typeof servicesTable.$inferInsert;
 export type SelectService = typeof servicesTable.$inferSelect;
+
+// File d'attente pour les notifications (email/WhatsApp) dont l'envoi immédiat a échoué.
+// Rejouée par le worker de src/lib/notification-queue.ts avec backoff exponentiel.
+export const notificationQueueTable = pgTable('notification_queue', {
+  id: serial('id').primaryKey(),
+  channel: notificationChannelEnum('channel').notNull(),
+  handler: text('handler').notNull(), // Clé du registre dans src/lib/notification-queue.ts
+  payload: text('payload').notNull(), // Arguments de l'appel, sérialisés en JSON
+  status: notificationQueueStatusEnum('status').notNull().default('pending'),
+  attempts: integer('attempts').notNull().default(0),
+  maxAttempts: integer('max_attempts').notNull().default(6),
+  lastError: text('last_error'),
+  nextAttemptAt: timestamp('next_attempt_at').notNull().defaultNow(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
+});
+
+export type InsertNotificationQueue = typeof notificationQueueTable.$inferInsert;
+export type SelectNotificationQueue = typeof notificationQueueTable.$inferSelect;
 
 // Alias pour les exports
 export const quotes = quotesTable;

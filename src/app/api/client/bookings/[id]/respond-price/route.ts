@@ -8,7 +8,7 @@ import { authOptions } from '@/lib/auth';
 import { db } from '@/db';
 import { bookingsTable } from '@/schema';
 import { eq, and } from 'drizzle-orm';
-import { sendBookingPriceAcceptedEmail, sendBookingPriceRejectedEmail } from '@/lib/resend-mailer';
+import { sendWithRetry } from '@/lib/notification-queue';
 
 /**
  * POST /api/client/bookings/[id]/respond-price
@@ -83,7 +83,7 @@ export async function POST(
     }
 
     // Mettre à jour la réservation
-    const updateData: any = {
+    const updateData: Partial<typeof bookingsTable.$inferInsert> = {
       clientResponse: response,
       clientResponseAt: new Date(),
       clientResponseMessage: message || null,
@@ -106,35 +106,28 @@ export async function POST(
 
     console.log(`✅ Client ${response === 'accepted' ? 'accepté' : 'rejeté'} le prix pour réservation #${bookingId}`);
 
-    // Envoyer email à l'admin
-    try {
-      if (response === 'accepted') {
-        await sendBookingPriceAcceptedEmail({
-          bookingId: updatedBooking.id,
-          customerName: updatedBooking.customerName,
-          customerEmail: updatedBooking.customerEmail,
-          pickupAddress: updatedBooking.pickupAddress,
-          dropoffAddress: updatedBooking.dropoffAddress,
-          scheduledDateTime: updatedBooking.scheduledDateTime.toISOString(),
-          price: updatedBooking.price || '0'
-        });
-        console.log('✅ Email prix accepté envoyé à l\'admin');
-      } else if (response === 'rejected') {
-        await sendBookingPriceRejectedEmail({
-          bookingId: updatedBooking.id,
-          customerName: updatedBooking.customerName,
-          customerEmail: updatedBooking.customerEmail,
-          pickupAddress: updatedBooking.pickupAddress,
-          dropoffAddress: updatedBooking.dropoffAddress,
-          scheduledDateTime: updatedBooking.scheduledDateTime.toISOString(),
-          price: updatedBooking.price || '0',
-          rejectionMessage: message
-        });
-        console.log('✅ Email prix rejeté envoyé à l\'admin');
-      }
-    } catch (emailError) {
-      console.error('⚠️ Erreur envoi email:', emailError);
-      // Ne pas bloquer la réponse même si l'email échoue
+    // Envoyer email à l'admin (retry automatique en cas d'échec, ne bloque jamais la réponse)
+    if (response === 'accepted') {
+      await sendWithRetry('email', 'resend-mailer.sendBookingPriceAcceptedEmail', [{
+        bookingId: updatedBooking.id,
+        customerName: updatedBooking.customerName,
+        customerEmail: updatedBooking.customerEmail,
+        pickupAddress: updatedBooking.pickupAddress,
+        dropoffAddress: updatedBooking.dropoffAddress,
+        scheduledDateTime: updatedBooking.scheduledDateTime.toISOString(),
+        price: updatedBooking.price || '0'
+      }]);
+    } else if (response === 'rejected') {
+      await sendWithRetry('email', 'resend-mailer.sendBookingPriceRejectedEmail', [{
+        bookingId: updatedBooking.id,
+        customerName: updatedBooking.customerName,
+        customerEmail: updatedBooking.customerEmail,
+        pickupAddress: updatedBooking.pickupAddress,
+        dropoffAddress: updatedBooking.dropoffAddress,
+        scheduledDateTime: updatedBooking.scheduledDateTime.toISOString(),
+        price: updatedBooking.price || '0',
+        rejectionMessage: message
+      }]);
     }
 
     return NextResponse.json({ 

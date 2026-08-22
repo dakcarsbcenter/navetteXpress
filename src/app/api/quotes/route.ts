@@ -8,7 +8,7 @@ import { quotesTable, rolePermissionsTable } from '@/schema';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { desc, and, eq } from 'drizzle-orm';
-import { sendNewQuoteRequestEmail } from '@/lib/resend-mailer';
+import { sendWithRetry } from '@/lib/notification-queue';
 
 // Fonction pour vérifier les permissions dynamiques des quotes
 async function hasQuotesPermission(userRole: string, action: 'read' | 'create' | 'update' | 'delete'): Promise<boolean> {
@@ -75,42 +75,60 @@ export async function POST(request: NextRequest) {
       })
       .returning();
 
-    // Envoyer email de confirmation au client
-    try {
-      console.log(`📧 Envoi email de confirmation au client pour devis #${newQuote[0].id}...`);
-      
-      await sendNewQuoteRequestEmail(customerEmail, {
+    // Envoyer email de confirmation au client (retry automatique en cas d'échec)
+    await sendWithRetry('email', 'resend-mailer.sendNewQuoteRequestEmail', [
+      customerEmail,
+      {
         quoteId: `QUOTE-${newQuote[0].id}`,
         customerName,
         service,
         preferredDate: preferredDate ? new Date(preferredDate).toLocaleDateString('fr-FR') : undefined,
         message
-      }, false);
+      },
+      false
+    ]);
 
-      console.log(`✅ Email client envoyé`);
-    } catch (emailError) {
-      console.error('❌ Erreur lors de l\'envoi de l\'email client:', emailError);
+    if (customerPhone) {
+      await sendWithRetry('whatsapp', 'whatsapp.sendQuoteWhatsAppNotification', [
+        customerPhone,
+        {
+          id: newQuote[0].id,
+          customerName,
+          service,
+          preferredDate: preferredDate ? new Date(preferredDate).toLocaleDateString('fr-FR') : undefined,
+        },
+        false
+      ]);
     }
 
     // Envoyer notification à l'admin
-    try {
-      console.log(`📧 Envoi notification admin pour nouvelle demande devis #${newQuote[0].id}...`);
-      
-      const adminEmail = process.env.ADMIN_EMAIL || 'admin@navettexpress.com';
-      await sendNewQuoteRequestEmail(adminEmail, {
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@navettexpress.com';
+    await sendWithRetry('email', 'resend-mailer.sendNewQuoteRequestEmail', [
+      adminEmail,
+      {
         quoteId: `QUOTE-${newQuote[0].id}`,
         customerName,
         service,
         preferredDate: preferredDate ? new Date(preferredDate).toLocaleDateString('fr-FR') : undefined,
         message
-      }, true);
+      },
+      true
+    ]);
 
-      console.log(`✅ Notification admin envoyée`);
-    } catch (emailError) {
-      console.error('❌ Erreur lors de l\'envoi de la notification admin:', emailError);
+    if (process.env.ADMIN_WHATSAPP_NUMBER) {
+      await sendWithRetry('whatsapp', 'whatsapp.sendQuoteWhatsAppNotification', [
+        process.env.ADMIN_WHATSAPP_NUMBER,
+        {
+          id: newQuote[0].id,
+          customerName,
+          service,
+          preferredDate: preferredDate ? new Date(preferredDate).toLocaleDateString('fr-FR') : undefined,
+        },
+        true
+      ]);
     }
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true, 
       data: newQuote[0],
       message: 'Demande de devis créée avec succès'

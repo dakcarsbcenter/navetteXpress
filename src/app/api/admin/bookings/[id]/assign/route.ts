@@ -7,8 +7,8 @@ import { db } from '@/db';
 import { bookingsTable, users } from '@/schema';
 import { eq, and } from 'drizzle-orm';
 import { requireBookingsUpdate } from '@/utils/admin-permissions';
-import { sendBookingAssignedToDriver } from '@/lib/resend-email';
 import { checkDriverAvailability } from '@/lib/driver-availability';
+import { sendWithRetry } from '@/lib/notification-queue';
 
 // PUT - Assigner une réservation à un chauffeur
 export async function PUT(
@@ -106,11 +106,9 @@ export async function PUT(
     
     console.log(`✅ Réservation #${assignedBooking.id} assignée au chauffeur ${assignedDriver.name}`);
 
-    // Envoyer notification au chauffeur assigné via Resend
-    try {
-      console.log(`📧 Envoi notification chauffeur pour assignation #${assignedBooking.id}...`);
-      
-      const emailResult = await sendBookingAssignedToDriver({
+    // Envoyer notification au chauffeur assigné (retry automatique en cas d'échec)
+    await sendWithRetry('email', 'resend-email.sendBookingAssignedToDriver', [
+      {
         id: assignedBooking.id,
         customerName: assignedBooking.customerName,
         customerEmail: assignedBooking.customerEmail,
@@ -121,23 +119,26 @@ export async function PUT(
         passengers: 1, // À ajuster si disponible
         price: assignedBooking.price || undefined,
         notes: assignedBooking.notes || undefined
-      }, {
+      },
+      {
         name: assignedDriver.name,
         email: assignedDriver.email
-      });
-
-      if (emailResult.success) {
-        console.log(`✅ Notification chauffeur envoyée via Resend`);
-      } else {
-        console.error(`❌ Erreur notification chauffeur:`, emailResult.error);
-        // On continue même si l'email échoue
       }
-    } catch (emailError) {
-      console.error('❌ Erreur lors de l\'envoi de la notification chauffeur:', emailError);
-      // On continue même si l'email échoue
-    }
+    ]);
 
-    return NextResponse.json({ 
+    await sendWithRetry('whatsapp', 'whatsapp.sendBookingAssignedWhatsAppToDriver', [
+      {
+        id: assignedBooking.id,
+        customerName: assignedBooking.customerName,
+        pickupAddress: assignedBooking.pickupAddress,
+        dropoffAddress: assignedBooking.dropoffAddress,
+        scheduledDateTime: assignedBooking.scheduledDateTime.toISOString(),
+        passengers: 1,
+      },
+      assignedDriver.phone
+    ]);
+
+    return NextResponse.json({
       success: true, 
       data: assignedBooking,
       message: `Réservation assignée avec succès au chauffeur ${assignedDriver.name}. Notification envoyée.`
