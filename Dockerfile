@@ -15,6 +15,15 @@ COPY package.json package-lock.json* ./
 # Installer toutes les dépendances (y compris devDependencies pour le build)
 RUN npm ci
 
+# Étape de dépendances de production uniquement
+# Le tracing automatique de Next.js standalone n'inclut pas toujours "postgres"
+# (imports conditionnels selon le runtime), nécessaire au script de migration
+# exécuté hors du bundle tracé. On installe donc les deps de prod à part.
+FROM base AS prod-deps
+WORKDIR /app
+COPY package.json package-lock.json* ./
+RUN npm ci --omit=dev
+
 # Étape de build
 FROM base AS builder
 WORKDIR /app
@@ -70,6 +79,10 @@ RUN chmod +x start.sh
 COPY --chown=nextjs:nodejs migrations ./migrations
 RUN mkdir -p scripts
 COPY --from=builder --chown=nextjs:nodejs /app/scripts/run-migrations.mjs ./scripts/run-migrations.mjs
+
+# Compléter le node_modules élagué du build standalone avec les deps de prod
+# complètes (garantit la présence de "postgres" pour run-migrations.mjs)
+COPY --from=prod-deps --chown=nextjs:nodejs /app/node_modules ./node_modules
 
 # Changer vers l'utilisateur non-root
 USER nextjs
