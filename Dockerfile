@@ -2,7 +2,8 @@
 FROM node:20-alpine AS base
 
 # Installer les dépendances nécessaires pour les builds natifs
-RUN apk add --no-cache libc6-compat postgresql-client
+# bash est requis par start.sh (set -o pipefail, absent de sh/ash Alpine)
+RUN apk add --no-cache libc6-compat postgresql-client bash
 
 # Étape de dépendances
 FROM base AS deps
