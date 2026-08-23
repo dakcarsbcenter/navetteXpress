@@ -1,4 +1,5 @@
 import { getServerSession } from 'next-auth/next';
+import type { Session } from "next-auth";
 import { authOptions } from '@/lib/auth';
 import { db } from '@/db';
 import { users, rolePermissionsTable } from '@/schema';
@@ -9,7 +10,7 @@ import { eq, and } from 'drizzle-orm';
  */
 export async function checkAdminRole(userId?: string): Promise<boolean> {
   try {
-    const session = await getServerSession(authOptions);
+    const session = (await getServerSession(authOptions)) as Session | null;
     const currentUserId = userId || session?.user?.id;
     if (!currentUserId) return false;
 
@@ -72,7 +73,7 @@ export async function hasResourcePermission(
  * Middleware pour protéger les routes admin (admin uniquement)
  */
 export async function requireAdminRole(): Promise<string> {
-  const session = await getServerSession(authOptions);
+  const session = (await getServerSession(authOptions)) as Session | null;
   
   if (!session?.user?.id) {
     console.error('Aucune session utilisateur trouvée');
@@ -96,7 +97,7 @@ export async function requireResourcePermission(
   resource: string,
   action: 'read' | 'create' | 'update' | 'delete'
 ): Promise<string> {
-  const session = await getServerSession(authOptions);
+  const session = (await getServerSession(authOptions)) as Session | null;
   
   console.log('🔍 [Permissions] Vérification session:', {
     hasSession: !!session,

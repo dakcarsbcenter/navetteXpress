@@ -80,9 +80,9 @@ export default function ContactClient() {
     {
       icon: <Phone size={24} weight="light" className="text-gold" />,
       title: "Conciergerie 24/7",
-      details: "+221 78 131 91 91",
+      details: "+221 78 465 13 02",
       sub: "Disponible via WhatsApp & Appel Direct",
-      link: "tel:+221781319191"
+      link: "tel:+221784651302"
     },
     {
       icon: <EnvelopeSimple size={24} weight="light" className="text-gold" />,
@@ -184,7 +184,7 @@ export default function ContactClient() {
                   <p className="text-foreground/80 text-sm leading-relaxed mb-6 italic">
                     "Plus qu'un transport, une garantie de sérénité pour vos transferts de dernière minute."
                   </p>
-                  <a href="tel:+221781319191" className="flex items-center gap-2 text-gold font-bold uppercase tracking-widest text-xs hover:gap-3 transition-all">
+                  <a href="tel:+221784651302" className="flex items-center gap-2 text-gold font-bold uppercase tracking-widest text-xs hover:gap-3 transition-all">
                     Appel Immédiat <CaretRight size={16} weight="light" />
                   </a>
                 </motion.div>

@@ -141,7 +141,7 @@ export default function TestimonialsClient() {
                   <svg key={i} width="22" height="22" viewBox="0 0 20 20" fill="none">
                     <path
                       d="M10 1l2.39 4.84L18 6.76l-4 3.9.94 5.5L10 13.77 5.06 16.16 6 10.66 2 6.76l5.61-.92L10 1z"
-                      fill={i <= Math.round(noteGlobale) ? '#9B1B30' : 'rgba(155,27,48,0.2)'}
+                      fill={i <= Math.round(noteGlobale) ? '#1F5245' : 'rgba(18,59,77,0.2)'}
                     />
                   </svg>
                 ))}
@@ -210,7 +210,7 @@ export default function TestimonialsClient() {
           </h2>
 
           <p className="font-sans text-base mb-10 text-foreground/50">
-            Vous avez voyagé avec Navette Xpress ? Partagez votre expérience sur Google et aidez d'autres voyageurs à faire le bon choix.
+            Vous avez voyagé avec Navette Xpress ? Partagez votre expérience sur Google et aidez d&apos;autres voyageurs à faire le bon choix.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

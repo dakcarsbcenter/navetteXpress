@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { advertisements } from '@/schema';
 import { eq } from 'drizzle-orm';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
+import type { Session } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
 export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -19,7 +20,7 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     // Auth admin
-    const session = await getServerSession(authOptions);
+    const session = (await getServerSession(authOptions)) as Session | null;
     if (!session || (session.user as any).role !== 'admin' && (session.user as any).role !== 'manager') {
         return NextResponse.json({ error: 'Non autorisé' }, { status: 403 });
     }
@@ -52,7 +53,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
 export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     // Auth admin
-    const session = await getServerSession(authOptions);
+    const session = (await getServerSession(authOptions)) as Session | null;
     if (!session || (session.user as any).role !== 'admin' && (session.user as any).role !== 'manager') {
         return NextResponse.json({ error: 'Non autorisé' }, { status: 403 });
     }

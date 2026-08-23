@@ -3,18 +3,19 @@ import { db } from '@/db';
 import { advertisements } from '@/schema';
 import { eq, sql } from 'drizzle-orm';
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
+        const { id } = await params;
         const { type } = await req.json(); // type: 'impression' | 'click'
 
         if (type === 'impression') {
             await db.update(advertisements)
                 .set({ impressions: sql`${advertisements.impressions} + 1` })
-                .where(eq(advertisements.id, params.id));
+                .where(eq(advertisements.id, id));
         } else if (type === 'click') {
             await db.update(advertisements)
                 .set({ clicks: sql`${advertisements.clicks} + 1` })
-                .where(eq(advertisements.id, params.id));
+                .where(eq(advertisements.id, id));
         }
 
         return NextResponse.json({ success: true });

@@ -94,7 +94,7 @@ export async function POST() {
  * Fonction helper pour uploader une image externe vers Cloudinary
  * (À implémenter selon vos besoins)
  */
-export async function migrateImageToCloudinary(imageUrl: string): Promise<string> {
+async function migrateImageToCloudinary(imageUrl: string): Promise<string> {
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
   const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
 

@@ -63,13 +63,13 @@ async function runManualMigration() {
     const rolesCount = await db.execute(sql`SELECT COUNT(*) as count FROM custom_roles`)
     const permissionsCount = await db.execute(sql`SELECT COUNT(*) as count FROM role_permissions`)
     
-    console.log(`📊 Rôles créés: ${rolesCount.rows[0].count}`)
-    console.log(`📊 Permissions migrées: ${permissionsCount.rows[0].count}`)
+    console.log(`📊 Rôles créés: ${rolesCount[0].count}`)
+    console.log(`📊 Permissions migrées: ${permissionsCount[0].count}`)
 
     // Afficher les rôles
     const roles = await db.execute(sql`SELECT name, display_name, is_system FROM custom_roles ORDER BY is_system DESC`)
     console.log('\n🎭 Rôles disponibles:')
-    for (const role of roles.rows) {
+    for (const role of roles) {
       const type = role.is_system ? '🔒 Système' : '🎨 Personnalisé'
       console.log(`  ${type}: ${role.name} (${role.display_name})`)
     }

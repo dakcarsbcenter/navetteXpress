@@ -58,18 +58,18 @@ export const TransportIcons = {
 };
 
 // =============================================================================
-// 🎨 UPGRADE DES ICÔNES LUCIDE EXISTANTES
+// 🎨 ICÔNES STYLISÉES (Phosphor)
 // =============================================================================
 
 /**
- * Wrapper pour styliser les icônes Lucide avec notre palette
+ * Wrapper pour styliser les icônes Phosphor avec notre palette
  */
-export const StyledLucideIcons = {
+export const StyledIcons = {
   // Navigation moderne
   Menu: ({ className = "", variant = "default" }: { className?: string; variant?: "default" | "primary" | "secondary" }) => {
     const variants = {
       default: "text-slate-600 dark:text-slate-300",
-      primary: "text-[#9B1B30]",
+      primary: "text-[#1F5245]",
       secondary: "text-[#0F5B8A]"
     };
     return <Menu className={`${variants[variant]} ${className}`} />;
@@ -80,7 +80,7 @@ export const StyledLucideIcons = {
     const variants = {
       default: "text-slate-600 dark:text-slate-300",
       success: "text-[#22C55E]",
-      primary: "text-[#9B1B30]"
+      primary: "text-[#1F5245]"
     };
     return <Phone className={`${variants[variant]} ${className}`} />;
   }
@@ -222,7 +222,7 @@ export const IconUpgradePlan = {
 
 export default {
   TransportIcons,
-  StyledLucideIcons,
+  StyledIcons,
   BusinessIcons,
   CulturalIcons,
   ModernUIIcons,

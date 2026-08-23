@@ -16,7 +16,9 @@ async function runMigration() {
   
   try {
     // Connexion directe avec postgres.js
-    sql = postgres(DATABASE_URL)
+    // DATABASE_URL est garanti défini par la vérification en haut du fichier,
+    // mais TS ne peut pas propager cette étroite portée dans cette fonction.
+    sql = postgres(DATABASE_URL!)
     
     // Lire le fichier SQL
     const sqlFile = path.join(__dirname, 'migrations', 'add-invoices-table.sql')

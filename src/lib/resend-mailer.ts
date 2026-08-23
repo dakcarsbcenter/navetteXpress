@@ -71,12 +71,12 @@ export async function sendInvoiceEmail(
               <h3>💰 Détails des montants</h3>
               <p><strong>Montant HT :</strong> ${invoiceData.amountHT}</p>
               <p><strong>TVA (20%) :</strong> ${invoiceData.vatAmount}</p>
-              <p><strong>Montant TTC :</strong> <span style="font-size: 18px; color: #93374d;">${invoiceData.amountTTC}</span></p>
+              <p><strong>Montant TTC :</strong> <span style="font-size: 18px; color: #1F5245;">${invoiceData.amountTTC}</span></p>
             </div>
             
             <p style="text-align: center; margin: 30px 0;">
               <a href="${invoiceData.invoiceUrl}" 
-                 style="background: #93374d; color: white; padding: 14px 40px; 
+                 style="background: #1F5245; color: white; padding: 14px 40px; 
                         text-decoration: none; border-radius: 5px; font-weight: bold;">
                 📥 Télécharger la facture
               </a>
@@ -136,7 +136,7 @@ export async function sendQuoteConfirmedEmail(
             <p>Nous avons le plaisir de vous proposer le devis suivant :</p>
             
             <div style="background: #dbeafe; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
-              <h3 style="color: #93374d; font-size: 32px; margin: 0;">${quoteData.amount}</h3>
+              <h3 style="color: #1F5245; font-size: 32px; margin: 0;">${quoteData.amount}</h3>
               <p style="margin: 5px 0;">Devis ${quoteData.quoteId}</p>
             </div>
             
@@ -203,8 +203,8 @@ export async function sendBookingConfirmedByDriverEmail(
         <!DOCTYPE html>
         <html>
           <body style="font-family: Arial, sans-serif; background: #e8f0f8; padding: 20px;">
-            <div style="max-width: 600px; margin: 0 auto; background: white; border: 2px solid #93374d; border-radius: 8px; overflow: hidden;">
-              <div style="background: #93374d; padding: 32px 20px; text-align: center;">
+            <div style="max-width: 600px; margin: 0 auto; background: white; border: 2px solid #1F5245; border-radius: 8px; overflow: hidden;">
+              <div style="background: #1F5245; padding: 32px 20px; text-align: center;">
                 <h1 style="color: white; margin: 0;">Navette Express</h1>
               </div>
               <div style="padding: 32px 24px;">
@@ -222,7 +222,7 @@ export async function sendBookingConfirmedByDriverEmail(
                 </div>
                 <div style="text-align: center; margin: 30px 0;">
                   <a href="${process.env.NEXT_PUBLIC_APP_URL}/client/reservations" 
-                     style="background: #93374d; color: white; padding: 14px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+                     style="background: #1F5245; color: white; padding: 14px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
                     📱 Voir ma réservation
                   </a>
                 </div>
@@ -274,14 +274,14 @@ export async function sendNewBookingRequestEmail(
         <html>
           <body style="font-family: Arial, sans-serif; background: #e8f0f8; padding: 20px;">
             <div style="max-width: 600px; margin: 0 auto; background: white; border: 2px solid #2563eb; border-radius: 8px; overflow: hidden;">
-              <div style="background: #93374d; padding: 32px 20px; text-align: center;">
+              <div style="background: #1F5245; padding: 32px 20px; text-align: center;">
                 <h1 style="color: white; margin: 0; font-size: 28px;">Navette Express</h1>
               </div>
               <div style="padding: 32px 24px;">
                 <div style="text-align: left; margin-bottom: 30px;">
                   <div style="display: inline-block; background: white; padding: 8px 16px; border-radius: 4px;">
                     <span style="font-size: 40px; vertical-align: middle;">📋</span>
-                    <span style="color: #123B4D; font-size: 24px; font-weight: bold; margin-left: 10px; vertical-align: middle;">Nouvelle demande de réservation</span>
+                    <span style="color: #1F5245; font-size: 24px; font-weight: bold; margin-left: 10px; vertical-align: middle;">Nouvelle demande de réservation</span>
                   </div>
                 </div>
                 
@@ -331,7 +331,7 @@ export async function sendNewBookingRequestEmail(
 
                 <div style="text-align: center; margin: 30px 0;">
                   <a href="${process.env.NEXT_PUBLIC_APP_URL}/admin/reservations" 
-                     style="background: #93374d; color: white; padding: 16px 48px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 16px;">
+                     style="background: #1F5245; color: white; padding: 16px 48px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 16px;">
                     Voir la demande
                   </a>
                 </div>
@@ -398,8 +398,8 @@ export async function sendNewQuoteRequestEmail(
         <!DOCTYPE html>
         <html>
           <body style="font-family: Arial, sans-serif; background: #e8f0f8; padding: 20px;">
-            <div style="max-width: 600px; margin: 0 auto; background: white; border: 2px solid #93374d; border-radius: 8px; overflow: hidden;">
-              <div style="background: #93374d; padding: 32px 20px; text-align: center;">
+            <div style="max-width: 600px; margin: 0 auto; background: white; border: 2px solid #1F5245; border-radius: 8px; overflow: hidden;">
+              <div style="background: #1F5245; padding: 32px 20px; text-align: center;">
                 <h1 style="color: white; margin: 0;">Navette Express</h1>
               </div>
               <div style="padding: 32px 24px;">
@@ -408,8 +408,8 @@ export async function sendNewQuoteRequestEmail(
                 <p>${isAdmin 
                   ? 'Une nouvelle demande de devis a été soumise :' 
                   : 'Nous avons bien reçu votre demande de devis :'}</p>
-                <div style="background: #f8f9fa; border: 2px solid #93374d; border-radius: 8px; padding: 20px; margin: 20px 0;">
-                  <h3 style="color: #93374d; margin-top: 0;">📋 Devis ${quoteData.quoteId}</h3>
+                <div style="background: #f8f9fa; border: 2px solid #1F5245; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                  <h3 style="color: #1F5245; margin-top: 0;">📋 Devis ${quoteData.quoteId}</h3>
                   <p><strong>🚗 Service :</strong> ${quoteData.service}</p>
                   ${quoteData.preferredDate ? `<p><strong>📅 Date souhaitée :</strong> ${quoteData.preferredDate}</p>` : ''}
                   <p><strong>💬 Message :</strong></p>
@@ -424,7 +424,7 @@ export async function sendNewQuoteRequestEmail(
                 ` : ''}
                 <div style="text-align: center; margin: 30px 0;">
                   <a href="${process.env.NEXT_PUBLIC_APP_URL}/${isAdmin ? 'admin' : 'client'}/devis" 
-                     style="background: #93374d; color: white; padding: 14px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+                     style="background: #1F5245; color: white; padding: 14px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
                     ${isAdmin ? '📊 Gérer les devis' : '📱 Suivre ma demande'}
                   </a>
                 </div>
@@ -498,7 +498,7 @@ export async function sendQuoteRejectedEmail(
                 </div>
                 <div style="text-align: center; margin: 30px 0;">
                   <a href="${process.env.NEXT_PUBLIC_APP_URL}/admin/devis" 
-                     style="background: #93374d; color: white; padding: 14px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+                     style="background: #1F5245; color: white; padding: 14px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
                     📊 Voir les devis
                   </a>
                 </div>
@@ -567,7 +567,7 @@ export async function sendQuoteAcceptedEmail(
                 </div>
                 <div style="text-align: center; margin: 30px 0;">
                   <a href="${process.env.NEXT_PUBLIC_APP_URL}/admin/devis" 
-                     style="background: #93374d; color: white; padding: 14px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+                     style="background: #1F5245; color: white; padding: 14px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
                     📊 Gérer les devis
                   </a>
                 </div>
@@ -646,7 +646,7 @@ export async function sendBookingPriceAcceptedEmail(
                 </div>
                 <div style="text-align: center; margin: 30px 0;">
                   <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard?tab=bookings" 
-                     style="background: #93374d; color: white; padding: 14px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+                     style="background: #1F5245; color: white; padding: 14px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
                     📊 Gérer les réservations
                   </a>
                 </div>
@@ -732,7 +732,7 @@ export async function sendBookingPriceRejectedEmail(
                 </div>
                 <div style="text-align: center; margin: 30px 0;">
                   <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard?tab=bookings" 
-                     style="background: #93374d; color: white; padding: 14px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+                     style="background: #1F5245; color: white; padding: 14px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
                     📊 Modifier le prix
                   </a>
                 </div>

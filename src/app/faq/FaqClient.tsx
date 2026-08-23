@@ -207,10 +207,10 @@ export default function FaqClient() {
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <a
-              href="tel:+221781319191"
+              href="tel:+221784651302"
               className="px-10 py-5 bg-gold text-[#1A1A1A] font-bold tracking-widest uppercase rounded-full hover:scale-105 transition-all text-sm flex items-center justify-center gap-3"
             >
-              <Phone weight="fill" /> +221 78 131 91 91
+              <Phone weight="fill" /> +221 78 465 13 02
             </a>
             <a
               href="mailto:contact@navettexpress.com"

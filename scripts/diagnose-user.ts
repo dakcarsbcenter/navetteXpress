@@ -1,7 +1,7 @@
 
 import 'dotenv/config';
-import { db } from './src/db';
-import { users } from './src/schema';
+import { db } from '../src/db';
+import { users } from '../src/schema';
 import { sql } from 'drizzle-orm';
 
 async function diagnoseUser(emailToFind: string) {
@@ -43,7 +43,7 @@ async function diagnoseUser(emailToFind: string) {
             console.log("❌ Aucun utilisateur ne correspond exactement.");
             if (partialMatch.length > 0) {
                 console.log("💡 Utilisateurs suggérés par correspondance partielle :");
-                console.table(partialMatch.map(m => ({ email: m.email, role: m.role, isActive: m.isActive })));
+                console.table(partialMatch.map((m: typeof partialMatch[number]) => ({ email: m.email, role: m.role, isActive: m.isActive })));
             } else {
                 console.log("😭 Aucune suggestion trouvée non plus.");
             }

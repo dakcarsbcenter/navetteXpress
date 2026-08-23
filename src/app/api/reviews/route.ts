@@ -4,6 +4,7 @@ export const revalidate = 0;
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
+import type { Session } from "next-auth";
 import { authOptions } from '@/lib/auth'
 import { db } from '@/db'
 import { reviewsTable, users, bookingsTable, rolePermissionsTable } from '@/schema'
@@ -38,7 +39,7 @@ async function hasReviewsPermission(userRole: string, action: 'read' | 'create' 
 
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions)
+    const session = (await getServerSession(authOptions)) as Session | null;
     
     if (!session?.user) {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
@@ -158,7 +159,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = (await getServerSession(authOptions)) as Session | null;
     
     if (!session?.user) {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })

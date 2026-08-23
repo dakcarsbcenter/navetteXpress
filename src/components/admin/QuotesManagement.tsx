@@ -21,7 +21,8 @@ import {
   CaretLeft as ChevronLeft,
   CaretRight as ChevronRight,
   FileText,
-  Calendar
+  Calendar,
+  Trash as Trash2
 } from "@phosphor-icons/react"
 import { StatusBadge } from '@/components/ui/StatusBadge';
 

@@ -7,7 +7,7 @@ import { db } from "@/db"
 import { users } from "@/schema"
 import { eq } from "drizzle-orm"
 import { randomBytes } from "crypto"
-import { sendPasswordResetEmail } from "@/lib/email"
+import { sendWithRetry } from "@/lib/notification-queue"
 
 export async function POST(request: NextRequest) {
   try {
@@ -54,20 +54,14 @@ export async function POST(request: NextRequest) {
       })
       .where(eq(users.id, existingUser[0].id))
 
-    // Envoyer l'email de réinitialisation via Resend
-    const emailResult = await sendPasswordResetEmail(
+    // Envoyer l'email de réinitialisation via Resend. En cas d'échec immédiat,
+    // sendWithRetry met le job en file pour retry (voir notification-queue.ts)
+    // au lieu de le perdre — on ne révèle jamais l'échec au client ici.
+    await sendWithRetry('email', 'email.sendPasswordResetEmail', [
       email,
       resetToken,
       existingUser[0].name || 'Utilisateur'
-    )
-
-    if (!emailResult.success) {
-      console.error("❌ Erreur lors de l'envoi de l'email:", emailResult.error)
-      // On continue quand même pour ne pas révéler si l'email existe
-      // En production, vous pourriez logger cette erreur pour monitoring
-    } else {
-      console.log("✅ Email de réinitialisation envoyé avec succès à:", email)
-    }
+    ])
 
     return NextResponse.json(
       { 

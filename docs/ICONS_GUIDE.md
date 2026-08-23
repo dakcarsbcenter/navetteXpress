@@ -135,9 +135,9 @@ import { Calendar } from '@/components/icons';
 ```tsx
 import { Phone, Mail } from '@/components/icons';
 
-<a href="tel:+221781319191" className="flex items-center gap-2">
+<a href="tel:+221784651302" className="flex items-center gap-2">
   <Phone className="w-4 h-4" />
-  +221 78 131 91 91
+  +221 78 465 13 02
 </a>
 
 <a href="mailto:contact@navettexpress.sn" className="flex items-center gap-2">
@@ -276,7 +276,7 @@ export {
 <div className="flex items-center gap-6">
   <div className="flex items-center gap-2">
     <Phone className="w-4 h-4" />
-    <span>+221 78 131 91 91</span>
+    <span>+221 78 465 13 02</span>
   </div>
   <div className="flex items-center gap-2">
     <Mail className="w-4 h-4" />

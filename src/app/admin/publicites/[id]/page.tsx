@@ -16,9 +16,10 @@ async function getAd(id: string) {
     return res.json();
 }
 
-export default async function ModifierPublicitePage({ params }: { params: { id: string } }) {
+export default async function ModifierPublicitePage({ params }: { params: Promise<{ id: string }> }) {
     await requireAdminRole();
-    const ad = await getAd(params.id);
+    const { id } = await params;
+    const ad = await getAd(id);
 
     if (!ad) {
         notFound();

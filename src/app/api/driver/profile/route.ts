@@ -4,6 +4,7 @@ export const revalidate = 0;
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
+import type { Session } from "next-auth";
 import { authOptions } from '@/lib/auth'
 import { db } from '@/db'
 import { users } from '@/schema'
@@ -14,7 +15,7 @@ export async function GET(request: NextRequest) {
   try {
     console.log('📋 [DRIVER-PROFILE] Récupération du profil chauffeur...')
     
-    const session = await getServerSession(authOptions)
+    const session = (await getServerSession(authOptions)) as Session | null;
     console.log('🔍 [DRIVER-PROFILE] Session récupérée:', {
       hasSession: !!session,
       hasUser: !!session?.user,
@@ -115,7 +116,7 @@ export async function PUT(request: NextRequest) {
   try {
     console.log('📝 [DRIVER-PROFILE] Mise à jour du profil chauffeur...')
     
-    const session = await getServerSession(authOptions)
+    const session = (await getServerSession(authOptions)) as Session | null;
     console.log('🔍 [DRIVER-PROFILE-PUT] Session récupérée:', {
       hasSession: !!session,
       hasUser: !!session?.user,

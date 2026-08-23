@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { adPlacementEnum, advertisements } from '@/schema';
 import { eq, and, lte, gte } from 'drizzle-orm';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
+import type { Session } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
 export const runtime = 'nodejs';
@@ -53,7 +54,7 @@ export async function GET(req: NextRequest) {
 // POST /api/ads — Créer une publicité (admin)
 export async function POST(req: NextRequest) {
     // Vérifier auth admin
-    const session = await getServerSession(authOptions);
+    const session = (await getServerSession(authOptions)) as Session | null;
     if (!session || (session.user.role !== 'admin' && session.user.role !== 'manager')) {
         return NextResponse.json({ error: 'Non autorisé' }, { status: 403 });
     }

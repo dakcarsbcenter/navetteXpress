@@ -70,7 +70,7 @@ La page des services a été entièrement optimisée pour offrir une expérience
   - Taille texte : `text-base sm:text-lg`
   - Gap : `gap-3 sm:gap-4`
   - Padding container : `px-4`
-- ✅ **Numéro de téléphone** : Corrigé avec le bon numéro sénégalais `+221 78 131 91 91`
+- ✅ **Numéro de téléphone** : Corrigé avec le bon numéro sénégalais `+221 78 465 13 02`
 
 ## 🎨 Breakpoints Utilisés
 

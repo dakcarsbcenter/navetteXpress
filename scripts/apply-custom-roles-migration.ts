@@ -44,13 +44,13 @@ async function applyCustomRolesMigration() {
     const customRolesCount = await db.execute(sql`SELECT COUNT(*) as count FROM custom_roles`)
     const rolePermissionsCount = await db.execute(sql`SELECT COUNT(*) as count FROM role_permissions`)
     
-    console.log(`📊 Rôles personnalisés: ${customRolesCount.rows[0].count}`)
-    console.log(`📊 Permissions de rôles: ${rolePermissionsCount.rows[0].count}`)
+    console.log(`📊 Rôles personnalisés: ${customRolesCount[0].count}`)
+    console.log(`📊 Permissions de rôles: ${rolePermissionsCount[0].count}`)
     
     // Afficher les rôles créés
     const roles = await db.execute(sql`SELECT name, display_name, is_system FROM custom_roles ORDER BY is_system DESC, name`)
     console.log('\n🎭 Rôles disponibles:')
-    for (const role of roles.rows) {
+    for (const role of roles) {
       const type = role.is_system ? '🔒 Système' : '🎨 Personnalisé'
       console.log(`  ${type}: ${role.name} (${role.display_name})`)
     }

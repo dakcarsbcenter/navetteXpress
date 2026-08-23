@@ -109,8 +109,9 @@ const zones: Record<string, ZoneData> = {
     },
 };
 
-export async function generateMetadata({ params }: { params: { zone: string } }): Promise<Metadata> {
-    const zone = zones[params.zone];
+export async function generateMetadata({ params }: { params: Promise<{ zone: string }> }): Promise<Metadata> {
+    const { zone: zoneSlug } = await params;
+    const zone = zones[zoneSlug];
     if (!zone) return {};
 
     return {
@@ -126,8 +127,9 @@ export async function generateMetadata({ params }: { params: { zone: string } })
     };
 }
 
-export default function Page({ params }: { params: { zone: string } }) {
-    const t = zones[params.zone];
+export default async function Page({ params }: { params: Promise<{ zone: string }> }) {
+    const { zone: zoneSlug } = await params;
+    const t = zones[zoneSlug];
     if (!t) notFound();
 
     const breadcrumbs = [

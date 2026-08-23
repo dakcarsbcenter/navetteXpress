@@ -1,10 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, type ReactNode } from "react"
 
 interface FilterOption {
   value: string
-  label: string
+  label: ReactNode
   count?: number
 }
 

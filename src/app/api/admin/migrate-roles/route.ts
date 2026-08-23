@@ -6,12 +6,13 @@ import { db } from '@/db'
 import { sql } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
+import type { Session } from "next-auth";
 import { authOptions } from '@/lib/auth'
 
 export async function POST() {
   try {
     // Vérifier que l'utilisateur est admin
-    const session = await getServerSession(authOptions)
+    const session = (await getServerSession(authOptions)) as Session | null;
     if (!session?.user || (session.user as any).role !== 'admin') {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
     }
@@ -73,9 +74,9 @@ export async function POST() {
       success: true,
       message: 'Migration des rôles personnalisés appliquée avec succès',
       stats: {
-        customRoles: parseInt(customRolesCount.rows[0].count as string),
-        rolePermissions: parseInt(rolePermissionsCount.rows[0].count as string),
-        roles: roles.rows
+        customRoles: parseInt(customRolesCount[0].count as string),
+        rolePermissions: parseInt(rolePermissionsCount[0].count as string),
+        roles: roles
       }
     })
     

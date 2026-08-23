@@ -4,6 +4,7 @@ export const revalidate = 0;
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
+import type { Session } from "next-auth";
 import { authOptions } from '@/lib/auth'
 import { db } from '@/db'
 import { reviewsTable, rolePermissionsTable } from '@/schema'
@@ -41,7 +42,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = (await getServerSession(authOptions)) as Session | null;
     
     if (!session?.user) {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
@@ -84,10 +85,10 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = (await getServerSession(authOptions)) as Session | null;
     
     if (!session?.user) {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
@@ -102,7 +103,8 @@ export async function DELETE(
       }, { status: 403 });
     }
 
-    const reviewId = parseInt(params.id)
+    const { id } = await params
+    const reviewId = parseInt(id)
     
     await db.delete(reviewsTable).where(eq(reviewsTable.id, reviewId))
 

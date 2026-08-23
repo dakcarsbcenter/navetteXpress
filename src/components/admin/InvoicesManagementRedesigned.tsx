@@ -342,6 +342,7 @@ export default function InvoicesManagementRedesigned() {
   const exportToPDF = async () => {
     try {
       const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+        // @ts-expect-error jspdf's ESM build has no type declarations; the shape matches the main 'jspdf' export
         import('jspdf/dist/jspdf.es.min.js'),
         import('jspdf-autotable')
       ])

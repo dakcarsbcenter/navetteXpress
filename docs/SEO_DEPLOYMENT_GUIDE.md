@@ -16,7 +16,7 @@ GOOGLE_SITE_VERIFICATION="your-google-verification-code"
 # Site Configuration
 NEXT_PUBLIC_SITE_URL="https://navettexpress.sn"
 NEXT_PUBLIC_SITE_NAME="Navette Xpress Sénégal"
-NEXT_PUBLIC_CONTACT_PHONE="+221781319191"
+NEXT_PUBLIC_CONTACT_PHONE="+221784651302"
 NEXT_PUBLIC_CONTACT_EMAIL="contact@navettexpress.sn"
 ```
 
@@ -157,7 +157,7 @@ NEXT_PUBLIC_CONTACT_EMAIL="contact@navettexpress.sn"
 
 Pour toute question sur l'implémentation SEO :
 - Email : contact@navettexpress.sn
-- Téléphone : +221 78 131 91 91
+- Téléphone : +221 78 465 13 02
 
 ---
 

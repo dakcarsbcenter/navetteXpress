@@ -8,13 +8,14 @@ import { servicesTable } from '@/schema';
 import { requireAdminRole } from '@/utils/admin-permissions';
 import { eq } from 'drizzle-orm';
 
-type Params = { params: { id: string } };
+type Params = { params: Promise<{ id: string }> };
 
 // PATCH — modifier ou basculer isActive
 export async function PATCH(req: NextRequest, { params }: Params) {
     try {
         await requireAdminRole();
-        const id = parseInt(params.id, 10);
+        const { id: idParam } = await params;
+        const id = parseInt(idParam, 10);
         if (isNaN(id)) {
             return NextResponse.json({ success: false, error: 'ID invalide' }, { status: 400 });
         }
@@ -58,7 +59,8 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 export async function DELETE(_req: NextRequest, { params }: Params) {
     try {
         await requireAdminRole();
-        const id = parseInt(params.id, 10);
+        const { id: idParam } = await params;
+        const id = parseInt(idParam, 10);
         if (isNaN(id)) {
             return NextResponse.json({ success: false, error: 'ID invalide' }, { status: 400 });
         }

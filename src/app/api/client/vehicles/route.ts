@@ -4,6 +4,7 @@ export const revalidate = 0;
 
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
+import type { Session } from "next-auth";
 import { authOptions } from '@/lib/auth'
 import { db } from '@/db'
 import { vehiclesTable, users, rolePermissionsTable } from '@/schema'
@@ -36,7 +37,7 @@ async function hasVehiclePermission(userRole: string): Promise<boolean> {
 
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions)
+    const session = (await getServerSession(authOptions)) as Session | null;
 
     if (!session?.user) {
       return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })

@@ -2,22 +2,24 @@ import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { locationsTable } from '@/schema';
 import { eq } from 'drizzle-orm';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
+import type { Session } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
 /**
  * Met à jour un lieu (Ex: toggler actif/inactif, modifier le nom)
  */
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const session = await getServerSession(authOptions);
+        const session = (await getServerSession(authOptions)) as Session | null;
         const userRole = (session?.user as any)?.role;
 
         if (!session || (userRole !== 'admin' && userRole !== 'manager')) {
             return NextResponse.json({ success: false, error: 'Non autorisé' }, { status: 401 });
         }
 
-        const id = parseInt(params.id);
+        const { id: idParam } = await params;
+        const id = parseInt(idParam);
         if (isNaN(id)) {
             return NextResponse.json({ success: false, error: 'ID invalide' }, { status: 400 });
         }
@@ -52,16 +54,17 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 /**
  * Supprime un lieu
  */
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const session = await getServerSession(authOptions);
+        const session = (await getServerSession(authOptions)) as Session | null;
         const userRole = (session?.user as any)?.role;
 
         if (!session || (userRole !== 'admin' && userRole !== 'manager')) {
             return NextResponse.json({ success: false, error: 'Non autorisé' }, { status: 401 });
         }
 
-        const id = parseInt(params.id);
+        const { id: idParam } = await params;
+        const id = parseInt(idParam);
         if (isNaN(id)) {
             return NextResponse.json({ success: false, error: 'ID invalide' }, { status: 400 });
         }

@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { advertisements } from '@/schema';
 import { desc } from 'drizzle-orm';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
+import type { Session } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
     // Vérifier auth admin
-    const session = await getServerSession(authOptions);
+    const session = (await getServerSession(authOptions)) as Session | null;
     if (!session || (session.user as any).role !== 'admin' && (session.user as any).role !== 'manager') {
         return NextResponse.json({ error: 'Non autorisé' }, { status: 403 });
     }

@@ -14,9 +14,9 @@ import {
 } from '@/lib/seo-money-pages';
 
 interface Params {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export const dynamicParams = false;
@@ -26,7 +26,8 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
-  const page = getMoneyRouteBySlug(params.slug);
+  const { slug } = await params;
+  const page = getMoneyRouteBySlug(slug);
   if (!page) {
     return {};
   }
@@ -47,8 +48,9 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   };
 }
 
-export default function RouteMoneyPage({ params }: Params) {
-  const page = getMoneyRouteBySlug(params.slug);
+export default async function RouteMoneyPage({ params }: Params) {
+  const { slug: pageSlug } = await params;
+  const page = getMoneyRouteBySlug(pageSlug);
   if (!page) {
     notFound();
   }

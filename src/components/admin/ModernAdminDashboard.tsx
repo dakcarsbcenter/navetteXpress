@@ -130,7 +130,7 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
         if (bookingsRes.ok) {
           const data = await bookingsRes.json()
           if (data.success && Array.isArray(data.data)) {
-            const recent = data.data.slice(0, 8).map((item: any) => ({
+            const recent = data.data.slice(0, 8).map((item: { booking?: { id?: number; customerName?: string; status?: string; price?: number; scheduledDateTime?: string; pickupAddress?: string } }) => ({
               id: item.booking?.id || 0,
               customerName: item.booking?.customerName || 'Inconnu',
               status: item.booking?.status || 'pending',
@@ -161,7 +161,7 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
   const isAdmin = userRole === 'admin'
   const userName = session?.user?.name || 'Opérateur'
 
-  // Quick actions with lucide-react icons
+  // Quick actions with Phosphor icons
   const allQuickActions: QuickAction[] = [
     {
       id: 'users', title: 'Utilisateurs', description: 'Comptes et accès',
@@ -241,7 +241,7 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
       label: 'Revenu Total',
       value: `${stats.totalRevenue.toLocaleString('fr-FR')} F`,
       growth: stats.monthlyGrowth?.revenue,
-      color: '#9B1B30',
+      color: '#1F5245',
       icon: <DollarSign size={18} />
     },
     {

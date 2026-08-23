@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans, Lora, JetBrains_Mono } from "next/font/google";
+import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
@@ -8,31 +8,24 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { schemaLocalBusiness, schemaWebSite } from '@/lib/schema';
 import { CapacitorAppUrlListener } from '@/components/mobile/CapacitorAppUrlListener';
 
-const jakartaSans = Plus_Jakarta_Sans({
-  variable: "--font-jakarta",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-  display: "swap",
-});
-
-const lora = Lora({
-  variable: "--font-lora",
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains",
+const ibmPlexMono = IBM_Plex_Mono({
+  variable: "--font-ibm-plex-mono",
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: ["400", "500", "600"],
   display: "swap",
 });
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#9B1B30',
+  themeColor: '#1F5245',
 };
 
 export const metadata: Metadata = {
@@ -43,7 +36,7 @@ export const metadata: Metadata = {
     template: '%s | Navette Xpress — Chauffeur Privé Dakar',
   },
   description:
-    'Service de chauffeur privé N°1 à Dakar. Transfert aéroport AIBD 24h/24, navette privée, mise à disposition. Réservation en ligne, prix fixe, chauffeurs certifiés. +221 78 131 91 91',
+    'Service de chauffeur privé N°1 à Dakar. Transfert aéroport AIBD 24h/24, navette privée, mise à disposition. Réservation en ligne, prix fixe, chauffeurs certifiés. +221 78 465 13 02',
 
   // ── Mots-clés ──
   keywords: [
@@ -147,7 +140,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" suppressHydrationWarning className={`scroll-smooth ${jakartaSans.variable} ${lora.variable} ${jetbrainsMono.variable}`} data-scroll-behavior="smooth">
+    <html lang="fr" suppressHydrationWarning className={`scroll-smooth ${archivo.variable} ${ibmPlexMono.variable}`} data-scroll-behavior="smooth">
       <head />
       <body className="antialiased font-body bg-background text-foreground">
         <JsonLd data={schemaLocalBusiness} />

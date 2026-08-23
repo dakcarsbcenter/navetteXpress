@@ -1,7 +1,5 @@
-import { defineConfig } from 'react-email';
-
-export default defineConfig({
+export default {
   emailsDir: 'src/emails',
   outDir: '.react-email',
   port: 3001,
-});
+};

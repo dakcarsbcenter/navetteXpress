@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from "react"
 import { signIn } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
-import { Mail, Lock, Eye, EyeOff, AlertCircle, ArrowLeft, Loader2 } from "lucide-react"
+import { Envelope, Lock, Eye, EyeSlash, WarningCircle, ArrowLeft, CircleNotch } from "@phosphor-icons/react"
 
 function SignInForm() {
   const [email, setEmail] = useState("")
@@ -202,7 +202,7 @@ function SignInForm() {
         {/* Motif géométrique discret (grille de points) */}
         <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
           style={{
-            backgroundImage: 'radial-gradient(circle, #9B1B30 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(circle, #1F5245 1px, transparent 1px)',
             backgroundSize: '32px 32px',
           }} />
 
@@ -261,8 +261,8 @@ function SignInForm() {
                   color: '#A09CB0',
                   fontWeight: 300,
                 }}>
-                "Ponctuel, professionnel et véhicule impeccable.
-                Mon transfert AIBD s'est passé parfaitement."
+                &quot;Ponctuel, professionnel et véhicule impeccable.
+                Mon transfert AIBD s&apos;est passé parfaitement.&quot;
               </p>
               <p className="text-xs font-medium" style={{ color: '#6B6880' }}>
                 — Aminata D., Dakar
@@ -335,7 +335,7 @@ function SignInForm() {
                   backgroundColor: 'rgba(239,68,68,0.08)',
                   border: '1px solid rgba(239,68,68,0.2)',
                 }}>
-                <AlertCircle size={18} className="shrink-0 mt-0.5" style={{ color: 'var(--color-error)' }} />
+                <WarningCircle size={18} className="shrink-0 mt-0.5" style={{ color: 'var(--color-error)' }} />
                 <div className="flex-1">
                   <p className="text-sm" style={{ color: 'var(--color-error)' }}>{error}</p>
                   {showResetOption && (
@@ -358,7 +358,7 @@ function SignInForm() {
               <div className="relative">
                 <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"
                   style={{ color: 'var(--color-text-muted)' }}>
-                  <Mail size={16} />
+                  <Envelope size={16} />
                 </div>
                 <input
                   id="email"
@@ -416,7 +416,7 @@ function SignInForm() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 transition-colors hover:opacity-80"
                   style={{ color: 'var(--color-text-muted)' }}>
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  {showPassword ? <EyeSlash size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>
@@ -428,7 +428,7 @@ function SignInForm() {
               style={{ opacity: isLoading ? 0.7 : 1 }}>
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <Loader2 size={18} className="animate-spin" />
+                  <CircleNotch size={18} className="animate-spin" />
                   Connexion...
                 </span>
               ) : (
@@ -490,7 +490,7 @@ export default function SignInPage() {
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-[#0A0A0F]">
         <div className="text-center">
-          <Loader2 className="animate-spin h-10 w-10 text-dash-nav-active-border mx-auto" />
+          <CircleNotch className="animate-spin h-10 w-10 text-dash-nav-active-border mx-auto" />
           <p className="mt-4 text-[#8A8799] animate-pulse">Chargement...</p>
         </div>
       </div>

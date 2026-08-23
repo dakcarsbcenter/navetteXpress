@@ -1,4 +1,3 @@
-// NextAuthOptions type removed - using plain object
 import CredentialsProvider from "next-auth/providers/credentials"
 import GoogleProvider from "next-auth/providers/google"
 import { db } from "@/db"
@@ -6,8 +5,14 @@ import { users } from "@/schema"
 import { eq, sql } from "drizzle-orm"
 import bcrypt from "bcryptjs"
 import { sendWithRetry } from "./notification-queue"
-import type { NextAuthOptions } from "next-auth"
-import { decode as defaultDecode } from "next-auth/jwt"
+import * as nextAuthJwt from "next-auth/jwt"
+
+interface JwtDecodeParams {
+  token?: string
+  secret: string | Buffer
+  salt?: string
+  maxAge?: number
+}
 
 // Vérifier les variables d'environnement au démarrage
 const { NEXTAUTH_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, NEXTAUTH_URL } = process.env
@@ -203,7 +208,7 @@ const providers = [
   })
 ]
 
-export const authOptions: NextAuthOptions = {
+export const authOptions = {
   secret: NEXTAUTH_SECRET,
   providers,
   session: {
@@ -308,9 +313,10 @@ export const authOptions: NextAuthOptions = {
   },
   jwt: {
     // Gracefully handle malformed/expired JWT cookies instead of crashing
-    async decode(params) {
+    async decode(params: JwtDecodeParams) {
       try {
-        return await defaultDecode(params)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return await (nextAuthJwt as any).decode(params)
       } catch {
         return null
       }

@@ -21,7 +21,7 @@ import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import AdForm from './AdForm';
 
-interface Ad {
+export interface Ad {
     id: string;
     title: string;
     advertiser: string;

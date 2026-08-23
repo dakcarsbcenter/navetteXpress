@@ -20,6 +20,8 @@ export const adStatusEnum = pgEnum('ad_status', [
   'expired',  // Expirée automatiquement (date dépassée)
 ]);
 
+export const companyTypeEnum = pgEnum('company_type', ['hotel', 'entreprise', 'ong']);
+
 export const notificationChannelEnum = pgEnum('notification_channel', ['email', 'whatsapp']);
 export const notificationQueueStatusEnum = pgEnum('notification_queue_status', ['pending', 'sent', 'failed']);
 
@@ -49,6 +51,7 @@ export const users = pgTable('users', {
   address: text('address'),
   // Champs entreprise (Optionnel)
   isCompany: boolean('is_company').notNull().default(false),
+  companyType: companyTypeEnum('company_type'),
   companyName: text('company_name'),
   ninea: text('ninea'),
   raisonSociale: text('raison_sociale'),

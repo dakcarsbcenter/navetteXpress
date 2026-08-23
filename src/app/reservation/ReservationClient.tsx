@@ -6,9 +6,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+import { Button } from "@/components/ui/Button";
 import { BookNowIcon } from "@/components/icons/custom-icons";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, CalendarBlank, Clock, Users, Bag, Phone, EnvelopeSimple, ArrowRight, ArrowLeft, ShieldCheck, CheckCircle, Warning, ChatCircle, User } from "@phosphor-icons/react";
+import { MapPin, CalendarBlank, Clock, Users, Bag, Phone, EnvelopeSimple, ArrowRight, ArrowLeft, CheckCircle, ChatCircle, User } from "@phosphor-icons/react";
 import { serviceTypes, additionalServices, getServiceById } from "@/lib/services";
 import Link from "next/link";
 
@@ -41,7 +42,7 @@ const ROUTES_LOCATION_FALLBACK: LocationOption[] = [
 const normalizeLocationName = (value: string): string =>
   value
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[̀-ͯ]/g, '')
     .replace(/[^A-Za-z0-9 ]+/g, ' ')
     .replace(/\s+/g, ' ')
     .trim()
@@ -140,6 +141,8 @@ interface ReservationFormProps {
   onClose?: () => void;
   isEmbedded?: boolean;
 }
+
+const STEP_LABELS = ['TRAJET', 'BESOINS', 'CONTACT'] as const;
 
 export function ReservationForm({ onClose, isEmbedded = false }: ReservationFormProps = {}) {
   const { data: session, status } = useSession();
@@ -349,78 +352,58 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
     formData.pickupAddress && formData.destinationAddress && !isRouteCombinationAllowed(formData.pickupAddress, formData.destinationAddress)
   );
 
+  const isStep1Complete = Boolean(
+    formData.serviceType &&
+    !(formData.serviceType === "autres" && !formData.customServiceType) &&
+    formData.pickupAddress &&
+    formData.destinationAddress &&
+    !isInvalidCombination &&
+    formData.datetime
+  );
+
+  const isStep3Complete = Boolean(
+    formData.contactPhone && (isSignedIn || (formData.clientName && formData.clientEmail))
+  );
+
   if (!isLoaded) {
     return <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="text-center text-foreground">Chargement...</div>
     </div>;
   }
 
+  const selectedServiceName = formData.serviceType === "autres"
+    ? formData.customServiceType
+    : (dbServices.find(s => s.slug === formData.serviceType)?.name ||
+      serviceTypes.find(s => s.id === formData.serviceType)?.name ||
+      'Non défini');
+
   return (
-    <div className={isEmbedded ? "relative overflow-x-hidden font-sans" : "noise-bg min-h-screen relative overflow-x-hidden bg-background font-sans selection:bg-gold/30 selection:text-gold"}>
+    <div className={isEmbedded ? "relative overflow-x-hidden font-archivo" : "min-h-screen relative overflow-x-hidden bg-background font-archivo"}>
       {!isEmbedded && <Navigation variant="transparent" />}
 
-      {/* Hero Section of Reservation */}
-      <div className={`${isEmbedded ? 'pt-8' : 'pt-32'} pb-12 px-6`}>
-        <div className="max-w-4xl mx-auto text-center mb-12">
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-[10px] tracking-[0.3em] uppercase mb-4 text-gold font-medium"
-          >
-            Réservation Premium
-          </motion.p>
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl lg:text-6xl text-foreground font-display leading-tight mb-6"
-          >
-            Planifiez votre <span className="text-gold italic">Prochain Voyage</span>
-          </motion.h1>
-        </div>
-
-        {/* Stepper Logic adapted for 3 steps */}
-        <div className="max-w-xl mx-auto mb-16 px-4">
+      <div className={`${isEmbedded ? 'pt-8' : 'pt-32'} pb-16 px-4 sm:px-6`}>
+        {/* Fil de progression — le corridor */}
+        <div className="max-w-2xl mx-auto mb-12 px-2">
           <div className="flex items-center justify-between relative">
-            {/* Background Line */}
-            <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-border/20 -translate-y-1/2 z-0" />
-
-            {/* Active Progress Line */}
-            <motion.div
-              className="absolute top-1/2 left-0 h-0.5 bg-gold -translate-y-1/2 z-0 origin-left"
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: (currentStep - 1) / 2 }}
-              transition={{ duration: 0.5, ease: "easeInOut" }}
-              style={{ width: '100%' }}
-            />
-
-            {[1, 2, 3].map((step) => {
-              const label = step === 1 ? 'Service' : step === 2 ? 'Détails' : 'Confirmation';
+            <div className="absolute top-[9px] left-0 right-0 h-[1.5px] bg-[#12100E] z-0" />
+            {[1, 2, 3].map((step, i) => {
               const isActive = currentStep === step;
               const isPast = currentStep > step;
-              const isFuture = currentStep < step;
-
               return (
-                <div key={step} className="flex flex-col items-center relative z-10">
-                  <motion.button
+                <div key={step} className="flex flex-col items-center gap-2 relative z-10 bg-background px-2">
+                  <button
+                    type="button"
                     onClick={() => isPast && setCurrentStep(step)}
-                    disabled={isFuture}
-                    whileHover={isPast ? { scale: 1.1 } : {}}
-                    className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${isActive || isPast
-                      ? 'bg-gold text-background'
-                      : 'bg-surface-2 text-text-muted border border-border'
+                    disabled={!isPast}
+                    className={`w-[13px] h-[13px] rounded-full border-2 transition-colors ${isActive || isPast
+                      ? (i === 2 ? 'bg-[#B4643A] border-[#B4643A]' : 'bg-accent border-accent')
+                      : 'bg-background border-[#c9c3b8]'
                       }`}
-                    style={{
-                      boxShadow: isActive ? '0 0 20px rgba(155, 27, 48, 0.4)' : 'none'
-                    }}
-                  >
-                    {isPast ? (
-                      <CheckCircle size={18} />
-                    ) : step}
-                  </motion.button>
-                  <span className={`absolute -bottom-7 text-[10px] tracking-widest uppercase font-medium whitespace-nowrap transition-colors duration-300 ${isActive ? 'text-gold' : isPast ? 'text-foreground/70' : 'text-text-muted'
+                    aria-label={STEP_LABELS[i]}
+                  />
+                  <span className={`text-[11px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.12em] whitespace-nowrap ${isActive ? 'text-[#12100E] font-medium' : isPast ? 'text-[#12100E]' : 'text-[#a8a199]'
                     }`}>
-                    {label}
+                    {step} · {STEP_LABELS[i]}
                   </span>
                 </div>
               );
@@ -432,175 +415,91 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
           <AnimatePresence mode="wait">
             <motion.div
               key={currentStep}
-              initial={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0, x: 16 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
+              exit={{ opacity: 0, x: -16 }}
+              transition={{ duration: 0.25 }}
               className="relative z-10"
             >
               {/* Message pour les utilisateurs non connectés */}
-              {!isSignedIn && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mb-10 p-6 rounded-2xl glass-card relative overflow-hidden group border border-border"
-                >
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gold/5 rounded-full -translate-y-16 translate-x-16 blur-3xl group-hover:bg-gold/10 transition-colors" />
-                  <div className="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center shrink-0 border border-gold/20">
-                        <ShieldCheck className="text-gold" size={24} weight="light" />
-                      </div>
-                      <div>
-                        <h3 className="text-foreground font-semibold text-lg">Réservation Express</h3>
-                        <p className="text-text-secondary text-sm">Connectez-vous pour pré-remplir vos informations et suivre vos trajets.</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3 w-full md:w-auto">
-                      <Link href="/auth/signin" className="flex-1 md:flex-none px-6 py-2.5 rounded-xl border border-border text-foreground text-sm font-medium hover:bg-surface-2/50 transition-colors text-center">
-                        Connexion
-                      </Link>
-                      <Link href="/auth/signup" className="flex-1 md:flex-none px-6 py-2.5 rounded-xl bg-gold text-background text-sm font-bold hover:bg-gold/80 transition-colors text-center">
-                        Créer un compte
-                      </Link>
+              {!isSignedIn && currentStep === 1 && (
+                <div className="mb-8 p-5 rounded border border-border bg-white flex flex-col md:flex-row items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div>
+                      <h3 className="text-foreground font-semibold">Réservation express</h3>
+                      <p className="text-[#3d3a35] text-sm">Connectez-vous pour pré-remplir vos informations et suivre vos trajets. Aucun compte requis pour réserver.</p>
                     </div>
                   </div>
-                </motion.div>
+                  <div className="flex items-center gap-3 w-full md:w-auto shrink-0">
+                    <Link href="/auth/signin" className="flex-1 md:flex-none px-5 py-2.5 rounded border border-[#12100E] text-[#12100E] text-sm font-medium hover:bg-[#12100E] hover:text-white transition-colors text-center">
+                      Connexion
+                    </Link>
+                    <Link href="/auth/signup" className="flex-1 md:flex-none px-5 py-2.5 rounded bg-accent text-white text-sm font-semibold hover:bg-accent-hover transition-colors text-center">
+                      Créer un compte
+                    </Link>
+                  </div>
+                </div>
               )}
 
-              <div className="glass-card rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden border border-border">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-gold/5 rounded-full -translate-y-32 translate-x-32 blur-[100px] pointer-events-none" />
+              <div className="bg-white rounded-lg border border-border p-6 sm:p-10">
 
-                {/* Étape 1: Type de service */}
+                {/* Étape 1: Trajet */}
                 {currentStep === 1 && (
-                  <div className="space-y-10">
-                    <div className="text-center md:text-left">
-                      <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="text-[10px] tracking-[0.2em] uppercase mb-2 text-gold font-medium"
-                      >
-                        Étape 1 / 3
-                      </motion.p>
-                      <h2 className="text-3xl sm:text-4xl text-foreground font-display mb-4">
-                        Choisissez votre <span className="text-gold italic">Service</span>
-                      </h2>
-                      <p className="text-text-secondary max-w-xl">Sélectionnez le type de prestige qui vous convient pour ce voyage.</p>
-                    </div>
+                  <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-10">
+                    <div className="space-y-7">
+                      <div>
+                        <h1 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight mb-2">Où sur le corridor ?</h1>
+                        <p className="text-[#3d3a35]">Décrivez votre trajet. Le véhicule est attribué par nos soins à l'étape suivante.</p>
+                      </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {(dbServices.length > 0 ? dbServices : serviceTypes).map((service) => (
-                        <motion.div
-                          key={service.slug || service.id}
-                          onClick={() => handleInputChange('serviceType', service.slug || service.id)}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          className={`group p-6 rounded-2xl cursor-pointer transition-all duration-300 relative overflow-hidden ${formData.serviceType === (service.slug || service.id)
-                            ? 'bg-gold/10 border-2 border-gold/50 shadow-[0_0_30px_rgba(155,27,48,0.1)]'
-                            : 'bg-surface-2/50 border border-border hover:border-gold/30'
-                            }`}
-                        >
-                          {formData.serviceType === (service.slug || service.id) && (
-                            <motion.div layoutId="activeService" className="absolute top-2 right-2 flex items-center justify-center w-6 h-6 rounded-full bg-gold text-background">
-                              <CheckCircle size={14} weight="bold" />
-                            </motion.div>
-                          )}
-                          <div className="flex items-start space-x-5">
-                            <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-3xl transition-colors duration-300 ${formData.serviceType === (service.slug || service.id) ? 'bg-gold text-background shadow-[0_4px_15px_rgba(155,27,48,0.3)]' : 'bg-surface-2/50 text-gold'
-                              }`}>
-                              {service.icon}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h3 className={`font-bold text-lg transition-colors duration-300 ${formData.serviceType === (service.slug || service.id) ? 'text-gold' : 'text-foreground group-hover:text-gold'
-                                }`}>
+                      {/* Type de service */}
+                      <div className="space-y-2">
+                        <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block">Type de service</span>
+                        <div className="flex flex-wrap gap-2">
+                          {(dbServices.length > 0 ? dbServices : serviceTypes).map((service) => {
+                            const id = service.slug || service.id;
+                            const selected = formData.serviceType === id;
+                            return (
+                              <button
+                                key={id}
+                                type="button"
+                                onClick={() => handleInputChange('serviceType', id)}
+                                className={`px-4 py-2.5 rounded text-sm font-medium font-[family-name:var(--font-ibm-plex-mono)] transition-colors ${selected
+                                  ? 'bg-[#12100E] text-white'
+                                  : 'border border-[#c9c3b8] text-[#3d3a35] hover:border-[#12100E]'
+                                  }`}
+                              >
                                 {service.name}
-                              </h3>
-                              <p className="text-sm text-text-secondary leading-relaxed mt-1 line-clamp-2">{service.description}</p>
-                            </div>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
-
-                    {formData.serviceType === "autres" && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        className="pt-4"
-                      >
-                        <label className="block text-[10px] tracking-widest uppercase mb-3 text-gold font-medium">
-                          Précisez votre besoin spécifique
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.customServiceType}
-                          onChange={(e) => handleInputChange('customServiceType', e.target.value)}
-                          placeholder="Ex: Transport événementiel, tournage, etc."
-                          className="w-full bg-surface-2/50 border border-border rounded-2xl p-4 text-foreground placeholder:text-foreground/20 focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all text-lg"
-                        />
-                      </motion.div>
-                    )}
-                  </div>
-                )}
-
-                {/* Étape 2: Détails du trajet */}
-                {currentStep === 2 && (
-                  <div className="space-y-10">
-                    <div className="text-center md:text-left">
-                      <p className="text-[10px] tracking-[0.2em] uppercase mb-2 text-gold font-medium">Étape 2 / 3</p>
-                      <h2 className="text-3xl sm:text-4xl text-foreground font-display mb-4">
-                        Détails du <span className="text-gold italic">Trajet</span>
-                      </h2>
-                      <p className="text-text-secondary">Précisez les modalités de votre déplacement.</p>
-                    </div>
-
-                    <div className="space-y-8">
-                      {/* Infos Client (Guest) */}
-                      {!isSignedIn && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-2xl bg-surface-2/50 border border-border">
-                          <div className="space-y-2">
-                            <label className="text-[10px] tracking-widest uppercase text-gold font-medium block">Nom complet</label>
-                            <div className="relative group">
-                              <input
-                                type="text"
-                                value={formData.clientName}
-                                onChange={(e) => handleInputChange('clientName', e.target.value)}
-                                placeholder="Alpha Oumar Sow"
-                                className="w-full bg-surface-1 border border-border rounded-xl px-10 py-4 text-foreground focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all"
-                              />
-                              <User className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/30 group-focus-within:text-gold transition-colors" size={18} weight="light" />
-                            </div>
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[10px] tracking-widest uppercase text-gold font-medium block">Email</label>
-                            <div className="relative group">
-                              <input
-                                type="email"
-                                value={formData.clientEmail}
-                                onChange={(e) => handleInputChange('clientEmail', e.target.value)}
-                                placeholder="votre@email.com"
-                                className="w-full bg-surface-1 border border-border rounded-xl px-10 py-4 text-foreground focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all"
-                              />
-                              <EnvelopeSimple className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/30 group-focus-within:text-gold transition-colors" size={18} weight="light" />
-                            </div>
-                          </div>
+                              </button>
+                            );
+                          })}
                         </div>
-                      )}
+                        {formData.serviceType === "autres" && (
+                          <input
+                            type="text"
+                            value={formData.customServiceType}
+                            onChange={(e) => handleInputChange('customServiceType', e.target.value)}
+                            placeholder="Précisez votre besoin (transport événementiel, tournage...)"
+                            className="mt-2 w-full bg-white border border-border rounded p-3 text-foreground placeholder:text-[#a8a199] focus:outline-none focus:ring-1 focus:ring-accent transition-all"
+                          />
+                        )}
+                      </div>
 
-                      {/* Destinations */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <label className="text-[10px] tracking-widest uppercase text-gold font-medium block">Lieu de prise en charge</label>
-                          <div className="relative group">
+                      {/* Départ / Arrivée — jalons corridor */}
+                      <div className="flex flex-col gap-3">
+                        <div className="flex items-center gap-4">
+                          <div className="w-[13px] h-[13px] rounded-full bg-accent shrink-0" />
+                          <div className="flex-1 relative">
+                            <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block mb-1">Départ</span>
                             {locations.length > 0 ? (
                               <select
                                 value={formData.pickupAddress}
                                 onChange={(e) => handleLocationChange('pickupAddress', e.target.value)}
-                                className="w-full bg-surface-2/50 border border-border rounded-xl px-10 py-4 text-foreground focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all appearance-none cursor-pointer"
+                                className="w-full bg-white border border-border rounded px-3 py-3 text-foreground font-medium focus:outline-none focus:ring-1 focus:ring-accent cursor-pointer"
                               >
-                                <option value="" disabled className="bg-background text-foreground/50">Sélectionnez un lieu...</option>
+                                <option value="" disabled>Sélectionnez un lieu...</option>
                                 {pickupOptions.map(loc => (
-                                  <option key={loc.id} value={loc.name} className="bg-background text-foreground">{loc.name}</option>
+                                  <option key={loc.id} value={loc.name}>{loc.name}</option>
                                 ))}
                               </select>
                             ) : (
@@ -609,24 +508,27 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                                 value={formData.pickupAddress}
                                 onChange={(e) => handleInputChange('pickupAddress', e.target.value)}
                                 placeholder="Aéroport AIBD, Dakar..."
-                                className="w-full bg-surface-2/50 border border-border rounded-xl px-10 py-4 text-foreground focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all"
+                                className="w-full bg-white border border-border rounded px-3 py-3 text-foreground font-medium focus:outline-none focus:ring-1 focus:ring-accent"
                               />
                             )}
-                            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/30 group-focus-within:text-gold transition-colors" size={18} weight="light" />
                           </div>
                         </div>
-                        <div className="space-y-2">
-                          <label className="text-[10px] tracking-widest uppercase text-gold font-medium block">Destination finale</label>
-                          <div className="relative group">
+                        <div className="flex items-center gap-4 pl-[3px]">
+                          <div className="w-[7px] h-6 border-l-2 border-[#12100E] ml-[0px]" />
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <div className="w-[13px] h-[13px] rounded-full bg-[#B4643A] shrink-0" />
+                          <div className="flex-1">
+                            <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block mb-1">Arrivée</span>
                             {locations.length > 0 ? (
                               <select
                                 value={formData.destinationAddress}
                                 onChange={(e) => handleLocationChange('destinationAddress', e.target.value)}
-                                className="w-full bg-surface-2/50 border border-border rounded-xl px-10 py-4 text-foreground focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all appearance-none cursor-pointer"
+                                className="w-full bg-white border border-border rounded px-3 py-3 text-foreground font-medium focus:outline-none focus:ring-1 focus:ring-accent cursor-pointer"
                               >
-                                <option value="" disabled className="bg-background text-foreground/50">Sélectionnez une destination...</option>
+                                <option value="" disabled>Sélectionnez une destination...</option>
                                 {destinationOptions.map(loc => (
-                                  <option key={loc.id} value={loc.name} className="bg-background text-foreground">{loc.name}</option>
+                                  <option key={loc.id} value={loc.name}>{loc.name}</option>
                                 ))}
                               </select>
                             ) : (
@@ -634,292 +536,269 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                                 type="text"
                                 value={formData.destinationAddress}
                                 onChange={(e) => handleInputChange('destinationAddress', e.target.value)}
-                                placeholder="Almadies, Hotel Terrou-Bi..."
-                                className="w-full bg-surface-2/50 border border-border rounded-xl px-10 py-4 text-foreground focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all"
+                                placeholder="Almadies, Hôtel Terrou-Bi..."
+                                className="w-full bg-white border border-border rounded px-3 py-3 text-foreground font-medium focus:outline-none focus:ring-1 focus:ring-accent"
                               />
                             )}
-                            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/30 group-focus-within:text-gold transition-colors" size={18} weight="light" />
                           </div>
                         </div>
+                        {isInvalidCombination && (
+                          <p className="text-xs text-[#B8493C] pl-[29px]">
+                            Combinaison non autorisée. Choisissez uniquement DAKAR vers AIBD, MBOUR, SALY, NGAPAROU, THIES, NIANING, POINTE SARRENE, SOMONE (et inverse).
+                          </p>
+                        )}
                       </div>
 
-                      {isInvalidCombination && (
-                        <p className="text-xs text-red-400">
-                          Combinaison non autorisée. Veuillez choisir uniquement DAKAR vers AIBD, MBOUR, SALY, NGAPAROU, THIES, NIANING, POINTE SARRENE, SOMONE (et inverse).
-                        </p>
-                      )}
-
-                      {/* Date, Time, Phone */}
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                        <div className="space-y-2">
-                          <label className="text-[10px] tracking-widest uppercase text-gold font-medium block">Date & Heure</label>
-                          <div className="relative group">
-                            <input
-                              type="datetime-local"
-                              value={formData.datetime}
-                              onChange={(e) => handleInputChange('datetime', e.target.value)}
-                              className="w-full bg-surface-2/50 border border-border rounded-xl px-10 py-4 text-foreground focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all dark:scheme-dark"
-                              min={new Date().toISOString().slice(0, 16)}
-                            />
-                            <CalendarBlank className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/30 group-focus-within:text-gold transition-colors" size={18} weight="light" />
-                          </div>
+                      {/* Date, heure, passagers */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="bg-white border border-border rounded p-3">
+                          <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block mb-1">Date &amp; heure</span>
+                          <input
+                            type="datetime-local"
+                            value={formData.datetime}
+                            onChange={(e) => handleInputChange('datetime', e.target.value)}
+                            className="w-full bg-transparent text-foreground font-medium focus:outline-none"
+                            min={new Date().toISOString().slice(0, 16)}
+                          />
                         </div>
-                        <div className="space-y-2">
-                          <label className="text-[10px] tracking-widest uppercase text-gold font-medium block">Téléphone</label>
-                          <div className="relative group">
-                            <input
-                              type="tel"
-                              value={formData.contactPhone}
-                              onChange={(e) => handleInputChange('contactPhone', e.target.value)}
-                              placeholder="+221 77 650 01 02"
-                              className="w-full bg-surface-2/50 border border-border rounded-xl px-10 py-4 text-foreground focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all"
-                            />
-                            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/30 group-focus-within:text-gold transition-colors" size={18} weight="light" />
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-[10px] tracking-widest uppercase text-gold font-medium block">Passagers & Bagages</label>
-                          <div className="flex bg-surface-2/50 border border-border rounded-xl p-1 gap-1">
-                            <div className="flex-1 flex items-center gap-2 px-3 py-3 border-r border-border/50">
-                              <Users size={16} weight="light" className="text-gold" />
-                              <select
-                                value={formData.passengers}
-                                onChange={(e) => handleInputChange('passengers', Number(e.target.value))}
-                                className="bg-transparent text-foreground text-sm focus:outline-none w-full cursor-pointer"
-                              >
-                                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(n => (
-                                  <option key={n} value={n} className="bg-background text-foreground">{n === 11 ? '10+' : n}</option>
-                                ))}
-                              </select>
-                            </div>
-                            <div className="flex-1 flex items-center gap-2 px-3 py-3">
-                              <Bag size={16} weight="light" className="text-gold" />
-                              <select
-                                value={formData.luggage}
-                                onChange={(e) => handleInputChange('luggage', Number(e.target.value))}
-                                className="bg-transparent text-foreground text-sm focus:outline-none w-full cursor-pointer"
-                              >
-                                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(n => (
-                                  <option key={n} value={n} className="bg-background text-foreground">{n === 11 ? '10+' : n}</option>
-                                ))}
-                              </select>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Services Additionnels */}
-                      <div className="space-y-4">
-                        <label className="text-[10px] tracking-widest uppercase text-gold font-medium block">Options de prestige (Facultatif)</label>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                          {additionalServices.map((service) => (
-                            <motion.div
-                              key={service.id}
-                              onClick={() => handleAdditionalServiceToggle(service.id)}
-                              whileTap={{ scale: 0.95 }}
-                              className={`p-4 rounded-xl cursor-pointer text-center transition-all duration-300 border ${formData.additionalServices.includes(service.id)
-                                ? 'bg-gold text-background border-gold font-bold'
-                                : 'bg-surface-2/50 border-border text-foreground/70 hover:bg-surface-2/70'
-                                }`}
+                        <div className="bg-white border border-border rounded p-3 flex items-center gap-2">
+                          <Users size={16} weight="light" className="text-[#6E6A63]" />
+                          <div className="flex-1">
+                            <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block mb-1">Passagers</span>
+                            <select
+                              value={formData.passengers}
+                              onChange={(e) => handleInputChange('passengers', Number(e.target.value))}
+                              className="bg-transparent text-foreground font-medium focus:outline-none w-full cursor-pointer"
                             >
-                              <span className="text-xs uppercase tracking-tighter">{service.name}</span>
-                            </motion.div>
-                          ))}
+                              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(n => (
+                                <option key={n} value={n}>{n === 11 ? '10+' : n}</option>
+                              ))}
+                            </select>
+                          </div>
                         </div>
                       </div>
+                    </div>
 
-                      {/* Demandes Spéciales */}
-                      <div className="space-y-2">
-                        <label className="text-[10px] tracking-widest uppercase text-gold font-medium block">Notes particulières</label>
-                        <textarea
-                          value={formData.specialRequests}
-                          onChange={(e) => handleInputChange('specialRequests', e.target.value)}
-                          placeholder="Bouteille d'eau pétillante, accueil personnalisé..."
-                          rows={3}
-                          className="w-full bg-surface-2/50 border border-border rounded-xl p-4 text-foreground focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all resize-none"
-                        />
+                    {/* Estimation */}
+                    <div className="space-y-4">
+                      <div className="h-40 rounded bg-[#E8DCC8] flex items-end p-3">
+                        <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.1em] uppercase text-[#6b6154] bg-[#F7F3EC] px-2 py-1.5 rounded">Carte du trajet</span>
+                      </div>
+                      <div className="bg-[#12100E] rounded p-6 space-y-3">
+                        <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.16em] text-[#9a938a] uppercase block">Votre demande</span>
+                        <p className="text-white font-medium">{selectedServiceName}</p>
+                        <div className="h-px bg-[#2e2b27]" />
+                        <div className="flex flex-col gap-1.5 text-[12px] font-[family-name:var(--font-ibm-plex-mono)] text-[#9a938a]">
+                          <div className="flex justify-between"><span>PÉAGE &amp; CARBURANT</span><span>INCLUS</span></div>
+                          <div className="flex justify-between"><span>ATTENTE 60 MIN</span><span>INCLUS</span></div>
+                          <div className="flex justify-between"><span>TARIF</span><span>SUR DEVIS</span></div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 )}
 
-                {/* Étape 3: Confirmation */}
-                {currentStep === 3 && (
-                  <div className="space-y-10">
-                    <div className="text-center md:text-left">
-                      <p className="text-[10px] tracking-[0.2em] uppercase mb-2 text-gold font-medium">Étape 3 / 3</p>
-                      <h2 className="text-3xl sm:text-4xl text-foreground font-display mb-4">
-                        Finalisez votre <span className="text-gold italic">Expérience</span>
-                      </h2>
-                      <p className="text-text-secondary">Revoyez les détails de votre réservation avant confirmation.</p>
+                {/* Étape 2: Besoins */}
+                {currentStep === 2 && (
+                  <div className="space-y-8 max-w-2xl">
+                    <div>
+                      <h1 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight mb-2">Que faut-il prévoir ?</h1>
+                      <p className="text-[#3d3a35]">Le véhicule est attribué par nos soins selon les passagers et les bagages. Dites-nous seulement ce dont vous avez besoin à bord.</p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-                      {/* Recap Card */}
-                      <div className="p-8 rounded-3xl bg-surface-2/50 border border-border space-y-6 relative overflow-hidden group">
-                        <div className="absolute top-0 left-0 w-2 h-full bg-gold/50" />
+                    <div className="space-y-2">
+                      <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block">Bagages</span>
+                      <div className="flex items-center gap-2 bg-white border border-border rounded p-2 w-fit">
+                        <Bag size={16} weight="light" className="text-[#6E6A63]" />
+                        <select
+                          value={formData.luggage}
+                          onChange={(e) => handleInputChange('luggage', Number(e.target.value))}
+                          className="bg-transparent text-foreground font-medium focus:outline-none cursor-pointer pr-2"
+                        >
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(n => (
+                            <option key={n} value={n}>{n === 11 ? '10+' : n} valise{n > 1 ? 's' : ''}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
 
-                        <div className="space-y-1">
-                          <p className="text-[10px] uppercase tracking-widest text-gold opacity-50">Itinéraire</p>
-                          <div className="flex items-start gap-3 mt-4">
-                            <div className="flex flex-col items-center gap-1 mt-1 shrink-0">
-                              <div className="w-2.5 h-2.5 rounded-full border border-gold" />
-                              <div className="w-px h-10 bg-border" />
-                              <MapPin size={16} weight="light" className="text-gold" />
+                    <div className="space-y-2">
+                      <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block">Options sans supplément</span>
+                      <div className="flex flex-wrap gap-2">
+                        {additionalServices.map((service) => (
+                          <button
+                            key={service.id}
+                            type="button"
+                            onClick={() => handleAdditionalServiceToggle(service.id)}
+                            className={`px-4 py-2.5 rounded text-sm font-medium transition-colors ${formData.additionalServices.includes(service.id)
+                              ? 'bg-[#12100E] text-white'
+                              : 'border border-[#c9c3b8] text-[#3d3a35] hover:border-[#12100E]'
+                              }`}
+                          >
+                            {service.name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block">Précisions pour le chauffeur — facultatif</span>
+                      <textarea
+                        value={formData.specialRequests}
+                        onChange={(e) => handleInputChange('specialRequests', e.target.value)}
+                        placeholder="Point de rendez-vous exact, code portail, nom de l'hôtel, arrêt en route..."
+                        rows={3}
+                        className="w-full bg-white border border-border rounded p-3 text-foreground focus:outline-none focus:ring-1 focus:ring-accent resize-none"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Étape 3: Contact */}
+                {currentStep === 3 && (
+                  <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-10">
+                    <div className="space-y-7">
+                      <div>
+                        <h1 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight mb-2">Comment vous joindre ?</h1>
+                        <p className="text-[#3d3a35]">Nous confirmons par téléphone dans les trente minutes.</p>
+                      </div>
+
+                      {!isSignedIn && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="bg-white border border-border rounded p-3">
+                            <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block mb-1">Nom et prénom</span>
+                            <div className="flex items-center gap-2">
+                              <User size={16} weight="light" className="text-[#6E6A63] shrink-0" />
+                              <input
+                                type="text"
+                                value={formData.clientName}
+                                onChange={(e) => handleInputChange('clientName', e.target.value)}
+                                placeholder="Alpha Oumar Sow"
+                                className="w-full bg-transparent text-foreground font-medium focus:outline-none"
+                              />
                             </div>
-                            <div className="space-y-4 pt-0.5">
-                              <div>
-                                <p className="text-xs text-text-muted mb-1 font-medium uppercase tracking-tighter">Départ</p>
-                                <p className="text-foreground font-medium">{formData.pickupAddress || 'Non définie'}</p>
-                              </div>
-                              <div>
-                                <p className="text-xs text-text-muted mb-1 font-medium uppercase tracking-tighter">Arrivée</p>
-                                <p className="text-foreground font-medium">{formData.destinationAddress || 'Non définie'}</p>
-                              </div>
+                          </div>
+                          <div className="bg-white border border-border rounded p-3">
+                            <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block mb-1">E-mail</span>
+                            <div className="flex items-center gap-2">
+                              <EnvelopeSimple size={16} weight="light" className="text-[#6E6A63] shrink-0" />
+                              <input
+                                type="email"
+                                value={formData.clientEmail}
+                                onChange={(e) => handleInputChange('clientEmail', e.target.value)}
+                                placeholder="votre@email.com"
+                                className="w-full bg-transparent text-foreground font-medium focus:outline-none"
+                              />
                             </div>
                           </div>
                         </div>
+                      )}
 
-                        <div className="grid grid-cols-2 gap-6 pt-4 border-t border-border">
-                          <div>
-                            <p className="text-[10px] uppercase tracking-widest text-gold opacity-50 mb-1">Date & Heure</p>
-                            <div className="flex items-center gap-2 text-foreground">
-                              <CalendarBlank size={14} weight="light" className="text-gold" />
-                              <p className="font-medium text-sm">
-                                {formData.datetime ? new Date(formData.datetime).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : '--'}
-                              </p>
-                              <Clock size={14} weight="light" className="text-gold ml-1" />
-                              <p className="font-medium text-sm">
-                                {formData.datetime ? new Date(formData.datetime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '--'}
-                              </p>
-                            </div>
+                      <div className="bg-white border-[1.5px] border-accent rounded p-3 max-w-sm">
+                        <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-accent uppercase block mb-1">Téléphone / WhatsApp</span>
+                        <div className="flex items-center gap-2">
+                          <Phone size={16} weight="light" className="text-accent shrink-0" />
+                          <input
+                            type="tel"
+                            value={formData.contactPhone}
+                            onChange={(e) => handleInputChange('contactPhone', e.target.value)}
+                            placeholder="+221 77 XXX XX XX"
+                            className="w-full bg-transparent text-foreground font-medium focus:outline-none"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Récapitulatif */}
+                    <div className="bg-white border border-border rounded p-6 space-y-4 h-fit">
+                      <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.16em] text-[#6E6A63] uppercase block">Votre course</span>
+                      <div className="flex flex-col gap-0">
+                        <div className="flex gap-3">
+                          <div className="flex flex-col items-center w-[11px]">
+                            <div className="w-[11px] h-[11px] rounded-full bg-accent" />
+                            <div className="w-px flex-1 bg-[#12100E]" />
                           </div>
-                          <div>
-                            <p className="text-[10px] uppercase tracking-widest text-gold opacity-50 mb-1">Type de Service</p>
-                            <p className="text-foreground font-medium text-sm capitalize">
-                              {formData.serviceType === "autres" ? formData.customServiceType : (
-                                dbServices.find(s => s.slug === formData.serviceType)?.name ||
-                                serviceTypes.find(s => s.id === formData.serviceType)?.name ||
-                                'Standard'
-                              )}
+                          <div className="pb-4">
+                            <p className="font-medium text-foreground">{formData.pickupAddress || 'Non défini'}</p>
+                            <p className="text-[11px] font-[family-name:var(--font-ibm-plex-mono)] text-[#6E6A63]">
+                              {formData.datetime ? new Date(formData.datetime).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : '--'} · {formData.datetime ? new Date(formData.datetime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '--'}
                             </p>
                           </div>
                         </div>
-
-                        <div className="flex items-center justify-between pt-4 border-t border-border">
-                          <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-1.5 text-foreground/70">
-                              <Users size={14} weight="light" className="text-gold" />
-                              <span className="text-xs font-medium">{formData.passengers === 11 ? '10+' : formData.passengers} Pax</span>
-                            </div>
-                            <div className="flex items-center gap-1.5 text-foreground/70">
-                              <Bag size={14} weight="light" className="text-gold" />
-                              <span className="text-xs font-medium">{formData.luggage === 11 ? '10+' : formData.luggage} Sacs</span>
-                            </div>
+                        <div className="flex gap-3">
+                          <div className="w-[11px] flex justify-center">
+                            <div className="w-[11px] h-[11px] rounded-full bg-[#B4643A]" />
                           </div>
-                          <div className="text-right">
-                            <span className="text-[10px] bg-gold/20 text-gold px-2 py-0.5 rounded-full uppercase tracking-widest font-bold">Sur Devis</span>
+                          <div>
+                            <p className="font-medium text-foreground">{formData.destinationAddress || 'Non défini'}</p>
+                            <p className="text-[11px] font-[family-name:var(--font-ibm-plex-mono)] text-[#6E6A63]">{formData.passengers === 11 ? '10+' : formData.passengers} passager{formData.passengers > 1 ? 's' : ''} · {formData.luggage === 11 ? '10+' : formData.luggage} bagage{formData.luggage > 1 ? 's' : ''}</p>
                           </div>
                         </div>
                       </div>
-
-                      {/* Info & Action */}
-                      <div className="space-y-6">
-                        <div className="p-6 rounded-2xl bg-gold/5 border border-gold/10 space-y-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center shrink-0">
-                              <ShieldCheck size={20} weight="regular" className="text-gold" />
-                            </div>
-                            <h4 className="text-foreground font-semibold">Garantie de Service</h4>
-                          </div>
-                          <p className="text-sm text-text-secondary leading-relaxed">
-                            Votre réservation sera traitée en priorité. Un conseiller Navette Xpress prendra contact avec vous dans un délai de <strong className="text-gold">30 minutes</strong> pour confirmer les détails et le tarif.
-                          </p>
-                        </div>
-
-                        {formData.specialRequests && (
-                          <div className="p-4 rounded-xl bg-surface-2 border border-border">
-                            <div className="flex items-center gap-2 mb-2">
-                              <ChatCircle size={14} weight="regular" className="text-gold" />
-                              <span className="text-[10px] uppercase tracking-widest text-gold">Requêtes Spéciales</span>
-                            </div>
-                            <p className="text-xs text-text-secondary italic leading-relaxed">"{formData.specialRequests}"</p>
-                          </div>
-                        )}
-
-                        <div className="flex items-center gap-3 p-4 rounded-xl bg-blue-500/5 border border-blue-500/10">
-                          <Warning size={18} weight="regular" className="text-blue-500 shrink-0" />
-                          <p className="text-xs text-foreground/60 italic">Un SMS de confirmation avec les détails du chauffeur vous sera envoyé une fois le trajet validé.</p>
-                        </div>
+                      <div className="h-px bg-border" />
+                      <div className="flex flex-col gap-1.5 text-[12px] font-[family-name:var(--font-ibm-plex-mono)] text-[#6E6A63]">
+                        <div className="flex justify-between"><span>SERVICE</span><span className="text-foreground">{selectedServiceName}</span></div>
+                        <div className="flex justify-between"><span>VÉHICULE</span><span className="text-foreground">ATTRIBUÉ</span></div>
+                        <div className="flex justify-between"><span>TARIF</span><span className="text-foreground">SUR DEVIS</span></div>
                       </div>
+                      {formData.specialRequests && (
+                        <>
+                          <div className="h-px bg-border" />
+                          <div className="flex items-start gap-2">
+                            <ChatCircle size={14} weight="regular" className="text-[#6E6A63] mt-0.5 shrink-0" />
+                            <p className="text-xs text-[#3d3a35] italic">"{formData.specialRequests}"</p>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 )}
               </div>
 
               {/* Navigation controls */}
-              <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-6">
-                <div className="flex items-center gap-4 w-full sm:w-auto">
+              <div className="mt-10 flex items-center justify-between gap-6">
+                <div>
                   {currentStep > 1 ? (
-                    <motion.button
-                      whileHover={{ x: -4 }}
+                    <button
                       onClick={prevStep}
-                      className="flex items-center gap-2 text-text-muted hover:text-foreground transition-colors uppercase tracking-widest text-xs font-bold"
+                      className="flex items-center gap-2 text-[#12100E] font-semibold text-sm hover:opacity-70 transition-opacity"
                     >
-                      <ArrowLeft size={16} weight="light" /> Précédent
-                    </motion.button>
+                      <ArrowLeft size={16} weight="regular" /> Retour
+                    </button>
                   ) : (
                     <button
                       onClick={() => isEmbedded && onClose ? onClose() : router.push('/')}
-                      className="text-text-muted hover:text-foreground transition-colors uppercase tracking-widest text-xs font-bold"
+                      className="text-[#6E6A63] hover:text-[#12100E] transition-colors text-sm font-medium"
                     >
                       Annuler
                     </button>
                   )}
                 </div>
 
-                <div className="flex items-center gap-4 w-full sm:w-auto">
+                <div className="flex items-center gap-4">
                   {currentStep < 3 ? (
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={nextStep}
-                      disabled={
-                        (currentStep === 1 && (!formData.serviceType || (formData.serviceType === "autres" && !formData.customServiceType))) ||
-                        (currentStep === 2 && (
-                          !formData.datetime ||
-                          !formData.pickupAddress ||
-                          !formData.destinationAddress ||
-                          isInvalidCombination ||
-                          !formData.contactPhone ||
-                          (!isSignedIn && (!formData.clientName || !formData.clientEmail))
-                        ))
-                      }
-                      className="lux-button w-full sm:w-auto flex items-center justify-center gap-3 px-10 py-4 font-bold uppercase tracking-[0.2em] text-sm group text-background"
-                    >
-                      Suivant
-                      <ArrowRight size={18} weight="regular" className="group-hover:translate-x-1 transition-transform" />
-                    </motion.button>
+                    <>
+                      {currentStep === 1 && <span className="hidden sm:inline text-xs font-[family-name:var(--font-ibm-plex-mono)] text-[#6E6A63]">AUCUN COMPTE REQUIS</span>}
+                      <Button
+                        variant="primary"
+                        onClick={nextStep}
+                        disabled={currentStep === 1 && !isStep1Complete}
+                        icon={<ArrowRight size={18} weight="regular" />}
+                        iconPosition="right"
+                      >
+                        Continuer
+                      </Button>
+                    </>
                   ) : (
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                    <Button
+                      variant="primary"
                       onClick={handleSubmit}
-                      disabled={isSubmitting || isInvalidCombination}
-                      className="lux-button w-full sm:w-auto flex items-center justify-center gap-3 px-12 py-4 font-bold uppercase tracking-[0.2em] text-sm text-background shadow-[0_10px_30px_rgba(155,27,48,0.3)]"
+                      disabled={isSubmitting || isInvalidCombination || !isStep3Complete}
+                      loading={isSubmitting}
+                      icon={<BookNowIcon size={18} color="white" />}
                     >
-                      {isSubmitting ? (
-                        <>
-                          <div className="w-5 h-5 border-2 border-background/30 border-t-background rounded-full animate-spin" />
-                          Confirmation...
-                        </>
-                      ) : (
-                        <>
-                          <BookNowIcon size={18} color="white" />
-                          Confirmer la Réservation
-                        </>
-                      )}
-                    </motion.button>
+                      Confirmer la réservation
+                    </Button>
                   )}
                 </div>
               </div>
@@ -930,8 +809,8 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
           <ConfirmationModal
             isOpen={showSuccessModal}
             onClose={() => setShowSuccessModal(false)}
-            title="Réservation effectuée !"
-            message="Votre réservation a été soumise avec succès. Notre équipe vous contactera dans les plus brefs délais pour confirmer les détails de votre service."
+            title="Réservation enregistrée !"
+            message="C'est noté. Nous vous confirmons sous 30 minutes par téléphone. Notre équipe vous contactera pour valider les détails et le tarif."
             type="success"
             confirmText="Parfait !"
             onConfirm={() => {

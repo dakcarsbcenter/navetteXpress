@@ -16,46 +16,43 @@ NavetteXpress offre des services de transport de luxe professionnels, fiables et
 - **Accessibilité** : Service disponible 24h/24, 7j/7
 - **Innovation** : Réservation instantanée et suivi en temps réel
 
-## 🎨 Palette de Couleurs
+## 🎨 Palette de Couleurs — Corridor
 
-### Couleurs Principales
+> Direction validée en remplacement de la précédente palette bleu atlantique (`#123B4D`), elle-même venue remplacer un rouge pourpre (`#9B1B30`). Le bordeaux d'origine est définitivement retiré. Objectif : un système éditorial, chaleureux et tenable sur de longues pages — deux fonds seulement (craie et encre), un vert lagune qui porte l'action, une terre brûlée en accent ponctuel.
 
-#### Bleu Professionnel
+#### Lagune (accent principal)
 ```css
---primary-blue: #1e40af;      /* Bleu foncé principal */
---primary-blue-light: #3b82f6; /* Bleu clair pour les accents */
---primary-blue-dark: #1e3a8a;  /* Bleu très foncé */
+--color-accent: #1F5245;        /* Lagune — boutons primaires, nav active */
+--color-accent-hover: #19433B;
+--color-accent-light: #3D7A67;
 ```
-**Usage** : Navigation, informations importantes, éléments de confiance
+**Usage** : Navigation active, boutons primaires, liens, focus rings — sur les 3 dashboards et le site public. Le chauffeur garde une nuance distincte dans la famille Terre (`#B4643A` clair / `#D68F63` sombre) pour se différencier visuellement sans rompre la cohérence — la Terre est aussi la couleur des jalons "arrivée" du motif corridor, un rappel cohérent du thème route/chauffeur.
 
-#### Orange Énergique
+#### Terre brûlée (accent ponctuel)
 ```css
---accent-orange: #f97316;      /* Orange principal */
---accent-orange-light: #fb923c; /* Orange clair */
---accent-orange-dark: #ea580c;  /* Orange foncé */
+--gold: #B4643A;
+--gold-light: #C98761;
 ```
-**Usage** : Call-to-action, éléments d'interaction, chaleur sénégalaise
+**Usage** : Accent chaud utilisé avec parcimonie — une ou deux occurrences par page (bornes d'arrivée, chiffres clés, badges). Ne pas l'utiliser pour les boutons d'action principaux (ceux-ci utilisent la Lagune).
 
-#### Vert Sénégal
+#### Couleurs sémantiques (préservées)
 ```css
---senegal-green: #059669;      /* Vert sénégalais */
---senegal-green-light: #10b981; /* Vert clair */
+--color-success: #22C55E;
+--color-warning: #F39C12;
+--color-error: #B8493C;         /* Brique — déjà proche de la Terre, cohérent avec la palette */
 ```
-**Usage** : Succès, nature, croissance, éléments positifs
 
-### Couleurs Neutres
+### Couleurs Neutres — Encre / Craie
 ```css
---neutral-900: #0f172a;  /* Texte principal */
---neutral-800: #1e293b;  /* Texte secondaire */
---neutral-700: #334155;  /* Texte tertiaire */
---neutral-600: #475569;  /* Texte désactivé */
---neutral-500: #64748b;  /* Bordures */
---neutral-400: #94a3b8;  /* Bordures claires */
---neutral-300: #cbd5e1;  /* Arrière-plans */
---neutral-200: #e2e8f0;  /* Arrière-plans clairs */
---neutral-100: #f1f5f9;  /* Arrière-plans très clairs */
---neutral-50: #f8fafc;   /* Arrière-plan principal */
+--encre: #12100E;        /* Texte principal, fond sombre (blocs entreprise, footer) */
+--texte-secondaire: #3d3a35;  /* Paragraphes */
+--texte-muet: #6E6A63;   /* Libellés mono, légendes */
+--bordure: #E2DACD;      /* Filets, séparateurs */
+--sable: #E8DCC8;        /* Blocs d'emphase, panneaux */
+--craie: #F7F3EC;        /* Fond principal — le seul fond clair du système */
 ```
+
+Deux fonds seulement dans tout le produit : **craie** (`#F7F3EC`) pour les surfaces claires, **encre** (`#12100E`) pour les blocs de contraste (bandeaux entreprise, footer, cartes de résumé sombre dans le tunnel de réservation).
 
 ### Couleurs d'État
 ```css
@@ -67,9 +64,9 @@ NavetteXpress offre des services de transport de luxe professionnels, fiables et
 
 ## 📝 Typographie
 
-### Police Principale
-- **Famille** : Poppins (Google Fonts)
-- **Poids disponibles** : 300, 400, 500, 600, 700, 800
+### Familles de Polices (next/font/google, voir `src/app/layout.tsx`)
+- **Archivo** (`--font-archivo`) : titres (700, interlettrage -3,5 %), sous-titres et boutons (600), texte courant (400) — une seule famille pour toute la hiérarchie, pas de serif.
+- **Mono / data** (`--font-ibm-plex-mono`) : IBM Plex Mono — kilométrages, horaires, références, libellés de champs. Toujours en capitales, interlettrage +14 % pour les libellés.
 
 ### Hiérarchie Typographique
 
@@ -115,20 +112,34 @@ NavetteXpress offre des services de transport de luxe professionnels, fiables et
 
 ## 🧩 Composants UI
 
+### Icônes
+- **Librairie unique** : `@phosphor-icons/react` — utilisée dans les 3 dashboards (admin, client, chauffeur)
+- `lucide-react` a été retiré du projet ; ne pas le réintroduire, même pour un composant ponctuel
+
 ### Boutons
 
-#### Variantes
-- **Primary** : Bouton principal avec gradient orange
-- **Secondary** : Bouton secondaire avec gradient bleu
-- **Luxury** : Bouton de luxe avec gradient sombre
-- **Outline** : Bouton avec bordure
-- **Ghost** : Bouton transparent
+#### Variantes (`src/components/ui/Button.tsx`)
+- **Primary** : Lagune plein (`#1F5245` → hover `#19433B`) — action principale. Plat, pas d'ombre, `border-radius: 4px`.
+- **Secondary** : Terre plein (`#B4643A` → hover `#96502D`)
+- **Luxury** : Encre plein (`#12100E`), texte craie, en majuscules — CTA de contraste (bandeaux sombres)
+- **Outline** : Bordure encre 1px, fond transparent
+- **Ghost** : Lien texte souligné (filet 2px), pas de fond ni de padding visuel
 
 #### Tailles
 - **SM** : 32px de hauteur
 - **MD** : 40px de hauteur
 - **LG** : 48px de hauteur
 - **XL** : 56px de hauteur
+
+### Le trait du corridor
+
+Motif récurrent introduit par la refonte Corridor : une ligne horizontale (filet 1.5-2px, encre) reliant des jalons circulaires, qui matérialise un trajet ou une progression.
+
+- **Bandeau de zones** (sous l'en-tête, pages publiques) : jalons Dakar (lagune) — AIBD — Mbour — Petite Côte (terre), reliés par le filet, avec les distances en mono entre les jalons intermédiaires.
+- **Fil de progression** (tunnel de réservation) : les 3 étapes (Trajet / Besoins / Contact) sont les 3 jalons ; jalon actif et jalons passés en lagune, jalon à venir en gris clair (`#c9c3b8`) avec anneau vide.
+- **Jalons départ/arrivée** (formulaires et récapitulatifs de course) : cercle 11-13px, filet 2px — départ en lagune, arrivée en terre, étapes intermédiaires en encre.
+
+Ne pas réinventer ce motif ailleurs sous une autre forme (barre de progression classique, stepper Material, etc.) — c'est l'élément signature du système.
 
 ### Cards
 
@@ -258,12 +269,14 @@ NavetteXpress offre des services de transport de luxe professionnels, fiables et
 ## 🚀 Implémentation
 
 ### Installation
-```bash
-# Importer le design system
+```tsx
+// Le design system global est chargé une fois dans src/app/layout.tsx
 import '@/styles/design-system.css';
 
-# Utiliser les composants
-import { Button, Card, Badge } from '@/components/ui';
+// Les composants s'importent individuellement (pas de barrel export dans src/components/ui/)
+import { Button } from '@/components/ui/Button';
+import { ServiceCard } from '@/components/ui/ServiceCard';
+import { Badge } from '@/components/ui/Badge';
 ```
 
 ### Utilisation des Composants

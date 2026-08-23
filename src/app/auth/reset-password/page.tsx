@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Mail, ArrowLeft, AlertCircle, Loader2, Send, CheckCircle2 } from "lucide-react"
+import { Envelope, ArrowLeft, WarningCircle, CircleNotch, PaperPlaneRight, CheckCircle } from "@phosphor-icons/react"
 
 export default function ResetPasswordPage() {
   const [email, setEmail] = useState("")
@@ -71,7 +71,7 @@ export default function ResetPasswordPage() {
         {/* Motif géométrique discret */}
         <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
           style={{
-            backgroundImage: 'radial-gradient(circle, #9B1B30 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(circle, #1F5245 1px, transparent 1px)',
             backgroundSize: '32px 32px',
           }} />
 
@@ -171,7 +171,7 @@ export default function ResetPasswordPage() {
                       backgroundColor: 'rgba(239,68,68,0.08)',
                       border: '1px solid rgba(239,68,68,0.2)',
                     }}>
-                    <AlertCircle size={18} className="shrink-0 mt-0.5" style={{ color: 'var(--color-error)' }} />
+                    <WarningCircle size={18} className="shrink-0 mt-0.5" style={{ color: 'var(--color-error)' }} />
                     <p className="text-sm" style={{ color: 'var(--color-error)' }}>{error}</p>
                   </div>
                 )}
@@ -185,7 +185,7 @@ export default function ResetPasswordPage() {
                   <div className="relative">
                     <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"
                       style={{ color: 'var(--color-text-muted)' }}>
-                      <Mail size={16} />
+                      <Envelope size={16} />
                     </div>
                     <input
                       id="email"
@@ -211,12 +211,12 @@ export default function ResetPasswordPage() {
                   style={{ opacity: isLoading ? 0.7 : 1 }}>
                   {isLoading ? (
                     <span className="flex items-center justify-center gap-2">
-                      <Loader2 size={18} className="animate-spin" />
+                      <CircleNotch size={18} className="animate-spin" />
                       Traitement...
                     </span>
                   ) : (
                     <span className="flex items-center justify-center gap-2">
-                      Envoyer le lien <Send size={16} />
+                      Envoyer le lien <PaperPlaneRight size={16} />
                     </span>
                   )}
                 </button>
@@ -226,7 +226,7 @@ export default function ResetPasswordPage() {
             <div className="text-center animate-fade-in">
               <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6"
                 style={{ backgroundColor: 'rgba(46,204,113,0.1)', border: '1px solid rgba(46,204,113,0.2)' }}>
-                <CheckCircle2 size={32} style={{ color: 'var(--color-success)' }} />
+                <CheckCircle size={32} style={{ color: 'var(--color-success)' }} />
               </div>
               <h2 className="text-2xl mb-3"
                 style={{
@@ -246,7 +246,7 @@ export default function ResetPasswordPage() {
                 Retour à la connexion
               </button>
               <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
-                Vous n'avez rien reçu ? Vérifiez vos spams ou{' '}
+                Vous n&apos;avez rien reçu ? Vérifiez vos spams ou{' '}
                 <button
                   onClick={() => setSuccess(false)}
                   className="font-medium underline hover:opacity-80"

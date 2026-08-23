@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { locationsTable } from '@/schema';
 import { eq, desc } from 'drizzle-orm';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
+import type { Session } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
 /**
@@ -36,7 +37,7 @@ export async function GET(request: Request) {
  */
 export async function POST(request: Request) {
     try {
-        const session = await getServerSession(authOptions);
+        const session = (await getServerSession(authOptions)) as Session | null;
         const userRole = (session?.user as any)?.role;
 
         if (!session || (userRole !== 'admin' && userRole !== 'manager')) {

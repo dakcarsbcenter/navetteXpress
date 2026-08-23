@@ -18,7 +18,9 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
 
   const navLinks = [
     { href: "/", label: "Accueil" },
-    { href: "/services", label: "Services" },
+    { href: "/tarifs", label: "Tarifs par segment" },
+    { href: "/entreprises", label: "Hôtels & entreprises" },
+    { href: "/diaspora", label: "Diaspora" },
     { href: "/flotte", label: "Flotte" },
     { href: "/temoignages", label: "Avis" },
     { href: "/contact", label: "Contact" },
@@ -46,12 +48,12 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center text-text-muted">
           <div className="flex items-center gap-6">
             <a
-              href="tel:+221781319191"
+              href="tel:+221784651302"
               className="flex items-center gap-1.5 hover:text-gold transition-colors"
               onClick={() => trackPhoneCall('header')}
             >
               <Phone size={12} weight="light" className="text-gold" />
-              <span>+221 78 131 91 91</span>
+              <span>+221 78 465 13 02</span>
             </a>
             <a
               href="mailto:contact@navettexpress.com"
@@ -81,12 +83,12 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
 
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 bg-gold rounded-lg flex items-center justify-center transition-transform group-hover:rotate-12 shrink-0">
-                <span className="text-background font-bold text-xl">NX</span>
+              <div className="w-10 h-10 bg-[#12100E] rounded flex items-center justify-center shrink-0">
+                <span className="text-[#F7F3EC] font-bold text-xl">NX</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-foreground font-display text-xl leading-none tracking-wide">NAVETTE XPRESS</span>
-                <span className="text-gold text-[10px] tracking-[0.2em] font-medium leading-none mt-1 uppercase">Premium Service</span>
+                <span className="text-foreground font-semibold text-xl leading-none tracking-tight">Navette Xpress</span>
+                <span className="text-text-muted text-[10px] tracking-[0.2em] font-medium leading-none mt-1 uppercase font-[family-name:var(--font-ibm-plex-mono)]">Dakar — AIBD — Petite Côte</span>
               </div>
             </Link>
 
@@ -96,10 +98,10 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-foreground/70 hover:text-gold text-sm font-medium transition-colors relative group"
+                  className="text-foreground/70 hover:text-accent text-sm font-medium transition-colors relative group"
                 >
                   {link.label}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all group-hover:w-full"></span>
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all group-hover:w-full"></span>
                 </Link>
               ))}
             </nav>
@@ -110,21 +112,21 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
 
               {!session ? (
                 <div className="flex items-center gap-3">
-                  <Link href="/auth/signin" className="text-foreground text-sm font-medium hover:text-gold transition-colors">
+                  <Link href="/auth/signin" className="text-foreground text-sm font-medium hover:text-accent transition-colors">
                     Se connecter
                   </Link>
                   <Link
                     href="/reservation"
-                    className="bg-gold text-background px-6 py-2.5 rounded-lg text-sm font-bold shadow-[0_0_20px_rgba(201,168,76,0.2)] hover:shadow-[0_0_30px_rgba(201,168,76,0.4)] hover:bg-gold/90 transition-all hover:-translate-y-0.5"
+                    className="bg-accent text-white px-6 py-2.5 rounded text-sm font-semibold hover:bg-accent-hover transition-colors"
                   >
                     Réserver
                   </Link>
                 </div>
               ) : (
                 <div className="relative group/user">
-                  <button className="flex items-center gap-2 text-foreground hover:text-gold transition-colors">
-                    <div className="w-8 h-8 rounded-full border border-gold/30 flex items-center justify-center bg-surface-2/50">
-                      <UserCircle size={16} weight="light" className="text-gold" />
+                  <button className="flex items-center gap-2 text-foreground hover:text-accent transition-colors">
+                    <div className="w-8 h-8 rounded-full border border-accent/30 flex items-center justify-center bg-surface-2/50">
+                      <UserCircle size={16} weight="light" className="text-accent" />
                     </div>
                     <CaretDown size={14} weight="light" />
                   </button>
@@ -132,15 +134,15 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
                   {/* Dropdown Menu */}
                   <div className="absolute right-0 mt-2 w-56 bg-background border border-border rounded-xl shadow-2xl opacity-0 invisible group-hover/user:opacity-100 group-hover/user:visible transition-all duration-300 backdrop-blur-xl">
                     <div className="p-4 border-b border-border">
-                      <p className="text-foreground text-sm font-bold truncate">{session.user.name}</p>
-                      <p className="text-text-muted text-xs truncate">{session.user.email}</p>
+                      <p className="text-foreground text-sm font-bold truncate">{session.user?.name}</p>
+                      <p className="text-text-muted text-xs truncate">{session.user?.email}</p>
                     </div>
                     <div className="p-2 space-y-1">
                       <Link
                         href={(session.user as any).role === 'admin' ? '/admin/dashboard' : '/client/dashboard'}
-                        className="flex items-center gap-3 px-3 py-2 text-sm text-foreground/70 hover:text-gold hover:bg-surface-2/50 rounded-lg transition-colors"
+                        className="flex items-center gap-3 px-3 py-2 text-sm text-foreground/70 hover:text-accent hover:bg-surface-2/50 rounded-lg transition-colors"
                       >
-                        <SquaresFour size={16} weight="regular" className="text-gold" />
+                        <SquaresFour size={16} weight="regular" className="text-accent" />
                         Dashboard
                       </Link>
                       <button
@@ -175,7 +177,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="block text-2xl font-display text-foreground hover:text-gold transition-colors"
+                  className="block text-2xl font-display text-foreground hover:text-accent transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {link.label}
@@ -187,7 +189,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
             <div className="mt-auto space-y-4">
               <Link
                 href="/reservation"
-                className="block w-full bg-gold text-background text-center py-4 rounded-xl font-bold text-lg hover:bg-gold/90 transition-colors"
+                className="block w-full bg-accent text-white text-center py-4 rounded font-semibold text-lg hover:bg-accent-hover transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Réserver Maintenant
@@ -207,7 +209,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
                     className="flex items-center justify-center gap-2 w-full border border-border text-foreground text-center py-4 rounded-xl font-medium hover:bg-surface-2/50 transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <SquaresFour size={18} weight="regular" className="text-gold" />
+                    <SquaresFour size={18} weight="regular" className="text-accent" />
                     Dashboard
                   </Link>
                   <button

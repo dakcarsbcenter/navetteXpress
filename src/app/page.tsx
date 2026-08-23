@@ -55,7 +55,7 @@ export default function Page() {
         <>
             <JsonLd data={schemaService()} />
             <JsonLd data={schemaFAQ(faqs)} />
-            <HomeClient />
+            <HomeClient faqs={faqs} />
         </>
     );
 }

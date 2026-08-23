@@ -199,20 +199,20 @@ Description: ${formData.description}`,
 
   // Shared input class helpers
   const inputBase =
-    'w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+    'w-full px-4 py-3 rounded border border-border bg-white text-foreground placeholder-[#a8a199] text-sm transition-colors focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent'
   const inputReadOnly =
-    'bg-slate-100 dark:bg-slate-700/60 cursor-not-allowed text-slate-500 dark:text-slate-400'
+    'bg-[#F7F3EC] cursor-not-allowed text-[#6E6A63]'
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-6">
+    <div className="max-w-3xl mx-auto px-4 py-6 font-archivo">
       <NotificationCenter notifications={notifications} onRemove={removeNotification} />
 
       {/* Page header */}
       <div className="mb-8 text-center">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+        <h1 className="text-3xl font-bold text-foreground tracking-tight">
           Demander un devis
         </h1>
-        <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+        <p className="mt-2 text-[#3d3a35]">
           Remplissez ce formulaire pour recevoir une offre personnalisée adaptée à vos besoins
         </p>
       </div>
@@ -220,21 +220,21 @@ Description: ${formData.description}`,
       <form onSubmit={handleSubmit} className="space-y-6">
 
         {/* ── Section 1 : Vos informations ── */}
-        <section className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-          <div className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
-            <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400">
-              <User size={18} weight="bold" />
+        <section className="bg-white rounded border border-border overflow-hidden">
+          <div className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b border-border">
+            <span className="flex items-center justify-center w-8 h-8 rounded bg-[#F7F3EC] text-accent">
+              <User size={18} weight="regular" />
             </span>
-            <h2 className="text-sm font-semibold text-slate-800 dark:text-white uppercase tracking-wide">
+            <h2 className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase">
               Vos informations
             </h2>
           </div>
 
           <div className="p-4 sm:p-6 space-y-5">
             {user && (
-              <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
-                <Info size={18} weight="fill" className="mt-0.5 shrink-0 text-blue-500 dark:text-blue-400" />
-                <p className="text-sm text-blue-700 dark:text-blue-300 leading-snug">
+              <div className="flex items-start gap-3 px-4 py-3 rounded bg-[#F7F3EC] border border-border">
+                <Info size={18} weight="regular" className="mt-0.5 shrink-0 text-accent" />
+                <p className="text-sm text-[#3d3a35] leading-snug">
                   Vos informations sont automatiquement pré-remplies depuis votre compte. Seul le numéro de téléphone est modifiable.
                 </p>
               </div>
@@ -243,11 +243,11 @@ Description: ${formData.description}`,
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Nom complet */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                <label className="block text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase">
                   Nom complet <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none" />
+                  <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6E6A63] pointer-events-none" />
                   <input
                     type="text"
                     required
@@ -262,11 +262,11 @@ Description: ${formData.description}`,
 
               {/* Email */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                <label className="block text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase">
                   Adresse e-mail <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <EnvelopeSimple size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none" />
+                  <EnvelopeSimple size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6E6A63] pointer-events-none" />
                   <input
                     type="email"
                     required
@@ -281,16 +281,16 @@ Description: ${formData.description}`,
 
               {/* Téléphone */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                <label className="block text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase">
                   Téléphone <span className="text-red-500">*</span>
                   {user && user.phone && formData.customerPhone !== user.phone && (
-                    <span className="ml-2 normal-case text-orange-500 dark:text-orange-400 font-normal">
+                    <span className="ml-2 normal-case text-[#B4643A] font-normal">
                       (modifié)
                     </span>
                   )}
                 </label>
                 <div className="relative">
-                  <Phone size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none" />
+                  <Phone size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6E6A63] pointer-events-none" />
                   <input
                     type="tel"
                     required
@@ -304,11 +304,11 @@ Description: ${formData.description}`,
 
               {/* Nombre de personnes */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                <label className="block text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase">
                   Nombre de voyageurs <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <Users size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none" />
+                  <Users size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6E6A63] pointer-events-none" />
                   <input
                     type="number"
                     min="1"
@@ -326,12 +326,12 @@ Description: ${formData.description}`,
         </section>
 
         {/* ── Section 2 : Services souhaités ── */}
-        <section className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-          <div className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
-            <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-violet-100 dark:bg-violet-900/40 text-violet-600 dark:text-violet-400">
+        <section className="bg-white rounded border border-border overflow-hidden">
+          <div className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b border-border">
+            <span className="flex items-center justify-center w-8 h-8 rounded bg-[#F7F3EC] text-accent">
               <SealCheck size={18} weight="bold" />
             </span>
-            <h2 className="text-sm font-semibold text-slate-800 dark:text-white uppercase tracking-wide">
+            <h2 className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase">
               Services souhaités <span className="text-red-500">*</span>
             </h2>
           </div>
@@ -343,10 +343,10 @@ Description: ${formData.description}`,
                 return (
                   <label
                     key={service.id}
-                    className={`relative flex flex-col gap-1 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                    className={`relative flex flex-col gap-1 p-4 rounded border cursor-pointer transition-colors ${
                       isSelected
-                        ? 'border-violet-500 bg-violet-50 dark:bg-violet-900/20 dark:border-violet-500'
-                        : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-violet-300 dark:hover:border-violet-600'
+                        ? 'border-accent bg-[#F7F3EC]'
+                        : 'border-border bg-white hover:border-accent/50'
                     }`}
                   >
                     <input
@@ -356,10 +356,10 @@ Description: ${formData.description}`,
                       className="sr-only"
                     />
                     {/* Custom check badge */}
-                    <span className={`absolute top-3 right-3 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                    <span className={`absolute top-3 right-3 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
                       isSelected
-                        ? 'bg-violet-500 border-violet-500'
-                        : 'border-slate-300 dark:border-slate-600'
+                        ? 'bg-accent border-accent'
+                        : 'border-[#c9c3b8]'
                     }`}>
                       {isSelected && (
                         <svg viewBox="0 0 10 8" className="w-3 h-3 fill-white">
@@ -369,10 +369,10 @@ Description: ${formData.description}`,
                     </span>
 
                     <span className="text-2xl leading-none">{service.icon}</span>
-                    <span className={`text-sm font-semibold mt-1 ${isSelected ? 'text-violet-800 dark:text-violet-300' : 'text-slate-800 dark:text-white'}`}>
+                    <span className={`text-sm font-semibold mt-1 ${isSelected ? 'text-accent' : 'text-foreground'}`}>
                       {service.name}
                     </span>
-                    <span className="text-xs text-slate-500 dark:text-slate-400 leading-snug">
+                    <span className="text-xs text-[#6E6A63] leading-snug">
                       {service.description}
                     </span>
                   </label>
@@ -380,7 +380,7 @@ Description: ${formData.description}`,
               })}
             </div>
             {formData.services.length === 0 && (
-              <p className="mt-3 text-xs text-slate-400 dark:text-slate-500">
+              <p className="mt-3 text-xs text-[#6E6A63]">
                 Sélectionnez au moins un service pour continuer.
               </p>
             )}
@@ -388,12 +388,12 @@ Description: ${formData.description}`,
         </section>
 
         {/* ── Section 3 : Planning et durée ── */}
-        <section className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-          <div className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
-            <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400">
+        <section className="bg-white rounded border border-border overflow-hidden">
+          <div className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b border-border">
+            <span className="flex items-center justify-center w-8 h-8 rounded bg-[#F7F3EC] text-accent">
               <CalendarBlank size={18} weight="bold" />
             </span>
-            <h2 className="text-sm font-semibold text-slate-800 dark:text-white uppercase tracking-wide">
+            <h2 className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase">
               Planning et durée <span className="text-red-500">*</span>
             </h2>
           </div>
@@ -402,7 +402,7 @@ Description: ${formData.description}`,
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Durée */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                <label className="block text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase">
                   Durée du voyage <span className="text-red-500">*</span>
                 </label>
                 <select
@@ -426,11 +426,11 @@ Description: ${formData.description}`,
 
               {/* Date de début */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                <label className="block text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase">
                   Date de début souhaitée
                 </label>
                 <div className="relative">
-                  <CalendarBlank size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none" />
+                  <CalendarBlank size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6E6A63] pointer-events-none" />
                   <input
                     type="date"
                     value={formData.startDate}
@@ -444,12 +444,12 @@ Description: ${formData.description}`,
         </section>
 
         {/* ── Section 4 : Itinéraire ── */}
-        <section className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-          <div className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
-            <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400">
+        <section className="bg-white rounded border border-border overflow-hidden">
+          <div className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b border-border">
+            <span className="flex items-center justify-center w-8 h-8 rounded bg-[#F7F3EC] text-accent">
               <MapPin size={18} weight="bold" />
             </span>
-            <h2 className="text-sm font-semibold text-slate-800 dark:text-white uppercase tracking-wide">
+            <h2 className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase">
               Itinéraire <span className="text-red-500">*</span>
             </h2>
           </div>
@@ -458,11 +458,11 @@ Description: ${formData.description}`,
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Départ */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                <label className="block text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase">
                   Lieu de départ <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <MapPin size={16} weight="fill" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-500 pointer-events-none" />
+                  <MapPin size={16} weight="fill" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-accent pointer-events-none" />
                   <input
                     type="text"
                     required
@@ -476,11 +476,11 @@ Description: ${formData.description}`,
 
               {/* Destination */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                <label className="block text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase">
                   Destination <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <MapPin size={16} weight="fill" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-red-500 pointer-events-none" />
+                  <MapPin size={16} weight="fill" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#B4643A] pointer-events-none" />
                   <input
                     type="text"
                     required
@@ -495,12 +495,12 @@ Description: ${formData.description}`,
 
             {/* Visual route indicator */}
             {(formData.departure || formData.destination) && (
-              <div className="mt-4 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-                <span className="font-medium text-slate-700 dark:text-slate-300 truncate max-w-[160px]">
+              <div className="mt-4 flex items-center gap-2 text-xs text-[#6E6A63]">
+                <span className="font-medium text-foreground truncate max-w-[160px]">
                   {formData.departure || '—'}
                 </span>
-                <ArrowRight size={14} className="shrink-0 text-slate-400" />
-                <span className="font-medium text-slate-700 dark:text-slate-300 truncate max-w-[160px]">
+                <ArrowRight size={14} className="shrink-0 text-[#6E6A63]" />
+                <span className="font-medium text-foreground truncate max-w-[160px]">
                   {formData.destination || '—'}
                 </span>
               </div>
@@ -509,23 +509,23 @@ Description: ${formData.description}`,
         </section>
 
         {/* ── Section 5 : Informations complémentaires ── */}
-        <section className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-          <div className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
-            <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-sky-100 dark:bg-sky-900/40 text-sky-600 dark:text-sky-400">
+        <section className="bg-white rounded border border-border overflow-hidden">
+          <div className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b border-border">
+            <span className="flex items-center justify-center w-8 h-8 rounded bg-[#F7F3EC] text-accent">
               <CreditCard size={18} weight="bold" />
             </span>
-            <h2 className="text-sm font-semibold text-slate-800 dark:text-white uppercase tracking-wide">
+            <h2 className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase">
               Informations complémentaires
             </h2>
           </div>
 
           <div className="p-4 sm:p-6">
             <div className="max-w-sm space-y-1.5">
-              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+              <label className="block text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase">
                 Mode de paiement préféré
               </label>
               <div className="relative">
-                <CreditCard size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none" />
+                <CreditCard size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6E6A63] pointer-events-none" />
                 <select
                   value={formData.paymentMode}
                   onChange={(e) => handleFormChange('paymentMode', e.target.value)}
@@ -541,19 +541,19 @@ Description: ${formData.description}`,
         </section>
 
         {/* ── Section 6 : Description ── */}
-        <section className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-          <div className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
-            <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400">
+        <section className="bg-white rounded border border-border overflow-hidden">
+          <div className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b border-border">
+            <span className="flex items-center justify-center w-8 h-8 rounded bg-[#F7F3EC] text-accent">
               <TextAlignLeft size={18} weight="bold" />
             </span>
-            <h2 className="text-sm font-semibold text-slate-800 dark:text-white uppercase tracking-wide">
+            <h2 className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase">
               Description
             </h2>
           </div>
 
           <div className="p-4 sm:p-6">
             <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+              <label className="block text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase">
                 Demandes spécifiques ou informations utiles
               </label>
               <textarea
@@ -572,7 +572,7 @@ Description: ${formData.description}`,
           <button
             type="button"
             onClick={handleCancel}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors min-h-[44px]"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded border border-[#12100E] bg-white text-[#12100E] text-sm font-medium hover:bg-[#12100E] hover:text-white transition-colors min-h-[44px]"
           >
             <X size={16} />
             Annuler
@@ -581,7 +581,7 @@ Description: ${formData.description}`,
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-blue-400 disabled:to-indigo-400 dark:disabled:from-blue-700 dark:disabled:to-indigo-700 text-white text-sm font-semibold shadow-sm hover:shadow-md transition-all disabled:cursor-not-allowed min-h-[44px]"
+            className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded bg-accent hover:bg-accent-hover disabled:opacity-50 text-white text-sm font-semibold transition-colors disabled:cursor-not-allowed min-h-[44px]"
           >
             {isSubmitting ? (
               <>

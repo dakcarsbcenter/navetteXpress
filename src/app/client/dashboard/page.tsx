@@ -2,6 +2,7 @@
 
 import { useSession } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
+import Link from "next/link"
 import { useEffect, useState, Suspense } from "react"
 import { CreateReviewModal } from "@/components/client/CreateReviewModal"
 import { ReservationForm } from "@/app/reservation/ReservationClient"
@@ -1046,9 +1047,17 @@ function ClientDashboardContent() {
                       <Buildings size={120} weight="duotone" />
                     </div>
 
-                    <div className="flex items-center gap-3 text-red-500">
-                      <Buildings size={20} weight="bold" />
-                      <h4 className="text-xs font-black uppercase tracking-[0.2em]">Informations Entreprise</h4>
+                    <div className="flex items-center justify-between gap-3 flex-wrap">
+                      <div className="flex items-center gap-3 text-red-500">
+                        <Buildings size={20} weight="bold" />
+                        <h4 className="text-xs font-black uppercase tracking-[0.2em]">Informations Entreprise</h4>
+                      </div>
+                      <Link
+                        href="/entreprise/dashboard"
+                        className="text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 hover:opacity-70 transition-opacity"
+                      >
+                        Accéder à mon espace entreprise →
+                      </Link>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 relative">

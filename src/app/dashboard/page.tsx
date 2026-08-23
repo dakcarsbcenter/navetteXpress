@@ -1,4 +1,5 @@
 import { getServerSession } from "next-auth/next";
+import type { Session } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
@@ -12,7 +13,7 @@ import { redirect } from "next/navigation";
  * - customer -> /client/dashboard
  */
 export default async function DashboardPage() {
-  const session = await getServerSession(authOptions);
+  const session = (await getServerSession(authOptions)) as Session | null;
 
   // Vérification de l'authentification
   if (!session?.user) {

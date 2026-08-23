@@ -4,6 +4,7 @@ export const revalidate = 0;
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
+import type { Session } from "next-auth";
 import { authOptions } from '@/lib/auth'
 import { db } from '@/db'
 import { users, bookingsTable, vehiclesTable } from '@/schema'
@@ -15,7 +16,7 @@ export async function GET(request: NextRequest) {
     console.log('🔍 [ADMIN] Récupération des données de vue d\'ensemble...')
     
     // Vérification de l'authentification
-    const session = await getServerSession(authOptions)
+    const session = (await getServerSession(authOptions)) as Session | null;
     
     if (!session?.user?.email) {
       console.log('❌ [ADMIN] Utilisateur non authentifié')

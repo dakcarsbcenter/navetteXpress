@@ -17,10 +17,11 @@ import { eq } from 'drizzle-orm';
 // Récupérer un véhicule par ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const vehicleId = parseInt(params.id);
+    const { id } = await params;
+    const vehicleId = parseInt(id);
     
     if (isNaN(vehicleId)) {
       return NextResponse.json(
@@ -58,10 +59,11 @@ export async function GET(
 // Mettre à jour un véhicule
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const vehicleId = parseInt(params.id);
+    const { id } = await params;
+    const vehicleId = parseInt(id);
     
     if (isNaN(vehicleId)) {
       return NextResponse.json(
@@ -134,10 +136,11 @@ export async function PUT(
 // Supprimer un véhicule
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const vehicleId = parseInt(params.id);
+    const { id } = await params;
+    const vehicleId = parseInt(id);
     
     if (isNaN(vehicleId)) {
       return NextResponse.json(

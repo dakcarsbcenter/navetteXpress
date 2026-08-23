@@ -24,14 +24,14 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     disabled,
     ...props 
   }, ref) => {
-    const baseClasses = "inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
-    
+    const baseClasses = "inline-flex items-center justify-center font-semibold rounded font-[family-name:var(--font-archivo)] transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
+
     const variants = {
-      primary: "bg-[#9B1B30] hover:bg-[#821528] text-white shadow-lg hover:shadow-2xl hover:shadow-[rgba(155,27,48,0.3)] hover:-translate-y-0.5 focus:ring-[#9B1B30]/50",
-      secondary: "bg-linear-to-r from-[#3B82F6] to-[#2563EB] hover:from-[#2563EB] hover:to-[#1E40AF] text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5 focus:ring-[#3B82F6]/50",
-      luxury: "bg-linear-to-r from-[#1E293B] to-[#334155] hover:from-[#334155] hover:to-[#475569] text-white shadow-2xl hover:shadow-3xl hover:-translate-y-1 focus:ring-[#1E293B]/50 uppercase tracking-wide",
-      outline: "border-2 border-[#9B1B30] text-[#9B1B30] hover:bg-[#9B1B30] hover:text-white focus:ring-[#9B1B30]/50",
-      ghost: "text-[#1E293B] hover:bg-[#F1F5F9] hover:text-[#1E293B] focus:ring-[#64748B]/50"
+      primary: "bg-[#1F5245] hover:bg-[#19433B] text-white focus:ring-[#1F5245]/50",
+      secondary: "bg-[#B4643A] hover:bg-[#96502D] text-white focus:ring-[#B4643A]/50",
+      luxury: "bg-[#12100E] hover:bg-[#2a2620] text-[#F7F3EC] uppercase tracking-wide focus:ring-[#12100E]/50",
+      outline: "border border-[#12100E] text-[#12100E] hover:bg-[#12100E] hover:text-[#F7F3EC] focus:ring-[#12100E]/50",
+      ghost: "text-[#1F5245] border-b-2 border-[#1F5245] rounded-none hover:text-[#12100E] hover:border-[#12100E] focus:ring-[#1F5245]/50"
     };
     
     const sizes = {

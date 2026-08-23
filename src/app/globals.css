@@ -12,8 +12,8 @@
   --danger: #ef4444;
   --transition: 200ms ease;
 
-  --background: #FAFAFA;
-  --foreground: #1A1A1A;
+  --background: #F7F3EC;
+  --foreground: #12100E;
 
   --midnight: #FFFFFF;
   --obsidian: #F5F5F5;
@@ -25,36 +25,36 @@
   --color-client-card: #111620;
   --color-client-surface: #181E2A;
   --color-client-border: rgba(255, 255, 255, 0.06);
-  --color-client-accent: #9B1B30;
-  --color-client-accent-light: #C23B55;
-  --color-client-accent-bg: rgba(155, 27, 48, 0.08);
-  --color-client-accent-glow: rgba(155, 27, 48, 0.2);
+  --color-client-accent: #1F5245;
+  --color-client-accent-light: #3D7A67;
+  --color-client-accent-bg: rgba(31, 82, 69, 0.08);
+  --color-client-accent-glow: rgba(31, 82, 69, 0.2);
   --color-client-text-primary: #F9FAFB;
   --color-client-text-secondary: #9CA3AF;
-  --color-trip-inprogress-bg: rgba(155, 27, 48, 0.08);
+  --color-trip-inprogress-bg: rgba(31, 82, 69, 0.08);
 
-  /* ─── ACCENT PRINCIPAL (rouge pourpre) ─── */
-  --color-accent: #9B1B30;
-  --color-accent-hover: #821528;
-  --color-accent-light: #C23B55;
-  --color-accent-subtle: rgba(155, 27, 48, 0.12);
-  --color-accent-border: rgba(155, 27, 48, 0.35);
+  /* ─── ACCENT PRINCIPAL (Lagune — Corridor) ─── */
+  --color-accent: #1F5245;
+  --color-accent-hover: #19433B;
+  --color-accent-light: #3D7A67;
+  --color-accent-subtle: rgba(31, 82, 69, 0.12);
+  --color-accent-border: rgba(31, 82, 69, 0.35);
 
-  /* ─── IDENTITÉ POURPRE (Landing Page) ─── */
-  --gold: #9B1B30;
-  --gold-light: #C23B55;
-  --crimson: #9B1B30;
-  --text-primary: #1A1A1A;
-  --text-secondary: #4A4A4A;
-  --text-muted: #71717A;
+  /* ─── IDENTITÉ TERRE (Landing Page) ─── */
+  --gold: #B4643A;
+  --gold-light: #C98761;
+  --crimson: #1F5245;
+  --text-primary: #12100E;
+  --text-secondary: #3d3a35;
+  --text-muted: #6E6A63;
 
-  --primary: #9B1B30;
+  --primary: #1F5245;
   --primary-foreground: #FFFFFF;
 
-  --secondary: #0F5B8A;
+  --secondary: #B4643A;
   --secondary-foreground: #FFFFFF;
 
-  --accent: #9B1B30;
+  --accent: #1F5245;
   --accent-foreground: #FFFFFF;
 
   --destructive: #ef4444;
@@ -62,7 +62,7 @@
 
   --border: rgba(0, 0, 0, 0.08);
   --input: rgba(0, 0, 0, 0.05);
-  --ring: #9B1B30;
+  --ring: #1F5245;
 
   --radius: 0.75rem;
 
@@ -74,11 +74,11 @@
   --color-driver-text-primary: #111827;
   --color-driver-text-secondary: #4B5563;
 
-  /* Accent chauffeur : bleu électrique — autorité, route */
-  --color-driver-accent: #2563EB;
-  --color-driver-accent-light: #3B82F6;
-  --color-driver-accent-bg: rgba(37, 99, 235, 0.05);
-  --color-driver-accent-glow: rgba(37, 99, 235, 0.1);
+  /* Accent chauffeur : Terre — nuance distincte de la Lagune (client/admin) */
+  --color-driver-accent: #B4643A;
+  --color-driver-accent-light: #C98761;
+  --color-driver-accent-bg: rgba(180, 100, 58, 0.06);
+  --color-driver-accent-glow: rgba(180, 100, 58, 0.12);
 
 
   /* Statuts mission (light mode) */
@@ -92,6 +92,16 @@
   --color-mission-inprogress-bg: rgba(34, 197, 94, 0.08);
   --color-mission-done: #6B7280;
   --color-mission-done-bg: rgba(107, 114, 128, 0.07);
+
+  /* ── Tokens spécifiques dashboard ADMIN (défaut / sombre) ── */
+  --color-dash-bg: #0D0D14;
+  --color-dash-sidebar: #09090F;
+  --color-dash-sidebar-border: rgba(255, 255, 255, 0.05);
+  --color-dash-content: #0D0D14;
+  --color-dash-card: #13131C;
+  --color-dash-nav-text: #6B6880;
+  --color-dash-nav-active-text: #F0EDE8;
+  --color-dash-nav-active-bg: rgba(31, 82, 69, 0.09);
 }
 
 [data-theme="light"] {
@@ -99,10 +109,10 @@
   --bg-secondary: #ffffff;
   --bg-card: #ffffff;
   --border: #e2e8f0;
-  --accent: #9B1B30;
+  --accent: #1F5245;
   --accent-purple: #6c63ff;
   --text-primary: #1a1a2e;
-  --text-muted: #64748b;
+  --text-muted: #6E6A63;
   --success: #16a34a;
   --danger: #dc2626;
 
@@ -111,13 +121,23 @@
   --color-client-card: #FFFFFF;
   --color-client-surface: #F8F9FA;
   --color-client-border: rgba(0, 0, 0, 0.08);
-  --color-client-accent: #9B1B30;
-  --color-client-accent-light: #C23B55;
-  --color-client-accent-bg: rgba(155, 27, 48, 0.07);
-  --color-client-accent-glow: rgba(155, 27, 48, 0.15);
+  --color-client-accent: #1F5245;
+  --color-client-accent-light: #3D7A67;
+  --color-client-accent-bg: rgba(31, 82, 69, 0.07);
+  --color-client-accent-glow: rgba(31, 82, 69, 0.15);
   --color-client-text-primary: #111827;
   --color-client-text-secondary: #6B7280;
-  --color-trip-inprogress-bg: rgba(155, 27, 48, 0.08);
+  --color-trip-inprogress-bg: rgba(31, 82, 69, 0.08);
+
+  /* ── Tokens spécifiques dashboard ADMIN — clair ── */
+  --color-dash-bg: #F4F7F8;
+  --color-dash-sidebar: #EAF0F1;
+  --color-dash-sidebar-border: rgba(0, 0, 0, 0.06);
+  --color-dash-content: #F4F7F8;
+  --color-dash-card: #FFFFFF;
+  --color-dash-nav-text: #56666D;
+  --color-dash-nav-active-text: #1F5245;
+  --color-dash-nav-active-bg: rgba(31, 82, 69, 0.08);
 }
 
 .dark {
@@ -126,37 +146,37 @@
 
   --midnight: #0D0D0D;
   --obsidian: #141414;
-  --surface: #1A1A1A;
+  --surface: #12100E;
   --surface-2: #1F1F1F;
 
-  --card: #1A1A1A;
+  --card: #12100E;
   --card-foreground: #F5F5F5;
 
-  --popover: #1A1A1A;
+  --popover: #12100E;
   --popover-foreground: #F5F5F5;
 
-  --primary: #9B1B30;
+  --primary: #1F5245;
   --primary-foreground: #FFFFFF;
 
-  --secondary: #3B82F6;
+  --secondary: #D68F63;
   --secondary-foreground: #FFFFFF;
 
-  --muted: #1A1A1A;
+  --muted: #12100E;
   --muted-foreground: #A0A0A0;
 
-  --accent: #9B1B30;
+  --accent: #1F5245;
   --accent-foreground: #FFFFFF;
 
   --destructive: #ef4444;
   --border: rgba(255, 255, 255, 0.07);
   --input: rgba(255, 255, 255, 0.05);
-  --ring: #9B1B30;
+  --ring: #1F5245;
 
   --text-primary: #F5F5F5;
   --text-secondary: #A0A0A0;
   --text-muted: #5A5A5A;
   --text-on-accent: #FFFFFF;
-  --shadow-accent: 0 4px 20px rgba(155, 27, 48, 0.25);
+  --shadow-accent: 0 4px 20px rgba(31, 82, 69, 0.25);
 
   /* ── Dark mode: Tokens spécifiques dashboard CHAUFFEUR ── */
   --color-driver-bg: #05070A;
@@ -166,11 +186,11 @@
   --color-driver-text-primary: #F9FAFB;
   --color-driver-text-secondary: #9CA3AF;
 
-  /* Accent chauffeur : bleu électrique — autorité, route, nuit */
-  --color-driver-accent: #3B82F6;
-  --color-driver-accent-light: #60A5FA;
-  --color-driver-accent-bg: rgba(59, 130, 246, 0.06);
-  --color-driver-accent-glow: rgba(59, 130, 246, 0.15);
+  /* Accent chauffeur : Terre clair — nuance distincte de la Lagune (client/admin) */
+  --color-driver-accent: #D68F63;
+  --color-driver-accent-light: #E3AE8A;
+  --color-driver-accent-bg: rgba(214, 143, 99, 0.08);
+  --color-driver-accent-glow: rgba(214, 143, 99, 0.18);
 
 
   /* Statuts mission (dark mode) */
@@ -184,6 +204,16 @@
   --color-mission-inprogress-bg: rgba(34, 197, 94, 0.08);
   --color-mission-done: #6B7280;
   --color-mission-done-bg: rgba(107, 114, 128, 0.07);
+
+  /* ── Tokens spécifiques dashboard ADMIN — sombre ── */
+  --color-dash-bg: #0D0D14;
+  --color-dash-sidebar: #09090F;
+  --color-dash-sidebar-border: rgba(255, 255, 255, 0.05);
+  --color-dash-content: #0D0D14;
+  --color-dash-card: #13131C;
+  --color-dash-nav-text: #6B6880;
+  --color-dash-nav-active-text: #F0EDE8;
+  --color-dash-nav-active-bg: rgba(31, 82, 69, 0.09);
 }
 
 [data-theme="dark"] {
@@ -191,7 +221,7 @@
   --bg-secondary: #1a1a24;
   --bg-card: #1e1e2e;
   --border: rgba(255, 255, 255, 0.07);
-  --accent: #9B1B30;
+  --accent: #1F5245;
   --accent-purple: #6c63ff;
   --text-primary: #F5F5F5;
   --text-secondary: #A0A0A0;
@@ -204,7 +234,7 @@
 
   --midnight: #0D0D0D;
   --obsidian: #141414;
-  --surface: #1A1A1A;
+  --surface: #12100E;
   --surface-2: #1F1F1F;
 
   /* Client dashboard tokens — dark mode */
@@ -212,13 +242,23 @@
   --color-client-card: #111620;
   --color-client-surface: #181E2A;
   --color-client-border: rgba(255, 255, 255, 0.06);
-  --color-client-accent: #9B1B30;
-  --color-client-accent-light: #C23B55;
-  --color-client-accent-bg: rgba(155, 27, 48, 0.08);
-  --color-client-accent-glow: rgba(155, 27, 48, 0.2);
+  --color-client-accent: #1F5245;
+  --color-client-accent-light: #3D7A67;
+  --color-client-accent-bg: rgba(31, 82, 69, 0.08);
+  --color-client-accent-glow: rgba(31, 82, 69, 0.2);
   --color-client-text-primary: #F9FAFB;
   --color-client-text-secondary: #9CA3AF;
-  --color-trip-inprogress-bg: rgba(155, 27, 48, 0.08);
+  --color-trip-inprogress-bg: rgba(31, 82, 69, 0.08);
+
+  /* ── Tokens spécifiques dashboard ADMIN — sombre ── */
+  --color-dash-bg: #0D0D14;
+  --color-dash-sidebar: #09090F;
+  --color-dash-sidebar-border: rgba(255, 255, 255, 0.05);
+  --color-dash-content: #0D0D14;
+  --color-dash-card: #13131C;
+  --color-dash-nav-text: #6B6880;
+  --color-dash-nav-active-text: #F0EDE8;
+  --color-dash-nav-active-bg: rgba(31, 82, 69, 0.09);
 }
 
 
@@ -352,13 +392,13 @@ html {
   --color-border: var(--border);
   --color-border-hover: var(--border);
 
-  /* ── Accent pourpre ── */
+  /* ── Accent Terre ── */
   --color-gold: var(--gold);
   --color-gold-light: var(--gold-light);
-  --color-gold-glow: rgba(155, 27, 48, 0.25);
-  --color-gold-subtle: rgba(155, 27, 48, 0.08);
+  --color-gold-glow: rgba(180, 100, 58, 0.25);
+  --color-gold-subtle: rgba(180, 100, 58, 0.08);
 
-  /* ── Accent ROUGE PASSION (principal) ── */
+  /* ── Accent LAGUNE (principal) ── */
   --color-accent: var(--color-accent);
   --color-accent-hover: var(--color-accent-hover);
   --color-accent-light: var(--color-accent-light);
@@ -373,44 +413,37 @@ html {
 
   /* ── États ── */
   --color-success: #22C55E;
-  --color-error: #E74C3C;
+  --color-error: #B8493C;
   --color-warning: #F39C12;
 
   /* ── Typographie ── */
-  --font-display: var(--font-lora), Georgia, serif;
-  --font-heading: var(--font-jakarta), system-ui, sans-serif;
-  --font-body: var(--font-jakarta), system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains), 'Courier New', monospace;
+  --font-display: var(--font-archivo), system-ui, sans-serif;
+  --font-heading: var(--font-archivo), system-ui, sans-serif;
+  --font-body: var(--font-archivo), system-ui, sans-serif;
+  --font-mono: var(--font-ibm-plex-mono), 'Courier New', monospace;
 
-  /* Tailwind font-family tokens */
-  --font-family-sans: var(--font-jakarta), system-ui, sans-serif;
-  --font-family-display: var(--font-lora), Georgia, serif;
-  --font-family-mono: var(--font-jetbrains), 'Courier New', monospace;
+  /* Tailwind v4 canonical font-family tokens (drive the `font-sans`/`font-mono` utilities) */
+  --font-sans: var(--font-archivo), system-ui, sans-serif;
+
+  /* Legacy aliases kept for any code still reading these var names directly */
+  --font-family-sans: var(--font-archivo), system-ui, sans-serif;
+  --font-family-display: var(--font-archivo), system-ui, sans-serif;
+  --font-family-mono: var(--font-ibm-plex-mono), 'Courier New', monospace;
 
   /* ── Existing tokens mapping ── */
   --color-crimson: var(--crimson);
 
-  /* ── Tokens spécifiques dashboard ── */
-  --color-dash-bg: #0D0D14;
-  /* Fond général dashboard */
-  --color-dash-sidebar: #09090F;
-  /* Sidebar encore plus sombre */
-  --color-dash-sidebar-border: rgba(255, 255, 255, 0.05);
-  --color-dash-content: #0D0D14;
-  /* Zone contenu */
-  --color-dash-card: #13131C;
-  /* Cards KPI et widgets */
+  /* ── Tokens spécifiques dashboard ADMIN ──
+     --color-dash-bg / -sidebar / -sidebar-border / -content / -card / -nav-text /
+     -nav-active-text / -nav-active-bg sont désormais définis dans :root / [data-theme="light"] /
+     .dark / [data-theme="dark"] (voir plus haut), sur le même modèle que --color-driver-*,
+     pour obtenir un vrai thème clair/sombre. Ne pas les redéclarer ici (auto-référence). */
   --color-dash-card-hover: #17172200;
   /* Hover card */
   --color-dash-row: #10101800;
   /* Ligne tableau */
-  --color-dash-row-hover: rgba(155, 27, 48, 0.04);
-
-  /* Sidebar navigation */
-  --color-dash-nav-text: #6B6880;
-  --color-dash-nav-active-text: #F0EDE8;
-  --color-dash-nav-active-bg: rgba(155, 27, 48, 0.09);
-  --color-dash-nav-active-border: #9B1B30;
+  --color-dash-row-hover: rgba(31, 82, 69, 0.04);
+  --color-dash-nav-active-border: var(--color-accent);
 
   /* Statuts réservations — semantic colors preservées */
   --color-status-pending: #F59E0B;
@@ -440,17 +473,17 @@ html {
   --color-client-surface: #181E2A;
   --color-client-border: rgba(255, 255, 255, 0.06);
 
-  /* Accent client : ROUGE POURPRE */
-  --color-client-accent: #9B1B30;
-  --color-client-accent-light: #C23B55;
-  --color-client-accent-bg: rgba(155, 27, 48, 0.08);
-  --color-client-accent-glow: rgba(155, 27, 48, 0.2);
+  /* Accent client : LAGUNE */
+  --color-client-accent: #1F5245;
+  --color-client-accent-light: #3D7A67;
+  --color-client-accent-bg: rgba(31, 82, 69, 0.08);
+  --color-client-accent-glow: rgba(31, 82, 69, 0.2);
 
   /* Statuts trajets client */
   --color-trip-upcoming: #3B82F6;
   --color-trip-upcoming-bg: rgba(59, 130, 246, 0.08);
-  --color-trip-inprogress: #9B1B30;
-  --color-trip-inprogress-bg: rgba(155, 27, 48, 0.08);
+  --color-trip-inprogress: #1F5245;
+  --color-trip-inprogress-bg: rgba(31, 82, 69, 0.08);
   --color-trip-completed: #6B7280;
   --color-trip-completed-bg: rgba(107, 114, 128, 0.07);
   --color-trip-cancelled: #EF4444;
@@ -666,11 +699,11 @@ body {
 
   0%,
   100% {
-    box-shadow: 0 0 25px rgba(155, 27, 48, 0.3);
+    box-shadow: 0 0 25px rgba(31, 82, 69, 0.3);
   }
 
   50% {
-    box-shadow: 0 0 55px rgba(155, 27, 48, 0.6);
+    box-shadow: 0 0 55px rgba(31, 82, 69, 0.6);
   }
 }
 
@@ -690,7 +723,7 @@ body {
 .btn-gold {
   position: relative;
   overflow: hidden;
-  background-color: var(--color-gold);
+  background-color: var(--color-accent);
   color: #FFFFFF;
   font-weight: 600;
   transition: background-color 0.2s, box-shadow 0.2s;
@@ -705,8 +738,8 @@ body {
 }
 
 .btn-gold:hover {
-  background-color: var(--color-gold-light);
-  box-shadow: 0 0 30px rgba(155, 27, 48, 0.4);
+  background-color: var(--color-accent-hover);
+  box-shadow: 0 0 30px rgba(31, 82, 69, 0.4);
 }
 
 .btn-gold:hover::after {
@@ -775,7 +808,7 @@ body {
 
 .lux-button:hover {
   background-color: var(--color-gold-light);
-  box-shadow: 0 0 30px rgba(155, 27, 48, 0.4);
+  box-shadow: 0 0 30px rgba(180, 100, 58, 0.4);
 }
 
 .lux-button:disabled {
@@ -865,7 +898,7 @@ body {
   body {
     background-color: var(--background);
     color: var(--foreground);
-    font-family: var(--font-jakarta), system-ui, sans-serif;
+    font-family: var(--font-archivo), system-ui, sans-serif;
   }
 
   /* Mobile-first optimizations */
@@ -1185,7 +1218,7 @@ select option {
 }
 
 select option:checked {
-  background-color: #9B1B30;
+  background-color: #1F5245;
   color: #FFFFFF;
 }
 

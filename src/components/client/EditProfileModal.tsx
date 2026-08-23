@@ -33,6 +33,7 @@ interface UserProfile {
   phone?: string
   address?: string
   isCompany?: boolean
+  companyType?: 'hotel' | 'entreprise' | 'ong' | null
   companyName?: string
   ninea?: string
   raisonSociale?: string
@@ -50,6 +51,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
     phone: "",
     address: "",
     isCompany: false,
+    companyType: "" as "" | "hotel" | "entreprise" | "ong",
     companyName: "",
     ninea: "",
     raisonSociale: "",
@@ -69,6 +71,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
         phone: initialData.phone || "",
         address: initialData.address || "",
         isCompany: !!initialData.isCompany,
+        companyType: initialData.companyType || "",
         companyName: initialData.companyName || "",
         ninea: initialData.ninea || "",
         raisonSociale: initialData.raisonSociale || "",
@@ -119,9 +122,9 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
       <div className="relative w-[95vw] max-w-3xl max-h-[90vh] overflow-hidden rounded-2xl sm:rounded-[2.5rem] bg-[#0F172A] border border-white/10 shadow-2xl flex flex-col animate-scaleIn">
 
         {/* Header Section */}
-        <div className="p-4 sm:p-6 lg:p-8 pb-4 shrink-0 border-b border-white/5 flex items-center justify-between bg-linear-to-r from-red-500/10 to-transparent">
+        <div className="p-4 sm:p-6 lg:p-8 pb-4 shrink-0 border-b border-white/5 flex items-center justify-between bg-linear-to-r from-(--color-client-accent)/10 to-transparent">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-red-500/20 flex items-center justify-center text-red-400 border border-red-500/20">
+            <div className="w-12 h-12 rounded-2xl bg-(--color-client-accent)/20 flex items-center justify-center text-(--color-client-accent) border border-(--color-client-accent)/20">
               <User size={28} weight="duotone" />
             </div>
             <div>
@@ -141,7 +144,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
 
           {/* Section: Identité de base */}
           <section className="space-y-6">
-            <div className="flex items-center gap-3 text-red-400/80 mb-2">
+            <div className="flex items-center gap-3 text-(--color-client-accent)/80 mb-2">
               <IdentificationCard size={20} weight="bold" />
               <h4 className="text-xs font-bold uppercase tracking-[0.2em]">Identité & Contact</h4>
             </div>
@@ -155,7 +158,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
                     type="text"
                     value={formData.name}
                     onChange={e => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:border-red-500/50 transition-all"
+                    className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:border-(--color-client-accent)/50 transition-all"
                     placeholder="Votre nom..."
                     required
                   />
@@ -170,7 +173,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
                     type="email"
                     value={formData.email}
                     onChange={e => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:border-red-500/50 transition-all"
+                    className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:border-(--color-client-accent)/50 transition-all"
                     placeholder="votre.email@exemple.com"
                     required
                   />
@@ -185,7 +188,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
                     type="tel"
                     value={formData.phone}
                     onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:border-red-500/50 transition-all"
+                    className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:border-(--color-client-accent)/50 transition-all"
                     placeholder="+221 77 000 00 00"
                   />
                 </div>
@@ -199,7 +202,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
                     type="text"
                     value={formData.address}
                     onChange={e => setFormData({ ...formData, address: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:border-red-500/50 transition-all"
+                    className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:border-(--color-client-accent)/50 transition-all"
                     placeholder="Dakar, Sénégal..."
                   />
                 </div>
@@ -214,7 +217,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
                 <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-3 text-center md:text-left">Photo de profil</p>
                 <UniversalProfilePhotoUpload
                   currentImage={formData.image}
-                  onImageUpdate={(url) => setFormData({ ...formData, image: url })}
+                  onImageUpdate={(url) => setFormData({ ...formData, image: url ?? "" })}
                   onSuccess={() => { }}
                   onError={(err) => setError(err)}
                 />
@@ -231,34 +234,57 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
 
           {/* Section: Entreprise Toggle */}
           <section className="space-y-8">
-            <div className="flex items-center justify-between p-6 rounded-3xl bg-red-500/5 border border-red-500/20">
+            <div className="flex items-center justify-between p-6 rounded-3xl bg-(--color-client-accent)/5 border border-(--color-client-accent)/20">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center text-red-400">
+                <div className="w-10 h-10 rounded-full bg-(--color-client-accent)/20 flex items-center justify-center text-(--color-client-accent)">
                   <Buildings size={20} weight="fill" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-white">Profil Entreprise</h4>
-                  <p className="text-xs text-white/40 mt-0.5">Activer pour ajouter des informations de facturation pro</p>
+                  <h4 className="text-sm font-bold text-white">Compte hôtel / entreprise / ONG</h4>
+                  <p className="text-xs text-white/40 mt-0.5">Activer pour accéder au portail entreprise (relevé mensuel) et ajouter vos informations de facturation</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, isCompany: !formData.isCompany })}
-                className={`relative w-14 h-8 rounded-full transition-all duration-300 ${formData.isCompany ? 'bg-red-500' : 'bg-white/10'}`}
+                className={`relative w-14 h-8 rounded-full transition-all duration-300 ${formData.isCompany ? 'bg-(--color-client-accent)' : 'bg-white/10'}`}
               >
                 <div className={`absolute top-1 left-1 w-6 h-6 rounded-full bg-white shadow-lg transition-transform duration-300 ${formData.isCompany ? 'translate-x-6' : 'translate-x-0'}`} />
               </button>
             </div>
 
             {formData.isCompany && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 animate-fadeIn">
+              <div className="space-y-6 animate-fadeIn">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 ml-1">Type d'établissement</label>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { value: 'hotel', label: 'Hôtel' },
+                      { value: 'entreprise', label: 'Entreprise' },
+                      { value: 'ong', label: 'ONG / mission' },
+                    ].map((opt) => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, companyType: opt.value as typeof formData.companyType })}
+                        className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors border ${formData.companyType === opt.value
+                          ? 'bg-(--color-client-accent) border-(--color-client-accent) text-white'
+                          : 'bg-white/5 border-white/10 text-white/70 hover:border-(--color-client-accent)/50'
+                          }`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 ml-1">Nom de l'entreprise</label>
                   <input
                     type="text"
                     value={formData.companyName}
                     onChange={e => setFormData({ ...formData, companyName: e.target.value })}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 transition-all"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-(--color-client-accent)/50 transition-all"
                     placeholder="E Corp..."
                   />
                 </div>
@@ -268,7 +294,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
                     type="text"
                     value={formData.ninea}
                     onChange={e => setFormData({ ...formData, ninea: e.target.value })}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 transition-all"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-(--color-client-accent)/50 transition-all"
                     placeholder="XX-XXXXX-X..."
                   />
                 </div>
@@ -278,7 +304,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
                     type="text"
                     value={formData.raisonSociale}
                     onChange={e => setFormData({ ...formData, raisonSociale: e.target.value })}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 transition-all"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-(--color-client-accent)/50 transition-all"
                     placeholder="SARL, SA..."
                   />
                 </div>
@@ -288,7 +314,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
                     type="text"
                     value={formData.bp}
                     onChange={e => setFormData({ ...formData, bp: e.target.value })}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 transition-all"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-(--color-client-accent)/50 transition-all"
                     placeholder="BP 00000..."
                   />
                 </div>
@@ -298,7 +324,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
                     type="text"
                     value={formData.companyAddress}
                     onChange={e => setFormData({ ...formData, companyAddress: e.target.value })}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 transition-all"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-(--color-client-accent)/50 transition-all"
                     placeholder="Siège social..."
                   />
                 </div>
@@ -308,9 +334,10 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
                     type="tel"
                     value={formData.companyPhone}
                     onChange={e => setFormData({ ...formData, companyPhone: e.target.value })}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 transition-all"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-(--color-client-accent)/50 transition-all"
                     placeholder="+221 33 000 00 00"
                   />
+                </div>
                 </div>
               </div>
             )}
@@ -337,7 +364,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
           <button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="flex-[1.5] px-4 sm:px-6 py-3 sm:py-4 rounded-2xl bg-red-600 text-white font-bold hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-3 shadow-lg shadow-red-500/20 min-h-[44px]"
+            className="flex-[1.5] px-4 sm:px-6 py-3 sm:py-4 rounded-2xl bg-(--color-client-accent) text-white font-bold hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-3 shadow-lg shadow-(--color-client-accent)/20 min-h-[44px]"
           >
             {isSubmitting ? (
               <div className="w-5 h-5 border-2 border-[#0F172A] border-t-transparent rounded-full animate-spin" />

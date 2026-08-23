@@ -71,9 +71,9 @@ export async function POST() {
       success: true,
       message: 'Migration des rôles personnalisés terminée avec succès',
       data: {
-        rolesCreated: parseInt(rolesCount.rows[0].count as string),
-        permissionsMigrated: parseInt(permissionsCount.rows[0].count as string),
-        roles: roles.rows
+        rolesCreated: parseInt(rolesCount[0].count as string),
+        permissionsMigrated: parseInt(permissionsCount[0].count as string),
+        roles: roles
       }
     })
 

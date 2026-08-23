@@ -4,6 +4,7 @@ export const revalidate = 0;
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
+import type { Session } from "next-auth";
 import { authOptions } from '@/lib/auth'
 import { db } from '@/db'
 import { users, permissionsTable, customRolesTable, rolePermissionsTable } from '@/schema'
@@ -13,7 +14,7 @@ export async function GET() {
   try {
     console.log('👑 GET /api/admin/roles - Début de la requête')
     
-    const session = await getServerSession(authOptions)
+    const session = (await getServerSession(authOptions)) as Session | null;
     const userRole = (session?.user as any)?.role
     console.log('🔐 Session:', session ? `User: ${(session.user as any)?.email}, Role: ${userRole}` : 'Non authentifié')
     
@@ -265,7 +266,7 @@ async function getLegacyRoles() {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = (await getServerSession(authOptions)) as Session | null;
     const userRole = (session?.user as any)?.role
     
     // Seuls les admins peuvent gérer les rôles (matrice de permissions)

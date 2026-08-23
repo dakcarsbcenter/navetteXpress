@@ -1,63 +1,63 @@
-// Palette de couleurs optimisée pour NavetteXpress
+// Palette de couleurs NavetteXpress — identité "Corridor"
 export const colors = {
-  // Couleurs principales — ROUGE POURPRE
+  // Couleurs principales — LAGUNE
   primary: {
-    main: '#9B1B30',      // Rouge pourpre principal
-    hover: '#821528',     // Rouge pourpre hover
-    light: '#C23B55',     // Rouge pourpre clair
-    dark: '#7A1228',      // Rouge pourpre sombre
+    main: '#1F5245',      // Lagune principale
+    hover: '#19433B',     // Lagune hover
+    light: '#3D7A67',     // Lagune claire
+    dark: '#12362D',      // Lagune sombre
   },
 
-  // Identité pourpre (Landing Page)
+  // Accent ponctuel (Landing Page)
   gold: {
-    main: '#9B1B30',      // Rouge pourpre principal
-    hover: '#821528',     // Rouge pourpre hover
-    light: '#C23B55',     // Rouge pourpre clair
-    dark: '#7A1228',      // Rouge pourpre sombre
+    main: '#B4643A',      // Terre brûlée
+    hover: '#96502D',     // Terre hover
+    light: '#C98761',     // Terre claire
+    dark: '#8A4A2C',      // Terre sombre
   },
-  
-  // Couleur secondaire bleu (Driver Dashboard)
+
+  // Couleur secondaire — accent chauffeur (famille Terre, distincte de la Lagune)
   secondary: {
-    main: '#3B82F6',      // Bleu électrique
-    hover: '#2563EB',     // Bleu hover
-    light: '#60A5FA',     // Bleu clair
-    dark: '#1E40AF',      // Bleu sombre
+    main: '#B4643A',       // Terre chauffeur
+    hover: '#96502D',      // Terre hover
+    light: '#C98761',      // Terre claire
+    dark: '#8A4A2C',       // Terre sombre
   },
-  
-  // Couleurs neutres améliorées
+
+  // Couleurs neutres
   neutral: {
-    charcoal: '#1E293B',    // Charbon principal
-    charcoalLight: '#334155', // Charbon léger
-    gray: '#64748B',        // Gris moderne
-    whiteOff: '#FAFBFC',    // Blanc cassé
-    grayVeryLight: '#F1F5F9', // Gris très clair
-    grayLight: '#E2E8F0',   // Gris léger
+    charcoal: '#12100E',     // Encre principale
+    charcoalLight: '#3d3a35', // Texte secondaire
+    gray: '#6E6A63',         // Gris-brun muet (libellés mono)
+    whiteOff: '#F7F3EC',     // Craie
+    grayVeryLight: '#F2EEE4', // Craie légèrement ombrée
+    grayLight: '#E2DACD',    // Bordure claire
   },
-  
+
   // Couleurs d'état — sémantiques préservées
   status: {
     success: '#22C55E',     // Succès (vert sémantique)
     warning: '#F59E0B',     // Attention/En attente (or)
-    error: '#EF4444',       // Erreur
+    error: '#B8493C',       // Erreur (brique, ton adouci)
     info: '#3B82F6',        // Information (bleu)
     online: '#22C55E',      // En ligne (chevauche success)
     offline: '#94A3B8',     // Hors ligne
   },
-  
+
   // Couleurs thématiques transport
   transport: {
     taxi: '#FCD34D',        // Jaune taxi
-    accent: '#9B1B30',      // Accent transport (rouge pourpre)
-    sunset: '#821528',      // Sunset Dakar (rouge pourpre sombre)
+    accent: '#1F5245',      // Accent transport (lagune)
+    sunset: '#B4643A',      // Terre brûlée (accent chaud)
   },
 
-  // Tokens d'accent pourpre
+  // Tokens d'accent Lagune
   accent: {
-    main: '#9B1B30',
-    hover: '#821528',
-    light: '#C23B55',
-    subtle: 'rgba(155, 27, 48, 0.12)',
-    border: 'rgba(155, 27, 48, 0.35)',
+    main: '#1F5245',
+    hover: '#19433B',
+    light: '#3D7A67',
+    subtle: 'rgba(31, 82, 69, 0.12)',
+    border: 'rgba(31, 82, 69, 0.35)',
   }
 } as const;
 
@@ -66,12 +66,12 @@ export const colorClasses = {
   // Boutons primaires
   btnPrimary: `bg-[${colors.primary.main}] hover:bg-[${colors.primary.hover}] focus:ring-[${colors.primary.main}]`,
   btnSecondary: `bg-[${colors.secondary.main}] hover:bg-[${colors.secondary.hover}] focus:ring-[${colors.secondary.main}]`,
-  
+
   // Backgrounds
   bgPrimary: `bg-[${colors.primary.main}]`,
   bgSecondary: `bg-[${colors.secondary.main}]`,
   bgNeutral: `bg-[${colors.neutral.charcoal}]`,
-  
+
   // Text
   textPrimary: `text-[${colors.primary.main}]`,
   textSecondary: `text-[${colors.secondary.main}]`,

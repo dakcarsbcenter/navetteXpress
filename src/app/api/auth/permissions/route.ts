@@ -4,6 +4,7 @@ export const revalidate = 0;
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
+import type { Session } from "next-auth";
 import { authOptions } from '@/lib/auth'
 import { db } from '@/db'
 import { customRolesTable, rolePermissionsTable, permissionsTable } from '@/schema'
@@ -11,7 +12,7 @@ import { eq, and, sql } from 'drizzle-orm'
 
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions)
+    const session = (await getServerSession(authOptions)) as Session | null;
     
     if (!session?.user) {
       return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })

@@ -4,6 +4,7 @@ export const revalidate = 0;
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
+import type { Session } from "next-auth";
 import { authOptions } from '@/lib/auth'
 import { db } from '@/db'
 import { quotes, invoicesTable, bookingsTable } from '@/schema'
@@ -13,7 +14,7 @@ import { sendWithRetry } from '@/lib/notification-queue'
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = (await getServerSession(authOptions)) as Session | null;
     
     if (!session?.user?.email) {
       return NextResponse.json({ success: false, error: 'Non authentifié' }, { status: 401 })

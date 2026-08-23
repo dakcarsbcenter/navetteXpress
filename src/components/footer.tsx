@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Phone, EnvelopeSimple, MapPin, InstagramLogo, FacebookLogo, LinkedinLogo } from "@phosphor-icons/react";
+import { Phone, MapPin, InstagramLogo, FacebookLogo, LinkedinLogo } from "@phosphor-icons/react";
 
 export function Footer() {
     const currentYear = new Date().getFullYear();
@@ -13,34 +13,45 @@ export function Footer() {
         { label: "Événements & VIP", href: "/services" },
     ];
 
+    const societe = [
+        { label: "Hôtels & entreprises", href: "/entreprises" },
+        { label: "Diaspora", href: "/diaspora" },
+        { label: "Devenir partenaire", href: "/devenir-partenaire" },
+        { label: "Avis clients", href: "/temoignages" },
+    ];
+
     const socialLinks = [
-        { icon: <FacebookLogo size={18} weight="regular" />, href: "https://facebook.com/navettexpresssenegal", label: "Facebook" },
-        { icon: <InstagramLogo size={18} weight="regular" />, href: "https://instagram.com/navettexpresssenegal", label: "Instagram" },
-        { icon: <LinkedinLogo size={18} weight="regular" />, href: "https://linkedin.com/company/navettexpresssenegal", label: "LinkedIn" },
+        { icon: <FacebookLogo size={16} weight="regular" />, href: "https://facebook.com/navettexpresssenegal", label: "Facebook" },
+        { icon: <InstagramLogo size={16} weight="regular" />, href: "https://instagram.com/navettexpresssenegal", label: "Instagram" },
+        { icon: <LinkedinLogo size={16} weight="regular" />, href: "https://linkedin.com/company/navettexpresssenegal", label: "LinkedIn" },
     ];
 
     return (
-        <footer className="bg-surface-1 pt-20 pb-10 border-t border-border font-sans">
+        <footer className="bg-foreground pt-16 pb-8 font-sans">
             <div className="max-w-7xl mx-auto px-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr] gap-12 mb-14">
 
-                    {/* Brand Column */}
-                    <div className="space-y-6">
-                        <Link href="/" className="flex items-center gap-3 group">
-                            <div className="w-10 h-10 bg-gold rounded-lg flex items-center justify-center transition-transform group-hover:rotate-12 shrink-0">
-                                <span className="text-background font-bold text-xl">NX</span>
+                    {/* Brand + Contact Column */}
+                    <div className="flex flex-col gap-4">
+                        <Link href="/" className="flex items-center gap-3">
+                            <div className="w-9 h-9 bg-background rounded flex items-center justify-center shrink-0">
+                                <span className="text-foreground font-bold text-base font-[family-name:var(--font-archivo)]">NX</span>
                             </div>
-                            <span className="text-foreground font-display text-2xl tracking-wide">NAVETTE XPRESS</span>
+                            <span className="text-background font-semibold text-lg tracking-tight">Navette Xpress</span>
                         </Link>
-                        <p className="text-text-secondary text-sm leading-relaxed max-w-xs">
-                            L&apos;excellence de la mobilité privée au Sénégal. Service premium de transfert aéroport, navette urbaine et mise à disposition.
+
+                        <p className="font-[family-name:var(--font-ibm-plex-mono)] text-xs leading-[1.7] tracking-[0.02em] text-[#6b645c] uppercase max-w-xs">
+                            Dakar, Sénégal<br />
+                            +221 78 465 13 02<br />
+                            contact@navettexpress.com
                         </p>
-                        <div className="flex gap-4">
+
+                        <div className="flex gap-3 pt-1">
                             {socialLinks.map((social, i) => (
                                 <a
                                     key={i}
                                     href={social.href}
-                                    className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-text-secondary hover:text-gold hover:border-gold transition-all"
+                                    className="w-9 h-9 rounded border border-[#2e2b27] flex items-center justify-center text-[#9a938a] hover:text-gold hover:border-gold transition-colors"
                                     aria-label={social.label}
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -51,13 +62,15 @@ export function Footer() {
                         </div>
                     </div>
 
-                    {/* Services Column */}
+                    {/* Trajets Column */}
                     <div>
-                        <h3 className="text-foreground font-display text-lg mb-6 tracking-wide">Nos Services</h3>
-                        <ul className="space-y-4">
+                        <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#6b645c] mb-4">
+                            Trajets
+                        </h3>
+                        <ul className="space-y-3">
                             {services.map((service, i) => (
                                 <li key={i}>
-                                    <Link href={service.href} className="text-text-secondary hover:text-gold text-sm transition-colors">
+                                    <Link href={service.href} className="text-[#9a938a] hover:text-gold text-sm transition-colors">
                                         {service.label}
                                     </Link>
                                 </li>
@@ -65,75 +78,91 @@ export function Footer() {
                         </ul>
                     </div>
 
-                    {/* Zones SEO Column */}
+                    {/* Société Column */}
                     <div>
-                        <h3 className="text-foreground font-display text-lg mb-6 tracking-wide">Zones Desservies</h3>
-                        <div className="flex flex-wrap gap-x-1 gap-y-2">
-                            {[
-                                { name: "Dakar Plateau", slug: "plateau" },
-                                { name: "Almadies", slug: "almadies" },
-                                { name: "Ngor", slug: "ngor" },
-                                { name: "Mermoz", slug: "mermoz" },
-                                { name: "Sacré-Cœur", slug: "sacre-coeur" },
-                                { name: "Yoff", slug: "yoff" },
-                            ].map((zone, i, arr) => (
-                                <span key={i} className="text-text-secondary text-sm">
-                                    <Link
-                                        href={`/zones/${zone.slug}`}
-                                        className="hover:text-gold transition-colors"
-                                    >
-                                        {zone.name}
+                        <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#6b645c] mb-4">
+                            Société
+                        </h3>
+                        <ul className="space-y-3">
+                            {societe.map((item, i) => (
+                                <li key={i}>
+                                    <Link href={item.href} className="text-[#9a938a] hover:text-gold text-sm transition-colors">
+                                        {item.label}
                                     </Link>
-                                    {i < arr.length - 1 && <span className="text-border mx-1">•</span>}
-                                </span>
+                                </li>
                             ))}
-                        </div>
-                        <div className="mt-8">
-                            <h3 className="text-foreground font-display text-sm mb-4 tracking-wide uppercase">Support 24/7</h3>
-                            <a href="https://wa.me/221781319191" className="text-gold font-bold text-lg hover:underline transition-all">
-                                +221 78 131 91 91
-                            </a>
-                        </div>
+                            <li>
+                                <Link href="/cgv" className="text-[#9a938a] hover:text-gold text-sm transition-colors">
+                                    Conditions
+                                </Link>
+                            </li>
+                        </ul>
                     </div>
 
-                    {/* Contact Column */}
+                    {/* Langue Column */}
                     <div>
-                        <h3 className="text-foreground font-display text-lg mb-6 tracking-wide">Contact</h3>
-                        <ul className="space-y-4">
-                            <li className="flex items-center gap-3 text-text-secondary text-sm">
-                                <MapPin size={16} weight="light" className="text-gold shrink-0" />
-                                <span>Dakar, Sénégal</span>
-                            </li>
-                            <li className="flex items-center gap-3 text-text-secondary text-sm">
-                                <Phone size={16} weight="light" className="text-gold shrink-0" />
-                                <span>+221 78 131 91 91</span>
-                            </li>
-                            <li className="flex items-center gap-3 text-text-secondary text-sm">
-                                <EnvelopeSimple size={16} weight="light" className="text-gold shrink-0" />
-                                <span>contact@navettexpress.com</span>
+                        <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#6b645c] mb-4">
+                            Langue
+                        </h3>
+                        <ul className="space-y-3">
+                            <li className="text-background text-sm">Français</li>
+                            <li>
+                                <Link href="/en" className="text-[#9a938a] hover:text-gold text-sm transition-colors">
+                                    English
+                                </Link>
                             </li>
                         </ul>
 
-                        {/* Payment methods */}
-                        <div className="mt-8 p-4 rounded-xl bg-surface-2/80 border border-border">
-                            <p className="text-xs text-text-muted mb-3 uppercase tracking-widest font-medium">Paiements Acceptés</p>
-                            <div className="flex flex-wrap gap-2">
-                                {["Wave", "Orange Money", "Virement"].map((method) => (
-                                    <span
-                                        key={method}
-                                        className="px-2 py-1 rounded-md bg-background border border-border text-foreground text-[10px] font-bold tracking-wide"
-                                    >
-                                        {method}
-                                    </span>
-                                ))}
-                            </div>
+                        <div className="mt-8">
+                            <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#6b645c] mb-3">
+                                Support 24/7
+                            </h3>
+                            <a href="https://wa.me/221784651302" className="flex items-center gap-2 text-gold text-sm font-semibold hover:underline">
+                                <Phone size={14} weight="fill" />
+                                +221 78 465 13 02
+                            </a>
                         </div>
                     </div>
                 </div>
 
+                {/* Zones + Contact strip */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 py-6 border-t border-[#2e2b27]">
+                    <div className="flex flex-wrap gap-x-1 gap-y-2">
+                        {[
+                            { name: "Dakar Plateau", slug: "plateau" },
+                            { name: "Almadies", slug: "almadies" },
+                            { name: "Ngor", slug: "ngor" },
+                            { name: "Mermoz", slug: "mermoz" },
+                            { name: "Sacré-Cœur", slug: "sacre-coeur" },
+                            { name: "Yoff", slug: "yoff" },
+                        ].map((zone, i, arr) => (
+                            <span key={i} className="text-[#6b645c] text-xs">
+                                <Link href={`/zones/${zone.slug}`} className="hover:text-gold transition-colors">
+                                    {zone.name}
+                                </Link>
+                                {i < arr.length - 1 && <span className="text-[#2e2b27] mx-1.5">·</span>}
+                            </span>
+                        ))}
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                        {["Wave", "Orange Money", "Virement"].map((method) => (
+                            <span
+                                key={method}
+                                className="px-2 py-1 rounded border border-[#2e2b27] text-[#9a938a] text-[10px] font-semibold tracking-[0.06em] uppercase"
+                            >
+                                {method}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+
                 {/* Bottom bar */}
-                <div className="pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-text-muted">
-                    <p>© {currentYear} Navette Xpress Sénégal. Tous droits réservés.</p>
+                <div className="pt-6 border-t border-[#2e2b27] flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-[#6b645c]">
+                    <p className="flex items-center gap-2">
+                        <MapPin size={12} weight="light" />
+                        © {currentYear} Navette Xpress Sénégal. Tous droits réservés.
+                    </p>
                     <div className="flex gap-6">
                         <Link href="/cgv" className="hover:text-gold transition-colors">CGV</Link>
                         <Link href="/mentions-legales" className="hover:text-gold transition-colors">Mentions Légales</Link>

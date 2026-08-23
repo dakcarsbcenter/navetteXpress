@@ -90,7 +90,7 @@ export default function InteractiveMap({
                   {markerDescription}
                 </p>
                 <div className="space-y-1 text-sm text-slate-500">
-                  <p>📞 +221 78 131 91 91</p>
+                  <p>📞 +221 78 465 13 02</p>
                   <p>📧 contact@navettexpress.com</p>
                   <p>🕒 Service 24h/24, 7j/7</p>
                 </div>

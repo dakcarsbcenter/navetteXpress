@@ -8,7 +8,6 @@ import { schemaBreadcrumb } from "@/lib/schema";
 import Link from "next/link";
 import { MapPin, ShieldCheck, Clock } from "@phosphor-icons/react";
 import Image from "next/image";
-import { Link as ScrollLink } from "react-scroll";
 
 export default function ZoneClient({ t, breadcrumbs }: { t: any, breadcrumbs: any }) {
     return (

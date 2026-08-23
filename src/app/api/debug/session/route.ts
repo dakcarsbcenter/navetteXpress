@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
+import type { Session } from "next-auth";
 import { authOptions } from '@/lib/auth'
 
 export async function GET() {
   try {
     console.log('🔍 [Debug Session] Récupération de la session...')
     
-    const session = await getServerSession(authOptions)
+    const session = (await getServerSession(authOptions)) as Session | null;
     
     console.log('📋 [Debug Session] Session:', JSON.stringify(session, null, 2))
     

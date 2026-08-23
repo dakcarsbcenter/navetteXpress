@@ -1,14 +1,21 @@
+import type { Metadata } from 'next'
+import { Navigation } from '@/components/navigation'
+import { Footer } from '@/components/footer'
 import { QuoteRequestForm } from '@/components/client/QuoteRequestForm'
+
+export const metadata: Metadata = {
+  title: 'Demander un devis | Navette Xpress',
+  description: 'Demandez votre devis personnalisé pour vos besoins de transport avec Navette Xpress. Service rapide et professionnel.',
+}
 
 export default function QuoteRequestPage() {
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 py-8">
-      <QuoteRequestForm />
+    <div className="min-h-screen bg-background">
+      <Navigation variant="solid" />
+      <div className="pt-28 pb-16">
+        <QuoteRequestForm />
+      </div>
+      <Footer />
     </div>
   )
-}
-
-export const metadata = {
-  title: 'Demander un devis - NavetteXpress',
-  description: 'Demandez votre devis personnalisé pour vos besoins de transport avec NavetteXpress. Service rapide et professionnel.',
 }

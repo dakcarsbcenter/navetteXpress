@@ -12,7 +12,7 @@ import { eq, and } from 'drizzle-orm';
 // PATCH - Mettre à jour un rapport (seulement si status === 'open')
 export async function PATCH(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const session = await getServerSession(authOptions) as { user?: { id?: string; role?: string } } | null;
@@ -20,7 +20,8 @@ export async function PATCH(
             return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
         }
 
-        const reportId = parseInt(params.id);
+        const { id } = await params;
+        const reportId = parseInt(id);
         const userId = session.user.id as string;
         const body = await request.json();
 
@@ -58,7 +59,7 @@ export async function PATCH(
 // DELETE - Supprimer un rapport (seulement si status === 'open')
 export async function DELETE(
     _request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const session = await getServerSession(authOptions) as { user?: { id?: string; role?: string } } | null;
@@ -66,7 +67,8 @@ export async function DELETE(
             return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
         }
 
-        const reportId = parseInt(params.id);
+        const { id } = await params;
+        const reportId = parseInt(id);
         const userId = session.user.id as string;
 
         const result = await db

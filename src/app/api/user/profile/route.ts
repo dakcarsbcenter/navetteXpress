@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
+import type { Session } from "next-auth";
 import { authOptions } from '@/lib/auth';
 import { db } from '@/db';
 import { users } from '@/schema';
@@ -8,7 +9,7 @@ import { eq } from 'drizzle-orm';
 // PATCH - Mettre à jour le profil utilisateur
 export async function PATCH(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = (await getServerSession(authOptions)) as Session | null;
 
     if (!session || !session.user?.email) {
       return NextResponse.json(
@@ -82,7 +83,7 @@ export async function PATCH(request: NextRequest) {
 // GET - Récupérer le profil utilisateur
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = (await getServerSession(authOptions)) as Session | null;
 
     if (!session || !session.user?.email) {
       return NextResponse.json(

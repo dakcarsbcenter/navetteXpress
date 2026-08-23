@@ -7,7 +7,7 @@ import { db } from '@/db'
 import { users } from '@/schema'
 import { and, eq, gt } from 'drizzle-orm'
 import bcrypt from 'bcryptjs'
-import { sendPasswordChangedEmail } from '@/lib/email'
+import { sendWithRetry } from '@/lib/notification-queue'
 
 export async function POST(request: NextRequest) {
   try {
@@ -53,16 +53,11 @@ export async function POST(request: NextRequest) {
       })
       .where(eq(users.id, user.id))
 
-    // Envoyer un email de confirmation
-    const emailResult = await sendPasswordChangedEmail(
+    // Envoyer un email de confirmation (retry automatique en cas d'échec)
+    await sendWithRetry('email', 'email.sendPasswordChangedEmail', [
       user.email,
       user.name || 'Utilisateur'
-    )
-
-    if (!emailResult.success) {
-      console.error("❌ Erreur lors de l'envoi de l'email de confirmation:", emailResult.error)
-      // On continue quand même, le mot de passe a été changé
-    }
+    ])
 
     return NextResponse.json({ success: true, message: 'Mot de passe réinitialisé avec succès' })
   } catch (error) {

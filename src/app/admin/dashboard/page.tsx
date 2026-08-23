@@ -5,7 +5,9 @@ import { useSession, signOut } from "next-auth/react"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { usePermissions } from "@/hooks/usePermissions"
-import { HouseLine, TrendUp, Users as PhosphorUsers, Van, CalendarBlank, Money, Receipt, LockSimple, Star, MapPin, Megaphone, Bell as PhosphorBell, Robot, SignOut as PhosphorSignOut, Plus as PhosphorPlus, List as PhosphorList, BellSimple } from '@phosphor-icons/react'
+import { HouseLine, TrendUp, Users as PhosphorUsers, Van, CalendarBlank, Money, Receipt, LockSimple, Star, MapPin, Megaphone, Bell as PhosphorBell, Robot } from '@phosphor-icons/react'
+import { AdminSidebar, type AdminTabGroup } from "@/components/admin/AdminSidebar"
+import { AdminTopbar } from "@/components/admin/AdminTopbar"
 
 // Composants pour chaque section
 import { VehiclesManagementRedesigned } from "@/components/admin/VehiclesManagementRedesigned"
@@ -19,7 +21,7 @@ import AdminGlobalStats from "@/components/admin/AdminGlobalStats"
 import { ModernAdminDashboard } from "@/components/admin/ModernAdminDashboard"
 import InvoicesManagementRedesigned from "@/components/admin/InvoicesManagementRedesigned"
 import { LocationsManagementRedesigned } from "@/components/admin/LocationsManagementRedesigned"
-import PublicitesClient from "@/components/admin/ads/PublicitesClient"
+import PublicitesClient, { type Ad } from "@/components/admin/ads/PublicitesClient"
 import { ServicesManager } from "@/components/admin/ServicesManager"
 import { AgentAdminPanel } from "@/components/admin/AgentAdminPanel"
 
@@ -41,7 +43,6 @@ export default function AdminDashboard() {
     }
   }, []);
   const [isLoading, setIsLoading] = useState(true)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [pendingBookingsCount, setPendingBookingsCount] = useState(0)
   const [openUserCreateTrigger, setOpenUserCreateTrigger] = useState(0)
 
@@ -54,7 +55,7 @@ export default function AdminDashboard() {
           const data = await response.json()
           if (data.success && Array.isArray(data.data)) {
             // Compter les réservations avec le statut "pending" (En attente)
-            const pendingCount = data.data.filter((booking: any) =>
+            const pendingCount = data.data.filter((booking: { booking?: { status?: string } }) =>
               booking.booking?.status === 'pending'
             ).length
             setPendingBookingsCount(pendingCount)
@@ -137,7 +138,7 @@ export default function AdminDashboard() {
     // Si on charge encore les permissions, montrer tous les onglets pour éviter le flicker
     if (permissionsLoading) return true
 
-    const userRole = (session?.user as any)?.role
+    const userRole = (session?.user as { role?: string } | undefined)?.role
 
     // Les onglets adminOnly sont uniquement pour les admins
     if (tab.adminOnly && userRole !== 'admin') return false
@@ -156,6 +157,13 @@ export default function AdminDashboard() {
 
     return false
   })
+
+  const navGroups: AdminTabGroup[] = [
+    { label: 'Principal', tabs: tabs.filter(t => ['modern', 'stats', 'bookings'].includes(t.id)) },
+    { label: 'Gestion', tabs: tabs.filter(t => ['users', 'vehicles'].includes(t.id)) },
+    { label: 'Finance & Admin', tabs: tabs.filter(t => ['quotes', 'invoices', 'ads', 'permissions', 'reviews', 'locations', 'services'].includes(t.id)) },
+    { label: 'Assistant IA', tabs: tabs.filter(t => ['agent'].includes(t.id)) },
+  ].filter(group => group.tabs.length > 0)
 
   const renderContent = () => {
     switch (activeTab) {
@@ -192,7 +200,7 @@ export default function AdminDashboard() {
 
   // Wrapper for Ads Component to fetch data client-side since page.tsx is a client component
   const AdsManagementWrapper = () => {
-    const [ads, setAds] = useState<any[]>([])
+    const [ads, setAds] = useState<Ad[]>([])
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -228,264 +236,35 @@ export default function AdminDashboard() {
     return <PublicitesClient ads={ads} />
   }
 
-  // Affichage avec sidebar redessinée "Command Center"
+  // Affichage avec sidebar/topbar unifiées (même gabarit que client/chauffeur)
   return (
-    <div className="flex h-screen overflow-hidden"
-      style={{ backgroundColor: 'var(--color-dash-bg)', fontFamily: 'var(--font-body)' }}>
+    <div className="flex h-screen overflow-hidden bg-(--color-dash-bg)" style={{ fontFamily: 'var(--font-body)' }}>
+      <AdminSidebar
+        groups={navGroups}
+        activeTab={activeTab}
+        onTabChange={(id) => setActiveTab(id as TabType)}
+        pendingBookingsCount={pendingBookingsCount}
+        userName={session.user.name}
+        userEmail={session.user.email}
+      />
 
-      {/* SIDEBAR */}
-      <aside
-        className="hidden lg:flex w-[260px] flex-col shrink-0 overflow-y-auto dash-scroll"
-        style={{
-          backgroundColor: 'var(--color-dash-sidebar)',
-          borderRight: '1px solid var(--color-dash-sidebar-border)',
-        }}>
-
-        {/* ── LOGO ── */}
-        <div className="px-6 py-5 flex items-center gap-3"
-          style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-          <div className="w-8 h-8 bg-gold rounded flex items-center justify-center shrink-0"
-            style={{ backgroundColor: 'var(--color-gold)' }}>
-            <svg className="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
-              <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z" />
-            </svg>
-          </div>
-          <div>
-            <p className="text-sm font-semibold"
-              style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-body)' }}>
-              Navette <span>Xpress</span>
-            </p>
-            {/* Indicateur système opérationnel */}
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="status-pulse w-1.5 h-1.5 rounded-full block"
-                style={{ backgroundColor: '#10B981' }} />
-              <span className="text-[10px]" style={{ color: 'var(--color-text-muted)' }}>
-                Système opérationnel
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* ── NAVIGATION ── */}
-        <nav className="flex-1 px-3 py-4 space-y-1">
-          <p className="px-3 mb-2 text-[10px] tracking-[0.15em] uppercase font-bold"
-            style={{ color: 'var(--color-text-muted)' }}>
-            Principal
-          </p>
-
-          {tabs.filter(t => ['modern', 'stats', 'bookings'].includes(t.id)).map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 relative"
-              style={activeTab === tab.id ? {
-                backgroundColor: 'var(--color-dash-nav-active-bg)',
-                color: 'var(--color-dash-nav-active-text)',
-                borderLeft: '2px solid var(--color-dash-nav-active-border)',
-                borderRadius: '0 12px 12px 0'
-              } : {
-                color: 'var(--color-dash-nav-text)'
-              }}
-            >
-              <tab.Icon size={16} weight={activeTab === tab.id ? "fill" : "regular"} />
-              <span>{tab.label}</span>
-              {tab.id === 'bookings' && pendingBookingsCount > 0 && (
-                <span className="ml-auto text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                  style={{ backgroundColor: 'var(--color-gold)', color: '#fff' }}>
-                  {pendingBookingsCount}
-                </span>
-              )}
-            </button>
-          ))}
-
-          <p className="px-3 pt-4 pb-2 text-[10px] tracking-[0.15em] uppercase font-bold"
-            style={{ color: 'var(--color-text-muted)' }}>
-            Gestion
-          </p>
-          {tabs.filter(t => ['users', 'vehicles'].includes(t.id)).map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 relative"
-              style={activeTab === tab.id ? {
-                backgroundColor: 'var(--color-dash-nav-active-bg)',
-                color: 'var(--color-dash-nav-active-text)',
-                borderLeft: '2px solid var(--color-dash-nav-active-border)',
-                borderRadius: '0 12px 12px 0'
-              } : {
-                color: 'var(--color-dash-nav-text)'
-              }}
-            >
-              <tab.Icon size={16} weight={activeTab === tab.id ? "fill" : "regular"} />
-              <span>{tab.label}</span>
-            </button>
-          ))}
-
-          <p className="px-3 pt-4 pb-2 text-[10px] tracking-[0.15em] uppercase font-bold"
-            style={{ color: 'var(--color-text-muted)' }}>
-            Finance & Admin
-          </p>
-          {tabs.filter(t => ['quotes', 'invoices', 'ads', 'permissions', 'reviews', 'locations', 'services'].includes(t.id)).map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 relative"
-              style={activeTab === tab.id ? {
-                backgroundColor: 'var(--color-dash-nav-active-bg)',
-                color: 'var(--color-dash-nav-active-text)',
-                borderLeft: '2px solid var(--color-dash-nav-active-border)',
-                borderRadius: '0 12px 12px 0'
-              } : {
-                color: 'var(--color-dash-nav-text)'
-              }}
-            >
-              <tab.Icon size={16} weight={activeTab === tab.id ? "fill" : "regular"} />
-              <span>{tab.label}</span>
-            </button>
-          ))}
-
-          <p className="px-3 pt-4 pb-2 text-[10px] tracking-[0.15em] uppercase font-bold"
-            style={{ color: 'var(--color-text-muted)' }}>
-            Assistant IA
-          </p>
-          {tabs.filter(t => ['agent'].includes(t.id)).map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 relative"
-              style={activeTab === tab.id ? {
-                backgroundColor: 'var(--color-dash-nav-active-bg)',
-                color: 'var(--color-dash-nav-active-text)',
-                borderLeft: '2px solid var(--color-dash-nav-active-border)',
-                borderRadius: '0 12px 12px 0'
-              } : {
-                color: 'var(--color-dash-nav-text)'
-              }}
-            >
-              <tab.Icon size={16} weight={activeTab === tab.id ? "fill" : "regular"} />
-              <span>{tab.label}</span>
-            </button>
-          ))}
-        </nav>
-
-        {/* ── PROFIL UTILISATEUR ── */}
-        <div className="p-3" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-          <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl"
-            style={{ backgroundColor: 'rgba(255,255,255,0.03)' }}>
-            <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold shrink-0"
-              style={{ backgroundColor: 'rgba(201,168,76,0.2)', color: 'var(--color-gold)' }}>
-              {session.user.name?.charAt(0).toUpperCase() || 'A'}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium truncate"
-                style={{ color: 'var(--color-text-primary)' }}>
-                {session.user.name || 'Administrateur'}
-              </p>
-              <p className="text-[10px] truncate" style={{ color: 'var(--color-text-muted)' }}>
-                {session.user.email}
-              </p>
-            </div>
-          </div>
-
-          <button
-            onClick={async () => {
-              await signOut({ callbackUrl: '/', redirect: true })
-            }}
-            className="w-full flex items-center gap-2 px-3 py-2 mt-1 rounded-xl text-xs transition-all duration-150 hover:bg-red-500/10 hover:text-red-500"
-            style={{ color: 'var(--color-text-muted)' }}
-          >
-            <PhosphorSignOut size={14} />
-            Déconnexion
-          </button>
-        </div>
-      </aside>
-
-      {/* ZONE CONTENU */}
       <div className="flex-1 flex flex-col overflow-hidden">
+        <AdminTopbar
+          title={tabs.find(t => t.id === activeTab)?.label || 'Dashboard'}
+          pendingBookingsCount={pendingBookingsCount}
+          onCreateNew={() => {
+            if (activeTab === 'users') {
+              setOpenUserCreateTrigger(t => t + 1)
+            } else {
+              setActiveTab('bookings')
+            }
+          }}
+        />
 
-        {/* TOPBAR */}
-        <header className="flex items-center justify-between px-6 lg:px-8 py-4 shrink-0"
-          style={{
-            backgroundColor: 'var(--color-dash-bg)',
-            borderBottom: '1px solid rgba(255,255,255,0.05)',
-          }}>
-          <div>
-            <h1 className="text-xl font-semibold"
-              style={{ color: '#F0EDE8', fontFamily: 'var(--font-body)' }}>
-              {tabs.find(t => t.id === activeTab)?.label || 'Dashboard'}
-            </h1>
-            <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>
-              Navette Xpress Admin
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              className="relative w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-150"
-              style={{
-                backgroundColor: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.07)',
-                color: 'var(--color-text-secondary)',
-              }}>
-              <BellSimple size={16} />
-              {pendingBookingsCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[9px] font-bold flex items-center justify-center"
-                  style={{ backgroundColor: 'var(--color-gold)', color: '#fff' }}>
-                  {pendingBookingsCount > 9 ? '9+' : pendingBookingsCount}
-                </span>
-              )}
-            </button>
-
-            <button
-              onClick={() => {
-                if (activeTab === 'users') {
-                  setOpenUserCreateTrigger(t => t + 1)
-                } else {
-                  setActiveTab('bookings')
-                }
-              }}
-              className="btn-gold flex items-center gap-2 px-4 py-2 rounded-xl text-sm">
-              <PhosphorPlus size={16} />
-              <span className="hidden sm:inline">Nouveau</span>
-            </button>
-          </div>
-        </header>
-
-        {/* CONTENU SCROLLABLE */}
         <main className="flex-1 overflow-y-auto dash-scroll p-6 lg:p-8">
           {renderContent()}
         </main>
       </div>
-
-      {/* MOBILE OVERLAY (Simplified for now) */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-dash-sidebar border-b border-white/5 p-4 flex justify-between items-center h-16">
-        <div className="flex items-center gap-2">
-          <span>Navette</span> <span>Xpress</span>
-        </div>
-        <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-white">
-          <PhosphorList size={24} />
-        </button>
-      </div>
-      {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-60 bg-black/80 flex justify-end">
-          <div className="w-64 bg-dash-sidebar h-full p-6">
-            <button onClick={() => setMobileMenuOpen(false)} className="text-white mb-8">Fermer</button>
-            <div className="space-y-4">
-              {tabs.map(tab => (
-                <button
-                  key={tab.id}
-                  onClick={() => { setActiveTab(tab.id); setMobileMenuOpen(false); }}
-                  className="w-full text-left text-white py-2 flex items-center gap-3"
-                >
-                  <tab.Icon size={16} weight="regular" />
-                  <span>{tab.label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

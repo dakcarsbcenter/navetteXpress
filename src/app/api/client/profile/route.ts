@@ -48,6 +48,7 @@ export async function PUT(request: NextRequest) {
       image,
       address,
       isCompany,
+      companyType,
       companyName,
       ninea,
       raisonSociale,
@@ -55,6 +56,9 @@ export async function PUT(request: NextRequest) {
       companyPhone,
       bp
     } = await request.json()
+
+    const allowedCompanyTypes = ['hotel', 'entreprise', 'ong']
+    const normalizedCompanyType = allowedCompanyTypes.includes(companyType) ? companyType : null
 
     // Validation des données
     if (!name?.trim() || !email?.trim()) {
@@ -99,6 +103,7 @@ export async function PUT(request: NextRequest) {
         image: image?.trim() || null,
         address: address?.trim() || null,
         isCompany: !!isCompany,
+        companyType: isCompany ? normalizedCompanyType : null,
         companyName: companyName?.trim() || null,
         ninea: ninea?.trim() || null,
         raisonSociale: raisonSociale?.trim() || null,
@@ -179,6 +184,7 @@ export async function GET() {
         image: users.image,
         address: users.address,
         isCompany: users.isCompany,
+        companyType: users.companyType,
         companyName: users.companyName,
         ninea: users.ninea,
         raisonSociale: users.raisonSociale,

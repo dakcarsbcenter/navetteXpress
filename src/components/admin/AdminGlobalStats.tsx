@@ -228,7 +228,7 @@ const AdminGlobalStats = () => {
           {/* Main Stats Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { label: 'Total Courses', value: filteredStats.globalStats.totalRides.toLocaleString(), icon: '🚗', color: '#9B1B30', growth: '+2%' },
+              { label: 'Total Courses', value: filteredStats.globalStats.totalRides.toLocaleString(), icon: '🚗', color: '#1F5245', growth: '+2%' },
               { label: 'Chauffeurs', value: `${filteredStats.globalStats.activeDrivers || filteredStats.globalStats.totalDrivers}/${filteredStats.globalStats.totalDrivers}`, icon: '👤', color: '#8B5CF6', growth: 'Actifs' },
               { label: 'Revenus', value: `${(filteredStats.globalStats.totalEarnings / 1000).toLocaleString()}k F`, icon: '💰', color: '#10B981', growth: '+12%' },
               { label: 'Complétion', value: `${filteredStats.globalStats.completionRate.toFixed(1)}%`, icon: '📈', color: '#F59E0B', growth: 'Taux' },
