@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "title": "Rutas AIBD Dakar Saly Somone Mbour Thies Saint-Louis | Navette Xpress",
+    "description": "Centro de rutas prioritarias de Navette Xpress: compare los traslados AIBD y reserve su chofer privado con la mejor relacion fiabilidad-precio.",
+    "ogTitle": "Rutas AIBD y Traslados Privados | Navette Xpress",
+    "ogDescription": "Consulte nuestras paginas de rutas de alta intencion y reserve un traslado privado 24/7 en Senegal."
+  },
+  "breadcrumbs": {
+    "home": "Inicio",
+    "routes": "Rutas"
+  },
+  "slugPage": {
+    "eyebrow": "Ruta prioritaria",
+    "travelTimeLabel": "Tiempo medio",
+    "availability247": "Puntualidad 24/7",
+    "whyHeading": "Pruebas de fiabilidad",
+    "processHeading": "Proceso de recepcion en el AIBD",
+    "faqHeading": "FAQ de la Ruta",
+    "faqViewAll": "Ver la FAQ completa",
+    "usefulLinksHeading": "Enlaces internos",
+    "recommendedRoutes": "Otras rutas estrategicas",
+    "otherServices": "Servicios asociados",
+    "routesHub": "Volver al centro de rutas",
+    "bookNow": "Reservar este trayecto",
+    "breadcrumbHome": "Inicio",
+    "breadcrumbRoutes": "Rutas"
+  }
+}

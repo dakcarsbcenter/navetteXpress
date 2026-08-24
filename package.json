@@ -29,10 +29,10 @@
     "seo:refresh:monthly": "npx tsx scripts/seo-monthly-refresh.ts"
   },
   "dependencies": {
-    "@capacitor/app": "^7.0.1",
-    "@capacitor/core": "^7.4.3",
     "@anthropic-ai/sdk": "^0.80.0",
     "@auth/drizzle-adapter": "^1.10.0",
+    "@capacitor/app": "^7.0.1",
+    "@capacitor/core": "^7.4.3",
     "@headlessui/react": "^2.2.9",
     "@neondatabase/serverless": "^1.0.1",
     "@phosphor-icons/react": "^2.1.10",
@@ -63,6 +63,7 @@
     "leaflet": "^1.9.4",
     "next": "^16.2.0",
     "next-auth": "^4.24.11",
+    "next-intl": "^4.13.7",
     "pg": "^8.16.3",
     "postgres": "^3.4.7",
     "react": "19.1.0",

@@ -1,7 +1,7 @@
 import { requireAdminRole } from "@/utils/admin-permissions";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
-import { Navigation } from "@/components/navigation";
+import { AdminNavigation } from "@/components/admin-navigation";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import Link from "next/link";
 
@@ -11,7 +11,7 @@ export default async function AdminPage() {
 
   return (
     <div className="font-sans min-h-screen bg-slate-50 dark:bg-slate-900">
-      <Navigation variant="solid" />
+      <AdminNavigation variant="solid" />
       
       <div className="max-w-7xl mx-auto px-6 py-8 mt-20">
         {/* Welcome Section */}

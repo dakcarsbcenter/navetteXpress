@@ -1,0 +1,50 @@
+{
+  "Navigation": {
+    "serviceAvailable": "Available 24/7",
+    "becomePartner": "Become a Partner",
+    "links": {
+      "home": "Home",
+      "rates": "Rates by Segment",
+      "companies": "Hotels & Companies",
+      "diaspora": "Diaspora",
+      "fleet": "Fleet",
+      "contact": "Contact"
+    },
+    "signIn": "Sign in",
+    "bookNow": "Book Now",
+    "bookNowLong": "Book Now",
+    "dashboard": "Dashboard",
+    "signOut": "Sign out",
+    "menu": "Menu"
+  },
+  "Footer": {
+    "tagline": "Dakar, Senegal",
+    "routesHeading": "Routes",
+    "services": {
+      "airportTransfer": "AIBD Airport Transfer",
+      "urbanShuttle": "Dakar Urban Shuttle",
+      "dayHire": "Day Hire",
+      "events": "Events & VIP"
+    },
+    "companyHeading": "Company",
+    "company": {
+      "companies": "Hotels & Companies",
+      "diaspora": "Diaspora",
+      "becomePartner": "Become a Partner",
+      "terms": "Terms"
+    },
+    "languageHeading": "Language",
+    "supportHeading": "24/7 Support",
+    "paymentMethods": {
+      "wave": "Wave",
+      "orangeMoney": "Orange Money",
+      "transfer": "Bank Transfer"
+    },
+    "rightsReserved": "All rights reserved.",
+    "legal": {
+      "terms": "Terms",
+      "mentions": "Legal Notice",
+      "privacy": "Privacy"
+    }
+  }
+}

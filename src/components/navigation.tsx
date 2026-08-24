@@ -1,9 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
+import { useTranslations } from "next-intl";
+import NextLink from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { Link } from "@/i18n/navigation";
 import { Phone, EnvelopeSimple, List, X, CaretDown, UserCircle, SignOut, SquaresFour } from "@phosphor-icons/react";
 import { trackPhoneCall, trackEmailClick } from "@/lib/analytics";
 
@@ -13,17 +16,18 @@ interface NavigationProps {
 
 export function Navigation({ variant = "solid" }: NavigationProps) {
   const { data: session } = useSession();
+  const t = useTranslations("Navigation");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
   const navLinks = [
-    { href: "/", label: "Accueil" },
-    { href: "/tarifs", label: "Tarifs par segment" },
-    { href: "/entreprises", label: "Hôtels & entreprises" },
-    { href: "/diaspora", label: "Diaspora" },
-    { href: "/flotte", label: "Flotte" },
-    { href: "/temoignages", label: "Avis" },
-    { href: "/contact", label: "Contact" },
+    { href: "/", label: t("links.home") },
+    { href: "/tarifs", label: t("links.rates") },
+    { href: "/entreprises", label: t("links.companies") },
+    { href: "/diaspora", label: t("links.diaspora") },
+    { href: "/flotte", label: t("links.fleet") },
+    { href: "/contact", label: t("links.contact") },
+    // "Avis" removed on purpose — /temoignages hidden
   ];
 
   useEffect(() => {
@@ -67,11 +71,11 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 bg-success rounded-full animate-pulse"></span>
-              Service 24h/24
+              {t("serviceAvailable")}
             </span>
             <div className="h-3 w-px bg-border"></div>
             <Link href="/devenir-partenaire" className="hover:text-gold transition-colors">
-              Devenir Partenaire
+              {t("becomePartner")}
             </Link>
           </div>
         </div>
@@ -108,18 +112,19 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
 
             {/* Desktop Actions */}
             <div className="hidden lg:flex items-center gap-6">
+              <LanguageSwitcher />
               <ThemeToggle />
 
               {!session ? (
                 <div className="flex items-center gap-3">
-                  <Link href="/auth/signin" className="text-foreground text-sm font-medium hover:text-accent transition-colors">
-                    Se connecter
-                  </Link>
+                  <NextLink href="/auth/signin" className="text-foreground text-sm font-medium hover:text-accent transition-colors">
+                    {t("signIn")}
+                  </NextLink>
                   <Link
                     href="/reservation"
                     className="bg-accent text-white px-6 py-2.5 rounded text-sm font-semibold hover:bg-accent-hover transition-colors"
                   >
-                    Réserver
+                    {t("bookNow")}
                   </Link>
                 </div>
               ) : (
@@ -138,19 +143,19 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
                       <p className="text-text-muted text-xs truncate">{session.user?.email}</p>
                     </div>
                     <div className="p-2 space-y-1">
-                      <Link
+                      <NextLink
                         href={(session.user as any).role === 'admin' ? '/admin/dashboard' : '/client/dashboard'}
                         className="flex items-center gap-3 px-3 py-2 text-sm text-foreground/70 hover:text-accent hover:bg-surface-2/50 rounded-lg transition-colors"
                       >
                         <SquaresFour size={16} weight="regular" className="text-accent" />
-                        Dashboard
-                      </Link>
+                        {t("dashboard")}
+                      </NextLink>
                       <button
                         onClick={() => signOut({ callbackUrl: '/' })}
                         className="w-full flex items-center gap-3 px-3 py-2 text-sm text-crimson hover:bg-crimson/10 rounded-lg transition-colors"
                       >
                         <SignOut size={16} weight="regular" />
-                        Déconnexion
+                        {t("signOut")}
                       </button>
                     </div>
                   </div>
@@ -162,7 +167,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
             <button
               className="lg:hidden text-foreground"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              aria-label="Menu"
+              aria-label={t("menu")}
             >
               {isMobileMenuOpen ? <X size={28} weight="light" /> : <List size={28} weight="regular" />}
             </button>
@@ -187,36 +192,37 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
 
             {/* Mobile Bottom Actions */}
             <div className="mt-auto space-y-4">
+              <LanguageSwitcher variant="inline" className="justify-center pb-2" />
               <Link
                 href="/reservation"
                 className="block w-full bg-accent text-white text-center py-4 rounded font-semibold text-lg hover:bg-accent-hover transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Réserver Maintenant
+                {t("bookNowLong")}
               </Link>
               {!session ? (
-                <Link
+                <NextLink
                   href="/auth/signin"
                   className="block w-full border border-border text-foreground text-center py-4 rounded-xl font-medium hover:bg-surface-2/50 transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Se connecter
-                </Link>
+                  {t("signIn")}
+                </NextLink>
               ) : (
                 <>
-                  <Link
+                  <NextLink
                     href={(session.user as any).role === 'admin' ? '/admin/dashboard' : '/client/dashboard'}
                     className="flex items-center justify-center gap-2 w-full border border-border text-foreground text-center py-4 rounded-xl font-medium hover:bg-surface-2/50 transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <SquaresFour size={18} weight="regular" className="text-accent" />
-                    Dashboard
-                  </Link>
+                    {t("dashboard")}
+                  </NextLink>
                   <button
                     onClick={() => signOut({ callbackUrl: '/' })}
                     className="block w-full text-crimson text-center py-4 hover:opacity-80 transition-opacity"
                   >
-                    Déconnexion
+                    {t("signOut")}
                   </button>
                 </>
               )}

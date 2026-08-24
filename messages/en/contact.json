@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "title": "Contact Navette Xpress — Private Chauffeur Dakar",
+    "description": "Contact Navette Xpress to book your private chauffeur in Dakar. Available by phone, WhatsApp, and email. +221 78 465 13 02 — Immediate response 24/7."
+  },
+  "hero": {
+    "titleLine1": "We're Here",
+    "titleLine2": "To Listen",
+    "subtitle": "For any specific request or personalized assistance, our advisors are fully available to you 24 hours a day, 7 days a week."
+  },
+  "methods": {
+    "phone": {
+      "title": "24/7 Concierge",
+      "sub": "Available via WhatsApp & Direct Call"
+    },
+    "email": {
+      "title": "Official Email",
+      "sub": "Guaranteed reply within 2 hours"
+    },
+    "office": {
+      "title": "Head Office",
+      "sub": "Dakar, Senegal"
+    }
+  },
+  "emergency": {
+    "title": "Emergency Service",
+    "quote": "More than transport — a guarantee of peace of mind for your last-minute transfers.",
+    "cta": "Call Now"
+  },
+  "map": {
+    "markerTitle": "Navette Xpress Head Office"
+  },
+  "form": {
+    "titleLine1": "Request a",
+    "titleLine2": "Consultation",
+    "subtitle": "Complete this exclusive form. A personal advisor will get back to you with a tailored proposal.",
+    "nameLabel": "Full Name",
+    "namePlaceholder": "Your full name",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "your@email.com",
+    "phoneLabel": "Direct Line",
+    "serviceLabel": "Service of Interest",
+    "servicePlaceholder": "Select a service",
+    "messageLabel": "Message & Special Requirements",
+    "messagePlaceholder": "Let us know your expectations...",
+    "submit": "Submit My Request",
+    "error": "An error occurred. Please contact us by phone.",
+    "success": {
+      "title": "Message Received",
+      "desc": "Your request has been sent to our concierge service. You will receive a reply within 2 hours.",
+      "another": "Send another message"
+    }
+  },
+  "services": [
+    "AIBD Dakar Airport Transfer",
+    "Thies Airport Transfer",
+    "Mbour Airport Transfer",
+    "Private Chauffeur Dakar",
+    "Private Transport Senegal",
+    "VIP Service",
+    "Other / Custom Quote"
+  ],
+  "brandPromise": {
+    "prestige": "Dakar Prestige",
+    "security": "Guaranteed Safety",
+    "excellence": "Service Excellence"
+  }
+}

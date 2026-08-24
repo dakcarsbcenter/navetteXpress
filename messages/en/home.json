@@ -1,0 +1,112 @@
+{
+  "meta": {
+    "title": "Private Chauffeur Dakar & AIBD Airport Transfer | Navette Xpress",
+    "description": "Navette Xpress, the #1 private chauffeur service in Dakar. AIBD airport transfer 24/7, urban shuttle, day hire. Instant online booking. Guaranteed fixed price.",
+    "ogTitle": "Private Chauffeur Dakar & AIBD Transfer — Navette Xpress",
+    "ogDescription": "Premium private chauffeur service in Dakar. AIBD airport transfer, 24/7 urban shuttle."
+  },
+  "corridor": "Corridor Dakar — AIBD — Petite Côte",
+  "hero": {
+    "titleLine1": "One route.",
+    "titleLine2": "Handled end to end.",
+    "subtitle": "Our drivers make this trip every day. They know what time the toll gets busy, where to wait at AIBD, and which gate in Saly opens at night.",
+    "bookCta": "Book a trip",
+    "ratesCta": "Rates by segment",
+    "imageAlt": "Navette Xpress driver on the Dakar — AIBD — Petite Côte corridor"
+  },
+  "stats": {
+    "trips": "TRIPS",
+    "rating": "CUSTOMER RATING",
+    "support": "SUPPORT"
+  },
+  "differentiators": {
+    "d1": {
+      "title": "The segment price, displayed",
+      "desc": "Every leg has its public rate. Toll and fuel included, transparent pricing set in advance, no surprises or surcharges."
+    },
+    "d2": {
+      "title": "Flight tracking at AIBD",
+      "desc": "Personalized meet & greet at AIBD with a name sign. Your driver tracks your flight in real time and adjusts departure, at no extra cost."
+    },
+    "d3": {
+      "title": "The same drivers",
+      "desc": "A fixed team on the corridor, trained in protocol and discretion — not a platform of strangers picked at random for every ride."
+    }
+  },
+  "segments": {
+    "heading": "The segments, one by one",
+    "viewAll": "See the full price grid",
+    "dakarAibd": "DAKAR → AIBD",
+    "aibdSaly": "AIBD → SALY",
+    "dakarSaly": "DAKAR → SALY",
+    "dayHire": "DAY HIRE",
+    "day": "DAY"
+  },
+  "b2b": {
+    "eyebrow": "Hotels, companies, NGOs",
+    "title": "One account, one contact, one monthly invoice.",
+    "desc": "Your teams book, we consolidate. Detailed monthly statement per trip, supporting documents attached, agreement signed quickly.",
+    "cta": "Request an agreement",
+    "footnote": "Already used by hotels and companies on the Petite Côte, as well as organizations based in Dakar."
+  },
+  "booking": {
+    "title": "Ready for your trip?",
+    "subtitle": "Book your airport transfer or private ride now with transparent pricing.",
+    "perk1": "Free waiting time at the airport",
+    "perk2": "Free cancellation 24h in advance",
+    "perk3": "Secure payment on board",
+    "tabAirport": "AIBD Transfer",
+    "tabCity": "City & Regions",
+    "placeholder": "Simplify the organization of your trips with Navette Xpress.",
+    "cta": "Book my trip"
+  },
+  "fleet": {
+    "title": "Our Fleet",
+    "subtitle": "Exceptional vehicles for demanding passengers. Rigorous maintenance and absolute comfort.",
+    "viewAll": "See all vehicles",
+    "loading": "Loading the fleet…",
+    "pax": "Pax",
+    "luggageIncluded": "Luggage included",
+    "from": "From",
+    "onRequest": "On request",
+    "bookVehicleAria": "Book this vehicle",
+    "categories": {
+      "luxurySupreme": "Supreme Luxury",
+      "prestigeSuv": "Prestige SUV",
+      "businessVan": "Business Van",
+      "vip": "VIP"
+    }
+  },
+  "faqHeading": "Frequently Asked Questions",
+  "finalCta": {
+    "title": "Got a trip coming up?",
+    "availability": "Available 24/7",
+    "cta": "Book now"
+  },
+  "faqs": [
+    {
+      "question": "How much does a Dakar-AIBD transfer cost?",
+      "answer": "The price of a transfer between Dakar and AIBD airport varies by vehicle: from 15,000 FCFA for a comfort sedan, 22,000 FCFA for a Premium SUV and 30,000 FCFA for a VIP SUV. The price is fixed, with no extra fees."
+    },
+    {
+      "question": "How do I book a private driver in Dakar?",
+      "answer": "Booking is done online on our website in under 2 minutes: enter your route, choose your vehicle, fill in your details and confirm. You immediately receive a confirmation by email and SMS."
+    },
+    {
+      "question": "Is Navette Xpress available 24/7?",
+      "answer": "Yes, our service is available 24/7, including public holidays. Our drivers cover night transfers and very early morning flights."
+    },
+    {
+      "question": "Do you accept Orange Money and Wave payments?",
+      "answer": "Yes, we accept Orange Money, Wave, cash on board and bank transfers. Payment is simple and secure."
+    },
+    {
+      "question": "What happens if my flight is delayed?",
+      "answer": "Your driver tracks your flight in real time. In case of delay, they automatically adjust their arrival time. You pay no waiting fees for flight delays."
+    },
+    {
+      "question": "Does Navette Xpress serve Saly and Mbour?",
+      "answer": "Yes, we operate transfers to and from Dakar, Saly, Mbour and the entire Thiès region. Contact us for a custom quote."
+    }
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "title": "Devenir Partenaire Chauffeur à Dakar | Navette Xpress",
+    "description": "Rejoignez le réseau Navette Xpress. Devenez chauffeur privé partenaire à Dakar et bénéficiez de revenus attractifs, d'horaires flexibles et d'un support 24h/24."
+  },
+  "hero": {
+    "eyebrow": "Chauffeurs & propriétaires de véhicules",
+    "title": "Vous connaissez la route. Nous avons les passagers.",
+    "subtitle": "Nous travaillons avec un nombre limité de chauffeurs sur le corridor. Courses régulières, tarifs connus avant acceptation, paiement sous sept jours. Douze places ouvertes pour 2026.",
+    "cta": "Lire les conditions",
+    "imageAlt": "Photo — chauffeur partenaire, aire d'attente AIBD"
+  },
+  "stats": {
+    "payment": {
+      "value": "7 j",
+      "text": "Délai de paiement après la course. Virement, Wave ou Orange Money."
+    },
+    "commission": {
+      "value": "15 %",
+      "text": "Commission fixe, annoncée avant la première course. Aucun frais d'inscription."
+    },
+    "corridor": {
+      "value": "1 axe",
+      "text": "Vous restez sur le corridor que vous connaissez, pas envoyé au hasard dans Dakar."
+    }
+  },
+  "benefits": {
+    "title": "Ce que la place vous apporte",
+    "items": [
+      {
+        "label": "VOLUME",
+        "text": "Entre 12 et 20 courses par semaine selon la disponibilité que vous déclarez. Le planning part le vendredi pour la semaine suivante."
+      },
+      {
+        "label": "TARIF",
+        "text": "Le montant de chaque course est connu avant que vous l'acceptiez. Pas d'enchère, pas de course à l'aveugle, pas de tarif révisé après coup."
+      },
+      {
+        "label": "LITIGES",
+        "text": "Un interlocuteur humain, joignable, et une procédure écrite en cas de désaccord avec un client. Vous n'êtes pas seul face à une application."
+      },
+      {
+        "label": "CARBURANT",
+        "text": "Péage et carburant remboursés au réel sur les courses longues, sur présentation du ticket."
+      }
+    ]
+  },
+  "conditions": {
+    "eyebrow": "Conditions partenaire — 2026",
+    "items": [
+      { "label": "COMMISSION", "value": "15 % FIXE" },
+      { "label": "DÉLAI DE PAIEMENT", "value": "7 JOURS" },
+      { "label": "FRAIS D'ENTRÉE", "value": "AUCUN" },
+      { "label": "VÉHICULE", "value": "MOINS DE 8 ANS" },
+      { "label": "ÉQUIPEMENT", "value": "CLIM. OBLIGATOIRE" },
+      { "label": "PERMIS", "value": "B, 3 ANS MINIMUM" },
+      { "label": "ASSURANCE", "value": "TRANSPORT DE PERS." },
+      { "label": "ZONE", "value": "CORRIDOR DKR–MBR" }
+    ],
+    "openSpots": "Places ouvertes",
+    "openSpotsValue": "12"
+  },
+  "steps": {
+    "title": "Comment on avance",
+    "stepLabel": "Étape",
+    "items": [
+      {
+        "title": "Vous vous présentez",
+        "text": "Identité, véhicule et disponibilités. Le formulaire se remplit en quelques minutes."
+      },
+      {
+        "title": "On vous rappelle",
+        "text": "Sous 48 heures ouvrées. Nous répondons à tout le monde, même quand c'est non."
+      },
+      {
+        "title": "On se voit",
+        "text": "Rencontre à Dakar ou Mbour, vérification des papiers et état du véhicule."
+      },
+      {
+        "title": "Première course",
+        "text": "Course accompagnée sur un segment court, puis entrée dans le planning."
+      }
+    ]
+  },
+  "application": {
+    "eyebrow": "Candidature",
+    "title": "Les conditions vous conviennent ?",
+    "desc": "Remplissez votre dossier ci-contre. Aucune pièce à téléverser à ce stade : les papiers, on les regarde ensemble le jour du rendez-vous.",
+    "perk1": { "value": "48 H", "text": "Délai de réponse, quelle qu'elle soit." },
+    "perk2": { "value": "0 F", "text": "Aucun frais de dossier, à aucun moment." }
+  },
+  "form": {
+    "title": "Dossier de candidature",
+    "sections": {
+      "identity": "Votre identité",
+      "vehicle": "Votre véhicule",
+      "motivation": "Motivation & disponibilité"
+    },
+    "fields": {
+      "firstName": { "label": "Prénom", "placeholder": "Ex : Amadou" },
+      "lastName": { "label": "Nom", "placeholder": "Ex : Fall" },
+      "email": { "label": "Email", "placeholder": "amadou@gmail.com" },
+      "phone": { "label": "Téléphone / WhatsApp", "placeholder": "+221 XX XXX XX XX" },
+      "experience": { "label": "Expérience de conduite" },
+      "brand": { "label": "Marque" },
+      "model": { "label": "Modèle" },
+      "year": { "label": "Année" },
+      "plate": { "label": "Immatriculation", "placeholder": "Ex : AA-123-BB" },
+      "insurance": "Je certifie posséder une assurance valide",
+      "license": "Mon permis de conduire est valide (plus de 3 ans)",
+      "availability": { "label": "Profil de disponibilité" },
+      "availabilityHint": "Les demandes vous seront assignées en fonction des créneaux déclarés.",
+      "motivation": {
+        "label": "Vos motivations",
+        "placeholder": "Parlez-nous de vous et de pourquoi vous souhaitez nous rejoindre..."
+      }
+    },
+    "experienceOptions": {
+      "opt1": "1 à 3 ans",
+      "opt2": "4 à 6 ans",
+      "opt3": "7 à 10 ans",
+      "opt4": "Plus de 10 ans"
+    },
+    "availabilityOptions": {
+      "fullTime": "Temps plein",
+      "partTime": "Temps partiel",
+      "weekend": "Week-ends",
+      "evening": "Soirées",
+      "occasional": "Ponctuel"
+    },
+    "selectPlaceholder": "Choisir...",
+    "submit": "Envoyer ma candidature",
+    "submitting": "Traitement de votre dossier...",
+    "footnote": "Réponse sous 48 h · Aucun frais de dossier"
+  },
+  "success": {
+    "title": "Candidature reçue",
+    "desc": "Merci de votre intérêt pour Navette Xpress. Notre équipe partenaires va analyser votre dossier.",
+    "descHighlight": "Vous recevrez une réponse sous 48 h.",
+    "backHome": "Retour à l'accueil"
+  }
+}

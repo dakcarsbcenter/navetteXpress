@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "title": "Contacte con Navette Xpress — Chófer Privado en Dakar",
+    "description": "Contacte con Navette Xpress para reservar su chófer privado en Dakar. Disponible por teléfono, WhatsApp y correo electrónico. +221 78 465 13 02 — Respuesta inmediata 24h/24."
+  },
+  "hero": {
+    "titleLine1": "Estamos",
+    "titleLine2": "A Su Escucha",
+    "subtitle": "Para cualquier solicitud específica o asistencia personalizada, nuestros asesores están a su entera disposición las 24 horas del día, los 7 días de la semana."
+  },
+  "methods": {
+    "phone": {
+      "title": "Conserjería 24/7",
+      "sub": "Disponible por WhatsApp y llamada directa"
+    },
+    "email": {
+      "title": "Correo Oficial",
+      "sub": "Respuesta garantizada en 2 horas"
+    },
+    "office": {
+      "title": "Sede Central",
+      "sub": "Dakar, Senegal"
+    }
+  },
+  "emergency": {
+    "title": "Servicio de Urgencia",
+    "quote": "Más que un transporte, una garantía de tranquilidad para sus traslados de última hora.",
+    "cta": "Llamada Inmediata"
+  },
+  "map": {
+    "markerTitle": "Sede Navette Xpress"
+  },
+  "form": {
+    "titleLine1": "Solicitud de",
+    "titleLine2": "Asesoría",
+    "subtitle": "Complete este formulario exclusivo. Un asesor personal se pondrá en contacto con usted con una propuesta a medida.",
+    "nameLabel": "Nombre Completo",
+    "namePlaceholder": "Su nombre completo",
+    "emailLabel": "Correo Electrónico",
+    "emailPlaceholder": "su@email.com",
+    "phoneLabel": "Línea Directa",
+    "serviceLabel": "Servicio de Interés",
+    "servicePlaceholder": "Seleccionar un servicio",
+    "messageLabel": "Mensaje y Requisitos Especiales",
+    "messagePlaceholder": "Cuéntenos sus expectativas...",
+    "submit": "Enviar Mi Solicitud",
+    "error": "Se ha producido un error. Por favor, contáctenos por teléfono.",
+    "success": {
+      "title": "Mensaje Recibido",
+      "desc": "Su solicitud ha sido transmitida a nuestro servicio de conserjería. Recibirá una respuesta en un plazo de 2 horas.",
+      "another": "Enviar otro mensaje"
+    }
+  },
+  "services": [
+    "Traslado Aeropuerto AIBD Dakar",
+    "Traslado Aeropuerto Thies",
+    "Traslado Aeropuerto Mbour",
+    "Chófer Privado Dakar",
+    "Transporte Privado Senegal",
+    "Servicio VIP",
+    "Otro / Presupuesto personalizado"
+  ],
+  "brandPromise": {
+    "prestige": "Dakar Prestige",
+    "security": "Seguridad Garantizada",
+    "excellence": "Excelencia en el Servicio"
+  }
+}

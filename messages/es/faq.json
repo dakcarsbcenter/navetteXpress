@@ -1,0 +1,140 @@
+{
+  "meta": {
+    "title": "Preguntas Frecuentes — Traslado AIBD, Tarifas y Reserva de Chófer Privado en Dakar | Navette Xpress",
+    "description": "Preguntas frecuentes sobre los traslados AIBD, precios fijos, el proceso de recepción en el aeropuerto, la reserva en línea y nuestro servicio de chófer privado 24/7."
+  },
+  "beforeBooking": {
+    "heading": "Antes de reservar",
+    "routesHub": "Rutas",
+    "servicesHub": "Servicios",
+    "reservation": "Reserva"
+  },
+  "hero": {
+    "titleHighlight": "Preguntas",
+    "titleRest": "Frecuentes",
+    "subtitle": "Encuentre rápidamente respuestas a sus preguntas sobre nuestros servicios de transporte en Senegal"
+  },
+  "cta": {
+    "titleLine1": "¿No encuentra",
+    "titleLine2": "su respuesta?",
+    "subtitle": "Nuestro equipo está aquí para ayudarle. ¡Contáctenos directamente!",
+    "writeUs": "Escríbanos"
+  },
+  "schemaFaqs": [
+    {
+      "question": "¿Cómo reservo un traslado?",
+      "answer": "¡Es muy sencillo! Vaya a nuestra página de reservas, complete el formulario con los detalles de su vuelo y sus datos personales. Recibirá una confirmación por correo electrónico con los datos de su chófer."
+    },
+    {
+      "question": "¿Cuáles son sus tarifas?",
+      "answer": "Nuestras tarifas varían según el destino. Para Dakar - AIBD o AIBD - Dakar, nuestras tarifas comienzan en 25.000 FCFA. Para cualquier otro destino, contáctenos para un presupuesto personalizado."
+    },
+    {
+      "question": "¿Qué tipos de vehículos ofrecen?",
+      "answer": "Ofrecemos una flota moderna de vehículos: berlinas, SUV y minibuses climatizados. Todos nuestros vehículos están perfectamente mantenidos y equipados para su comodidad."
+    },
+    {
+      "question": "¿Cómo me encontrará en el aeropuerto?",
+      "answer": "Su chófer le esperará en la sala de llegadas con un cartel con su nombre. También le contactará por teléfono si es necesario. Le enviaremos sus datos de contacto antes de su llegada."
+    }
+  ],
+  "categories": [
+    {
+      "title": "Reservas y Tarifas",
+      "questions": [
+        {
+          "question": "¿Cómo reservo un traslado?",
+          "answer": "¡Es muy sencillo! Vaya a nuestra página de reservas, complete el formulario con los detalles de su vuelo y sus datos personales. Recibirá una confirmación por correo electrónico con los datos de su chófer."
+        },
+        {
+          "question": "¿Cuáles son sus tarifas?",
+          "answer": "Nuestras tarifas varían según el destino. Para Dakar - AIBD o AIBD - Dakar, nuestras tarifas comienzan en 25.000 FCFA. Para cualquier otro destino, contáctenos para un presupuesto personalizado."
+        },
+        {
+          "question": "¿Hay cargos ocultos?",
+          "answer": "No, nuestras tarifas son totalmente transparentes. El precio indicado incluye el transporte, la asistencia con el equipaje y 30 minutos de espera gratuita. Solo los peajes y aparcamientos pueden añadirse según el trayecto."
+        },
+        {
+          "question": "¿Puedo cancelar mi reserva?",
+          "answer": "Sí, puede cancelar hasta 2 horas antes de la hora prevista sin cargo alguno. Para cancelaciones de última hora, pueden aplicarse tarifas."
+        }
+      ]
+    },
+    {
+      "title": "Servicios y Vehículos",
+      "questions": [
+        {
+          "question": "¿Qué tipos de vehículos ofrecen?",
+          "answer": "Ofrecemos una flota moderna de vehículos: berlinas, SUV y minibuses climatizados. Todos nuestros vehículos están perfectamente mantenidos y equipados para su comodidad."
+        },
+        {
+          "question": "¿Sus chóferes son profesionales?",
+          "answer": "¡Por supuesto! Todos nuestros chóferes están certificados, tienen experiencia y conocen perfectamente las carreteras de Senegal."
+        },
+        {
+          "question": "¿Ofrecen servicio 24 horas?",
+          "answer": "Sí, estamos disponibles 24 horas al día, los 7 días de la semana, para todos sus traslados al aeropuerto y desplazamientos privados. Nuestros chóferes siempre están listos para atenderle."
+        },
+        {
+          "question": "¿Qué pasa si mi vuelo se retrasa?",
+          "answer": "¡No hay problema! Supervisamos los vuelos en tiempo real. Su chófer esperará gratuitamente hasta 1 hora después de la hora de llegada prevista. Más allá de ese tiempo, pueden aplicarse cargos por espera."
+        }
+      ]
+    },
+    {
+      "title": "Aeropuerto AIBD de Dakar",
+      "questions": [
+        {
+          "question": "¿Cómo me encontrará en el aeropuerto?",
+          "answer": "Su chófer le esperará en la sala de llegadas con un cartel con su nombre. También le contactará por teléfono si es necesario. Le enviaremos sus datos de contacto antes de su llegada."
+        },
+        {
+          "question": "¿Con cuánta antelación debo reservar antes de mi vuelo?",
+          "answer": "Recomendamos reservar con al menos 24 horas de antelación para garantizar la disponibilidad. Sin embargo, aceptamos reservas de última hora según nuestra disponibilidad."
+        },
+        {
+          "question": "¿Puedo reservar un viaje de ida y vuelta?",
+          "answer": "¡Por supuesto! Ofrecemos paquetes de ida y vuelta con tarifas preferenciales. Contáctenos para conocer nuestras ofertas especiales."
+        },
+        {
+          "question": "¿Qué pasa si pierdo mi vuelo?",
+          "answer": "Si pierde su vuelo, contáctenos de inmediato. Adaptaremos su reserva a su nuevo vuelo sin costes adicionales."
+        }
+      ]
+    },
+    {
+      "title": "Pago y Facturación",
+      "questions": [
+        {
+          "question": "¿Qué medios de pago aceptan?",
+          "answer": "Aceptamos pagos en efectivo (FCFA), tarjeta bancaria, transferencia bancaria y dinero móvil (Orange Money, Free Money). El pago suele realizarse al finalizar el servicio."
+        },
+        {
+          "question": "¿Puedo pagar por adelantado?",
+          "answer": "Sí, puede pagar por adelantado mediante transferencia bancaria o dinero móvil. Esto garantiza su reserva y puede darle acceso a tarifas preferenciales."
+        },
+        {
+          "question": "¿Emiten facturas?",
+          "answer": "Sí, emitimos facturas profesionales para todos nuestros servicios. Son perfectas como justificante de sus desplazamientos de negocio."
+        }
+      ]
+    },
+    {
+      "title": "Otros Servicios",
+      "questions": [
+        {
+          "question": "¿Ofrecen servicios de chófer por horas?",
+          "answer": "¡Sí! Ofrecemos servicios de chófer con disposición por tiempo determinado. Ideal para eventos, visitas turísticas o desplazamientos de negocio."
+        },
+        {
+          "question": "¿Organizan recorridos turísticos?",
+          "answer": "¡Por supuesto! Nuestros chóferes-guías le harán descubrir Dakar y sus alrededores. Ofrecemos itinerarios personalizados según sus intereses."
+        },
+        {
+          "question": "¿Puedo reservar para un grupo?",
+          "answer": "Sí, disponemos de vehículos adaptados a grupos (hasta 8 personas). Contáctenos para organizar el transporte de su equipo o grupo de amigos."
+        }
+      ]
+    }
+  ]
+}

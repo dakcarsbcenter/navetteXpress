@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "title": "Become a Partner Driver in Dakar | Navette Xpress",
+    "description": "Join the Navette Xpress network. Become a partner private driver in Dakar and enjoy attractive earnings, flexible hours and 24/7 support."
+  },
+  "hero": {
+    "eyebrow": "Drivers & vehicle owners",
+    "title": "You know the road. We have the passengers.",
+    "subtitle": "We work with a limited number of drivers on the corridor. Regular rides, fares known before you accept, payment within seven days. Twelve spots open for 2026.",
+    "cta": "Read the terms",
+    "imageAlt": "Photo — partner driver, AIBD waiting area"
+  },
+  "stats": {
+    "payment": {
+      "value": "7 d",
+      "text": "Payment delay after the ride. Bank transfer, Wave or Orange Money."
+    },
+    "commission": {
+      "value": "15 %",
+      "text": "Fixed commission, announced before your first ride. No sign-up fee."
+    },
+    "corridor": {
+      "value": "1 route",
+      "text": "You stay on the corridor you know, not sent at random across Dakar."
+    }
+  },
+  "benefits": {
+    "title": "What the spot gets you",
+    "items": [
+      {
+        "label": "VOLUME",
+        "text": "Between 12 and 20 rides per week depending on the availability you declare. The schedule goes out on Friday for the following week."
+      },
+      {
+        "label": "FARE",
+        "text": "The amount of each ride is known before you accept it. No bidding, no blind rides, no fare revised after the fact."
+      },
+      {
+        "label": "DISPUTES",
+        "text": "A human contact, reachable, and a written procedure in case of disagreement with a client. You're not alone facing an app."
+      },
+      {
+        "label": "FUEL",
+        "text": "Tolls and fuel reimbursed at cost on long rides, on presentation of the receipt."
+      }
+    ]
+  },
+  "conditions": {
+    "eyebrow": "Partner terms — 2026",
+    "items": [
+      { "label": "COMMISSION", "value": "15 % FIXED" },
+      { "label": "PAYMENT DELAY", "value": "7 DAYS" },
+      { "label": "ENTRY FEE", "value": "NONE" },
+      { "label": "VEHICLE", "value": "UNDER 8 YEARS" },
+      { "label": "EQUIPMENT", "value": "A/C MANDATORY" },
+      { "label": "LICENSE", "value": "CLASS B, 3 YEARS MIN." },
+      { "label": "INSURANCE", "value": "PASSENGER TRANSPORT" },
+      { "label": "ZONE", "value": "DKR–MBR CORRIDOR" }
+    ],
+    "openSpots": "Open spots",
+    "openSpotsValue": "12"
+  },
+  "steps": {
+    "title": "How we move forward",
+    "stepLabel": "Step",
+    "items": [
+      {
+        "title": "You introduce yourself",
+        "text": "Identity, vehicle and availability. The form takes just a few minutes to fill in."
+      },
+      {
+        "title": "We call you back",
+        "text": "Within 48 business hours. We reply to everyone, even when it's a no."
+      },
+      {
+        "title": "We meet",
+        "text": "Meeting in Dakar or Mbour, checking your papers and the vehicle's condition."
+      },
+      {
+        "title": "First ride",
+        "text": "A supervised ride on a short segment, then entry into the schedule."
+      }
+    ]
+  },
+  "application": {
+    "eyebrow": "Application",
+    "title": "Do the terms work for you?",
+    "desc": "Fill in your application opposite. No documents to upload at this stage: we go over the paperwork together on the day of the meeting.",
+    "perk1": { "value": "48 H", "text": "Response time, whatever the answer." },
+    "perk2": { "value": "0 F", "text": "No application fee, at any point." }
+  },
+  "form": {
+    "title": "Application file",
+    "sections": {
+      "identity": "Your identity",
+      "vehicle": "Your vehicle",
+      "motivation": "Motivation & availability"
+    },
+    "fields": {
+      "firstName": { "label": "First name", "placeholder": "E.g. Amadou" },
+      "lastName": { "label": "Last name", "placeholder": "E.g. Fall" },
+      "email": { "label": "Email", "placeholder": "amadou@gmail.com" },
+      "phone": { "label": "Phone / WhatsApp", "placeholder": "+221 XX XXX XX XX" },
+      "experience": { "label": "Driving experience" },
+      "brand": { "label": "Make" },
+      "model": { "label": "Model" },
+      "year": { "label": "Year" },
+      "plate": { "label": "License plate", "placeholder": "E.g. AA-123-BB" },
+      "insurance": "I certify that I have valid insurance",
+      "license": "My driving license is valid (over 3 years)",
+      "availability": { "label": "Availability profile" },
+      "availabilityHint": "Requests will be assigned based on the time slots you declare.",
+      "motivation": {
+        "label": "Your motivations",
+        "placeholder": "Tell us about yourself and why you want to join us..."
+      }
+    },
+    "experienceOptions": {
+      "opt1": "1 to 3 years",
+      "opt2": "4 to 6 years",
+      "opt3": "7 to 10 years",
+      "opt4": "More than 10 years"
+    },
+    "availabilityOptions": {
+      "fullTime": "Full time",
+      "partTime": "Part time",
+      "weekend": "Weekends",
+      "evening": "Evenings",
+      "occasional": "Occasional"
+    },
+    "selectPlaceholder": "Choose...",
+    "submit": "Send my application",
+    "submitting": "Processing your application...",
+    "footnote": "Response within 48 h · No application fee"
+  },
+  "success": {
+    "title": "Application received",
+    "desc": "Thank you for your interest in Navette Xpress. Our partner team will review your application.",
+    "descHighlight": "You will receive a response within 48 h.",
+    "backHome": "Back to home"
+  }
+}

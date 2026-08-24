@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "title": "Hôtels & Entreprises — Compte Corporate, Facturation Mensuelle | Navette Xpress",
+    "description": "Un compte, un interlocuteur, une facture par mois. Solution de transport pour hôtels, entreprises, ONG et missions diplomatiques à Dakar et AIBD.",
+    "keywords": ["transport entreprise Dakar", "compte corporate navette AIBD", "chauffeur privé hôtel Sénégal", "convention transport ONG"]
+  },
+  "hero": {
+    "eyebrow": "HÔTELS · ENTREPRISES · ONG · MISSIONS DIPLOMATIQUES",
+    "title": "Un compte, un interlocuteur, une facture par mois.",
+    "subtitle": "Vos équipes réservent directement, par téléphone ou par e-mail, sans avancer de frais. Nous consolidons tout en fin de mois : relevé par mission, justificatifs joints, TVA détaillée.",
+    "ctaConvention": "Demander une convention",
+    "ctaRates": "Grille négociée"
+  },
+  "statement": {
+    "eyebrow": "RELEVÉ MENSUEL — EXTRAIT",
+    "date": "DATE",
+    "mission": "MISSION",
+    "amount": "MONTANT",
+    "total": "TOTAL AOÛT · 14 COURSES"
+  },
+  "releve": [
+    { "date": "02.08", "mission": "DKR → AIBD · M. FALL", "montant": "25 000" },
+    { "date": "05.08", "mission": "AIBD → SALY · MISSION UE", "montant": "25 000" },
+    { "date": "11.08", "mission": "JOUR COURSE · DÉLÉGATION", "montant": "75 000" },
+    { "date": "19.08", "mission": "DKR → MBOUR · Mme SY", "montant": "35 000" }
+  ],
+  "benefits": [
+    { "n": "01", "title": "Convention sous 5 jours", "text": "Grille tarifaire annexée, valable douze mois." },
+    { "n": "02", "title": "Réservation sans compte", "text": "Vos collaborateurs appellent ou écrivent, nous rattachons." },
+    { "n": "03", "title": "Chauffeurs habilités", "text": "Casier vierge, discrétion contractuelle, anglophones sur demande." },
+    { "n": "04", "title": "Navettes récurrentes", "text": "Rotations quotidiennes hôtel–aéroport à tarif dégressif." }
+  ],
+  "closingCta": {
+    "title": "Parlons volumes.",
+    "subtitle": "RÉPONSE SOUS 24 H OUVRÉES · CONTACT@NAVETTEXPRESS.COM",
+    "cta": "Demander une convention"
+  }
+}

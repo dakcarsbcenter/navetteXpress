@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { requireAdminRole } from '@/utils/admin-permissions';
-import { Navigation } from '@/components/navigation';
+import { AdminNavigation } from '@/components/admin-navigation';
 import {
   competitorBenchmarkRows,
   geoExpansionRows,
@@ -16,7 +16,7 @@ export default async function SeoDashboardPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
-      <Navigation variant="solid" />
+      <AdminNavigation variant="solid" />
 
       <main className="max-w-7xl mx-auto px-6 pt-28 pb-12 space-y-8">
         <header className="space-y-2">

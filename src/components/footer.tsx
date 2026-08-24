@@ -1,29 +1,38 @@
 "use client";
 
-import Link from "next/link";
+import NextLink from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { Phone, MapPin, InstagramLogo, FacebookLogo, LinkedinLogo } from "@phosphor-icons/react";
 
 export function Footer() {
+    const t = useTranslations("Footer");
     const currentYear = new Date().getFullYear();
 
     const services = [
-        { label: "Transfert Aéroport AIBD", href: "/services" },
-        { label: "Navette Urbaine Dakar", href: "/services" },
-        { label: "Mise à Disposition", href: "/services" },
-        { label: "Événements & VIP", href: "/services" },
+        { label: t("services.airportTransfer"), href: "/services" },
+        { label: t("services.urbanShuttle"), href: "/services" },
+        { label: t("services.dayHire"), href: "/services" },
+        { label: t("services.events"), href: "/services" },
     ];
 
     const societe = [
-        { label: "Hôtels & entreprises", href: "/entreprises" },
-        { label: "Diaspora", href: "/diaspora" },
-        { label: "Devenir partenaire", href: "/devenir-partenaire" },
-        { label: "Avis clients", href: "/temoignages" },
+        { label: t("company.companies"), href: "/entreprises" },
+        { label: t("company.diaspora"), href: "/diaspora" },
+        { label: t("company.becomePartner"), href: "/devenir-partenaire" },
     ];
 
     const socialLinks = [
         { icon: <FacebookLogo size={16} weight="regular" />, href: "https://facebook.com/navettexpresssenegal", label: "Facebook" },
         { icon: <InstagramLogo size={16} weight="regular" />, href: "https://instagram.com/navettexpresssenegal", label: "Instagram" },
         { icon: <LinkedinLogo size={16} weight="regular" />, href: "https://linkedin.com/company/navettexpresssenegal", label: "LinkedIn" },
+    ];
+
+    const paymentMethods = [
+        t("paymentMethods.wave"),
+        t("paymentMethods.orangeMoney"),
+        t("paymentMethods.transfer"),
     ];
 
     return (
@@ -41,7 +50,7 @@ export function Footer() {
                         </Link>
 
                         <p className="font-[family-name:var(--font-ibm-plex-mono)] text-xs leading-[1.7] tracking-[0.02em] text-[#6b645c] uppercase max-w-xs">
-                            Dakar, Sénégal<br />
+                            {t("tagline")}<br />
                             +221 78 465 13 02<br />
                             contact@navettexpress.com
                         </p>
@@ -65,7 +74,7 @@ export function Footer() {
                     {/* Trajets Column */}
                     <div>
                         <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#6b645c] mb-4">
-                            Trajets
+                            {t("routesHeading")}
                         </h3>
                         <ul className="space-y-3">
                             {services.map((service, i) => (
@@ -81,7 +90,7 @@ export function Footer() {
                     {/* Société Column */}
                     <div>
                         <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#6b645c] mb-4">
-                            Société
+                            {t("companyHeading")}
                         </h3>
                         <ul className="space-y-3">
                             {societe.map((item, i) => (
@@ -92,9 +101,9 @@ export function Footer() {
                                 </li>
                             ))}
                             <li>
-                                <Link href="/cgv" className="text-[#9a938a] hover:text-gold text-sm transition-colors">
-                                    Conditions
-                                </Link>
+                                <NextLink href="/cgv" className="text-[#9a938a] hover:text-gold text-sm transition-colors">
+                                    {t("company.terms")}
+                                </NextLink>
                             </li>
                         </ul>
                     </div>
@@ -102,20 +111,13 @@ export function Footer() {
                     {/* Langue Column */}
                     <div>
                         <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#6b645c] mb-4">
-                            Langue
+                            {t("languageHeading")}
                         </h3>
-                        <ul className="space-y-3">
-                            <li className="text-background text-sm">Français</li>
-                            <li>
-                                <Link href="/en" className="text-[#9a938a] hover:text-gold text-sm transition-colors">
-                                    English
-                                </Link>
-                            </li>
-                        </ul>
+                        <LanguageSwitcher variant="inline" className="flex-col items-start gap-3 [&_button]:text-[#9a938a] [&_button.text-accent]:text-gold" />
 
                         <div className="mt-8">
                             <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#6b645c] mb-3">
-                                Support 24/7
+                                {t("supportHeading")}
                             </h3>
                             <a href="https://wa.me/221784651302" className="flex items-center gap-2 text-gold text-sm font-semibold hover:underline">
                                 <Phone size={14} weight="fill" />
@@ -146,7 +148,7 @@ export function Footer() {
                     </div>
 
                     <div className="flex flex-wrap gap-2">
-                        {["Wave", "Orange Money", "Virement"].map((method) => (
+                        {paymentMethods.map((method) => (
                             <span
                                 key={method}
                                 className="px-2 py-1 rounded border border-[#2e2b27] text-[#9a938a] text-[10px] font-semibold tracking-[0.06em] uppercase"
@@ -161,12 +163,12 @@ export function Footer() {
                 <div className="pt-6 border-t border-[#2e2b27] flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-[#6b645c]">
                     <p className="flex items-center gap-2">
                         <MapPin size={12} weight="light" />
-                        © {currentYear} Navette Xpress Sénégal. Tous droits réservés.
+                        © {currentYear} Navette Xpress Sénégal. {t("rightsReserved")}
                     </p>
                     <div className="flex gap-6">
-                        <Link href="/cgv" className="hover:text-gold transition-colors">CGV</Link>
-                        <Link href="/mentions-legales" className="hover:text-gold transition-colors">Mentions Légales</Link>
-                        <Link href="/confidentialite" className="hover:text-gold transition-colors">Confidentialité</Link>
+                        <NextLink href="/cgv" className="hover:text-gold transition-colors">{t("legal.terms")}</NextLink>
+                        <NextLink href="/mentions-legales" className="hover:text-gold transition-colors">{t("legal.mentions")}</NextLink>
+                        <NextLink href="/confidentialite" className="hover:text-gold transition-colors">{t("legal.privacy")}</NextLink>
                     </div>
                 </div>
             </div>

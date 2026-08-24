@@ -1,0 +1,73 @@
+{
+  "meta": {
+    "title": "Chofer Privado Dakar, Traslado al Aeropuerto AIBD y Chofer a Disposición | Navette Xpress",
+    "description": "Compare nuestros servicios de alta intención: traslado al aeropuerto AIBD, chofer privado en Dakar, chofer a disposición, transporte para eventos y traslados de hotel.",
+    "keywords": ["traslado aeropuerto Dakar", "chofer privado Senegal", "VTC Dakar", "traslado AIBD", "alquiler de auto con chofer Dakar"]
+  },
+  "breadcrumbs": {
+    "home": "Inicio",
+    "services": "Servicios"
+  },
+  "priorityHeading": "Páginas de servicios prioritarios",
+  "priorityIntro": "Explore nuestras páginas de alta intención y continúe hacia las rutas más solicitadas.",
+  "priorityPages": {
+    "airportTransfer": "Traslado al aeropuerto AIBD",
+    "privateDriver": "Chofer privado Dakar",
+    "chauffeurDisposal": "Chofer a disposición",
+    "routesHub": "Centro de rutas",
+    "faq": "Preguntas frecuentes"
+  },
+  "hero": {
+    "titlePrefix": "La Excelencia",
+    "titleAccent": "en Movimiento",
+    "subtitle": "Descubra nuestras soluciones de movilidad premium, diseñadas para satisfacer sus exigencias más altas en Senegal."
+  },
+  "grid": {
+    "loading": "Cargando servicios de prestigio...",
+    "empty": "No hay servicios disponibles por el momento.",
+    "bookCta": "Reservar ahora"
+  },
+  "why": {
+    "titlePrefix": "Por Qué Elegir",
+    "titleAccent": "Navette Xpress",
+    "subtitle": "La alianza perfecta entre la tecnología moderna y la auténtica hospitalidad senegalesa.",
+    "item1": {
+      "title": "Seguridad Total",
+      "desc": "Vehículos asegurados y monitoreados por GPS en tiempo real."
+    },
+    "item2": {
+      "title": "Puntualidad",
+      "desc": "Llegada garantizada 15 minutos antes de la hora prevista."
+    },
+    "item3": {
+      "title": "Experiencia VIP",
+      "desc": "Agua fresca, WiFi y prensa a bordo de cada vehículo."
+    },
+    "item4": {
+      "title": "En todo Senegal",
+      "desc": "Desde traslados AIBD hasta circuitos turísticos nacionales."
+    }
+  },
+  "finalCta": {
+    "titleLine1": "¿Listo para una Experiencia",
+    "titleAccent": "Inolvidable?",
+    "bookCta": "Reservar mi trayecto",
+    "contactCta": "Contáctenos"
+  },
+  "slugPage": {
+    "eyebrow": "Servicio prioritario",
+    "travelTimeLabel": "Tiempo promedio",
+    "availability247": "Disponible 24/7",
+    "whyHeading": "Por qué elegir este servicio",
+    "processHeading": "Proceso de recepción en AIBD",
+    "faqHeading": "Preguntas frecuentes del servicio",
+    "faqViewAll": "Ver todas las preguntas frecuentes",
+    "usefulLinksHeading": "Enlaces útiles",
+    "recommendedRoutes": "Rutas recomendadas",
+    "otherServices": "Otros servicios",
+    "routesHub": "Centro de rutas",
+    "bookNow": "Reservar ahora",
+    "breadcrumbHome": "Inicio",
+    "breadcrumbServices": "Servicios"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "meta": {
+    "title": "Private Driver Dakar, AIBD Airport Transfer & Chauffeur at Disposal | Navette Xpress",
+    "description": "Compare our high-intent services: AIBD airport transfer, private driver in Dakar, chauffeur at disposal, event shuttle and hotel transport.",
+    "keywords": ["Dakar airport transfer", "private driver Senegal", "chauffeur service Dakar", "AIBD shuttle", "car with driver rental Dakar"]
+  },
+  "breadcrumbs": {
+    "home": "Home",
+    "services": "Services"
+  },
+  "priorityHeading": "Priority service pages",
+  "priorityIntro": "Explore our high-intent pages and continue on to our most requested routes.",
+  "priorityPages": {
+    "airportTransfer": "AIBD Airport Transfer",
+    "privateDriver": "Private Driver Dakar",
+    "chauffeurDisposal": "Chauffeur at Disposal",
+    "routesHub": "Routes Hub",
+    "faq": "FAQ"
+  },
+  "hero": {
+    "titlePrefix": "Excellence",
+    "titleAccent": "in Motion",
+    "subtitle": "Discover our premium mobility solutions, designed to meet your highest expectations across Senegal."
+  },
+  "grid": {
+    "loading": "Loading our premium services...",
+    "empty": "No services available at the moment.",
+    "bookCta": "Book Now"
+  },
+  "why": {
+    "titlePrefix": "Why Choose",
+    "titleAccent": "Navette Xpress",
+    "subtitle": "The perfect alliance of modern technology and authentic Senegalese hospitality.",
+    "item1": {
+      "title": "Total Safety",
+      "desc": "Insured vehicles tracked by GPS in real time."
+    },
+    "item2": {
+      "title": "Punctuality",
+      "desc": "Guaranteed arrival 15 minutes ahead of schedule."
+    },
+    "item3": {
+      "title": "VIP Experience",
+      "desc": "Fresh water, WiFi and press on board every vehicle."
+    },
+    "item4": {
+      "title": "Anywhere in Senegal",
+      "desc": "From AIBD transfers to national tourist circuits."
+    }
+  },
+  "finalCta": {
+    "titleLine1": "Ready for an",
+    "titleAccent": "Unforgettable Experience?",
+    "bookCta": "Book My Ride",
+    "contactCta": "Contact Us"
+  },
+  "slugPage": {
+    "eyebrow": "Priority service",
+    "travelTimeLabel": "Average time",
+    "availability247": "Available 24/7",
+    "whyHeading": "Why choose this service",
+    "processHeading": "AIBD welcome process",
+    "faqHeading": "Service FAQ",
+    "faqViewAll": "View full FAQ",
+    "usefulLinksHeading": "Useful links",
+    "recommendedRoutes": "Recommended routes",
+    "otherServices": "Other services",
+    "routesHub": "Routes hub",
+    "bookNow": "Book Now",
+    "breadcrumbHome": "Home",
+    "breadcrumbServices": "Services"
+  }
+}

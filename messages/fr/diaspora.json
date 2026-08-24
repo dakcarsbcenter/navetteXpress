@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "title": "Diaspora — Organisez l'Arrivée depuis l'Étranger | Navette Xpress",
+    "description": "Réservez depuis Paris, Milan ou New York pour vous ou votre famille qui rentre au Sénégal. Confirmation WhatsApp en français ou anglais, paiement depuis l'étranger.",
+    "keywords": ["transport diaspora sénégalaise", "réserver navette AIBD depuis étranger", "accueil aéroport famille Sénégal", "chauffeur Dakar diaspora"]
+  },
+  "hero": {
+    "eyebrow": "VOUS RENTREZ AU PAYS",
+    "title": "Organisez l'arrivée depuis là-bas, arrivez sans y penser.",
+    "subtitle": "Réservez depuis Paris, Milan ou New York, pour vous ou pour la famille qui arrive. Nous confirmons par WhatsApp, en français ou en anglais, et nous acceptons le paiement depuis l'étranger.",
+    "cta": "Organiser mon arrivée",
+    "imageCaption": "photo — retrouvailles en salle d'arrivée AIBD"
+  },
+  "changesHeading": "Ce qui change quand on arrive de loin",
+  "changements": [
+    { "eyebrow": "BAGAGES", "title": "Cinq valises, ça rentre", "text": "Dites-nous combien vous êtes et ce que vous ramenez : nous envoyons le véhicule qui convient, pas celui qui reste." },
+    { "eyebrow": "FAMILLE", "title": "Vous réservez pour eux", "text": "Le chauffeur appelle la personne qui voyage, pas vous. Vous recevez seulement la confirmation qu'elle est montée." },
+    { "eyebrow": "PAIEMENT", "title": "Depuis l'étranger", "text": "Virement international, Wave ou espèces à l'arrivée. Le tarif est fixé à la réservation, sans variation de change." }
+  ],
+  "longStays": {
+    "title": "Séjours longs",
+    "text": "Trois semaines au pays, plusieurs déplacements : mise à disposition à la journée ou forfait sur la durée du séjour, avec le même chauffeur du début à la fin.",
+    "dayRate": "LA JOURNÉE · 10 H",
+    "discount": "AU-DELÀ DE 5 JOURS"
+  },
+  "timelineHeading": "CE QUE VOUS RECEVEZ, OÙ QUE VOUS SOYEZ",
+  "timeline": [
+    { "step": "J-1", "text": "Prénom du chauffeur, numéro, modèle et plaque." },
+    { "step": "H-1", "text": "Confirmation qu'il est en route vers l'aéroport." },
+    { "step": "H+0", "text": "Message quand vos proches sont montés dans le véhicule." },
+    { "step": "FIN", "text": "Message d'arrivée à destination." }
+  ],
+  "closingCta": {
+    "title": "Quelle date d'arrivée ?",
+    "subtitle": "RÉSERVATION POSSIBLE JUSQU'À 6 MOIS À L'AVANCE",
+    "cta": "Organiser mon arrivée"
+  }
+}

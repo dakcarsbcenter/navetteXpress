@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "title": "Rates by Segment — Fixed Prices AIBD, Dakar, Petite Côte | Navette Xpress",
+    "description": "Check our public rates by segment in CFA francs: Dakar, AIBD, Mbour, Saly, Somone. Tolls and fuel included, fixed price confirmed at booking.",
+    "keywords": ["AIBD shuttle rates", "private driver price Dakar", "Senegal airport transfer rate", "Petite Côte Saly price"]
+  },
+  "hero": {
+    "title": "The price of every segment, made clear",
+    "subtitle": "Public rates in CFA francs, tolls and fuel included, for a sedan. SUV +17,000, minibus +33,000. Night surcharge of 5,000 between midnight and 5am, confirmed at booking."
+  },
+  "filters": {
+    "all": "All",
+    "fromDakar": "From Dakar",
+    "fromAibd": "From AIBD",
+    "petiteCote": "Petite Côte"
+  },
+  "table": {
+    "segment": "Segment",
+    "distance": "Distance",
+    "duration": "Duration",
+    "sedan": "Sedan",
+    "suv": "SUV"
+  },
+  "segments": [
+    { "route": "Dakar Plateau → AIBD", "distance": "47 km", "duree": "55 min", "berline": 25000, "suv": 42000, "dot": "accent", "zones": ["dakar"] },
+    { "route": "Almadies / Ngor → AIBD", "distance": "55 km", "duree": "1 h 05", "berline": 28000, "suv": 45000, "dot": "accent", "zones": ["dakar"] },
+    { "route": "AIBD → Mbour centre", "distance": "32 km", "duree": "35 min", "berline": 22000, "suv": 39000, "dot": "ink", "zones": ["aibd"] },
+    { "route": "AIBD → Saly Portudal", "distance": "45 km", "duree": "40 min", "berline": 25000, "suv": 42000, "dot": "gold", "zones": ["aibd", "petite-cote"] },
+    { "route": "AIBD → La Somone", "distance": "52 km", "duree": "50 min", "berline": 30000, "suv": 47000, "dot": "gold", "zones": ["aibd", "petite-cote"] },
+    { "route": "Dakar → Saly Portudal", "distance": "92 km", "duree": "1 h 30", "berline": 45000, "suv": 62000, "dot": "gold", "zones": ["dakar", "petite-cote"] },
+    { "route": "Dakar → Nianing / Joal", "distance": "115 km", "duree": "1 h 55", "berline": 55000, "suv": 72000, "dot": "gold", "zones": ["dakar", "petite-cote"] },
+    { "route": "Chauffeur hire — 10 h / 150 km", "distance": "150 km", "duree": "full day", "berline": 75000, "suv": 95000, "dot": "ink", "zones": [] }
+  ],
+  "closingCta": {
+    "title": "Your route isn't on the list?",
+    "cta": "Request a quote"
+  }
+}

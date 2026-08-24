@@ -1,0 +1,99 @@
+{
+  "meta": {
+    "title": "Book a Private Driver in Dakar & Fixed-Price AIBD Airport Transfer | Navette Xpress",
+    "description": "Book your AIBD airport transfer or private driver in Dakar online. Fast confirmation, fixed pricing, service available 24/7."
+  },
+  "breadcrumbs": {
+    "home": "Home",
+    "reservation": "Booking"
+  },
+  "steps": {
+    "trip": "TRIP",
+    "needs": "NEEDS",
+    "contact": "CONTACT"
+  },
+  "loading": {
+    "auth": "Loading...",
+    "page": "Loading your experience..."
+  },
+  "expressBanner": {
+    "title": "Express booking",
+    "desc": "Sign in to pre-fill your details and track your trips. No account required to book.",
+    "signIn": "Sign in",
+    "signUp": "Create an account"
+  },
+  "step1": {
+    "title": "Where on the corridor?",
+    "subtitle": "Describe your trip. We assign the vehicle for you in the next step.",
+    "serviceTypeLabel": "Service type",
+    "customServicePlaceholder": "Tell us what you need (event transport, film shoot...)",
+    "departureLabel": "Pickup",
+    "pickupSelectPlaceholder": "Select a location...",
+    "pickupInputPlaceholder": "AIBD Airport, Dakar...",
+    "arrivalLabel": "Drop-off",
+    "destinationSelectPlaceholder": "Select a destination...",
+    "destinationInputPlaceholder": "Almadies, Hôtel Terrou-Bi...",
+    "invalidCombination": "This combination isn't available. Choose only DAKAR to/from AIBD, MBOUR, SALY, NGAPAROU, THIES, NIANING, POINTE SARRENE, SOMONE.",
+    "datetimeLabel": "Date & time",
+    "passengersLabel": "Passengers",
+    "mapPlaceholder": "Route map",
+    "notDefined": "Not set",
+    "requestSummary": {
+      "label": "Your request",
+      "toll": "TOLLS & FUEL",
+      "included": "INCLUDED",
+      "wait": "60 MIN WAITING",
+      "rate": "RATE",
+      "onQuote": "ON REQUEST"
+    }
+  },
+  "step2": {
+    "title": "What should we plan for?",
+    "subtitle": "We assign the vehicle for you based on passengers and luggage. Just tell us what you need on board.",
+    "luggageLabel": "Luggage",
+    "luggageUnit": "{count, plural, one {bag} other {bags}}",
+    "optionsLabel": "Options at no extra cost",
+    "notesLabel": "Notes for the driver — optional",
+    "notesPlaceholder": "Exact meeting point, gate code, hotel name, stop along the way..."
+  },
+  "step3": {
+    "title": "How can we reach you?",
+    "subtitle": "We confirm by phone within thirty minutes.",
+    "nameLabel": "Full name",
+    "namePlaceholder": "Alpha Oumar Sow",
+    "emailLabel": "Email",
+    "emailPlaceholder": "your@email.com",
+    "phoneLabel": "Phone / WhatsApp",
+    "phonePlaceholder": "+221 77 XXX XX XX",
+    "summary": {
+      "label": "Your ride",
+      "notDefined": "Not set",
+      "passengersUnit": "{count, plural, one {passenger} other {passengers}}",
+      "luggageUnit": "{count, plural, one {bag} other {bags}}",
+      "service": "SERVICE",
+      "vehicle": "VEHICLE",
+      "vehicleValue": "ASSIGNED",
+      "rate": "RATE",
+      "rateValue": "ON REQUEST"
+    }
+  },
+  "nav": {
+    "back": "Back",
+    "cancel": "Cancel",
+    "noAccountRequired": "NO ACCOUNT REQUIRED",
+    "continue": "Continue",
+    "confirm": "Confirm booking"
+  },
+  "success": {
+    "title": "Booking received!",
+    "message": "Got it. We'll confirm by phone within 30 minutes. Our team will contact you to finalize the details and the fare.",
+    "confirm": "Great!"
+  },
+  "errors": {
+    "forbiddenTitle": "Action not allowed",
+    "genericTitle": "Booking failed",
+    "defaultMessage": "An error occurred while creating the booking",
+    "networkMessage": "Something went wrong while creating your booking. Please try again.",
+    "retry": "Try again"
+  }
+}

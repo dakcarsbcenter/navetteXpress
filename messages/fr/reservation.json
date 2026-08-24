@@ -1,0 +1,99 @@
+{
+  "meta": {
+    "title": "Reservation Chauffeur Prive Dakar et Transfert AIBD Prix Fixe | Navette Xpress",
+    "description": "Reservez en ligne votre transfert aeroport AIBD ou chauffeur prive a Dakar. Confirmation rapide, prix fixe, service disponible 24/7."
+  },
+  "breadcrumbs": {
+    "home": "Accueil",
+    "reservation": "Réservation"
+  },
+  "steps": {
+    "trip": "TRAJET",
+    "needs": "BESOINS",
+    "contact": "CONTACT"
+  },
+  "loading": {
+    "auth": "Chargement...",
+    "page": "Chargement de votre expérience..."
+  },
+  "expressBanner": {
+    "title": "Réservation express",
+    "desc": "Connectez-vous pour pré-remplir vos informations et suivre vos trajets. Aucun compte requis pour réserver.",
+    "signIn": "Connexion",
+    "signUp": "Créer un compte"
+  },
+  "step1": {
+    "title": "Où sur le corridor ?",
+    "subtitle": "Décrivez votre trajet. Le véhicule est attribué par nos soins à l'étape suivante.",
+    "serviceTypeLabel": "Type de service",
+    "customServicePlaceholder": "Précisez votre besoin (transport événementiel, tournage...)",
+    "departureLabel": "Départ",
+    "pickupSelectPlaceholder": "Sélectionnez un lieu...",
+    "pickupInputPlaceholder": "Aéroport AIBD, Dakar...",
+    "arrivalLabel": "Arrivée",
+    "destinationSelectPlaceholder": "Sélectionnez une destination...",
+    "destinationInputPlaceholder": "Almadies, Hôtel Terrou-Bi...",
+    "invalidCombination": "Combinaison non autorisée. Choisissez uniquement DAKAR vers AIBD, MBOUR, SALY, NGAPAROU, THIES, NIANING, POINTE SARRENE, SOMONE (et inverse).",
+    "datetimeLabel": "Date & heure",
+    "passengersLabel": "Passagers",
+    "mapPlaceholder": "Carte du trajet",
+    "notDefined": "Non défini",
+    "requestSummary": {
+      "label": "Votre demande",
+      "toll": "PÉAGE & CARBURANT",
+      "included": "INCLUS",
+      "wait": "ATTENTE 60 MIN",
+      "rate": "TARIF",
+      "onQuote": "SUR DEVIS"
+    }
+  },
+  "step2": {
+    "title": "Que faut-il prévoir ?",
+    "subtitle": "Le véhicule est attribué par nos soins selon les passagers et les bagages. Dites-nous seulement ce dont vous avez besoin à bord.",
+    "luggageLabel": "Bagages",
+    "luggageUnit": "{count, plural, one {valise} other {valises}}",
+    "optionsLabel": "Options sans supplément",
+    "notesLabel": "Précisions pour le chauffeur — facultatif",
+    "notesPlaceholder": "Point de rendez-vous exact, code portail, nom de l'hôtel, arrêt en route..."
+  },
+  "step3": {
+    "title": "Comment vous joindre ?",
+    "subtitle": "Nous confirmons par téléphone dans les trente minutes.",
+    "nameLabel": "Nom et prénom",
+    "namePlaceholder": "Alpha Oumar Sow",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "votre@email.com",
+    "phoneLabel": "Téléphone / WhatsApp",
+    "phonePlaceholder": "+221 77 XXX XX XX",
+    "summary": {
+      "label": "Votre course",
+      "notDefined": "Non défini",
+      "passengersUnit": "{count, plural, one {passager} other {passagers}}",
+      "luggageUnit": "{count, plural, one {bagage} other {bagages}}",
+      "service": "SERVICE",
+      "vehicle": "VÉHICULE",
+      "vehicleValue": "ATTRIBUÉ",
+      "rate": "TARIF",
+      "rateValue": "SUR DEVIS"
+    }
+  },
+  "nav": {
+    "back": "Retour",
+    "cancel": "Annuler",
+    "noAccountRequired": "AUCUN COMPTE REQUIS",
+    "continue": "Continuer",
+    "confirm": "Confirmer la réservation"
+  },
+  "success": {
+    "title": "Réservation enregistrée !",
+    "message": "C'est noté. Nous vous confirmons sous 30 minutes par téléphone. Notre équipe vous contactera pour valider les détails et le tarif.",
+    "confirm": "Parfait !"
+  },
+  "errors": {
+    "forbiddenTitle": "Action non autorisée",
+    "genericTitle": "Échec de la réservation",
+    "defaultMessage": "Erreur lors de la création de la réservation",
+    "networkMessage": "Une erreur est survenue lors de la création de la réservation. Veuillez réessayer.",
+    "retry": "Réessayer"
+  }
+}

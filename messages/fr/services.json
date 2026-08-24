@@ -1,0 +1,73 @@
+{
+  "meta": {
+    "title": "Services Chauffeur Privé Dakar, Transfert AIBD et Mise à Disposition | Navette Xpress",
+    "description": "Comparez nos services à forte intention : transfert aéroport AIBD, chauffeur privé Dakar, mise à disposition, navette événementielle et transport hôtel.",
+    "keywords": ["transfert aéroport Dakar", "chauffeur privé Sénégal", "VTC Dakar", "navette AIBD", "location voiture avec chauffeur Dakar"]
+  },
+  "breadcrumbs": {
+    "home": "Accueil",
+    "services": "Services"
+  },
+  "priorityHeading": "Pages services prioritaires",
+  "priorityIntro": "Explorez nos pages à forte intention et poursuivez vers les routes les plus demandées.",
+  "priorityPages": {
+    "airportTransfer": "Transfert aéroport AIBD",
+    "privateDriver": "Chauffeur privé Dakar",
+    "chauffeurDisposal": "Mise à disposition",
+    "routesHub": "Hub routes",
+    "faq": "FAQ"
+  },
+  "hero": {
+    "titlePrefix": "L'Excellence",
+    "titleAccent": "en Mouvement",
+    "subtitle": "Découvrez nos solutions de mobilité premium conçues pour répondre à vos exigences les plus élevées au Sénégal."
+  },
+  "grid": {
+    "loading": "Chargement des services prestige...",
+    "empty": "Aucun service disponible pour le moment.",
+    "bookCta": "Réserver maintenant"
+  },
+  "why": {
+    "titlePrefix": "Pourquoi Choisir",
+    "titleAccent": "Navette Xpress",
+    "subtitle": "L'alliance parfaite de la technologie moderne et de l'hospitalité sénégalaise authentique.",
+    "item1": {
+      "title": "Sécurité Totale",
+      "desc": "Véhicules assurés et suivis par GPS en temps réel."
+    },
+    "item2": {
+      "title": "Ponctualité",
+      "desc": "Arrivée garantie 15 minutes avant l'heure prévue."
+    },
+    "item3": {
+      "title": "Expérience VIP",
+      "desc": "Eau fraîche, WiFi et presse à bord de chaque véhicule."
+    },
+    "item4": {
+      "title": "Partout au Sénégal",
+      "desc": "Des transferts AIBD aux circuits touristiques nationaux."
+    }
+  },
+  "finalCta": {
+    "titleLine1": "Prêt pour une Expérience",
+    "titleAccent": "Inoubliable ?",
+    "bookCta": "Réserver mon trajet",
+    "contactCta": "Nous contacter"
+  },
+  "slugPage": {
+    "eyebrow": "Service prioritaire",
+    "travelTimeLabel": "Temps moyen",
+    "availability247": "Disponibilité 24/7",
+    "whyHeading": "Pourquoi choisir ce service",
+    "processHeading": "Processus d'accueil AIBD",
+    "faqHeading": "FAQ Service",
+    "faqViewAll": "Voir la FAQ complète",
+    "usefulLinksHeading": "Liens utiles",
+    "recommendedRoutes": "Routes recommandées",
+    "otherServices": "Autres services",
+    "routesHub": "Hub des routes",
+    "bookNow": "Réserver maintenant",
+    "breadcrumbHome": "Accueil",
+    "breadcrumbServices": "Services"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "title": "Diaspora — Organize Your Arrival from Abroad | Navette Xpress",
+    "description": "Book from Paris, Milan or New York for yourself or family flying back to Senegal. WhatsApp confirmation in French or English, payment from abroad accepted.",
+    "keywords": ["Senegalese diaspora transport", "book AIBD shuttle from abroad", "family airport pickup Senegal", "Dakar driver diaspora"]
+  },
+  "hero": {
+    "eyebrow": "HEADING HOME",
+    "title": "Arrange the arrival from over there, land without a worry.",
+    "subtitle": "Book from Paris, Milan or New York, for yourself or for the family flying in. We confirm by WhatsApp, in French or English, and we accept payment from abroad.",
+    "cta": "Arrange my arrival",
+    "imageCaption": "photo — reunion in the AIBD arrivals hall"
+  },
+  "changesHeading": "What's different when you're arriving from far away",
+  "changements": [
+    { "eyebrow": "LUGGAGE", "title": "Five suitcases, no problem", "text": "Tell us how many you are and what you're bringing back: we send the vehicle that fits, not whichever one is free." },
+    { "eyebrow": "FAMILY", "title": "You book, they travel", "text": "The driver calls the person traveling, not you. You simply get a message confirming they're in the car." },
+    { "eyebrow": "PAYMENT", "title": "From abroad", "text": "International transfer, Wave, or cash on arrival. The fare is fixed at booking, with no exchange-rate surprises." }
+  ],
+  "longStays": {
+    "title": "Longer stays",
+    "text": "Three weeks back home, several trips: day hire or a package for the length of your stay, with the same driver from start to finish.",
+    "dayRate": "PER DAY · 10 H",
+    "discount": "BEYOND 5 DAYS"
+  },
+  "timelineHeading": "WHAT YOU RECEIVE, WHEREVER YOU ARE",
+  "timeline": [
+    { "step": "D-1", "text": "Driver's first name, phone number, car model and plate." },
+    { "step": "H-1", "text": "Confirmation that he's on his way to the airport." },
+    { "step": "H+0", "text": "Message once your family is in the vehicle." },
+    { "step": "END", "text": "Message confirming arrival at destination." }
+  ],
+  "closingCta": {
+    "title": "What's the arrival date?",
+    "subtitle": "BOOKINGS ACCEPTED UP TO 6 MONTHS IN ADVANCE",
+    "cta": "Arrange my arrival"
+  }
+}

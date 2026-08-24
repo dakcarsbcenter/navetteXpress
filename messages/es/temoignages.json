@@ -1,0 +1,100 @@
+{
+  "meta": {
+    "title": "Opiniones de Clientes — Valoración 4.9/5 en más de 1000 Traslados | Navette Xpress Dakar",
+    "description": "Lea las opiniones de nuestros clientes satisfechos. Valoración de 4.9/5 en más de 1000 traslados al aeropuerto AIBD y trayectos en Dakar. Servicio fiable, puntual y profesional."
+  },
+  "hero": {
+    "badge": "Opiniones de clientes verificadas",
+    "titleLine1": "Han depositado su",
+    "titleLine2": "confianza en nosotros",
+    "subtitle": "Más de 1.000 traslados realizados en Dakar. Esto es lo que dicen nuestros clientes sobre su experiencia."
+  },
+  "rating": {
+    "outOf5": "sobre 5",
+    "verifiedReviews": "opiniones verificadas",
+    "viewOnGoogle": "Ver en Google",
+    "satisfiedCustomers": "Clientes Satisfechos"
+  },
+  "testimonials": [
+    {
+      "id": 1,
+      "nom": "Marie Diop",
+      "role": "Directora de Marketing",
+      "note": 5,
+      "commentaire": "¡Servicio excepcional! Chófer puntual, vehículo impecable. Recomiendo encarecidamente Navette Xpress para los traslados al aeropuerto AIBD. Precios muy competitivos en Senegal.",
+      "date": "2024-12-15",
+      "service": "Traslado AIBD Dakar"
+    },
+    {
+      "id": 2,
+      "nom": "Amadou Ba",
+      "role": "Empresario",
+      "note": 5,
+      "commentaire": "Lo he usado varias veces para mis viajes de negocios. Servicio profesional, chóferes experimentados. ¡El seguimiento de vuelos en tiempo real es un verdadero plus!",
+      "date": "2024-12-10",
+      "service": "Chófer Privado Dakar"
+    },
+    {
+      "id": 3,
+      "nom": "Fatou Sall",
+      "role": "Turista",
+      "note": 5,
+      "commentaire": "Mi primera vez en Senegal, Navette Xpress me tranquilizó desde el aeropuerto. Chófer acogedor, vehículo cómodo. ¡Perfecto para descubrir Dakar!",
+      "date": "2024-12-08",
+      "service": "Traslado Aeropuerto Thies"
+    },
+    {
+      "id": 4,
+      "nom": "Papa Diouf",
+      "role": "Alto Ejecutivo",
+      "note": 5,
+      "commentaire": "Servicio 24h/24 muy práctico. Tuve un vuelo retrasado y el chófer esperó pacientemente. ¡Atención al cliente de primer nivel!",
+      "date": "2024-12-05",
+      "service": "Traslado AIBD Dakar"
+    },
+    {
+      "id": 5,
+      "nom": "Aïcha Ndiaye",
+      "role": "Médica",
+      "note": 5,
+      "commentaire": "Vehículos muy limpios, chóferes respetuosos. Precios asequibles para la calidad del servicio. ¡Lo recomiendo sin dudarlo!",
+      "date": "2024-12-01",
+      "service": "Traslado Aeropuerto Mbour"
+    },
+    {
+      "id": 6,
+      "nom": "Moussa Diallo",
+      "role": "Diplomático",
+      "note": 5,
+      "commentaire": "Servicio VIP impecable. Chófer bilingüe, vehículo de lujo. Perfecto para recibir a invitados importantes. Navette Xpress se ha convertido en mi opción número uno.",
+      "date": "2024-11-28",
+      "service": "Servicio VIP"
+    },
+    {
+      "id": 7,
+      "nom": "Khadija Fall",
+      "role": "Estudiante",
+      "note": 5,
+      "commentaire": "Reserva fácil y rápida. Chófer puntual, precios para estudiantes. Servicio perfecto para mis desplazamientos entre Dakar y Thies.",
+      "date": "2024-11-25",
+      "service": "Traslado Aeropuerto Thies"
+    },
+    {
+      "id": 8,
+      "nom": "Cheikh Wade",
+      "role": "Hombre de Negocios",
+      "note": 5,
+      "commentaire": "Lo utilicé para una boda, servicio excepcional. Limusina magnífica, chófer de uniforme. ¡Nuestros invitados quedaron impresionados!",
+      "date": "2024-11-20",
+      "service": "Evento Especial"
+    }
+  ],
+  "cta": {
+    "titleLine1": "Su opinión nos ayuda a",
+    "titleLine2": "crecer",
+    "subtitle": "¿Ha viajado con Navette Xpress? Comparta su experiencia en Google y ayude a otros viajeros a tomar la mejor decisión.",
+    "leaveGoogleReview": "Dejar una Opinión en Google",
+    "bookShuttle": "Reservar un Traslado",
+    "verifiedNote": "Todas nuestras opiniones están verificadas y provienen de clientes que han viajado con nosotros."
+  }
+}

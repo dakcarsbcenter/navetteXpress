@@ -1,0 +1,54 @@
+{
+  "breadcrumbs": {
+    "home": "Inicio",
+    "zones": "Zonas"
+  },
+  "meta": {
+    "titleTemplate": "Chofer Privado {name} y Traslado Aeropuerto AIBD | Navette Xpress",
+    "ogTitleTemplate": "Chofer Privado {name} — Navette Xpress"
+  },
+  "hero": {
+    "titlePrefix": "Chofer Privado"
+  },
+  "sidebar": {
+    "reserveAt": "Reservar en {name}",
+    "confirmation": "Confirmación en 30 minutos",
+    "fixedPrice": "Precio fijo garantizado",
+    "reserveNow": "Reservar Ahora",
+    "ratingSuffix": "de más de 100 trayectos en {name}",
+    "testimonial": "\"Servicio impecable para mis citas de negocios en Plateau. Chofer muy profesional.\"",
+    "reviewAlt": "Reseña de cliente Navette Xpress"
+  },
+  "zonesData": {
+    "almadies": {
+      "id": "almadies",
+      "name": "Almadies",
+      "description": "Chofer privado y traslado al aeropuerto en Almadies, Dakar. Servicio premium 24/7 para residentes y empresas.",
+      "content": "<h3>¿Necesita un chofer privado en Almadies?</h3><p>Navette Xpress da servicio al barrio más prestigioso de Dakar: <strong>Almadies</strong>. Conocido por sus residencias diplomáticas, sedes de organizaciones internacionales y restaurantes de lujo, este barrio exige una movilidad de excepción.</p><p>Ya sea residente, hombre de negocios en desplazamiento o turista alojado en uno de los hoteles de lujo del barrio, le ofrecemos un servicio de chofer privado a la altura de sus exigencias. Nuestros choferes conocen perfectamente las calles sinuosas y los atajos de Almadies para evitarle los atascos de la rotonda de Ngor.</p><h3>Traslado Aeropuerto Almadies — AIBD con Total Tranquilidad</h3><p>Para sus salidas y llegadas al aeropuerto Blaise Diagne (AIBD), garantizamos un enlace directo desde su domicilio u oficina en Almadies. Imagínelo: sin necesidad de buscar un taxi, sin negociar el precio, un chofer le espera con un cartel a su regreso, y un vehículo climatizado le lleva cómodamente a casa.</p><h3>¿Por qué elegir Navette Xpress en Almadies?</h3><ul><li><strong>Puntualidad garantizada</strong>: Llegamos 15 minutos antes para cada recogida.</li><li><strong>Vehículos premium</strong>: SUV y berlinas de lujo para sus citas de negocios.</li><li><strong>Precio fijo</strong>: Sin taxímetro, sin sorpresas. La tarifa Almadies-AIBD se comunica al reservar.</li><li><strong>Servicio 24/7</strong>: Ya sea que su vuelo llegue a las 3 de la madrugada o al mediodía, estamos ahí.</li></ul>"
+    },
+    "plateau": {
+      "id": "plateau",
+      "name": "Dakar Plateau",
+      "description": "Servicio de chofer privado en Plateau, centro de Dakar. Puntualidad absoluta para sus citas de negocios.",
+      "content": "<h3>Su Chofer Privado en el Corazón de Dakar Plateau</h3><p>El <strong>Plateau</strong> es el centro neurálgico de los negocios, la administración y la política en Senegal. Navette Xpress ofrece un servicio de chofer privado a su disposición para acompañarle en todos sus desplazamientos profesionales en el centro de la ciudad.</p><p>Nuestros choferes están formados para circular con fluidez por las calles densas del centro, entre la Place de l'Indépendance, el Puerto de Dakar y los distintos ministerios. Ahorre tiempo y manténgase productivo a bordo de nuestros vehículos equipados con Wi-Fi.</p><h3>Enlace Dakar Plateau — Aeropuerto AIBD</h3><p>El trayecto entre Plateau y el aeropuerto internacional Blaise Diagne puede resultar largo según el tráfico en la autopista de peaje. Al reservar con Navette Xpress, tiene la garantía de una salida calculada para nunca perder su vuelo. Su chofer vigila el estado del tráfico en tiempo real para adaptar el itinerario.</p><h3>Un Servicio a Medida para las Empresas del Plateau</h3><ul><li><strong>Facturación mensual</strong>: Para sus colaboradores e invitados destacados.</li><li><strong>Recepción personalizada</strong>: Recepción VIP en la sala del aeropuerto.</li><li><strong>Discreción total</strong>: Choferes profesionales formados en protocolo.</li></ul>"
+    },
+    "ngor": {
+      "id": "ngor",
+      "name": "Ngor & Virage",
+      "description": "Traslado al aeropuerto y transporte privado en Ngor. Disfrute de la costa con total tranquilidad con Navette Xpress.",
+      "content": "<h3>Muévase por Ngor con un Chofer Privado</h3><p>El barrio de <strong>Ngor</strong>, con su pueblo de pescadores, su isla paradisíaca y las zonas residenciales de Virage, es un destino imprescindible. Navette Xpress facilita sus desplazamientos hacia esta zona costera muy solicitada.</p><p>Ya sea que regrese de la isla de Ngor por la noche o necesite un traslado al aeropuerto tras un fin de semana junto al mar, nuestros vehículos están estacionados cerca para intervenir rápidamente.</p><h3>Traslado de Aeropuerto hacia Ngor / Virage</h3><p>Virage es uno de los primeros accesos a Dakar desde la autopista viniendo del AIBD. Garantizamos traslados rápidos y seguros a todos los hoteles y residencias amuebladas del sector Ngor-Virage.</p><h3>Servicios Disponibles en Ngor</h3><ul><li><strong>Chofer a disposición</strong>: Para un día de compras o visitas.</li><li><strong>Furgonetas para grupos</strong>: Ideal para familias o grupos de amigos.</li><li><strong>Trayectos nocturnos</strong>: Seguridad garantizada para sus salidas a restaurantes o discotecas en Almadies/Ngor.</li></ul>"
+    },
+    "yoff": {
+      "id": "yoff",
+      "name": "Yoff",
+      "description": "Chofer privado en Yoff. Transporte fiable y económico hacia el aeropuerto AIBD y el centro de la ciudad.",
+      "content": "<h3>Navette Xpress en Yoff: Su Aliado de Movilidad</h3><p>El barrio de <strong>Yoff</strong>, corazón cultural y religioso de Dakar con sus extensas playas y su antiguo aeropuerto, está en pleno desarrollo. Navette Xpress refuerza su presencia en Yoff para ofrecer a residentes y visitantes un transporte fiable y seguro.</p><p>Evite las tarifas imprevisibles de los taxis clandestinos. Con nosotros, reserva un vehículo de categoría con una tarifa transparente, ya sea para ir a la Gran Mezquita de Yoff o para un trayecto interurbano.</p><h3>Acceso Rápido a la Autopista desde Yoff</h3><p>Yoff cuenta con un acceso estratégico a la autopista de peaje. Aprovechamos esta ventaja para ofrecerle traslados al aeropuerto AIBD en un tiempo récord desde Yoff-Diamalaye, Yoff-Tonghor o Yoff-Aéroport.</p><h3>Las Ventajas de Navette Xpress en Yoff</h3><ul><li><strong>Seguridad de los pasajeros</strong>: Seguimiento GPS de cada trayecto.</li><li><strong>Espacio para equipaje</strong>: Nuestros SUV son perfectos para viajeros con mucho equipaje que salen de Yoff.</li><li><strong>Pago flexible</strong>: Efectivo, Orange Money o Wave.</li></ul>"
+    },
+    "sacre-coeur": {
+      "id": "sacre-coeur",
+      "name": "Sacré-Cœur & Mermoz",
+      "description": "Transporte privado en el corazón de Dakar: Sacré-Cœur 1, 2, 3 y Mermoz. La opción del confort urbano.",
+      "content": "<h3>Chofer Privado en Sacré-Cœur y Mermoz</h3><p>Barrios residenciales céntricos y dinámicos, <strong>Sacré-Cœur</strong> (1, 2, 3, VDN) y <strong>Mermoz</strong> están en el centro de todos los trayectos en Dakar. Navette Xpress ofrece allí un servicio de proximidad para sus necesidades diarias o excepcionales.</p><p>¿Necesita ir al supermercado Exclusive, acudir a una cita en la VDN o llegar al aeropuerto AIBD sin estrés? Nuestros choferes están posicionados estratégicamente para atenderle con rapidez.</p><h3>La Solución Ideal para las Familias de Sacré-Cœur</h3><p>Sabemos que las familias de Sacré-Cœur y Mermoz aprecian el confort. Nuestros vehículos espaciosos permiten transportar niños y equipaje para sus escapadas de fin de semana a Saly o sus regresos de expatriación vía el AIBD.</p><h3>¿Por qué confiar en nosotros en Sacré-Cœur?</h3><ul><li><strong>Vehículos familiares</strong>: Sillas de coche bajo petición.</li><li><strong>Conocimiento del tráfico</strong>: Dominio de los atajos de la VDN y la antigua pista.</li><li><strong>Reserva sencilla</strong>: A través de nuestra aplicación web en 3 clics.</li></ul>"
+    }
+  }
+}

@@ -7,6 +7,7 @@ import { GoogleAnalytics } from "./google-analytics";
 import { JsonLd } from '@/components/seo/JsonLd';
 import { schemaLocalBusiness, schemaWebSite } from '@/lib/schema';
 import { CapacitorAppUrlListener } from '@/components/mobile/CapacitorAppUrlListener';
+import { getLocale } from 'next-intl/server';
 
 const archivo = Archivo({
   variable: "--font-archivo",
@@ -116,6 +117,7 @@ export const metadata: Metadata = {
       'fr-SN': 'https://navettexpress.com',
       'fr-FR': 'https://navettexpress.com',
       'en-US': 'https://navettexpress.com/en',
+      'es-ES': 'https://navettexpress.com/es',
     },
   },
 
@@ -134,13 +136,14 @@ export const metadata: Metadata = {
 };
 
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
   return (
-    <html lang="fr" suppressHydrationWarning className={`scroll-smooth ${archivo.variable} ${ibmPlexMono.variable}`} data-scroll-behavior="smooth">
+    <html lang={locale} suppressHydrationWarning className={`scroll-smooth ${archivo.variable} ${ibmPlexMono.variable}`} data-scroll-behavior="smooth">
       <head />
       <body className="antialiased font-body bg-background text-foreground">
         <JsonLd data={schemaLocalBusiness} />

@@ -1,0 +1,54 @@
+{
+  "meta": {
+    "title": "Flota de Vehículos de Lujo en Dakar | Sedanes, SUV y Minibuses | Navette Xpress",
+    "description": "Descubra nuestra flota de excepción en Senegal. Desde sedanes de lujo hasta minibuses espaciosos, todos nuestros vehículos están climatizados, asegurados y equipados para su máximo confort.",
+    "keywords": [
+      "coche de lujo Dakar",
+      "minibús Senegal",
+      "SUV con chófer Dakar",
+      "flota VTC Senegal",
+      "vehículo VIP Dakar"
+    ]
+  },
+  "breadcrumbs": {
+    "home": "Inicio",
+    "fleet": "Flota"
+  },
+  "hero": {
+    "titleLine1": "Una Flota",
+    "titleLine2": "de Excepción",
+    "subtitle": "Símbolo de prestigio y refinamiento, nuestra colección de vehículos es seleccionada rigurosamente para ofrecerle un confort inigualable en cada desplazamiento."
+  },
+  "benefits": {
+    "maintenance": {
+      "title": "Mantenimiento Impecable",
+      "desc": "Inspección diaria y mantenimiento riguroso para una seguridad óptima."
+    },
+    "comfort": {
+      "title": "Confort Absoluto",
+      "desc": "Climatización tri-zona, tapicería de cuero y suspensión adaptativa."
+    },
+    "connectivity": {
+      "title": "Conectividad y Servicios",
+      "desc": "WiFi de alta velocidad, refrescos y cargadores a bordo."
+    }
+  },
+  "loading": "Cargando la colección...",
+  "pax": "Plazas",
+  "luggageIncluded": "Equipaje incluido",
+  "bookVehicle": "Reservar este vehículo",
+  "categories": {
+    "sedan": "Berlina Executive",
+    "luxury": "Gran Berlina de Lujo",
+    "suv": "SUV Premium",
+    "van": "Furgoneta Business",
+    "bus": "Minibús Prestige",
+    "default": "Vehículo de Excepción"
+  },
+  "cta": {
+    "titleLine1": "La Experiencia del Lujo",
+    "titleLine2": "Le Espera",
+    "bookNow": "Reservar Ahora",
+    "fleetAdvisor": "Asesor de Flota"
+  }
+}

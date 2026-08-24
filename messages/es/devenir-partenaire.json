@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "title": "Conviértete en Conductor Socio en Dakar | Navette Xpress",
+    "description": "Únete a la red Navette Xpress. Conviértete en chófer privado socio en Dakar y disfruta de ingresos atractivos, horarios flexibles y soporte 24/7."
+  },
+  "hero": {
+    "eyebrow": "Conductores y propietarios de vehículos",
+    "title": "Tú conoces la carretera. Nosotros tenemos los pasajeros.",
+    "subtitle": "Trabajamos con un número limitado de conductores en el corredor. Carreras regulares, tarifas conocidas antes de aceptar, pago en un plazo de siete días. Doce plazas abiertas para 2026.",
+    "cta": "Leer las condiciones",
+    "imageAlt": "Foto — conductor socio, zona de espera de AIBD"
+  },
+  "stats": {
+    "payment": {
+      "value": "7 d",
+      "text": "Plazo de pago tras la carrera. Transferencia, Wave u Orange Money."
+    },
+    "commission": {
+      "value": "15 %",
+      "text": "Comisión fija, anunciada antes de tu primera carrera. Sin gastos de inscripción."
+    },
+    "corridor": {
+      "value": "1 eje",
+      "text": "Permaneces en el corredor que conoces, no te envían al azar por todo Dakar."
+    }
+  },
+  "benefits": {
+    "title": "Lo que te aporta la plaza",
+    "items": [
+      {
+        "label": "VOLUMEN",
+        "text": "Entre 12 y 20 carreras por semana según la disponibilidad que declares. El planning se publica el viernes para la semana siguiente."
+      },
+      {
+        "label": "TARIFA",
+        "text": "El importe de cada carrera se conoce antes de aceptarla. Sin subastas, sin carreras a ciegas, sin tarifas revisadas después."
+      },
+      {
+        "label": "DISPUTAS",
+        "text": "Un interlocutor humano, localizable, y un procedimiento por escrito en caso de desacuerdo con un cliente. No estás solo frente a una aplicación."
+      },
+      {
+        "label": "COMBUSTIBLE",
+        "text": "Peajes y combustible reembolsados según el gasto real en las carreras largas, con presentación del recibo."
+      }
+    ]
+  },
+  "conditions": {
+    "eyebrow": "Condiciones de socio — 2026",
+    "items": [
+      { "label": "COMISIÓN", "value": "15 % FIJA" },
+      { "label": "PLAZO DE PAGO", "value": "7 DÍAS" },
+      { "label": "CUOTA DE ENTRADA", "value": "NINGUNA" },
+      { "label": "VEHÍCULO", "value": "MENOS DE 8 AÑOS" },
+      { "label": "EQUIPAMIENTO", "value": "A/A OBLIGATORIO" },
+      { "label": "CARNET", "value": "B, 3 AÑOS MÍNIMO" },
+      { "label": "SEGURO", "value": "TRANSPORTE DE PERSONAS" },
+      { "label": "ZONA", "value": "CORREDOR DKR–MBR" }
+    ],
+    "openSpots": "Plazas abiertas",
+    "openSpotsValue": "12"
+  },
+  "steps": {
+    "title": "Cómo avanzamos",
+    "stepLabel": "Paso",
+    "items": [
+      {
+        "title": "Te presentas",
+        "text": "Identidad, vehículo y disponibilidad. El formulario se completa en pocos minutos."
+      },
+      {
+        "title": "Te llamamos",
+        "text": "En un plazo de 48 horas laborables. Respondemos a todo el mundo, incluso cuando es un no."
+      },
+      {
+        "title": "Nos vemos",
+        "text": "Encuentro en Dakar o Mbour, verificación de la documentación y del estado del vehículo."
+      },
+      {
+        "title": "Primera carrera",
+        "text": "Carrera acompañada en un trayecto corto y, después, entrada en el planning."
+      }
+    ]
+  },
+  "application": {
+    "eyebrow": "Candidatura",
+    "title": "¿Te convencen las condiciones?",
+    "desc": "Completa tu expediente al lado. Ningún documento que subir en esta etapa: repasamos juntos la documentación el día de la cita.",
+    "perk1": { "value": "48 H", "text": "Plazo de respuesta, sea cual sea." },
+    "perk2": { "value": "0 F", "text": "Ningún gasto de expediente, en ningún momento." }
+  },
+  "form": {
+    "title": "Expediente de candidatura",
+    "sections": {
+      "identity": "Tu identidad",
+      "vehicle": "Tu vehículo",
+      "motivation": "Motivación y disponibilidad"
+    },
+    "fields": {
+      "firstName": { "label": "Nombre", "placeholder": "Ej.: Amadou" },
+      "lastName": { "label": "Apellido", "placeholder": "Ej.: Fall" },
+      "email": { "label": "Correo electrónico", "placeholder": "amadou@gmail.com" },
+      "phone": { "label": "Teléfono / WhatsApp", "placeholder": "+221 XX XXX XX XX" },
+      "experience": { "label": "Experiencia de conducción" },
+      "brand": { "label": "Marca" },
+      "model": { "label": "Modelo" },
+      "year": { "label": "Año" },
+      "plate": { "label": "Matrícula", "placeholder": "Ej.: AA-123-BB" },
+      "insurance": "Certifico que dispongo de un seguro válido",
+      "license": "Mi carnet de conducir es válido (más de 3 años)",
+      "availability": { "label": "Perfil de disponibilidad" },
+      "availabilityHint": "Las solicitudes se asignarán en función de las franjas horarias declaradas.",
+      "motivation": {
+        "label": "Tus motivaciones",
+        "placeholder": "Cuéntanos sobre ti y por qué quieres unirte a nosotros..."
+      }
+    },
+    "experienceOptions": {
+      "opt1": "1 a 3 años",
+      "opt2": "4 a 6 años",
+      "opt3": "7 a 10 años",
+      "opt4": "Más de 10 años"
+    },
+    "availabilityOptions": {
+      "fullTime": "Tiempo completo",
+      "partTime": "Tiempo parcial",
+      "weekend": "Fines de semana",
+      "evening": "Noches",
+      "occasional": "Ocasional"
+    },
+    "selectPlaceholder": "Elegir...",
+    "submit": "Enviar mi candidatura",
+    "submitting": "Procesando tu expediente...",
+    "footnote": "Respuesta en 48 h · Sin gastos de expediente"
+  },
+  "success": {
+    "title": "Candidatura recibida",
+    "desc": "Gracias por tu interés en Navette Xpress. Nuestro equipo de socios va a analizar tu expediente.",
+    "descHighlight": "Recibirás una respuesta en un plazo de 48 h.",
+    "backHome": "Volver al inicio"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "title": "Diáspora — Organice su Llegada desde el Extranjero | Navette Xpress",
+    "description": "Reserve desde París, Milán o Nueva York para usted o su familia que regresa a Senegal. Confirmación por WhatsApp en francés o inglés, pago aceptado desde el extranjero.",
+    "keywords": ["transporte diáspora senegalesa", "reservar traslado AIBD desde el extranjero", "recepción aeropuerto familia Senegal", "chófer Dakar diáspora"]
+  },
+  "hero": {
+    "eyebrow": "USTED REGRESA AL PAÍS",
+    "title": "Organice la llegada desde allí, aterrice sin preocupaciones.",
+    "subtitle": "Reserve desde París, Milán o Nueva York, para usted o para la familia que llega. Confirmamos por WhatsApp, en francés o inglés, y aceptamos el pago desde el extranjero.",
+    "cta": "Organizar mi llegada",
+    "imageCaption": "foto — reencuentro en la sala de llegadas de AIBD"
+  },
+  "changesHeading": "Lo que cambia cuando se llega desde lejos",
+  "changements": [
+    { "eyebrow": "EQUIPAJE", "title": "Cinco maletas, sin problema", "text": "Díganos cuántos son y qué traen: enviamos el vehículo adecuado, no el que quede disponible." },
+    { "eyebrow": "FAMILIA", "title": "Usted reserva para ellos", "text": "El chófer llama a la persona que viaja, no a usted. Solo recibe la confirmación de que ya subió al vehículo." },
+    { "eyebrow": "PAGO", "title": "Desde el extranjero", "text": "Transferencia internacional, Wave o efectivo a la llegada. La tarifa se fija al reservar, sin variación por tipo de cambio." }
+  ],
+  "longStays": {
+    "title": "Estancias largas",
+    "text": "Tres semanas en el país, varios desplazamientos: disposición por día o paquete para toda la estancia, con el mismo chófer de principio a fin.",
+    "dayRate": "EL DÍA · 10 H",
+    "discount": "A PARTIR DE 5 DÍAS"
+  },
+  "timelineHeading": "LO QUE RECIBE, ESTÉ DONDE ESTÉ",
+  "timeline": [
+    { "step": "D-1", "text": "Nombre del chófer, número de teléfono, modelo y matrícula." },
+    { "step": "H-1", "text": "Confirmación de que va camino al aeropuerto." },
+    { "step": "H+0", "text": "Mensaje cuando sus familiares suban al vehículo." },
+    { "step": "FIN", "text": "Mensaje de llegada a destino." }
+  ],
+  "closingCta": {
+    "title": "¿Qué fecha de llegada?",
+    "subtitle": "RESERVAS POSIBLES HASTA 6 MESES DE ANTELACIÓN",
+    "cta": "Organizar mi llegada"
+  }
+}

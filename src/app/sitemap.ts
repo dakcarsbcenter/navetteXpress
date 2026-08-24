@@ -1,99 +1,85 @@
 import { MetadataRoute } from 'next';
 import { allMoneyPages } from '@/lib/seo-money-pages';
+import { routing } from '@/i18n/routing';
+import { buildAlternates } from '@/lib/seo/localized-metadata';
+
+const baseUrl = 'https://navettexpress.com';
+
+function localizedUrl(path: string, locale: string) {
+  const cleanPath = path === '/' ? '' : path;
+  return locale === routing.defaultLocale ? `${baseUrl}${cleanPath}` : `${baseUrl}/${locale}${cleanPath}`;
+}
+
+interface StaticRoute {
+  path: string;
+  changeFrequency: NonNullable<MetadataRoute.Sitemap[number]['changeFrequency']>;
+  priority: number;
+}
+
+const staticRoutes: StaticRoute[] = [
+  { path: '/', changeFrequency: 'daily', priority: 1 },
+  { path: '/services', changeFrequency: 'weekly', priority: 0.9 },
+  { path: '/routes', changeFrequency: 'weekly', priority: 0.9 },
+  { path: '/flotte', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/contact', changeFrequency: 'monthly', priority: 0.6 },
+  { path: '/reservation', changeFrequency: 'daily', priority: 0.5 },
+  { path: '/faq', changeFrequency: 'weekly', priority: 0.7 },
+  { path: '/devenir-partenaire', changeFrequency: 'monthly', priority: 0.4 },
+  { path: '/entreprises', changeFrequency: 'monthly', priority: 0.6 },
+  { path: '/diaspora', changeFrequency: 'monthly', priority: 0.6 },
+  { path: '/tarifs', changeFrequency: 'weekly', priority: 0.7 },
+  { path: '/quote-request', changeFrequency: 'monthly', priority: 0.4 },
+];
+
+// Zones SEO (à automatiser si DB)
+const zones = [
+  'almadies',
+  'plateau',
+  'ngor',
+  'yoff',
+  'sacre-coeur',
+  'saly',
+  'saint-louis',
+  'mbour',
+  'lac-rose',
+  'somone',
+];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://navettexpress.com';
+  const entries: MetadataRoute.Sitemap = [];
 
-  // Pages Statiques
-  const staticPages = [
-    {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: 'daily' as const,
-      priority: 1,
-    },
-    {
-      url: `${baseUrl}/services`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/routes`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/en`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/flotte`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/temoignages`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/reservation`,
-      lastModified: new Date(),
-      changeFrequency: 'daily' as const,
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/faq`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/devenir-partenaire`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.4,
-    },
-  ];
+  for (const locale of routing.locales) {
+    for (const route of staticRoutes) {
+      entries.push({
+        url: localizedUrl(route.path, locale),
+        lastModified: new Date(),
+        changeFrequency: route.changeFrequency,
+        priority: route.priority,
+        alternates: { languages: buildAlternates(route.path, locale).languages },
+      });
+    }
 
-  // Zones SEO (à automatiser si DB)
-  const zones = [
-    'almadies',
-    'plateau',
-    'ngor',
-    'yoff',
-    'sacre-coeur',
-    'saly',
-    'saint-louis',
-    'mbour',
-    'lac-rose',
-    'somone'
-  ];
-  const zonePages = zones.map((zone) => ({
-    url: `${baseUrl}/zones/${zone}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.8,
-  }));
+    for (const zone of zones) {
+      const zonePath = `/zones/${zone}`;
+      entries.push({
+        url: localizedUrl(zonePath, locale),
+        lastModified: new Date(),
+        changeFrequency: 'weekly',
+        priority: 0.8,
+        alternates: { languages: buildAlternates(zonePath, locale).languages },
+      });
+    }
 
-  const moneyPages = allMoneyPages.map((page) => ({
-    url: `${baseUrl}${page.canonicalPath}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.85,
-  }));
+    for (const page of allMoneyPages) {
+      entries.push({
+        url: localizedUrl(page.canonicalPath, locale),
+        lastModified: new Date(),
+        changeFrequency: 'weekly',
+        priority: 0.85,
+        alternates: { languages: buildAlternates(page.canonicalPath, locale).languages },
+      });
+    }
+  }
 
-  return [...staticPages, ...zonePages, ...moneyPages];
+  return entries;
 }

@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "title": "Hoteles y Empresas — Cuenta Corporativa, Facturación Mensual | Navette Xpress",
+    "description": "Una cuenta, un interlocutor, una factura al mes. Solución de transporte para hoteles, empresas, ONG y misiones diplomáticas en Dakar y AIBD.",
+    "keywords": ["transporte empresarial Dakar", "cuenta corporativa traslado AIBD", "chófer privado hotel Senegal", "convenio transporte ONG"]
+  },
+  "hero": {
+    "eyebrow": "HOTELES · EMPRESAS · ONG · MISIONES DIPLOMÁTICAS",
+    "title": "Una cuenta, un interlocutor, una factura al mes.",
+    "subtitle": "Sus equipos reservan directamente, por teléfono o correo electrónico, sin adelantar gastos. Consolidamos todo a fin de mes: extracto por misión, justificantes adjuntos, IVA detallado.",
+    "ctaConvention": "Solicitar un convenio",
+    "ctaRates": "Tarifas negociadas"
+  },
+  "statement": {
+    "eyebrow": "EXTRACTO MENSUAL — MUESTRA",
+    "date": "FECHA",
+    "mission": "MISIÓN",
+    "amount": "IMPORTE",
+    "total": "TOTAL AGOSTO · 14 SERVICIOS"
+  },
+  "releve": [
+    { "date": "02.08", "mission": "DKR → AIBD · SR. FALL", "montant": "25.000" },
+    { "date": "05.08", "mission": "AIBD → SALY · MISIÓN UE", "montant": "25.000" },
+    { "date": "11.08", "mission": "DÍA COMPLETO · DELEGACIÓN", "montant": "75.000" },
+    { "date": "19.08", "mission": "DKR → MBOUR · SRA. SY", "montant": "35.000" }
+  ],
+  "benefits": [
+    { "n": "01", "title": "Convenio en 5 días", "text": "Tarifario adjunto, válido durante doce meses." },
+    { "n": "02", "title": "Reserva sin cuenta", "text": "Sus colaboradores llaman o escriben, nosotros lo asociamos a su cuenta." },
+    { "n": "03", "title": "Chóferes habilitados", "text": "Antecedentes limpios, discreción contractual, angloparlantes bajo petición." },
+    { "n": "04", "title": "Traslados recurrentes", "text": "Rotaciones diarias hotel-aeropuerto con tarifa decreciente." }
+  ],
+  "closingCta": {
+    "title": "Hablemos de volumen.",
+    "subtitle": "RESPUESTA EN 24 H HÁBILES · CONTACT@NAVETTEXPRESS.COM",
+    "cta": "Solicitar un convenio"
+  }
+}

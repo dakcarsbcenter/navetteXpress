@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "title": "Contactez Navette Xpress — Chauffeur Privé Dakar",
+    "description": "Contactez Navette Xpress pour réserver votre chauffeur privé à Dakar. Disponible par téléphone, WhatsApp et email. +221 78 465 13 02 — Réponse immédiate 24h/24."
+  },
+  "hero": {
+    "titleLine1": "Nous Sommes",
+    "titleLine2": "À Votre Écoute",
+    "subtitle": "Pour toute demande spécifique ou assistance personnalisée, nos conseillers sont à votre entière disposition 24h/24 et 7j/7."
+  },
+  "methods": {
+    "phone": {
+      "title": "Conciergerie 24/7",
+      "sub": "Disponible via WhatsApp & Appel Direct"
+    },
+    "email": {
+      "title": "Email Officiel",
+      "sub": "Réponse sous 2 heures garanties"
+    },
+    "office": {
+      "title": "Siège Social",
+      "sub": "Dakar, Sénégal"
+    }
+  },
+  "emergency": {
+    "title": "Service d'Urgence",
+    "quote": "Plus qu'un transport, une garantie de sérénité pour vos transferts de dernière minute.",
+    "cta": "Appel Immédiat"
+  },
+  "map": {
+    "markerTitle": "Siège Navette Xpress"
+  },
+  "form": {
+    "titleLine1": "Demande de",
+    "titleLine2": "Declamation",
+    "subtitle": "Remplissez ce formulaire d'exclusivité. Un conseiller personnel vous recontactera avec une proposition sur mesure.",
+    "nameLabel": "Nom de Prestige",
+    "namePlaceholder": "Votre nom complet",
+    "emailLabel": "Coordonnées Email",
+    "emailPlaceholder": "votre@email.com",
+    "phoneLabel": "Ligne Directe",
+    "serviceLabel": "Service d'Intérêt",
+    "servicePlaceholder": "Sélectionner un service",
+    "messageLabel": "Message & Exigences Particulières",
+    "messagePlaceholder": "Faites-nous part de vos attentes...",
+    "submit": "Transmettre ma demande",
+    "error": "Une erreur est survenue. Veuillez nous contacter par téléphone.",
+    "success": {
+      "title": "Message Reçu",
+      "desc": "Votre demande a été transmise à notre service conciergerie. Vous recevrez une réponse sous 2 heures.",
+      "another": "Envoyer un autre message"
+    }
+  },
+  "services": [
+    "Transfert Aéroport AIBD Dakar",
+    "Transfert Aéroport Thies",
+    "Transfert Aéroport Mbour",
+    "Chauffeur Privé Dakar",
+    "Transport Privé Sénégal",
+    "Service VIP",
+    "Autre / Devis personnalisé"
+  ],
+  "brandPromise": {
+    "prestige": "Dakar Prestige",
+    "security": "Sécurité Garantie",
+    "excellence": "Service Excellence"
+  }
+}

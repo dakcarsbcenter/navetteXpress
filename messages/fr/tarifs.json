@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "title": "Tarifs par Segment — Prix Fixes AIBD, Dakar, Petite Côte | Navette Xpress",
+    "description": "Consultez nos tarifs publics par segment en francs CFA : Dakar, AIBD, Mbour, Saly, Somone. Péage et carburant compris, prix fixe annoncé à la réservation.",
+    "keywords": ["tarifs navette AIBD", "prix chauffeur privé Dakar", "tarif transfert aéroport Sénégal", "prix Petite Côte Saly"]
+  },
+  "hero": {
+    "title": "Le prix de chaque segment, en clair",
+    "subtitle": "Tarifs publics en francs CFA, péage et carburant compris, pour une berline. SUV +17 000, minibus +33 000. Majoration nocturne de 5 000 entre minuit et cinq heures, annoncée à la réservation."
+  },
+  "filters": {
+    "all": "Tous",
+    "fromDakar": "Depuis Dakar",
+    "fromAibd": "Depuis AIBD",
+    "petiteCote": "Petite Côte"
+  },
+  "table": {
+    "segment": "Segment",
+    "distance": "Distance",
+    "duration": "Durée",
+    "sedan": "Berline",
+    "suv": "SUV"
+  },
+  "segments": [
+    { "route": "Dakar Plateau → AIBD", "distance": "47 km", "duree": "55 min", "berline": 25000, "suv": 42000, "dot": "accent", "zones": ["dakar"] },
+    { "route": "Almadies / Ngor → AIBD", "distance": "55 km", "duree": "1 h 05", "berline": 28000, "suv": 45000, "dot": "accent", "zones": ["dakar"] },
+    { "route": "AIBD → Mbour centre", "distance": "32 km", "duree": "35 min", "berline": 22000, "suv": 39000, "dot": "ink", "zones": ["aibd"] },
+    { "route": "AIBD → Saly Portudal", "distance": "45 km", "duree": "40 min", "berline": 25000, "suv": 42000, "dot": "gold", "zones": ["aibd", "petite-cote"] },
+    { "route": "AIBD → La Somone", "distance": "52 km", "duree": "50 min", "berline": 30000, "suv": 47000, "dot": "gold", "zones": ["aibd", "petite-cote"] },
+    { "route": "Dakar → Saly Portudal", "distance": "92 km", "duree": "1 h 30", "berline": 45000, "suv": 62000, "dot": "gold", "zones": ["dakar", "petite-cote"] },
+    { "route": "Dakar → Nianing / Joal", "distance": "115 km", "duree": "1 h 55", "berline": 55000, "suv": 72000, "dot": "gold", "zones": ["dakar", "petite-cote"] },
+    { "route": "Mise à disposition — 10 h / 150 km", "distance": "150 km", "duree": "journée", "berline": 75000, "suv": 95000, "dot": "ink", "zones": [] }
+  ],
+  "closingCta": {
+    "title": "Votre trajet n'est pas dans la liste ?",
+    "cta": "Demander un devis"
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "meta": {
+    "title": "FAQ — AIBD Airport Transfer, Rates & Private Driver Booking in Dakar | Navette Xpress",
+    "description": "Frequently asked questions about AIBD airport transfers, fixed prices, the airport pickup process, online booking and our 24/7 private driver service."
+  },
+  "beforeBooking": {
+    "heading": "Before you book",
+    "routesHub": "Routes hub",
+    "servicesHub": "Services hub",
+    "reservation": "Booking"
+  },
+  "hero": {
+    "titleHighlight": "Frequently",
+    "titleRest": "Asked Questions",
+    "subtitle": "Find quick answers to your questions about our transport services in Senegal"
+  },
+  "cta": {
+    "titleLine1": "Can't find",
+    "titleLine2": "your answer?",
+    "subtitle": "Our team is here to help. Get in touch with us directly!",
+    "writeUs": "Write to us"
+  },
+  "schemaFaqs": [
+    {
+      "question": "How do I book a transfer?",
+      "answer": "It's very simple! Head to our booking page, fill in the form with your flight details and personal information. You'll receive an email confirmation with your driver's details."
+    },
+    {
+      "question": "What are your rates?",
+      "answer": "Our rates vary depending on the destination. For Dakar - AIBD or AIBD - Dakar, our rates start at 25,000 FCFA. For any other destination, contact us for a personalized quote."
+    },
+    {
+      "question": "What types of vehicles do you offer?",
+      "answer": "We offer a modern fleet of vehicles: sedans, SUVs and air-conditioned minibuses. All our vehicles are perfectly maintained and equipped for your comfort."
+    },
+    {
+      "question": "How will I be found at the airport?",
+      "answer": "Your driver will be waiting for you in the arrivals hall with a sign bearing your name. He will also contact you by phone if necessary. We will send you his contact details before your arrival."
+    }
+  ],
+  "categories": [
+    {
+      "title": "Booking & Rates",
+      "questions": [
+        {
+          "question": "How do I book a transfer?",
+          "answer": "It's very simple! Head to our booking page, fill in the form with your flight details and personal information. You'll receive an email confirmation with your driver's details."
+        },
+        {
+          "question": "What are your rates?",
+          "answer": "Our rates vary depending on the destination. For Dakar - AIBD or AIBD - Dakar, our rates start at 25,000 FCFA. For any other destination, contact us for a personalized quote."
+        },
+        {
+          "question": "Are there any hidden fees?",
+          "answer": "No, our rates are fully transparent. The price shown includes transport, luggage assistance and 30 minutes of free waiting time. Only tolls and parking may be added depending on the route."
+        },
+        {
+          "question": "Can I cancel my booking?",
+          "answer": "Yes, you can cancel up to 2 hours before the scheduled time free of charge. For last-minute cancellations, fees may apply."
+        }
+      ]
+    },
+    {
+      "title": "Services & Vehicles",
+      "questions": [
+        {
+          "question": "What types of vehicles do you offer?",
+          "answer": "We offer a modern fleet of vehicles: sedans, SUVs and air-conditioned minibuses. All our vehicles are perfectly maintained and equipped for your comfort."
+        },
+        {
+          "question": "Are your drivers professional?",
+          "answer": "Absolutely! All our drivers are certified, experienced and know the roads of Senegal inside out."
+        },
+        {
+          "question": "Do you offer 24/7 service?",
+          "answer": "Yes, we are available 24/7 for all your airport transfers and private trips. Our drivers are always ready to serve you."
+        },
+        {
+          "question": "What happens if my flight is delayed?",
+          "answer": "No problem! We monitor flights in real time. Your driver will wait free of charge for up to 1 hour after the scheduled arrival time. Beyond that, waiting fees may apply."
+        }
+      ]
+    },
+    {
+      "title": "AIBD Dakar Airport",
+      "questions": [
+        {
+          "question": "How will I be found at the airport?",
+          "answer": "Your driver will be waiting for you in the arrivals hall with a sign bearing your name. He will also contact you by phone if necessary. We will send you his contact details before your arrival."
+        },
+        {
+          "question": "How far in advance should I book before my flight?",
+          "answer": "We recommend booking at least 24 hours in advance to guarantee availability. However, we do accept last-minute bookings subject to availability."
+        },
+        {
+          "question": "Can I book a round trip?",
+          "answer": "Of course! We offer round-trip packages with preferential rates. Contact us to find out about our special offers."
+        },
+        {
+          "question": "What happens if I miss my flight?",
+          "answer": "If you miss your flight, contact us immediately. We will adjust your booking to match your new flight at no extra cost."
+        }
+      ]
+    },
+    {
+      "title": "Payment & Billing",
+      "questions": [
+        {
+          "question": "What payment methods do you accept?",
+          "answer": "We accept cash (FCFA), bank card, bank transfer and mobile money (Orange Money, Free Money). Payment is usually made at the end of the service."
+        },
+        {
+          "question": "Can I pay in advance?",
+          "answer": "Yes, you can pay in advance by bank transfer or mobile money. This secures your booking and may qualify you for preferential rates."
+        },
+        {
+          "question": "Do you issue invoices?",
+          "answer": "Yes, we issue professional invoices for all our services. They're perfect for your business travel expense reports."
+        }
+      ]
+    },
+    {
+      "title": "Other Services",
+      "questions": [
+        {
+          "question": "Do you offer chauffeur hire services?",
+          "answer": "Yes! We offer chauffeur hire services for set durations. Ideal for events, sightseeing tours or business trips."
+        },
+        {
+          "question": "Do you organize sightseeing tours?",
+          "answer": "Absolutely! Our driver-guides will help you discover Dakar and its surroundings. We offer custom itineraries based on your interests."
+        },
+        {
+          "question": "Can I book for a group?",
+          "answer": "Yes, we have vehicles suited to groups (up to 8 people). Contact us to arrange transport for your team or group of friends."
+        }
+      ]
+    }
+  ]
+}

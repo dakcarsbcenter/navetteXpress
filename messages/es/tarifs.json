@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "title": "Tarifas por Trayecto — Precios Fijos AIBD, Dakar, Petite Côte | Navette Xpress",
+    "description": "Consulte nuestras tarifas públicas por trayecto en francos CFA: Dakar, AIBD, Mbour, Saly, Somone. Peaje y combustible incluidos, precio fijo confirmado al reservar.",
+    "keywords": ["tarifas traslado AIBD", "precio chófer privado Dakar", "tarifa traslado aeropuerto Senegal", "precio Petite Côte Saly"]
+  },
+  "hero": {
+    "title": "El precio de cada trayecto, sin sorpresas",
+    "subtitle": "Tarifas públicas en francos CFA, peaje y combustible incluidos, para una berlina. SUV +17.000, minibús +33.000. Recargo nocturno de 5.000 entre medianoche y las cinco de la mañana, confirmado al reservar."
+  },
+  "filters": {
+    "all": "Todos",
+    "fromDakar": "Desde Dakar",
+    "fromAibd": "Desde AIBD",
+    "petiteCote": "Petite Côte"
+  },
+  "table": {
+    "segment": "Trayecto",
+    "distance": "Distancia",
+    "duration": "Duración",
+    "sedan": "Berlina",
+    "suv": "SUV"
+  },
+  "segments": [
+    { "route": "Dakar Plateau → AIBD", "distance": "47 km", "duree": "55 min", "berline": 25000, "suv": 42000, "dot": "accent", "zones": ["dakar"] },
+    { "route": "Almadies / Ngor → AIBD", "distance": "55 km", "duree": "1 h 05", "berline": 28000, "suv": 45000, "dot": "accent", "zones": ["dakar"] },
+    { "route": "AIBD → Mbour centro", "distance": "32 km", "duree": "35 min", "berline": 22000, "suv": 39000, "dot": "ink", "zones": ["aibd"] },
+    { "route": "AIBD → Saly Portudal", "distance": "45 km", "duree": "40 min", "berline": 25000, "suv": 42000, "dot": "gold", "zones": ["aibd", "petite-cote"] },
+    { "route": "AIBD → La Somone", "distance": "52 km", "duree": "50 min", "berline": 30000, "suv": 47000, "dot": "gold", "zones": ["aibd", "petite-cote"] },
+    { "route": "Dakar → Saly Portudal", "distance": "92 km", "duree": "1 h 30", "berline": 45000, "suv": 62000, "dot": "gold", "zones": ["dakar", "petite-cote"] },
+    { "route": "Dakar → Nianing / Joal", "distance": "115 km", "duree": "1 h 55", "berline": 55000, "suv": 72000, "dot": "gold", "zones": ["dakar", "petite-cote"] },
+    { "route": "Disposición con chófer — 10 h / 150 km", "distance": "150 km", "duree": "día completo", "berline": 75000, "suv": 95000, "dot": "ink", "zones": [] }
+  ],
+  "closingCta": {
+    "title": "¿Su trayecto no está en la lista?",
+    "cta": "Solicitar presupuesto"
+  }
+}

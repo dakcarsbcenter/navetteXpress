@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "title": "Hotels & Companies — Corporate Account, Monthly Invoicing | Navette Xpress",
+    "description": "One account, one point of contact, one invoice a month. A transport solution for hotels, companies, NGOs and diplomatic missions in Dakar and AIBD.",
+    "keywords": ["corporate transport Dakar", "corporate shuttle account AIBD", "private driver hotel Senegal", "NGO transport agreement"]
+  },
+  "hero": {
+    "eyebrow": "HOTELS · COMPANIES · NGOS · DIPLOMATIC MISSIONS",
+    "title": "One account, one point of contact, one invoice a month.",
+    "subtitle": "Your teams book directly, by phone or email, with no upfront costs. We consolidate everything at month's end: a statement by mission, receipts attached, VAT itemized.",
+    "ctaConvention": "Request an agreement",
+    "ctaRates": "Negotiated rates"
+  },
+  "statement": {
+    "eyebrow": "MONTHLY STATEMENT — EXCERPT",
+    "date": "DATE",
+    "mission": "MISSION",
+    "amount": "AMOUNT",
+    "total": "TOTAL AUGUST · 14 TRIPS"
+  },
+  "releve": [
+    { "date": "08.02", "mission": "DKR → AIBD · MR FALL", "montant": "25,000" },
+    { "date": "08.05", "mission": "AIBD → SALY · EU MISSION", "montant": "25,000" },
+    { "date": "08.11", "mission": "DAY HIRE · DELEGATION", "montant": "75,000" },
+    { "date": "08.19", "mission": "DKR → MBOUR · MRS SY", "montant": "35,000" }
+  ],
+  "benefits": [
+    { "n": "01", "title": "Agreement within 5 days", "text": "Rate card attached, valid for twelve months." },
+    { "n": "02", "title": "Booking without an account", "text": "Your staff call or write in, we attribute the trip to you." },
+    { "n": "03", "title": "Vetted drivers", "text": "Clean record, contractual discretion, English speakers on request." },
+    { "n": "04", "title": "Recurring shuttles", "text": "Daily hotel-to-airport rotations at a tapered rate." }
+  ],
+  "closingCta": {
+    "title": "Let's talk about volume.",
+    "subtitle": "REPLY WITHIN 24 BUSINESS HOURS · CONTACT@NAVETTEXPRESS.COM",
+    "cta": "Request an agreement"
+  }
+}
