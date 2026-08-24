@@ -11,6 +11,15 @@ const nextConfig: NextConfig = {
   // Configuration pour Docker
   output: 'standalone',
 
+  // next-intl charge les fichiers de messages via un import() dynamique
+  // (chemin construit à partir de la locale) : le traceur de fichiers de
+  // Next.js ne le détecte pas automatiquement pour le build "standalone",
+  // ce qui exclurait silencieusement messages/ de l'image Docker. On force
+  // son inclusion explicitement.
+  outputFileTracingIncludes: {
+    '/**': ['./messages/**'],
+  },
+
   // Désactiver TypeScript checks pendant le build (pour Coolify)
   typescript: {
     ignoreBuildErrors: true,
