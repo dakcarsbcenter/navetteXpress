@@ -1,0 +1,78 @@
+{
+  "sidebar": {
+    "brandTagline": "Espace chauffeur",
+    "sectionMain": "Principal",
+    "sectionManagement": "Gestion",
+    "defaultName": "Chauffeur",
+    "nav": {
+      "dashboard": "Tableau de bord",
+      "planning": "Planning",
+      "availability": "Disponibilités",
+      "report": "Rapport Véhicule",
+      "statistics": "Statistiques",
+      "profile": "Profil"
+    }
+  },
+  "topbar": {
+    "titles": {
+      "dashboard": "Tableau de bord",
+      "planning": "Planning",
+      "availability": "Disponibilités",
+      "report": "Rapport Véhicule",
+      "statistics": "Statistiques",
+      "profile": "Profil",
+      "history": "Historique"
+    }
+  },
+  "home": {
+    "stats": {
+      "totalCourses": "Total Courses",
+      "activeDrivers": "Chauffeurs actifs",
+      "revenueToday": "Revenus du jour",
+      "averageRating": "Note moyenne",
+      "stable": "Stable"
+    },
+    "shortcuts": {
+      "title": "Raccourcis",
+      "report": "Rapport",
+      "profile": "Profil"
+    },
+    "missionRadar": {
+      "title": "En attente de mission",
+      "description": "Aucune course active pour le moment. Restez disponible."
+    },
+    "upcomingMissions": {
+      "title": "Missions à venir",
+      "emptyTitle": "En attente de mission",
+      "emptyDescription": "Aucune mission programmée"
+    },
+    "revenueChart": {
+      "title": "Évolution des Revenus",
+      "days": ["LUN", "MAR", "MER", "JEU", "VEN", "SAM", "DIM"]
+    },
+    "recentHistory": {
+      "title": "Historique Récent",
+      "viewAll": "Voir tout",
+      "emptyTitle": "Aucun historique",
+      "emptyDescription": "Aucun historique disponible",
+      "columns": {
+        "date": "Date",
+        "trip": "Trajet",
+        "distance": "Distance",
+        "revenue": "Revenu",
+        "status": "Statut"
+      }
+    },
+    "missionStatus": {
+      "onTime": "À l'heure",
+      "confirmed": "Confirmée",
+      "delayed": "Retard",
+      "cancelled": "Annulée"
+    },
+    "historyStatus": {
+      "completed": "Terminé",
+      "inProgress": "En cours",
+      "cancelled": "Annulé"
+    }
+  }
+}

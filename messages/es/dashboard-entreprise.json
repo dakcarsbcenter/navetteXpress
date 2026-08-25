@@ -1,0 +1,182 @@
+{
+  "loading": "Cargando su espacio empresa…",
+  "companyTypes": {
+    "hotel": "Hotel",
+    "entreprise": "Empresa",
+    "ong": "ONG / misión"
+  },
+  "defaultCompanyType": "Cuenta empresa",
+  "backToAccount": "Volver a mi cuenta",
+  "tabs": {
+    "overview": "Vista general",
+    "planning": "Planificación",
+    "schedule": "Calendario",
+    "quotes": "Presupuestos",
+    "invoices": "Facturas",
+    "profile": "Perfil"
+  },
+  "overview": {
+    "periods": {
+      "day": "Hoy",
+      "week": "Esta semana",
+      "month": "Este mes",
+      "year": "Este año"
+    },
+    "stats": {
+      "trips": "Viajes",
+      "amount": "Importe total",
+      "pending": "Pendientes",
+      "completed": "Completados"
+    },
+    "chartTitle": "Evolución de los viajes",
+    "accountCard": {
+      "title": "Su cuenta",
+      "type": "Tipo",
+      "tripsThisMonth": "Viajes · mes"
+    }
+  },
+  "schedule": {
+    "title": "Calendario",
+    "periods": {
+      "day": "Día",
+      "week": "Semana",
+      "month": "Mes",
+      "year": "Año"
+    },
+    "prev": "Anterior",
+    "next": "Siguiente",
+    "today": "Hoy",
+    "columns": {
+      "date": "Fecha",
+      "trip": "Trayecto",
+      "status": "Estado",
+      "amount": "Importe"
+    },
+    "empty": "No hay viajes en este período.",
+    "status": {
+      "pending": "Pendiente",
+      "assigned": "Asignada",
+      "approved": "Aprobada",
+      "rejected": "Rechazada",
+      "confirmed": "Confirmada",
+      "in_progress": "En curso",
+      "completed": "Finalizada",
+      "cancelled": "Cancelada"
+    }
+  },
+  "planningTab": {
+    "title": "Planificar desplazamientos",
+    "description": "Programe viajes recurrentes o elija fechas puntuales, en un período de hasta un año. Cada viaje generado queda pendiente de validación por nuestro equipo.",
+    "form": {
+      "pickup": "Dirección de recogida",
+      "dropoff": "Dirección de destino",
+      "time": "Hora",
+      "passengers": "Pasajeros",
+      "luggage": "Equipaje",
+      "notes": "Notas (opcional)",
+      "recurrenceType": "Tipo de planificación",
+      "recurrenceWeekly": "Recurrente — semanal",
+      "recurrenceMonthly": "Recurrente — mensual",
+      "recurrenceCustom": "Fechas puntuales",
+      "daysOfWeek": "Días de la semana",
+      "dayOfMonth": "Día del mes",
+      "startDate": "Fecha de inicio",
+      "endDate": "Fecha de fin",
+      "addDate": "Añadir una fecha",
+      "removeDate": "Quitar",
+      "customDates": "Fechas seleccionadas",
+      "submit": "Planificar",
+      "submitting": "Planificando…",
+      "daysShort": ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"]
+    },
+    "errors": {
+      "maxSpan": "La planificación no puede superar 1 año.",
+      "maxOccurrences": "Esta planificación genera demasiados viajes (máximo {max}).",
+      "noDates": "Añada al menos una fecha.",
+      "noDays": "Seleccione al menos un día de la semana.",
+      "generic": "Error al crear la planificación."
+    },
+    "success": "Planificación creada: {count, plural, one {# viaje pendiente de validación} other {# viajes pendientes de validación}}.",
+    "listTitle": "Planificaciones activas",
+    "empty": "No hay ninguna planificación en curso.",
+    "occurrences": "{count, plural, one {# viaje} other {# viajes}}",
+    "cancel": "Cancelar",
+    "cancelConfirm": "¿Cancelar esta planificación y todos sus viajes pendientes?",
+    "recurrenceLabels": {
+      "weekly": "Semanal",
+      "monthly": "Mensual",
+      "custom": "Fechas puntuales",
+      "once": "Puntual"
+    },
+    "statusLabels": {
+      "active": "Activa",
+      "cancelled": "Cancelada",
+      "completed": "Finalizada"
+    }
+  },
+  "quotes": {
+    "title": "Presupuestos",
+    "subtitle": "Solicite un presupuesto personalizado y siga su estado.",
+    "newRequest": "Nueva solicitud",
+    "loading": "Cargando sus presupuestos…",
+    "empty": "Todavía no hay ningún presupuesto.",
+    "estimatedPrice": "Precio estimado",
+    "preferredDate": "Fecha preferida",
+    "requestedOn": "Solicitado el",
+    "accept": "Aceptar",
+    "reject": "Rechazar",
+    "negotiate": "Negociar",
+    "negotiatePrompt": "Su mensaje para la negociación:",
+    "rejectPrompt": "Motivo del rechazo (opcional):",
+    "confirmAccept": "¿Aceptar este presupuesto? Se generarán automáticamente una factura y una reserva.",
+    "actionError": "Error al procesar el presupuesto.",
+    "status": {
+      "pending": "Pendiente",
+      "in_progress": "En proceso",
+      "sent": "Oferta recibida",
+      "accepted": "Aceptado",
+      "rejected": "Rechazado",
+      "expired": "Caducado"
+    }
+  },
+  "invoices": {
+    "title": "Facturas",
+    "loading": "Cargando sus facturas…",
+    "empty": "Todavía no hay ninguna factura.",
+    "filters": {
+      "all": "Todas",
+      "pending": "Pendientes",
+      "paid": "Pagadas",
+      "overdue": "Atrasadas"
+    },
+    "download": "Descargar",
+    "downloadSelection": "Descargar selección",
+    "dueDate": "Vencimiento",
+    "status": {
+      "draft": "Borrador",
+      "pending": "Pendiente",
+      "paid": "Pagada",
+      "cancelled": "Cancelada",
+      "overdue": "Atrasada"
+    },
+    "invoiceCard": {
+      "title": "¿Necesita un justificante?",
+      "description": "Escríbanos para recibir el detalle de sus viajes, una factura consolidada o modificar su convenio."
+    }
+  },
+  "profile": {
+    "title": "Perfil de empresa",
+    "edit": "Editar",
+    "fields": {
+      "name": "Nombre de contacto",
+      "email": "Correo electrónico",
+      "phone": "Teléfono",
+      "companyName": "Nombre comercial",
+      "companyType": "Tipo",
+      "companyAddress": "Dirección",
+      "raisonSociale": "Razón social",
+      "ninea": "NIF",
+      "bp": "Apartado postal"
+    }
+  }
+}

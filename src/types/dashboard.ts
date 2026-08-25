@@ -1,8 +1,10 @@
 import type React from "react"
 
 export type TrendType = "up" | "down" | "neutral"
-export type MissionStatus = "À l'heure" | "Confirmée" | "Retard" | "Annulée"
-export type HistoryStatus = "Terminé" | "En cours" | "Annulé"
+// Codes, not display labels — translated at render time via the
+// driver.home.missionStatus / driver.home.historyStatus message namespaces.
+export type MissionStatus = "onTime" | "confirmed" | "delayed" | "cancelled"
+export type HistoryStatus = "completed" | "inProgress" | "cancelled"
 
 type PhosphorIcon = React.ComponentType<{ size?: number; className?: string; weight?: "thin" | "light" | "regular" | "bold" | "fill" | "duotone" }>
 

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react"
 import { CalendarBlank, Clock, Coins, Car, ListChecks } from "@phosphor-icons/react"
 import { UpcomingMissions } from "@/app/driver/dashboard/components/UpcomingMissions"
 import { ContentCard, EmptyState, MetricCard, SectionHeader } from "@/components/driver/shared"
-import type { DriverBookingsApiResponse } from "@/types/dashboard"
+import type { DriverBookingsApiResponse, MissionItem } from "@/types/dashboard"
 
 type BookingStatus = "confirmed" | "pending" | "in_progress" | "completed" | "cancelled" | "assigned"
 
@@ -107,18 +107,21 @@ export function DriverPlanning({ onBack }: PlanningProps) {
     return map
   }, [weekMissions])
 
-  const upcomingMissions = useMemo(() => {
+  const upcomingMissions = useMemo<MissionItem[]>(() => {
     return missions
       .filter((mission) => mission.date >= now)
       .sort((a, b) => a.date.getTime() - b.date.getTime())
       .slice(0, 5)
-      .map((mission) => ({
-        id: mission.id,
-        departure: mission.pickup,
-        destination: mission.destination,
-        time: mission.date.toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }),
-        status: mission.status === "pending" ? "En attente" : "Confirmée" as "En attente" | "Confirmée",
-      }))
+      .map((mission) => {
+        const status: MissionItem["status"] = mission.status === "pending" ? "delayed" : "confirmed"
+        return {
+          id: mission.id,
+          departure: mission.pickup,
+          destination: mission.destination,
+          time: mission.date.toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }),
+          status,
+        }
+      })
   }, [missions, now])
 
   const summary = useMemo(() => {
@@ -203,7 +206,7 @@ export function DriverPlanning({ onBack }: PlanningProps) {
 
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <UpcomingMissions missions={upcomingMissions.map((item) => ({ ...item, status: item.status === "En attente" ? "Retard" : "Confirmée" }))} />
+          <UpcomingMissions missions={upcomingMissions} />
         </div>
         <div className="space-y-4">
           <MetricCard icon={ListChecks} label="Missions planifiées" value={summary.total} badge={summary.total > 0 ? "Active" : "Neutre"} delay={0} />

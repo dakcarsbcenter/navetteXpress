@@ -3,28 +3,30 @@
 import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { SquaresFour, CalendarBlank, Clock, ChartBar, SignOut, User, Wrench, Circle } from '@phosphor-icons/react'
 import { ThemeToggle } from '@/app/driver/dashboard/components/ThemeToggle'
+import { DashboardLanguageSwitcher } from '@/components/dashboard/DashboardLanguageSwitcher'
 
 interface NavItem {
   href: string
-  label: string
+  labelKey: string
   icon: React.ComponentType<{ size?: number; className?: string; weight?: "thin" | "light" | "regular" | "bold" | "fill" | "duotone" }>
 }
 
 const principalItems: NavItem[] = [
-  { href: '/driver/dashboard', label: 'Tableau de bord', icon: SquaresFour },
-  { href: '/driver/planning', label: 'Planning', icon: CalendarBlank },
+  { href: '/driver/dashboard', labelKey: 'nav.dashboard', icon: SquaresFour },
+  { href: '/driver/planning', labelKey: 'nav.planning', icon: CalendarBlank },
 ]
 
 const managementItems: NavItem[] = [
-  { href: '/driver/disponibilites', label: 'Disponibilités', icon: Clock },
-  { href: '/driver/rapport', label: 'Rapport Véhicule', icon: Wrench },
-  { href: '/driver/statistiques', label: 'Statistiques', icon: ChartBar },
-  { href: '/driver/profil', label: 'Profil', icon: User },
+  { href: '/driver/disponibilites', labelKey: 'nav.availability', icon: Clock },
+  { href: '/driver/rapport', labelKey: 'nav.report', icon: Wrench },
+  { href: '/driver/statistiques', labelKey: 'nav.statistics', icon: ChartBar },
+  { href: '/driver/profil', labelKey: 'nav.profile', icon: User },
 ]
 
-function SidebarLink({ item, active }: { item: NavItem; active: boolean }) {
+function SidebarLink({ item, active, label }: { item: NavItem; active: boolean; label: string }) {
   const Icon = item.icon
 
   return (
@@ -37,7 +39,7 @@ function SidebarLink({ item, active }: { item: NavItem; active: boolean }) {
     >
       {active && <span className="absolute -left-3 top-2 h-7 w-1 rounded-full bg-(--accent)" />}
       <Icon size={16} weight={active ? "fill" : "regular"} />
-      <span>{item.label}</span>
+      <span>{label}</span>
     </Link>
   )
 }
@@ -45,6 +47,9 @@ function SidebarLink({ item, active }: { item: NavItem; active: boolean }) {
 export default function DriverSidebar() {
   const pathname = usePathname()
   const { data: session } = useSession()
+  const t = useTranslations('driver.sidebar')
+  const tCommon = useTranslations('common.actions')
+  const tStatus = useTranslations('common.status')
 
   const getInitials = (name?: string | null) => {
     if (!name) return 'CH'
@@ -63,7 +68,7 @@ export default function DriverSidebar() {
               <p className="text-sm font-semibold text-(--text-primary)">
                 Navette <span className="text-(--accent)">Xpress</span>
               </p>
-              <p className="text-[10px] text-(--text-muted)">Espace chauffeur</p>
+              <p className="text-[10px] text-(--text-muted)">{t('brandTagline')}</p>
             </div>
           </div>
         </div>
@@ -74,10 +79,10 @@ export default function DriverSidebar() {
               {getInitials(session?.user?.name)}
             </div>
             <div>
-              <p className="text-sm font-semibold text-(--text-primary)">{session?.user?.name ?? 'Chauffeur'}</p>
+              <p className="text-sm font-semibold text-(--text-primary)">{session?.user?.name ?? t('defaultName')}</p>
               <div className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-[color-mix(in_srgb,var(--success)_15%,transparent)] px-2 py-0.5 text-[11px] text-(--success)">
                 <Circle size={8} weight="fill" />
-                Disponible
+                {tStatus('available')}
               </div>
             </div>
           </div>
@@ -85,29 +90,32 @@ export default function DriverSidebar() {
 
         <nav className="flex-1 space-y-6 overflow-y-auto px-4 py-5">
           <div className="space-y-2">
-            <p className="px-2 text-[10px] font-bold uppercase tracking-[0.2em] text-(--text-muted)">Principal</p>
+            <p className="px-2 text-[10px] font-bold uppercase tracking-[0.2em] text-(--text-muted)">{t('sectionMain')}</p>
             {principalItems.map((item) => (
-              <SidebarLink key={item.href} item={item} active={pathname === item.href} />
+              <SidebarLink key={item.href} item={item} active={pathname === item.href} label={t(item.labelKey)} />
             ))}
           </div>
 
           <div className="space-y-2">
-            <p className="px-2 text-[10px] font-bold uppercase tracking-[0.2em] text-(--text-muted)">Gestion</p>
+            <p className="px-2 text-[10px] font-bold uppercase tracking-[0.2em] text-(--text-muted)">{t('sectionManagement')}</p>
             {managementItems.map((item) => (
-              <SidebarLink key={item.href} item={item} active={pathname === item.href} />
+              <SidebarLink key={item.href} item={item} active={pathname === item.href} label={t(item.labelKey)} />
             ))}
           </div>
 
         </nav>
 
         <div className="space-y-3 border-t border-(--border) p-4">
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <DashboardLanguageSwitcher dropDirection="up" />
+          </div>
           <button
             onClick={() => signOut({ callbackUrl: '/' })}
             className="driver-dashboard-card inline-flex h-11 w-full items-center gap-2 rounded-xl border border-(--border) bg-(--bg-card) px-3 text-sm text-(--text-muted) hover:text-(--danger)"
           >
             <SignOut size={16} />
-            Déconnexion
+            {tCommon('logout')}
           </button>
         </div>
       </aside>
@@ -117,6 +125,7 @@ export default function DriverSidebar() {
           {[...principalItems, ...managementItems].map((item) => {
             const Icon = item.icon
             const active = pathname === item.href
+            const label = t(item.labelKey)
 
             return (
               <Link
@@ -125,7 +134,7 @@ export default function DriverSidebar() {
                 className={`flex flex-col items-center gap-1 rounded-lg px-2 py-2 text-[11px] ${active ? 'bg-[color-mix(in_srgb,var(--accent)_12%,transparent)] text-(--accent)' : 'text-(--text-muted)'}`}
               >
                 <Icon size={18} weight={active ? "fill" : "regular"} />
-                <span>{item.label.split(' ')[0]}</span>
+                <span>{label.split(' ')[0]}</span>
               </Link>
             )
           })}

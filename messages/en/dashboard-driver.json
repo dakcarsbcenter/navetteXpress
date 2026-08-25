@@ -1,0 +1,78 @@
+{
+  "sidebar": {
+    "brandTagline": "Driver space",
+    "sectionMain": "Main",
+    "sectionManagement": "Management",
+    "defaultName": "Driver",
+    "nav": {
+      "dashboard": "Dashboard",
+      "planning": "Schedule",
+      "availability": "Availability",
+      "report": "Vehicle Report",
+      "statistics": "Statistics",
+      "profile": "Profile"
+    }
+  },
+  "topbar": {
+    "titles": {
+      "dashboard": "Dashboard",
+      "planning": "Schedule",
+      "availability": "Availability",
+      "report": "Vehicle Report",
+      "statistics": "Statistics",
+      "profile": "Profile",
+      "history": "History"
+    }
+  },
+  "home": {
+    "stats": {
+      "totalCourses": "Total Rides",
+      "activeDrivers": "Active Drivers",
+      "revenueToday": "Today's Revenue",
+      "averageRating": "Average Rating",
+      "stable": "Stable"
+    },
+    "shortcuts": {
+      "title": "Shortcuts",
+      "report": "Report",
+      "profile": "Profile"
+    },
+    "missionRadar": {
+      "title": "Waiting for a mission",
+      "description": "No active ride at the moment. Stay available."
+    },
+    "upcomingMissions": {
+      "title": "Upcoming missions",
+      "emptyTitle": "Waiting for a mission",
+      "emptyDescription": "No mission scheduled"
+    },
+    "revenueChart": {
+      "title": "Revenue Trend",
+      "days": ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
+    },
+    "recentHistory": {
+      "title": "Recent History",
+      "viewAll": "View all",
+      "emptyTitle": "No history",
+      "emptyDescription": "No history available",
+      "columns": {
+        "date": "Date",
+        "trip": "Trip",
+        "distance": "Distance",
+        "revenue": "Revenue",
+        "status": "Status"
+      }
+    },
+    "missionStatus": {
+      "onTime": "On time",
+      "confirmed": "Confirmed",
+      "delayed": "Delayed",
+      "cancelled": "Cancelled"
+    },
+    "historyStatus": {
+      "completed": "Completed",
+      "inProgress": "In progress",
+      "cancelled": "Cancelled"
+    }
+  }
+}

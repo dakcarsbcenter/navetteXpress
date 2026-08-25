@@ -1,0 +1,11 @@
+{
+  "actions": {
+    "logout": "Déconnexion",
+    "toggleTheme": "Basculer le thème",
+    "notifications": "Notifications",
+    "changeLanguage": "Changer de langue"
+  },
+  "status": {
+    "available": "Disponible"
+  }
+}

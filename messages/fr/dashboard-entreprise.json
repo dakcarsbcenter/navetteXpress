@@ -1,0 +1,182 @@
+{
+  "loading": "Chargement de votre espace entreprise…",
+  "companyTypes": {
+    "hotel": "Hôtel",
+    "entreprise": "Entreprise",
+    "ong": "ONG / mission"
+  },
+  "defaultCompanyType": "Compte entreprise",
+  "backToAccount": "Retour à mon compte",
+  "tabs": {
+    "overview": "Vue globale",
+    "planning": "Planification",
+    "schedule": "Voir planning",
+    "quotes": "Devis",
+    "invoices": "Factures",
+    "profile": "Profil"
+  },
+  "overview": {
+    "periods": {
+      "day": "Aujourd'hui",
+      "week": "Cette semaine",
+      "month": "Ce mois",
+      "year": "Cette année"
+    },
+    "stats": {
+      "trips": "Courses",
+      "amount": "Montant total",
+      "pending": "En attente",
+      "completed": "Terminées"
+    },
+    "chartTitle": "Évolution des courses",
+    "accountCard": {
+      "title": "Votre compte",
+      "type": "Type",
+      "tripsThisMonth": "Courses · mois"
+    }
+  },
+  "schedule": {
+    "title": "Planning",
+    "periods": {
+      "day": "Jour",
+      "week": "Semaine",
+      "month": "Mois",
+      "year": "Année"
+    },
+    "prev": "Précédent",
+    "next": "Suivant",
+    "today": "Aujourd'hui",
+    "columns": {
+      "date": "Date",
+      "trip": "Trajet",
+      "status": "Statut",
+      "amount": "Montant"
+    },
+    "empty": "Aucune course sur cette période.",
+    "status": {
+      "pending": "En attente",
+      "assigned": "Assignée",
+      "approved": "Approuvée",
+      "rejected": "Rejetée",
+      "confirmed": "Confirmée",
+      "in_progress": "En cours",
+      "completed": "Terminée",
+      "cancelled": "Annulée"
+    }
+  },
+  "planningTab": {
+    "title": "Planifier des déplacements",
+    "description": "Programmez des courses récurrentes ou choisissez des dates ponctuelles, sur une période allant jusqu'à un an. Chaque course générée reste en attente de validation par notre équipe.",
+    "form": {
+      "pickup": "Adresse de départ",
+      "dropoff": "Adresse de destination",
+      "time": "Heure",
+      "passengers": "Passagers",
+      "luggage": "Bagages",
+      "notes": "Notes (optionnel)",
+      "recurrenceType": "Type de planification",
+      "recurrenceWeekly": "Récurrent — hebdomadaire",
+      "recurrenceMonthly": "Récurrent — mensuel",
+      "recurrenceCustom": "Dates ponctuelles",
+      "daysOfWeek": "Jours de la semaine",
+      "dayOfMonth": "Jour du mois",
+      "startDate": "Date de début",
+      "endDate": "Date de fin",
+      "addDate": "Ajouter une date",
+      "removeDate": "Retirer",
+      "customDates": "Dates sélectionnées",
+      "submit": "Planifier",
+      "submitting": "Planification en cours…",
+      "daysShort": ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"]
+    },
+    "errors": {
+      "maxSpan": "La planification ne peut pas dépasser 1 an.",
+      "maxOccurrences": "Cette planification génère trop de courses (maximum {max}).",
+      "noDates": "Ajoutez au moins une date.",
+      "noDays": "Sélectionnez au moins un jour de la semaine.",
+      "generic": "Erreur lors de la création de la planification."
+    },
+    "success": "Planification créée : {count, plural, one {# course en attente de validation} other {# courses en attente de validation}}.",
+    "listTitle": "Planifications actives",
+    "empty": "Aucune planification en cours.",
+    "occurrences": "{count, plural, one {# course} other {# courses}}",
+    "cancel": "Annuler",
+    "cancelConfirm": "Annuler cette planification et toutes ses courses en attente ?",
+    "recurrenceLabels": {
+      "weekly": "Hebdomadaire",
+      "monthly": "Mensuel",
+      "custom": "Dates ponctuelles",
+      "once": "Ponctuelle"
+    },
+    "statusLabels": {
+      "active": "Active",
+      "cancelled": "Annulée",
+      "completed": "Terminée"
+    }
+  },
+  "quotes": {
+    "title": "Devis",
+    "subtitle": "Demandez un devis personnalisé et suivez son statut.",
+    "newRequest": "Nouvelle demande",
+    "loading": "Chargement de vos devis…",
+    "empty": "Aucun devis pour le moment.",
+    "estimatedPrice": "Prix estimé",
+    "preferredDate": "Date souhaitée",
+    "requestedOn": "Demandé le",
+    "accept": "Accepter",
+    "reject": "Refuser",
+    "negotiate": "Négocier",
+    "negotiatePrompt": "Votre message pour la négociation :",
+    "rejectPrompt": "Raison du refus (optionnel) :",
+    "confirmAccept": "Accepter ce devis ? Une facture et une réservation seront générées automatiquement.",
+    "actionError": "Erreur lors de l'action sur le devis.",
+    "status": {
+      "pending": "En attente",
+      "in_progress": "En traitement",
+      "sent": "Proposition reçue",
+      "accepted": "Accepté",
+      "rejected": "Refusé",
+      "expired": "Expiré"
+    }
+  },
+  "invoices": {
+    "title": "Factures",
+    "loading": "Chargement de vos factures…",
+    "empty": "Aucune facture pour le moment.",
+    "filters": {
+      "all": "Toutes",
+      "pending": "En attente",
+      "paid": "Payées",
+      "overdue": "En retard"
+    },
+    "download": "Télécharger",
+    "downloadSelection": "Télécharger la sélection",
+    "dueDate": "Échéance",
+    "status": {
+      "draft": "Brouillon",
+      "pending": "En attente",
+      "paid": "Payée",
+      "cancelled": "Annulée",
+      "overdue": "En retard"
+    },
+    "invoiceCard": {
+      "title": "Besoin d'un justificatif ?",
+      "description": "Écrivez-nous pour recevoir le détail de vos missions, une facture consolidée ou faire évoluer votre convention."
+    }
+  },
+  "profile": {
+    "title": "Profil entreprise",
+    "edit": "Modifier",
+    "fields": {
+      "name": "Nom du contact",
+      "email": "Email",
+      "phone": "Téléphone",
+      "companyName": "Raison commerciale",
+      "companyType": "Type",
+      "companyAddress": "Adresse",
+      "raisonSociale": "Raison sociale",
+      "ninea": "NINEA",
+      "bp": "Boîte postale"
+    }
+  }
+}

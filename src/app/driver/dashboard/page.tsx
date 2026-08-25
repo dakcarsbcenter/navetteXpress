@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
+import { useLocale, useTranslations } from "next-intl"
 import { Car, Coins, Star, Users, FileText, User } from "@phosphor-icons/react"
 import { StatCard } from "@/app/driver/dashboard/components/StatCard"
 import { MissionRadar } from "@/app/driver/dashboard/components/MissionRadar"
@@ -9,6 +10,7 @@ import { UpcomingMissions } from "@/app/driver/dashboard/components/UpcomingMiss
 import { RevenueChart } from "@/app/driver/dashboard/components/RevenueChart"
 import { RecentHistory } from "@/app/driver/dashboard/components/RecentHistory"
 import styles from "@/styles/driver-dashboard.module.css"
+import { toIntlLocale } from "@/lib/intl-locale"
 import type {
   DriverBookingsApiResponse,
   HistoryItem,
@@ -16,12 +18,12 @@ import type {
   RevenuePoint,
 } from "@/types/dashboard"
 
-function formatMoney(value: number): string {
-  return `${Math.round(value).toLocaleString("fr-FR")} F`
+function formatMoney(value: number, intlLocale: string): string {
+  return `${Math.round(value).toLocaleString(intlLocale)} F`
 }
 
-function formatDateLabel(dateString: string): string {
-  return new Date(dateString).toLocaleDateString("fr-FR", {
+function formatDateLabel(dateString: string, intlLocale: string): string {
+  return new Date(dateString).toLocaleDateString(intlLocale, {
     day: "2-digit",
     month: "short",
     year: "numeric",
@@ -29,6 +31,9 @@ function formatDateLabel(dateString: string): string {
 }
 
 export default function DriverDashboardPage() {
+  const locale = useLocale()
+  const intlLocale = toIntlLocale(locale)
+  const t = useTranslations("driver.home")
   const [bookings, setBookings] = useState<DriverBookingsApiResponse["data"]>([])
 
   useEffect(() => {
@@ -79,15 +84,15 @@ export default function DriverDashboardPage() {
         id: item.booking.id,
         departure: item.booking.pickupAddress,
         destination: item.booking.dropoffAddress,
-        time: new Date(item.booking.scheduledDateTime).toLocaleString("fr-FR", {
+        time: new Date(item.booking.scheduledDateTime).toLocaleString(intlLocale, {
           day: "2-digit",
           month: "2-digit",
           hour: "2-digit",
           minute: "2-digit",
         }),
-        status: "Confirmée",
+        status: "confirmed",
       }))
-  }, [bookings])
+  }, [bookings, intlLocale])
 
   const history = useMemo<HistoryItem[]>(() => {
     return bookings
@@ -95,20 +100,20 @@ export default function DriverDashboardPage() {
       .slice(0, 8)
       .map((item) => ({
         id: item.booking.id,
-        date: formatDateLabel(item.booking.scheduledDateTime),
+        date: formatDateLabel(item.booking.scheduledDateTime, intlLocale),
         trajet: `${item.booking.pickupAddress} → ${item.booking.dropoffAddress}`,
         distance: "—",
-        revenu: formatMoney(typeof item.booking.price === "string" ? Number.parseFloat(item.booking.price) : Number(item.booking.price ?? 0)),
+        revenu: formatMoney(typeof item.booking.price === "string" ? Number.parseFloat(item.booking.price) : Number(item.booking.price ?? 0), intlLocale),
         statut: item.booking.status === "completed"
-          ? "Terminé"
+          ? "completed"
           : item.booking.status === "cancelled"
-            ? "Annulé"
-            : "En cours",
+            ? "cancelled"
+            : "inProgress",
       }))
-  }, [bookings])
+  }, [bookings, intlLocale])
 
   const revenueData = useMemo<RevenuePoint[]>(() => {
-    const days = ["LUN", "MAR", "MER", "JEU", "VEN", "SAM", "DIM"]
+    const days = t.raw("revenueChart.days") as string[]
     const revenueByDay = new Array(7).fill(0)
     for (const item of bookings) {
       if (item.booking.status !== "completed") continue
@@ -119,22 +124,22 @@ export default function DriverDashboardPage() {
       if (Number.isFinite(price)) revenueByDay[dayIndex] += price
     }
     return days.map((day, index) => ({ day, value: revenueByDay[index] }))
-  }, [bookings])
+  }, [bookings, t])
 
   return (
     <div className="space-y-3 sm:space-y-4">
       <div className={styles.pageGrid}>
         <div className="xl:col-span-1">
-          <StatCard icon={Car} label="Total Courses" value={statValues.totalCourses} trend="+0%" trendType="neutral" animationDelay={0} />
+          <StatCard icon={Car} label={t("stats.totalCourses")} value={statValues.totalCourses} trend="+0%" trendType="neutral" animationDelay={0} />
         </div>
         <div className="xl:col-span-1">
-          <StatCard icon={Users} label="Chauffeurs actifs" value="2/2" trend="Stable" trendType="up" animationDelay={100} />
+          <StatCard icon={Users} label={t("stats.activeDrivers")} value="2/2" trend={t("stats.stable")} trendType="up" animationDelay={100} />
         </div>
         <div className="xl:col-span-1">
-          <StatCard icon={Coins} label="Revenus du jour" value={`${Math.round(statValues.revenueToday)} F`} trend="+0%" trendType="neutral" animationDelay={200} />
+          <StatCard icon={Coins} label={t("stats.revenueToday")} value={`${Math.round(statValues.revenueToday)} F`} trend="+0%" trendType="neutral" animationDelay={200} />
         </div>
         <div className="xl:col-span-1">
-          <StatCard icon={Star} label="Note moyenne" value="4.9/5" trend="+0.1" trendType="up" animationDelay={300} />
+          <StatCard icon={Star} label={t("stats.averageRating")} value="4.9/5" trend="+0.1" trendType="up" animationDelay={300} />
         </div>
 
         <div className="xl:col-span-2">
@@ -148,21 +153,21 @@ export default function DriverDashboardPage() {
           <RevenueChart data={revenueData} />
         </div>
         <section className="driver-dashboard-card xl:col-span-1 rounded-2xl border border-(--border) bg-(--bg-card) p-4 sm:p-6">
-          <h3 className="mb-3 font-heading text-base font-bold text-(--text-primary) sm:mb-4 sm:text-lg">Raccourcis</h3>
+          <h3 className="mb-3 font-heading text-base font-bold text-(--text-primary) sm:mb-4 sm:text-lg">{t("shortcuts.title")}</h3>
           <div className="grid gap-3">
             <Link
               href="/driver/rapport"
               className="driver-dashboard-card inline-flex items-center gap-2.5 rounded-xl border border-(--border) bg-[color-mix(in_srgb,var(--bg-secondary)_65%,transparent)] px-3 py-2.5 text-xs font-semibold text-(--text-primary) sm:gap-3 sm:px-4 sm:py-3 sm:text-sm"
             >
               <FileText size={16} className="text-(--accent) sm:h-[18px] sm:w-[18px]" />
-              Rapport
+              {t("shortcuts.report")}
             </Link>
             <Link
               href="/driver/profil"
               className="driver-dashboard-card inline-flex items-center gap-2.5 rounded-xl border border-(--border) bg-[color-mix(in_srgb,var(--bg-secondary)_65%,transparent)] px-3 py-2.5 text-xs font-semibold text-(--text-primary) sm:gap-3 sm:px-4 sm:py-3 sm:text-sm"
             >
               <User size={16} className="text-(--accent) sm:h-[18px] sm:w-[18px]" />
-              Profil
+              {t("shortcuts.profile")}
             </Link>
           </div>
         </section>
@@ -174,5 +179,3 @@ export default function DriverDashboardPage() {
     </div>
   )
 }
-
-

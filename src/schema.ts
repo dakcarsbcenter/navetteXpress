@@ -1,4 +1,4 @@
-import { integer, pgTable, serial, text, timestamp, decimal, boolean, check, pgEnum } from 'drizzle-orm/pg-core';
+import { integer, pgTable, serial, text, timestamp, decimal, boolean, check, pgEnum, jsonb, type AnyPgColumn } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
 // Enums (unifiés)
@@ -152,6 +152,7 @@ export const bookingsTable = pgTable('bookings', {
   cancellationReason: text('cancellation_reason'),
   cancelledBy: text('cancelled_by').references(() => users.id, { onDelete: 'set null' }),
   cancelledAt: timestamp('cancelled_at'),
+  tripPlanId: integer('trip_plan_id').references((): AnyPgColumn => tripPlansTable.id, { onDelete: 'set null' }), // occurrence générée par une planification (voir tripPlansTable)
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
 }, (table) => ({
@@ -234,6 +235,35 @@ export const invoicesTable = pgTable('invoices', {
   amountCheck: check('amount_check', sql`${table.amount} > 0`),
   totalCheck: check('total_check', sql`${table.totalAmount} > 0`),
 }));
+
+// Planification de déplacements (courses programmées à l'avance, ex: comptes entreprise)
+export const tripPlanRecurrenceEnum = pgEnum('trip_plan_recurrence', ['once', 'weekly', 'monthly', 'custom']);
+export const tripPlanStatusEnum = pgEnum('trip_plan_status', ['active', 'completed', 'cancelled']);
+
+export const tripPlansTable = pgTable('trip_plans', {
+  id: serial('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  pickupAddress: text('pickup_address').notNull(),
+  dropoffAddress: text('dropoff_address').notNull(),
+  time: text('time').notNull(), // "HH:mm"
+  passengers: integer('passengers').notNull().default(1),
+  luggage: integer('luggage').notNull().default(0),
+  recurrence: tripPlanRecurrenceEnum('recurrence').notNull(),
+  daysOfWeek: jsonb('days_of_week').$type<number[]>(), // recurrence=weekly: 0(dim)-6(sam)
+  dayOfMonth: integer('day_of_month'), // recurrence=monthly: 1-31
+  customDates: jsonb('custom_dates').$type<string[]>(), // recurrence=once|custom: dates ISO ponctuelles
+  startDate: timestamp('start_date').notNull(),
+  endDate: timestamp('end_date'), // requis pour weekly/monthly, plafonné à +1 an côté API
+  notes: text('notes'),
+  status: tripPlanStatusEnum('status').notNull().default('active'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
+}, (table) => ({
+  passengersCheck: check('trip_plan_passengers_check', sql`${table.passengers} > 0`),
+}));
+
+export type InsertTripPlan = typeof tripPlansTable.$inferInsert;
+export type SelectTripPlan = typeof tripPlansTable.$inferSelect;
 
 // Types TS
 export type InsertUser = typeof users.$inferInsert;

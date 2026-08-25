@@ -1,0 +1,182 @@
+{
+  "loading": "Loading your company space…",
+  "companyTypes": {
+    "hotel": "Hotel",
+    "entreprise": "Company",
+    "ong": "NGO / mission"
+  },
+  "defaultCompanyType": "Company account",
+  "backToAccount": "Back to my account",
+  "tabs": {
+    "overview": "Overview",
+    "planning": "Trip Planning",
+    "schedule": "Schedule",
+    "quotes": "Quotes",
+    "invoices": "Invoices",
+    "profile": "Profile"
+  },
+  "overview": {
+    "periods": {
+      "day": "Today",
+      "week": "This week",
+      "month": "This month",
+      "year": "This year"
+    },
+    "stats": {
+      "trips": "Rides",
+      "amount": "Total amount",
+      "pending": "Pending",
+      "completed": "Completed"
+    },
+    "chartTitle": "Ride trend",
+    "accountCard": {
+      "title": "Your account",
+      "type": "Type",
+      "tripsThisMonth": "Rides · month"
+    }
+  },
+  "schedule": {
+    "title": "Schedule",
+    "periods": {
+      "day": "Day",
+      "week": "Week",
+      "month": "Month",
+      "year": "Year"
+    },
+    "prev": "Previous",
+    "next": "Next",
+    "today": "Today",
+    "columns": {
+      "date": "Date",
+      "trip": "Trip",
+      "status": "Status",
+      "amount": "Amount"
+    },
+    "empty": "No rides for this period.",
+    "status": {
+      "pending": "Pending",
+      "assigned": "Assigned",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "confirmed": "Confirmed",
+      "in_progress": "In progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    }
+  },
+  "planningTab": {
+    "title": "Plan your trips",
+    "description": "Schedule recurring rides or pick one-off dates, over a period of up to one year. Every generated ride stays pending until validated by our team.",
+    "form": {
+      "pickup": "Pickup address",
+      "dropoff": "Drop-off address",
+      "time": "Time",
+      "passengers": "Passengers",
+      "luggage": "Luggage",
+      "notes": "Notes (optional)",
+      "recurrenceType": "Planning type",
+      "recurrenceWeekly": "Recurring — weekly",
+      "recurrenceMonthly": "Recurring — monthly",
+      "recurrenceCustom": "One-off dates",
+      "daysOfWeek": "Days of the week",
+      "dayOfMonth": "Day of the month",
+      "startDate": "Start date",
+      "endDate": "End date",
+      "addDate": "Add a date",
+      "removeDate": "Remove",
+      "customDates": "Selected dates",
+      "submit": "Schedule",
+      "submitting": "Scheduling…",
+      "daysShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+    },
+    "errors": {
+      "maxSpan": "Planning cannot span more than 1 year.",
+      "maxOccurrences": "This plan generates too many rides (maximum {max}).",
+      "noDates": "Add at least one date.",
+      "noDays": "Select at least one day of the week.",
+      "generic": "Error while creating the plan."
+    },
+    "success": "Plan created: {count, plural, one {# ride pending validation} other {# rides pending validation}}.",
+    "listTitle": "Active plans",
+    "empty": "No plan in progress.",
+    "occurrences": "{count, plural, one {# ride} other {# rides}}",
+    "cancel": "Cancel",
+    "cancelConfirm": "Cancel this plan and all its pending rides?",
+    "recurrenceLabels": {
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "custom": "One-off dates",
+      "once": "One-off"
+    },
+    "statusLabels": {
+      "active": "Active",
+      "cancelled": "Cancelled",
+      "completed": "Completed"
+    }
+  },
+  "quotes": {
+    "title": "Quotes",
+    "subtitle": "Request a custom quote and track its status.",
+    "newRequest": "New request",
+    "loading": "Loading your quotes…",
+    "empty": "No quote yet.",
+    "estimatedPrice": "Estimated price",
+    "preferredDate": "Preferred date",
+    "requestedOn": "Requested on",
+    "accept": "Accept",
+    "reject": "Decline",
+    "negotiate": "Negotiate",
+    "negotiatePrompt": "Your message for the negotiation:",
+    "rejectPrompt": "Reason for declining (optional):",
+    "confirmAccept": "Accept this quote? An invoice and a booking will be generated automatically.",
+    "actionError": "Error while processing the quote.",
+    "status": {
+      "pending": "Pending",
+      "in_progress": "In progress",
+      "sent": "Offer received",
+      "accepted": "Accepted",
+      "rejected": "Declined",
+      "expired": "Expired"
+    }
+  },
+  "invoices": {
+    "title": "Invoices",
+    "loading": "Loading your invoices…",
+    "empty": "No invoice yet.",
+    "filters": {
+      "all": "All",
+      "pending": "Pending",
+      "paid": "Paid",
+      "overdue": "Overdue"
+    },
+    "download": "Download",
+    "downloadSelection": "Download selection",
+    "dueDate": "Due date",
+    "status": {
+      "draft": "Draft",
+      "pending": "Pending",
+      "paid": "Paid",
+      "cancelled": "Cancelled",
+      "overdue": "Overdue"
+    },
+    "invoiceCard": {
+      "title": "Need an invoice?",
+      "description": "Write to us to receive the details of your trips, a consolidated invoice, or to update your agreement."
+    }
+  },
+  "profile": {
+    "title": "Company profile",
+    "edit": "Edit",
+    "fields": {
+      "name": "Contact name",
+      "email": "Email",
+      "phone": "Phone",
+      "companyName": "Trading name",
+      "companyType": "Type",
+      "companyAddress": "Address",
+      "raisonSociale": "Legal name",
+      "ninea": "Tax ID",
+      "bp": "P.O. Box"
+    }
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "sidebar": {
+    "brandTagline": "Espacio del conductor",
+    "sectionMain": "Principal",
+    "sectionManagement": "Gestión",
+    "defaultName": "Conductor",
+    "nav": {
+      "dashboard": "Panel",
+      "planning": "Planificación",
+      "availability": "Disponibilidad",
+      "report": "Informe del Vehículo",
+      "statistics": "Estadísticas",
+      "profile": "Perfil"
+    }
+  },
+  "topbar": {
+    "titles": {
+      "dashboard": "Panel",
+      "planning": "Planificación",
+      "availability": "Disponibilidad",
+      "report": "Informe del Vehículo",
+      "statistics": "Estadísticas",
+      "profile": "Perfil",
+      "history": "Historial"
+    }
+  },
+  "home": {
+    "stats": {
+      "totalCourses": "Total de Viajes",
+      "activeDrivers": "Conductores Activos",
+      "revenueToday": "Ingresos de Hoy",
+      "averageRating": "Calificación Media",
+      "stable": "Estable"
+    },
+    "shortcuts": {
+      "title": "Accesos Directos",
+      "report": "Informe",
+      "profile": "Perfil"
+    },
+    "missionRadar": {
+      "title": "Esperando una misión",
+      "description": "No hay ningún viaje activo por el momento. Mantente disponible."
+    },
+    "upcomingMissions": {
+      "title": "Próximas misiones",
+      "emptyTitle": "Esperando una misión",
+      "emptyDescription": "No hay ninguna misión programada"
+    },
+    "revenueChart": {
+      "title": "Evolución de los Ingresos",
+      "days": ["LUN", "MAR", "MIÉ", "JUE", "VIE", "SÁB", "DOM"]
+    },
+    "recentHistory": {
+      "title": "Historial Reciente",
+      "viewAll": "Ver todo",
+      "emptyTitle": "Sin historial",
+      "emptyDescription": "No hay historial disponible",
+      "columns": {
+        "date": "Fecha",
+        "trip": "Trayecto",
+        "distance": "Distancia",
+        "revenue": "Ingreso",
+        "status": "Estado"
+      }
+    },
+    "missionStatus": {
+      "onTime": "A tiempo",
+      "confirmed": "Confirmada",
+      "delayed": "Retraso",
+      "cancelled": "Cancelada"
+    },
+    "historyStatus": {
+      "completed": "Finalizado",
+      "inProgress": "En curso",
+      "cancelled": "Cancelado"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "actions": {
+    "logout": "Cerrar sesión",
+    "toggleTheme": "Cambiar tema",
+    "notifications": "Notificaciones",
+    "changeLanguage": "Cambiar idioma"
+  },
+  "status": {
+    "available": "Disponible"
+  }
+}
