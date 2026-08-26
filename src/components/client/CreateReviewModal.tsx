@@ -1,6 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useLocale, useTranslations } from "next-intl"
+import { toIntlLocale } from "@/lib/intl-locale"
+import { X, Star, Car, User } from "@phosphor-icons/react"
 
 interface Booking {
   id: number
@@ -22,6 +25,9 @@ interface CreateReviewModalProps {
 }
 
 export function CreateReviewModal({ isOpen, onClose, booking, onSuccess }: CreateReviewModalProps) {
+  const locale = useLocale()
+  const intlLocale = toIntlLocale(locale)
+  const t = useTranslations('client.createReview')
   const [rating, setRating] = useState(0)
   const [hoverRating, setHoverRating] = useState(0)
   const [comment, setComment] = useState("")
@@ -59,11 +65,11 @@ export function CreateReviewModal({ isOpen, onClose, booking, onSuccess }: Creat
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!booking) return
-    
+
     if (rating === 0) {
-      setError("Veuillez donner une note")
+      setError(t('ratingRequired'))
       return
     }
 
@@ -89,33 +95,40 @@ export function CreateReviewModal({ isOpen, onClose, booking, onSuccess }: Creat
         onSuccess()
         onClose()
       } else {
-        setError(data.error || "Erreur lors de la création de l'avis")
+        setError(data.error || t('submitError'))
       }
     } catch (error) {
       console.error('Erreur lors de la soumission:', error)
-      setError("Erreur de connexion. Veuillez réessayer.")
+      setError(t('connectionError'))
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  const ratingHints: Record<number, string> = {
+    0: t('ratingHint0'),
+    1: t('ratingHint1'),
+    2: t('ratingHint2'),
+    3: t('ratingHint3'),
+    4: t('ratingHint4'),
+    5: t('ratingHint5'),
   }
 
   const renderStars = () => {
     return Array.from({ length: 5 }, (_, i) => {
       const starValue = i + 1
       const isActive = starValue <= (hoverRating || rating)
-      
+
       return (
         <button
           key={i}
           type="button"
-          className={`text-3xl transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center ${
-            isActive ? 'text-yellow-400' : 'text-gray-300'
-          } hover:text-yellow-400`}
+          className="min-w-[44px] min-h-[44px] flex items-center justify-center transition-colors"
           onClick={() => setRating(starValue)}
           onMouseEnter={() => setHoverRating(starValue)}
           onMouseLeave={() => setHoverRating(0)}
         >
-          ⭐
+          <Star size={28} weight={isActive ? 'fill' : 'regular'} style={{ color: isActive ? '#F59E0B' : 'var(--color-client-border)' }} />
         </button>
       )
     })
@@ -126,40 +139,40 @@ export function CreateReviewModal({ isOpen, onClose, booking, onSuccess }: Creat
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       {/* Backdrop */}
-      <div 
-        className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+      <div
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
-      
+
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
-        <div className="relative w-[95vw] max-w-lg transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800 p-4 sm:p-6 text-left shadow-xl transition-all">
+        <div className="relative w-[95vw] max-w-lg transform overflow-hidden rounded-2xl p-4 sm:p-6 text-left transition-all"
+          style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
-              Évaluer votre trajet
+            <h3 className="text-xl font-semibold" style={{ color: 'var(--color-client-text-primary)' }}>
+              {t('title')}
             </h3>
             <button
               onClick={onClose}
-              className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+              className="transition-colors"
+              style={{ color: 'var(--color-client-text-secondary)' }}
             >
-              <span className="sr-only">Fermer</span>
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <span className="sr-only">{t('close')}</span>
+              <X size={22} />
             </button>
           </div>
 
           {/* Trip Info */}
-          <div className="bg-slate-50 dark:bg-slate-700 p-4 rounded-lg mb-6">
+          <div className="rounded-lg p-4 mb-6" style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)' }}>
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-2xl">🚗</span>
+              <Car size={22} style={{ color: 'var(--color-client-accent)' }} />
               <div className="flex-1">
-                <p className="font-medium text-slate-900 dark:text-white">
+                <p className="font-medium" style={{ color: 'var(--color-client-text-primary)' }}>
                   {booking.pickupAddress} → {booking.dropoffAddress}
                 </p>
-                <p className="text-sm text-slate-600 dark:text-slate-400">
-                  {new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR', {
+                <p className="text-sm" style={{ color: 'var(--color-client-text-secondary)' }}>
+                  {new Date(booking.scheduledDateTime).toLocaleDateString(intlLocale, {
                     day: 'numeric',
                     month: 'long',
                     year: 'numeric',
@@ -169,14 +182,14 @@ export function CreateReviewModal({ isOpen, onClose, booking, onSuccess }: Creat
                 </p>
               </div>
             </div>
-            
-            <div className="flex items-center gap-2 mt-3 pt-3 border-t border-slate-200 dark:border-slate-600">
-              <span className="text-lg">👤</span>
+
+            <div className="flex items-center gap-2 mt-3 pt-3" style={{ borderTop: '1px solid var(--color-client-border)' }}>
+              <User size={18} style={{ color: 'var(--color-client-text-secondary)' }} />
               <div>
-                <p className="font-medium text-slate-900 dark:text-white">
-                  Chauffeur: {booking.driver.name}
+                <p className="font-medium" style={{ color: 'var(--color-client-text-primary)' }}>
+                  {t('driverLabel')}: {booking.driver.name}
                 </p>
-                <p className="text-sm text-slate-600 dark:text-slate-400">
+                <p className="text-sm" style={{ color: 'var(--color-client-text-secondary)' }}>
                   {booking.driver.email}
                 </p>
               </div>
@@ -186,44 +199,40 @@ export function CreateReviewModal({ isOpen, onClose, booking, onSuccess }: Creat
           <form onSubmit={handleSubmit}>
             {/* Rating */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
-                Comment évaluez-vous ce trajet ?
+              <label className="block text-sm font-medium mb-3" style={{ color: 'var(--color-client-text-primary)' }}>
+                {t('ratingLabel')}
               </label>
               <div className="flex items-center gap-1 mb-2">
                 {renderStars()}
               </div>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                {rating === 0 && "Cliquez sur les étoiles pour noter"}
-                {rating === 1 && "Très insatisfaisant"}
-                {rating === 2 && "Insatisfaisant"}
-                {rating === 3 && "Correct"}
-                {rating === 4 && "Satisfaisant"}
-                {rating === 5 && "Excellent"}
+              <p className="text-sm" style={{ color: 'var(--color-client-text-secondary)' }}>
+                {ratingHints[rating]}
               </p>
             </div>
 
             {/* Comment */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                Commentaire (optionnel)
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-client-text-primary)' }}>
+                {t('commentLabel')}
               </label>
               <textarea
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 rounded-lg outline-none transition-all"
+                style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
                 rows={4}
-                placeholder="Partagez votre expérience..."
+                placeholder={t('commentPlaceholder')}
                 maxLength={500}
               />
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                {comment.length}/500 caractères
+              <p className="text-xs mt-1" style={{ color: 'var(--color-client-text-secondary)' }}>
+                {t('commentCounter', { count: comment.length })}
               </p>
             </div>
 
             {/* Error */}
             {error && (
-              <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
+              <div className="mb-4 p-3 rounded-lg" style={{ backgroundColor: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}>
+                <p className="text-sm" style={{ color: '#EF4444' }}>{error}</p>
               </div>
             )}
 
@@ -232,25 +241,27 @@ export function CreateReviewModal({ isOpen, onClose, booking, onSuccess }: Creat
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 px-4 py-3 text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg font-medium transition-colors min-h-[44px]"
+                className="flex-1 px-4 py-3 rounded-lg font-medium transition-colors min-h-[44px]"
+                style={{ backgroundColor: 'var(--color-client-surface)', color: 'var(--color-client-text-primary)', border: '1px solid var(--color-client-border)' }}
                 disabled={isSubmitting}
               >
-                Annuler
+                {t('cancel')}
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting || rating === 0}
-                className="flex-1 px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 min-h-[44px]"
+                className="flex-1 px-4 py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 min-h-[44px] disabled:opacity-50"
+                style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}
               >
                 {isSubmitting ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Publication...
+                    {t('publishing')}
                   </>
                 ) : (
                   <>
-                    <span className="text-lg">⭐</span>
-                    Publier l&apos;avis
+                    <Star size={16} weight="fill" />
+                    {t('publish')}
                   </>
                 )}
               </button>

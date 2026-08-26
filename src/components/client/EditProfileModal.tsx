@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
+import { useTranslations } from "next-intl"
 import {
   X,
   User,
@@ -10,10 +11,7 @@ import {
   MapPin,
   Buildings,
   IdentificationCard,
-  AddressBook,
-  CheckCircle,
   DeviceMobile,
-  Camera,
   FloppyDisk,
   Warning
 } from "@phosphor-icons/react"
@@ -45,6 +43,7 @@ interface UserProfile {
 
 export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: EditProfileModalProps) {
   const { data: session } = useSession()
+  const t = useTranslations('client.editProfile')
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -101,10 +100,10 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
         onSuccess()
         onClose()
       } else {
-        setError(data.error || "Erreur lors de la mise à jour")
+        setError(data.error || t('updateError'))
       }
     } catch (err) {
-      setError("Une erreur est survenue")
+      setError(t('genericError'))
     } finally {
       setIsSubmitting(false)
     }
@@ -112,29 +111,38 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
 
   if (!isOpen) return null
 
+  const establishmentTypes = [
+    { value: 'hotel', label: t('typeHotel') },
+    { value: 'entreprise', label: t('typeEnterprise') },
+    { value: 'ong', label: t('typeNgo') },
+  ]
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
-        className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
 
-      <div className="relative w-[95vw] max-w-3xl max-h-[90vh] overflow-hidden rounded-2xl sm:rounded-[2.5rem] bg-[#0F172A] border border-white/10 shadow-2xl flex flex-col animate-scaleIn">
+      <div className="relative w-[95vw] max-w-3xl max-h-[90vh] overflow-hidden rounded-2xl sm:rounded-[2.5rem] shadow-2xl flex flex-col animate-scaleIn"
+        style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
 
         {/* Header Section */}
-        <div className="p-4 sm:p-6 lg:p-8 pb-4 shrink-0 border-b border-white/5 flex items-center justify-between bg-linear-to-r from-(--color-client-accent)/10 to-transparent">
+        <div className="p-4 sm:p-6 lg:p-8 pb-4 shrink-0 flex items-center justify-between"
+          style={{ borderBottom: '1px solid var(--color-client-border)', background: 'linear-gradient(135deg, var(--color-client-accent-bg) 0%, transparent 100%)' }}>
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-(--color-client-accent)/20 flex items-center justify-center text-(--color-client-accent) border border-(--color-client-accent)/20">
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)', border: '1px solid var(--color-client-accent-border)' }}>
               <User size={28} weight="duotone" />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-white leading-tight">Modifier mon profil</h3>
-              <p className="text-sm text-white/40 mt-1">Gérez vos informations personnelles et professionnelles</p>
+              <h3 className="text-xl font-bold leading-tight" style={{ color: 'var(--color-client-text-primary)' }}>{t('title')}</h3>
+              <p className="text-sm mt-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('subtitle')}</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-white/5 text-white/40 hover:text-white transition-all"
+            className="p-2 rounded-full transition-all"
+            style={{ color: 'var(--color-client-text-secondary)' }}
           >
             <X size={24} />
           </button>
@@ -144,66 +152,70 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
 
           {/* Section: Identité de base */}
           <section className="space-y-6">
-            <div className="flex items-center gap-3 text-(--color-client-accent)/80 mb-2">
+            <div className="flex items-center gap-3 mb-2" style={{ color: 'var(--color-client-accent)' }}>
               <IdentificationCard size={20} weight="bold" />
-              <h4 className="text-xs font-bold uppercase tracking-[0.2em]">Identité & Contact</h4>
+              <h4 className="text-xs font-bold uppercase tracking-[0.2em]">{t('identityContact')}</h4>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 ml-1">Nom Complet</label>
+                <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('fullName')}</label>
                 <div className="relative">
-                  <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" />
+                  <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: 'var(--color-client-text-secondary)' }} />
                   <input
                     type="text"
                     value={formData.name}
                     onChange={e => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:border-(--color-client-accent)/50 transition-all"
-                    placeholder="Votre nom..."
+                    className="w-full pl-12 pr-4 py-3 rounded-2xl outline-none transition-all"
+                    style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                    placeholder={t('fullNamePlaceholder')}
                     required
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 ml-1">Adresse Email</label>
+                <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('email')}</label>
                 <div className="relative">
-                  <Envelope size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" />
+                  <Envelope size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: 'var(--color-client-text-secondary)' }} />
                   <input
                     type="email"
                     value={formData.email}
                     onChange={e => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:border-(--color-client-accent)/50 transition-all"
-                    placeholder="votre.email@exemple.com"
+                    className="w-full pl-12 pr-4 py-3 rounded-2xl outline-none transition-all"
+                    style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                    placeholder={t('emailPlaceholder')}
                     required
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 ml-1">Téléphone Personnel</label>
+                <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('phone')}</label>
                 <div className="relative">
-                  <DeviceMobile size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" />
+                  <DeviceMobile size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: 'var(--color-client-text-secondary)' }} />
                   <input
                     type="tel"
                     value={formData.phone}
                     onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:border-(--color-client-accent)/50 transition-all"
-                    placeholder="+221 77 000 00 00"
+                    className="w-full pl-12 pr-4 py-3 rounded-2xl outline-none transition-all"
+                    style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                    placeholder={t('phonePlaceholder')}
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 ml-1">Adresse Résidentielle</label>
+                <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('address')}</label>
                 <div className="relative">
-                  <MapPin size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" />
+                  <MapPin size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: 'var(--color-client-text-secondary)' }} />
                   <input
                     type="text"
                     value={formData.address}
                     onChange={e => setFormData({ ...formData, address: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:border-(--color-client-accent)/50 transition-all"
-                    placeholder="Dakar, Sénégal..."
+                    className="w-full pl-12 pr-4 py-3 rounded-2xl outline-none transition-all"
+                    style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                    placeholder={t('addressPlaceholder')}
                   />
                 </div>
               </div>
@@ -211,10 +223,10 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
           </section>
 
           {/* Section: Photo de profil */}
-          <section className="p-6 rounded-3xl bg-white/[0.02] border border-white/5">
+          <section className="p-6 rounded-3xl" style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)' }}>
             <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
               <div className="shrink-0">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-3 text-center md:text-left">Photo de profil</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest mb-3 text-center md:text-left" style={{ color: 'var(--color-client-text-secondary)' }}>{t('photoTitle')}</p>
                 <UniversalProfilePhotoUpload
                   currentImage={formData.image}
                   onImageUpdate={(url) => setFormData({ ...formData, image: url ?? "" })}
@@ -223,10 +235,9 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
                 />
               </div>
               <div className="text-center md:text-left">
-                <h5 className="text-sm font-bold text-white">Une image vaut mille mots</h5>
-                <p className="text-xs text-white/40 mt-1 max-w-sm leading-relaxed">
-                  Utilisez une photo professionnelle pour être plus facilement identifié par vos chauffeurs.
-                  Formats JPEG ou PNG supportés.
+                <h5 className="text-sm font-bold" style={{ color: 'var(--color-client-text-primary)' }}>{t('photoHeadline')}</h5>
+                <p className="text-xs mt-1 max-w-sm leading-relaxed" style={{ color: 'var(--color-client-text-secondary)' }}>
+                  {t('photoDescription')}
                 </p>
               </div>
             </div>
@@ -234,20 +245,21 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
 
           {/* Section: Entreprise Toggle */}
           <section className="space-y-8">
-            <div className="flex items-center justify-between p-6 rounded-3xl bg-(--color-client-accent)/5 border border-(--color-client-accent)/20">
+            <div className="flex items-center justify-between p-6 rounded-3xl" style={{ backgroundColor: 'var(--color-client-accent-bg)', border: '1px solid var(--color-client-accent-border)' }}>
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-(--color-client-accent)/20 flex items-center justify-center text-(--color-client-accent)">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--color-client-card)', color: 'var(--color-client-accent)' }}>
                   <Buildings size={20} weight="fill" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-white">Compte hôtel / entreprise / ONG</h4>
-                  <p className="text-xs text-white/40 mt-0.5">Activer pour accéder au portail entreprise (relevé mensuel) et ajouter vos informations de facturation</p>
+                  <h4 className="text-sm font-bold" style={{ color: 'var(--color-client-text-primary)' }}>{t('companyToggleTitle')}</h4>
+                  <p className="text-xs mt-0.5" style={{ color: 'var(--color-client-text-secondary)' }}>{t('companyToggleDescription')}</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, isCompany: !formData.isCompany })}
-                className={`relative w-14 h-8 rounded-full transition-all duration-300 ${formData.isCompany ? 'bg-(--color-client-accent)' : 'bg-white/10'}`}
+                className="relative w-14 h-8 rounded-full transition-all duration-300 shrink-0"
+                style={{ backgroundColor: formData.isCompany ? 'var(--color-client-accent)' : 'var(--color-client-border)' }}
               >
                 <div className={`absolute top-1 left-1 w-6 h-6 rounded-full bg-white shadow-lg transition-transform duration-300 ${formData.isCompany ? 'translate-x-6' : 'translate-x-0'}`} />
               </button>
@@ -256,21 +268,17 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
             {formData.isCompany && (
               <div className="space-y-6 animate-fadeIn">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 ml-1">Type d'établissement</label>
+                  <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('establishmentType')}</label>
                   <div className="flex flex-wrap gap-2">
-                    {[
-                      { value: 'hotel', label: 'Hôtel' },
-                      { value: 'entreprise', label: 'Entreprise' },
-                      { value: 'ong', label: 'ONG / mission' },
-                    ].map((opt) => (
+                    {establishmentTypes.map((opt) => (
                       <button
                         key={opt.value}
                         type="button"
                         onClick={() => setFormData({ ...formData, companyType: opt.value as typeof formData.companyType })}
-                        className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors border ${formData.companyType === opt.value
-                          ? 'bg-(--color-client-accent) border-(--color-client-accent) text-white'
-                          : 'bg-white/5 border-white/10 text-white/70 hover:border-(--color-client-accent)/50'
-                          }`}
+                        className="px-4 py-2.5 rounded-xl text-sm font-medium transition-colors"
+                        style={formData.companyType === opt.value
+                          ? { backgroundColor: 'var(--color-client-accent)', border: '1px solid var(--color-client-accent)', color: '#fff' }
+                          : { backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-secondary)' }}
                       >
                         {opt.label}
                       </button>
@@ -278,73 +286,79 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 ml-1">Nom de l'entreprise</label>
-                  <input
-                    type="text"
-                    value={formData.companyName}
-                    onChange={e => setFormData({ ...formData, companyName: e.target.value })}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-(--color-client-accent)/50 transition-all"
-                    placeholder="E Corp..."
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 ml-1">NINEA</label>
-                  <input
-                    type="text"
-                    value={formData.ninea}
-                    onChange={e => setFormData({ ...formData, ninea: e.target.value })}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-(--color-client-accent)/50 transition-all"
-                    placeholder="XX-XXXXX-X..."
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 ml-1">Raison Sociale</label>
-                  <input
-                    type="text"
-                    value={formData.raisonSociale}
-                    onChange={e => setFormData({ ...formData, raisonSociale: e.target.value })}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-(--color-client-accent)/50 transition-all"
-                    placeholder="SARL, SA..."
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 ml-1">Boîte Postale (BP)</label>
-                  <input
-                    type="text"
-                    value={formData.bp}
-                    onChange={e => setFormData({ ...formData, bp: e.target.value })}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-(--color-client-accent)/50 transition-all"
-                    placeholder="BP 00000..."
-                  />
-                </div>
-                <div className="space-y-2 md:col-span-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 ml-1">Adresse de l'entreprise</label>
-                  <input
-                    type="text"
-                    value={formData.companyAddress}
-                    onChange={e => setFormData({ ...formData, companyAddress: e.target.value })}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-(--color-client-accent)/50 transition-all"
-                    placeholder="Siège social..."
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 ml-1">Téléphone de l'entreprise</label>
-                  <input
-                    type="tel"
-                    value={formData.companyPhone}
-                    onChange={e => setFormData({ ...formData, companyPhone: e.target.value })}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-(--color-client-accent)/50 transition-all"
-                    placeholder="+221 33 000 00 00"
-                  />
-                </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('companyName')}</label>
+                    <input
+                      type="text"
+                      value={formData.companyName}
+                      onChange={e => setFormData({ ...formData, companyName: e.target.value })}
+                      className="w-full px-4 py-3 rounded-xl outline-none transition-all"
+                      style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                      placeholder={t('companyNamePlaceholder')}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('ninea')}</label>
+                    <input
+                      type="text"
+                      value={formData.ninea}
+                      onChange={e => setFormData({ ...formData, ninea: e.target.value })}
+                      className="w-full px-4 py-3 rounded-xl outline-none transition-all"
+                      style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                      placeholder={t('nineaPlaceholder')}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('raisonSociale')}</label>
+                    <input
+                      type="text"
+                      value={formData.raisonSociale}
+                      onChange={e => setFormData({ ...formData, raisonSociale: e.target.value })}
+                      className="w-full px-4 py-3 rounded-xl outline-none transition-all"
+                      style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                      placeholder={t('raisonSocialePlaceholder')}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('bp')}</label>
+                    <input
+                      type="text"
+                      value={formData.bp}
+                      onChange={e => setFormData({ ...formData, bp: e.target.value })}
+                      className="w-full px-4 py-3 rounded-xl outline-none transition-all"
+                      style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                      placeholder={t('bpPlaceholder')}
+                    />
+                  </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('companyAddress')}</label>
+                    <input
+                      type="text"
+                      value={formData.companyAddress}
+                      onChange={e => setFormData({ ...formData, companyAddress: e.target.value })}
+                      className="w-full px-4 py-3 rounded-xl outline-none transition-all"
+                      style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                      placeholder={t('companyAddressPlaceholder')}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('companyPhone')}</label>
+                    <input
+                      type="tel"
+                      value={formData.companyPhone}
+                      onChange={e => setFormData({ ...formData, companyPhone: e.target.value })}
+                      className="w-full px-4 py-3 rounded-xl outline-none transition-all"
+                      style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                      placeholder={t('companyPhonePlaceholder')}
+                    />
+                  </div>
                 </div>
               </div>
             )}
           </section>
 
           {error && (
-            <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-500 text-sm flex items-center gap-3">
+            <div className="p-4 rounded-2xl text-sm flex items-center gap-3" style={{ backgroundColor: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#EF4444' }}>
               <Warning size={20} weight="fill" />
               {error}
             </div>
@@ -352,26 +366,28 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
         </form>
 
         {/* Footer Actions */}
-        <div className="p-4 sm:p-6 lg:p-8 shrink-0 bg-white/[0.02] border-t border-white/5 flex gap-3 sm:gap-4">
+        <div className="p-4 sm:p-6 lg:p-8 shrink-0 flex gap-3 sm:gap-4" style={{ backgroundColor: 'var(--color-client-surface)', borderTop: '1px solid var(--color-client-border)' }}>
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-2xl border border-white/10 text-white font-semibold hover:bg-white/5 transition-all min-h-[44px]"
+            className="flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-2xl font-semibold transition-all min-h-[44px]"
+            style={{ border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
             disabled={isSubmitting}
           >
-            Annuler
+            {t('cancel')}
           </button>
           <button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="flex-[1.5] px-4 sm:px-6 py-3 sm:py-4 rounded-2xl bg-(--color-client-accent) text-white font-bold hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-3 shadow-lg shadow-(--color-client-accent)/20 min-h-[44px]"
+            className="flex-[1.5] px-4 sm:px-6 py-3 sm:py-4 rounded-2xl font-bold hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-3 min-h-[44px]"
+            style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}
           >
             {isSubmitting ? (
-              <div className="w-5 h-5 border-2 border-[#0F172A] border-t-transparent rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
             ) : (
               <>
                 <FloppyDisk size={20} weight="bold" />
-                Mettre à jour mon profil
+                {t('save')}
               </>
             )}
           </button>

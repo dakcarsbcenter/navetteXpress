@@ -2,23 +2,15 @@
 
 import { useState, useEffect } from 'react'
 import { Bell } from '@phosphor-icons/react'
-import { usePathname, useSearchParams } from 'next/navigation'
-
-const tabTitleMap: Record<string, string> = {
-  overview: "Vue d'ensemble",
-  bookings: 'Mes Réservations',
-  quotes: 'Mes Devis',
-  invoices: 'Mes Factures',
-  'create-reviews': 'Évaluer des trajets',
-  reviews: 'Mes Avis',
-  profile: 'Mon Profil',
-  vehicles: 'Véhicules',
-  users: 'Utilisateurs',
-}
+import { useSearchParams } from 'next/navigation'
+import { useLocale, useTranslations } from 'next-intl'
+import { toIntlLocale } from '@/lib/intl-locale'
 
 function ClientTopbarInner() {
-  const pathname = usePathname()
   const searchParams = useSearchParams()
+  const locale = useLocale()
+  const intlLocale = toIntlLocale(locale)
+  const t = useTranslations('client')
   const [currentDateTime, setCurrentDateTime] = useState<Date | null>(null)
   const [notifCount] = useState(0)
 
@@ -37,7 +29,7 @@ function ClientTopbarInner() {
       month: 'long',
       year: 'numeric',
     }
-    return date.toLocaleDateString('fr-FR', options).toUpperCase()
+    return date.toLocaleDateString(intlLocale, options).toUpperCase()
   }
 
   const formatDateShort = (date: Date) => {
@@ -46,17 +38,29 @@ function ClientTopbarInner() {
       day: '2-digit',
       month: 'short',
     }
-    return date.toLocaleDateString('fr-FR', options).toUpperCase()
+    return date.toLocaleDateString(intlLocale, options).toUpperCase()
   }
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+    return date.toLocaleTimeString(intlLocale, { hour: '2-digit', minute: '2-digit' })
+  }
+
+  const tabTitleMap: Record<string, string> = {
+    overview: t('topbar.titles.overview'),
+    bookings: t('topbar.titles.bookings'),
+    quotes: t('topbar.titles.quotes'),
+    invoices: t('topbar.titles.invoices'),
+    'create-reviews': t('topbar.titles.createReviews'),
+    reviews: t('topbar.titles.reviews'),
+    profile: t('topbar.titles.profile'),
+    vehicles: t('topbar.titles.vehicles'),
+    users: t('topbar.titles.users'),
   }
 
   const currentTab = searchParams?.get('tab')
   const pageTitle = currentTab
-    ? (tabTitleMap[currentTab] ?? "Vue d'ensemble")
-    : "Vue d'ensemble"
+    ? (tabTitleMap[currentTab] ?? t('topbar.titles.overview'))
+    : t('topbar.titles.overview')
 
   return (
     <header
@@ -97,7 +101,7 @@ function ClientTopbarInner() {
             backgroundColor: 'var(--color-client-surface)',
             color: 'var(--text-muted)',
           }}
-          aria-label="Notifications"
+          aria-label={t('topbar.notifications')}
         >
           <Bell
             size={18}

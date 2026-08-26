@@ -1,6 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useLocale, useTranslations } from "next-intl"
+import { toIntlLocale } from "@/lib/intl-locale"
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal"
 import {
     X,
@@ -12,9 +14,7 @@ import {
     PencilSimple,
     CheckCircle,
     Car,
-    User,
     Wallet,
-    ArrowRight,
     Info
 } from "@phosphor-icons/react"
 
@@ -44,6 +44,10 @@ interface BookingDetailsModalProps {
 }
 
 export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: BookingDetailsModalProps) {
+    const locale = useLocale()
+    const intlLocale = toIntlLocale(locale)
+    const t = useTranslations('client.bookingDetails')
+    const tStatus = useTranslations('client.statuses')
     const [isEditing, setIsEditing] = useState(false)
     const [formData, setFormData] = useState({
         pickupAddress: '',
@@ -100,13 +104,13 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                 setIsSubmitting(false)
                 setErrorModal({
                     open: true,
-                    message: result.error || 'Erreur lors de la mise à jour'
+                    message: result.error || t('updateError')
                 })
             }
         } catch (error) {
             console.error('Erreur:', error)
             setIsSubmitting(false)
-            setErrorModal({ open: true, message: 'Une erreur est survenue.' })
+            setErrorModal({ open: true, message: t('genericError') })
         }
     }
 
@@ -121,17 +125,17 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
             case 'in_progress': return 'var(--color-status-inprogress)'
             case 'completed': return 'var(--color-status-completed)'
             case 'cancelled': return 'var(--color-status-cancelled)'
-            default: return 'var(--color-text-secondary)'
+            default: return 'var(--color-client-text-secondary)'
         }
     }
 
     const getStatusLabel = (status: string) => {
         switch (status) {
-            case 'pending': return 'En attente'
-            case 'confirmed': return 'Confirmée'
-            case 'in_progress': return 'En cours'
-            case 'completed': return 'Terminée'
-            case 'cancelled': return 'Annulée'
+            case 'pending': return tStatus('pending')
+            case 'confirmed': return tStatus('confirmed')
+            case 'in_progress': return tStatus('inProgress')
+            case 'completed': return tStatus('completed')
+            case 'cancelled': return tStatus('cancelled')
             default: return status
         }
     }
@@ -141,36 +145,35 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
             <div className="fixed inset-0 z-50 overflow-y-auto px-4 py-6 sm:py-12 flex items-center justify-center">
                 {/* Backdrop */}
                 <div
-                    className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity animate-fadeIn"
+                    className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity animate-fadeIn"
                     onClick={onClose}
                 />
 
                 {/* Modal */}
-                <div className="relative w-full max-w-2xl transform overflow-hidden rounded-4xl bg-slate-900 border border-white/10 shadow-2xl transition-all animate-scaleIn flex flex-col max-h-[90vh]">
+                <div className="relative w-full max-w-2xl transform overflow-hidden rounded-4xl shadow-2xl transition-all animate-scaleIn flex flex-col max-h-[90vh]"
+                    style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
 
-                    {/* Header Image/Pattern */}
-                    <div className="h-32 w-full relative overflow-hidden shrink-0">
-                        <div className="absolute inset-0 bg-linear-to-br from-red-500/20 to-transparent" />
-                        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23EF4444' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
-
+                    {/* Header */}
+                    <div className="h-32 w-full relative overflow-hidden shrink-0" style={{ background: 'linear-gradient(135deg, var(--color-client-accent-bg) 0%, transparent 100%)' }}>
                         <button
                             onClick={onClose}
-                            className="absolute top-6 right-6 p-2 rounded-full bg-black/20 text-white/70 hover:text-white hover:bg-black/40 transition-all z-10"
+                            className="absolute top-6 right-6 p-2 rounded-full transition-all z-10"
+                            style={{ backgroundColor: 'var(--color-client-surface)', color: 'var(--color-client-text-secondary)' }}
                         >
                             <X size={20} weight="bold" />
                         </button>
 
                         <div className="absolute bottom-6 left-8 flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 text-red-500">
+                            <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-accent)' }}>
                                 <Car size={28} weight="duotone" />
                             </div>
                             <div>
-                                <h3 className="text-xl font-bold text-white leading-tight">
-                                    Réservation <span className="text-red-500">#{booking.id}</span>
+                                <h3 className="text-xl font-bold leading-tight" style={{ color: 'var(--color-client-text-primary)' }}>
+                                    {t('bookingNumber')} <span style={{ color: 'var(--color-client-accent)' }}>#{booking.id}</span>
                                 </h3>
                                 <div className="flex items-center gap-2 mt-1">
                                     <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: getStatusColor(booking.status) }} />
-                                    <span className="text-xs font-semibold uppercase tracking-wider text-white/60">
+                                    <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-client-text-secondary)' }}>
                                         {getStatusLabel(booking.status)}
                                     </span>
                                 </div>
@@ -178,7 +181,7 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto custom-scrollbar p-8 pt-6">
+                    <div className="flex-1 overflow-y-auto custom-scrollbar p-6 sm:p-8 pt-6">
                         {!isEditing ? (
                             <div className="space-y-8 animate-fadeIn">
 
@@ -186,18 +189,18 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                                 <div className="relative grid grid-cols-1 gap-6">
                                     <div className="flex gap-4">
                                         <div className="flex flex-col items-center gap-1 shrink-0">
-                                            <div className="w-5 h-5 rounded-full border-4 border-red-500 bg-slate-900 z-10" />
-                                            <div className="w-0.5 flex-1 bg-linear-to-b from-red-500 to-red-500/50 border-dashed border-l border-white/20" />
-                                            <div className="w-5 h-5 rounded-full border-4 border-red-500 bg-slate-900 z-10" />
+                                            <div className="w-5 h-5 rounded-full border-4 z-10" style={{ borderColor: 'var(--color-client-accent)', backgroundColor: 'var(--color-client-card)' }} />
+                                            <div className="w-0.5 flex-1" style={{ background: 'linear-gradient(to bottom, var(--color-client-accent), transparent)' }} />
+                                            <div className="w-5 h-5 rounded-full border-4 z-10" style={{ borderColor: 'var(--color-client-accent)', backgroundColor: 'var(--color-client-card)' }} />
                                         </div>
                                         <div className="flex flex-col justify-between py-0.5 gap-8">
                                             <div>
-                                                <p className="text-[10px] font-bold uppercase tracking-widest text-red-500 mb-1">Départ</p>
-                                                <p className="text-base text-white/90 font-medium">{booking.pickupAddress}</p>
+                                                <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--color-client-accent)' }}>{t('departure')}</p>
+                                                <p className="text-base font-medium" style={{ color: 'var(--color-client-text-primary)' }}>{booking.pickupAddress}</p>
                                             </div>
                                             <div>
-                                                <p className="text-[10px] font-bold uppercase tracking-widest text-red-500 mb-1">Destination</p>
-                                                <p className="text-base text-white/90 font-medium">{booking.dropoffAddress}</p>
+                                                <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--color-client-accent)' }}>{t('destination')}</p>
+                                                <p className="text-base font-medium" style={{ color: 'var(--color-client-text-primary)' }}>{booking.dropoffAddress}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -205,66 +208,66 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
 
                                 {/* Info Grid */}
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div className="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-1">
-                                        <div className="flex items-center gap-2 text-red-500">
+                                    <div className="p-4 rounded-2xl space-y-1" style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)' }}>
+                                        <div className="flex items-center gap-2" style={{ color: 'var(--color-client-accent)' }}>
                                             <Calendar size={18} />
-                                            <span className="text-[10px] font-bold uppercase tracking-widest opacity-70">Date</span>
+                                            <span className="text-[10px] font-bold uppercase tracking-widest opacity-70">{t('date')}</span>
                                         </div>
-                                        <p className="text-sm font-semibold text-white">
-                                            {new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
+                                        <p className="text-sm font-semibold" style={{ color: 'var(--color-client-text-primary)' }}>
+                                            {new Date(booking.scheduledDateTime).toLocaleDateString(intlLocale, { weekday: 'long', day: 'numeric', month: 'long' })}
                                         </p>
                                     </div>
-                                    <div className="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-1">
-                                        <div className="flex items-center gap-2 text-red-500">
+                                    <div className="p-4 rounded-2xl space-y-1" style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)' }}>
+                                        <div className="flex items-center gap-2" style={{ color: 'var(--color-client-accent)' }}>
                                             <Clock size={18} />
-                                            <span className="text-[10px] font-bold uppercase tracking-widest opacity-70">Heure</span>
+                                            <span className="text-[10px] font-bold uppercase tracking-widest opacity-70">{t('time')}</span>
                                         </div>
-                                        <p className="text-sm font-semibold text-white">
-                                            {new Date(booking.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                                        <p className="text-sm font-semibold" style={{ color: 'var(--color-client-text-primary)' }}>
+                                            {new Date(booking.scheduledDateTime).toLocaleTimeString(intlLocale, { hour: '2-digit', minute: '2-digit' })}
                                         </p>
                                     </div>
                                 </div>
 
                                 {/* Additional Details */}
                                 <div className="space-y-4">
-                                    <h4 className="text-xs font-bold uppercase tracking-widest text-white/40 flex items-center gap-2">
-                                        <Info size={14} /> Informations complémentaires
+                                    <h4 className="text-xs font-bold uppercase tracking-widest flex items-center gap-2" style={{ color: 'var(--color-client-text-secondary)' }}>
+                                        <Info size={14} /> {t('additionalInfo')}
                                     </h4>
 
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         {booking.price && (
-                                            <div className="flex items-center gap-3 p-3 rounded-xl bg-red-500/5 border border-red-500/10">
-                                                <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center text-red-500">
+                                            <div className="flex items-center gap-3 p-3 rounded-xl" style={{ backgroundColor: 'var(--color-client-accent-bg)', border: '1px solid var(--color-client-accent-border)' }}>
+                                                <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--color-client-card)', color: 'var(--color-client-accent)' }}>
                                                     <Wallet size={20} />
                                                 </div>
                                                 <div>
-                                                    <p className="text-[10px] font-bold uppercase tracking-widest text-red-500 opacity-70">Tarif</p>
-                                                    <p className="text-lg font-bold text-white" style={{ fontFamily: 'var(--font-mono)' }}>
-                                                        {parseFloat(booking.price).toLocaleString('fr-FR')} FCFA
+                                                    <p className="text-[10px] font-bold uppercase tracking-widest opacity-70" style={{ color: 'var(--color-client-accent)' }}>{t('fare')}</p>
+                                                    <p className="text-lg font-bold" style={{ color: 'var(--color-client-text-primary)', fontFamily: 'var(--font-mono)' }}>
+                                                        {parseFloat(booking.price).toLocaleString(intlLocale)} FCFA
                                                     </p>
                                                 </div>
                                             </div>
                                         )}
 
-                                        <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10">
-                                            <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center text-white/70">
+                                        <div className="flex items-center gap-3 p-3 rounded-xl" style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)' }}>
+                                            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--color-client-card)', color: 'var(--color-client-text-secondary)' }}>
                                                 <Phone size={20} />
                                             </div>
                                             <div>
-                                                <p className="text-[10px] font-bold uppercase tracking-widest text-white/40">Contact</p>
-                                                <p className="text-sm font-medium text-white">{booking.customerPhone || 'N/A'}</p>
+                                                <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--color-client-text-secondary)' }}>{t('contact')}</p>
+                                                <p className="text-sm font-medium" style={{ color: 'var(--color-client-text-primary)' }}>{booking.customerPhone || t('notPresent')}</p>
                                             </div>
                                         </div>
                                     </div>
 
                                     {booking.notes && (
-                                        <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
-                                            <div className="flex items-center gap-2 mb-2 text-white/40">
+                                        <div className="p-4 rounded-2xl" style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)' }}>
+                                            <div className="flex items-center gap-2 mb-2" style={{ color: 'var(--color-client-text-secondary)' }}>
                                                 <Note size={18} />
-                                                <span className="text-[10px] font-bold uppercase tracking-widest">Notes & Demandes</span>
+                                                <span className="text-[10px] font-bold uppercase tracking-widest">{t('notesLabel')}</span>
                                             </div>
-                                            <p className="text-sm text-white/70 leading-relaxed italic">
-                                                "{booking.notes}"
+                                            <p className="text-sm leading-relaxed italic" style={{ color: 'var(--color-client-text-secondary)' }}>
+                                                &ldquo;{booking.notes}&rdquo;
                                             </p>
                                         </div>
                                     )}
@@ -272,20 +275,21 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
 
                                 {/* Status Messages */}
                                 {booking.status === 'pending' && (
-                                    <div className="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex gap-4">
-                                        <div className="shrink-0 w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
+                                    <div className="p-4 rounded-2xl flex gap-4" style={{ backgroundColor: 'var(--color-client-accent-bg)', border: '1px solid var(--color-client-accent-border)' }}>
+                                        <div className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--color-client-card)', color: 'var(--color-client-accent)' }}>
                                             <Info size={18} weight="fill" />
                                         </div>
                                         <div>
-                                            <p className="text-sm text-blue-200/90 leading-snug">
-                                                Cette réservation est en attente de traitement. Vous recevrez une notification dès qu'un chauffeur vous sera assigné.
+                                            <p className="text-sm leading-snug" style={{ color: 'var(--color-client-text-secondary)' }}>
+                                                {t('pendingMessage')}
                                             </p>
                                             {canEdit && (
                                                 <button
                                                     onClick={() => setIsEditing(true)}
-                                                    className="mt-3 text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors"
+                                                    className="mt-3 text-xs font-bold flex items-center gap-1 transition-colors"
+                                                    style={{ color: 'var(--color-client-accent)' }}
                                                 >
-                                                    <PencilSimple size={14} /> Modifier mes informations
+                                                    <PencilSimple size={14} /> {t('editInfo')}
                                                 </button>
                                             )}
                                         </div>
@@ -297,30 +301,32 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                             <form onSubmit={handleSubmit} className="space-y-6 animate-fadeIn">
                                 <div className="grid grid-cols-1 gap-5">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-bold uppercase tracking-widest text-red-500 ml-1">Adresse de départ</label>
+                                        <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-accent)' }}>{t('editDepartureLabel')}</label>
                                         <div className="relative group">
-                                            <MapPin size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-red-500 transition-colors" />
+                                            <MapPin size={18} className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors" style={{ color: 'var(--color-client-text-secondary)' }} />
                                             <input
                                                 type="text"
                                                 value={formData.pickupAddress}
                                                 onChange={(e) => setFormData({ ...formData, pickupAddress: e.target.value })}
-                                                className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 focus:bg-white/8 transition-all"
-                                                placeholder="Lieu de départ..."
+                                                className="w-full pl-12 pr-4 py-3 rounded-xl outline-none transition-all"
+                                                style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                                                placeholder={t('editDeparturePlaceholder')}
                                                 required
                                             />
                                         </div>
                                     </div>
 
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-bold uppercase tracking-widest text-red-500 ml-1">Destination</label>
+                                        <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-accent)' }}>{t('editDestinationLabel')}</label>
                                         <div className="relative group">
-                                            <MapPin size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-red-500 transition-colors" />
+                                            <MapPin size={18} className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors" style={{ color: 'var(--color-client-text-secondary)' }} />
                                             <input
                                                 type="text"
                                                 value={formData.dropoffAddress}
                                                 onChange={(e) => setFormData({ ...formData, dropoffAddress: e.target.value })}
-                                                className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 focus:bg-white/8 transition-all"
-                                                placeholder="Lieu de destination..."
+                                                className="w-full pl-12 pr-4 py-3 rounded-xl outline-none transition-all"
+                                                style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                                                placeholder={t('editDestinationPlaceholder')}
                                                 required
                                             />
                                         </div>
@@ -328,34 +334,37 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
 
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 ml-1">Date & Heure</label>
+                                            <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('editDateTimeLabel')}</label>
                                             <input
                                                 type="datetime-local"
                                                 value={formData.scheduledDateTime}
                                                 onChange={(e) => setFormData({ ...formData, scheduledDateTime: e.target.value })}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 focus:bg-white/8 transition-all scheme-dark"
+                                                className="w-full px-4 py-3 rounded-xl outline-none transition-all"
+                                                style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
                                                 required
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 ml-1">Contact</label>
+                                            <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('editContactLabel')}</label>
                                             <input
                                                 type="tel"
                                                 value={formData.customerPhone}
                                                 onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 focus:bg-white/8 transition-all"
-                                                placeholder="Ex: 77 000 00 00"
+                                                className="w-full px-4 py-3 rounded-xl outline-none transition-all"
+                                                style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                                                placeholder={t('editContactPlaceholder')}
                                             />
                                         </div>
                                     </div>
 
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 ml-1">Notes spécifiques</label>
+                                        <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('editNotesLabel')}</label>
                                         <textarea
                                             value={formData.notes}
                                             onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-red-500/50 focus:bg-white/8 transition-all min-h-[100px] resize-none"
-                                            placeholder="Une précision à apporter ?"
+                                            className="w-full px-4 py-3 rounded-xl outline-none transition-all min-h-[100px] resize-none"
+                                            style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                                            placeholder={t('editNotesPlaceholder')}
                                         />
                                     </div>
                                 </div>
@@ -364,20 +373,22 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                                     <button
                                         type="button"
                                         onClick={() => setIsEditing(false)}
-                                        className="flex-1 px-6 py-3.5 rounded-xl border border-white/10 text-white font-semibold hover:bg-white/5 transition-all text-sm"
+                                        className="flex-1 px-6 py-3.5 rounded-xl font-semibold transition-all text-sm"
+                                        style={{ border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
                                     >
-                                        Annuler
+                                        {t('cancel')}
                                     </button>
                                     <button
                                         type="submit"
                                         disabled={isSubmitting}
-                                        className="flex-[1.5] px-6 py-3.5 rounded-xl bg-red-600 text-white font-bold hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-2 text-sm shadow-lg shadow-red-500/20"
+                                        className="flex-[1.5] px-6 py-3.5 rounded-xl font-bold hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-2 text-sm"
+                                        style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}
                                     >
                                         {isSubmitting ? (
                                             <Clock size={20} className="animate-spin" />
                                         ) : (
                                             <>
-                                                <CheckCircle size={20} weight="bold" /> Enregistrer les modifications
+                                                <CheckCircle size={20} weight="bold" /> {t('save')}
                                             </>
                                         )}
                                     </button>
@@ -387,20 +398,22 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                     </div>
 
                     {!isEditing && (
-                        <div className="p-8 pt-4 pb-8 shrink-0 bg-white/2 border-t border-white/5">
+                        <div className="p-6 sm:p-8 pt-4 shrink-0" style={{ backgroundColor: 'var(--color-client-surface)', borderTop: '1px solid var(--color-client-border)' }}>
                             <div className="flex items-center justify-between gap-4">
                                 <button
                                     onClick={onClose}
-                                    className="px-6 py-3 rounded-xl border border-white/10 text-white/70 font-semibold hover:text-white hover:bg-white/5 transition-all text-sm"
+                                    className="px-6 py-3 rounded-xl font-semibold transition-all text-sm"
+                                    style={{ border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-secondary)' }}
                                 >
-                                    Fermer
+                                    {t('close')}
                                 </button>
                                 {canEdit && (
                                     <button
                                         onClick={() => setIsEditing(true)}
-                                        className="px-6 py-3 rounded-xl bg-white/10 text-white font-bold hover:bg-white/20 transition-all flex items-center gap-2 text-sm border border-white/10"
+                                        className="px-6 py-3 rounded-xl font-bold transition-all flex items-center gap-2 text-sm"
+                                        style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}
                                     >
-                                        <PencilSimple size={18} /> Modifier
+                                        <PencilSimple size={18} /> {t('modify')}
                                     </button>
                                 )}
                             </div>
@@ -417,10 +430,10 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                     onSuccess()
                     onClose()
                 }}
-                title="Mise à jour réussie !"
-                message="Vos modifications ont été enregistrées avec succès."
+                title={t('updateSuccessTitle')}
+                message={t('updateSuccessMessage')}
                 type="success"
-                confirmText="Parfait"
+                confirmText={t('confirmPerfect')}
                 onConfirm={() => {
                     setSuccessModal(false)
                     onSuccess()
@@ -432,10 +445,10 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
             <ConfirmationModal
                 isOpen={errorModal.open}
                 onClose={() => setErrorModal({ open: false, message: '' })}
-                title="Oups !"
+                title={t('errorTitle')}
                 message={errorModal.message}
                 type="error"
-                confirmText="Réessayer"
+                confirmText={t('retry')}
                 onConfirm={() => setErrorModal({ open: false, message: '' })}
             />
         </>

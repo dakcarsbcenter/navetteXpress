@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
 import { usePathname, useSearchParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import {
   SquaresFour,
   CalendarBlank,
@@ -13,10 +14,9 @@ import {
   User,
   SignOut,
   Circle,
-  Car,
-  Users,
 } from '@phosphor-icons/react'
 import { ThemeToggle } from '@/app/driver/dashboard/components/ThemeToggle'
+import { DashboardLanguageSwitcher } from '@/components/dashboard/DashboardLanguageSwitcher'
 
 interface NavItem {
   href: string
@@ -29,22 +29,6 @@ interface NavItem {
   }>
   tab?: string
 }
-
-const principalItems: NavItem[] = [
-  { href: '/client/dashboard', label: "Vue d'ensemble", mobileLabel: 'Accueil', icon: SquaresFour, tab: 'overview' },
-  { href: '/client/dashboard?tab=bookings', label: 'Mes Réservations', mobileLabel: 'Trajets', icon: CalendarBlank, tab: 'bookings' },
-]
-
-const serviceItems: NavItem[] = [
-  { href: '/client/dashboard?tab=quotes', label: 'Mes Devis', mobileLabel: 'Devis', icon: FileText, tab: 'quotes' },
-  { href: '/client/dashboard?tab=invoices', label: 'Mes Factures', mobileLabel: 'Factures', icon: Receipt, tab: 'invoices' },
-]
-
-const accountItems: NavItem[] = [
-  { href: '/client/dashboard?tab=create-reviews', label: 'Évaluer trajets', mobileLabel: 'Évaluer', icon: PencilSimple, tab: 'create-reviews' },
-  { href: '/client/dashboard?tab=reviews', label: 'Mes Avis', mobileLabel: 'Avis', icon: Star, tab: 'reviews' },
-  { href: '/client/dashboard?tab=profile', label: 'Mon Profil', mobileLabel: 'Profil', icon: User, tab: 'profile' },
-]
 
 function SidebarLink({ item, active }: { item: NavItem; active: boolean }) {
   const Icon = item.icon
@@ -71,6 +55,23 @@ function ClientSidebarInner() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const { data: session } = useSession()
+  const t = useTranslations('client')
+
+  const principalItems: NavItem[] = [
+    { href: '/client/dashboard', label: t('sidebar.nav.overview'), mobileLabel: t('sidebar.nav.overviewMobile'), icon: SquaresFour, tab: 'overview' },
+    { href: '/client/dashboard?tab=bookings', label: t('sidebar.nav.bookings'), mobileLabel: t('sidebar.nav.bookingsMobile'), icon: CalendarBlank, tab: 'bookings' },
+  ]
+
+  const serviceItems: NavItem[] = [
+    { href: '/client/dashboard?tab=quotes', label: t('sidebar.nav.quotes'), mobileLabel: t('sidebar.nav.quotesMobile'), icon: FileText, tab: 'quotes' },
+    { href: '/client/dashboard?tab=invoices', label: t('sidebar.nav.invoices'), mobileLabel: t('sidebar.nav.invoicesMobile'), icon: Receipt, tab: 'invoices' },
+  ]
+
+  const accountItems: NavItem[] = [
+    { href: '/client/dashboard?tab=create-reviews', label: t('sidebar.nav.createReviews'), mobileLabel: t('sidebar.nav.createReviewsMobile'), icon: PencilSimple, tab: 'create-reviews' },
+    { href: '/client/dashboard?tab=reviews', label: t('sidebar.nav.reviews'), mobileLabel: t('sidebar.nav.reviewsMobile'), icon: Star, tab: 'reviews' },
+    { href: '/client/dashboard?tab=profile', label: t('sidebar.nav.profile'), mobileLabel: t('sidebar.nav.profileMobile'), icon: User, tab: 'profile' },
+  ]
 
   const currentTab = searchParams?.get('tab') ?? 'overview'
 
@@ -114,7 +115,7 @@ function ClientSidebarInner() {
                 Navette <span style={{ color: 'var(--color-client-accent)' }}>Xpress</span>
               </p>
               <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>
-                Espace client
+                {t('sidebar.brandTagline')}
               </p>
             </div>
           </div>
@@ -135,7 +136,7 @@ function ClientSidebarInner() {
             </div>
             <div>
               <p className="text-sm font-semibold" style={{ color: 'var(--color-client-text-primary)' }}>
-                {session?.user?.name ?? 'Client'}
+                {session?.user?.name ?? t('sidebar.defaultName')}
               </p>
               <div
                 className="mt-1 inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px]"
@@ -145,7 +146,7 @@ function ClientSidebarInner() {
                 }}
               >
                 <Circle size={8} weight="fill" />
-                En ligne
+                {t('sidebar.online')}
               </div>
             </div>
           </div>
@@ -158,7 +159,7 @@ function ClientSidebarInner() {
               className="px-2 text-[10px] font-bold uppercase tracking-[0.2em]"
               style={{ color: 'var(--text-muted)' }}
             >
-              Principal
+              {t('sidebar.sectionPrincipal')}
             </p>
             {principalItems.map((item) => (
               <SidebarLink key={item.href} item={item} active={isActive(item)} />
@@ -170,7 +171,7 @@ function ClientSidebarInner() {
               className="px-2 text-[10px] font-bold uppercase tracking-[0.2em]"
               style={{ color: 'var(--text-muted)' }}
             >
-              Services
+              {t('sidebar.sectionServices')}
             </p>
             {serviceItems.map((item) => (
               <SidebarLink key={item.href} item={item} active={isActive(item)} />
@@ -182,7 +183,7 @@ function ClientSidebarInner() {
               className="px-2 text-[10px] font-bold uppercase tracking-[0.2em]"
               style={{ color: 'var(--text-muted)' }}
             >
-              Compte
+              {t('sidebar.sectionAccount')}
             </p>
             {accountItems.map((item) => (
               <SidebarLink key={item.href} item={item} active={isActive(item)} />
@@ -195,7 +196,10 @@ function ClientSidebarInner() {
           className="space-y-3 p-4"
           style={{ borderTop: '1px solid var(--color-client-border)' }}
         >
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <DashboardLanguageSwitcher dropDirection="up" />
+          </div>
           <button
             onClick={() => signOut({ callbackUrl: '/' })}
             className="inline-flex h-11 w-full items-center gap-2 rounded-xl border px-3 text-sm transition-colors hover:text-(--danger)"
@@ -206,7 +210,7 @@ function ClientSidebarInner() {
             }}
           >
             <SignOut size={16} />
-            Déconnexion
+            {t('sidebar.logout')}
           </button>
         </div>
       </aside>

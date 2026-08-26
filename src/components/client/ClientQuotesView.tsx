@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
+import { useLocale, useTranslations } from 'next-intl'
+import { toIntlLocale } from '@/lib/intl-locale'
 import { useNotification } from '@/hooks/useNotification'
 import { NotificationCenter } from '@/components/ui/NotificationCenter'
-import { FileText, Calendar, Clock, CurrencyDollar, CheckCircle, XCircle, ChatCircle, Eye, MagnifyingGlass, Plus, CaretRight, Tag, ClipboardText, X } from "@phosphor-icons/react"
+import { FileText, Calendar, Clock, CheckCircle, XCircle, ChatCircle, Eye, Plus, CaretRight, Tag, ClipboardText, X, MagnifyingGlass } from "@phosphor-icons/react"
 import { QuoteRequestForm } from '@/components/client/QuoteRequestForm'
 
 interface Quote {
@@ -26,6 +28,9 @@ interface Quote {
 
 export function ClientQuotesView() {
   const { data: session } = useSession()
+  const locale = useLocale()
+  const intlLocale = toIntlLocale(locale)
+  const t = useTranslations('client.quotes')
   const [quotes, setQuotes] = useState<Quote[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [showNewQuoteForm, setShowNewQuoteForm] = useState(false)
@@ -41,6 +46,7 @@ export function ClientQuotesView() {
     if (session?.user?.email) {
       fetchQuotes()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session])
 
   const fetchQuotes = async () => {
@@ -52,10 +58,10 @@ export function ClientQuotesView() {
       if (result.success) {
         setQuotes(result.data)
       } else {
-        showError('Erreur lors du chargement de vos devis')
+        showError(t('loadError'))
       }
     } catch (error) {
-      showError('Erreur de connexion lors du chargement des devis')
+      showError(t('connectionError'))
     } finally {
       setIsLoading(false)
     }
@@ -64,17 +70,17 @@ export function ClientQuotesView() {
   const getStatusConfig = (status: string) => {
     switch (status) {
       case 'pending':
-        return { label: 'En attente', color: '#F59E0B', bg: 'rgba(245,158,11,0.1)', icon: <Clock size={12} /> }
+        return { label: t('status.pending'), color: '#F59E0B', bg: 'rgba(245,158,11,0.1)', icon: <Clock size={12} /> }
       case 'in_progress':
-        return { label: 'En traitement', color: '#3B82F6', bg: 'rgba(59,130,246,0.1)', icon: <MagnifyingGlass size={12} /> }
+        return { label: t('status.inProgress'), color: '#3B82F6', bg: 'rgba(59,130,246,0.1)', icon: <MagnifyingGlass size={12} /> }
       case 'sent':
-        return { label: 'Proposition reçue', color: 'var(--color-client-accent)', bg: 'rgba(16,185,129,0.1)', icon: <Tag size={12} /> }
+        return { label: t('status.sent'), color: 'var(--color-client-accent)', bg: 'var(--color-client-accent-bg)', icon: <Tag size={12} /> }
       case 'accepted':
-        return { label: 'Accepté', color: 'var(--color-client-accent)', bg: 'var(--color-client-accent-bg)', icon: <CheckCircle size={12} /> }
+        return { label: t('status.accepted'), color: 'var(--color-client-accent)', bg: 'var(--color-client-accent-bg)', icon: <CheckCircle size={12} /> }
       case 'rejected':
-        return { label: 'Refusé', color: '#EF4444', bg: 'rgba(239,68,68,0.1)', icon: <XCircle size={12} /> }
+        return { label: t('status.rejected'), color: '#EF4444', bg: 'rgba(239,68,68,0.1)', icon: <XCircle size={12} /> }
       case 'expired':
-        return { label: 'Expiré', color: '#6B7280', bg: 'rgba(107,114,128,0.1)', icon: <Clock size={12} /> }
+        return { label: t('status.expired'), color: '#6B7280', bg: 'rgba(107,114,128,0.1)', icon: <Clock size={12} /> }
       default:
         return { label: status, color: '#6B7280', bg: 'rgba(107,114,128,0.1)', icon: <Clock size={12} /> }
     }
@@ -100,16 +106,20 @@ export function ClientQuotesView() {
           setSelectedQuote(prev => prev ? { ...prev, status: result.newStatus as any } : null)
         }
 
-        const actionLabels = { accept: 'accepté', reject: 'rejeté', negotiate: 'marqué pour négociation' }
-        showSuccess(`Devis ${actionLabels[action as keyof typeof actionLabels]} avec succès`)
+        const actionLabels: Record<string, string> = {
+          accept: t('actionAccepted'),
+          reject: t('actionRejected'),
+          negotiate: t('actionNegotiated'),
+        }
+        showSuccess(t('actionSuccess', { action: actionLabels[action] }))
         setShowActionModal(false)
         setActionMessage('')
         setPendingAction(null)
       } else {
-        showError(result.error || 'Erreur lors de l\'action')
+        showError(result.error || t('actionError'))
       }
     } catch (error) {
-      showError('Erreur de connexion')
+      showError(t('connectionError'))
     } finally {
       setIsProcessing(false)
     }
@@ -131,7 +141,7 @@ export function ClientQuotesView() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px]">
         <div className="w-12 h-12 rounded-full border-2 border-transparent border-t-[var(--color-client-accent)] animate-spin mb-4" />
-        <p className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>Chargement de vos devis...</p>
+        <p className="text-sm font-medium" style={{ color: 'var(--color-client-text-secondary)' }}>{t('loading')}</p>
       </div>
     )
   }
@@ -140,36 +150,36 @@ export function ClientQuotesView() {
     <div className="space-y-6">
       {/* Header Premium */}
       <div className="client-card-enter relative rounded-2xl overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #111E1A 0%, var(--color-client-card) 60%)', border: '1px solid var(--color-client-accent-border)' }}>
+        style={{ background: 'linear-gradient(135deg, var(--color-client-accent-bg) 0%, var(--color-client-card) 60%)', border: '1px solid var(--color-client-accent-border)' }}>
         <div className="h-1 w-full" style={{ background: 'linear-gradient(to right, var(--color-client-accent), transparent)' }} />
         <div className="p-4 sm:p-6 lg:p-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6">
             <div className="flex items-center gap-4 sm:gap-5">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[var(--color-client-accent-bg)] rounded-2xl flex items-center justify-center shadow-lg border border-[var(--color-client-accent-glow)] shrink-0">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shadow-lg shrink-0" style={{ backgroundColor: 'var(--color-client-accent-bg)', border: '1px solid var(--color-client-accent-glow)' }}>
                 <FileText size={24} weight="duotone" style={{ color: 'var(--color-client-accent)' }} />
               </div>
               <div className="min-w-0">
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 truncate" style={{ color: '#ffffff' }}>Mes Devis</h1>
-                <p className="text-xs sm:text-sm font-medium" style={{ color: 'rgba(255,255,255,0.65)' }}>
-                  Gérez vos demandes de transport personnalisé et suivez vos propositions de prix.
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 truncate" style={{ color: 'var(--color-client-text-primary)' }}>{t('title')}</h1>
+                <p className="text-xs sm:text-sm font-medium" style={{ color: 'var(--color-client-text-secondary)' }}>
+                  {t('subtitle')}
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
-              <div className="text-center px-3 sm:px-6 py-2 sm:py-3 bg-white/[0.03] rounded-xl border border-white/[0.05]">
-                <div className="text-xl sm:text-2xl font-bold" style={{ color: '#ffffff' }}>{quotes.length}</div>
-                <div className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.6)' }}>Total</div>
+              <div className="text-center px-3 sm:px-6 py-2 sm:py-3 rounded-xl" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
+                <div className="text-xl sm:text-2xl font-bold" style={{ color: 'var(--color-client-text-primary)' }}>{quotes.length}</div>
+                <div className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-client-text-secondary)' }}>{t('total')}</div>
               </div>
-              <div className="text-center px-3 sm:px-6 py-2 sm:py-3 bg-[var(--color-client-accent-bg)] rounded-xl border border-[var(--color-client-accent-glow)]">
+              <div className="text-center px-3 sm:px-6 py-2 sm:py-3 rounded-xl" style={{ backgroundColor: 'var(--color-client-accent-bg)', border: '1px solid var(--color-client-accent-glow)' }}>
                 <div className="text-xl sm:text-2xl font-bold" style={{ color: 'var(--color-client-accent)' }}>{quotes.filter(q => q.status === 'accepted').length}</div>
-                <div className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--color-client-accent)' }}>Acceptés</div>
+                <div className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--color-client-accent)' }}>{t('accepted')}</div>
               </div>
               <button
                 onClick={() => setShowNewQuoteForm(true)}
                 className="flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl text-sm font-semibold transition-all hover:brightness-110 min-h-[44px]"
                 style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}>
-                <Plus size={16} weight="bold" /> Nouvelle demande
+                <Plus size={16} weight="bold" /> {t('newRequest')}
               </button>
             </div>
           </div>
@@ -180,19 +190,19 @@ export function ClientQuotesView() {
       {quotes.length === 0 ? (
         <div className="client-card-enter text-center py-20 px-6 rounded-2xl"
           style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
-          <div className="w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl"
-            style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-client-border)' }}>
-            <FileText size={40} weight="light" style={{ color: 'var(--color-text-secondary)' }} />
+          <div className="w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6"
+            style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)' }}>
+            <FileText size={40} weight="light" style={{ color: 'var(--color-client-text-secondary)' }} />
           </div>
-          <h3 className="text-xl font-bold mb-2" style={{ color: '#ffffff' }}>Aucun devis pour le moment</h3>
-          <p className="text-sm font-medium max-w-sm mx-auto mb-8" style={{ color: 'rgba(255,255,255,0.6)' }}>
-            Dès que vous effectuerez une demande de devis personnalisé, elle apparaîtra ici avec son statut en temps réel.
+          <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--color-client-text-primary)' }}>{t('noQuoteYet')}</h3>
+          <p className="text-sm font-medium max-w-sm mx-auto mb-8" style={{ color: 'var(--color-client-text-secondary)' }}>
+            {t('noQuoteDescription')}
           </p>
           <button
             onClick={() => setShowNewQuoteForm(true)}
             className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold transition-all"
             style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)', border: '1px solid var(--color-client-accent-glow)' }}>
-            Demander un devis
+            {t('requestQuote')}
           </button>
         </div>
       ) : (
@@ -206,13 +216,13 @@ export function ClientQuotesView() {
                 <div className="px-3 py-3 sm:px-6 sm:py-4">
                   <div className="flex items-start justify-between mb-4 sm:mb-5">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg border border-white/[0.05]"
-                        style={{ backgroundColor: 'rgba(255,255,255,0.03)', color: 'var(--color-text-primary)' }}>
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center"
+                        style={{ backgroundColor: 'var(--color-client-surface)', color: 'var(--color-client-text-primary)', border: '1px solid var(--color-client-border)' }}>
                         <ClipboardText size={24} weight="duotone" />
                       </div>
                       <div>
-                        <h3 className="font-bold text-lg" style={{ color: '#ffffff' }}>
-                          Devis <span style={{ fontFamily: 'var(--font-mono)' }}>#{quote.id}</span>
+                        <h3 className="font-bold text-lg" style={{ color: 'var(--color-client-text-primary)' }}>
+                          {t('quoteNumber')} <span style={{ fontFamily: 'var(--font-mono)' }}>#{quote.id}</span>
                         </h3>
                         <p className="text-xs font-medium uppercase tracking-wider mt-0.5" style={{ color: 'var(--color-client-accent)' }}>
                           {quote.service}
@@ -227,29 +237,29 @@ export function ClientQuotesView() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div className="p-3.5 rounded-xl border border-white/[0.03]" style={{ backgroundColor: 'rgba(255,255,255,0.015)' }}>
-                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Date souhaitée</p>
+                    <div className="p-3.5 rounded-xl" style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)' }}>
+                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('preferredDate')}</p>
                       <div className="flex items-center gap-2">
                         <Calendar size={14} style={{ color: 'var(--color-client-accent)' }} />
-                        <span className="text-sm font-semibold" style={{ color: '#ffffff' }}>
-                          {quote.preferredDate ? new Date(quote.preferredDate).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }) : 'À définir'}
+                        <span className="text-sm font-semibold" style={{ color: 'var(--color-client-text-primary)' }}>
+                          {quote.preferredDate ? new Date(quote.preferredDate).toLocaleDateString(intlLocale, { day: '2-digit', month: 'short', year: 'numeric' }) : t('toBeDefined')}
                         </span>
                       </div>
                     </div>
-                    <div className="p-3.5 rounded-xl border border-white/[0.03]" style={{ backgroundColor: 'rgba(255,255,255,0.015)' }}>
-                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Prix estimé</p>
+                    <div className="p-3.5 rounded-xl" style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)' }}>
+                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('estimatedPrice')}</p>
                       <div className="flex items-center gap-2">
                         <Tag size={14} style={{ color: 'var(--color-client-accent)' }} />
-                        <span className="text-sm font-bold" style={{ color: quote.estimatedPrice ? '#ffffff' : 'rgba(255,255,255,0.45)' }}>
-                          {quote.estimatedPrice ? `${parseFloat(quote.estimatedPrice).toLocaleString('fr-FR')} FCFA` : 'En attente'}
+                        <span className="text-sm font-bold" style={{ color: quote.estimatedPrice ? 'var(--color-client-text-primary)' : 'var(--color-client-text-secondary)' }}>
+                          {quote.estimatedPrice ? `${parseFloat(quote.estimatedPrice).toLocaleString(intlLocale)} FCFA` : t('awaiting')}
                         </span>
                       </div>
                     </div>
                   </div>
 
                   <div className="mb-6">
-                    <p className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: 'rgba(255,255,255,0.5)' }}>Détails de la demande</p>
-                    <p className="text-sm font-medium leading-relaxed line-clamp-2" style={{ color: 'rgba(255,255,255,0.75)' }}>
+                    <p className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: 'var(--color-client-text-secondary)' }}>{t('requestDetails')}</p>
+                    <p className="text-sm font-medium leading-relaxed line-clamp-2" style={{ color: 'var(--color-client-text-secondary)' }}>
                       {quote.message}
                     </p>
                   </div>
@@ -258,19 +268,19 @@ export function ClientQuotesView() {
                     <button
                       onClick={() => { setSelectedQuote(quote); setShowDetails(true) }}
                       className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold transition-all shadow-md group-hover:brightness-110 min-h-[44px]"
-                      style={{ backgroundColor: 'var(--color-client-surface)', color: 'var(--color-text-primary)', border: '1px solid var(--color-client-border)' }}
+                      style={{ backgroundColor: 'var(--color-client-surface)', color: 'var(--color-client-text-primary)', border: '1px solid var(--color-client-border)' }}
                     >
-                      <Eye size={16} /> Voir les détails
+                      <Eye size={16} /> {t('viewDetails')}
                     </button>
 
                     {quote.status === 'sent' && (
                       <button
                         onClick={() => openActionModal('accept', quote.id)}
                         disabled={isProcessing}
-                        className="w-full sm:w-auto px-6 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-[var(--color-client-accent-glow)] min-h-[44px]"
+                        className="w-full sm:w-auto px-6 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-lg min-h-[44px]"
                         style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}
                       >
-                        Accepter <CaretRight size={14} weight="bold" />
+                        {t('accept')} <CaretRight size={14} weight="bold" />
                       </button>
                     )}
                   </div>
@@ -283,24 +293,24 @@ export function ClientQuotesView() {
 
       {/* Modal Détails Premium */}
       {showDetails && selectedQuote && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[60] p-4 animate-fadeIn">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[60] p-4 animate-fadeIn">
           <div className="rounded-3xl shadow-2xl w-[95vw] max-w-2xl max-h-[90vh] overflow-hidden animate-scaleIn"
             style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
 
             {/* Modal Header */}
-            <div className="p-4 sm:p-6 lg:p-8 flex items-center justify-between border-b border-white/[0.05]">
+            <div className="p-4 sm:p-6 lg:p-8 flex items-center justify-between" style={{ borderBottom: '1px solid var(--color-client-border)' }}>
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-[var(--color-client-accent-bg)] flex items-center justify-center border border-[var(--color-client-accent-glow)]">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'var(--color-client-accent-bg)', border: '1px solid var(--color-client-accent-glow)' }}>
                   <FileText size={24} style={{ color: 'var(--color-client-accent)' }} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
-                    Détails du Devis <span style={{ fontFamily: 'var(--font-mono)' }}>#{selectedQuote.id}</span>
+                  <h2 className="text-xl font-bold" style={{ color: 'var(--color-client-text-primary)' }}>
+                    {t('detailsModalTitle')} <span style={{ fontFamily: 'var(--font-mono)' }}>#{selectedQuote.id}</span>
                   </h2>
-                  <p className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.5)' }}>Mise à jour le {new Date(selectedQuote.updatedAt).toLocaleDateString('fr-FR')}</p>
+                  <p className="text-xs font-medium" style={{ color: 'var(--color-client-text-secondary)' }}>{t('updatedOn')} {new Date(selectedQuote.updatedAt).toLocaleDateString(intlLocale)}</p>
                 </div>
               </div>
-              <button onClick={() => setShowDetails(false)} className="w-10 h-10 rounded-full flex items-center justify-center transition-colors hover:bg-white/[0.05]" style={{ color: 'var(--color-text-secondary)' }}>
+              <button onClick={() => setShowDetails(false)} className="w-10 h-10 rounded-full flex items-center justify-center transition-colors" style={{ color: 'var(--color-client-text-secondary)' }}>
                 <XCircle size={24} />
               </button>
             </div>
@@ -309,9 +319,9 @@ export function ClientQuotesView() {
               <div className="space-y-8">
                 {/* Status and Price Highlight */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl"
-                  style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--color-client-border)' }}>
+                  style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)' }}>
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.65)' }}>Statut actuel :</span>
+                    <span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-client-text-secondary)' }}>{t('currentStatus')}</span>
                     <span className="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-2"
                       style={{ backgroundColor: getStatusConfig(selectedQuote.status).bg, color: getStatusConfig(selectedQuote.status).color }}>
                       {getStatusConfig(selectedQuote.status).icon}
@@ -320,9 +330,9 @@ export function ClientQuotesView() {
                   </div>
                   {selectedQuote.estimatedPrice && (
                     <div className="flex items-center gap-3">
-                      <span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.65)' }}>Prix proposé :</span>
+                      <span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-client-text-secondary)' }}>{t('proposedPrice')}</span>
                       <span className="text-xl font-black italic" style={{ color: 'var(--color-client-accent)', fontFamily: 'var(--font-mono)' }}>
-                        {parseFloat(selectedQuote.estimatedPrice).toLocaleString()} FCFA
+                        {parseFloat(selectedQuote.estimatedPrice).toLocaleString(intlLocale)} FCFA
                       </span>
                     </div>
                   )}
@@ -331,20 +341,20 @@ export function ClientQuotesView() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <h3 className="text-[10px] uppercase tracking-widest font-bold mb-3 flex items-center gap-2" style={{ color: 'var(--color-client-accent)' }}>
-                      <Tag size={12} weight="fill" /> Service Demandé
+                      <Tag size={12} weight="fill" /> {t('serviceRequested')}
                     </h3>
-                    <p className="text-sm font-semibold p-4 rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.015)', border: '1px solid rgba(255,255,255,0.03)', color: 'var(--color-text-primary)' }}>
+                    <p className="text-sm font-semibold p-4 rounded-xl" style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}>
                       {selectedQuote.service}
                     </p>
                   </div>
                   <div>
                     <h3 className="text-[10px] uppercase tracking-widest font-bold mb-3 flex items-center gap-2" style={{ color: 'var(--color-client-accent)' }}>
-                      <Calendar size={12} weight="fill" /> Date de prestation
+                      <Calendar size={12} weight="fill" /> {t('serviceDate')}
                     </h3>
-                    <div className="p-4 rounded-xl flex items-center gap-3" style={{ backgroundColor: 'rgba(255,255,255,0.015)', border: '1px solid rgba(255,255,255,0.03)' }}>
+                    <div className="p-4 rounded-xl flex items-center gap-3" style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)' }}>
                       <Calendar size={20} style={{ color: 'var(--color-client-accent)' }} />
-                      <span className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-                        {selectedQuote.preferredDate ? new Date(selectedQuote.preferredDate).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : 'Non précisé'}
+                      <span className="text-sm font-semibold" style={{ color: 'var(--color-client-text-primary)' }}>
+                        {selectedQuote.preferredDate ? new Date(selectedQuote.preferredDate).toLocaleDateString(intlLocale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : t('notSpecified')}
                       </span>
                     </div>
                   </div>
@@ -352,20 +362,20 @@ export function ClientQuotesView() {
 
                 <div>
                   <h3 className="text-[10px] uppercase tracking-widest font-bold mb-3 flex items-center gap-2" style={{ color: 'var(--color-client-accent)' }}>
-                    <ChatCircle size={12} weight="fill" /> Détails de la demande
+                    <ChatCircle size={12} weight="fill" /> {t('requestDetails')}
                   </h3>
                   <div className="p-6 rounded-2xl leading-relaxed text-sm font-medium"
-                    style={{ backgroundColor: 'rgba(255,255,255,0.015)', border: '1px solid rgba(255,255,255,0.03)', color: 'rgba(255,255,255,0.8)' }}>
+                    style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-secondary)' }}>
                     {selectedQuote.message}
                   </div>
                 </div>
 
                 {selectedQuote.adminNotes && (
-                  <div className="p-6 rounded-2xl" style={{ backgroundColor: 'rgba(59,130,246,0.05)', border: '1px solid rgba(59,130,246,0.1)' }}>
-                    <h3 className="text-[10px] uppercase tracking-widest font-bold mb-3 flex items-center gap-2 text-blue-400">
-                      <Tag size={12} weight="fill" /> Note de l'administration
+                  <div className="p-6 rounded-2xl" style={{ backgroundColor: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.15)' }}>
+                    <h3 className="text-[10px] uppercase tracking-widest font-bold mb-3 flex items-center gap-2" style={{ color: '#3B82F6' }}>
+                      <Tag size={12} weight="fill" /> {t('adminNote')}
                     </h3>
-                    <p className="text-sm leading-relaxed text-blue-100/80">
+                    <p className="text-sm leading-relaxed" style={{ color: 'var(--color-client-text-secondary)' }}>
                       {selectedQuote.adminNotes}
                     </p>
                   </div>
@@ -373,28 +383,28 @@ export function ClientQuotesView() {
 
                 {/* Quick Actions Panel */}
                 {selectedQuote.status === 'sent' && (
-                  <div className="p-8 rounded-3xl space-y-6" style={{ background: 'linear-gradient(to bottom right, var(--color-client-accent-bg), rgba(255,44,44,0.02))', border: '1px solid var(--color-client-accent-border)' }}>
-                    <h4 className="font-bold text-center text-sm" style={{ color: 'var(--color-text-primary)' }}>
-                      Cette proposition vous convient-elle ?
+                  <div className="p-8 rounded-3xl space-y-6" style={{ background: 'linear-gradient(to bottom right, var(--color-client-accent-bg), transparent)', border: '1px solid var(--color-client-accent-border)' }}>
+                    <h4 className="font-bold text-center text-sm" style={{ color: 'var(--color-client-text-primary)' }}>
+                      {t('doesThisWorkForYou')}
                     </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <button onClick={() => openActionModal('accept', selectedQuote.id)} className="group flex flex-col items-center gap-2 p-4 rounded-2xl transition-all hover:bg-[var(--color-client-accent-glow)] border border-transparent hover:border-[var(--color-client-accent-glow)]">
-                        <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform">
+                      <button onClick={() => openActionModal('accept', selectedQuote.id)} className="group flex flex-col items-center gap-2 p-4 rounded-2xl transition-all border border-transparent hover:border-[var(--color-client-accent-glow)]" style={{ backgroundColor: 'transparent' }}>
+                        <div className="w-12 h-12 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform" style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)' }}>
                           <CheckCircle size={28} weight="fill" />
                         </div>
-                        <span className="text-xs font-bold" style={{ color: 'var(--color-text-primary)' }}>Accepter</span>
+                        <span className="text-xs font-bold" style={{ color: 'var(--color-client-text-primary)' }}>{t('accept')}</span>
                       </button>
-                      <button onClick={() => openActionModal('negotiate', selectedQuote.id)} className="group flex flex-col items-center gap-2 p-4 rounded-2xl transition-all hover:bg-blue-500/10 border border-transparent hover:border-blue-500/20">
-                        <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
+                      <button onClick={() => openActionModal('negotiate', selectedQuote.id)} className="group flex flex-col items-center gap-2 p-4 rounded-2xl transition-all border border-transparent hover:border-blue-500/20">
+                        <div className="w-12 h-12 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform" style={{ backgroundColor: 'rgba(59,130,246,0.1)', color: '#3B82F6' }}>
                           <ChatCircle size={28} weight="fill" />
                         </div>
-                        <span className="text-xs font-bold" style={{ color: 'var(--color-text-primary)' }}>Négocier</span>
+                        <span className="text-xs font-bold" style={{ color: 'var(--color-client-text-primary)' }}>{t('negotiate')}</span>
                       </button>
-                      <button onClick={() => openActionModal('reject', selectedQuote.id)} className="group flex flex-col items-center gap-2 p-4 rounded-2xl transition-all hover:bg-red-500/10 border border-transparent hover:border-red-500/20">
-                        <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform">
+                      <button onClick={() => openActionModal('reject', selectedQuote.id)} className="group flex flex-col items-center gap-2 p-4 rounded-2xl transition-all border border-transparent hover:border-red-500/20">
+                        <div className="w-12 h-12 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform" style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#EF4444' }}>
                           <XCircle size={28} weight="fill" />
                         </div>
-                        <span className="text-xs font-bold" style={{ color: 'var(--color-text-primary)' }}>Refuser</span>
+                        <span className="text-xs font-bold" style={{ color: 'var(--color-client-text-primary)' }}>{t('reject')}</span>
                       </button>
                     </div>
                   </div>
@@ -407,7 +417,7 @@ export function ClientQuotesView() {
 
       {/* Confirmation Modal */}
       {showActionModal && pendingAction && (
-        <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-[70] p-4">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-[70] p-4">
           <div className="rounded-3xl w-[95vw] max-w-md p-4 sm:p-6 lg:p-8 shadow-2xl animate-scaleIn"
             style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
             <div className="text-center mb-8">
@@ -421,45 +431,45 @@ export function ClientQuotesView() {
                 {pendingAction.action === 'reject' && <XCircle size={40} weight="duotone" />}
                 {pendingAction.action === 'negotiate' && <ChatCircle size={40} weight="duotone" />}
               </div>
-              <h3 className="text-2xl font-bold mb-3" style={{ color: 'var(--color-text-primary)' }}>
-                {pendingAction.action === 'accept' && 'Confirmer l\'acceptation'}
-                {pendingAction.action === 'reject' && 'Confirmer le rejet'}
-                {pendingAction.action === 'negotiate' && 'Demande de négociation'}
+              <h3 className="text-2xl font-bold mb-3" style={{ color: 'var(--color-client-text-primary)' }}>
+                {pendingAction.action === 'accept' && t('confirmAccept')}
+                {pendingAction.action === 'reject' && t('confirmReject')}
+                {pendingAction.action === 'negotiate' && t('negotiateRequest')}
               </h3>
-              <p className="text-sm font-medium leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)' }}>
-                {pendingAction.action === 'accept' && 'En confirmant, vous acceptez le prix proposé et les termes du devis.'}
-                {pendingAction.action === 'reject' && 'Attention, cette action marquera ce devis comme refusé de votre part.'}
-                {pendingAction.action === 'negotiate' && 'Précisez ci-dessous vos attentes ou votre contre-proposition.'}
+              <p className="text-sm font-medium leading-relaxed" style={{ color: 'var(--color-client-text-secondary)' }}>
+                {pendingAction.action === 'accept' && t('acceptDescription')}
+                {pendingAction.action === 'reject' && t('rejectDescription')}
+                {pendingAction.action === 'negotiate' && t('negotiateDescription')}
               </p>
             </div>
 
             <div className="mb-8">
-              <label className="block text-[10px] uppercase tracking-widest font-bold mb-3" style={{ color: 'rgba(255,255,255,0.6)' }}>
-                {pendingAction.action === 'accept' ? 'Laissez un petit mot (optionnel)' : 'Votre message'}
+              <label className="block text-[10px] uppercase tracking-widest font-bold mb-3" style={{ color: 'var(--color-client-text-secondary)' }}>
+                {pendingAction.action === 'accept' ? t('optionalNote') : t('yourMessage')}
               </label>
               <textarea
                 value={actionMessage}
                 onChange={(e) => setActionMessage(e.target.value)}
-                placeholder="Votre message ici..."
+                placeholder={t('messagePlaceholder')}
                 className="w-full px-5 py-4 border rounded-2xl text-sm italic focus:ring-2 focus:ring-[var(--color-client-accent)] focus:border-transparent outline-none transition-all"
-                style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-text-primary)' }}
+                style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
                 rows={3}
               />
             </div>
 
             <div className="flex gap-4">
               <button onClick={() => { setShowActionModal(false); setPendingAction(null) }}
-                className="flex-1 py-4 rounded-2xl text-sm font-bold transition-all hover:bg-white/[0.05]"
-                style={{ color: 'var(--color-text-secondary)', border: '1px solid var(--color-client-border)' }}>
-                Annuler
+                className="flex-1 py-4 rounded-2xl text-sm font-bold transition-all"
+                style={{ color: 'var(--color-client-text-secondary)', border: '1px solid var(--color-client-border)' }}>
+                {t('cancel')}
               </button>
               <button onClick={confirmAction} disabled={isProcessing}
                 className="flex-1 py-4 rounded-2xl text-sm font-bold transition-all shadow-lg hover:brightness-110 disabled:opacity-50"
                 style={{
                   backgroundColor: pendingAction.action === 'accept' ? 'var(--color-client-accent)' : pendingAction.action === 'reject' ? '#EF4444' : '#3B82F6',
-                  color: pendingAction.action === 'accept' ? '#fff' : '#FFF'
+                  color: '#fff'
                 }}>
-                {isProcessing ? 'Envoi...' : 'Confirmer'}
+                {isProcessing ? t('sending') : t('confirm')}
               </button>
             </div>
           </div>
@@ -474,12 +484,12 @@ export function ClientQuotesView() {
               <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)' }}>
                 <FileText size={16} weight="duotone" />
               </div>
-              <h2 className="text-base font-bold" style={{ color: 'var(--color-client-text-primary)' }}>Nouvelle demande de devis</h2>
+              <h2 className="text-base font-bold" style={{ color: 'var(--color-client-text-primary)' }}>{t('newQuoteModalTitle')}</h2>
             </div>
             <button
               onClick={() => setShowNewQuoteForm(false)}
-              className="w-9 h-9 rounded-xl flex items-center justify-center transition-all hover:bg-white/10"
-              style={{ color: 'var(--color-text-secondary)' }}
+              className="w-9 h-9 rounded-xl flex items-center justify-center transition-all hover:bg-black/5"
+              style={{ color: 'var(--color-client-text-secondary)' }}
             >
               <X size={18} weight="bold" />
             </button>
@@ -494,8 +504,8 @@ export function ClientQuotesView() {
 
       <style jsx>{`
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.05); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--color-client-border); border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--color-client-accent); }
       `}</style>
     </div>

@@ -1,6 +1,9 @@
 "use client"
 
 import React, { useState } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
+import { toIntlLocale } from '@/lib/intl-locale';
+import { Wallet, Clock, Warning } from '@phosphor-icons/react';
 
 interface PriceApprovalModalProps {
   bookingId: number;
@@ -25,6 +28,9 @@ export function PriceApprovalModal({
   onClose,
   onSuccess
 }: PriceApprovalModalProps) {
+  const locale = useLocale();
+  const intlLocale = toIntlLocale(locale);
+  const t = useTranslations('client.priceApproval');
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [showRejectForm, setShowRejectForm] = useState(false);
@@ -49,15 +55,14 @@ export function PriceApprovalModal({
       const result = await response.json();
 
       if (result.success) {
-        alert('✅ Proposition acceptée ! Votre réservation est confirmée.');
         onSuccess();
         onClose();
       } else {
-        alert('❌ Erreur : ' + result.error);
+        alert(`${t('genericError')}: ${result.error}`);
       }
     } catch (error) {
       console.error('Erreur:', error);
-      alert('❌ Une erreur est survenue');
+      alert(t('connectionError'));
     } finally {
       setIsLoading(false);
     }
@@ -65,7 +70,7 @@ export function PriceApprovalModal({
 
   const handleReject = async () => {
     if (!message.trim()) {
-      alert('Veuillez indiquer pourquoi vous refusez cette proposition');
+      alert(t('rejectReasonRequired'));
       return;
     }
 
@@ -86,47 +91,51 @@ export function PriceApprovalModal({
       const result = await response.json();
 
       if (result.success) {
-        alert('✅ Proposition rejetée. L\'administrateur a été notifié.');
         onSuccess();
         onClose();
       } else {
-        alert('❌ Erreur : ' + result.error);
+        alert(`${t('genericError')}: ${result.error}`);
       }
     } catch (error) {
       console.error('Erreur:', error);
-      alert('❌ Une erreur est survenue');
+      alert(t('connectionError'));
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="rounded-2xl w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto"
+        style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
         {/* Header */}
-        <div className="bg-linear-to-r from-blue-600 to-blue-700 p-4 sm:p-6 text-white">
-          <h2 className="text-xl sm:text-2xl font-bold">Proposition de Prix</h2>
-          <p className="text-blue-100 mt-2 text-sm sm:text-base">Réservation #{bookingId}</p>
+        <div className="p-4 sm:p-6 flex items-center gap-4" style={{ background: 'linear-gradient(135deg, var(--color-client-accent-bg) 0%, transparent 100%)', borderBottom: '1px solid var(--color-client-border)' }}>
+          <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)', border: '1px solid var(--color-client-accent-border)' }}>
+            <Wallet size={24} weight="duotone" />
+          </div>
+          <div>
+            <h2 className="text-lg sm:text-xl font-bold" style={{ color: 'var(--color-client-text-primary)' }}>{t('title')}</h2>
+            <p className="text-sm mt-0.5" style={{ color: 'var(--color-client-text-secondary)' }}>{t('booking')} #{bookingId}</p>
+          </div>
         </div>
 
         {/* Content */}
         <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
-          {/* Détails de la réservation */}
-          <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
-            <h3 className="font-semibold text-slate-900 dark:text-white mb-3">📋 Détails du trajet</h3>
+          <div className="rounded-xl p-4" style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)' }}>
+            <h3 className="font-semibold mb-3 text-sm" style={{ color: 'var(--color-client-text-primary)' }}>{t('tripDetails')}</h3>
             <div className="space-y-2 text-sm">
               <div>
-                <span className="text-slate-600 dark:text-slate-400">De :</span>
-                <span className="ml-2 text-slate-900 dark:text-white font-medium">{pickupAddress}</span>
+                <span style={{ color: 'var(--color-client-text-secondary)' }}>{t('from')}</span>
+                <span className="ml-2 font-medium" style={{ color: 'var(--color-client-text-primary)' }}>{pickupAddress}</span>
               </div>
               <div>
-                <span className="text-slate-600 dark:text-slate-400">À :</span>
-                <span className="ml-2 text-slate-900 dark:text-white font-medium">{dropoffAddress}</span>
+                <span style={{ color: 'var(--color-client-text-secondary)' }}>{t('to')}</span>
+                <span className="ml-2 font-medium" style={{ color: 'var(--color-client-text-primary)' }}>{dropoffAddress}</span>
               </div>
               <div>
-                <span className="text-slate-600 dark:text-slate-400">Date :</span>
-                <span className="ml-2 text-slate-900 dark:text-white font-medium">
-                  {new Date(scheduledDateTime).toLocaleDateString('fr-FR', {
+                <span style={{ color: 'var(--color-client-text-secondary)' }}>{t('date')}</span>
+                <span className="ml-2 font-medium" style={{ color: 'var(--color-client-text-primary)' }}>
+                  {new Date(scheduledDateTime).toLocaleDateString(intlLocale, {
                     weekday: 'long',
                     year: 'numeric',
                     month: 'long',
@@ -140,76 +149,81 @@ export function PriceApprovalModal({
           </div>
 
           {/* Prix proposé */}
-          <div className="bg-linear-to-r from-red-50 to-red-50 dark:from-red-900/20 dark:to-red-900/20 border-2 border-red-300 dark:border-red-700 rounded-lg p-6 text-center">
-            <p className="text-slate-600 dark:text-slate-400 mb-2">Prix proposé par l'administrateur</p>
-            <p className="text-5xl font-bold text-red-600 dark:text-red-400">{price} FCFA</p>
+          <div className="rounded-xl p-6 text-center" style={{ backgroundColor: 'var(--color-client-accent-bg)', border: '1px solid var(--color-client-accent-border)' }}>
+            <p className="mb-2 text-sm" style={{ color: 'var(--color-client-text-secondary)' }}>{t('proposedPrice')}</p>
+            <p className="text-4xl sm:text-5xl font-bold" style={{ color: 'var(--color-client-accent)', fontFamily: 'var(--font-mono)' }}>{price} FCFA</p>
           </div>
 
-          {/* Message optionnel */}
           {!showRejectForm && (
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                Message optionnel (pour acceptation ou questions)
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-client-text-primary)' }}>
+                {t('optionalMessage')}
               </label>
               <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="Ajoutez un commentaire si vous le souhaitez..."
+                placeholder={t('optionalMessagePlaceholder')}
                 rows={3}
-                className="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full p-3 rounded-lg resize-none outline-none transition-all"
+                style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
               />
             </div>
           )}
 
-          {/* Formulaire de rejet */}
           {showRejectForm && (
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-300 dark:border-red-700 rounded-lg p-4">
-              <label className="block text-sm font-medium text-red-900 dark:text-red-300 mb-2">
-                Pourquoi refusez-vous cette proposition ? *
+            <div className="rounded-xl p-4" style={{ backgroundColor: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.2)' }}>
+              <label className="block text-sm font-medium mb-2" style={{ color: '#EF4444' }}>
+                {t('rejectReasonLabel')}
               </label>
               <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="Exemple : Le prix est trop élevé, je souhaite négocier..."
+                placeholder={t('rejectReasonPlaceholder')}
                 rows={4}
-                className="w-full p-3 border border-red-300 dark:border-red-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white resize-none focus:ring-2 focus:ring-red-500"
+                className="w-full p-3 rounded-lg resize-none outline-none transition-all"
+                style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid rgba(239,68,68,0.3)', color: 'var(--color-client-text-primary)' }}
                 required
               />
             </div>
           )}
 
-          {/* Avertissement */}
-          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-300 dark:border-yellow-700 rounded-lg p-4">
-            <p className="text-sm text-yellow-800 dark:text-yellow-300">
-              ⚠️ <strong>Important :</strong> Une fois votre réponse envoyée, vous ne pourrez plus la modifier.
-            </p>
+          <div className="rounded-xl p-4 flex items-start gap-3" style={{ backgroundColor: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.25)' }}>
+            <Warning size={18} weight="fill" className="shrink-0 mt-0.5" style={{ color: '#F59E0B' }} />
+            <p className="text-sm" style={{ color: '#B45309' }}>{t('warning')}</p>
           </div>
         </div>
 
         {/* Actions */}
-        <div className="p-4 sm:p-6 bg-slate-50 dark:bg-slate-700/50 border-t border-slate-200 dark:border-slate-600 flex flex-col sm:flex-row gap-3">
+        <div className="p-4 sm:p-6 flex flex-col sm:flex-row gap-3" style={{ backgroundColor: 'var(--color-client-surface)', borderTop: '1px solid var(--color-client-border)' }}>
           {!showRejectForm ? (
             <>
               <button
                 onClick={() => setShowRejectForm(true)}
                 disabled={isLoading}
-                className="flex-1 px-4 sm:px-6 py-3 border-2 border-red-600 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg font-semibold transition-colors disabled:opacity-50 min-h-[44px]"
+                className="flex-1 px-4 sm:px-6 py-3 rounded-xl font-semibold transition-colors disabled:opacity-50 min-h-[44px]"
+                style={{ border: '2px solid #EF4444', color: '#EF4444', backgroundColor: 'transparent' }}
               >
-                Refuser
+                {t('reject')}
               </button>
               <button
                 onClick={handleAccept}
                 disabled={isLoading}
-                className="flex-1 px-4 sm:px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 min-h-[44px]"
+                className="flex-1 px-4 sm:px-6 py-3 rounded-xl font-semibold transition-colors disabled:opacity-50 min-h-[44px] flex items-center justify-center gap-2"
+                style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}
               >
-                {isLoading ? 'Traitement...' : 'Accepter'}
+                {isLoading ? (
+                  <>
+                    <Clock size={16} className="animate-spin" /> {t('processing')}
+                  </>
+                ) : t('accept')}
               </button>
               <button
                 onClick={onClose}
                 disabled={isLoading}
-                className="w-full sm:w-auto px-4 sm:px-6 py-3 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-600 rounded-lg font-medium transition-colors disabled:opacity-50 min-h-[44px]"
+                className="w-full sm:w-auto px-4 sm:px-6 py-3 rounded-xl font-medium transition-colors disabled:opacity-50 min-h-[44px]"
+                style={{ border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-secondary)' }}
               >
-                Annuler
+                {t('cancel')}
               </button>
             </>
           ) : (
@@ -220,16 +234,18 @@ export function PriceApprovalModal({
                   setMessage('');
                 }}
                 disabled={isLoading}
-                className="flex-1 px-4 sm:px-6 py-3 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-600 rounded-lg font-medium transition-colors disabled:opacity-50 min-h-[44px]"
+                className="flex-1 px-4 sm:px-6 py-3 rounded-xl font-medium transition-colors disabled:opacity-50 min-h-[44px]"
+                style={{ border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-secondary)' }}
               >
-                Retour
+                {t('back')}
               </button>
               <button
                 onClick={handleReject}
                 disabled={isLoading}
-                className="flex-1 px-4 sm:px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 min-h-[44px]"
+                className="flex-1 px-4 sm:px-6 py-3 rounded-xl font-semibold transition-colors disabled:opacity-50 min-h-[44px]"
+                style={{ backgroundColor: '#EF4444', color: '#fff' }}
               >
-                {isLoading ? 'Envoi...' : 'Confirmer le refus'}
+                {isLoading ? t('sending') : t('confirmReject')}
               </button>
             </>
           )}
@@ -238,4 +254,3 @@ export function PriceApprovalModal({
     </div>
   );
 }
-

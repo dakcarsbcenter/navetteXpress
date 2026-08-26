@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
+import { useTranslations } from "next-intl"
 import { ImageUploader } from "@/components/ImageUploader"
+import { Car, Plus, Eye, PencilSimple, Prohibit, CheckCircle, Trash, Warning, MagnifyingGlass } from "@phosphor-icons/react"
 
 interface Vehicle {
   id: number
@@ -33,6 +35,7 @@ interface UserPermissions {
 
 export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
   const { data: session } = useSession()
+  const t = useTranslations('client.vehicles')
   const [vehicles, setVehicles] = useState<Vehicle[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
@@ -50,8 +53,6 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
     loadVehicles()
     loadUserPermissions()
   }, [])
-
-
 
   const loadUserPermissions = async () => {
     try {
@@ -79,10 +80,10 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
         const data = await response.json()
         setVehicles(data.vehicles || [])
       } else {
-        setError("Erreur lors du chargement des véhicules")
+        setError(t('loadError'))
       }
     } catch (err) {
-      setError("Erreur de connexion")
+      setError(t('connectionError'))
     } finally {
       setIsLoading(false)
     }
@@ -100,11 +101,11 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
         setError("")
       } else {
         const data = await response.json()
-        setError(data.error || "Erreur lors de la suppression")
+        setError(data.error || t('deleteError'))
         setDeletingVehicle(null)
       }
     } catch (err) {
-      setError("Erreur de connexion")
+      setError(t('connectionError'))
       setDeletingVehicle(null)
     }
   }
@@ -121,10 +122,10 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
         loadVehicles()
       } else {
         const data = await response.json()
-        setError(data.error || "Erreur lors de la mise à jour")
+        setError(data.error || t('updateError'))
       }
     } catch (err) {
-      setError("Erreur de connexion")
+      setError(t('connectionError'))
     }
   }
 
@@ -158,10 +159,10 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
         setError("")
       } else {
         const data = await response.json()
-        setError(data.error || "Erreur lors de la sauvegarde")
+        setError(data.error || t('saveError'))
       }
     } catch (err) {
-      setError("Erreur de connexion")
+      setError(t('connectionError'))
     }
   }
 
@@ -213,37 +214,21 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
     return matchesSearch && matchesType && matchesStatus
   })
 
-  const getVehicleTypeLabel = (type: string) => {
-    const types: Record<string, string> = {
-      sedan: 'Berline',
-      suv: 'SUV',
-      van: 'Van',
-      luxury: 'Luxe',
-      bus: 'Bus'
-    }
-    return types[type] || type
+  const vehicleTypeLabels: Record<string, string> = {
+    sedan: t('typeSedan'),
+    suv: t('typeSuv'),
+    van: t('typeVan'),
+    minibus: t('typeMinibus'),
+    luxury: t('typeLuxury'),
+    bus: t('typeBus'),
   }
 
-  const getVehicleTypeIcon = (type: string) => {
-    const icons: Record<string, string> = {
-      sedan: '🚗',
-      suv: '🚙',
-      van: '🚐',
-      luxury: '🚘',
-      bus: '🚌'
-    }
-    return icons[type] || '🚗'
-  }
+  const getVehicleTypeLabel = (type: string) => vehicleTypeLabels[type] || type
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="flex flex-col items-center gap-4">
-          <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-linear-to-r from-gold via-white to-gold animate-pulse"
-            style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
-            Navette Xpress
-          </div>
-        </div>
+        <div className="w-8 h-8 rounded-full border-2 border-transparent animate-spin" style={{ borderTopColor: 'var(--color-client-accent)' }} />
       </div>
     )
   }
@@ -251,185 +236,195 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <span className="text-3xl">🚗</span>
-            Gestion de la flotte
+          <h2 className="text-2xl font-bold flex items-center gap-2" style={{ color: 'var(--color-client-text-primary)' }}>
+            <Car size={26} weight="duotone" style={{ color: 'var(--color-client-accent)' }} />
+            {t('title')}
           </h2>
-          <p className="text-slate-600 dark:text-slate-400 mt-1">
-            {vehicles.length} véhicule{vehicles.length > 1 ? 's' : ''} au total
+          <p className="mt-1 text-sm" style={{ color: 'var(--color-client-text-secondary)' }}>
+            {vehicles.length > 1 ? t('vehicleCountPlural', { count: vehicles.length }) : t('vehicleCount', { count: vehicles.length })}
           </p>
         </div>
         {canCreate && (
           <button
             onClick={() => setShowAddModal(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors inline-flex items-center gap-2"
+            className="px-6 py-3 rounded-xl font-medium transition-colors inline-flex items-center gap-2"
+            style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}
           >
-            <span className="text-xl">➕</span>
-            Ajouter un véhicule
+            <Plus size={18} weight="bold" />
+            {t('addVehicle')}
           </button>
         )}
         {!canCreate && canRead && (
-          <div className="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 px-6 py-3 rounded-lg font-medium inline-flex items-center gap-2">
-            <span className="text-xl">👁️</span>
-            Mode lecture seule
+          <div className="px-6 py-3 rounded-lg font-medium inline-flex items-center gap-2" style={{ backgroundColor: 'var(--color-client-surface)', color: 'var(--color-client-text-secondary)', border: '1px solid var(--color-client-border)' }}>
+            <Eye size={18} />
+            {t('readOnlyMode')}
           </div>
         )}
       </div>
 
       {error && (
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 px-4 py-3 rounded-lg">
+        <div className="px-4 py-3 rounded-lg text-sm" style={{ backgroundColor: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#EF4444' }}>
           {error}
         </div>
       )}
 
       {/* Modal d'édition unifié */}
       {editingVehicle && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="rounded-xl shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
             <div className="p-6">
-              <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
-                ✏️ Modifier le véhicule
+              <h3 className="text-2xl font-bold mb-6 flex items-center gap-2" style={{ color: 'var(--color-client-text-primary)' }}>
+                <PencilSimple size={22} /> {t('editTitle')}
               </h3>
 
               <form onSubmit={handleSaveVehicle} className="space-y-6">
-                {/* 📋 Informations essentielles */}
-                <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg">
-                  <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
-                    📋 Informations essentielles
+                {/* Informations essentielles */}
+                <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)' }}>
+                  <h4 className="text-sm font-semibold mb-3" style={{ color: 'var(--color-client-text-primary)' }}>
+                    {t('essentialInfo')}
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Marque *</label>
+                      <label className="block text-xs font-medium mb-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('make')}</label>
                       <input
                         type="text"
                         value={editingVehicle.make}
                         onChange={(e) => setEditingVehicle({ ...editingVehicle, make: e.target.value })}
-                        className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                        className="w-full px-2 py-1.5 text-sm rounded outline-none"
+                        style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Modèle *</label>
+                      <label className="block text-xs font-medium mb-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('model')}</label>
                       <input
                         type="text"
                         value={editingVehicle.model}
                         onChange={(e) => setEditingVehicle({ ...editingVehicle, model: e.target.value })}
-                        className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                        className="w-full px-2 py-1.5 text-sm rounded outline-none"
+                        style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Année *</label>
+                      <label className="block text-xs font-medium mb-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('year')}</label>
                       <input
                         type="number"
                         value={editingVehicle.year}
                         onChange={(e) => setEditingVehicle({ ...editingVehicle, year: parseInt(e.target.value) })}
-                        className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                        className="w-full px-2 py-1.5 text-sm rounded outline-none"
+                        style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
                         required
                         min="1900"
                         max={new Date().getFullYear() + 2}
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">🏷️ Type *</label>
+                      <label className="block text-xs font-medium mb-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('type')}</label>
                       <select
                         value={editingVehicle.type}
                         onChange={(e) => setEditingVehicle({ ...editingVehicle, type: e.target.value })}
-                        className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                        className="w-full px-2 py-1.5 text-sm rounded outline-none"
+                        style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
                       >
-                        <option value="sedan">Berline</option>
-                        <option value="suv">SUV</option>
-                        <option value="van">Van</option>
-                        <option value="minibus">Minibus</option>
-                        <option value="luxury">Luxe</option>
+                        <option value="sedan">{t('typeSedan')}</option>
+                        <option value="suv">{t('typeSuv')}</option>
+                        <option value="van">{t('typeVan')}</option>
+                        <option value="minibus">{t('typeMinibus')}</option>
+                        <option value="luxury">{t('typeLuxury')}</option>
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">👥 Capacité *</label>
+                      <label className="block text-xs font-medium mb-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('capacity')}</label>
                       <select
                         value={editingVehicle.capacity}
                         onChange={(e) => setEditingVehicle({ ...editingVehicle, capacity: parseInt(e.target.value) })}
-                        className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                        className="w-full px-2 py-1.5 text-sm rounded outline-none"
+                        style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
                       >
-                        <option value={2}>2 places</option>
-                        <option value={4}>4 places</option>
-                        <option value={6}>6 places</option>
-                        <option value={8}>8+ places</option>
+                        <option value={2}>{t('seats', { count: 2 })}</option>
+                        <option value={4}>{t('seats', { count: 4 })}</option>
+                        <option value={6}>{t('seats', { count: 6 })}</option>
+                        <option value={8}>{t('seats8Plus')}</option>
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Plaque d'immatriculation *</label>
+                      <label className="block text-xs font-medium mb-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('plateNumber')}</label>
                       <input
                         type="text"
                         value={editingVehicle.plateNumber}
                         onChange={(e) => setEditingVehicle({ ...editingVehicle, plateNumber: e.target.value.toUpperCase() })}
-                        className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white font-mono"
-                        placeholder="AB-123-CD"
+                        className="w-full px-2 py-1.5 text-sm rounded outline-none font-mono"
+                        style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                        placeholder={t('plateNumberPlaceholder')}
                         required
                       />
                     </div>
                   </div>
                 </div>
 
-                {/* 📸 Photo */}
+                {/* Photo */}
                 <div>
-                  <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">📸 Photo du véhicule *</h4>
+                  <h4 className="text-sm font-medium mb-2" style={{ color: 'var(--color-client-text-primary)' }}>{t('photoTitle')}</h4>
                   <ImageUploader
                     onUploadComplete={handleImageUpload}
                     currentImage={editingVehicle.photo}
                     className="mb-2"
                   />
                   <details className="mt-1">
-                    <summary className="text-xs text-slate-500 cursor-pointer">URL manuelle</summary>
+                    <summary className="text-xs cursor-pointer" style={{ color: 'var(--color-client-text-secondary)' }}>{t('manualUrl')}</summary>
                     <input
                       type="url"
                       value={editingVehicle.photo || ''}
                       onChange={(e) => setEditingVehicle({ ...editingVehicle, photo: e.target.value })}
                       placeholder="https://..."
-                      className="w-full px-2 py-1 mt-1 text-xs border rounded dark:bg-gray-700 dark:text-white"
+                      className="w-full px-2 py-1 mt-1 text-xs rounded"
+                      style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
                     />
                   </details>
                 </div>
 
-                {/* 🎨 Personnalisation (optionnel) */}
-                <details className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
-                  <summary className="text-sm font-medium text-blue-700 dark:text-blue-300 cursor-pointer">
-                    🎨 Personnalisation page Flotte (optionnel)
+                {/* Personnalisation (optionnel) */}
+                <details className="p-3 rounded-lg" style={{ backgroundColor: 'var(--color-client-accent-bg)', border: '1px solid var(--color-client-accent-border)' }}>
+                  <summary className="text-sm font-medium cursor-pointer" style={{ color: 'var(--color-client-accent)' }}>
+                    {t('customizationTitle')}
                   </summary>
                   <div className="mt-3 space-y-3">
                     <div>
-                      <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                        Catégorie personnalisée 🏷️
+                      <label className="block text-xs font-medium mb-1" style={{ color: 'var(--color-client-text-secondary)' }}>
+                        {t('customCategory')}
                       </label>
                       <input
                         type="text"
                         value={editingVehicle.category || ''}
                         onChange={(e) => setEditingVehicle({ ...editingVehicle, category: e.target.value })}
-                        placeholder="Ex: Berline Executive, SUV Premium..."
-                        className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                        placeholder={t('customCategoryPlaceholder')}
+                        className="w-full px-2 py-1.5 text-sm rounded outline-none"
+                        style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                        Description 📝
+                      <label className="block text-xs font-medium mb-1" style={{ color: 'var(--color-client-text-secondary)' }}>
+                        {t('description')}
                       </label>
                       <textarea
                         value={editingVehicle.description || ''}
                         onChange={(e) => setEditingVehicle({ ...editingVehicle, description: e.target.value })}
-                        placeholder="Description pour la page publique..."
+                        placeholder={t('descriptionPlaceholder')}
                         rows={2}
-                        className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                        className="w-full px-2 py-1.5 text-sm rounded outline-none"
+                        style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
                       />
                     </div>
                   </div>
                 </details>
 
-                {/* ⚙️ Équipements (optionnel) */}
-                <details className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg">
-                  <summary className="text-sm font-medium text-red-700 dark:text-red-300 cursor-pointer">
-                    ⚙️ Équipements et services (optionnel)
+                {/* Équipements (optionnel) */}
+                <details className="p-3 rounded-lg" style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)' }}>
+                  <summary className="text-sm font-medium cursor-pointer" style={{ color: 'var(--color-client-text-primary)' }}>
+                    {t('featuresTitle')}
                   </summary>
                   <div className="mt-3 space-y-2">
                     <div className="flex gap-2">
@@ -437,16 +432,18 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                         type="text"
                         value={newFeature}
                         onChange={(e) => setNewFeature(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddFeature())}
-                        placeholder="Ex: Wi-Fi, Climatisation..."
-                        className="flex-1 px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-red-500 dark:bg-gray-700 dark:text-white"
+                        onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddFeature())}
+                        placeholder={t('featuresPlaceholder')}
+                        className="flex-1 px-2 py-1.5 text-sm rounded outline-none"
+                        style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
                       />
                       <button
                         type="button"
                         onClick={handleAddFeature}
-                        className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded text-sm font-medium"
+                        className="px-3 py-1.5 rounded text-sm font-medium"
+                        style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}
                       >
-                        + Ajouter
+                        + {t('addFeature')}
                       </button>
                     </div>
 
@@ -455,13 +452,14 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                         {featuresList.map((feature, index) => (
                           <span
                             key={index}
-                            className="bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200 px-2 py-1 rounded text-xs flex items-center gap-1"
+                            className="px-2 py-1 rounded text-xs flex items-center gap-1"
+                            style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)', border: '1px solid var(--color-client-accent-border)' }}
                           >
                             {feature}
                             <button
                               type="button"
                               onClick={() => handleRemoveFeature(index)}
-                              className="text-red-600 dark:text-red-300 hover:text-red-800 text-sm font-bold"
+                              className="text-sm font-bold"
                             >
                               ×
                             </button>
@@ -472,34 +470,37 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                   </div>
                 </details>
 
-                {/* ✅ Statut */}
-                <div className="flex items-center pt-2 border-t border-gray-200 dark:border-gray-700">
+                {/* Statut */}
+                <div className="flex items-center pt-2" style={{ borderTop: '1px solid var(--color-client-border)' }}>
                   <input
                     type="checkbox"
                     id="isActiveEdit"
                     checked={editingVehicle.isActive}
                     onChange={(e) => setEditingVehicle({ ...editingVehicle, isActive: e.target.checked })}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-4 w-4 rounded"
+                    style={{ accentColor: 'var(--color-client-accent)' }}
                   />
-                  <label htmlFor="isActiveEdit" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
-                    Véhicule actif (visible sur la page Flotte)
+                  <label htmlFor="isActiveEdit" className="ml-2 block text-sm" style={{ color: 'var(--color-client-text-secondary)' }}>
+                    {t('activeCheckbox')}
                   </label>
                 </div>
 
                 {/* Boutons */}
-                <div className="flex justify-end space-x-3 pt-4 border-t border-slate-200 dark:border-slate-700">
+                <div className="flex justify-end gap-3 pt-4" style={{ borderTop: '1px solid var(--color-client-border)' }}>
                   <button
                     type="button"
                     onClick={handleCancelEdit}
-                    className="px-6 py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-900 dark:text-white rounded-lg font-medium transition-colors"
+                    className="px-6 py-2.5 rounded-lg font-medium transition-colors"
+                    style={{ backgroundColor: 'var(--color-client-surface)', color: 'var(--color-client-text-primary)', border: '1px solid var(--color-client-border)' }}
                   >
-                    ❌ Annuler
+                    {t('cancel')}
                   </button>
                   <button
                     type="submit"
-                    className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+                    className="px-6 py-2.5 rounded-lg font-medium transition-colors"
+                    style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}
                   >
-                    💾 Mettre à jour
+                    {t('update')}
                   </button>
                 </div>
               </form>
@@ -510,22 +511,20 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
 
       {/* Modal de confirmation de suppression */}
       {deletingVehicle && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 animate-fadeIn">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full transform transition-all animate-scaleIn">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
+          <div className="rounded-2xl shadow-2xl max-w-md w-full transform transition-all animate-scaleIn" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
             {/* Header avec icône d'avertissement */}
-            <div className="bg-linear-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 p-6 rounded-t-2xl border-b border-red-100 dark:border-red-800">
+            <div className="p-6 rounded-t-2xl" style={{ background: 'linear-gradient(135deg, rgba(239,68,68,0.08), transparent)', borderBottom: '1px solid rgba(239,68,68,0.15)' }}>
               <div className="flex items-center gap-4">
-                <div className="shrink-0 w-12 h-12 bg-red-100 dark:bg-red-900/50 rounded-full flex items-center justify-center">
-                  <svg className="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                  </svg>
+                <div className="shrink-0 w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(239,68,68,0.12)', color: '#EF4444' }}>
+                  <Warning size={24} weight="fill" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">
-                    Confirmer la suppression
+                  <h3 className="text-xl font-bold" style={{ color: 'var(--color-client-text-primary)' }}>
+                    {t('confirmDeleteTitle')}
                   </h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                    Cette action est irréversible
+                  <p className="text-sm mt-1" style={{ color: 'var(--color-client-text-secondary)' }}>
+                    {t('irreversible')}
                   </p>
                 </div>
               </div>
@@ -533,12 +532,12 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
 
             {/* Contenu avec les détails du véhicule */}
             <div className="p-6">
-              <p className="text-slate-700 dark:text-slate-300 mb-4">
-                Êtes-vous sûr de vouloir supprimer ce véhicule ?
+              <p className="mb-4" style={{ color: 'var(--color-client-text-secondary)' }}>
+                {t('confirmDeleteMessage')}
               </p>
 
               {/* Card du véhicule */}
-              <div className="bg-slate-50 dark:bg-slate-900/50 rounded-xl p-4 border-2 border-red-200 dark:border-red-800">
+              <div className="rounded-xl p-4" style={{ backgroundColor: 'var(--color-client-surface)', border: '2px solid rgba(239,68,68,0.2)' }}>
                 <div className="flex items-center gap-4">
                   {deletingVehicle.photo ? (
                     <div className="relative w-20 h-20 rounded-lg overflow-hidden shrink-0">
@@ -550,51 +549,51 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                       />
                     </div>
                   ) : (
-                    <div className="w-20 h-20 bg-linear-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-600 rounded-lg flex items-center justify-center shrink-0">
-                      <span className="text-3xl">{getVehicleTypeIcon(deletingVehicle.type)}</span>
+                    <div className="w-20 h-20 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
+                      <Car size={32} style={{ color: 'var(--color-client-text-secondary)' }} />
                     </div>
                   )}
 
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-slate-900 dark:text-white text-lg truncate">
+                    <h4 className="font-bold text-lg truncate" style={{ color: 'var(--color-client-text-primary)' }}>
                       {deletingVehicle.make} {deletingVehicle.model}
                     </h4>
-                    <div className="flex items-center gap-2 mt-1 text-sm text-slate-600 dark:text-slate-400">
-                      <span className="font-mono bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded">
+                    <div className="flex items-center gap-2 mt-1 text-sm" style={{ color: 'var(--color-client-text-secondary)' }}>
+                      <span className="font-mono px-2 py-0.5 rounded" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
                         {deletingVehicle.plateNumber}
                       </span>
                       <span>•</span>
                       <span>{deletingVehicle.year}</span>
                       <span>•</span>
-                      <span>{deletingVehicle.capacity} places</span>
+                      <span>{t('passengers', { count: deletingVehicle.capacity })}</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3 flex items-start gap-2">
-                <svg className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
-                <p className="text-sm text-amber-800 dark:text-amber-200">
-                  <strong>Attention :</strong> Toutes les données associées à ce véhicule seront définitivement perdues.
+              <div className="mt-4 rounded-lg p-3 flex items-start gap-2" style={{ backgroundColor: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.25)' }}>
+                <Warning size={18} weight="fill" className="shrink-0 mt-0.5" style={{ color: '#F59E0B' }} />
+                <p className="text-sm" style={{ color: '#B45309' }}>
+                  {t('deleteWarning')}
                 </p>
               </div>
             </div>
 
             {/* Footer avec boutons d'action */}
-            <div className="bg-slate-50 dark:bg-slate-900/50 px-6 py-4 rounded-b-2xl flex gap-3">
+            <div className="px-6 py-4 rounded-b-2xl flex gap-3" style={{ backgroundColor: 'var(--color-client-surface)' }}>
               <button
                 onClick={() => setDeletingVehicle(null)}
-                className="flex-1 px-6 py-3 bg-white dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl font-semibold transition-all duration-200 border-2 border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500 shadow-sm hover:shadow"
+                className="flex-1 px-6 py-3 rounded-xl font-semibold transition-all"
+                style={{ backgroundColor: 'var(--color-client-card)', color: 'var(--color-client-text-primary)', border: '2px solid var(--color-client-border)' }}
               >
-                ❌ Annuler
+                {t('cancel')}
               </button>
               <button
                 onClick={() => handleDeleteVehicle(deletingVehicle.id)}
-                className="flex-1 px-6 py-3 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                className="flex-1 px-6 py-3 rounded-xl font-semibold transition-all shadow-lg flex items-center justify-center gap-2"
+                style={{ backgroundColor: '#EF4444', color: '#fff' }}
               >
-                🗑️ Supprimer définitivement
+                <Trash size={18} /> {t('deleteConfirm')}
               </button>
             </div>
           </div>
@@ -602,51 +601,57 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
       )}
 
       {/* Filters */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+      <div className="rounded-xl p-6" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              🔍 Rechercher
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-client-text-primary)' }}>
+              {t('searchLabel')}
             </label>
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Marque, modèle, immatriculation..."
-              className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
-            />
+            <div className="relative">
+              <MagnifyingGlass size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--color-client-text-secondary)' }} />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder={t('searchPlaceholder')}
+                className="w-full pl-9 pr-4 py-2 rounded-lg outline-none"
+                style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+              />
+            </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              🚙 Type de véhicule
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-client-text-primary)' }}>
+              {t('typeFilterLabel')}
             </label>
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+              className="w-full px-4 py-2 rounded-lg outline-none"
+              style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
             >
-              <option value="all">Tous les types</option>
-              <option value="sedan">Berline</option>
-              <option value="suv">SUV</option>
-              <option value="van">Van</option>
-              <option value="luxury">Luxe</option>
-              <option value="bus">Bus</option>
+              <option value="all">{t('allTypes')}</option>
+              <option value="sedan">{t('typeSedan')}</option>
+              <option value="suv">{t('typeSuv')}</option>
+              <option value="van">{t('typeVan')}</option>
+              <option value="luxury">{t('typeLuxury')}</option>
+              <option value="bus">{t('typeBus')}</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              📊 Statut
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-client-text-primary)' }}>
+              {t('statusLabel')}
             </label>
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+              className="w-full px-4 py-2 rounded-lg outline-none"
+              style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
             >
-              <option value="all">Tous les statuts</option>
-              <option value="active">Actifs</option>
-              <option value="inactive">Inactifs</option>
+              <option value="all">{t('allStatuses')}</option>
+              <option value="active">{t('active')}</option>
+              <option value="inactive">{t('inactive')}</option>
             </select>
           </div>
         </div>
@@ -654,15 +659,15 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
 
       {/* Vehicles Grid */}
       {filteredVehicles.length === 0 ? (
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-12 text-center">
-          <div className="text-6xl mb-4">🚗</div>
-          <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
-            Aucun véhicule trouvé
+        <div className="rounded-xl p-12 text-center" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
+          <Car size={48} weight="light" className="mx-auto mb-4" style={{ color: 'var(--color-client-text-secondary)' }} />
+          <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--color-client-text-primary)' }}>
+            {t('noVehicleFound')}
           </h3>
-          <p className="text-slate-600 dark:text-slate-400">
+          <p style={{ color: 'var(--color-client-text-secondary)' }}>
             {searchTerm || filterType !== "all" || filterStatus !== "all"
-              ? "Aucun véhicule ne correspond à vos critères de recherche"
-              : "Commencez par ajouter votre premier véhicule"}
+              ? t('noVehicleMatch')
+              : t('noVehicleStart')}
           </p>
         </div>
       ) : (
@@ -670,11 +675,12 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
           {filteredVehicles.map((vehicle) => (
             <div
               key={vehicle.id}
-              className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden hover:shadow-lg transition-shadow"
+              className="rounded-xl overflow-hidden transition-shadow hover:shadow-lg"
+              style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}
             >
               {/* Image du véhicule */}
-              {vehicle.photo && (
-                <div className="relative w-full h-48 bg-slate-100 dark:bg-slate-700">
+              {vehicle.photo ? (
+                <div className="relative w-full h-48" style={{ backgroundColor: 'var(--color-client-surface)' }}>
                   <Image
                     src={vehicle.photo}
                     alt={`${vehicle.make} ${vehicle.model}`}
@@ -682,29 +688,24 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
-                  {/* Badge Cloudinary */}
                   {vehicle.photo.includes('cloudinary.com') && (
                     <div
-                      className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1"
-                      title="Image optimisée par Cloudinary"
+                      className="absolute top-2 right-2 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1"
+                      style={{ backgroundColor: 'var(--color-client-accent)' }}
+                      title={t('cloudinaryOptimized')}
                     >
                       <span>📸</span>
                     </div>
                   )}
-                  {/* Badge Statut */}
-                  <div className={`absolute top-2 left-2 px-3 py-1 rounded-full text-xs font-medium ${vehicle.isActive
-                      ? 'bg-red-500 text-white'
-                      : 'bg-slate-500 text-white'
-                    }`}>
-                    {vehicle.isActive ? '✅ Actif' : '🚫 Inactif'}
+                  <div className="absolute top-2 left-2 px-3 py-1 rounded-full text-xs font-medium text-white flex items-center gap-1"
+                    style={{ backgroundColor: vehicle.isActive ? 'var(--color-client-accent)' : '#6B7280' }}>
+                    {vehicle.isActive ? <CheckCircle size={12} weight="fill" /> : <Prohibit size={12} weight="fill" />}
+                    {vehicle.isActive ? t('activeBadge') : t('inactiveBadge')}
                   </div>
                 </div>
-              )}
-
-              {/* Placeholder si pas d'image */}
-              {!vehicle.photo && (
-                <div className="relative w-full h-48 bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                  <span className="text-6xl">{getVehicleTypeIcon(vehicle.type)}</span>
+              ) : (
+                <div className="relative w-full h-48 flex items-center justify-center" style={{ backgroundColor: 'var(--color-client-accent-bg)' }}>
+                  <Car size={56} weight="duotone" style={{ color: 'var(--color-client-accent)' }} />
                 </div>
               )}
 
@@ -712,10 +713,10 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                    <h3 className="text-lg font-bold" style={{ color: 'var(--color-client-text-primary)' }}>
                       {vehicle.make} {vehicle.model}
                     </h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-sm" style={{ color: 'var(--color-client-text-secondary)' }}>
                       {vehicle.year}
                     </p>
                   </div>
@@ -724,27 +725,27 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                 {/* Details */}
                 <div className="space-y-3 mb-4">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-600 dark:text-slate-400">Immatriculation</span>
-                    <span className="font-mono font-bold text-slate-900 dark:text-white">
+                    <span style={{ color: 'var(--color-client-text-secondary)' }}>{t('registration')}</span>
+                    <span className="font-mono font-bold" style={{ color: 'var(--color-client-text-primary)' }}>
                       {vehicle.plateNumber}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-600 dark:text-slate-400">Type</span>
-                    <span className="font-medium text-slate-900 dark:text-white">
+                    <span style={{ color: 'var(--color-client-text-secondary)' }}>{t('typeField')}</span>
+                    <span className="font-medium" style={{ color: 'var(--color-client-text-primary)' }}>
                       {getVehicleTypeLabel(vehicle.type)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-600 dark:text-slate-400">Capacité</span>
-                    <span className="font-medium text-slate-900 dark:text-white">
-                      {vehicle.capacity} passagers
+                    <span style={{ color: 'var(--color-client-text-secondary)' }}>{t('capacityField')}</span>
+                    <span className="font-medium" style={{ color: 'var(--color-client-text-primary)' }}>
+                      {t('passengers', { count: vehicle.capacity })}
                     </span>
                   </div>
                   {vehicle.driverName && (
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-slate-600 dark:text-slate-400">Chauffeur</span>
-                      <span className="font-medium text-slate-900 dark:text-white">
+                      <span style={{ color: 'var(--color-client-text-secondary)' }}>{t('driver')}</span>
+                      <span className="font-medium" style={{ color: 'var(--color-client-text-primary)' }}>
                         {vehicle.driverName}
                       </span>
                     </div>
@@ -752,34 +753,38 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
                 </div>
 
                 {/* Actions */}
-                <div className="flex gap-2 pt-4 border-t border-slate-200 dark:border-slate-700">
+                <div className="flex gap-2 pt-4" style={{ borderTop: '1px solid var(--color-client-border)' }}>
                   {canUpdate && (
                     <button
                       onClick={() => handleEditVehicle(vehicle)}
-                      className="flex-1 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                      className="flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1.5"
+                      style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)' }}
                     >
-                      ✏️ Modifier
+                      <PencilSimple size={14} /> {t('edit')}
                     </button>
                   )}
                   {canUpdate && (
                     <button
                       onClick={() => handleToggleStatus(vehicle)}
-                      className="flex-1 bg-slate-50 hover:bg-slate-100 dark:bg-slate-700/50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                      className="flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1.5"
+                      style={{ backgroundColor: 'var(--color-client-surface)', color: 'var(--color-client-text-secondary)' }}
                     >
-                      {vehicle.isActive ? '🚫 Désactiver' : '✅ Activer'}
+                      {vehicle.isActive ? <Prohibit size={14} /> : <CheckCircle size={14} />}
+                      {vehicle.isActive ? t('deactivate') : t('activate')}
                     </button>
                   )}
                   {canDelete && (
                     <button
                       onClick={() => setDeletingVehicle(vehicle)}
-                      className="bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                      className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                      style={{ backgroundColor: 'rgba(239,68,68,0.08)', color: '#EF4444' }}
                     >
-                      🗑️
+                      <Trash size={14} />
                     </button>
                   )}
                   {!canUpdate && !canDelete && (
-                    <div className="flex-1 text-center text-sm text-slate-500 dark:text-slate-400 py-2">
-                      👁️ Mode lecture seule
+                    <div className="flex-1 text-center text-sm py-2 flex items-center justify-center gap-1.5" style={{ color: 'var(--color-client-text-secondary)' }}>
+                      <Eye size={14} /> {t('readOnlyMode')}
                     </div>
                   )}
                 </div>
@@ -791,40 +796,39 @@ export function VehiclesManagement({ onClose }: VehiclesManagementProps) {
 
       {/* Statistiques */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 text-center">
-          <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+        <div className="rounded-xl p-6 text-center" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
+          <div className="text-3xl font-bold" style={{ color: 'var(--color-client-accent)', fontFamily: 'var(--font-mono)' }}>
             {vehicles.length}
           </div>
-          <div className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-            Total véhicules
+          <div className="text-sm mt-1" style={{ color: 'var(--color-client-text-secondary)' }}>
+            {t('statTotal')}
           </div>
         </div>
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 text-center">
-          <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+        <div className="rounded-xl p-6 text-center" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
+          <div className="text-3xl font-bold" style={{ color: 'var(--color-client-accent)', fontFamily: 'var(--font-mono)' }}>
             {vehicles.filter(v => v.isActive).length}
           </div>
-          <div className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-            Actifs
+          <div className="text-sm mt-1" style={{ color: 'var(--color-client-text-secondary)' }}>
+            {t('statActive')}
           </div>
         </div>
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 text-center">
-          <div className="text-3xl font-bold text-red-600 dark:text-red-400">
+        <div className="rounded-xl p-6 text-center" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
+          <div className="text-3xl font-bold" style={{ color: '#EF4444', fontFamily: 'var(--font-mono)' }}>
             {vehicles.filter(v => !v.isActive).length}
           </div>
-          <div className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-            Inactifs
+          <div className="text-sm mt-1" style={{ color: 'var(--color-client-text-secondary)' }}>
+            {t('statInactive')}
           </div>
         </div>
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 text-center">
-          <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
+        <div className="rounded-xl p-6 text-center" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
+          <div className="text-3xl font-bold" style={{ color: 'var(--color-client-text-primary)', fontFamily: 'var(--font-mono)' }}>
             {Math.round(vehicles.reduce((acc, v) => acc + v.capacity, 0) / vehicles.length) || 0}
           </div>
-          <div className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-            Capacité moy.
+          <div className="text-sm mt-1" style={{ color: 'var(--color-client-text-secondary)' }}>
+            {t('statAvgCapacity')}
           </div>
         </div>
       </div>
     </div>
   )
 }
-
