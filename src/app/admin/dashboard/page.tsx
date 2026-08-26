@@ -12,7 +12,6 @@ import { AdminTopbar } from "@/components/admin/AdminTopbar"
 // Composants pour chaque section
 import { VehiclesManagementRedesigned } from "@/components/admin/VehiclesManagementRedesigned"
 import { BookingsManagementRedesigned } from "@/components/admin/BookingsManagementRedesigned"
-import { ModernPermissionsManagement } from "@/components/admin/ModernPermissionsManagement"
 import PermissionsManagementRedesigned from "@/components/admin/PermissionsManagementRedesigned"
 import ReviewsManagementRedesigned from "@/components/admin/ReviewsManagementRedesigned"
 import { QuotesManagementRedesigned } from "@/components/admin/QuotesManagementRedesigned"

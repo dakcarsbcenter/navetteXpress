@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useTranslations } from "next-intl"
-import { ModernUsersManagement } from "@/components/admin/ModernUsersManagement"
+import { ModernUsersManagement } from "@/components/shared/ModernUsersManagement"
 import { Warning, Info } from "@phosphor-icons/react"
 
 interface UserPermissions {
