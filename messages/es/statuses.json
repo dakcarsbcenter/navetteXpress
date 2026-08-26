@@ -1,0 +1,38 @@
+{
+  "booking": {
+    "pending": { "client": "Esperando confirmación", "driver": "—", "admin": "Por tratar" },
+    "assigned": { "client": "Conductor asignado", "driver": "Misión recibida", "admin": "Asignada" },
+    "approved": { "client": "Precio validado", "driver": "Precio validado", "admin": "Precio aprobado" },
+    "rejected": { "client": "Precio rechazado", "driver": "Rechazada", "admin": "Precio rechazado" },
+    "confirmed": { "client": "Confirmada", "driver": "Confirmada", "admin": "Confirmada" },
+    "in_progress": { "client": "Viaje en curso", "driver": "En curso", "admin": "En curso" },
+    "completed": { "client": "Finalizada", "driver": "Finalizada", "admin": "Finalizada" },
+    "cancelled": { "client": "Cancelada", "driver": "Cancelada", "admin": "Cancelada" }
+  },
+  "quote": {
+    "pending": { "client": "Pendiente", "driver": "Pendiente", "admin": "Pendiente" },
+    "in_progress": { "client": "En tratamiento", "driver": "En tratamiento", "admin": "En tratamiento" },
+    "sent": { "client": "Presupuesto enviado", "driver": "Presupuesto enviado", "admin": "Presupuesto enviado" },
+    "accepted": { "client": "Aceptado", "driver": "Aceptado", "admin": "Aceptado" },
+    "rejected": { "client": "Rechazado", "driver": "Rechazado", "admin": "Rechazado" },
+    "expired": { "client": "Caducado", "driver": "Caducado", "admin": "Caducado" }
+  },
+  "invoice": {
+    "draft": { "client": "Borrador", "driver": "Borrador", "admin": "Borrador" },
+    "pending": { "client": "Pendiente de pago", "driver": "Pendiente de pago", "admin": "Pendiente de pago" },
+    "paid": { "client": "Pagada", "driver": "Pagada", "admin": "Pagada" },
+    "cancelled": { "client": "Cancelada", "driver": "Cancelada", "admin": "Cancelada" },
+    "overdue": { "client": "Atrasada", "driver": "Atrasada", "admin": "Atrasada" }
+  },
+  "report": {
+    "open": { "client": "Abierto", "driver": "Abierto", "admin": "Abierto" },
+    "in_progress": { "client": "En curso", "driver": "En curso", "admin": "En curso" },
+    "resolved": { "client": "Resuelto", "driver": "Resuelto", "admin": "Resuelto" },
+    "closed": { "client": "Cerrado", "driver": "Cerrado", "admin": "Cerrado" }
+  },
+  "tripPlan": {
+    "active": { "client": "Activo", "driver": "Activo", "admin": "Activo" },
+    "completed": { "client": "Finalizado", "driver": "Finalizado", "admin": "Finalizado" },
+    "cancelled": { "client": "Cancelado", "driver": "Cancelado", "admin": "Cancelado" }
+  }
+}

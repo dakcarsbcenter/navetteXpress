@@ -11,7 +11,7 @@ export default async function DriverLayout({
     children: React.ReactNode
 }) {
     const locale = await getDashboardLocale()
-    const messages = await getDashboardMessages(locale, ["common", "driver"])
+    const messages = await getDashboardMessages(locale, ["common", "driver", "statuses"])
 
     return (
         <NextIntlClientProvider locale={locale} messages={messages}>

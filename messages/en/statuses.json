@@ -1,0 +1,38 @@
+{
+  "booking": {
+    "pending": { "client": "Awaiting confirmation", "driver": "—", "admin": "To process" },
+    "assigned": { "client": "Driver assigned", "driver": "Mission received", "admin": "Assigned" },
+    "approved": { "client": "Price approved", "driver": "Price approved", "admin": "Price approved" },
+    "rejected": { "client": "Price declined", "driver": "Declined", "admin": "Price declined" },
+    "confirmed": { "client": "Confirmed", "driver": "Confirmed", "admin": "Confirmed" },
+    "in_progress": { "client": "Trip in progress", "driver": "In progress", "admin": "In progress" },
+    "completed": { "client": "Completed", "driver": "Completed", "admin": "Completed" },
+    "cancelled": { "client": "Cancelled", "driver": "Cancelled", "admin": "Cancelled" }
+  },
+  "quote": {
+    "pending": { "client": "Pending", "driver": "Pending", "admin": "Pending" },
+    "in_progress": { "client": "Being processed", "driver": "Being processed", "admin": "Being processed" },
+    "sent": { "client": "Quote sent", "driver": "Quote sent", "admin": "Quote sent" },
+    "accepted": { "client": "Accepted", "driver": "Accepted", "admin": "Accepted" },
+    "rejected": { "client": "Declined", "driver": "Declined", "admin": "Declined" },
+    "expired": { "client": "Expired", "driver": "Expired", "admin": "Expired" }
+  },
+  "invoice": {
+    "draft": { "client": "Draft", "driver": "Draft", "admin": "Draft" },
+    "pending": { "client": "Awaiting payment", "driver": "Awaiting payment", "admin": "Awaiting payment" },
+    "paid": { "client": "Paid", "driver": "Paid", "admin": "Paid" },
+    "cancelled": { "client": "Cancelled", "driver": "Cancelled", "admin": "Cancelled" },
+    "overdue": { "client": "Overdue", "driver": "Overdue", "admin": "Overdue" }
+  },
+  "report": {
+    "open": { "client": "Open", "driver": "Open", "admin": "Open" },
+    "in_progress": { "client": "In progress", "driver": "In progress", "admin": "In progress" },
+    "resolved": { "client": "Resolved", "driver": "Resolved", "admin": "Resolved" },
+    "closed": { "client": "Closed", "driver": "Closed", "admin": "Closed" }
+  },
+  "tripPlan": {
+    "active": { "client": "Active", "driver": "Active", "admin": "Active" },
+    "completed": { "client": "Completed", "driver": "Completed", "admin": "Completed" },
+    "cancelled": { "client": "Cancelled", "driver": "Cancelled", "admin": "Cancelled" }
+  }
+}

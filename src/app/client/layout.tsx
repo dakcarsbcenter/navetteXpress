@@ -5,7 +5,7 @@ import { ClientLayoutInner } from "./ClientLayoutInner"
 
 export default async function ClientLayout({ children }: { children: React.ReactNode }) {
   const locale = await getDashboardLocale()
-  const messages = await getDashboardMessages(locale, ["common", "client"])
+  const messages = await getDashboardMessages(locale, ["common", "client", "statuses"])
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
