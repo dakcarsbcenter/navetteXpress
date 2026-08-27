@@ -24,44 +24,23 @@
       "history": "Historial"
     }
   },
+  "duty": {
+    "on": "En servicio",
+    "off": "Fuera de servicio"
+  },
   "home": {
-    "stats": {
-      "totalCourses": "Total de Viajes",
-      "activeDrivers": "Conductores Activos",
-      "revenueToday": "Ingresos de Hoy",
-      "averageRating": "Calificación Media",
-      "stable": "Estable"
+    "eyebrow": "Viaje en curso",
+    "greeting": {
+      "morning": "Buenos días",
+      "evening": "Buenas noches"
     },
-    "shortcuts": {
-      "title": "Accesos Directos",
-      "report": "Informe",
-      "profile": "Perfil"
-    },
-    "missionRadar": {
-      "title": "Esperando una misión",
-      "description": "No hay ningún viaje activo por el momento. Mantente disponible."
-    },
+    "dayline": "{count, plural, one {Un viaje previsto hoy.} other {# viajes previstos hoy.}}",
+    "daylineEmpty": "Ningún viaje previsto hoy.",
+    "viewPlanning": "Ver planificación",
     "upcomingMissions": {
       "title": "Próximas misiones",
       "emptyTitle": "Esperando una misión",
       "emptyDescription": "No hay ninguna misión programada"
-    },
-    "revenueChart": {
-      "title": "Evolución de los Ingresos",
-      "days": ["LUN", "MAR", "MIÉ", "JUE", "VIE", "SÁB", "DOM"]
-    },
-    "recentHistory": {
-      "title": "Historial Reciente",
-      "viewAll": "Ver todo",
-      "emptyTitle": "Sin historial",
-      "emptyDescription": "No hay historial disponible",
-      "columns": {
-        "date": "Fecha",
-        "trip": "Trayecto",
-        "distance": "Distancia",
-        "revenue": "Ingreso",
-        "status": "Estado"
-      }
     },
     "missionStatus": {
       "onTime": "A tiempo",
@@ -69,10 +48,128 @@
       "delayed": "Retraso",
       "cancelled": "Cancelada"
     },
-    "historyStatus": {
-      "completed": "Finalizado",
-      "inProgress": "En curso",
-      "cancelled": "Cancelado"
+    "course": {
+      "ref": "REF. NX-{id}",
+      "departure": "Salida",
+      "arrival": "Llegada",
+      "pickupAt": "RECOGIDA {time}",
+      "dropoffEstimated": "LLEGADA ESTIMADA {time}",
+      "passenger": "Pasajero",
+      "passengersCount": "{count, plural, one {# pasajero} other {# pasajeros}}",
+      "luggageCount": "{count, plural, one {# maleta} other {# maletas}}",
+      "priceLabel": "Viaje",
+      "priceNote": "Peaje y combustible incluidos. Pago a bordo.",
+      "call": "Llamar",
+      "itinerary": "Itinerario",
+      "reportIncident": "Reportar una espera o un incidente",
+      "incidentReported": "Incidente reportado al despacho",
+      "steps": {
+        "nouvelle": "Nueva",
+        "acceptee": "Aceptada",
+        "enroute": "En camino",
+        "surplace": "En el lugar",
+        "encours": "En curso",
+        "terminee": "Finalizada"
+      },
+      "actions": {
+        "nouvelle": "Aceptar la misión",
+        "acceptee": "Voy hacia el cliente",
+        "enroute": "He llegado",
+        "surplace": "Iniciar el viaje",
+        "encours": "Cerrar el viaje",
+        "terminee": "Viaje cerrado"
+      },
+      "status": {
+        "nouvelle": "Nueva misión recibida",
+        "acceptee": "Salida prevista a las {time}",
+        "enroute": "En camino hacia el cliente",
+        "surplace": "Esperando al pasajero",
+        "encours": "Viaje en curso hacia {destination}",
+        "terminee": "Viaje cerrado"
+      },
+      "empty": {
+        "title": "Ningún viaje pendiente",
+        "description": "Se le notificará en cuanto se le asigne una nueva misión."
+      }
+    },
+    "kpis": {
+      "todayCount": "Viajes de hoy",
+      "todayNote": "{count, plural, one {# viaje finalizado} other {# viajes finalizados}}",
+      "remaining": "Restantes",
+      "remainingNote": "El último a las {time}",
+      "remainingNoteEmpty": "Jornada finalizada",
+      "collected": "Cobrado",
+      "collectedNote": "Efectivo y Wave",
+      "ratingMonth": "Calificación del mes",
+      "ratingNote": "{count, plural, one {Sobre # reseña} other {Sobre # reseñas}}",
+      "ratingNoteEmpty": "Sin reseñas este mes"
+    },
+    "missions": {
+      "title": "Misiones de hoy",
+      "count": "{count, plural, one {# viaje} other {# viajes}}",
+      "empty": "Ninguna misión hoy",
+      "viewHistory": "Historial completo"
+    },
+    "week": {
+      "title": "Semana en curso",
+      "note": "{count, plural, one {# viaje finalizado esta semana.} other {# viajes finalizados esta semana.}}",
+      "noteEmpty": "Ningún viaje finalizado esta semana.",
+      "completed": "Viajes",
+      "average": "Tarifa media",
+      "rating": "Calificación"
+    },
+    "vehicleReport": {
+      "title": "Informe del vehículo",
+      "pending": "{count, plural, one {# pendiente} other {# pendientes}}",
+      "upToDate": "Al día",
+      "description": "Reporte cualquier incidente o anomalía observada en el vehículo.",
+      "empty": "Ningún informe pendiente.",
+      "cta": "Completar el informe"
+    }
+  },
+  "planning": {
+    "weekOf": "Semana del {start} al {end}",
+    "headline": "{count, plural, =0 {Ningún viaje esta semana.} one {Un viaje esta semana.} other {# viajes esta semana.}}",
+    "weekNote": "{count, plural, =0 {Toda la semana está abierta.} one {Queda un día cerrado.} other {Quedan # días cerrados.}}",
+    "prevWeek": "Semana anterior",
+    "nextWeek": "Semana siguiente",
+    "closed": "Cerrado",
+    "dayCourseLabel": "{count, plural, one {viaje} other {viajes}}",
+    "missions": {
+      "title": "Viajes de la semana",
+      "summary": "{count, plural, one {# viaje} other {# viajes}} · {total} F",
+      "empty": "Ningún viaje previsto esta semana."
+    }
+  },
+  "availability": {
+    "eyebrow": "Mi disponibilidad",
+    "headline": "{count, plural, one {# día abierto de siete.} other {# días abiertos de siete.}}",
+    "description": "El despacho no puede asignarle un viaje fuera de estos horarios. Una excepción por fecha siempre prevalece sobre el horario semanal.",
+    "save": "Guardar",
+    "saving": "Guardando...",
+    "weeklyTitle": "Horario semanal",
+    "weeklySummary": "{openCount} / 7 días · {exceptionsCount, plural, one {# excepción} other {# excepciones}}",
+    "available": "Disponible",
+    "unavailable": "No disponible",
+    "exceptions": {
+      "title": "Excepciones por fecha",
+      "badge": "Prevalece sobre lo semanal",
+      "add": "Añadir una excepción",
+      "empty": "Ninguna excepción programada.",
+      "fullDay": "Todo el día",
+      "notesPlaceholder": "Nota (opcional)",
+      "cancel": "Cancelar",
+      "confirm": "Añadir",
+      "unavailableAllDay": "No disponible todo el día",
+      "availableRange": "Disponible {start} — {end}",
+      "unavailableRange": "No disponible {start} — {end}"
+    },
+    "dispatch": {
+      "title": "Lo que ve el despacho",
+      "description": "Sus horarios se verifican en el momento de la asignación. Si el despacho intenta asignarle un viaje fuera de su disponibilidad, la asignación se rechaza y se muestra el motivo.",
+      "openDays": "Días abiertos",
+      "activeExceptions": "Excepciones activas",
+      "assignedRides": "Viajes asignados"
     }
   }
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
-import { StatusBadge } from '@/components/ui/StatusBadge'
+import { StatusBadge } from '@/components/shared/StatusBadge'
 import {
   TrendUp as TrendingUp,
   TrendDown as TrendingDown,
@@ -455,7 +455,7 @@ export function ModernAdminDashboard({ onNavigate }: ModernAdminDashboardProps) 
                     </div>
 
                     <div className="flex flex-col items-end gap-1 shrink-0">
-                      <StatusBadge statut={booking.status} />
+                      <StatusBadge domain="booking" value={booking.status} audience="admin" live={booking.status === 'in_progress'} />
                       <span className="text-[10px] text-slate-600 font-mono">
                         {booking.price ? `${parseFloat(booking.price).toLocaleString()} F` : '—'}
                       </span>

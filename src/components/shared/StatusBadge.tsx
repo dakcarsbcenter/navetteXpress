@@ -5,9 +5,12 @@ import { useTranslations } from "next-intl"
 export type StatusDomain = "booking" | "quote" | "invoice" | "report" | "tripPlan"
 export type StatusAudience = "client" | "driver" | "admin"
 
-type Tone = "attente" | "valide" | "enCours" | "clos" | "arrete"
+export type Tone = "attente" | "valide" | "enCours" | "clos" | "arrete"
 
-const TONE_STYLE: Record<Tone, { color: string; bg: string }> = {
+// Les cinq tons du systeme de statuts (README redesign) — reutilisable par tout
+// composant qui a besoin d'un pastille de statut hors du couple domaine/valeur
+// de StatusBadge (ex: sous-etapes locales d'une course chauffeur).
+export const TONE_STYLE: Record<Tone, { color: string; bg: string }> = {
   attente: { color: "#B4643A", bg: "rgba(180,100,58,.10)" },
   valide: { color: "#1F5245", bg: "rgba(31,82,69,.10)" },
   enCours: { color: "#1B9E4B", bg: "rgba(34,197,94,.12)" },

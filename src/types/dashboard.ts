@@ -1,21 +1,6 @@
-import type React from "react"
-
-export type TrendType = "up" | "down" | "neutral"
 // Codes, not display labels — translated at render time via the
-// driver.home.missionStatus / driver.home.historyStatus message namespaces.
+// driver.home.missionStatus message namespace.
 export type MissionStatus = "onTime" | "confirmed" | "delayed" | "cancelled"
-export type HistoryStatus = "completed" | "inProgress" | "cancelled"
-
-type PhosphorIcon = React.ComponentType<{ size?: number; className?: string; weight?: "thin" | "light" | "regular" | "bold" | "fill" | "duotone" }>
-
-export interface StatCardProps {
-  icon: PhosphorIcon
-  label: string
-  value: string | number
-  trend?: string
-  trendType?: TrendType
-  animationDelay?: number
-}
 
 export interface MissionItem {
   id: number
@@ -29,28 +14,6 @@ export interface UpcomingMissionsProps {
   missions: MissionItem[]
 }
 
-export interface RevenuePoint {
-  day: string
-  value: number
-}
-
-export interface RevenueChartProps {
-  data?: RevenuePoint[]
-}
-
-export interface HistoryItem {
-  id: number
-  date: string
-  trajet: string
-  distance: string
-  revenu: string
-  statut: HistoryStatus
-}
-
-export interface RecentHistoryProps {
-  items: HistoryItem[]
-}
-
 export interface DriverBookingApiItem {
   booking: {
     id: number
@@ -59,10 +22,32 @@ export interface DriverBookingApiItem {
     scheduledDateTime: string
     status: string
     price: string | number | null
+    customerName: string
+    customerPhone: string
+    passengers: number
+    luggage: number
+    duration: string | number | null
+    notes: string | null
   }
 }
 
 export interface DriverBookingsApiResponse {
   success: boolean
   data: DriverBookingApiItem[]
+}
+
+export interface DriverAvailabilityRow {
+  id: number
+  driverId: string
+  dayOfWeek: number // 0 = dimanche ... 6 = samedi, comme Date.getDay()
+  startTime: string
+  endTime: string
+  isAvailable: boolean
+  specificDate: string | null
+  notes: string | null
+}
+
+export interface DriverAvailabilityApiResponse {
+  success: boolean
+  data: DriverAvailabilityRow[]
 }

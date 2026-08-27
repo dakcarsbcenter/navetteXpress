@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useLocale, useTranslations } from "next-intl"
 import { toIntlLocale } from "@/lib/intl-locale"
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal"
+import { StatusBadge } from "@/components/shared/StatusBadge"
 import {
     X,
     MapPin,
@@ -47,7 +48,6 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
     const locale = useLocale()
     const intlLocale = toIntlLocale(locale)
     const t = useTranslations('client.bookingDetails')
-    const tStatus = useTranslations('client.statuses')
     const [isEditing, setIsEditing] = useState(false)
     const [formData, setFormData] = useState({
         pickupAddress: '',
@@ -118,28 +118,6 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
 
     const canEdit = !['confirmed', 'in_progress', 'completed', 'cancelled'].includes(booking.status)
 
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'pending': return 'var(--color-status-pending)'
-            case 'confirmed': return 'var(--color-status-confirmed)'
-            case 'in_progress': return 'var(--color-status-inprogress)'
-            case 'completed': return 'var(--color-status-completed)'
-            case 'cancelled': return 'var(--color-status-cancelled)'
-            default: return 'var(--color-client-text-secondary)'
-        }
-    }
-
-    const getStatusLabel = (status: string) => {
-        switch (status) {
-            case 'pending': return tStatus('pending')
-            case 'confirmed': return tStatus('confirmed')
-            case 'in_progress': return tStatus('inProgress')
-            case 'completed': return tStatus('completed')
-            case 'cancelled': return tStatus('cancelled')
-            default: return status
-        }
-    }
-
     return (
         <>
             <div className="fixed inset-0 z-50 overflow-y-auto px-4 py-6 sm:py-12 flex items-center justify-center">
@@ -171,11 +149,8 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                                 <h3 className="text-xl font-bold leading-tight" style={{ color: 'var(--color-client-text-primary)' }}>
                                     {t('bookingNumber')} <span style={{ color: 'var(--color-client-accent)' }}>#{booking.id}</span>
                                 </h3>
-                                <div className="flex items-center gap-2 mt-1">
-                                    <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: getStatusColor(booking.status) }} />
-                                    <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-client-text-secondary)' }}>
-                                        {getStatusLabel(booking.status)}
-                                    </span>
+                                <div className="mt-1">
+                                    <StatusBadge domain="booking" value={booking.status} audience="client" live={booking.status === 'in_progress'} />
                                 </div>
                             </div>
                         </div>

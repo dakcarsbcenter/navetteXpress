@@ -24,44 +24,23 @@
       "history": "History"
     }
   },
+  "duty": {
+    "on": "On duty",
+    "off": "Off duty"
+  },
   "home": {
-    "stats": {
-      "totalCourses": "Total Rides",
-      "activeDrivers": "Active Drivers",
-      "revenueToday": "Today's Revenue",
-      "averageRating": "Average Rating",
-      "stable": "Stable"
+    "eyebrow": "Current ride",
+    "greeting": {
+      "morning": "Good morning",
+      "evening": "Good evening"
     },
-    "shortcuts": {
-      "title": "Shortcuts",
-      "report": "Report",
-      "profile": "Profile"
-    },
-    "missionRadar": {
-      "title": "Waiting for a mission",
-      "description": "No active ride at the moment. Stay available."
-    },
+    "dayline": "{count, plural, one {One ride scheduled today.} other {# rides scheduled today.}}",
+    "daylineEmpty": "No ride scheduled today.",
+    "viewPlanning": "View schedule",
     "upcomingMissions": {
       "title": "Upcoming missions",
       "emptyTitle": "Waiting for a mission",
       "emptyDescription": "No mission scheduled"
-    },
-    "revenueChart": {
-      "title": "Revenue Trend",
-      "days": ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
-    },
-    "recentHistory": {
-      "title": "Recent History",
-      "viewAll": "View all",
-      "emptyTitle": "No history",
-      "emptyDescription": "No history available",
-      "columns": {
-        "date": "Date",
-        "trip": "Trip",
-        "distance": "Distance",
-        "revenue": "Revenue",
-        "status": "Status"
-      }
     },
     "missionStatus": {
       "onTime": "On time",
@@ -69,10 +48,128 @@
       "delayed": "Delayed",
       "cancelled": "Cancelled"
     },
-    "historyStatus": {
-      "completed": "Completed",
-      "inProgress": "In progress",
-      "cancelled": "Cancelled"
+    "course": {
+      "ref": "REF. NX-{id}",
+      "departure": "Departure",
+      "arrival": "Arrival",
+      "pickupAt": "PICKUP {time}",
+      "dropoffEstimated": "ESTIMATED DROP-OFF {time}",
+      "passenger": "Passenger",
+      "passengersCount": "{count, plural, one {# passenger} other {# passengers}}",
+      "luggageCount": "{count, plural, one {# bag} other {# bags}}",
+      "priceLabel": "Ride",
+      "priceNote": "Tolls and fuel included. Payment on board.",
+      "call": "Call",
+      "itinerary": "Directions",
+      "reportIncident": "Report a delay or incident",
+      "incidentReported": "Incident reported to dispatch",
+      "steps": {
+        "nouvelle": "New",
+        "acceptee": "Accepted",
+        "enroute": "En route",
+        "surplace": "On site",
+        "encours": "In progress",
+        "terminee": "Completed"
+      },
+      "actions": {
+        "nouvelle": "Accept mission",
+        "acceptee": "Heading to client",
+        "enroute": "I've arrived",
+        "surplace": "Start ride",
+        "encours": "Close ride",
+        "terminee": "Ride closed"
+      },
+      "status": {
+        "nouvelle": "New mission received",
+        "acceptee": "Departure planned for {time}",
+        "enroute": "En route to the client",
+        "surplace": "Waiting for the passenger",
+        "encours": "Ride in progress to {destination}",
+        "terminee": "Ride closed"
+      },
+      "empty": {
+        "title": "No ride waiting",
+        "description": "You'll be notified as soon as a new mission is assigned to you."
+      }
+    },
+    "kpis": {
+      "todayCount": "Rides today",
+      "todayNote": "{count, plural, one {# ride completed} other {# rides completed}}",
+      "remaining": "Remaining",
+      "remainingNote": "Last one at {time}",
+      "remainingNoteEmpty": "Day complete",
+      "collected": "Collected",
+      "collectedNote": "Cash and Wave",
+      "ratingMonth": "Rating this month",
+      "ratingNote": "{count, plural, one {From # review} other {From # reviews}}",
+      "ratingNoteEmpty": "No reviews this month"
+    },
+    "missions": {
+      "title": "Today's missions",
+      "count": "{count, plural, one {# ride} other {# rides}}",
+      "empty": "No mission today",
+      "viewHistory": "Full history"
+    },
+    "week": {
+      "title": "This week",
+      "note": "{count, plural, one {# ride completed this week.} other {# rides completed this week.}}",
+      "noteEmpty": "No ride completed this week.",
+      "completed": "Rides",
+      "average": "Average fare",
+      "rating": "Rating"
+    },
+    "vehicleReport": {
+      "title": "Vehicle report",
+      "pending": "{count, plural, one {# pending} other {# pending}}",
+      "upToDate": "Up to date",
+      "description": "Report any incident or anomaly noticed on the vehicle.",
+      "empty": "No pending report.",
+      "cta": "Complete the report"
+    }
+  },
+  "planning": {
+    "weekOf": "Week of {start} to {end}",
+    "headline": "{count, plural, =0 {No ride this week.} one {One ride this week.} other {# rides this week.}}",
+    "weekNote": "{count, plural, =0 {The whole week is open.} one {One day is still closed.} other {# days are still closed.}}",
+    "prevWeek": "Previous week",
+    "nextWeek": "Next week",
+    "closed": "Closed",
+    "dayCourseLabel": "{count, plural, one {ride} other {rides}}",
+    "missions": {
+      "title": "This week's rides",
+      "summary": "{count, plural, one {# ride} other {# rides}} · {total} F",
+      "empty": "No ride scheduled this week."
+    }
+  },
+  "availability": {
+    "eyebrow": "My availability",
+    "headline": "{count, plural, one {# day open out of seven.} other {# days open out of seven.}}",
+    "description": "Dispatch cannot assign you a ride outside these slots. A date exception always overrides the weekly schedule.",
+    "save": "Save",
+    "saving": "Saving...",
+    "weeklyTitle": "Weekly schedule",
+    "weeklySummary": "{openCount} / 7 days · {exceptionsCount, plural, one {# exception} other {# exceptions}}",
+    "available": "Available",
+    "unavailable": "Unavailable",
+    "exceptions": {
+      "title": "Date exceptions",
+      "badge": "Overrides the weekly schedule",
+      "add": "Add an exception",
+      "empty": "No exception scheduled.",
+      "fullDay": "All day",
+      "notesPlaceholder": "Note (optional)",
+      "cancel": "Cancel",
+      "confirm": "Add",
+      "unavailableAllDay": "Unavailable all day",
+      "availableRange": "Available {start} — {end}",
+      "unavailableRange": "Unavailable {start} — {end}"
+    },
+    "dispatch": {
+      "title": "What dispatch sees",
+      "description": "Your slots are checked at assignment time. If dispatch tries to assign you a ride outside your availability, the assignment is refused and the reason is shown.",
+      "openDays": "Open days",
+      "activeExceptions": "Active exceptions",
+      "assignedRides": "Assigned rides"
     }
   }
 }

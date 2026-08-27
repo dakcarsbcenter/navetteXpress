@@ -18,7 +18,18 @@ import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { BulkDeleteModal } from "@/components/ui/BulkDeleteModal"
 import { useNotification } from "@/hooks/useNotification"
 import { BookingDetailsModal } from "./BookingDetailsModal"
-import { StatusBadge } from "@/components/ui/StatusBadge"
+import { StatusBadge } from "@/components/shared/StatusBadge"
+
+const STATUS_BAR_COLOR: Record<string, string> = {
+  pending: '#B4643A',
+  assigned: '#1F5245',
+  approved: '#1F5245',
+  rejected: '#B8493C',
+  confirmed: '#1F5245',
+  inprogress: '#1B9E4B',
+  completed: '#6E6A63',
+  cancelled: '#B8493C',
+}
 
 interface Booking {
   id: number
@@ -347,10 +358,10 @@ export function BookingsManagementRedesigned() {
         </div>
 
         {[
-          { label: 'Attente', value: stats.pending, color: 'var(--color-status-pending)', icon: <Clock size={16} /> },
-          { label: 'Assignés', value: stats.assigned, color: 'var(--color-status-assigned)', icon: <User size={16} /> },
-          { label: 'Confirmés', value: stats.confirmed, color: 'var(--color-status-confirmed)', icon: <MapPin size={16} /> },
-          { label: 'En Cours', value: stats.inProgress, color: 'var(--color-status-inprogress)', icon: <Clock size={16} className="animate-pulse" /> },
+          { label: 'Attente', value: stats.pending, color: '#F59E0B', icon: <Clock size={16} /> },
+          { label: 'Assignés', value: stats.assigned, color: '#3B82F6', icon: <User size={16} /> },
+          { label: 'Confirmés', value: stats.confirmed, color: '#3B82F6', icon: <MapPin size={16} /> },
+          { label: 'En Cours', value: stats.inProgress, color: '#8B5CF6', icon: <Clock size={16} className="animate-pulse" /> },
         ].map((stat, i) => (
           <div key={i} className="p-5 rounded-2xl border border-white/5 flex flex-col items-center justify-center text-center"
             style={{ backgroundColor: 'var(--color-dash-card)' }}>
@@ -448,7 +459,7 @@ export function BookingsManagementRedesigned() {
 
                 {/* Visual indicator bar */}
                 <div className="absolute top-0 left-0 w-1 h-full opacity-30 group-hover:opacity-100 transition-opacity"
-                  style={{ backgroundColor: `var(--color-status-${booking.status.replace(/_/g, '')})` || 'var(--color-gold)' }} />
+                  style={{ backgroundColor: STATUS_BAR_COLOR[booking.status.replace(/_/g, '')] ?? '#B4643A' }} />
 
                 <div className="flex justify-between items-start mb-6 pr-6">
                   <div className="flex items-center gap-3">
@@ -465,7 +476,7 @@ export function BookingsManagementRedesigned() {
                       <p className="text-[10px] text-slate-500 mt-1 font-mono uppercase tracking-tighter">IDX-{booking.id.toString().padStart(4, '0')}</p>
                     </div>
                   </div>
-                  <StatusBadge statut={booking.status} />
+                  <StatusBadge domain="booking" value={booking.status} audience="admin" live={booking.status === 'in_progress'} />
                 </div>
 
                 <div className="space-y-4 mb-6 relative">
@@ -587,7 +598,7 @@ export function BookingsManagementRedesigned() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <StatusBadge statut={booking.status} />
+                    <StatusBadge domain="booking" value={booking.status} audience="admin" live={booking.status === 'in_progress'} />
                   </td>
                   <td className="px-6 py-4 text-right">
                     <span className="text-sm font-bold text-white font-mono block">

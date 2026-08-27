@@ -24,44 +24,23 @@
       "history": "Historique"
     }
   },
+  "duty": {
+    "on": "En service",
+    "off": "Hors service"
+  },
   "home": {
-    "stats": {
-      "totalCourses": "Total Courses",
-      "activeDrivers": "Chauffeurs actifs",
-      "revenueToday": "Revenus du jour",
-      "averageRating": "Note moyenne",
-      "stable": "Stable"
+    "eyebrow": "Course en cours",
+    "greeting": {
+      "morning": "Bonjour",
+      "evening": "Bonsoir"
     },
-    "shortcuts": {
-      "title": "Raccourcis",
-      "report": "Rapport",
-      "profile": "Profil"
-    },
-    "missionRadar": {
-      "title": "En attente de mission",
-      "description": "Aucune course active pour le moment. Restez disponible."
-    },
+    "dayline": "{count, plural, one {Une course prévue aujourd'hui.} other {# courses prévues aujourd'hui.}}",
+    "daylineEmpty": "Aucune course prévue aujourd'hui.",
+    "viewPlanning": "Voir le planning",
     "upcomingMissions": {
       "title": "Missions à venir",
       "emptyTitle": "En attente de mission",
       "emptyDescription": "Aucune mission programmée"
-    },
-    "revenueChart": {
-      "title": "Évolution des Revenus",
-      "days": ["LUN", "MAR", "MER", "JEU", "VEN", "SAM", "DIM"]
-    },
-    "recentHistory": {
-      "title": "Historique Récent",
-      "viewAll": "Voir tout",
-      "emptyTitle": "Aucun historique",
-      "emptyDescription": "Aucun historique disponible",
-      "columns": {
-        "date": "Date",
-        "trip": "Trajet",
-        "distance": "Distance",
-        "revenue": "Revenu",
-        "status": "Statut"
-      }
     },
     "missionStatus": {
       "onTime": "À l'heure",
@@ -69,10 +48,128 @@
       "delayed": "Retard",
       "cancelled": "Annulée"
     },
-    "historyStatus": {
-      "completed": "Terminé",
-      "inProgress": "En cours",
-      "cancelled": "Annulé"
+    "course": {
+      "ref": "RÉF. NX-{id}",
+      "departure": "Départ",
+      "arrival": "Arrivée",
+      "pickupAt": "PRISE EN CHARGE {time}",
+      "dropoffEstimated": "DÉPOSE ESTIMÉE {time}",
+      "passenger": "Passager",
+      "passengersCount": "{count, plural, one {# passager} other {# passagers}}",
+      "luggageCount": "{count, plural, one {# bagage} other {# bagages}}",
+      "priceLabel": "Course",
+      "priceNote": "Péage et carburant compris. Paiement à bord.",
+      "call": "Appeler",
+      "itinerary": "Itinéraire",
+      "reportIncident": "Signaler une attente ou un incident",
+      "incidentReported": "Incident signalé au dispatch",
+      "steps": {
+        "nouvelle": "Nouvelle",
+        "acceptee": "Acceptée",
+        "enroute": "En route",
+        "surplace": "Sur place",
+        "encours": "En cours",
+        "terminee": "Terminée"
+      },
+      "actions": {
+        "nouvelle": "Accepter la mission",
+        "acceptee": "Je pars vers le client",
+        "enroute": "Je suis sur place",
+        "surplace": "Démarrer la course",
+        "encours": "Clôturer la course",
+        "terminee": "Course clôturée"
+      },
+      "status": {
+        "nouvelle": "Nouvelle mission reçue",
+        "acceptee": "Départ prévu à {time}",
+        "enroute": "En route vers le client",
+        "surplace": "En attente du passager",
+        "encours": "Course en cours vers {destination}",
+        "terminee": "Course clôturée"
+      },
+      "empty": {
+        "title": "Aucune course en attente",
+        "description": "Vous serez notifié dès qu'une nouvelle mission vous sera assignée."
+      }
+    },
+    "kpis": {
+      "todayCount": "Courses du jour",
+      "todayNote": "{count, plural, one {# course terminée} other {# courses terminées}}",
+      "remaining": "Restantes",
+      "remainingNote": "Dernière à {time}",
+      "remainingNoteEmpty": "Journée terminée",
+      "collected": "Encaissé",
+      "collectedNote": "Espèces et Wave",
+      "ratingMonth": "Note du mois",
+      "ratingNote": "{count, plural, one {Sur # avis} other {Sur # avis}}",
+      "ratingNoteEmpty": "Aucun avis ce mois"
+    },
+    "missions": {
+      "title": "Missions du jour",
+      "count": "{count, plural, one {# course} other {# courses}}",
+      "empty": "Aucune mission aujourd'hui",
+      "viewHistory": "Historique complet"
+    },
+    "week": {
+      "title": "Semaine en cours",
+      "note": "{count, plural, one {# course terminée cette semaine.} other {# courses terminées cette semaine.}}",
+      "noteEmpty": "Aucune course terminée cette semaine.",
+      "completed": "Courses",
+      "average": "Panier moyen",
+      "rating": "Note"
+    },
+    "vehicleReport": {
+      "title": "Rapport véhicule",
+      "pending": "{count, plural, one {# en attente} other {# en attente}}",
+      "upToDate": "À jour",
+      "description": "Signalez tout incident ou anomalie constatée sur le véhicule.",
+      "empty": "Aucun rapport en attente.",
+      "cta": "Compléter le rapport"
+    }
+  },
+  "planning": {
+    "weekOf": "Semaine du {start} au {end}",
+    "headline": "{count, plural, =0 {Aucune course cette semaine.} one {Une course cette semaine.} other {# courses cette semaine.}}",
+    "weekNote": "{count, plural, =0 {Toute la semaine est ouverte.} one {Un jour reste fermé cette semaine.} other {# jours restent fermés cette semaine.}}",
+    "prevWeek": "Semaine précédente",
+    "nextWeek": "Semaine suivante",
+    "closed": "Fermé",
+    "dayCourseLabel": "{count, plural, one {course} other {courses}}",
+    "missions": {
+      "title": "Courses de la semaine",
+      "summary": "{count, plural, one {# course} other {# courses}} · {total} F",
+      "empty": "Aucune course prévue cette semaine."
+    }
+  },
+  "availability": {
+    "eyebrow": "Mes disponibilités",
+    "headline": "{count, plural, one {# jour ouvert sur sept.} other {# jours ouverts sur sept.}}",
+    "description": "Le dispatch ne peut pas vous assigner une course hors de ces créneaux. Une exception par date prime toujours sur l'horaire hebdomadaire.",
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "weeklyTitle": "Horaire hebdomadaire",
+    "weeklySummary": "{openCount} / 7 jours · {exceptionsCount, plural, one {# exception} other {# exceptions}}",
+    "available": "Disponible",
+    "unavailable": "Indisponible",
+    "exceptions": {
+      "title": "Exceptions par date",
+      "badge": "Prime sur l'hebdomadaire",
+      "add": "Ajouter une exception",
+      "empty": "Aucune exception programmée.",
+      "fullDay": "Toute la journée",
+      "notesPlaceholder": "Note (optionnelle)",
+      "cancel": "Annuler",
+      "confirm": "Ajouter",
+      "unavailableAllDay": "Indisponible toute la journée",
+      "availableRange": "Disponible {start} — {end}",
+      "unavailableRange": "Indisponible {start} — {end}"
+    },
+    "dispatch": {
+      "title": "Ce que voit le dispatch",
+      "description": "Vos créneaux sont contrôlés au moment de l'assignation. Si le dispatch tente de vous confier une course hors de vos disponibilités, l'assignation est refusée et la raison est affichée.",
+      "openDays": "Jours ouverts",
+      "activeExceptions": "Exceptions actives",
+      "assignedRides": "Courses assignées"
     }
   }
 }

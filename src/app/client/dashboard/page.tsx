@@ -369,7 +369,7 @@ function ClientDashboardContent() {
   if (!session?.user || (session.user as unknown as { role?: string }).role !== 'customer') {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--color-client-bg)' }}>
-        <div className="text-sm font-medium" style={{ color: 'var(--color-trip-cancelled)' }}>{t('accessDenied')}</div>
+        <div className="text-sm font-medium" style={{ color: '#B8493C' }}>{t('accessDenied')}</div>
       </div>
     )
   }
@@ -552,7 +552,7 @@ function ClientDashboardContent() {
                   {bookings.slice(0, 5).map((booking) => (
                     <div key={booking.id} className="flex items-center gap-2 sm:gap-3 px-3 sm:px-6 py-3 sm:py-3.5 transition-colors duration-150 hover:bg-white/3 cursor-pointer" onClick={() => { setEditingBooking(booking); setIsEditBookingModalOpen(true) }}>
                       <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                        style={{ backgroundColor: booking.status === 'in_progress' ? 'var(--color-trip-inprogress-bg)' : booking.status === 'pending' ? 'rgba(245,158,11,0.1)' : 'var(--color-client-border)', color: booking.status === 'in_progress' ? 'var(--color-trip-inprogress)' : booking.status === 'pending' ? '#F59E0B' : '#6B7280' }}>
+                        style={{ backgroundColor: booking.status === 'in_progress' ? 'rgba(34,197,94,.12)' : booking.status === 'pending' ? 'rgba(245,158,11,0.1)' : 'var(--color-client-border)', color: booking.status === 'in_progress' ? '#1B9E4B' : booking.status === 'pending' ? '#F59E0B' : '#6B7280' }}>
                         <MapPin size={14} weight="fill" />
                       </div>
                       <div className="flex-1 min-w-0">

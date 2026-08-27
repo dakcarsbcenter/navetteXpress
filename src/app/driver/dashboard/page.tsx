@@ -1,180 +1,259 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import Link from "next/link"
+import { useSession } from "next-auth/react"
 import { useLocale, useTranslations } from "next-intl"
-import { Car, Coins, Star, Users, FileText, User } from "@phosphor-icons/react"
-import { StatCard } from "@/app/driver/dashboard/components/StatCard"
-import { MissionRadar } from "@/app/driver/dashboard/components/MissionRadar"
-import { UpcomingMissions } from "@/app/driver/dashboard/components/UpcomingMissions"
-import { RevenueChart } from "@/app/driver/dashboard/components/RevenueChart"
-import { RecentHistory } from "@/app/driver/dashboard/components/RecentHistory"
-import styles from "@/styles/driver-dashboard.module.css"
 import { toIntlLocale } from "@/lib/intl-locale"
-import type {
-  DriverBookingsApiResponse,
-  HistoryItem,
-  MissionItem,
-  RevenuePoint,
-} from "@/types/dashboard"
+import { CorridorBanner } from "@/app/driver/dashboard/components/CorridorBanner"
+import { CourseCard, type CoursePhase } from "@/app/driver/dashboard/components/CourseCard"
+import { KpiBand } from "@/app/driver/dashboard/components/KpiBand"
+import { MissionsToday } from "@/app/driver/dashboard/components/MissionsToday"
+import { WeekEarnings } from "@/app/driver/dashboard/components/WeekEarnings"
+import { VehicleReportPanel, type VehicleReportItem } from "@/app/driver/dashboard/components/VehicleReportPanel"
+import type { DriverBookingApiItem, DriverBookingsApiResponse } from "@/types/dashboard"
 
-function formatMoney(value: number, intlLocale: string): string {
-  return `${Math.round(value).toLocaleString(intlLocale)} F`
+const ACTIVE_STATUSES = ["assigned", "confirmed", "in_progress"]
+
+function isSameDay(a: Date, b: Date) {
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate()
 }
 
-function formatDateLabel(dateString: string, intlLocale: string): string {
-  return new Date(dateString).toLocaleDateString(intlLocale, {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  })
+function startOfWeek(date: Date) {
+  const result = new Date(date)
+  const day = result.getDay() === 0 ? 7 : result.getDay() // lundi = 1 ... dimanche = 7
+  result.setDate(result.getDate() - (day - 1))
+  result.setHours(0, 0, 0, 0)
+  return result
 }
 
 export default function DriverDashboardPage() {
+  const { data: session } = useSession()
   const locale = useLocale()
   const intlLocale = toIntlLocale(locale)
   const t = useTranslations("driver.home")
-  const [bookings, setBookings] = useState<DriverBookingsApiResponse["data"]>([])
+
+  const [bookings, setBookings] = useState<DriverBookingApiItem["booking"][]>([])
+  const [monthRating, setMonthRating] = useState({ average: 0, count: 0 })
+  const [vehicleReports, setVehicleReports] = useState<VehicleReportItem[]>([])
+  const [phase, setPhase] = useState<CoursePhase>("nouvelle")
+  const [busy, setBusy] = useState(false)
+  const [incidentReported, setIncidentReported] = useState(false)
+
+  const fetchBookings = useCallback(async () => {
+    try {
+      const response = await fetch("/api/driver/bookings")
+      if (!response.ok) return
+      const data: DriverBookingsApiResponse = await response.json()
+      if (data.success && Array.isArray(data.data)) {
+        setBookings(data.data.map((item) => item.booking))
+      }
+    } catch (error) {
+      console.error("Erreur lors du chargement des réservations:", error)
+    }
+  }, [])
 
   useEffect(() => {
-    const fetchDriverBookings = async () => {
-      try {
-        const response = await fetch("/api/driver/bookings")
-        if (!response.ok) {
-          return
-        }
+    fetchBookings()
 
-        const data: DriverBookingsApiResponse = await response.json()
-        if (data.success && Array.isArray(data.data)) {
-          setBookings(data.data)
+    const fetchRating = async () => {
+      try {
+        const response = await fetch("/api/driver/stats?period=month")
+        if (!response.ok) return
+        const data = await response.json()
+        if (data.success) {
+          setMonthRating({ average: data.data.averageRating ?? 0, count: data.data.totalRatings ?? 0 })
         }
       } catch (error) {
-        console.error("Erreur lors du chargement des réservations:", error)
+        console.error("Erreur lors du chargement des statistiques:", error)
       }
     }
 
-    fetchDriverBookings()
-  }, [])
-
-  const statValues = useMemo(() => {
-    const today = new Date().toDateString()
-    const completedToday = bookings.filter((item) => {
-      const bookingDate = new Date(item.booking.scheduledDateTime).toDateString()
-      return bookingDate === today && item.booking.status === "completed"
-    })
-
-    const revenueToday = completedToday.reduce((sum, item) => {
-      const currentPrice = typeof item.booking.price === "string"
-        ? Number.parseFloat(item.booking.price)
-        : Number(item.booking.price ?? 0)
-      return Number.isFinite(currentPrice) ? sum + currentPrice : sum
-    }, 0)
-
-    return {
-      totalCourses: bookings.length,
-      revenueToday,
+    const fetchVehicleReports = async () => {
+      try {
+        const response = await fetch("/api/vehicle-reports")
+        if (!response.ok) return
+        const data = await response.json()
+        if (data.success && Array.isArray(data.data)) {
+          setVehicleReports(data.data)
+        }
+      } catch (error) {
+        console.error("Erreur lors du chargement des rapports véhicule:", error)
+      }
     }
+
+    fetchRating()
+    fetchVehicleReports()
+  }, [fetchBookings])
+
+  const current = useMemo(() => {
+    const candidates = bookings.filter((b) => ACTIVE_STATUSES.includes(b.status))
+    const inProgress = candidates.find((b) => b.status === "in_progress")
+    if (inProgress) return inProgress
+    return [...candidates].sort(
+      (a, b) => new Date(a.scheduledDateTime).getTime() - new Date(b.scheduledDateTime).getTime()
+    )[0]
   }, [bookings])
 
-  const upcomingMissions = useMemo<MissionItem[]>(() => {
-    return bookings
-      .filter((item) => item.booking.status === "assigned" || item.booking.status === "pending")
-      .slice(0, 5)
-      .map((item) => ({
-        id: item.booking.id,
-        departure: item.booking.pickupAddress,
-        destination: item.booking.dropoffAddress,
-        time: new Date(item.booking.scheduledDateTime).toLocaleString(intlLocale, {
-          day: "2-digit",
-          month: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        status: "confirmed",
-      }))
-  }, [bookings, intlLocale])
-
-  const history = useMemo<HistoryItem[]>(() => {
-    return bookings
-      .filter((item) => ["completed", "in_progress", "cancelled"].includes(item.booking.status))
-      .slice(0, 8)
-      .map((item) => ({
-        id: item.booking.id,
-        date: formatDateLabel(item.booking.scheduledDateTime, intlLocale),
-        trajet: `${item.booking.pickupAddress} → ${item.booking.dropoffAddress}`,
-        distance: "—",
-        revenu: formatMoney(typeof item.booking.price === "string" ? Number.parseFloat(item.booking.price) : Number(item.booking.price ?? 0), intlLocale),
-        statut: item.booking.status === "completed"
-          ? "completed"
-          : item.booking.status === "cancelled"
-            ? "cancelled"
-            : "inProgress",
-      }))
-  }, [bookings, intlLocale])
-
-  const revenueData = useMemo<RevenuePoint[]>(() => {
-    const days = t.raw("revenueChart.days") as string[]
-    const revenueByDay = new Array(7).fill(0)
-    for (const item of bookings) {
-      if (item.booking.status !== "completed") continue
-      const date = new Date(item.booking.scheduledDateTime)
-      const dayIndex = date.getDay() === 0 ? 6 : date.getDay() - 1
-      const rawPrice = item.booking.price
-      const price = typeof rawPrice === "string" ? Number.parseFloat(rawPrice) : Number(rawPrice ?? 0)
-      if (Number.isFinite(price)) revenueByDay[dayIndex] += price
+  // Le statut reel (assigned/confirmed/in_progress) ne distingue pas
+  // "en route" de "sur place" : ce sont des sous-etapes locales, sans
+  // colonne dediee en base, tant que le chauffeur n'a pas demarre la course.
+  useEffect(() => {
+    if (!current) return
+    if (current.status === "assigned") setPhase("nouvelle")
+    else if (current.status === "in_progress") setPhase("encours")
+    else if (current.status === "confirmed") {
+      setPhase((prev) => (prev === "enroute" || prev === "surplace" ? prev : "acceptee"))
     }
-    return days.map((day, index) => ({ day, value: revenueByDay[index] }))
-  }, [bookings, t])
+    setIncidentReported(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [current?.id, current?.status])
+
+  const patchStatus = useCallback(async (id: number, status: string) => {
+    setBusy(true)
+    try {
+      const response = await fetch(`/api/driver/bookings/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      })
+      if (response.ok) {
+        await fetchBookings()
+      }
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour de la course:", error)
+    } finally {
+      setBusy(false)
+    }
+  }, [fetchBookings])
+
+  const handleAdvance = useCallback(() => {
+    if (!current) return
+    switch (phase) {
+      case "nouvelle":
+        patchStatus(current.id, "confirmed")
+        break
+      case "acceptee":
+        setPhase("enroute")
+        break
+      case "enroute":
+        setPhase("surplace")
+        break
+      case "surplace":
+        patchStatus(current.id, "in_progress")
+        break
+      case "encours":
+        patchStatus(current.id, "completed")
+        break
+    }
+  }, [current, phase, patchStatus])
+
+  const today = new Date()
+  const todayBookings = useMemo(
+    () => bookings.filter((b) => isSameDay(new Date(b.scheduledDateTime), today)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [bookings]
+  )
+
+  const kpis = useMemo(() => {
+    const completedToday = todayBookings.filter((b) => b.status === "completed")
+    const remaining = todayBookings.filter((b) => ACTIVE_STATUSES.includes(b.status))
+    const collected = completedToday.reduce((sum, b) => {
+      const price = typeof b.price === "string" ? Number.parseFloat(b.price) : Number(b.price ?? 0)
+      return Number.isFinite(price) ? sum + price : sum
+    }, 0)
+    const lastRemaining = [...remaining].sort(
+      (a, b) => new Date(b.scheduledDateTime).getTime() - new Date(a.scheduledDateTime).getTime()
+    )[0]
+
+    return [
+      { value: String(todayBookings.length), label: t("kpis.todayCount"), note: t("kpis.todayNote", { count: completedToday.length }) },
+      {
+        value: String(remaining.length),
+        label: t("kpis.remaining"),
+        note: lastRemaining
+          ? t("kpis.remainingNote", { time: new Date(lastRemaining.scheduledDateTime).toLocaleTimeString(intlLocale, { hour: "2-digit", minute: "2-digit" }) })
+          : t("kpis.remainingNoteEmpty"),
+      },
+      { value: `${Math.round(collected).toLocaleString(intlLocale)} F`, label: t("kpis.collected"), note: t("kpis.collectedNote") },
+      {
+        value: monthRating.average > 0 ? monthRating.average.toFixed(1) : "—",
+        label: t("kpis.ratingMonth"),
+        note: monthRating.count > 0 ? t("kpis.ratingNote", { count: monthRating.count }) : t("kpis.ratingNoteEmpty"),
+      },
+    ]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [todayBookings, monthRating, intlLocale])
+
+  const week = useMemo(() => {
+    const weekStart = startOfWeek(today)
+    const bars = Array.from({ length: 7 }, (_, i) => {
+      const day = new Date(weekStart)
+      day.setDate(day.getDate() + i)
+      const dayTotal = bookings
+        .filter((b) => b.status === "completed" && isSameDay(new Date(b.scheduledDateTime), day))
+        .reduce((sum, b) => {
+          const price = typeof b.price === "string" ? Number.parseFloat(b.price) : Number(b.price ?? 0)
+          return Number.isFinite(price) ? sum + price : sum
+        }, 0)
+      return {
+        day: day.toLocaleDateString(intlLocale, { weekday: "short" }).toUpperCase(),
+        value: dayTotal,
+        isToday: isSameDay(day, today),
+      }
+    })
+    const total = bars.reduce((sum, b) => sum + b.value, 0)
+    const completedCount = bookings.filter(
+      (b) => b.status === "completed" && new Date(b.scheduledDateTime) >= weekStart
+    ).length
+
+    return { bars, total, completedCount, averageFare: completedCount > 0 ? total / completedCount : 0 }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bookings, intlLocale])
+
+  const firstName = session?.user?.name?.split(" ")[0] ?? ""
+  const hour = today.getHours()
+  const greeting = hour < 18 ? t("greeting.morning") : t("greeting.evening")
+  const dayline = todayBookings.length > 0 ? t("dayline", { count: todayBookings.length }) : t("daylineEmpty")
 
   return (
-    <div className="space-y-3 sm:space-y-4">
-      <div className={styles.pageGrid}>
-        <div className="xl:col-span-1">
-          <StatCard icon={Car} label={t("stats.totalCourses")} value={statValues.totalCourses} trend="+0%" trendType="neutral" animationDelay={0} />
-        </div>
-        <div className="xl:col-span-1">
-          <StatCard icon={Users} label={t("stats.activeDrivers")} value="2/2" trend={t("stats.stable")} trendType="up" animationDelay={100} />
-        </div>
-        <div className="xl:col-span-1">
-          <StatCard icon={Coins} label={t("stats.revenueToday")} value={`${Math.round(statValues.revenueToday)} F`} trend="+0%" trendType="neutral" animationDelay={200} />
-        </div>
-        <div className="xl:col-span-1">
-          <StatCard icon={Star} label={t("stats.averageRating")} value="4.9/5" trend="+0.1" trendType="up" animationDelay={300} />
-        </div>
+    <div className="flex flex-col gap-7">
+      <CorridorBanner />
 
-        <div className="xl:col-span-2">
-          <MissionRadar />
-        </div>
-        <div className="xl:col-span-2">
-          <UpcomingMissions missions={upcomingMissions} />
-        </div>
-
-        <div className="xl:col-span-3">
-          <RevenueChart data={revenueData} />
-        </div>
-        <section className="driver-dashboard-card xl:col-span-1 rounded-2xl border border-(--border) bg-(--bg-card) p-4 sm:p-6">
-          <h3 className="mb-3 font-heading text-base font-bold text-(--text-primary) sm:mb-4 sm:text-lg">{t("shortcuts.title")}</h3>
-          <div className="grid gap-3">
-            <Link
-              href="/driver/rapport"
-              className="driver-dashboard-card inline-flex items-center gap-2.5 rounded-xl border border-(--border) bg-[color-mix(in_srgb,var(--bg-secondary)_65%,transparent)] px-3 py-2.5 text-xs font-semibold text-(--text-primary) sm:gap-3 sm:px-4 sm:py-3 sm:text-sm"
-            >
-              <FileText size={16} className="text-(--accent) sm:h-[18px] sm:w-[18px]" />
-              {t("shortcuts.report")}
-            </Link>
-            <Link
-              href="/driver/profil"
-              className="driver-dashboard-card inline-flex items-center gap-2.5 rounded-xl border border-(--border) bg-[color-mix(in_srgb,var(--bg-secondary)_65%,transparent)] px-3 py-2.5 text-xs font-semibold text-(--text-primary) sm:gap-3 sm:px-4 sm:py-3 sm:text-sm"
-            >
-              <User size={16} className="text-(--accent) sm:h-[18px] sm:w-[18px]" />
-              {t("shortcuts.profile")}
-            </Link>
+      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-7">
+        <section className="flex flex-wrap items-baseline justify-between gap-4">
+          <div className="flex flex-col gap-2">
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.16em", textTransform: "uppercase", color: "#B4643A" }}>
+              {t("eyebrow")}
+            </span>
+            <h2 style={{ margin: 0, fontSize: "clamp(22px, 2.4vw, 30px)", fontWeight: 600, letterSpacing: "-0.025em", lineHeight: 1.1 }}>
+              {greeting}, {firstName}.
+            </h2>
+            <p style={{ margin: 0, fontSize: "15px", color: "#3d3a35", lineHeight: 1.5 }}>{dayline}</p>
           </div>
+          <Link href="/driver/planning" style={{ fontSize: "13px", fontWeight: 600, color: "#12100E", borderBottom: "2px solid #12100E", paddingBottom: "2px" }}>
+            {t("viewPlanning")}
+          </Link>
         </section>
 
-        <div className="xl:col-span-4">
-          <RecentHistory items={history} />
-        </div>
+        <CourseCard
+          booking={current}
+          phase={phase}
+          busy={busy}
+          incidentReported={incidentReported}
+          onAdvance={handleAdvance}
+          onReportIncident={() => setIncidentReported(true)}
+        />
+
+        <KpiBand kpis={kpis} />
+
+        <section className="grid items-start gap-6" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 380px), 1fr))" }}>
+          <MissionsToday bookings={todayBookings} />
+          <div className="flex flex-col gap-6">
+            <WeekEarnings total={week.total} completedCount={week.completedCount} averageFare={week.averageFare} rating={monthRating.average} bars={week.bars} />
+            <VehicleReportPanel reports={vehicleReports} />
+          </div>
+        </section>
       </div>
     </div>
   )

@@ -215,28 +215,6 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
     })
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'in_progress': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-      case 'confirmed': return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300'
-      case 'assigned': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
-      case 'completed': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
-      case 'cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
-    }
-  }
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'in_progress': return 'En cours'
-      case 'confirmed': return 'Confirmé'
-      case 'assigned': return 'Assigné'
-      case 'completed': return 'Terminé'
-      case 'cancelled': return 'Annulé'
-      default: return status
-    }
-  }
-
   // Fonction pour mettre à jour le statut d'une réservation
   const updateBookingStatus = async (bookingId: number, newStatus: string) => {
     try {

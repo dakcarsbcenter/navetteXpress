@@ -14,6 +14,7 @@ type PhosphorIcon = React.ComponentType<{
   size?: number
   className?: string
   weight?: "thin" | "light" | "regular" | "bold" | "fill" | "duotone"
+  style?: React.CSSProperties
 }>
 
 export type DashboardAccent = "lagune" | "terre"
@@ -48,6 +49,13 @@ export interface DashboardShellChip {
   label: string
 }
 
+export interface DashboardShellDutyToggle {
+  active: boolean
+  onToggle: () => void
+  activeLabel: string
+  inactiveLabel: string
+}
+
 interface DashboardShellProps {
   space: string
   accent: DashboardAccent
@@ -55,6 +63,8 @@ interface DashboardShellProps {
   title: string
   chip?: DashboardShellChip
   hasNotifications?: boolean
+  identitySubtitle?: string
+  dutyToggle?: DashboardShellDutyToggle
   children: React.ReactNode
 }
 
@@ -103,7 +113,7 @@ function NavLink({ item, active, accent }: { item: DashboardNavItem; active: boo
   )
 }
 
-export function DashboardShell({ space, accent, groups, title, chip, hasNotifications, children }: DashboardShellProps) {
+export function DashboardShell({ space, accent, groups, title, chip, hasNotifications, identitySubtitle, dutyToggle, children }: DashboardShellProps) {
   const pathname = usePathname()
   const { data: session } = useSession()
   const t = useTranslations("common.actions")
@@ -169,10 +179,38 @@ export function DashboardShell({ space, accent, groups, title, chip, hasNotifica
           <div className="min-w-0">
             <p className="truncate text-[13px] font-semibold" style={{ color: "#F7F3EC" }}>{session?.user?.name ?? "—"}</p>
             <p className="truncate font-mono text-[9px]" style={{ color: "#9a938a", fontFamily: "var(--font-mono)" }}>
-              {session?.user?.email ?? ""}
+              {identitySubtitle ?? session?.user?.email ?? ""}
             </p>
           </div>
         </div>
+
+        {dutyToggle && (
+          <div className="px-4 pt-4">
+            <button
+              type="button"
+              onClick={dutyToggle.onToggle}
+              className="flex h-11 w-full items-center justify-between gap-2 rounded-[3px] px-3 font-mono text-[10px] uppercase transition-colors"
+              style={{ border: "1px solid #3a3631", color: "#F7F3EC", letterSpacing: "0.14em", fontFamily: "var(--font-mono)" }}
+            >
+              <span className="flex items-center gap-2">
+                <span
+                  className="h-[7px] w-[7px] shrink-0 rounded-full"
+                  style={{ backgroundColor: dutyToggle.active ? "#22C55E" : "#94A3B8" }}
+                />
+                {dutyToggle.active ? dutyToggle.activeLabel : dutyToggle.inactiveLabel}
+              </span>
+              <span
+                className="relative block h-[18px] w-[34px] shrink-0 rounded-full"
+                style={{ backgroundColor: dutyToggle.active ? ACCENT_HEX[accent] : "#3a3631" }}
+              >
+                <span
+                  className="absolute top-0.5 h-[14px] w-[14px] rounded-full transition-[left]"
+                  style={{ backgroundColor: "#F7F3EC", left: dutyToggle.active ? "18px" : "2px" }}
+                />
+              </span>
+            </button>
+          </div>
+        )}
 
         {sidebarNav}
 
@@ -267,11 +305,11 @@ export function DashboardShell({ space, accent, groups, title, chip, hasNotifica
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex flex-col items-center gap-1 rounded-[3px] px-2 py-2 text-[11px]"
+                className="flex min-w-0 flex-col items-center gap-1 rounded-[3px] px-1 py-2 text-[10px]"
                 style={{ color: active ? ACCENT_HEX[accent] : "#9a938a", backgroundColor: active ? accentRgba(accent, 0.18) : "transparent" }}
               >
                 <Icon size={18} weight={active ? "fill" : "regular"} />
-                <span className="truncate">{item.label.split(" ")[0]}</span>
+                <span className="w-full truncate text-center">{item.label.split(" ")[0]}</span>
               </Link>
             )
           })}
