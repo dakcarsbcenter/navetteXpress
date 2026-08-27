@@ -19,13 +19,14 @@ export function ClientShell({ children }: { children: React.ReactNode }) {
   }))
 
   const tab = searchParams?.get("tab") ?? "overview"
+  const titleKey = tab.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())
 
   return (
     <DashboardShell
       space={t("sidebar.brandTagline")}
       accent="lagune"
       groups={groups}
-      title={t(`topbar.titles.${tab}`)}
+      title={t(`topbar.titles.${titleKey}`)}
     >
       {children}
     </DashboardShell>
