@@ -7,23 +7,20 @@ import {
     Envelope,
     Phone,
     Calendar,
-    ChatCircleText,
     CurrencyDollar as DollarSign,
     PaperPlaneRight as Send,
-    Warning as AlertTriangle,
     Clock,
     Tag,
-    Note,
     CheckCircle,
     CarProfile,
     AirplaneTilt,
     Binoculars,
     Crown,
-    Confetti,
-    Download
+    Confetti
 } from "@phosphor-icons/react"
 import { useNotification } from "@/hooks/useNotification"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
+import { StatusBadge } from "@/components/shared/StatusBadge"
 
 interface Quote {
     id: number
@@ -46,6 +43,10 @@ interface QuoteDetailModalProps {
     onClose: () => void
     quote: Quote | null
     onUpdate: () => void
+}
+
+const fieldLabel: React.CSSProperties = {
+    display: 'block', fontFamily: 'var(--font-mono)', fontSize: '9.5px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#1F5245', marginBottom: '8px',
 }
 
 export function QuoteDetailModal({ isOpen, onClose, quote, onUpdate }: QuoteDetailModalProps) {
@@ -118,75 +119,58 @@ export function QuoteDetailModal({ isOpen, onClose, quote, onUpdate }: QuoteDeta
         return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })
     }
 
-    const getStatusConfig = (status: string) => {
-        const configs: Record<string, { label: string; color: string; bg: string }> = {
-            pending: { label: 'En attente', color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/20' },
-            in_progress: { label: 'Traitement', color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/20' },
-            sent: { label: 'Envoyé', color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/20' },
-            accepted: { label: 'Confirmé', color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
-            rejected: { label: 'Refusé', color: 'text-red-400', bg: 'bg-red-500/10 border-red-500/20' },
-            expired: { label: 'Expiré', color: 'text-slate-400', bg: 'bg-slate-500/10 border-slate-500/20' }
-        }
-        return configs[status] || configs.pending
-    }
-
-    const statusConfig = getStatusConfig(quote.status)
-
     return (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
-            <div
-                className="absolute inset-0 bg-[#09090B]/90 backdrop-blur-md"
-                onClick={onClose}
-            />
+            <div className="absolute inset-0" style={{ backgroundColor: 'rgba(18,16,14,.55)' }} onClick={onClose} />
 
-            <NotificationCenter
-                notifications={notifications}
-                onRemove={removeNotification}
-            />
+            <NotificationCenter notifications={notifications} onRemove={removeNotification} />
 
-            <div className="relative w-full max-w-2xl bg-[#12121A] border border-white/10 rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+            <div className="relative w-full max-w-2xl" style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '4px', overflow: 'hidden' }}>
                 {/* Header */}
-                <div className="p-6 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-gold/10 border border-gold/20 flex items-center justify-center text-gold shadow-lg shadow-gold/5">
+                <div className="flex items-center justify-between" style={{ padding: '20px 24px', borderBottom: '1px solid #E2DACD' }}>
+                    <div className="flex items-center gap-3">
+                        <div style={{ width: '40px', height: '40px', borderRadius: '3px', backgroundColor: 'rgba(31,82,69,.08)', display: 'grid', placeItems: 'center', color: '#1F5245' }}>
                             {getServiceIcon(quote.service)}
                         </div>
                         <div>
-                            <h2 className="text-xl font-bold text-white leading-none">Détails du Devis</h2>
-                            <p className="text-xs text-slate-500 mt-1 font-mono uppercase tracking-widest">#{quote.id.toString().padStart(4, '0')}</p>
+                            <h2 style={{ margin: 0, fontSize: '17px', fontWeight: 600, color: '#12100E' }}>Détails du devis</h2>
+                            <p style={{ margin: '2px 0 0', fontFamily: 'var(--font-mono)', fontSize: '10px', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#6E6A63' }}>
+                                #{quote.id.toString().padStart(4, '0')}
+                            </p>
                         </div>
                     </div>
                     <button
+                        type="button"
                         onClick={onClose}
-                        className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-all hover:bg-white/10"
+                        style={{ display: 'grid', placeItems: 'center', width: '36px', height: '36px', border: '1px solid #E2DACD', borderRadius: '3px', color: '#6E6A63' }}
                     >
-                        <X size={20} />
+                        <X size={18} />
                     </button>
                 </div>
 
-                <div className="max-h-[70vh] overflow-y-auto p-6 scrollbar-hide">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="dash-scroll" style={{ maxHeight: '65vh', overflowY: 'auto', padding: '24px' }}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Left Column: Client Info */}
-                        <div className="space-y-6">
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                             <section>
-                                <div className="flex items-center gap-2 mb-4">
-                                    <User size={18} className="text-gold" weight="bold" />
-                                    <h3 className="text-sm font-bold text-white uppercase tracking-wider">Client</h3>
+                                <div className="flex items-center gap-2" style={{ marginBottom: '12px' }}>
+                                    <User size={16} style={{ color: '#1F5245' }} weight="bold" />
+                                    <h3 style={{ margin: 0, fontSize: '12px', fontWeight: 600, color: '#12100E', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Client</h3>
                                 </div>
-                                <div className="bg-white/[0.03] border border-white/5 rounded-2xl p-4 space-y-4">
+                                <div style={{ backgroundColor: '#F7F3EC', border: '1px solid #E2DACD', borderRadius: '3px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                                     <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-full bg-gold/10 flex items-center justify-center text-xs font-bold text-gold">
+                                        <div style={{ width: '28px', height: '28px', borderRadius: '3px', backgroundColor: 'rgba(31,82,69,.10)', display: 'grid', placeItems: 'center', fontSize: '11px', fontWeight: 600, color: '#1F5245' }}>
                                             {quote.customerName.charAt(0)}
                                         </div>
-                                        <span className="text-sm font-medium text-white">{quote.customerName}</span>
+                                        <span style={{ fontSize: '13.5px', fontWeight: 600, color: '#12100E' }}>{quote.customerName}</span>
                                     </div>
-                                    <div className="flex items-center gap-3 text-slate-400 text-sm">
-                                        <Envelope size={16} />
+                                    <div className="flex items-center gap-3" style={{ color: '#6E6A63', fontSize: '13px' }}>
+                                        <Envelope size={15} />
                                         <span>{quote.customerEmail}</span>
                                     </div>
                                     {quote.customerPhone && (
-                                        <div className="flex items-center gap-3 text-slate-400 text-sm">
-                                            <Phone size={16} />
+                                        <div className="flex items-center gap-3" style={{ color: '#6E6A63', fontSize: '13px' }}>
+                                            <Phone size={15} />
                                             <span>{quote.customerPhone}</span>
                                         </div>
                                     )}
@@ -194,26 +178,26 @@ export function QuoteDetailModal({ isOpen, onClose, quote, onUpdate }: QuoteDeta
                             </section>
 
                             <section>
-                                <div className="flex items-center gap-2 mb-4">
-                                    <Tag size={18} className="text-gold" weight="bold" />
-                                    <h3 className="text-sm font-bold text-white uppercase tracking-wider">Prestation</h3>
+                                <div className="flex items-center gap-2" style={{ marginBottom: '12px' }}>
+                                    <Tag size={16} style={{ color: '#1F5245' }} weight="bold" />
+                                    <h3 style={{ margin: 0, fontSize: '12px', fontWeight: 600, color: '#12100E', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Prestation</h3>
                                 </div>
-                                <div className="bg-white/[0.03] border border-white/5 rounded-2xl p-4 space-y-3">
+                                <div style={{ backgroundColor: '#F7F3EC', border: '1px solid #E2DACD', borderRadius: '3px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                                     <div className="flex justify-between">
-                                        <span className="text-xs text-slate-500">Service</span>
-                                        <span className="text-xs font-bold text-white">{quote.service}</span>
+                                        <span style={{ fontSize: '12px', color: '#6E6A63' }}>Service</span>
+                                        <span style={{ fontSize: '12px', fontWeight: 600, color: '#12100E' }}>{quote.service}</span>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span className="text-xs text-slate-500">Date souhaitée</span>
-                                        <div className="flex items-center gap-1.5 text-xs font-bold text-gold">
-                                            <Calendar size={14} />
+                                        <span style={{ fontSize: '12px', color: '#6E6A63' }}>Date souhaitée</span>
+                                        <div className="flex items-center gap-1.5" style={{ fontSize: '12px', fontWeight: 600, color: '#1F5245' }}>
+                                            <Calendar size={13} />
                                             {formatDate(quote.preferredDate)}
                                         </div>
                                     </div>
-                                    <div className="pt-2">
-                                        <span className="text-xs text-slate-500 mb-1 block">Message :</span>
-                                        <p className="text-xs text-slate-300 italic leading-relaxed bg-black/20 p-3 rounded-xl border border-white/5">
-                                            "{quote.message}"
+                                    <div style={{ paddingTop: '6px' }}>
+                                        <span style={{ fontSize: '12px', color: '#6E6A63', display: 'block', marginBottom: '4px' }}>Message :</span>
+                                        <p style={{ margin: 0, fontSize: '12.5px', color: '#3d3a35', fontStyle: 'italic', lineHeight: 1.5, backgroundColor: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '3px', padding: '10px 12px' }}>
+                                            &ldquo;{quote.message}&rdquo;
                                         </p>
                                     </div>
                                 </div>
@@ -221,49 +205,39 @@ export function QuoteDetailModal({ isOpen, onClose, quote, onUpdate }: QuoteDeta
                         </div>
 
                         {/* Right Column: Admin Actions */}
-                        <div className="space-y-6">
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                             <section>
-                                <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center justify-between" style={{ marginBottom: '12px' }}>
                                     <div className="flex items-center gap-2">
-                                        <Clock size={18} className="text-gold" weight="bold" />
-                                        <h3 className="text-sm font-bold text-white uppercase tracking-wider">Statut & Prix</h3>
+                                        <Clock size={16} style={{ color: '#1F5245' }} weight="bold" />
+                                        <h3 style={{ margin: 0, fontSize: '12px', fontWeight: 600, color: '#12100E', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Statut &amp; prix</h3>
                                     </div>
-                                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border ${statusConfig.bg} ${statusConfig.color}`}>
-                                        {statusConfig.label}
-                                    </span>
+                                    <StatusBadge domain="quote" value={quote.status} audience="admin" live={quote.status === 'in_progress'} />
                                 </div>
 
-                                <div className="space-y-4">
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] uppercase font-bold text-slate-500 tracking-widest ml-1">
-                                            Prix proposé (FCFA)
-                                        </label>
-                                        <div className="relative group">
-                                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gold group-focus-within:scale-110 transition-transform">
-                                                <DollarSign size={20} weight="bold" />
-                                            </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                    <div>
+                                        <label style={fieldLabel}>Prix proposé (FCFA)</label>
+                                        <div style={{ position: 'relative' }}>
+                                            <DollarSign size={16} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#1F5245' }} weight="bold" />
                                             <input
                                                 type="number"
                                                 value={estimatedPrice}
                                                 onChange={(e) => setEstimatedPrice(e.target.value)}
                                                 placeholder="Ex: 25000"
-                                                className="w-full bg-[#1A1A24] border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white text-lg font-mono focus:border-gold/50 outline-none transition-all placeholder:text-slate-700 shadow-inner"
+                                                style={{ width: '100%', height: '46px', padding: '0 14px 0 40px', border: '1px solid #E2DACD', borderRadius: '3px', fontFamily: 'var(--font-mono)', fontSize: '15px', color: '#12100E' }}
                                             />
                                         </div>
                                     </div>
 
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] uppercase font-bold text-slate-500 tracking-widest ml-1">
-                                            Notes Administrateur
-                                        </label>
-                                        <div className="relative">
-                                            <textarea
-                                                value={adminNotes}
-                                                onChange={(e) => setAdminNotes(e.target.value)}
-                                                placeholder="Détails du chiffrage, options incluses..."
-                                                className="w-full bg-[#1A1A24] border border-white/10 rounded-2xl p-4 text-sm text-white focus:border-gold/50 outline-none transition-all placeholder:text-slate-700 min-h-[120px] resize-none"
-                                            />
-                                        </div>
+                                    <div>
+                                        <label style={fieldLabel}>Notes administrateur</label>
+                                        <textarea
+                                            value={adminNotes}
+                                            onChange={(e) => setAdminNotes(e.target.value)}
+                                            placeholder="Détails du chiffrage, options incluses..."
+                                            style={{ width: '100%', minHeight: '120px', padding: '12px 14px', border: '1px solid #E2DACD', borderRadius: '3px', fontSize: '13px', color: '#12100E', resize: 'none' }}
+                                        />
                                     </div>
                                 </div>
                             </section>
@@ -272,33 +246,37 @@ export function QuoteDetailModal({ isOpen, onClose, quote, onUpdate }: QuoteDeta
                 </div>
 
                 {/* Footer Actions */}
-                <div className="p-6 border-t border-white/5 bg-white/[0.01] flex flex-col sm:flex-row gap-3">
+                <div className="flex flex-col sm:flex-row gap-3" style={{ padding: '20px 24px', borderTop: '1px solid #E2DACD' }}>
                     <button
+                        type="button"
                         onClick={() => handleUpdate()}
                         disabled={isSubmitting}
-                        className="flex-1 px-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-white text-sm font-bold uppercase tracking-widest hover:bg-white/10 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                        className="flex items-center justify-center gap-2"
+                        style={{ flex: 1, height: '48px', backgroundColor: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '4px', color: '#12100E', fontSize: '12.5px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer', opacity: isSubmitting ? 0.6 : 1 }}
                     >
                         {isSubmitting ? (
-                            <div className="w-5 h-5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                            <div className="h-5 w-5 animate-spin rounded-full border-2" style={{ borderColor: '#E2DACD', borderTopColor: '#1F5245' }} />
                         ) : (
                             <>
-                                <CheckCircle size={20} />
+                                <CheckCircle size={18} />
                                 Sauvegarder
                             </>
                         )}
                     </button>
 
                     <button
+                        type="button"
                         onClick={handleSendToClient}
                         disabled={isSubmitting}
-                        className="flex-[1.5] px-6 py-4 rounded-2xl bg-gold text-black text-sm font-bold uppercase tracking-widest hover:bg-gold/90 transition-all flex items-center justify-center gap-2 shadow-xl shadow-gold/20 disabled:opacity-50"
+                        className="flex items-center justify-center gap-2"
+                        style={{ flex: 1.5, height: '48px', backgroundColor: '#1F5245', border: 'none', borderRadius: '4px', color: '#FFFFFF', fontSize: '12.5px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer', opacity: isSubmitting ? 0.6 : 1 }}
                     >
                         {isSubmitting ? (
-                            <div className="w-5 h-5 rounded-full border-2 border-black/30 border-t-black animate-spin" />
+                            <div className="h-5 w-5 animate-spin rounded-full border-2" style={{ borderColor: 'rgba(255,255,255,.35)', borderTopColor: '#FFFFFF' }} />
                         ) : (
                             <>
-                                <Send size={20} weight="fill" />
-                                Définir prix & Envoyer au client
+                                <Send size={18} weight="fill" />
+                                Définir prix &amp; envoyer au client
                             </>
                         )}
                     </button>

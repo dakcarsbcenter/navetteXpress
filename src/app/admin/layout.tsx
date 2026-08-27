@@ -1,15 +1,15 @@
 import { NextIntlClientProvider } from "next-intl"
 import { getDashboardLocale } from "@/lib/dashboard-locale"
 import { getDashboardMessages } from "@/i18n/dashboard-messages"
-import { EntrepriseShell } from "@/components/entreprise/EntrepriseShell"
+import { AdminShell } from "@/components/admin/AdminShell"
 
-export default async function EntrepriseLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const locale = await getDashboardLocale()
-  const messages = await getDashboardMessages(locale, ["common", "entreprise"])
+  const messages = await getDashboardMessages(locale, ["common", "admin", "statuses"])
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <EntrepriseShell>{children}</EntrepriseShell>
+      <AdminShell>{children}</AdminShell>
     </NextIntlClientProvider>
   )
 }

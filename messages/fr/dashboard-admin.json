@@ -1,0 +1,139 @@
+{
+  "loading": "Chargement...",
+  "loadingSpace": "Chargement de votre espace admin...",
+  "accessDenied": "Accès refusé. Seuls les administrateurs et managers peuvent accéder à cette page.",
+  "sidebar": {
+    "brandTagline": "Espace admin",
+    "sectionExploitation": "Exploitation",
+    "sectionReferentiel": "Référentiel",
+    "sectionAdministration": "Administration",
+    "nav": {
+      "overview": "Vue d'ensemble",
+      "bookings": "Réservations",
+      "quotes": "Devis",
+      "drivers": "Chauffeurs",
+      "vehicles": "Véhicules",
+      "services": "Services",
+      "locations": "Lieux",
+      "users": "Utilisateurs",
+      "permissions": "Permissions",
+      "invoices": "Factures",
+      "reviews": "Avis",
+      "stats": "Statistiques"
+    }
+  },
+  "topbar": {
+    "titles": {
+      "overview": "Vue d'ensemble",
+      "bookings": "Réservations",
+      "quotes": "Devis",
+      "drivers": "Chauffeurs",
+      "vehicles": "Véhicules",
+      "services": "Services",
+      "locations": "Lieux",
+      "users": "Utilisateurs",
+      "permissions": "Permissions",
+      "invoices": "Factures",
+      "reviews": "Avis",
+      "stats": "Statistiques"
+    },
+    "systemStatus": "Système opérationnel"
+  },
+  "overview": {
+    "corridorLabel": "Corridor — temps réel",
+    "headline": {
+      "inProgress": "{count, plural, =0 {Aucune course en cours} one {# course en cours} other {# courses en cours}}",
+      "toAssign": "{count, plural, =0 {file vide} one {# à assigner} other {# à assigner}}"
+    },
+    "subline": {
+      "queueEmpty": "Toutes les réservations en attente ont désormais un chauffeur.",
+      "queueActive": "La disponibilité du chauffeur est vérifiée avant chaque assignation."
+    },
+    "kpis": {
+      "toAssign": "À assigner",
+      "inProgress": "En cours",
+      "activeDrivers": "Chauffeurs actifs",
+      "activeVehicles": "Véhicules actifs",
+      "todayRevenue": "Recettes du jour",
+      "notes": {
+        "toAssignEmpty": "File vide",
+        "toAssignPending": "En attente d'un chauffeur",
+        "inProgress": "Courses actives",
+        "driversUnavailable": "{count, plural, =0 {Tous disponibles} one {# indisponibilité déclarée} other {# indisponibilités déclarées}}",
+        "vehiclesInactive": "{count, plural, =0 {Toutes en service} one {# en entretien} other {# en entretien}}",
+        "revenue": "Courses clôturées aujourd'hui"
+      }
+    },
+    "queue": {
+      "title": "File d'assignation",
+      "description": "La disponibilité du chauffeur est vérifiée avant l'assignation. Une notification part par email et WhatsApp.",
+      "waiting": "{count, plural, =0 {0 en attente} one {# en attente} other {# en attente}}",
+      "oldest": "la plus ancienne il y a {time}",
+      "toAssign": "À assigner",
+      "ref": "RÉF.",
+      "departure": "Départ",
+      "arrival": "Arrivée",
+      "client": "Client",
+      "price": "Prix",
+      "driversHeading": "Chauffeurs — {when}",
+      "driversActive": "{active} / {total} actifs",
+      "available": "Disponible",
+      "unavailable": "Indisponible",
+      "busy": "En course",
+      "busyUntil": "jusqu'à {time}",
+      "assignRefused": "Assignation refusée",
+      "proposePrice": "Proposer un prix",
+      "proposePriceSubmit": "Envoyer",
+      "proposePriceCancel": "Annuler",
+      "proposePricePlaceholder": "Montant en FCFA",
+      "skip": "Traiter plus tard",
+      "emptyTitle": "File vide — tout est assigné",
+      "emptyDescription": "Toutes les réservations en attente ont désormais un chauffeur. Les chauffeurs assignés reçoivent leur notification par email et WhatsApp.",
+      "pax": "{passengers} PAX · {luggage} BAGAGES",
+      "assignError": "Erreur lors de l'assignation.",
+      "assigning": "Assignation…"
+    },
+    "recent": {
+      "title": "Réservations récentes",
+      "viewAll": "Tout voir",
+      "columns": {
+        "ref": "Réf.",
+        "client": "Client et trajet",
+        "driver": "Chauffeur",
+        "amount": "Montant",
+        "status": "Statut"
+      },
+      "empty": "Aucune réservation récente.",
+      "noDriver": "—"
+    },
+    "decisions": {
+      "title": "Ce qui attend une décision",
+      "unansweredPrices": "Prix proposés sans réponse",
+      "quotesToSend": "Devis à traiter",
+      "reviewsToModerate": "Avis à modérer",
+      "openReports": "Rapports véhicule ouverts"
+    },
+    "segments": {
+      "title": "Charge du corridor",
+      "today": "Aujourd'hui",
+      "empty": "Aucune course programmée aujourd'hui.",
+      "count": "{count, plural, one {# course} other {# courses}}",
+      "labels": {
+        "dakarAibd": "Dakar → AIBD",
+        "aibdPetiteCote": "AIBD → Petite Côte",
+        "intraDakar": "Intra-Dakar",
+        "other": "Mise à disposition"
+      }
+    },
+    "newAccounts": {
+      "title": "Derniers comptes créés",
+      "empty": "Aucun nouveau compte.",
+      "roles": {
+        "admin": "Admin",
+        "manager": "Manager",
+        "driver": "Chauffeur",
+        "customer": "Client"
+      }
+    }
+  }
+}

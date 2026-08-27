@@ -6,8 +6,11 @@ import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/db"
-import { bookingsTable, rolePermissionsTable } from "@/schema"
+import { bookingsTable, rolePermissionsTable, users } from "@/schema"
 import { eq, desc, and } from "drizzle-orm"
+import { alias } from "drizzle-orm/pg-core"
+
+const driverUsers = alias(users, 'driver_users')
 
 // Vérifier si l'utilisateur a la permission de gérer les réservations
 async function hasBookingPermission(userRole: string): Promise<boolean> {
@@ -58,16 +61,20 @@ export async function GET() {
       )
     }
 
-    // Récupérer les réservations du client
+    // Récupérer les réservations du client, avec le chauffeur assigné le cas échéant
     const bookings = await db
-      .select()
+      .select({
+        booking: bookingsTable,
+        driver: driverUsers,
+      })
       .from(bookingsTable)
+      .leftJoin(driverUsers, eq(bookingsTable.driverId, driverUsers.id))
       .where(eq(bookingsTable.userId, (session as unknown as { user: { id: string } }).user.id))
       .orderBy(desc(bookingsTable.createdAt))
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
-      bookings: bookings.map(booking => ({
+      bookings: bookings.map(({ booking, driver }) => ({
         id: booking.id,
         customerName: booking.customerName,
         customerEmail: booking.customerEmail,
@@ -78,7 +85,12 @@ export async function GET() {
         price: booking.price,
         notes: booking.notes,
         createdAt: booking.createdAt,
-        updatedAt: booking.updatedAt
+        updatedAt: booking.updatedAt,
+        priceProposedAt: booking.priceProposedAt,
+        clientResponse: booking.clientResponse,
+        clientResponseAt: booking.clientResponseAt,
+        clientResponseMessage: booking.clientResponseMessage,
+        driver: driver ? { id: driver.id, name: driver.name, phone: driver.phone } : null,
       }))
     })
 

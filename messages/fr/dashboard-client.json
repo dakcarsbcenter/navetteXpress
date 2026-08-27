@@ -66,6 +66,79 @@
     "evening": "Bonsoir",
     "welcome": "Bienvenue"
   },
+  "home": {
+    "eyebrow": "Mes trajets",
+    "viewAllBookings": "Toutes mes réservations",
+    "subtitleNextTrip": "Votre prochain trajet : {route}, {when}.",
+    "subtitleEmpty": "Vous n'avez aucun trajet prévu pour le moment.",
+    "priceBanner": {
+      "eyebrow": "Prix proposé — en attente de votre réponse",
+      "proposedOn": "Proposé le {date}. Sans réponse de votre part, la demande reste en attente.",
+      "currency": "FCFA · tout compris",
+      "accept": "Accepter",
+      "reject": "Refuser",
+      "moreOne": "+ 1 autre proposition en attente",
+      "moreMany": "+ {count} autres propositions en attente"
+    },
+    "answered": {
+      "acceptedTitle": "Prix accepté — réservation confirmée",
+      "acceptedNote": "{route}, {when}. Un chauffeur vous sera affecté sous 24 h.",
+      "rejectedTitle": "Prix refusé — l'équipe reprend contact",
+      "rejectedNote": "Une nouvelle proposition vous sera envoyée. La demande reste ouverte."
+    },
+    "nextTrip": {
+      "emptyTitle": "Aucun trajet à venir",
+      "emptyDescription": "Réservez votre prochain trajet pour le voir apparaître ici.",
+      "ref": "Réf. NX-{id}",
+      "departure": "Départ",
+      "arrival": "Arrivée",
+      "driverLabel": "Chauffeur",
+      "driverUnassigned": "Chauffeur non assigné pour le moment",
+      "call": "Appeler",
+      "message": "Message",
+      "priceLabel": "Prix",
+      "priceUnset": "À définir",
+      "viewDetails": "Voir le détail"
+    },
+    "kpis": {
+      "upcoming": "À venir",
+      "upcomingNote": "Prochain {when}",
+      "upcomingNoteEmpty": "Aucun trajet prévu",
+      "completed": "Trajets effectués",
+      "completedNote": "Depuis votre inscription",
+      "quotes": "Devis en cours",
+      "quotesNote": "{count} en attente de réponse",
+      "quotesNoteEmpty": "Aucun devis en cours",
+      "invoicesDue": "Factures dues",
+      "invoicesDueNote": "{count} à régler",
+      "invoicesDueNoteEmpty": "Tout est réglé"
+    },
+    "bookingsList": {
+      "title": "Mes réservations",
+      "totalCount": "{count} au total",
+      "empty": "Aucune réservation pour le moment",
+      "viewHistory": "Historique complet"
+    },
+    "reviewPrompt": {
+      "eyebrow": "Votre dernier trajet",
+      "withDriver": "Avec {driver}. Comment s'est passée la course ?"
+    },
+    "quotesCard": {
+      "title": "Devis en cours",
+      "sentBadge": "{count} envoyé(s)",
+      "empty": "Aucun devis en cours",
+      "emptyDescription": "Vos demandes de devis apparaîtront ici.",
+      "requestedOn": "Demandé le {date} · Réf. Q-{id}",
+      "amountLabel": "Montant",
+      "viewQuote": "Voir le devis"
+    },
+    "invoicesCard": {
+      "title": "Factures",
+      "noneDue": "Aucune due",
+      "due": "{count} due(s)",
+      "empty": "Aucune facture pour le moment"
+    }
+  },
   "overview": {
     "pendingLabel": "En attente",
     "newTrip": "Nouveau trajet",

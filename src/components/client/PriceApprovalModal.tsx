@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { toIntlLocale } from '@/lib/intl-locale';
 import { Wallet, Clock, Warning } from '@phosphor-icons/react';
@@ -13,6 +13,7 @@ interface PriceApprovalModalProps {
   dropoffAddress: string;
   scheduledDateTime: string;
   isOpen: boolean;
+  initialMode?: 'accept' | 'reject';
   onClose: () => void;
   onSuccess: () => void;
 }
@@ -25,6 +26,7 @@ export function PriceApprovalModal({
   dropoffAddress,
   scheduledDateTime,
   isOpen,
+  initialMode = 'accept',
   onClose,
   onSuccess
 }: PriceApprovalModalProps) {
@@ -33,7 +35,11 @@ export function PriceApprovalModal({
   const t = useTranslations('client.priceApproval');
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
-  const [showRejectForm, setShowRejectForm] = useState(false);
+  const [showRejectForm, setShowRejectForm] = useState(initialMode === 'reject');
+
+  useEffect(() => {
+    if (isOpen) setShowRejectForm(initialMode === 'reject');
+  }, [isOpen, initialMode]);
 
   if (!isOpen) return null;
 
@@ -105,36 +111,35 @@ export function PriceApprovalModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="rounded-2xl w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto"
-        style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(18,16,14,0.5)' }}>
+      <div className="w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto" style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '4px' }}>
         {/* Header */}
-        <div className="p-4 sm:p-6 flex items-center gap-4" style={{ background: 'linear-gradient(135deg, var(--color-client-accent-bg) 0%, transparent 100%)', borderBottom: '1px solid var(--color-client-border)' }}>
-          <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)', border: '1px solid var(--color-client-accent-border)' }}>
-            <Wallet size={24} weight="duotone" />
+        <div className="p-4 sm:p-6 flex items-center gap-4" style={{ borderBottom: '1px solid #E2DACD' }}>
+          <div className="w-11 h-11 flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(31,82,69,.10)', color: '#1F5245', borderRadius: '4px' }}>
+            <Wallet size={22} weight="duotone" />
           </div>
           <div>
-            <h2 className="text-lg sm:text-xl font-bold" style={{ color: 'var(--color-client-text-primary)' }}>{t('title')}</h2>
-            <p className="text-sm mt-0.5" style={{ color: 'var(--color-client-text-secondary)' }}>{t('booking')} #{bookingId}</p>
+            <h2 className="text-lg font-semibold" style={{ color: '#12100E', letterSpacing: '-0.01em' }}>{t('title')}</h2>
+            <p className="mt-0.5 font-mono text-[10px] uppercase" style={{ color: '#6E6A63', letterSpacing: '0.1em', fontFamily: 'var(--font-mono)' }}>{t('booking')} #{bookingId}</p>
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
-          <div className="rounded-xl p-4" style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)' }}>
-            <h3 className="font-semibold mb-3 text-sm" style={{ color: 'var(--color-client-text-primary)' }}>{t('tripDetails')}</h3>
+        <div className="p-4 sm:p-6 space-y-4 sm:space-y-5">
+          <div className="p-4" style={{ backgroundColor: '#F7F3EC', border: '1px solid #E2DACD', borderRadius: '3px' }}>
+            <h3 className="mb-3 font-mono text-[10px] font-semibold uppercase" style={{ color: '#6E6A63', letterSpacing: '0.14em', fontFamily: 'var(--font-mono)' }}>{t('tripDetails')}</h3>
             <div className="space-y-2 text-sm">
               <div>
-                <span style={{ color: 'var(--color-client-text-secondary)' }}>{t('from')}</span>
-                <span className="ml-2 font-medium" style={{ color: 'var(--color-client-text-primary)' }}>{pickupAddress}</span>
+                <span style={{ color: '#6E6A63' }}>{t('from')}</span>
+                <span className="ml-2 font-medium" style={{ color: '#12100E' }}>{pickupAddress}</span>
               </div>
               <div>
-                <span style={{ color: 'var(--color-client-text-secondary)' }}>{t('to')}</span>
-                <span className="ml-2 font-medium" style={{ color: 'var(--color-client-text-primary)' }}>{dropoffAddress}</span>
+                <span style={{ color: '#6E6A63' }}>{t('to')}</span>
+                <span className="ml-2 font-medium" style={{ color: '#12100E' }}>{dropoffAddress}</span>
               </div>
               <div>
-                <span style={{ color: 'var(--color-client-text-secondary)' }}>{t('date')}</span>
-                <span className="ml-2 font-medium" style={{ color: 'var(--color-client-text-primary)' }}>
+                <span style={{ color: '#6E6A63' }}>{t('date')}</span>
+                <span className="ml-2 font-medium" style={{ color: '#12100E' }}>
                   {new Date(scheduledDateTime).toLocaleDateString(intlLocale, {
                     weekday: 'long',
                     year: 'numeric',
@@ -149,14 +154,14 @@ export function PriceApprovalModal({
           </div>
 
           {/* Prix proposé */}
-          <div className="rounded-xl p-6 text-center" style={{ backgroundColor: 'var(--color-client-accent-bg)', border: '1px solid var(--color-client-accent-border)' }}>
-            <p className="mb-2 text-sm" style={{ color: 'var(--color-client-text-secondary)' }}>{t('proposedPrice')}</p>
-            <p className="text-4xl sm:text-5xl font-bold" style={{ color: 'var(--color-client-accent)', fontFamily: 'var(--font-mono)' }}>{price} FCFA</p>
+          <div className="p-6 text-center" style={{ backgroundColor: '#E8DCC8', borderRadius: '3px' }}>
+            <p className="mb-2 font-mono text-[10px] uppercase" style={{ color: '#3d3a35', letterSpacing: '0.12em', fontFamily: 'var(--font-mono)' }}>{t('proposedPrice')}</p>
+            <p className="text-4xl font-semibold" style={{ color: '#12100E', fontFamily: 'var(--font-mono)', letterSpacing: '-0.01em' }}>{price} <span className="text-xl font-normal" style={{ color: '#6E6A63' }}>FCFA</span></p>
           </div>
 
           {!showRejectForm && (
             <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-client-text-primary)' }}>
+              <label className="block text-sm font-medium mb-2" style={{ color: '#12100E' }}>
                 {t('optionalMessage')}
               </label>
               <textarea
@@ -164,15 +169,15 @@ export function PriceApprovalModal({
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder={t('optionalMessagePlaceholder')}
                 rows={3}
-                className="w-full p-3 rounded-lg resize-none outline-none transition-all"
-                style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                className="w-full p-3 resize-none outline-none transition-all"
+                style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '3px', color: '#12100E' }}
               />
             </div>
           )}
 
           {showRejectForm && (
-            <div className="rounded-xl p-4" style={{ backgroundColor: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.2)' }}>
-              <label className="block text-sm font-medium mb-2" style={{ color: '#EF4444' }}>
+            <div className="p-4" style={{ backgroundColor: 'rgba(184,73,60,.06)', border: '1px solid rgba(184,73,60,.25)', borderRadius: '3px' }}>
+              <label className="block text-sm font-medium mb-2" style={{ color: '#B8493C' }}>
                 {t('rejectReasonLabel')}
               </label>
               <textarea
@@ -180,36 +185,36 @@ export function PriceApprovalModal({
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder={t('rejectReasonPlaceholder')}
                 rows={4}
-                className="w-full p-3 rounded-lg resize-none outline-none transition-all"
-                style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid rgba(239,68,68,0.3)', color: 'var(--color-client-text-primary)' }}
+                className="w-full p-3 resize-none outline-none transition-all"
+                style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(184,73,60,.35)', borderRadius: '3px', color: '#12100E' }}
                 required
               />
             </div>
           )}
 
-          <div className="rounded-xl p-4 flex items-start gap-3" style={{ backgroundColor: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.25)' }}>
-            <Warning size={18} weight="fill" className="shrink-0 mt-0.5" style={{ color: '#F59E0B' }} />
-            <p className="text-sm" style={{ color: '#B45309' }}>{t('warning')}</p>
+          <div className="p-4 flex items-start gap-3" style={{ backgroundColor: 'rgba(180,100,58,.08)', border: '1px solid rgba(180,100,58,.25)', borderRadius: '3px' }}>
+            <Warning size={18} weight="fill" className="shrink-0 mt-0.5" style={{ color: '#B4643A' }} />
+            <p className="text-sm" style={{ color: '#3d3a35' }}>{t('warning')}</p>
           </div>
         </div>
 
         {/* Actions */}
-        <div className="p-4 sm:p-6 flex flex-col sm:flex-row gap-3" style={{ backgroundColor: 'var(--color-client-surface)', borderTop: '1px solid var(--color-client-border)' }}>
+        <div className="p-4 sm:p-6 flex flex-col sm:flex-row gap-3" style={{ backgroundColor: '#F7F3EC', borderTop: '1px solid #E2DACD' }}>
           {!showRejectForm ? (
             <>
               <button
                 onClick={() => setShowRejectForm(true)}
                 disabled={isLoading}
-                className="flex-1 px-4 sm:px-6 py-3 rounded-xl font-semibold transition-colors disabled:opacity-50 min-h-[44px]"
-                style={{ border: '2px solid #EF4444', color: '#EF4444', backgroundColor: 'transparent' }}
+                className="flex-1 px-4 sm:px-6 py-3 font-semibold transition-colors disabled:opacity-50 min-h-[44px]"
+                style={{ border: '1px solid #12100E', color: '#12100E', backgroundColor: 'transparent', borderRadius: '4px' }}
               >
                 {t('reject')}
               </button>
               <button
                 onClick={handleAccept}
                 disabled={isLoading}
-                className="flex-1 px-4 sm:px-6 py-3 rounded-xl font-semibold transition-colors disabled:opacity-50 min-h-[44px] flex items-center justify-center gap-2"
-                style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}
+                className="flex-1 px-4 sm:px-6 py-3 font-semibold transition-colors disabled:opacity-50 min-h-[44px] flex items-center justify-center gap-2"
+                style={{ backgroundColor: '#1F5245', color: '#FFFFFF', borderRadius: '4px' }}
               >
                 {isLoading ? (
                   <>
@@ -220,8 +225,8 @@ export function PriceApprovalModal({
               <button
                 onClick={onClose}
                 disabled={isLoading}
-                className="w-full sm:w-auto px-4 sm:px-6 py-3 rounded-xl font-medium transition-colors disabled:opacity-50 min-h-[44px]"
-                style={{ border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-secondary)' }}
+                className="w-full sm:w-auto px-4 sm:px-6 py-3 font-medium transition-colors disabled:opacity-50 min-h-[44px]"
+                style={{ border: '1px solid #E2DACD', color: '#6E6A63', borderRadius: '4px' }}
               >
                 {t('cancel')}
               </button>
@@ -234,16 +239,16 @@ export function PriceApprovalModal({
                   setMessage('');
                 }}
                 disabled={isLoading}
-                className="flex-1 px-4 sm:px-6 py-3 rounded-xl font-medium transition-colors disabled:opacity-50 min-h-[44px]"
-                style={{ border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-secondary)' }}
+                className="flex-1 px-4 sm:px-6 py-3 font-medium transition-colors disabled:opacity-50 min-h-[44px]"
+                style={{ border: '1px solid #E2DACD', color: '#6E6A63', borderRadius: '4px' }}
               >
                 {t('back')}
               </button>
               <button
                 onClick={handleReject}
                 disabled={isLoading}
-                className="flex-1 px-4 sm:px-6 py-3 rounded-xl font-semibold transition-colors disabled:opacity-50 min-h-[44px]"
-                style={{ backgroundColor: '#EF4444', color: '#fff' }}
+                className="flex-1 px-4 sm:px-6 py-3 font-semibold transition-colors disabled:opacity-50 min-h-[44px]"
+                style={{ backgroundColor: '#B8493C', color: '#FFFFFF', borderRadius: '4px' }}
               >
                 {isLoading ? t('sending') : t('confirmReject')}
               </button>

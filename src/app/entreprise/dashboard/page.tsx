@@ -1,12 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Buildings, ChartBar, CalendarPlus, CalendarBlank, FileText, Receipt, User as UserIcon } from "@phosphor-icons/react";
-import { DashboardLanguageSwitcher } from "@/components/dashboard/DashboardLanguageSwitcher";
+import { Buildings } from "@phosphor-icons/react";
 import { EntrepriseOverview } from "./components/EntrepriseOverview";
 import { EntreprisePlanning } from "./components/EntreprisePlanning";
 import { EntrepriseSchedule } from "./components/EntrepriseSchedule";
@@ -17,14 +15,25 @@ import type { Booking, Profile } from "./types";
 
 type TabId = "overview" | "planning" | "schedule" | "quotes" | "invoices" | "profile";
 
-export default function EntrepriseDashboardPage() {
+const TAB_IDS: TabId[] = ["overview", "planning", "schedule", "quotes", "invoices", "profile"];
+
+function EntrepriseDashboardContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const t = useTranslations("entreprise");
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [activeTab, setActiveTab] = useState<TabId>("overview");
+
+  // Le shell code l'onglet actif dans ?tab= (voir EntrepriseShell) : on suit ce
+  // paramètre plutôt qu'un état local isolé, sinon le contenu affiché se désynchronise
+  // du titre de la barre du haut et de l'entrée active de la barre latérale.
+  useEffect(() => {
+    const tabFromUrl = searchParams?.get("tab");
+    setActiveTab(tabFromUrl && TAB_IDS.includes(tabFromUrl as TabId) ? (tabFromUrl as TabId) : "overview");
+  }, [searchParams]);
 
   const companyTypeLabels: Record<string, string> = useMemo(
     () => ({
@@ -86,7 +95,7 @@ export default function EntrepriseDashboardPage() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="flex min-h-[60vh] items-center justify-center">
         <div className="text-[#6E6A63] font-[family-name:var(--font-ibm-plex-mono)] text-sm">{t("loading")}</div>
       </div>
     );
@@ -94,60 +103,18 @@ export default function EntrepriseDashboardPage() {
 
   if (!profile) return null;
 
-  const tabs: { id: TabId; label: string; icon: typeof ChartBar }[] = [
-    { id: "overview", label: t("tabs.overview"), icon: ChartBar },
-    { id: "planning", label: t("tabs.planning"), icon: CalendarPlus },
-    { id: "schedule", label: t("tabs.schedule"), icon: CalendarBlank },
-    { id: "quotes", label: t("tabs.quotes"), icon: FileText },
-    { id: "invoices", label: t("tabs.invoices"), icon: Receipt },
-    { id: "profile", label: t("tabs.profile"), icon: UserIcon },
-  ];
-
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10">
-      <div className="flex items-center justify-between border-b border-border pb-6 mb-6">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded bg-[#12100E] flex items-center justify-center shrink-0">
-            <Buildings size={22} weight="regular" className="text-[#F7F3EC]" />
-          </div>
-          <div>
-            <div className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.16em] text-accent uppercase mb-1">
-              {profile.companyType ? companyTypeLabels[profile.companyType] : t("defaultCompanyType")}
-            </div>
-            <h1 className="text-2xl font-bold text-foreground tracking-tight">{profile.companyName || session?.user?.name}</h1>
-          </div>
+    <div className="flex flex-col gap-6">
+      <div className="flex items-center gap-3">
+        <div className="grid h-10 w-10 shrink-0 place-items-center rounded bg-[#12100E]">
+          <Buildings size={18} weight="regular" className="text-[#F7F3EC]" />
         </div>
-        <div className="flex items-center gap-4">
-          <DashboardLanguageSwitcher />
-          <Link
-            href="/client/dashboard"
-            className="text-sm text-[#6E6A63] hover:text-[#12100E] transition-colors font-medium"
-          >
-            {t("backToAccount")}
-          </Link>
+        <div>
+          <div className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.16em] text-accent uppercase mb-0.5">
+            {profile.companyType ? companyTypeLabels[profile.companyType] : t("defaultCompanyType")}
+          </div>
+          <h1 className="text-xl font-bold text-foreground tracking-tight">{profile.companyName || session?.user?.name}</h1>
         </div>
-      </div>
-
-      <div className="flex gap-1 overflow-x-auto mb-8 border-b border-border">
-        {tabs.map((tab) => {
-          const Icon = tab.icon;
-          const active = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex shrink-0 items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
-                active
-                  ? "border-[#12100E] text-[#12100E]"
-                  : "border-transparent text-[#6E6A63] hover:text-[#12100E]"
-              }`}
-            >
-              <Icon size={16} weight={active ? "fill" : "regular"} />
-              {tab.label}
-            </button>
-          );
-        })}
       </div>
 
       {activeTab === "overview" && (
@@ -159,5 +126,19 @@ export default function EntrepriseDashboardPage() {
       {activeTab === "invoices" && <EntrepriseInvoices />}
       {activeTab === "profile" && <EntrepriseProfileTab profile={profile} onUpdated={loadProfile} />}
     </div>
+  );
+}
+
+export default function EntrepriseDashboardPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-[60vh] items-center justify-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-2" style={{ borderColor: "#E2DACD", borderTopColor: "#1F5245" }} />
+        </div>
+      }
+    >
+      <EntrepriseDashboardContent />
+    </Suspense>
   );
 }

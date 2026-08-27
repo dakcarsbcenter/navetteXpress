@@ -1,5 +1,28 @@
 {
   "loading": "Chargement de votre espace entreprise…",
+  "sidebar": {
+    "brandTagline": "Espace entreprise",
+    "section": "Principal",
+    "nav": {
+      "overview": "Vue globale",
+      "planning": "Planification",
+      "schedule": "Planning",
+      "quotes": "Devis",
+      "invoices": "Factures",
+      "profile": "Profil"
+    }
+  },
+  "topbar": {
+    "titles": {
+      "overview": "Vue globale",
+      "planning": "Planification",
+      "schedule": "Planning",
+      "quotes": "Devis",
+      "invoices": "Factures",
+      "profile": "Profil"
+    },
+    "notifications": "Notifications"
+  },
   "companyTypes": {
     "hotel": "Hôtel",
     "entreprise": "Entreprise",
@@ -7,14 +30,6 @@
   },
   "defaultCompanyType": "Compte entreprise",
   "backToAccount": "Retour à mon compte",
-  "tabs": {
-    "overview": "Vue globale",
-    "planning": "Planification",
-    "schedule": "Voir planning",
-    "quotes": "Devis",
-    "invoices": "Factures",
-    "profile": "Profil"
-  },
   "overview": {
     "periods": {
       "day": "Aujourd'hui",

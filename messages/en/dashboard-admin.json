@@ -1,0 +1,139 @@
+{
+  "loading": "Loading...",
+  "loadingSpace": "Loading your admin space...",
+  "accessDenied": "Access denied. Only administrators and managers can access this page.",
+  "sidebar": {
+    "brandTagline": "Admin space",
+    "sectionExploitation": "Operations",
+    "sectionReferentiel": "Reference data",
+    "sectionAdministration": "Administration",
+    "nav": {
+      "overview": "Overview",
+      "bookings": "Bookings",
+      "quotes": "Quotes",
+      "drivers": "Drivers",
+      "vehicles": "Vehicles",
+      "services": "Services",
+      "locations": "Locations",
+      "users": "Users",
+      "permissions": "Permissions",
+      "invoices": "Invoices",
+      "reviews": "Reviews",
+      "stats": "Statistics"
+    }
+  },
+  "topbar": {
+    "titles": {
+      "overview": "Overview",
+      "bookings": "Bookings",
+      "quotes": "Quotes",
+      "drivers": "Drivers",
+      "vehicles": "Vehicles",
+      "services": "Services",
+      "locations": "Locations",
+      "users": "Users",
+      "permissions": "Permissions",
+      "invoices": "Invoices",
+      "reviews": "Reviews",
+      "stats": "Statistics"
+    },
+    "systemStatus": "System operational"
+  },
+  "overview": {
+    "corridorLabel": "Corridor — live",
+    "headline": {
+      "inProgress": "{count, plural, =0 {No trips in progress} one {# trip in progress} other {# trips in progress}}",
+      "toAssign": "{count, plural, =0 {queue empty} one {# to assign} other {# to assign}}"
+    },
+    "subline": {
+      "queueEmpty": "Every pending booking now has a driver.",
+      "queueActive": "Driver availability is checked before each assignment."
+    },
+    "kpis": {
+      "toAssign": "To assign",
+      "inProgress": "In progress",
+      "activeDrivers": "Active drivers",
+      "activeVehicles": "Active vehicles",
+      "todayRevenue": "Today's revenue",
+      "notes": {
+        "toAssignEmpty": "Queue empty",
+        "toAssignPending": "Awaiting a driver",
+        "inProgress": "Active trips",
+        "driversUnavailable": "{count, plural, =0 {All available} one {# unavailability declared} other {# unavailabilities declared}}",
+        "vehiclesInactive": "{count, plural, =0 {All in service} one {# under maintenance} other {# under maintenance}}",
+        "revenue": "Trips closed today"
+      }
+    },
+    "queue": {
+      "title": "Assignment queue",
+      "description": "Driver availability is checked before assignment. A notification goes out by email and WhatsApp.",
+      "waiting": "{count, plural, =0 {0 waiting} one {# waiting} other {# waiting}}",
+      "oldest": "the oldest was {time} ago",
+      "toAssign": "To assign",
+      "ref": "REF.",
+      "departure": "Pickup",
+      "arrival": "Drop-off",
+      "client": "Client",
+      "price": "Price",
+      "driversHeading": "Drivers — {when}",
+      "driversActive": "{active} / {total} active",
+      "available": "Available",
+      "unavailable": "Unavailable",
+      "busy": "On a trip",
+      "busyUntil": "until {time}",
+      "assignRefused": "Assignment refused",
+      "proposePrice": "Propose a price",
+      "proposePriceSubmit": "Send",
+      "proposePriceCancel": "Cancel",
+      "proposePricePlaceholder": "Amount in FCFA",
+      "skip": "Handle later",
+      "emptyTitle": "Queue empty — everything is assigned",
+      "emptyDescription": "Every pending booking now has a driver. Assigned drivers receive their notification by email and WhatsApp.",
+      "pax": "{passengers} PAX · {luggage} BAGS",
+      "assignError": "Error while assigning.",
+      "assigning": "Assigning…"
+    },
+    "recent": {
+      "title": "Recent bookings",
+      "viewAll": "View all",
+      "columns": {
+        "ref": "Ref.",
+        "client": "Client & trip",
+        "driver": "Driver",
+        "amount": "Amount",
+        "status": "Status"
+      },
+      "empty": "No recent bookings.",
+      "noDriver": "—"
+    },
+    "decisions": {
+      "title": "Awaiting a decision",
+      "unansweredPrices": "Prices proposed, no reply",
+      "quotesToSend": "Quotes to process",
+      "reviewsToModerate": "Reviews to moderate",
+      "openReports": "Open vehicle reports"
+    },
+    "segments": {
+      "title": "Corridor load",
+      "today": "Today",
+      "empty": "No trips scheduled today.",
+      "count": "{count, plural, one {# trip} other {# trips}}",
+      "labels": {
+        "dakarAibd": "Dakar → AIBD",
+        "aibdPetiteCote": "AIBD → Petite Côte",
+        "intraDakar": "Intra-Dakar",
+        "other": "Charter"
+      }
+    },
+    "newAccounts": {
+      "title": "Latest accounts created",
+      "empty": "No new accounts.",
+      "roles": {
+        "admin": "Admin",
+        "manager": "Manager",
+        "driver": "Driver",
+        "customer": "Client"
+      }
+    }
+  }
+}

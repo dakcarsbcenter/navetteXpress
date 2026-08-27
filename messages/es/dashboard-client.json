@@ -66,6 +66,79 @@
     "evening": "Buenas noches",
     "welcome": "Bienvenido"
   },
+  "home": {
+    "eyebrow": "Mis trayectos",
+    "viewAllBookings": "Todas mis reservas",
+    "subtitleNextTrip": "Su próximo trayecto: {route}, {when}.",
+    "subtitleEmpty": "No tiene ningún trayecto previsto por el momento.",
+    "priceBanner": {
+      "eyebrow": "Precio propuesto — a la espera de su respuesta",
+      "proposedOn": "Propuesto el {date}. Sin su respuesta, la solicitud permanece pendiente.",
+      "currency": "FCFA · todo incluido",
+      "accept": "Aceptar",
+      "reject": "Rechazar",
+      "moreOne": "+ 1 otra propuesta pendiente",
+      "moreMany": "+ {count} otras propuestas pendientes"
+    },
+    "answered": {
+      "acceptedTitle": "Precio aceptado — reserva confirmada",
+      "acceptedNote": "{route}, {when}. Se le asignará un chófer en menos de 24 h.",
+      "rejectedTitle": "Precio rechazado — nuestro equipo le contactará",
+      "rejectedNote": "Se le enviará una nueva propuesta. La solicitud permanece abierta."
+    },
+    "nextTrip": {
+      "emptyTitle": "Ningún trayecto próximo",
+      "emptyDescription": "Reserve su próximo trayecto para verlo aparecer aquí.",
+      "ref": "Ref. NX-{id}",
+      "departure": "Salida",
+      "arrival": "Llegada",
+      "driverLabel": "Chófer",
+      "driverUnassigned": "Chófer aún no asignado",
+      "call": "Llamar",
+      "message": "Mensaje",
+      "priceLabel": "Precio",
+      "priceUnset": "Por definir",
+      "viewDetails": "Ver detalle"
+    },
+    "kpis": {
+      "upcoming": "Próximos",
+      "upcomingNote": "Próximo {when}",
+      "upcomingNoteEmpty": "Ningún trayecto previsto",
+      "completed": "Trayectos realizados",
+      "completedNote": "Desde su inscripción",
+      "quotes": "Presupuestos en curso",
+      "quotesNote": "{count} a la espera de respuesta",
+      "quotesNoteEmpty": "Ningún presupuesto en curso",
+      "invoicesDue": "Facturas pendientes",
+      "invoicesDueNote": "{count} por pagar",
+      "invoicesDueNoteEmpty": "Todo está pagado"
+    },
+    "bookingsList": {
+      "title": "Mis reservas",
+      "totalCount": "{count} en total",
+      "empty": "Ninguna reserva por el momento",
+      "viewHistory": "Historial completo"
+    },
+    "reviewPrompt": {
+      "eyebrow": "Su último trayecto",
+      "withDriver": "Con {driver}. ¿Cómo fue el viaje?"
+    },
+    "quotesCard": {
+      "title": "Presupuestos en curso",
+      "sentBadge": "{count} enviado(s)",
+      "empty": "Ningún presupuesto en curso",
+      "emptyDescription": "Sus solicitudes de presupuesto aparecerán aquí.",
+      "requestedOn": "Solicitado el {date} · Ref. Q-{id}",
+      "amountLabel": "Importe",
+      "viewQuote": "Ver presupuesto"
+    },
+    "invoicesCard": {
+      "title": "Facturas",
+      "noneDue": "Ninguna pendiente",
+      "due": "{count} pendiente(s)",
+      "empty": "Ninguna factura por el momento"
+    }
+  },
   "overview": {
     "pendingLabel": "Pendiente",
     "newTrip": "Nuevo viaje",

@@ -106,31 +106,27 @@ export const entrepriseNavigation: DashboardNavGroupConfig[] = [
   },
 ]
 
-// Provisoire : mapping des 12 icônes du README vers un premier découpage en 3
-// groupes (Exploitation / Référentiel / Administration). Les routes actuelles
-// de src/app/admin/dashboard/page.tsx sont pilotées par un seul état d'onglet
-// (TabType) et ne correspondent pas toutes 1:1 à ces 12 entrées (pas de tab
-// "chauffeurs" ni "file d'assignation" dédiés aujourd'hui) — à valider pendant
-// la session admin, dernière de l'ordre de migration. Ne pas câbler tel quel.
+// Miroir exact des 12 entrées / 3 groupes de docs/redesign/Dashboard Admin.dc.html
+// (lignes 392-410) : Exploitation (vue d'ensemble, réservations, devis, chauffeurs),
+// Référentiel (véhicules, services, lieux), Administration (utilisateurs,
+// permissions, factures, avis, statistiques). Chaque route est un onglet de
+// src/app/admin/dashboard/page.tsx piloté par ?tab=.
 export const adminNavigation: DashboardNavGroupConfig[] = [
   {
     labelKey: "sidebar.sectionExploitation",
     items: [
-      { href: "/admin/dashboard?tab=stats", labelKey: "sidebar.nav.overview", icon: SquaresFour },
+      { href: "/admin/dashboard?tab=overview", labelKey: "sidebar.nav.overview", icon: SquaresFour },
       { href: "/admin/dashboard?tab=bookings", labelKey: "sidebar.nav.bookings", icon: CalendarBlank },
       { href: "/admin/dashboard?tab=quotes", labelKey: "sidebar.nav.quotes", icon: FileText },
-      { href: "/admin/dashboard?tab=assign", labelKey: "sidebar.nav.assign", icon: ListChecks },
-      { href: "/admin/dashboard?tab=invoices", labelKey: "sidebar.nav.invoices", icon: Receipt },
-      { href: "/admin/dashboard?tab=stats", labelKey: "sidebar.nav.stats", icon: ChartLine },
+      { href: "/admin/dashboard?tab=drivers", labelKey: "sidebar.nav.drivers", icon: SteeringWheel },
     ],
   },
   {
     labelKey: "sidebar.sectionReferentiel",
     items: [
-      { href: "/admin/dashboard?tab=drivers", labelKey: "sidebar.nav.drivers", icon: SteeringWheel },
       { href: "/admin/dashboard?tab=vehicles", labelKey: "sidebar.nav.vehicles", icon: Car },
+      { href: "/admin/dashboard?tab=services", labelKey: "sidebar.nav.services", icon: ListChecks },
       { href: "/admin/dashboard?tab=locations", labelKey: "sidebar.nav.locations", icon: MapPin },
-      { href: "/admin/dashboard?tab=reviews", labelKey: "sidebar.nav.reviews", icon: Star },
     ],
   },
   {
@@ -138,6 +134,9 @@ export const adminNavigation: DashboardNavGroupConfig[] = [
     items: [
       { href: "/admin/dashboard?tab=users", labelKey: "sidebar.nav.users", icon: Users },
       { href: "/admin/dashboard?tab=permissions", labelKey: "sidebar.nav.permissions", icon: LockKey },
+      { href: "/admin/dashboard?tab=invoices", labelKey: "sidebar.nav.invoices", icon: Receipt },
+      { href: "/admin/dashboard?tab=reviews", labelKey: "sidebar.nav.reviews", icon: Star },
+      { href: "/admin/dashboard?tab=stats", labelKey: "sidebar.nav.stats", icon: ChartLine },
     ],
   },
 ]

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { PencilSimple } from "@phosphor-icons/react";
 import { EditProfileModal } from "@/components/client/EditProfileModal";
@@ -17,6 +18,7 @@ function Field({ label, value }: { label: string; value?: string | null }) {
 
 export function EntrepriseProfileTab({ profile, onUpdated }: { profile: Profile; onUpdated: () => void }) {
   const t = useTranslations("entreprise.profile");
+  const tRoot = useTranslations("entreprise");
   const [isEditOpen, setIsEditOpen] = useState(false);
 
   return (
@@ -41,6 +43,12 @@ export function EntrepriseProfileTab({ profile, onUpdated }: { profile: Profile;
         <Field label={t("fields.ninea")} value={profile.ninea} />
         <Field label={t("fields.companyAddress")} value={profile.companyAddress} />
         <Field label={t("fields.bp")} value={profile.bp} />
+      </div>
+
+      <div className="mt-6 border-t border-border pt-4">
+        <Link href="/client/dashboard" className="text-sm font-medium text-[#6E6A63] hover:text-[#12100E] transition-colors">
+          {tRoot("backToAccount")}
+        </Link>
       </div>
 
       <EditProfileModal

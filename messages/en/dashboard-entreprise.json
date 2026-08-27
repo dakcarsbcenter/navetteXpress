@@ -1,5 +1,28 @@
 {
   "loading": "Loading your company space…",
+  "sidebar": {
+    "brandTagline": "Company space",
+    "section": "Main",
+    "nav": {
+      "overview": "Overview",
+      "planning": "Trip Planning",
+      "schedule": "Schedule",
+      "quotes": "Quotes",
+      "invoices": "Invoices",
+      "profile": "Profile"
+    }
+  },
+  "topbar": {
+    "titles": {
+      "overview": "Overview",
+      "planning": "Trip Planning",
+      "schedule": "Schedule",
+      "quotes": "Quotes",
+      "invoices": "Invoices",
+      "profile": "Profile"
+    },
+    "notifications": "Notifications"
+  },
   "companyTypes": {
     "hotel": "Hotel",
     "entreprise": "Company",
@@ -7,14 +30,6 @@
   },
   "defaultCompanyType": "Company account",
   "backToAccount": "Back to my account",
-  "tabs": {
-    "overview": "Overview",
-    "planning": "Trip Planning",
-    "schedule": "Schedule",
-    "quotes": "Quotes",
-    "invoices": "Invoices",
-    "profile": "Profile"
-  },
   "overview": {
     "periods": {
       "day": "Today",

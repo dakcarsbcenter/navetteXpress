@@ -1,5 +1,28 @@
 {
   "loading": "Cargando su espacio empresa…",
+  "sidebar": {
+    "brandTagline": "Espacio empresa",
+    "section": "Principal",
+    "nav": {
+      "overview": "Vista general",
+      "planning": "Planificación",
+      "schedule": "Calendario",
+      "quotes": "Presupuestos",
+      "invoices": "Facturas",
+      "profile": "Perfil"
+    }
+  },
+  "topbar": {
+    "titles": {
+      "overview": "Vista general",
+      "planning": "Planificación",
+      "schedule": "Calendario",
+      "quotes": "Presupuestos",
+      "invoices": "Facturas",
+      "profile": "Perfil"
+    },
+    "notifications": "Notificaciones"
+  },
   "companyTypes": {
     "hotel": "Hotel",
     "entreprise": "Empresa",
@@ -7,14 +30,6 @@
   },
   "defaultCompanyType": "Cuenta empresa",
   "backToAccount": "Volver a mi cuenta",
-  "tabs": {
-    "overview": "Vista general",
-    "planning": "Planificación",
-    "schedule": "Calendario",
-    "quotes": "Presupuestos",
-    "invoices": "Facturas",
-    "profile": "Perfil"
-  },
   "overview": {
     "periods": {
       "day": "Hoy",

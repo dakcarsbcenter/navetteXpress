@@ -66,6 +66,79 @@
     "evening": "Good evening",
     "welcome": "Welcome"
   },
+  "home": {
+    "eyebrow": "My trips",
+    "viewAllBookings": "All my bookings",
+    "subtitleNextTrip": "Your next trip: {route}, {when}.",
+    "subtitleEmpty": "You have no upcoming trip at the moment.",
+    "priceBanner": {
+      "eyebrow": "Price proposed — awaiting your response",
+      "proposedOn": "Proposed on {date}. Without your response, the request stays pending.",
+      "currency": "FCFA · all inclusive",
+      "accept": "Accept",
+      "reject": "Decline",
+      "moreOne": "+ 1 other proposal pending",
+      "moreMany": "+ {count} other proposals pending"
+    },
+    "answered": {
+      "acceptedTitle": "Price accepted — booking confirmed",
+      "acceptedNote": "{route}, {when}. A driver will be assigned within 24 h.",
+      "rejectedTitle": "Price declined — our team is following up",
+      "rejectedNote": "A new proposal will be sent to you. The request stays open."
+    },
+    "nextTrip": {
+      "emptyTitle": "No upcoming trip",
+      "emptyDescription": "Book your next trip to see it appear here.",
+      "ref": "Ref. NX-{id}",
+      "departure": "Departure",
+      "arrival": "Arrival",
+      "driverLabel": "Driver",
+      "driverUnassigned": "No driver assigned yet",
+      "call": "Call",
+      "message": "Message",
+      "priceLabel": "Price",
+      "priceUnset": "To be set",
+      "viewDetails": "View details"
+    },
+    "kpis": {
+      "upcoming": "Upcoming",
+      "upcomingNote": "Next {when}",
+      "upcomingNoteEmpty": "No trip planned",
+      "completed": "Completed trips",
+      "completedNote": "Since you joined",
+      "quotes": "Quotes in progress",
+      "quotesNote": "{count} awaiting a reply",
+      "quotesNoteEmpty": "No quote in progress",
+      "invoicesDue": "Invoices due",
+      "invoicesDueNote": "{count} to settle",
+      "invoicesDueNoteEmpty": "Everything is settled"
+    },
+    "bookingsList": {
+      "title": "My bookings",
+      "totalCount": "{count} in total",
+      "empty": "No booking yet",
+      "viewHistory": "Full history"
+    },
+    "reviewPrompt": {
+      "eyebrow": "Your last trip",
+      "withDriver": "With {driver}. How did the ride go?"
+    },
+    "quotesCard": {
+      "title": "Quotes in progress",
+      "sentBadge": "{count} sent",
+      "empty": "No quote in progress",
+      "emptyDescription": "Your quote requests will appear here.",
+      "requestedOn": "Requested on {date} · Ref. Q-{id}",
+      "amountLabel": "Amount",
+      "viewQuote": "View quote"
+    },
+    "invoicesCard": {
+      "title": "Invoices",
+      "noneDue": "None due",
+      "due": "{count} due",
+      "empty": "No invoice yet"
+    }
+  },
   "overview": {
     "pendingLabel": "Pending",
     "newTrip": "New trip",

@@ -57,6 +57,13 @@ const DOMAIN_TONES: Record<StatusDomain, Record<string, Tone>> = {
   },
 }
 
+// Expose le ton d'un couple domaine/valeur aux composants qui ont besoin de la
+// meme couleur que StatusBadge pour autre chose qu'une pastille (ex: une barre
+// d'accent de carte), sans dupliquer DOMAIN_TONES localement.
+export function toneForStatus(domain: StatusDomain, value: string): Tone {
+  return DOMAIN_TONES[domain]?.[value] ?? "clos"
+}
+
 interface StatusBadgeProps {
   domain: StatusDomain
   value: string

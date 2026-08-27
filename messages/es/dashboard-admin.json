@@ -1,0 +1,139 @@
+{
+  "loading": "Cargando...",
+  "loadingSpace": "Cargando tu espacio de administración...",
+  "accessDenied": "Acceso denegado. Solo administradores y gestores pueden acceder a esta página.",
+  "sidebar": {
+    "brandTagline": "Espacio admin",
+    "sectionExploitation": "Operaciones",
+    "sectionReferentiel": "Referencia",
+    "sectionAdministration": "Administración",
+    "nav": {
+      "overview": "Resumen",
+      "bookings": "Reservas",
+      "quotes": "Presupuestos",
+      "drivers": "Conductores",
+      "vehicles": "Vehículos",
+      "services": "Servicios",
+      "locations": "Lugares",
+      "users": "Usuarios",
+      "permissions": "Permisos",
+      "invoices": "Facturas",
+      "reviews": "Reseñas",
+      "stats": "Estadísticas"
+    }
+  },
+  "topbar": {
+    "titles": {
+      "overview": "Resumen",
+      "bookings": "Reservas",
+      "quotes": "Presupuestos",
+      "drivers": "Conductores",
+      "vehicles": "Vehículos",
+      "services": "Servicios",
+      "locations": "Lugares",
+      "users": "Usuarios",
+      "permissions": "Permisos",
+      "invoices": "Facturas",
+      "reviews": "Reseñas",
+      "stats": "Estadísticas"
+    },
+    "systemStatus": "Sistema operativo"
+  },
+  "overview": {
+    "corridorLabel": "Corredor — en vivo",
+    "headline": {
+      "inProgress": "{count, plural, =0 {Ningún viaje en curso} one {# viaje en curso} other {# viajes en curso}}",
+      "toAssign": "{count, plural, =0 {cola vacía} one {# por asignar} other {# por asignar}}"
+    },
+    "subline": {
+      "queueEmpty": "Todas las reservas pendientes ya tienen conductor.",
+      "queueActive": "La disponibilidad del conductor se verifica antes de cada asignación."
+    },
+    "kpis": {
+      "toAssign": "Por asignar",
+      "inProgress": "En curso",
+      "activeDrivers": "Conductores activos",
+      "activeVehicles": "Vehículos activos",
+      "todayRevenue": "Ingresos del día",
+      "notes": {
+        "toAssignEmpty": "Cola vacía",
+        "toAssignPending": "Esperando conductor",
+        "inProgress": "Viajes activos",
+        "driversUnavailable": "{count, plural, =0 {Todos disponibles} one {# indisponibilidad declarada} other {# indisponibilidades declaradas}}",
+        "vehiclesInactive": "{count, plural, =0 {Todos en servicio} one {# en mantenimiento} other {# en mantenimiento}}",
+        "revenue": "Viajes cerrados hoy"
+      }
+    },
+    "queue": {
+      "title": "Cola de asignación",
+      "description": "La disponibilidad del conductor se verifica antes de la asignación. Se envía una notificación por email y WhatsApp.",
+      "waiting": "{count, plural, =0 {0 en espera} one {# en espera} other {# en espera}}",
+      "oldest": "la más antigua hace {time}",
+      "toAssign": "Por asignar",
+      "ref": "REF.",
+      "departure": "Salida",
+      "arrival": "Llegada",
+      "client": "Cliente",
+      "price": "Precio",
+      "driversHeading": "Conductores — {when}",
+      "driversActive": "{active} / {total} activos",
+      "available": "Disponible",
+      "unavailable": "No disponible",
+      "busy": "En viaje",
+      "busyUntil": "hasta las {time}",
+      "assignRefused": "Asignación rechazada",
+      "proposePrice": "Proponer un precio",
+      "proposePriceSubmit": "Enviar",
+      "proposePriceCancel": "Cancelar",
+      "proposePricePlaceholder": "Monto en FCFA",
+      "skip": "Atender más tarde",
+      "emptyTitle": "Cola vacía — todo asignado",
+      "emptyDescription": "Todas las reservas pendientes ya tienen conductor. Los conductores asignados reciben su notificación por email y WhatsApp.",
+      "pax": "{passengers} PAX · {luggage} MALETAS",
+      "assignError": "Error al asignar.",
+      "assigning": "Asignando…"
+    },
+    "recent": {
+      "title": "Reservas recientes",
+      "viewAll": "Ver todo",
+      "columns": {
+        "ref": "Ref.",
+        "client": "Cliente y trayecto",
+        "driver": "Conductor",
+        "amount": "Importe",
+        "status": "Estado"
+      },
+      "empty": "Sin reservas recientes.",
+      "noDriver": "—"
+    },
+    "decisions": {
+      "title": "A la espera de una decisión",
+      "unansweredPrices": "Precios propuestos sin respuesta",
+      "quotesToSend": "Presupuestos por tramitar",
+      "reviewsToModerate": "Reseñas por moderar",
+      "openReports": "Reportes de vehículo abiertos"
+    },
+    "segments": {
+      "title": "Carga del corredor",
+      "today": "Hoy",
+      "empty": "No hay viajes programados hoy.",
+      "count": "{count, plural, one {# viaje} other {# viajes}}",
+      "labels": {
+        "dakarAibd": "Dakar → AIBD",
+        "aibdPetiteCote": "AIBD → Petite Côte",
+        "intraDakar": "Intra-Dakar",
+        "other": "Servicio a demanda"
+      }
+    },
+    "newAccounts": {
+      "title": "Últimas cuentas creadas",
+      "empty": "Sin cuentas nuevas.",
+      "roles": {
+        "admin": "Admin",
+        "manager": "Gestor",
+        "driver": "Conductor",
+        "customer": "Cliente"
+      }
+    }
+  }
+}

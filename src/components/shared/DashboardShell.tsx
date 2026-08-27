@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useSearchParams } from "next/navigation"
 import { signOut, useSession } from "next-auth/react"
 import { useLocale, useTranslations } from "next-intl"
 import { Bell, SignOut } from "@phosphor-icons/react"
@@ -115,6 +115,7 @@ function NavLink({ item, active, accent }: { item: DashboardNavItem; active: boo
 
 export function DashboardShell({ space, accent, groups, title, chip, hasNotifications, identitySubtitle, dutyToggle, children }: DashboardShellProps) {
   const pathname = usePathname()
+  const searchParams = useSearchParams()
   const { data: session } = useSession()
   const t = useTranslations("common.actions")
   const locale = useLocale()
@@ -130,7 +131,16 @@ export function DashboardShell({ space, accent, groups, title, chip, hasNotifica
   const time = now.toLocaleTimeString(intlLocale, { hour: "2-digit", minute: "2-digit" })
 
   const flatItems = groups.flatMap((group) => group.items)
-  const isActive = (href: string) => pathname === href || pathname?.startsWith(`${href}?`)
+  // Les espaces a onglets (client, entreprise, admin) codent l'onglet actif dans
+  // ?tab=..., pas dans le pathname : on compare aussi ce parametre plutot que de
+  // ne matcher que le chemin, sinon toutes leurs entrees de nav paraissent actives.
+  const currentTab = searchParams?.get("tab") ?? null
+  const isActive = (href: string) => {
+    const [hrefPath, hrefQuery] = href.split("?")
+    if (pathname !== hrefPath) return false
+    const hrefTab = hrefQuery ? new URLSearchParams(hrefQuery).get("tab") : null
+    return hrefTab === currentTab
+  }
 
   const sidebarNav = (
     <nav className="flex-1 space-y-[22px] overflow-y-auto px-3 py-5">
