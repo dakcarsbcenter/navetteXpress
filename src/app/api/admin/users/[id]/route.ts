@@ -71,6 +71,9 @@ export async function GET(
         phone: users.phone,
         licenseNumber: users.licenseNumber,
         isActive: users.isActive,
+        isCompany: users.isCompany,
+        companyType: users.companyType,
+        companyName: users.companyName,
         createdAt: users.createdAt
       })
       .from(users)
@@ -129,7 +132,14 @@ export async function PUT(
       )
     }
 
-    const { name, email, role, phone, licenseNumber, isActive } = await request.json()
+    const { name, email, role, phone, licenseNumber, isActive, isCompany, companyType, companyName } = await request.json()
+
+    // Normaliser le type d'entreprise (uniquement pertinent pour les clients)
+    const normalizedCompanyType = (() => {
+      if (!isCompany || !companyType) return null
+      if (['hotel', 'entreprise', 'ong'].includes(companyType)) return companyType as 'hotel' | 'entreprise' | 'ong'
+      return null
+    })()
 
     // Vérifier si l'utilisateur existe
     const existingUser = await db
@@ -187,6 +197,9 @@ export async function PUT(
         phone: phone || null,
         licenseNumber: licenseNumber || null,
         isActive,
+        isCompany: !!normalizedCompanyType,
+        companyType: normalizedCompanyType,
+        companyName: normalizedCompanyType ? (companyName || null) : null,
         updatedAt: new Date()
       })
       .where(eq(users.id, (await params).id))

@@ -11,7 +11,8 @@ import {
   Trash as Trash2,
   Key,
   Clock,
-  X
+  X,
+  Buildings
 } from "@phosphor-icons/react"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { DeleteUserModal } from "@/components/ui/DeleteUserModal"
@@ -28,6 +29,9 @@ interface User {
   licenseNumber?: string
   isActive: boolean
   image?: string
+  isCompany?: boolean
+  companyType?: 'hotel' | 'entreprise' | 'ong' | null
+  companyName?: string | null
   createdAt: string
   lastLogin?: string
 }
@@ -45,6 +49,12 @@ const ROLE_META: Record<string, { label: string; color: string }> = {
   manager: { label: 'Manager', color: '#B4643A' },
   driver: { label: 'Chauffeur', color: '#1F5245' },
   customer: { label: 'Client', color: '#6E6A63' },
+}
+
+const COMPANY_TYPE_META: Record<string, { label: string; color: string }> = {
+  hotel: { label: 'Hôtel', color: '#2F6690' },
+  entreprise: { label: 'Entreprise', color: '#6B4FA0' },
+  ong: { label: 'ONG', color: '#3D8361' },
 }
 
 const fieldLabel: React.CSSProperties = {
@@ -82,7 +92,10 @@ export function UsersManagement({ userPermissions, openCreate, initialRoleFilter
     phone: '',
     licenseNumber: '',
     isActive: true,
-    password: ''
+    password: '',
+    isCompany: false,
+    companyType: '' as '' | 'hotel' | 'entreprise' | 'ong',
+    companyName: ''
   })
 
   useEffect(() => {
@@ -92,7 +105,7 @@ export function UsersManagement({ userPermissions, openCreate, initialRoleFilter
   useEffect(() => {
     if (openCreate && openCreate > 0) {
       setEditingUser(null)
-      setFormData({ name: '', email: '', role: 'customer', phone: '', licenseNumber: '', isActive: true, password: '' })
+      setFormData({ name: '', email: '', role: 'customer', phone: '', licenseNumber: '', isActive: true, password: '', isCompany: false, companyType: '', companyName: '' })
       setIsModalOpen(true)
     }
   }, [openCreate])
@@ -302,7 +315,10 @@ export function UsersManagement({ userPermissions, openCreate, initialRoleFilter
       phone: '',
       licenseNumber: '',
       isActive: true,
-      password: ''
+      password: '',
+      isCompany: false,
+      companyType: '',
+      companyName: ''
     })
     setIsModalOpen(true)
   }
@@ -316,7 +332,10 @@ export function UsersManagement({ userPermissions, openCreate, initialRoleFilter
       phone: user.phone || '',
       licenseNumber: user.licenseNumber || '',
       isActive: user.isActive,
-      password: ''
+      password: '',
+      isCompany: !!user.isCompany,
+      companyType: user.companyType || '',
+      companyName: user.companyName || ''
     })
     setIsModalOpen(true)
   }
@@ -518,15 +537,35 @@ export function UsersManagement({ userPermissions, openCreate, initialRoleFilter
                         </div>
                       </td>
                       <td style={{ padding: '12px 16px' }}>
-                        <span
-                          style={{
-                            fontFamily: 'var(--font-mono)', fontSize: '9.5px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase',
-                            padding: '3px 9px', borderRadius: '2px', backgroundColor: `${roleMeta.color}15`, color: roleMeta.color,
-                          }}
-                        >
-                          {roleMeta.label}
-                        </span>
-                        {user.phone && <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10.5px', color: '#6E6A63', marginTop: '6px' }}>{user.phone}</div>}
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span
+                            style={{
+                              fontFamily: 'var(--font-mono)', fontSize: '9.5px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase',
+                              padding: '3px 9px', borderRadius: '2px', backgroundColor: `${roleMeta.color}15`, color: roleMeta.color,
+                            }}
+                          >
+                            {roleMeta.label}
+                          </span>
+                          {user.isCompany && user.companyType && (
+                            <span
+                              className="inline-flex items-center gap-1"
+                              title={user.companyName || undefined}
+                              style={{
+                                fontFamily: 'var(--font-mono)', fontSize: '9.5px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase',
+                                padding: '3px 9px', borderRadius: '2px',
+                                backgroundColor: `${COMPANY_TYPE_META[user.companyType].color}15`,
+                                color: COMPANY_TYPE_META[user.companyType].color,
+                              }}
+                            >
+                              <Buildings size={10} weight="fill" />
+                              {COMPANY_TYPE_META[user.companyType].label}
+                            </span>
+                          )}
+                        </div>
+                        {user.companyName && (
+                          <div style={{ fontSize: '11px', fontWeight: 500, color: '#12100E', marginTop: '6px' }}>{user.companyName}</div>
+                        )}
+                        {user.phone && <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10.5px', color: '#6E6A63', marginTop: '4px' }}>{user.phone}</div>}
                       </td>
                       <td style={{ padding: '12px 16px' }}>
                         <span
@@ -656,6 +695,51 @@ export function UsersManagement({ userPermissions, openCreate, initialRoleFilter
                     style={{ ...fieldInput, fontFamily: 'var(--font-mono)' }}
                   />
                 </div>
+
+                {formData.role === 'customer' && (
+                  <div className="col-span-2" style={{ padding: '14px', border: '1px solid #E2DACD', borderRadius: '3px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <label className="flex items-center gap-3" style={{ cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={formData.isCompany}
+                        onChange={(e) => setFormData({ ...formData, isCompany: e.target.checked, companyType: e.target.checked ? formData.companyType : '' })}
+                        style={{ width: '16px', height: '16px', accentColor: '#1F5245' }}
+                      />
+                      <span className="flex items-center gap-2" style={{ fontSize: '12.5px', fontWeight: 500, color: '#12100E' }}>
+                        <Buildings size={14} />
+                        Compte entreprise / hôtel / ONG
+                      </span>
+                    </label>
+
+                    {formData.isCompany && (
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label style={fieldLabel}>Type de structure</label>
+                          <select
+                            value={formData.companyType}
+                            onChange={(e) => setFormData({ ...formData, companyType: e.target.value as '' | 'hotel' | 'entreprise' | 'ong' })}
+                            style={fieldInput}
+                          >
+                            <option value="">Sélectionner...</option>
+                            <option value="entreprise">Entreprise</option>
+                            <option value="hotel">Hôtel</option>
+                            <option value="ong">ONG</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label style={fieldLabel}>Nom de la structure</label>
+                          <input
+                            type="text"
+                            value={formData.companyName}
+                            onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+                            placeholder="Ex: Hôtel Terrou-Bi"
+                            style={fieldInput}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {!editingUser && (
                   <div className="col-span-2">

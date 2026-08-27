@@ -107,6 +107,9 @@ export async function GET(request: NextRequest) {
       licenseNumber: users.licenseNumber,
       isActive: users.isActive,
       image: users.image,
+      isCompany: users.isCompany,
+      companyType: users.companyType,
+      companyName: users.companyName,
       createdAt: users.createdAt
     }).from(users)
 
@@ -157,9 +160,16 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { name, email, role, phone, licenseNumber, isActive, password } = body
-    
-    console.log('📝 [CREATE USER] Données reçues:', { name, email, role, phone, licenseNumber, isActive, hasPassword: !!password })
+    const { name, email, role, phone, licenseNumber, isActive, password, isCompany, companyType, companyName } = body
+
+    console.log('📝 [CREATE USER] Données reçues:', { name, email, role, phone, licenseNumber, isActive, hasPassword: !!password, isCompany, companyType })
+
+    // Normaliser le type d'entreprise (uniquement pertinent pour les clients)
+    const normalizedCompanyType = (() => {
+      if (!isCompany || !companyType) return null
+      if (['hotel', 'entreprise', 'ong'].includes(companyType)) return companyType as 'hotel' | 'entreprise' | 'ong'
+      return null
+    })()
 
     // Normaliser le rôle en entrée
     const normalizedRole = (() => {
@@ -220,6 +230,9 @@ export async function POST(request: NextRequest) {
       isActive: boolean;
       password: string;
       role: 'admin' | 'manager' | 'driver' | 'customer';
+      isCompany: boolean;
+      companyType: 'hotel' | 'entreprise' | 'ong' | null;
+      companyName?: string | null;
     } = {
       id: userId,
       name,
@@ -229,6 +242,9 @@ export async function POST(request: NextRequest) {
       isActive,
       password: hashedPassword,
       role: normalizedRole,
+      isCompany: !!normalizedCompanyType,
+      companyType: normalizedCompanyType,
+      companyName: normalizedCompanyType ? (companyName || null) : null,
     }
 
     const newUser = await db
