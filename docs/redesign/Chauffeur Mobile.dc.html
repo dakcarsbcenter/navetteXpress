@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+<style>
+  html, body { margin: 0; padding: 0; background: #F7F3EC; }
+  * { box-sizing: border-box; }
+  a { color: #1F5245; text-decoration: none; }
+  a:hover { color: #19433B; }
+  ::-webkit-scrollbar { width: 0; height: 0; }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; background: #F7F3EC; font-family: Archivo, system-ui, sans-serif; color: #12100E; padding: 48px 48px 64px;">
+
+  <div style="display: flex; flex-direction: column; gap: 10px; max-width: 1600px; margin: 0 auto 40px;">
+    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #B4643A;">Application chauffeur — Android</span>
+    <h1 style="margin: 0; font-size: 32px; font-weight: 600; letter-spacing: -0.025em;">Au volant, un seul geste par étape.</h1>
+    <p style="margin: 0; max-width: 620px; font-size: 15px; color: #3d3a35; line-height: 1.55;">Le chauffeur ne lit pas un tableau de bord, il exécute une course. Chaque écran porte une seule action principale, à hauteur de pouce, dans le même système que le site.</p>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 56px; max-width: 1600px; margin: 0 auto; align-items: flex-start;">
+
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #6E6A63;">01 — Course en cours</span>
+      <x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" dark="{{ true }}" hint-size="412px,892px">
+        <div style="min-height: 100%; background: #F7F3EC; display: flex; flex-direction: column; font-family: Archivo, system-ui, sans-serif; color: #12100E;">
+
+          <div style="background: #12100E; padding: 14px 18px 18px; display: flex; flex-direction: column; gap: 16px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+              <div style="display: flex; align-items: center; gap: 9px;">
+                <div style="width: 30px; height: 30px; background: #F7F3EC; border-radius: 3px; display: grid; place-items: center;">
+                  <span style="font-size: 13px; font-weight: 700; color: #12100E;">NX</span>
+                </div>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #9a938a;">Espace chauffeur</span>
+              </div>
+              <button type="button" onClick="{{ toggleDuty }}" style="display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px; background: transparent; border: 1px solid #3a3631; border-radius: 3px; cursor: pointer;">
+                <span style="width: 7px; height: 7px; border-radius: 50%; background: {{ dutyDot }};"></span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #F7F3EC;">{{ dutyLabel }}</span>
+              </button>
+            </div>
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #B4643A;">{{ statusLabel }}</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: #6E6A63;">RÉF. NX-2408-114</span>
+            </div>
+          </div>
+
+          <div style="padding: 20px 18px; display: flex; flex-direction: column; gap: 20px; flex: 1;">
+
+            <div style="background: #FFFFFF; border: 1px solid #E2DACD; border-radius: 4px; padding: 18px; display: flex; flex-direction: column; gap: 18px;">
+              <div style="display: flex; gap: 14px;">
+                <div style="display: flex; flex-direction: column; align-items: center; padding-top: 4px;">
+                  <span style="width: 13px; height: 13px; border-radius: 50%; border: 2px solid #1F5245; background: #FFFFFF; flex-shrink: 0;"></span>
+                  <span style="width: 1.5px; flex: 1; min-height: 46px; background: #12100E;"></span>
+                  <span style="width: 13px; height: 13px; border-radius: 50%; border: 2px solid #B4643A; background: #FFFFFF; flex-shrink: 0;"></span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 20px; min-width: 0; flex: 1;">
+                  <div style="display: flex; flex-direction: column; gap: 3px;">
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63;">Prise en charge 14:20</span>
+                    <span style="font-size: 16px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.3;">Résidence Les Almadies</span>
+                    <span style="font-size: 13px; color: #6E6A63;">Route des Almadies, Dakar</span>
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 3px;">
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63;">Dépose estimée 15:15</span>
+                    <span style="font-size: 16px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.3;">Aéroport AIBD — Départs</span>
+                    <span style="font-size: 13px; color: #6E6A63;">Terminal passagers, Diass</span>
+                  </div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 14px; border-top: 1px solid #E2DACD;">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: #6E6A63;">47 KM · ~55 MIN</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 17px; font-weight: 600;">25 000 <span style="font-size: 11px; font-weight: 400; color: #6E6A63;">FCFA</span></span>
+              </div>
+            </div>
+
+            <div style="background: #E8DCC8; border-radius: 3px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+              <div style="display: flex; flex-direction: column; gap: 3px;">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63;">Vol suivi</span>
+                <span style="font-size: 14px; font-weight: 600;">AF 718 · 17:40</span>
+              </div>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #1F5245;">À l'heure</span>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 2px;">
+              <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0;">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63;">Passager</span>
+                <span style="font-size: 15px; font-weight: 600;">Mme Fatou Ndiaye</span>
+                <span style="font-size: 13px; color: #6E6A63;">2 passagers · 3 bagages · siège enfant</span>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+              <button type="button" style="flex: 1; height: 48px; display: flex; align-items: center; justify-content: center; gap: 8px; background: #FFFFFF; border: 1px solid #12100E; border-radius: 4px; color: #12100E; font-family: Archivo, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;">
+                <i class="ph ph-phone" style="font-size: 17px;"></i>
+                Appeler
+              </button>
+              <button type="button" style="flex: 1; height: 48px; display: flex; align-items: center; justify-content: center; gap: 8px; background: #FFFFFF; border: 1px solid #12100E; border-radius: 4px; color: #12100E; font-family: Archivo, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;">
+                <i class="ph ph-navigation-arrow" style="font-size: 17px;"></i>
+                Itinéraire
+              </button>
+            </div>
+          </div>
+
+          <div style="padding: 16px 18px 22px; background: #F7F3EC; border-top: 1px solid #E2DACD; display: flex; flex-direction: column; gap: 12px;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63; text-align: center;">{{ countdown }}</span>
+            <button type="button" onClick="{{ advance }}" style="height: 58px; background: #1F5245; border: none; border-radius: 4px; color: #FFFFFF; font-family: Archivo, sans-serif; font-size: 16px; font-weight: 600; cursor: pointer;">{{ primaryAction }}</button>
+            <button type="button" onClick="{{ reportIncident }}" style="height: 44px; background: transparent; border: none; color: #6E6A63; font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px;">{{ incidentLabel }}</button>
+          </div>
+        </div>
+      </x-import>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #6E6A63;">02 — Ma journée</span>
+      <x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" dark="{{ true }}" hint-size="412px,892px">
+        <div style="min-height: 100%; background: #F7F3EC; display: flex; flex-direction: column; font-family: Archivo, system-ui, sans-serif; color: #12100E;">
+
+          <div style="background: #12100E; padding: 14px 18px 20px; display: flex; flex-direction: column; gap: 18px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: #F7F3EC;">Ma journée</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #9a938a;">{{ todayShort }}</span>
+            </div>
+            <div style="display: flex; align-items: stretch; gap: 16px;">
+              <div style="display: flex; flex-direction: column; gap: 5px;">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 600; color: #F7F3EC;">4</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63;">Courses</span>
+              </div>
+              <span style="width: 1px; background: #2e2b27;"></span>
+              <div style="display: flex; flex-direction: column; gap: 5px;">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 600; color: #F7F3EC;">96 000</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63;">Encaissé</span>
+              </div>
+              <span style="width: 1px; background: #2e2b27;"></span>
+              <div style="display: flex; flex-direction: column; gap: 5px;">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 600; color: #B4643A;">1</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63;">Restante</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="flex: 1; display: flex; flex-direction: column;">
+            <sc-for list="{{ missions }}" as="m" hint-placeholder-count="4">
+              <div style="display: flex; gap: 14px; padding: 18px; border-bottom: 1px solid #E2DACD; background: #F7F3EC;">
+                <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px; width: 52px; flex-shrink: 0;">
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 600;">{{ m.time }}</span>
+                  <span style="width: 8px; height: 8px; border-radius: 50%; background: {{ m.color }};"></span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: 1;">
+                  <span style="font-size: 15px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.3;">{{ m.route }}</span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #6E6A63;">{{ m.meta }}</span>
+                  <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 2px;">
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: {{ m.color }};">{{ m.status }}</span>
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500;">{{ m.price }}</span>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="padding: 18px; background: #F7F3EC; border-top: 1px solid #E2DACD;">
+            <button type="button" style="width: 100%; height: 52px; background: #FFFFFF; border: 1px solid #12100E; border-radius: 4px; color: #12100E; font-family: Archivo, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;">Rapport de fin de journée</button>
+          </div>
+        </div>
+      </x-import>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #6E6A63;">03 — Gains et disponibilités</span>
+      <x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" dark="{{ true }}" hint-size="412px,892px">
+        <div style="min-height: 100%; background: #F7F3EC; display: flex; flex-direction: column; font-family: Archivo, system-ui, sans-serif; color: #12100E;">
+
+          <div style="background: #12100E; padding: 14px 18px 22px; display: flex; flex-direction: column; gap: 20px;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: #F7F3EC;">Mes gains</span>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #B4643A;">Semaine en cours</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 30px; font-weight: 600; color: #F7F3EC; letter-spacing: -0.01em;">312 000 <span style="font-size: 13px; font-weight: 400; color: #9a938a;">FCFA</span></span>
+              <span style="font-size: 13px; color: #9a938a; line-height: 1.5;">Objectif 350 000 — il reste deux jours.</span>
+            </div>
+            <div style="display: flex; align-items: flex-end; gap: 8px; height: 104px;">
+              <sc-for list="{{ bars }}" as="b" hint-placeholder-count="7">
+                <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 8px; height: 100%;">
+                  <div style="width: 100%; height: {{ b.h }}; background: {{ b.fill }}; border-radius: 1px;"></div>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: #6E6A63;">{{ b.day }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="padding: 22px 18px; display: flex; flex-direction: column; gap: 22px; flex: 1;">
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #6E6A63;">Mes disponibilités</span>
+              <sc-for list="{{ availability }}" as="d" hint-placeholder-count="4">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 52px; padding: 0 16px; background: #FFFFFF; border: 1px solid #E2DACD; border-radius: 4px;">
+                  <div style="display: flex; flex-direction: column; gap: 3px;">
+                    <span style="font-size: 14px; font-weight: 600;">{{ d.day }}</span>
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: #6E6A63;">{{ d.slot }}</span>
+                  </div>
+                  <span style="display: block; width: 42px; height: 24px; border-radius: 12px; background: {{ d.track }}; position: relative; flex-shrink: 0;">
+                    <span style="position: absolute; top: 3px; left: {{ d.thumb }}; width: 18px; height: 18px; border-radius: 50%; background: #FFFFFF;"></span>
+                  </span>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px; background: #E8DCC8; border-radius: 3px;">
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63;">Note du mois</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 600;">4.9 <span style="font-size: 12px; font-weight: 400; color: #6E6A63;">/ 5 · 34 avis</span></span>
+              </div>
+              <i class="ph-fill ph-star" style="font-size: 22px; color: #B4643A;"></i>
+            </div>
+          </div>
+        </div>
+      </x-import>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1600,&quot;height&quot;:1180}}">
+class Component extends DCLogic {
+  state = { step: 3, onDuty: true, incident: false };
+
+  renderVals() {
+    const steps = [
+      { label: "Nouvelle mission", action: "Accepter la mission", note: "Réponse attendue sous 8 min", color: "#B4643A" },
+      { label: "Mission acceptée", action: "Je pars vers le client", note: "Départ conseillé à 13:45", color: "#2563EB" },
+      { label: "En route", action: "Je suis sur place", note: "Arrivée prévue 14:18", color: "#7C3AED" },
+      { label: "Sur place", action: "Démarrer la course", note: "Attente sur place — 4 min", color: "#7C3AED" },
+      { label: "Course en cours", action: "Clôturer la course", note: "En route vers AIBD — 32 min", color: "#22C55E" },
+      { label: "Course terminée", action: "Course clôturée", note: "Clôturée à 15:12", color: "#6B7280" },
+    ];
+    const s = steps[this.state.step];
+    const dayLabels = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+    const values = [52, 68, 34, 90, 76, 100, 22];
+
+    return {
+      dutyLabel: this.state.onDuty ? "En service" : "Hors service",
+      dutyDot: this.state.onDuty ? "#22C55E" : "#94A3B8",
+      toggleDuty: () => this.setState(st => ({ onDuty: !st.onDuty })),
+
+      statusLabel: s.label,
+      primaryAction: s.action,
+      countdown: s.note,
+      advance: () => this.setState(st => ({ step: Math.min(st.step + 1, steps.length - 1) })),
+      incidentLabel: this.state.incident ? "Incident signalé au dispatch" : "Signaler une attente ou un incident",
+      reportIncident: () => this.setState({ incident: true }),
+
+      todayShort: new Date().toLocaleDateString("fr-FR", { weekday: "short", day: "2-digit", month: "short" }).toUpperCase(),
+
+      missions: [
+        { time: "08:15", route: "AIBD → Saly Portudal", meta: "45 km · Hôtel Lamantin", price: "25 000 F", status: "Terminée", color: "#6B7280" },
+        { time: "11:00", route: "Ngor → Plateau", meta: "Mise à disposition 2 h", price: "18 000 F", status: "Terminée", color: "#6B7280" },
+        { time: "14:20", route: "Almadies → AIBD", meta: "47 km · Vol AF 718", price: "25 000 F", status: s.label, color: s.color },
+        { time: "19:30", route: "AIBD → Mermoz", meta: "49 km · Accueil pancarte", price: "28 000 F", status: "À venir", color: "#B4643A" },
+      ],
+
+      bars: values.map((v, i) => ({
+        day: dayLabels[i],
+        h: Math.round(v * 0.78) + "px",
+        fill: i === 5 ? "#B4643A" : "#3D7A67",
+      })),
+
+      availability: [
+        { day: "Jeudi 27", slot: "06:00 — 22:00", on: true },
+        { day: "Vendredi 28", slot: "06:00 — 14:00", on: true },
+        { day: "Samedi 29", slot: "Indisponible", on: false },
+        { day: "Dimanche 30", slot: "14:00 — 23:00", on: true },
+      ].map(d => ({
+        day: d.day,
+        slot: d.slot,
+        track: d.on ? "#1F5245" : "#D8CFC0",
+        thumb: d.on ? "21px" : "3px",
+      })),
+    };
+  }
+}
+</script>
+</body>
+</html>

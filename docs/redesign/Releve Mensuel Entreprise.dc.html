@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; }
+  doc-page:not(:defined) { visibility: hidden; }
+  a { color: #1F5245; }
+  a:hover { color: #19433B; }
+</style>
+<script src="./doc-page.js"></script>
+</helmet>
+
+<doc-page margin="0.7in">
+
+  <div slot="header" style="font-family: Archivo, system-ui, sans-serif; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; padding-bottom: 10px; border-bottom: 1.5px solid #12100E;">
+    <div style="display: flex; align-items: center; gap: 9px;">
+      <div style="width: 26px; height: 26px; background: #12100E; border-radius: 3px; display: grid; place-items: center;">
+        <span style="font-size: 11pt; font-weight: 700; color: #F7F3EC;">NX</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px;">
+        <span style="font-size: 9.5pt; font-weight: 600; color: #12100E; line-height: 1;">Navette Xpress</span>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 6.5pt; letter-spacing: 0.16em; text-transform: uppercase; color: #6E6A63; line-height: 1;">Dakar — AIBD — Petite Côte</span>
+      </div>
+    </div>
+    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 7pt; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63;">Relevé mensuel · Août 2026 · {{ invoiceNumber }}</span>
+  </div>
+
+  <div slot="footer" style="font-family: 'IBM Plex Mono', monospace; font-size: 6.5pt; letter-spacing: 0.1em; color: #6E6A63; display: flex; justify-content: space-between; gap: 24px; padding-top: 8px; border-top: 1px solid #E2DACD;">
+    <span>NAVETTE XPRESS SÉNÉGAL · NINEA 007891245 2V1 · DAKAR, SÉNÉGAL</span>
+    <span>CONTACT@NAVETTEXPRESS.COM · +221 78 465 13 02</span>
+  </div>
+
+  <div style="font-family: Archivo, system-ui, sans-serif; color: #12100E; font-size: 10pt; line-height: 1.5;">
+
+    <p style="font-family: 'IBM Plex Mono', monospace; font-size: 7.5pt; letter-spacing: 0.16em; text-transform: uppercase; color: #B4643A; margin: 22px 0 8px;">Relevé mensuel consolidé</p>
+
+    <h1 style="font-size: 23pt; font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; margin: 0 0 20px;">Août 2026 — {{ missionCount }} missions, une facture.</h1>
+
+    <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; margin-bottom: 26px; break-inside: avoid;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 7pt; letter-spacing: 0.16em; text-transform: uppercase; color: #6E6A63;">Facturé à</span>
+        <span style="font-size: 12pt; font-weight: 600; letter-spacing: -0.01em;">Hôtel Lamantin Beach</span>
+        <span style="font-size: 9.5pt; color: #3d3a35; line-height: 1.55;">Route de la Corniche, Saly Portudal<br />BP 25, Mbour — Sénégal</span>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 8pt; color: #6E6A63; margin-top: 2px;">NINEA 004512378 2G3</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 9px;">
+        <sc-for list="{{ meta }}" as="m" hint-placeholder-count="5">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 14px; padding-bottom: 6px; border-bottom: 1px solid #E2DACD;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 7pt; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63;">{{ m.label }}</span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9pt; font-weight: 500; color: #12100E;">{{ m.value }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; border-top: 1px solid #E2DACD; border-bottom: 1px solid #E2DACD; margin-bottom: 26px; break-inside: avoid;">
+      <sc-for list="{{ totals }}" as="t" hint-placeholder-count="4">
+        <div style="flex: 1; padding: 13px 14px 13px 0; border-right: 1px solid #E2DACD; display: flex; flex-direction: column; gap: 5px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 14pt; font-weight: 600; letter-spacing: -0.01em; color: {{ t.color }};">{{ t.value }}</span>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 6.5pt; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63;">{{ t.label }}</span>
+        </div>
+      </sc-for>
+    </div>
+
+    <h2 style="font-size: 12.5pt; font-weight: 600; letter-spacing: -0.015em; margin: 0 0 4px;">Détail par mission</h2>
+    <p style="font-size: 9.5pt; color: #3d3a35; margin: 0 0 12px;">Chaque ligne correspond à une course réalisée et signée. Les justificatifs de péage et de carburant sont joints en annexe, numérotés par référence de mission.</p>
+
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 22px;">
+      <thead>
+        <tr>
+          <th style="text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 6.5pt; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63; padding: 0 8px 7px 0; border-bottom: 1.5px solid #12100E;">Date</th>
+          <th style="text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 6.5pt; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63; padding: 0 8px 7px 0; border-bottom: 1.5px solid #12100E;">Réf.</th>
+          <th style="text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 6.5pt; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63; padding: 0 8px 7px 0; border-bottom: 1.5px solid #12100E;">Trajet</th>
+          <th style="text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 6.5pt; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63; padding: 0 8px 7px 0; border-bottom: 1.5px solid #12100E;">Chauffeur</th>
+          <th style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 6.5pt; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63; padding: 0 8px 7px 0; border-bottom: 1.5px solid #12100E;">Pax</th>
+          <th style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 6.5pt; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63; padding: 0 8px 7px 0; border-bottom: 1.5px solid #12100E;">Km</th>
+          <th style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 6.5pt; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63; padding: 0 0 7px; border-bottom: 1.5px solid #12100E;">Montant HT</th>
+        </tr>
+      </thead>
+      <tbody>
+        <sc-for list="{{ missions }}" as="m" hint-placeholder-count="14">
+          <tr style="break-inside: avoid;">
+            <td style="font-family: 'IBM Plex Mono', monospace; font-size: 8pt; padding: 6px 8px 6px 0; border-bottom: 1px solid #F0EAE0; white-space: nowrap;">{{ m.date }}</td>
+            <td style="font-family: 'IBM Plex Mono', monospace; font-size: 8pt; color: #6E6A63; padding: 6px 8px 6px 0; border-bottom: 1px solid #F0EAE0;">{{ m.ref }}</td>
+            <td style="font-size: 9pt; padding: 6px 8px 6px 0; border-bottom: 1px solid #F0EAE0;">{{ m.route }}</td>
+            <td style="font-size: 9pt; color: #3d3a35; padding: 6px 8px 6px 0; border-bottom: 1px solid #F0EAE0; white-space: nowrap;">{{ m.driver }}</td>
+            <td style="font-family: 'IBM Plex Mono', monospace; font-size: 8pt; text-align: right; padding: 6px 8px 6px 0; border-bottom: 1px solid #F0EAE0;">{{ m.pax }}</td>
+            <td style="font-family: 'IBM Plex Mono', monospace; font-size: 8pt; text-align: right; color: #6E6A63; padding: 6px 8px 6px 0; border-bottom: 1px solid #F0EAE0;">{{ m.km }}</td>
+            <td style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5pt; font-weight: 500; text-align: right; padding: 6px 0; border-bottom: 1px solid #F0EAE0; white-space: nowrap;">{{ m.amount }}</td>
+          </tr>
+        </sc-for>
+      </tbody>
+    </table>
+
+    <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr); gap: 28px; margin-bottom: 24px; break-inside: avoid;">
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 7pt; letter-spacing: 0.16em; text-transform: uppercase; color: #6E6A63;">Répartition par prestation</span>
+        <sc-for list="{{ categories }}" as="c" hint-placeholder-count="4">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 14px; padding-bottom: 7px; border-bottom: 1px solid #E2DACD;">
+            <span style="font-size: 9.5pt;">{{ c.label }}</span>
+            <span style="display: flex; align-items: baseline; gap: 14px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 8pt; color: #6E6A63; white-space: nowrap;">{{ c.count }}</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9pt; font-weight: 500; white-space: nowrap;">{{ c.amount }}</span>
+            </span>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="background: #E8DCC8; border-radius: 3px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; height: fit-content;">
+        <sc-for list="{{ lines }}" as="l" hint-placeholder-count="3">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 14px;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 7.5pt; letter-spacing: 0.12em; text-transform: uppercase; color: #3d3a35;">{{ l.label }}</span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5pt; font-weight: 500; color: #12100E;">{{ l.value }}</span>
+          </div>
+        </sc-for>
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 14px; padding-top: 12px; border-top: 1px solid rgba(18,16,14,.2);">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 7.5pt; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #12100E;">Total à payer</span>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 15pt; font-weight: 600; letter-spacing: -0.01em; color: #12100E;">{{ totalTTC }}</span>
+        </div>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5pt; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #12100E;">Échéance {{ dueDate }}</span>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; break-inside: avoid; padding-top: 18px; border-top: 1px solid #E2DACD;">
+      <div style="display: flex; flex-direction: column; gap: 7px;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 7pt; letter-spacing: 0.16em; text-transform: uppercase; color: #6E6A63;">Règlement</span>
+        <p style="margin: 0; font-size: 9.5pt; color: #3d3a35; line-height: 1.6;">Wave, Orange Money ou virement bancaire, sous 30 jours à compter de la date d'émission. Les coordonnées bancaires figurent en annexe de la convention signée le 14 janvier 2026.</p>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 7px;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 7pt; letter-spacing: 0.16em; text-transform: uppercase; color: #6E6A63;">Interlocuteur</span>
+        <p style="margin: 0; font-size: 9.5pt; color: #3d3a35; line-height: 1.6;">Aïcha Sow — comptes entreprises<br />entreprises@navettexpress.com · +221 78 465 13 02<br />Toute contestation de ligne est à signaler dans les 15 jours.</p>
+      </div>
+    </div>
+
+  </div>
+</doc-page>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+class Component extends DCLogic {
+  renderVals() {
+    const raw = [
+      { date: "02/08", ref: "M-0389", route: "Dakar Plateau → AIBD", driver: "Ousmane Diallo", pax: 2, km: 47, amount: 25000, cat: "transfert" },
+      { date: "03/08", ref: "M-0391", route: "AIBD → Hôtel Lamantin", driver: "Mamadou Bâ", pax: 3, km: 45, amount: 25000, cat: "transfert" },
+      { date: "05/08", ref: "M-0394", route: "AIBD → Hôtel Lamantin", driver: "Cheikh Sarr", pax: 1, km: 45, amount: 25000, cat: "transfert" },
+      { date: "06/08", ref: "M-0396", route: "Mise à disposition — journée", driver: "Ousmane Diallo", pax: 4, km: 150, amount: 75000, cat: "dispo" },
+      { date: "08/08", ref: "M-0399", route: "Hôtel Lamantin → AIBD", driver: "Ibrahima Fall", pax: 2, km: 45, amount: 25000, cat: "transfert" },
+      { date: "09/08", ref: "M-0402", route: "Dakar → Saly Portudal", driver: "Mamadou Bâ", pax: 3, km: 92, amount: 45000, cat: "region" },
+      { date: "12/08", ref: "M-0405", route: "AIBD → Hôtel Lamantin", driver: "Cheikh Sarr", pax: 2, km: 45, amount: 25000, cat: "transfert" },
+      { date: "14/08", ref: "M-0407", route: "Mise à disposition — journée", driver: "Ousmane Diallo", pax: 2, km: 150, amount: 75000, cat: "dispo" },
+      { date: "16/08", ref: "M-0409", route: "Navette groupe AIBD → Saly", driver: "Ibrahima Fall", pax: 7, km: 45, amount: 65000, cat: "groupe" },
+      { date: "19/08", ref: "M-0411", route: "Hôtel Lamantin → AIBD", driver: "Mamadou Bâ", pax: 2, km: 45, amount: 25000, cat: "transfert" },
+      { date: "21/08", ref: "M-0412", route: "AIBD → Hôtel Lamantin", driver: "Cheikh Sarr", pax: 1, km: 45, amount: 25000, cat: "transfert" },
+      { date: "23/08", ref: "M-0415", route: "Saly Portudal → Mbour", driver: "Ibrahima Fall", pax: 2, km: 34, amount: 18000, cat: "region" },
+      { date: "25/08", ref: "M-0418", route: "AIBD → Hôtel Lamantin", driver: "Ousmane Diallo", pax: 4, km: 45, amount: 25000, cat: "transfert" },
+      { date: "26/08", ref: "M-0420", route: "Hôtel Lamantin → AIBD", driver: "Mamadou Bâ", pax: 2, km: 45, amount: 25000, cat: "transfert" },
+    ];
+
+    const fmt = n => n.toLocaleString("fr-FR").replace(/\u202f|\u00a0/g, " ");
+    const ht = raw.reduce((s, m) => s + m.amount, 0);
+    const km = raw.reduce((s, m) => s + m.km, 0);
+    const taxRate = 0.18;
+    const tva = Math.round(ht * taxRate);
+    const ttc = ht + tva;
+
+    const catLabels = {
+      transfert: "Transferts AIBD",
+      dispo: "Mise à disposition",
+      groupe: "Navette groupe",
+      region: "Trajets régionaux",
+    };
+    const order = ["transfert", "dispo", "groupe", "region"];
+    const categories = order.map(key => {
+      const items = raw.filter(m => m.cat === key);
+      const sum = items.reduce((s, m) => s + m.amount, 0);
+      return {
+        label: catLabels[key],
+        count: items.length + (items.length > 1 ? " missions" : " mission"),
+        amount: fmt(sum) + " F",
+      };
+    });
+
+    return {
+      invoiceNumber: "F-2026-08-014",
+      missionCount: raw.length,
+      dueDate: "30/09/2026",
+      totalTTC: fmt(ttc) + " F",
+
+      meta: [
+        { label: "Numéro", value: "F-2026-08-014" },
+        { label: "Période", value: "01 — 31 août 2026" },
+        { label: "Émission", value: "31/08/2026" },
+        { label: "Échéance", value: "30/09/2026" },
+        { label: "Convention", value: "CV-2026-018" },
+      ],
+
+      totals: [
+        { value: String(raw.length), label: "Missions", color: "#12100E" },
+        { value: fmt(km) + " km", label: "Distance cumulée", color: "#12100E" },
+        { value: fmt(ht), label: "Total HT (FCFA)", color: "#12100E" },
+        { value: fmt(ttc), label: "Total TTC (FCFA)", color: "#B4643A" },
+      ],
+
+      missions: raw.map(m => ({
+        date: m.date,
+        ref: m.ref,
+        route: m.route,
+        driver: m.driver,
+        pax: String(m.pax),
+        km: String(m.km),
+        amount: fmt(m.amount),
+      })),
+
+      categories,
+
+      lines: [
+        { label: "Total HT", value: fmt(ht) + " F" },
+        { label: "TVA 18 %", value: fmt(tva) + " F" },
+        { label: "Justificatifs joints", value: String(raw.length) },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

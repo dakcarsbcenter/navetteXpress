@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+<style>
+  html, body { margin: 0; padding: 0; background: #F7F3EC; }
+  * { box-sizing: border-box; }
+  a { color: #1F5245; text-decoration: none; }
+  a:hover { color: #19433B; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: rgba(0,0,0,.18); border-radius: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  @keyframes nxLive { 0% { box-shadow: 0 0 0 0 rgba(34,197,94,.55); } 70% { box-shadow: 0 0 0 7px rgba(34,197,94,0); } 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); } }
+</style>
+</helmet>
+
+<div style="display: flex; min-height: 100vh; background: #F7F3EC; font-family: Archivo, system-ui, sans-serif; color: #12100E;">
+
+  <aside style="width: 248px; flex-shrink: 0; background: #12100E; display: flex; flex-direction: column;">
+    <div style="padding: 20px; border-bottom: 1px solid #2e2b27; display: flex; align-items: center; gap: 10px;">
+      <div style="width: 36px; height: 36px; background: #F7F3EC; border-radius: 3px; display: grid; place-items: center; flex-shrink: 0;">
+        <span style="font-weight: 700; font-size: 15px; color: #12100E; letter-spacing: -0.02em;">NX</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 3px;">
+        <span style="font-size: 14px; font-weight: 600; color: #F7F3EC; line-height: 1;">Navette Xpress</span>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: #3D7A67; line-height: 1;">Espace admin</span>
+      </div>
+    </div>
+
+    <div style="padding: 18px 20px; border-bottom: 1px solid #2e2b27; display: flex; align-items: center; gap: 12px;">
+      <div style="width: 40px; height: 40px; border: 1px solid #3a3631; border-radius: 3px; display: grid; place-items: center; flex-shrink: 0;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; color: #F7F3EC;">AS</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0;">
+        <span style="font-size: 13px; font-weight: 600; color: #F7F3EC;">Aïcha Sow</span>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #9a938a;">Administratrice</span>
+      </div>
+    </div>
+
+    <nav style="flex: 1; padding: 20px 12px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto;">
+      <sc-for list="{{ navGroups }}" as="g" hint-placeholder-count="3">
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: #6E6A63; padding: 0 12px 8px;">{{ g.label }}</span>
+          <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="4">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; height: 38px; padding: 0 12px; border-radius: 3px; background: {{ it.bg }}; border-left: 2px solid {{ it.mark }}; color: {{ it.fg }}; font-size: 13px; font-weight: {{ it.weight }}; cursor: pointer;">
+              <span style="display: flex; align-items: center; gap: 10px;">
+                <i class="{{ it.icon }}" style="font-size: 16px;"></i>
+                {{ it.label }}
+              </span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.1em; color: #B4643A;">{{ it.badge }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-for>
+    </nav>
+
+    <div style="padding: 16px; border-top: 1px solid #2e2b27; display: flex; flex-direction: column; gap: 10px;">
+      <div style="display: flex; gap: 8px;">
+        <button type="button" style="flex: 1; height: 36px; background: transparent; border: 1px solid #3a3631; border-radius: 3px; color: #9a938a; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;" style-hover="color: #F7F3EC; border-color: #6E6A63;">Clair</button>
+        <button type="button" style="flex: 1; height: 36px; background: transparent; border: 1px solid #3a3631; border-radius: 3px; color: #9a938a; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;" style-hover="color: #F7F3EC; border-color: #6E6A63;">FR</button>
+      </div>
+      <button type="button" style="display: flex; align-items: center; gap: 10px; height: 40px; background: transparent; border: 1px solid #3a3631; border-radius: 3px; color: #9a938a; font-size: 12px; font-weight: 500; cursor: pointer; padding: 0 12px;" style-hover="color: #B8493C; border-color: rgba(184,73,60,.5);">
+        <i class="ph ph-sign-out" style="font-size: 16px;"></i>
+        Déconnexion
+      </button>
+    </div>
+  </aside>
+
+  <main style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+
+    <header style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px clamp(16px, 3vw, 32px); border-bottom: 1px solid #E2DACD; flex-wrap: wrap;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <h1 style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;">Vue d'ensemble</h1>
+        <p style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63;">{{ todayLabel }} — {{ clock }}</p>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px; height: 38px; padding: 0 12px; border: 1px solid #E2DACD; border-radius: 3px; background: #FFFFFF;">
+          <span style="width: 7px; height: 7px; border-radius: 50%; background: #22C55E; animation: nxLive 2s ease-in-out infinite;"></span>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;">Système opérationnel</span>
+        </div>
+        <button type="button" style="position: relative; width: 38px; height: 38px; border: 1px solid #E2DACD; border-radius: 3px; background: #FFFFFF; cursor: pointer; display: grid; place-items: center;" style-hover="border-color: #12100E;">
+          <i class="ph ph-bell" style="font-size: 18px; color: #12100E;"></i>
+          <span style="position: absolute; top: 7px; right: 7px; width: 6px; height: 6px; border-radius: 50%; background: #B4643A; border: 1.5px solid #FFFFFF;"></span>
+        </button>
+        <div style="width: 38px; height: 38px; border: 1px solid #E2DACD; border-radius: 3px; background: #FFFFFF; display: grid; place-items: center;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600;">AS</span>
+        </div>
+      </div>
+    </header>
+
+    <div style="flex: 1; max-width: 1320px; width: 100%; margin: 0 auto; padding: 28px clamp(16px, 3vw, 32px) 56px; display: flex; flex-direction: column; gap: 26px;">
+
+      <section style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #1F5245;">Corridor — temps réel</span>
+          <h2 style="margin: 0; font-size: clamp(22px, 2.4vw, 30px); font-weight: 600; letter-spacing: -0.025em; line-height: 1.1;">{{ headline }}</h2>
+          <p style="margin: 0; font-size: 15px; color: #3d3a35; line-height: 1.5;">{{ subline }}</p>
+        </div>
+      </section>
+
+      <section style="display: flex; flex-wrap: wrap; border-top: 1px solid #E2DACD; border-bottom: 1px solid #E2DACD;">
+        <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="5">
+          <div style="flex: 1 1 168px; min-width: 168px; padding: 20px 22px; border-right: 1px solid #E2DACD; display: flex; flex-direction: column; gap: 8px;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 23px; font-weight: 600; letter-spacing: -0.01em; color: {{ k.color }};">{{ k.value }}</span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63;">{{ k.label }}</span>
+            <span style="font-size: 12px; color: #3d3a35;">{{ k.note }}</span>
+          </div>
+        </sc-for>
+      </section>
+
+      <section style="background: #FFFFFF; border: 1px solid #E2DACD; border-radius: 4px; overflow: hidden;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 24px; border-bottom: 1px solid #E2DACD;">
+          <div style="display: flex; flex-direction: column; gap: 5px;">
+            <h3 style="margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -0.01em;">File d'assignation</h3>
+            <span style="font-size: 12.5px; color: #6E6A63;">La disponibilité du chauffeur est vérifiée avant l'assignation. Une notification part par email et WhatsApp.</span>
+          </div>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #B4643A; white-space: nowrap;">{{ queueLabel }}</span>
+        </div>
+
+        <sc-if value="{{ hasQueue }}" hint-placeholder-val="{{ true }}">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 1px; background: #E2DACD;">
+
+            <div style="padding: 24px; background: #FFFFFF; display: flex; flex-direction: column; gap: 22px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+                <span style="display: inline-flex; align-items: center; gap: 7px; height: 26px; padding: 0 10px; border-radius: 2px; background: rgba(180,100,58,.10);">
+                  <span style="width: 6px; height: 6px; border-radius: 50%; background: #B4643A;"></span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #B4643A;">À assigner</span>
+                </span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: #6E6A63;">RÉF. {{ current.ref }}</span>
+              </div>
+
+              <div style="display: flex; align-items: center;">
+                <div style="display: flex; flex-direction: column; gap: 10px; flex-shrink: 0;">
+                  <span style="width: 13px; height: 13px; border-radius: 50%; border: 2px solid #1F5245; background: #FFFFFF;"></span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63;">Départ</span>
+                </div>
+                <span style="flex: 1; height: 1.5px; background: #12100E; margin: 0 14px 22px;"></span>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; flex-shrink: 0; margin-bottom: 22px;">
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600;">{{ current.km }}</span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #6E6A63;">{{ current.duration }}</span>
+                </div>
+                <span style="flex: 1; height: 1.5px; background: #12100E; margin: 0 14px 22px;"></span>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px; flex-shrink: 0;">
+                  <span style="width: 13px; height: 13px; border-radius: 50%; border: 2px solid #B4643A; background: #FFFFFF;"></span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63;">Arrivée</span>
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: 20px;">
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                  <span style="font-size: 16px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.3;">{{ current.from }}</span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em;">{{ current.when }}</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 5px; text-align: right;">
+                  <span style="font-size: 16px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.3;">{{ current.to }}</span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: #6E6A63;">{{ current.pax }}</span>
+                </div>
+              </div>
+
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px; background: #F7F3EC; border-radius: 3px;">
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63;">Client</span>
+                  <span style="font-size: 14px; font-weight: 600;">{{ current.client }}</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px; text-align: right;">
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63;">Prix</span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600;">{{ current.price }}</span>
+                </div>
+              </div>
+
+              <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}">
+                <div style="display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border: 1px solid rgba(184,73,60,.45); border-radius: 3px; background: rgba(184,73,60,.06);">
+                  <i class="ph-fill ph-warning-circle" style="font-size: 18px; color: #B8493C; flex-shrink: 0;"></i>
+                  <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <span style="font-size: 13.5px; font-weight: 600; color: #B8493C;">Assignation refusée</span>
+                    <span style="font-size: 13px; color: #3d3a35; line-height: 1.5;">{{ errorMessage }}</span>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+
+            <div style="padding: 24px; background: #FFFFFF; display: flex; flex-direction: column; gap: 14px;">
+              <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px;">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63;">Chauffeurs — {{ current.when }}</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63;">11 / 14 actifs</span>
+              </div>
+              <sc-for list="{{ drivers }}" as="d" hint-placeholder-count="4">
+                <button type="button" onClick="{{ d.assign }}" style="display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 12px 14px; background: #FFFFFF; border: 1px solid {{ d.border }}; border-radius: 3px; cursor: pointer; text-align: left; width: 100%;" style-hover="border-color: #12100E;">
+                  <div style="display: flex; align-items: center; gap: 12px; min-width: 0;">
+                    <div style="width: 34px; height: 34px; border: 1px solid #E2DACD; border-radius: 3px; display: grid; place-items: center; flex-shrink: 0;">
+                      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; font-weight: 600;">{{ d.initials }}</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 3px; min-width: 0;">
+                      <span style="font-size: 13.5px; font-weight: 600;">{{ d.name }}</span>
+                      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: #6E6A63;">{{ d.meta }}</span>
+                    </div>
+                  </div>
+                  <span style="display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;">
+                    <span style="width: 6px; height: 6px; border-radius: 50%; background: {{ d.color }};"></span>
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: {{ d.color }};">{{ d.status }}</span>
+                  </span>
+                </button>
+              </sc-for>
+              <div style="display: flex; gap: 10px; margin-top: auto;">
+                <button type="button" style="flex: 1; height: 44px; background: transparent; border: 1px solid #E2DACD; border-radius: 4px; color: #12100E; font-size: 13px; font-weight: 500; cursor: pointer;" style-hover="border-color: #12100E;">Proposer un prix</button>
+                <button type="button" onClick="{{ skip }}" style="flex: 1; height: 44px; background: transparent; border: 1px solid #E2DACD; border-radius: 4px; color: #6E6A63; font-size: 13px; font-weight: 500; cursor: pointer;" style-hover="border-color: #12100E; color: #12100E;">Traiter plus tard</button>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ queueEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="padding: 44px 24px; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+            <i class="ph ph-check-circle" style="font-size: 30px; color: #1F5245;"></i>
+            <span style="font-size: 16px; font-weight: 600;">File vide — tout est assigné</span>
+            <span style="font-size: 13.5px; color: #6E6A63; text-align: center; max-width: 34em; line-height: 1.55;">Les deux réservations de la file ont été traitées. Les chauffeurs ont reçu leur notification par email et WhatsApp.</span>
+          </div>
+        </sc-if>
+      </section>
+
+      <section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 24px; align-items: start;">
+
+        <div style="background: #FFFFFF; border: 1px solid #E2DACD; border-radius: 4px;">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 18px 24px; border-bottom: 1px solid #E2DACD;">
+            <h3 style="margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -0.01em;">Réservations récentes</h3>
+            <a href="#" style="font-size: 13px; font-weight: 600; color: #12100E; border-bottom: 2px solid #12100E; padding-bottom: 2px;">Tout voir</a>
+          </div>
+          <div style="display: grid; grid-template-columns: 90px minmax(0, 1fr) 130px auto auto; gap: 14px; padding: 12px 24px; border-bottom: 1px solid #E2DACD;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63;">Réf.</span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63;">Client et trajet</span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63;">Chauffeur</span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63; text-align: right;">Montant</span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63;">Statut</span>
+          </div>
+          <sc-for list="{{ recent }}" as="r" hint-placeholder-count="6">
+            <div style="display: grid; grid-template-columns: 90px minmax(0, 1fr) 130px auto auto; gap: 14px; align-items: center; padding: 14px 24px; border-bottom: 1px solid #F0EAE0;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500;">{{ r.ref }}</span>
+              <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0;">
+                <span style="font-size: 13.5px; font-weight: 600;">{{ r.client }}</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #6E6A63;">{{ r.route }}</span>
+              </div>
+              <span style="font-size: 13px; color: {{ r.driverColor }};">{{ r.driver }}</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; text-align: right; white-space: nowrap;">{{ r.amount }}</span>
+              <span style="display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 9px; border-radius: 2px; background: {{ r.bg }}; white-space: nowrap;">
+                <span style="width: 5px; height: 5px; border-radius: 50%; background: {{ r.color }}; animation: {{ r.pulse }};"></span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: {{ r.color }};">{{ r.status }}</span>
+              </span>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+
+          <div style="background: #12100E; border-radius: 4px; padding: 24px; display: flex; flex-direction: column; gap: 18px;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #B4643A;">Ce qui attend une décision</span>
+            <sc-for list="{{ alerts }}" as="a" hint-placeholder-count="4">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 14px; padding-bottom: 13px; border-bottom: 1px solid #2e2b27;">
+                <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0;">
+                  <span style="font-size: 13.5px; font-weight: 600; color: #F7F3EC;">{{ a.label }}</span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: #6E6A63;">{{ a.note }}</span>
+                </div>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 17px; font-weight: 600; color: {{ a.color }}; flex-shrink: 0;">{{ a.count }}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid #E2DACD; border-radius: 4px; padding: 22px 24px; display: flex; flex-direction: column; gap: 18px;">
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px;">
+              <h3 style="margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -0.01em;">Charge du corridor</h3>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63;">Aujourd'hui</span>
+            </div>
+            <sc-for list="{{ segments }}" as="s" hint-placeholder-count="4">
+              <div style="display: flex; flex-direction: column; gap: 7px;">
+                <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px;">
+                  <span style="font-size: 13px; font-weight: 500;">{{ s.label }}</span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #6E6A63;">{{ s.count }}</span>
+                </div>
+                <div style="height: 6px; background: #F0EAE0; border-radius: 1px; overflow: hidden;">
+                  <div style="height: 100%; width: {{ s.w }}; background: {{ s.fill }};"></div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid #E2DACD; border-radius: 4px; padding: 22px 24px; display: flex; flex-direction: column; gap: 12px;">
+            <h3 style="margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -0.01em;">Derniers comptes créés</h3>
+            <div style="display: flex; flex-direction: column; gap: 1px; background: #E2DACD; border: 1px solid #E2DACD; border-radius: 3px; overflow: hidden;">
+              <sc-for list="{{ newUsers }}" as="u" hint-placeholder-count="3">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 14px; background: #FFFFFF;">
+                  <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+                    <span style="font-size: 13px; font-weight: 500;">{{ u.name }}</span>
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; color: #6E6A63;">{{ u.email }}</span>
+                  </div>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #12100E; border: 1px solid #E2DACD; border-radius: 2px; padding: 3px 7px; flex-shrink: 0;">{{ u.role }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:1400}}">
+class Component extends DCLogic {
+  state = { queue: 0, error: null, assignedCount: 0, now: new Date() };
+
+  componentDidMount() {
+    this.timer = setInterval(() => this.setState({ now: new Date() }), 30000);
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+
+  renderVals() {
+    const tones = {
+      wait: { color: "#B4643A", bg: "rgba(180,100,58,.10)" },
+      ok: { color: "#1F5245", bg: "rgba(31,82,69,.10)" },
+      live: { color: "#1B9E4B", bg: "rgba(34,197,94,.12)" },
+      done: { color: "#6E6A63", bg: "rgba(110,106,99,.12)" },
+      stop: { color: "#B8493C", bg: "rgba(184,73,60,.10)" },
+    };
+
+    const queue = [
+      {
+        ref: "NX-1148", from: "Résidence Les Almadies", to: "Aéroport AIBD",
+        when: "AUJOURD'HUI 14:20", km: "47 KM", duration: "~55 MIN",
+        pax: "2 PAX · 3 BAGAGES", client: "Fatou Ndiaye", price: "25 000 F",
+      },
+      {
+        ref: "NX-1147", from: "Aéroport AIBD", to: "Hôtel Lamantin, Saly",
+        when: "AUJOURD'HUI 15:00", km: "45 KM", duration: "~40 MIN",
+        pax: "7 PAX · NAVETTE GROUPE", client: "Hôtel Lamantin Beach", price: "65 000 F",
+      },
+    ];
+
+    const drivers = [
+      { initials: "OD", name: "Ousmane Diallo", meta: "Berline · 2 courses aujourd'hui", status: "Disponible", tone: "ok", available: true },
+      { initials: "MB", name: "Mamadou Bâ", meta: "SUV · 1 course aujourd'hui", status: "Disponible", tone: "ok", available: true },
+      { initials: "CS", name: "Cheikh Sarr", meta: "Berline · indisponibilité déclarée", status: "Indisponible", tone: "stop", available: false },
+      { initials: "IF", name: "Ibrahima Fall", meta: "Van · en course jusqu'à 15:40", status: "En course", tone: "live", available: false },
+    ];
+
+    const idx = this.state.queue;
+    const done = idx >= queue.length;
+    const current = done ? queue[queue.length - 1] : queue[idx];
+    const assigned = this.state.assignedCount;
+
+    const errorFor = d => d.status === "Indisponible"
+      ? "Cheikh Sarr a déclaré une indisponibilité sur ce créneau. Choisissez un autre chauffeur ou modifiez ses disponibilités."
+      : "Ibrahima Fall est en course jusqu'à 15:40, soit après l'heure de prise en charge. L'assignation est bloquée pour éviter le chevauchement.";
+
+    const recentBase = [
+      { ref: "NX-1145", client: "Moussa Sène", route: "Plateau → AIBD", driver: "Ibrahima Fall", amount: "25 000 F", status: "En cours", tone: "live" },
+      { ref: "NX-1144", client: "Aminata Diop", route: "Mbour → Dakar", driver: "Cheikh Sarr", amount: "45 000 F", status: "En cours", tone: "live" },
+      { ref: "NX-1142", client: "Fatou Ndiaye", route: "Almadies → AIBD", driver: "Ousmane Diallo", amount: "25 000 F", status: "Validé", tone: "ok" },
+      { ref: "NX-1139", client: "Khady Traoré", route: "AIBD → Saly", driver: "—", amount: "25 000 F", status: "Attente", tone: "wait" },
+      { ref: "NX-1131", client: "Ibrahima Ndoye", route: "Plateau → Ngor", driver: "Mamadou Bâ", amount: "18 000 F", status: "Clos", tone: "done" },
+      { ref: "NX-1128", client: "Hôtel Lamantin", route: "AIBD → Saly", driver: "Ousmane Diallo", amount: "65 000 F", status: "Clos", tone: "done" },
+    ];
+
+    const dt = this.state.now;
+
+    return {
+      todayLabel: dt.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }).toUpperCase(),
+      clock: dt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
+
+      headline: done ? "Six courses en cours, file vide." : "Six courses en cours, " + (queue.length - idx) + " à assigner.",
+      subline: done
+        ? "Toutes les réservations de la file ont un chauffeur. Deux prix proposés attendent encore la réponse du client."
+        : "Le péage se charge vers 17 h — les transferts AIBD de fin de journée partent avec 15 minutes d'avance.",
+
+      kpis: [
+        { value: String(Math.max(queue.length - idx, 0)), label: "À assigner", note: done ? "File vide" : "Sur le corridor AIBD", color: done ? "#1F5245" : "#B4643A" },
+        { value: "6", label: "En cours", note: "Dont 4 vers AIBD", color: "#12100E" },
+        { value: "11/14", label: "Chauffeurs actifs", note: "1 indisponibilité déclarée", color: "#12100E" },
+        { value: "9", label: "Véhicules actifs", note: "2 en entretien", color: "#12100E" },
+        { value: "1,42 M", label: "Recettes du jour", note: "Courses clôturées", color: "#12100E" },
+      ],
+
+      navGroups: [
+        { label: "Exploitation", items: [
+          { label: "Vue d'ensemble", icon: "ph-fill ph-squares-four", active: true },
+          { label: "Réservations", icon: "ph ph-calendar-blank", badge: done ? "" : String(queue.length - idx) },
+          { label: "Devis", icon: "ph ph-file-text", badge: "3" },
+          { label: "Chauffeurs", icon: "ph ph-steering-wheel" },
+        ]},
+        { label: "Référentiel", items: [
+          { label: "Véhicules", icon: "ph ph-car" },
+          { label: "Services", icon: "ph ph-list-checks" },
+          { label: "Lieux", icon: "ph ph-map-pin" },
+        ]},
+        { label: "Administration", items: [
+          { label: "Utilisateurs", icon: "ph ph-users" },
+          { label: "Permissions", icon: "ph ph-lock-key" },
+          { label: "Factures", icon: "ph ph-receipt" },
+          { label: "Avis", icon: "ph ph-star", badge: "2" },
+          { label: "Statistiques", icon: "ph ph-chart-line" },
+        ]},
+      ].map(g => ({
+        label: g.label,
+        items: g.items.map(it => ({
+          label: it.label,
+          icon: it.icon,
+          badge: it.badge ?? "",
+          bg: it.active ? "rgba(31,82,69,.22)" : "transparent",
+          mark: it.active ? "#1F5245" : "transparent",
+          fg: it.active ? "#F7F3EC" : "#9a938a",
+          weight: it.active ? 600 : 500,
+        })),
+      })),
+
+      hasQueue: !done,
+      queueEmpty: done,
+      queueLabel: done ? "0 en attente" : (queue.length - idx) + " en attente · la plus ancienne il y a 12 min",
+      current,
+
+      hasError: !!this.state.error,
+      errorMessage: this.state.error ?? "",
+
+      drivers: drivers.map(d => ({
+        initials: d.initials,
+        name: d.name,
+        meta: d.meta,
+        status: d.status,
+        color: tones[d.tone].color,
+        border: d.available ? "#E2DACD" : "rgba(184,73,60,.30)",
+        assign: () => d.available
+          ? this.setState(st => ({ queue: st.queue + 1, assignedCount: st.assignedCount + 1, error: null }))
+          : this.setState({ error: errorFor(d) }),
+      })),
+
+      skip: () => this.setState(st => ({ queue: st.queue + 1, error: null })),
+
+      recent: (assigned > 0
+        ? [{ ref: queue[0].ref, client: queue[0].client, route: "Almadies → AIBD", driver: "Ousmane Diallo", amount: "25 000 F", status: "Assignée", tone: "ok" }].concat(recentBase)
+        : recentBase
+      ).slice(0, 6).map(r => ({
+        ref: r.ref,
+        client: r.client,
+        route: r.route,
+        driver: r.driver,
+        driverColor: r.driver === "—" ? "#B4643A" : "#3d3a35",
+        amount: r.amount,
+        status: r.status,
+        color: tones[r.tone].color,
+        bg: tones[r.tone].bg,
+        pulse: r.tone === "live" ? "nxLive 2s ease-in-out infinite" : "none",
+      })),
+
+      alerts: [
+        { label: "Prix proposés sans réponse", note: "Le plus ancien depuis 3 jours", count: "2", color: "#B4643A" },
+        { label: "Devis à envoyer", note: "Dont un séminaire de 6 dates", count: "3", color: "#B4643A" },
+        { label: "Avis à modérer", note: "Publiés après validation", count: "2", color: "#B4643A" },
+        { label: "Rapports véhicule ouverts", note: "1 signalé urgent", count: "4", color: "#B8493C" },
+      ],
+
+      segments: [
+        { label: "Dakar → AIBD", count: "9 courses", w: "100%", fill: "#12100E" },
+        { label: "AIBD → Petite Côte", count: "6 courses", w: "67%", fill: "#12100E" },
+        { label: "Mise à disposition", count: "3 courses", w: "33%", fill: "#B4643A" },
+        { label: "Intra-Dakar", count: "2 courses", w: "22%", fill: "#12100E" },
+      ],
+
+      newUsers: [
+        { name: "Ndèye Fall", email: "ndeye.fall@gmail.com", role: "Client" },
+        { name: "Résidence Ngor Suites", email: "contact@ngorsuites.sn", role: "Entreprise" },
+        { name: "Abdou Kane", email: "abdou.kane@navettexpress.com", role: "Chauffeur" },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

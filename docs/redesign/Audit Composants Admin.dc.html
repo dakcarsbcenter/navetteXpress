@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; }
+  doc-page:not(:defined) { visibility: hidden; }
+  a { color: #1F5245; }
+  a:hover { color: #19433B; }
+</style>
+<script src="./doc-page.js"></script>
+</helmet>
+
+<doc-page margin="0.85in">
+  <div style="font-family: Archivo, system-ui, sans-serif; color: #12100E; font-size: 11pt; line-height: 1.55;">
+
+    <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 14px; border-bottom: 1.5px solid #12100E;">
+      <div style="width: 30px; height: 30px; background: #12100E; border-radius: 3px; display: grid; place-items: center;">
+        <span style="font-size: 12pt; font-weight: 700; color: #F7F3EC;">NX</span>
+      </div>
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 8pt; letter-spacing: 0.16em; text-transform: uppercase; color: #6E6A63;">Navette Xpress — note technique interne</span>
+    </div>
+
+    <p style="font-family: 'IBM Plex Mono', monospace; font-size: 8pt; letter-spacing: 0.16em; text-transform: uppercase; color: #B4643A; margin: 26px 0 10px;">Option 2 — Dette de composants</p>
+
+    <h1 style="font-size: 24pt; font-weight: 600; letter-spacing: -0.025em; line-height: 1.12; margin: 0 0 14px;">Quatre versions du même écran. Une seule tourne.</h1>
+
+    <p style="font-size: 11.5pt; color: #3d3a35; margin: 0 0 26px; max-width: 34em;">Le dossier <code style="font-family: 'IBM Plex Mono', monospace; font-size: 10pt;">src/components/admin/</code> contient 39 fichiers, dont 18 — soit 594 ko — que rien ne rend, et plusieurs générations superposées du même écran : <em>Management</em>, <em>Manager</em>, <em>Modern…</em>, <em>…Redesigned</em>. Le tableau de bord admin n'en importe qu'une par domaine. Le reste ne s'exécute jamais, mais continue d'être lu, modifié et déployé — et il faudra le redessiner quatre fois si on ne tranche pas maintenant.</p>
+
+    <div style="display: flex; gap: 0; border-top: 1px solid #E2DACD; border-bottom: 1px solid #E2DACD; margin-bottom: 30px;">
+      <div style="flex: 1; padding: 14px 16px 14px 0; border-right: 1px solid #E2DACD;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 17pt; font-weight: 600;">18</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 7.5pt; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63; margin-top: 5px;">Fichiers jamais rendus</div>
+      </div>
+      <div style="flex: 1; padding: 14px 16px; border-right: 1px solid #E2DACD;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 17pt; font-weight: 600;">594 ko</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 7.5pt; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63; margin-top: 5px;">De TSX mort</div>
+      </div>
+      <div style="flex: 1; padding: 14px 0 14px 16px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 17pt; font-weight: 600;">2</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 7.5pt; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63; margin-top: 5px;">Entrées admin concurrentes</div>
+      </div>
+    </div>
+
+    <h2 style="font-size: 15pt; font-weight: 600; letter-spacing: -0.015em; margin: 0 0 6px;">1. Ce qui tourne réellement</h2>
+    <p style="font-size: 11pt; color: #3d3a35; margin: 0 0 16px;">Composants importés et rendus par <code style="font-family: 'IBM Plex Mono', monospace; font-size: 10pt;">src/app/admin/dashboard/page.tsx</code>. Ce sont les seuls à conserver et à redessiner.</p>
+
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; break-inside: avoid;">
+      <thead>
+        <tr>
+          <th style="text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 7.5pt; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63; padding: 0 10px 8px 0; border-bottom: 1.5px solid #12100E;">Domaine</th>
+          <th style="text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 7.5pt; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63; padding: 0 10px 8px 0; border-bottom: 1.5px solid #12100E;">Version retenue</th>
+          <th style="text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 7.5pt; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63; padding: 0 0 8px; border-bottom: 1.5px solid #12100E;">Versions à supprimer</th>
+        </tr>
+      </thead>
+      <tbody>
+        <sc-for list="{{ keepRows }}" as="r" hint-placeholder-count="8">
+          <tr style="break-inside: avoid;">
+            <td style="font-size: 10pt; font-weight: 600; padding: 9px 10px 9px 0; border-bottom: 1px solid #E2DACD; vertical-align: top; white-space: nowrap;">{{ r.domain }}</td>
+            <td style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5pt; color: #1F5245; padding: 9px 10px 9px 0; border-bottom: 1px solid #E2DACD; vertical-align: top;">{{ r.keep }}</td>
+            <td style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5pt; color: #6E6A63; padding: 9px 0; border-bottom: 1px solid #E2DACD; vertical-align: top;">{{ r.drop }}</td>
+          </tr>
+        </sc-for>
+      </tbody>
+    </table>
+
+    <h2 style="font-size: 15pt; font-weight: 600; letter-spacing: -0.015em; margin: 0 0 6px;">2. Fichiers sans aucun importeur</h2>
+    <p style="font-size: 11pt; color: #3d3a35; margin: 0 0 16px;">Aucune page, aucun composant ne les référence. Suppression franche, en un seul commit, avant tout travail de design.</p>
+
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 26px;">
+      <thead>
+        <tr>
+          <th style="text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 7.5pt; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63; padding: 0 10px 8px 0; border-bottom: 1.5px solid #12100E;">Fichier</th>
+          <th style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 7.5pt; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63; padding: 0 10px 8px 0; border-bottom: 1.5px solid #12100E;">Poids</th>
+          <th style="text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 7.5pt; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #6E6A63; padding: 0 0 8px; border-bottom: 1.5px solid #12100E;">Note</th>
+        </tr>
+      </thead>
+      <tbody>
+        <sc-for list="{{ deadRows }}" as="d" hint-placeholder-count="16">
+          <tr style="break-inside: avoid;">
+            <td style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5pt; padding: 7px 10px 7px 0; border-bottom: 1px solid #F0EAE0; vertical-align: top;">{{ d.file }}</td>
+            <td style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5pt; text-align: right; color: #6E6A63; padding: 7px 10px 7px 0; border-bottom: 1px solid #F0EAE0; vertical-align: top; white-space: nowrap;">{{ d.size }}</td>
+            <td style="font-size: 9.5pt; color: #3d3a35; padding: 7px 0; border-bottom: 1px solid #F0EAE0; vertical-align: top;">{{ d.note }}</td>
+          </tr>
+        </sc-for>
+      </tbody>
+    </table>
+
+    <h2 style="font-size: 15pt; font-weight: 600; letter-spacing: -0.015em; margin: 0 0 12px;">3. Trois décisions à prendre</h2>
+
+    <div style="background: #E8DCC8; border-radius: 3px; padding: 18px 20px; margin-bottom: 14px; break-inside: avoid;">
+      <p style="font-family: 'IBM Plex Mono', monospace; font-size: 7.5pt; letter-spacing: 0.16em; text-transform: uppercase; color: #6E6A63; margin: 0 0 7px;">Décision 1 — Une seule entrée admin</p>
+      <p style="font-size: 10.5pt; margin: 0; color: #12100E;"><code style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5pt;">/admin</code> rend l'ancien <code style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5pt;">AdminDashboard</code> (qui tire <code style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5pt;">AdminStats</code> et <code style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5pt;">DriversManager</code>), <code style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5pt;">/admin/dashboard</code> rend la génération actuelle. Deux interfaces admin coexistent en production. Recommandation : <code style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5pt;">/admin</code> devient une redirection vers <code style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5pt;">/admin/dashboard</code>, et les trois fichiers partent avec.</p>
+    </div>
+
+    <div style="background: #E8DCC8; border-radius: 3px; padding: 18px 20px; margin-bottom: 14px; break-inside: avoid;">
+      <p style="font-family: 'IBM Plex Mono', monospace; font-size: 7.5pt; letter-spacing: 0.16em; text-transform: uppercase; color: #6E6A63; margin: 0 0 7px;">Décision 2 — Permissions : import fantôme</p>
+      <p style="font-size: 10.5pt; margin: 0; color: #12100E;">La page importe <code style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5pt;">ModernPermissionsManagement</code> (64,8 ko) mais rend <code style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5pt;">PermissionsManagementRedesigned</code> (ligne 185). L'import est payé au build sans jamais s'afficher. Supprimer l'import et le fichier.</p>
+    </div>
+
+    <div style="background: #E8DCC8; border-radius: 3px; padding: 18px 20px; margin-bottom: 28px; break-inside: avoid;">
+      <p style="font-family: 'IBM Plex Mono', monospace; font-size: 7.5pt; letter-spacing: 0.16em; text-transform: uppercase; color: #6E6A63; margin: 0 0 7px;">Décision 3 — Un composant admin dans l'espace client</p>
+      <p style="font-size: 10.5pt; margin: 0; color: #12100E;"><code style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5pt;">ModernUsersManagement</code> (63,8 ko) vit dans <code style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5pt;">admin/</code> mais n'est utilisé que par <code style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5pt;">client/ClientUsersManagement</code>. Le déplacer dans <code style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5pt;">components/shared/</code> — sinon il sera supprimé par erreur au prochain nettoyage admin.</p>
+    </div>
+
+    <h2 style="font-size: 15pt; font-weight: 600; letter-spacing: -0.015em; margin: 0 0 12px;">4. Ordre d'exécution</h2>
+    <ol style="margin: 0 0 26px; padding-left: 22px; font-size: 11pt; color: #3d3a35;">
+      <li style="margin-bottom: 7px;">Passer <code style="font-family: 'IBM Plex Mono', monospace; font-size: 10pt;">npx knip</code> ou <code style="font-family: 'IBM Plex Mono', monospace; font-size: 10pt;">ts-prune</code> pour confirmer la liste ci-dessus sur l'arbre complet.</li>
+      <li style="margin-bottom: 7px;">Une branche <code style="font-family: 'IBM Plex Mono', monospace; font-size: 10pt;">chore/prune-admin</code>, un commit par domaine (bookings, users, quotes, reviews, permissions, vehicles), pour un retour arrière ciblé.</li>
+      <li style="margin-bottom: 7px;">Recette : ouvrir chaque onglet du tableau de bord admin, plus <code style="font-family: 'IBM Plex Mono', monospace; font-size: 10pt;">/client/dashboard</code> et <code style="font-family: 'IBM Plex Mono', monospace; font-size: 10pt;">/entreprise/dashboard</code> qui empruntent des composants client.</li>
+      <li>Supprimer <code style="font-family: 'IBM Plex Mono', monospace; font-size: 10pt;">/admin/users/design-demo</code> et <code style="font-family: 'IBM Plex Mono', monospace; font-size: 10pt;">SimpleDriverTest</code> : pages de démonstration accessibles en production.</li>
+    </ol>
+
+    <div style="border-top: 1px solid #E2DACD; padding-top: 14px;">
+      <p style="font-family: 'IBM Plex Mono', monospace; font-size: 8pt; letter-spacing: 0.1em; color: #6E6A63; margin: 0; line-height: 1.6;">Méthode — recherche des imports sur la branche <span style="color: #12100E;">main</span> (<span style="color: #12100E;">1618261</span>), périmètre <span style="color: #12100E;">src/</span>. La recherche s'est arrêtée à 356 des 372 fichiers : confirmer avec un passage knip avant suppression définitive.</p>
+    </div>
+
+  </div>
+</doc-page>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      keepRows: [
+        { domain: "Réservations", keep: "BookingsManagementRedesigned", drop: "BookingsManagement, BookingsManager, ModernBookingsManagement" },
+        { domain: "Utilisateurs", keep: "UsersManagementRedesigned", drop: "UsersManagement, UsersManagementComparison" },
+        { domain: "Devis", keep: "QuotesManagementRedesigned", drop: "QuotesManagement, ModernQuotesManagement" },
+        { domain: "Avis", keep: "ReviewsManagementRedesigned", drop: "ReviewsManagement, ModernReviewsManagement" },
+        { domain: "Permissions", keep: "PermissionsManagementRedesigned", drop: "PermissionsManagement, ModernPermissionsManagement" },
+        { domain: "Véhicules", keep: "VehiclesManagementRedesigned", drop: "VehiclesManagement, VehiclesManager" },
+        { domain: "Vue d'ensemble", keep: "ModernAdminDashboard + AdminGlobalStats", drop: "AdminOverview, AdminStats, AdminDashboard" },
+        { domain: "Factures / Lieux", keep: "InvoicesManagementRedesigned, LocationsManagementRedesigned", drop: "—" },
+      ],
+      deadRows: [
+        { file: "admin/ModernQuotesManagement.tsx", size: "115,7 ko", note: "Le plus gros fichier du dossier, aucun importeur" },
+        { file: "admin/ModernBookingsManagement.tsx", size: "77,2 ko", note: "Importe BookingDetailsModal, mais n'est jamais rendu" },
+        { file: "admin/ModernPermissionsManagement.tsx", size: "64,8 ko", note: "Importé sans être rendu — voir décision 2" },
+        { file: "admin/BookingsManagement.tsx", size: "63,7 ko", note: "Génération précédente" },
+        { file: "admin/ModernReviewsManagement.tsx", size: "43,3 ko", note: "Génération précédente" },
+        { file: "admin/VehiclesManagement.tsx", size: "37,0 ko", note: "Tire DeleteVehicleModal, à conserver pour la version retenue" },
+        { file: "admin/UsersManagement.tsx", size: "26,5 ko", note: "Génération précédente" },
+        { file: "admin/BookingsManager.tsx", size: "25,4 ko", note: "Première génération" },
+        { file: "admin/VehiclesManager.tsx", size: "24,4 ko", note: "Première génération" },
+        { file: "admin/QuotesManagement.tsx", size: "23,4 ko", note: "Génération précédente" },
+        { file: "admin/DriversManager.tsx", size: "18,9 ko", note: "Atteignable seulement via /admin — voir décision 1" },
+        { file: "admin/AdminStats.tsx", size: "17,5 ko", note: "Atteignable seulement via /admin — voir décision 1" },
+        { file: "admin/ReviewsManagement.tsx", size: "16,6 ko", note: "Génération précédente" },
+        { file: "admin/PermissionsManagement.tsx", size: "15,9 ko", note: "Génération précédente" },
+        { file: "admin/AdminOverview.tsx", size: "14,6 ko", note: "Export par défaut sans aucun importeur" },
+        { file: "admin/AdminDashboard.tsx", size: "2,3 ko", note: "Rendu uniquement par /admin — voir décision 1" },
+        { file: "admin/UsersManagementComparison.tsx", size: "3,1 ko", note: "Page de démonstration /admin/users/design-demo" },
+        { file: "driver/SimpleDriverTest.tsx", size: "4,2 ko", note: "Composant de test resté dans le dossier chauffeur" },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>
