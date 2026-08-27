@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { signOut, useSession } from "next-auth/react"
 import { SignOut, Lock, FloppyDisk, ShieldCheck, UserCircle, Car } from "@phosphor-icons/react"
 import UniversalProfilePhotoUpload from "@/components/ui/UniversalProfilePhotoUpload"
-import { ContentCard, DriverStatusBadge, SectionHeader } from "@/components/driver/shared"
+import { ContentCard, DriverPill, SectionHeader } from "@/components/driver/shared"
 
 interface DriverProfileProps {
   onBack: () => void
@@ -89,7 +89,7 @@ export function DriverProfile({ onBack }: DriverProfileProps) {
               onError={(error) => console.error(error)}
             />
             <p className="text-sm font-semibold text-(--text-primary)">{form.name || "Chauffeur"}</p>
-            <DriverStatusBadge status={driverData?.isActive ? "Active" : "Indisponible"} />
+            <DriverPill label={driverData?.isActive ? "Active" : "Indisponible"} />
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">

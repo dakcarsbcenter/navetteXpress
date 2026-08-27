@@ -1,4 +1,4 @@
-import { DriverStatusBadge } from "@/components/driver/shared/StatusBadge"
+import { DriverPill } from "@/components/driver/shared/Pill"
 
 type PhosphorIcon = React.ComponentType<{ size?: number; className?: string; weight?: "thin" | "light" | "regular" | "bold" | "fill" | "duotone" }>
 
@@ -24,7 +24,7 @@ export function MetricCard({ icon: Icon, label, value, badge, iconTone = "gold",
         <div className={`inline-flex h-10 w-10 items-center justify-center rounded-full ${toneClass}`}>
           <Icon size={18} />
         </div>
-        {badge ? <DriverStatusBadge status={badge} /> : null}
+        {badge ? <DriverPill label={badge} /> : null}
       </div>
       <p className="text-[0.85rem] text-(--text-secondary)">{label}</p>
       <p className="mt-2 text-3xl font-bold text-(--text-primary)">{value}</p>

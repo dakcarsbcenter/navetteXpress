@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { Warning, Car, Gauge, ShieldCheck, Wrench, ClockCountdown, PaperPlaneTilt } from "@phosphor-icons/react"
-import { ContentCard, DriverStatusBadge, EmptyState, MetricCard, SectionHeader } from "@/components/driver/shared"
+import { ContentCard, EmptyState, MetricCard, SectionHeader } from "@/components/driver/shared"
+import { StatusBadge } from "@/components/shared/StatusBadge"
 
 interface VehicleReportProps {
   onBack: () => void
@@ -202,7 +203,7 @@ export function VehicleReport({ onBack }: VehicleReportProps) {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <DriverStatusBadge status={report.status === 'open' ? 'En attente' : report.status === 'resolved' ? 'Confirmée' : report.status} />
+                  <StatusBadge domain="report" value={report.status} audience="driver" live={report.status === 'in_progress'} />
                   <span className="text-xs text-(--text-muted)">{report.category}</span>
                 </div>
               </article>

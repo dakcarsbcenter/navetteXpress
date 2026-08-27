@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { Session } from 'next-auth'
 import { CancelBookingModal } from './CancelBookingModal'
-import { MissionStatusBadge } from './MissionStatusBadge'
+import { StatusBadge } from '@/components/shared/StatusBadge'
 import {
   CheckCircle,
   Money as Banknote,
@@ -654,7 +654,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
                     </div>
 
                     <div className="flex flex-col items-end justify-between self-stretch">
-                      <MissionStatusBadge statut={mission.status} />
+                      <StatusBadge domain="booking" value={mission.status} audience="driver" live={mission.status === 'in_progress'} />
                       <CaretRight size={16} weight="bold" className="text-gray-400 dark:text-gray-600 group-hover:text-blue-600 dark:group-hover:text-blue-500 transition-colors" />
                     </div>
 
@@ -837,7 +837,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
               </div>
 
               <div className="flex gap-2">
-                <MissionStatusBadge statut={selectedBooking.status} />
+                <StatusBadge domain="booking" value={selectedBooking.status} audience="driver" live={selectedBooking.status === 'in_progress'} />
                 <span className="px-3 py-1 rounded-full bg-amber-100 dark:bg-white/5 text-[11px] font-bold text-amber-700 dark:text-amber-500 tracking-wider">
                   {selectedBooking.price} FCFA
                 </span>

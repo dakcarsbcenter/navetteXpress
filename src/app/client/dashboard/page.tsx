@@ -15,7 +15,7 @@ import { ClientQuotesView } from "@/components/client/ClientQuotesView"
 import { ClientInvoicesView } from "@/components/client/ClientInvoicesView"
 import { VehiclesManagement } from "@/components/client/VehiclesManagement"
 import { ClientUsersManagement } from "@/components/client/ClientUsersManagement"
-import { TripStatusBadge } from "@/components/client/TripStatusBadge"
+import { StatusBadge } from "@/components/shared/StatusBadge"
 import { SquaresFour, CalendarBlank, FileText, Receipt, Star, ChatCircle, Car, Users, Plus, MapPin, Clock, Eye, Phone, Wallet, Calendar, ClipboardText, DownloadSimple, PencilSimple, X, CheckCircle, Envelope, Buildings, IdentificationCard } from "@phosphor-icons/react"
 
 interface Booking {
@@ -565,7 +565,7 @@ function ClientDashboardContent() {
                           {new Date(booking.scheduledDateTime).toLocaleDateString(intlLocale, { day: 'numeric', month: 'short' })}, {new Date(booking.scheduledDateTime).toLocaleTimeString(intlLocale, { hour: '2-digit', minute: '2-digit' })}
                         </p>
                       </div>
-                      <TripStatusBadge statut={booking.status} />
+                      <StatusBadge domain="booking" value={booking.status} audience="client" live={booking.status === 'in_progress'} />
                       <p className="text-xs font-semibold shrink-0 hidden sm:block" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-client-text-primary)' }}>
                         {booking.price ? `${parseFloat(booking.price).toLocaleString(intlLocale)} FCFA` : '—'}
                       </p>
@@ -654,7 +654,7 @@ function ClientDashboardContent() {
                                   {t('bookings.createdOn')} {new Date(booking.createdAt).toLocaleDateString(intlLocale)}
                                 </p>
                               </div>
-                              <TripStatusBadge statut={booking.status} />
+                              <StatusBadge domain="booking" value={booking.status} audience="client" live={booking.status === 'in_progress'} />
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">

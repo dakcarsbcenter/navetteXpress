@@ -1,5 +1,5 @@
 export * from "./MetricCard"
 export * from "./ContentCard"
-export * from "./StatusBadge"
+export * from "./Pill"
 export * from "./SectionHeader"
 export * from "./EmptyState"
