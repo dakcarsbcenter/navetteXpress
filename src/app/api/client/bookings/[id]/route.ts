@@ -6,8 +6,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { db } from '@/db';
-import { bookingsTable } from '@/schema';
+import { bookingsTable, users } from '@/schema';
 import { eq, and } from 'drizzle-orm';
+import { sendWithRetry } from '@/lib/notification-queue';
 
 // GET - Récupérer une réservation spécifique du client
 export async function GET(
@@ -101,18 +102,88 @@ export async function PUT(
     }
 
     const booking = existingBooking[0];
+    const body = await request.json();
+
+    // Annulation par le client de sa propre demande (jusqu'à 24h avant la date prévue)
+    if (body.status === 'cancelled') {
+      const nonCancellableStatuses = ['cancelled', 'completed', 'in_progress'];
+      if (nonCancellableStatuses.includes(booking.status)) {
+        return NextResponse.json({
+          success: false,
+          error: `Impossible d'annuler une réservation avec le statut "${booking.status}". Contactez le service client.`
+        }, { status: 403 });
+      }
+
+      const hoursUntilDeparture = (booking.scheduledDateTime.getTime() - Date.now()) / (1000 * 60 * 60);
+      if (hoursUntilDeparture < 24) {
+        return NextResponse.json({
+          success: false,
+          error: "Vous ne pouvez plus annuler cette réservation à moins de 24h de la date prévue. Contactez le service client."
+        }, { status: 403 });
+      }
+
+      let assignedDriverName: string | undefined;
+      if (booking.driverId) {
+        const driverData = await db
+          .select()
+          .from(users)
+          .where(eq(users.id, booking.driverId))
+          .limit(1);
+        assignedDriverName = driverData[0]?.name || undefined;
+      }
+
+      const cancelledBooking = await db
+        .update(bookingsTable)
+        .set({
+          status: 'cancelled',
+          cancellationReason: body.reason || null,
+          cancelledBy: session.user.id,
+          cancelledAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .where(and(
+          eq(bookingsTable.id, id),
+          eq(bookingsTable.userId, session.user.id)
+        ))
+        .returning();
+
+      if (cancelledBooking.length === 0) {
+        return NextResponse.json({
+          success: false,
+          error: "Erreur lors de l'annulation"
+        }, { status: 500 });
+      }
+
+      // Seul l'admin est notifié : c'est à lui de réassigner ou d'avertir le chauffeur si besoin
+      await sendWithRetry('whatsapp', 'whatsapp.sendBookingCancelledByClientWhatsAppToAdmin', [
+        {
+          id: booking.id,
+          customerName: booking.customerName,
+          pickupAddress: booking.pickupAddress,
+          dropoffAddress: booking.dropoffAddress,
+          scheduledDateTime: booking.scheduledDateTime.toISOString(),
+          passengers: 1,
+        },
+        body.reason || undefined,
+        assignedDriverName
+      ]);
+
+      return NextResponse.json({
+        success: true,
+        data: cancelledBooking[0],
+        message: 'Réservation annulée avec succès'
+      });
+    }
 
     // Vérifier que la réservation n'est pas confirmée, terminée ou annulée
     const nonEditableStatuses = ['confirmed', 'in_progress', 'completed', 'cancelled'];
     if (nonEditableStatuses.includes(booking.status)) {
-      return NextResponse.json({ 
-        success: false, 
-        error: `Impossible de modifier une réservation avec le statut "${booking.status}". Contactez le service client.` 
+      return NextResponse.json({
+        success: false,
+        error: `Impossible de modifier une réservation avec le statut "${booking.status}". Contactez le service client.`
       }, { status: 403 });
     }
 
-    const body = await request.json();
-    
     // Construction de l'objet de mise à jour avec uniquement les champs modifiables par le client
     const updateData: any = {
       updatedAt: new Date(),

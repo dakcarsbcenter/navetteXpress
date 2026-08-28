@@ -64,8 +64,9 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    let adminUserId: string;
     try {
-      await requireBookingsUpdate(); // Vérification de la permission de mise à jour
+      adminUserId = await requireBookingsUpdate(); // Vérification de la permission de mise à jour
     } catch (permError) {
       const errorMessage = permError instanceof Error ? permError.message : 'Permission refusée';
       const statusCode = errorMessage.includes('Unauthorized') ? 401 : 403;
@@ -75,14 +76,14 @@ export async function PATCH(
     const resolvedParams = await params;
     const id = parseInt(resolvedParams.id);
     if (isNaN(id)) {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'ID invalide' 
+      return NextResponse.json({
+        success: false,
+        error: 'ID invalide'
       }, { status: 400 });
     }
 
     const body = await request.json();
-    
+
     // Récupérer la réservation actuelle pour comparer
     const currentBooking = await db
       .select()
@@ -110,7 +111,14 @@ export async function PATCH(
     if (body.driverId !== undefined) updateData.driverId = body.driverId;
     if (body.vehicleId !== undefined) updateData.vehicleId = body.vehicleId;
     if (body.notes !== undefined) updateData.notes = body.notes;
-    
+
+    // Annulation définitive déclenchée par l'admin : seule cette action notifie le client
+    if (body.status === 'cancelled' && oldStatus !== 'cancelled') {
+      updateData.cancelledBy = adminUserId;
+      updateData.cancelledAt = new Date();
+      if (body.cancellationReason !== undefined) updateData.cancellationReason = body.cancellationReason;
+    }
+
     // Si l'admin définit ou modifie le prix
     if (body.price !== undefined) {
       updateData.price = body.price;
@@ -183,6 +191,36 @@ export async function PATCH(
         },
         booking.customerPhone,
         driver?.name || 'Votre chauffeur'
+      ]);
+    }
+
+    // Annulation définitive : seul l'admin peut déclencher cette notification au client
+    if (body.status === 'cancelled' && oldStatus !== 'cancelled') {
+      await sendWithRetry('email', 'resend-email.sendBookingCancelledToClient', [
+        {
+          id: booking.id,
+          customerName: booking.customerName,
+          customerEmail: booking.customerEmail,
+          customerPhone: booking.customerPhone || undefined,
+          pickupAddress: booking.pickupAddress,
+          dropoffAddress: booking.dropoffAddress,
+          scheduledDateTime: booking.scheduledDateTime.toISOString(),
+          passengers: 1,
+        },
+        booking.cancellationReason || undefined
+      ]);
+
+      await sendWithRetry('whatsapp', 'whatsapp.sendBookingCancelledWhatsAppToClient', [
+        {
+          id: booking.id,
+          customerName: booking.customerName,
+          pickupAddress: booking.pickupAddress,
+          dropoffAddress: booking.dropoffAddress,
+          scheduledDateTime: booking.scheduledDateTime.toISOString(),
+          passengers: 1,
+        },
+        booking.customerPhone,
+        booking.cancellationReason || undefined
       ]);
     }
 

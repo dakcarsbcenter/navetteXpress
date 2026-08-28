@@ -95,7 +95,7 @@
         "button": "Rechazar la misión",
         "modalTitle": "Rechazar la misión",
         "modalRef": "Ref. NX-{id}",
-        "warning": "Esta misión se eliminará de su planning y será reasignada por el administrador. El cliente y el administrador serán notificados del rechazo.",
+        "warning": "Esta misión se eliminará de su planning y será reasignada por el administrador. El administrador será notificado del rechazo.",
         "reasonLabel": "Motivo del rechazo",
         "reasons": {
           "vehicleIssue": "Problema técnico con el vehículo",

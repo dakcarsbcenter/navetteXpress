@@ -120,7 +120,7 @@ export function CancelBookingModal({
                   Attention
                 </p>
                 <p className="text-sm text-amber-700 dark:text-amber-300">
-                  Cette action annulera définitivement la réservation. Le client sera automatiquement notifié de l'annulation.
+                  Cette action annulera définitivement la réservation. L'administrateur sera notifié de l'annulation.
                 </p>
               </div>
             </div>

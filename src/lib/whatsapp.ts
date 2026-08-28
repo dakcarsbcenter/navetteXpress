@@ -188,6 +188,63 @@ export async function sendBookingRejectedWhatsAppToAdmin(
   return sendWhatsAppMessage(ADMIN_WHATSAPP_NUMBER, text)
 }
 
+/**
+ * Notifie l'admin (ADMIN_WHATSAPP_NUMBER) qu'un client a annulé sa propre réservation.
+ */
+export async function sendBookingCancelledByClientWhatsAppToAdmin(
+  booking: WhatsAppBookingData,
+  reason?: string,
+  assignedDriverName?: string
+): Promise<WhatsAppResult> {
+  if (!ADMIN_WHATSAPP_NUMBER) {
+    return { success: false, error: 'ADMIN_WHATSAPP_NUMBER non configuré' }
+  }
+
+  const scheduledDate = new Date(booking.scheduledDateTime).toLocaleString('fr-FR', {
+    dateStyle: 'long',
+    timeStyle: 'short',
+  })
+
+  const text =
+    `🚫 Course #${booking.id} annulée par le client\n\n` +
+    `Client: ${booking.customerName}\n` +
+    `Départ: ${booking.pickupAddress}\n` +
+    `Arrivée: ${booking.dropoffAddress}\n` +
+    `Date: ${scheduledDate}\n` +
+    (reason ? `Motif: ${reason}\n` : '') +
+    (assignedDriverName ? `Chauffeur actuellement assigné: ${assignedDriverName} — pensez à l'informer.` : '')
+
+  return sendWhatsAppMessage(ADMIN_WHATSAPP_NUMBER, text)
+}
+
+/**
+ * Notifie le client d'une annulation définitive de sa réservation, déclenchée par l'admin.
+ */
+export async function sendBookingCancelledWhatsAppToClient(
+  booking: WhatsAppBookingData,
+  clientPhone: string | null | undefined,
+  reason?: string
+): Promise<WhatsAppResult> {
+  if (!clientPhone) {
+    return { success: false, error: 'Numéro du client non renseigné' }
+  }
+
+  const scheduledDate = new Date(booking.scheduledDateTime).toLocaleString('fr-FR', {
+    dateStyle: 'long',
+    timeStyle: 'short',
+  })
+
+  const text =
+    `❌ Votre course #${booking.id} a été annulée\n\n` +
+    `Départ: ${booking.pickupAddress}\n` +
+    `Arrivée: ${booking.dropoffAddress}\n` +
+    `Date: ${scheduledDate}\n` +
+    (reason ? `Motif: ${reason}\n` : '') +
+    `Contactez-nous pour toute question.`
+
+  return sendWhatsAppMessage(clientPhone, text)
+}
+
 interface WhatsAppQuoteData {
   id: number
   customerName: string

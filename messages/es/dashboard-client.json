@@ -366,7 +366,15 @@
     "errorTitle": "¡Vaya!",
     "retry": "Reintentar",
     "updateError": "Error al actualizar",
-    "genericError": "Se produjo un error."
+    "genericError": "Se produjo un error.",
+    "cancelBooking": "Cancelar la reserva",
+    "cancelling": "Cancelando...",
+    "cancelConfirmTitle": "¿Cancelar esta reserva?",
+    "cancelConfirmMessage": "Esta acción es definitiva. El equipo de Navette Xpress será informado inmediatamente de su cancelación.",
+    "cancelConfirmYes": "Sí, cancelar",
+    "cancelConfirmNo": "No, mantener mi reserva",
+    "cancelSuccessTitle": "Reserva cancelada",
+    "cancelSuccessMessage": "Su reserva ha sido cancelada correctamente."
   },
   "quotes": {
     "title": "Mis Presupuestos",

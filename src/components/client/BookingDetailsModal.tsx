@@ -14,6 +14,7 @@ import {
     Note,
     PencilSimple,
     CheckCircle,
+    XCircle,
     Car,
     Wallet,
     Info
@@ -59,6 +60,9 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [errorModal, setErrorModal] = useState<{ open: boolean; message: string }>({ open: false, message: '' })
     const [successModal, setSuccessModal] = useState(false)
+    const [isCancelling, setIsCancelling] = useState(false)
+    const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false)
+    const [cancelSuccessOpen, setCancelSuccessOpen] = useState(false)
 
     useEffect(() => {
         if (booking && isOpen) {
@@ -114,9 +118,42 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
         }
     }
 
+    const handleCancelBooking = async () => {
+        if (!booking) return
+        setIsCancelling(true)
+
+        try {
+            const response = await fetch(`/api/client/bookings/${booking.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'cancelled' }),
+            })
+
+            const result = await response.json()
+            setIsCancelling(false)
+            setCancelConfirmOpen(false)
+
+            if (result.success) {
+                setCancelSuccessOpen(true)
+            } else {
+                setErrorModal({
+                    open: true,
+                    message: result.error || t('genericError')
+                })
+            }
+        } catch (error) {
+            console.error('Erreur:', error)
+            setIsCancelling(false)
+            setCancelConfirmOpen(false)
+            setErrorModal({ open: true, message: t('genericError') })
+        }
+    }
+
     if (!isOpen || !booking) return null
 
     const canEdit = !['confirmed', 'in_progress', 'completed', 'cancelled'].includes(booking.status)
+    const hoursUntilDeparture = (new Date(booking.scheduledDateTime).getTime() - Date.now()) / (1000 * 60 * 60)
+    const canCancelBooking = !['cancelled', 'completed', 'in_progress'].includes(booking.status) && hoursUntilDeparture >= 24
 
     return (
         <>
@@ -382,15 +419,26 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                                 >
                                     {t('close')}
                                 </button>
-                                {canEdit && (
-                                    <button
-                                        onClick={() => setIsEditing(true)}
-                                        className="px-6 py-3 rounded-xl font-bold transition-all flex items-center gap-2 text-sm"
-                                        style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}
-                                    >
-                                        <PencilSimple size={18} /> {t('modify')}
-                                    </button>
-                                )}
+                                <div className="flex items-center gap-3">
+                                    {canCancelBooking && (
+                                        <button
+                                            onClick={() => setCancelConfirmOpen(true)}
+                                            className="px-6 py-3 rounded-xl font-bold transition-all flex items-center gap-2 text-sm"
+                                            style={{ border: '1px solid #B8493C', color: '#B8493C' }}
+                                        >
+                                            <XCircle size={18} /> {t('cancelBooking')}
+                                        </button>
+                                    )}
+                                    {canEdit && (
+                                        <button
+                                            onClick={() => setIsEditing(true)}
+                                            className="px-6 py-3 rounded-xl font-bold transition-all flex items-center gap-2 text-sm"
+                                            style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}
+                                        >
+                                            <PencilSimple size={18} /> {t('modify')}
+                                        </button>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     )}
@@ -425,6 +473,38 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                 type="error"
                 confirmText={t('retry')}
                 onConfirm={() => setErrorModal({ open: false, message: '' })}
+            />
+
+            {/* Cancel Confirmation Modal */}
+            <ConfirmationModal
+                isOpen={cancelConfirmOpen}
+                onClose={() => !isCancelling && setCancelConfirmOpen(false)}
+                title={t('cancelConfirmTitle')}
+                message={t('cancelConfirmMessage')}
+                type="warning"
+                confirmText={isCancelling ? t('cancelling') : t('cancelConfirmYes')}
+                onConfirm={handleCancelBooking}
+                showCancel={!isCancelling}
+                cancelText={t('cancelConfirmNo')}
+            />
+
+            {/* Cancel Success Modal */}
+            <ConfirmationModal
+                isOpen={cancelSuccessOpen}
+                onClose={() => {
+                    setCancelSuccessOpen(false)
+                    onSuccess()
+                    onClose()
+                }}
+                title={t('cancelSuccessTitle')}
+                message={t('cancelSuccessMessage')}
+                type="success"
+                confirmText={t('confirmPerfect')}
+                onConfirm={() => {
+                    setCancelSuccessOpen(false)
+                    onSuccess()
+                    onClose()
+                }}
             />
         </>
     )

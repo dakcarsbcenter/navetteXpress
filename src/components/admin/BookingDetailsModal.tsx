@@ -128,10 +128,12 @@ export function BookingDetailsModal({
         },
         body: JSON.stringify({
           status: editedBooking.status,
+          oldStatus: booking.status,
           driverId: editedBooking.driverId,
           vehicleId: editedBooking.vehicleId,
           price: editedBooking.price,
           notes: editedBooking.notes,
+          cancellationReason: editedBooking.status === 'cancelled' ? editedBooking.cancellationReason : undefined,
         }),
       })
 
@@ -345,6 +347,22 @@ export function BookingDetailsModal({
                       <StatusBadge domain="booking" value={booking.status} audience="admin" live={booking.status === 'in_progress'} />
                     )}
                   </div>
+
+                  {isEditing && editedBooking.status === 'cancelled' && booking.status !== 'cancelled' && (
+                    <div>
+                      <label style={fieldLabel}>Motif d&apos;annulation (envoyé au client)</label>
+                      <textarea
+                        value={editedBooking.cancellationReason || ''}
+                        onChange={(e) => setEditedBooking(prev => prev ? { ...prev, cancellationReason: e.target.value } : null)}
+                        placeholder="Ex: Véhicule indisponible, précisez le motif..."
+                        rows={3}
+                        style={{ ...selectStyle, height: 'auto', padding: '10px 12px', resize: 'none' }}
+                      />
+                      <p style={{ margin: '6px 0 0', fontSize: '11px', color: '#B8493C' }}>
+                        Le client recevra un email et un WhatsApp l&apos;informant de cette annulation définitive.
+                      </p>
+                    </div>
+                  )}
 
                   <div>
                     <label style={fieldLabel}>Chauffeur assigné</label>

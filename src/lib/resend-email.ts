@@ -392,3 +392,90 @@ export async function sendBookingConfirmedToClient(booking: BookingData, driver?
     return { success: false, error }
   }
 }
+
+/**
+ * Envoie une notification au client lors de l'annulation définitive de sa réservation (déclenchée par l'admin)
+ */
+export async function sendBookingCancelledToClient(booking: BookingData, reason?: string) {
+  try {
+    const scheduledDate = new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: booking.customerEmail,
+      subject: `❌ Réservation annulée #${booking.id} - Navette Xpress`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta charset="utf-8">
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+              .header { background: linear-gradient(135deg, #B8493C 0%, #8f342a 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+              .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }
+              .info-box { background: white; padding: 20px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #B8493C; }
+              .info-row { margin: 10px 0; }
+              .label { font-weight: bold; color: #B8493C; }
+              .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h1>❌ Réservation Annulée</h1>
+              </div>
+              <div class="content">
+                <p>Bonjour <strong>${booking.customerName}</strong>,</p>
+                <p>Nous vous informons que votre réservation a été annulée.</p>
+
+                <div class="info-box">
+                  <h2>📋 Réservation #${booking.id}</h2>
+                  <div class="info-row">
+                    <span class="label">Date:</span> ${scheduledDate}
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Départ:</span> ${booking.pickupAddress}
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Arrivée:</span> ${booking.dropoffAddress}
+                  </div>
+                </div>
+
+                ${reason ? `
+                <div class="info-box">
+                  <h3>Motif</h3>
+                  <p>${reason}</p>
+                </div>
+                ` : ''}
+
+                <p>Pour toute question, contactez-nous à ${ADMIN_EMAIL}.</p>
+              </div>
+              <div class="footer">
+                <p>Navette Xpress</p>
+              </div>
+            </div>
+          </body>
+        </html>
+      `,
+    })
+
+    if (error) {
+      console.error('❌ Erreur lors de l\'envoi de l\'email d\'annulation au client:', error)
+      return { success: false, error }
+    }
+
+    console.log('✅ Email d\'annulation envoyé au client:', data)
+    return { success: true, data }
+  } catch (error) {
+    console.error('❌ Erreur lors de l\'envoi de l\'email d\'annulation au client:', error)
+    return { success: false, error }
+  }
+}

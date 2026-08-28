@@ -95,7 +95,7 @@
         "button": "Decline mission",
         "modalTitle": "Decline mission",
         "modalRef": "Ref. NX-{id}",
-        "warning": "This mission will be removed from your schedule and reassigned by the admin. The client and admin will be notified of the refusal.",
+        "warning": "This mission will be removed from your schedule and reassigned by the admin. The admin will be notified of the refusal.",
         "reasonLabel": "Reason for declining",
         "reasons": {
           "vehicleIssue": "Vehicle technical issue",

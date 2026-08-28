@@ -97,6 +97,13 @@ const registry: Record<string, Handler> = {
     const { sendBookingPriceRejectedEmail } = await import('./resend-mailer');
     return sendBookingPriceRejectedEmail(args[0] as Parameters<typeof sendBookingPriceRejectedEmail>[0]);
   },
+  'resend-email.sendBookingCancelledToClient': async (args) => {
+    const { sendBookingCancelledToClient } = await import('./resend-email');
+    return sendBookingCancelledToClient(
+      args[0] as Parameters<typeof sendBookingCancelledToClient>[0],
+      args[1] as string | undefined
+    );
+  },
   'whatsapp.sendBookingWhatsAppToAdmin': async (args) => {
     const { sendBookingWhatsAppToAdmin } = await import('./whatsapp');
     return sendBookingWhatsAppToAdmin(args[0] as Parameters<typeof sendBookingWhatsAppToAdmin>[0]);
@@ -121,6 +128,22 @@ const registry: Record<string, Handler> = {
     return sendBookingRejectedWhatsAppToAdmin(
       args[0] as Parameters<typeof sendBookingRejectedWhatsAppToAdmin>[0],
       args[1] as string,
+      args[2] as string | undefined
+    );
+  },
+  'whatsapp.sendBookingCancelledByClientWhatsAppToAdmin': async (args) => {
+    const { sendBookingCancelledByClientWhatsAppToAdmin } = await import('./whatsapp');
+    return sendBookingCancelledByClientWhatsAppToAdmin(
+      args[0] as Parameters<typeof sendBookingCancelledByClientWhatsAppToAdmin>[0],
+      args[1] as string | undefined,
+      args[2] as string | undefined
+    );
+  },
+  'whatsapp.sendBookingCancelledWhatsAppToClient': async (args) => {
+    const { sendBookingCancelledWhatsAppToClient } = await import('./whatsapp');
+    return sendBookingCancelledWhatsAppToClient(
+      args[0] as Parameters<typeof sendBookingCancelledWhatsAppToClient>[0],
+      args[1] as Parameters<typeof sendBookingCancelledWhatsAppToClient>[1],
       args[2] as string | undefined
     );
   },

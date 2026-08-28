@@ -366,7 +366,15 @@
     "errorTitle": "Oops!",
     "retry": "Retry",
     "updateError": "Error updating",
-    "genericError": "An error occurred."
+    "genericError": "An error occurred.",
+    "cancelBooking": "Cancel booking",
+    "cancelling": "Cancelling...",
+    "cancelConfirmTitle": "Cancel this booking?",
+    "cancelConfirmMessage": "This action is final. The Navette Xpress team will be notified immediately of your cancellation.",
+    "cancelConfirmYes": "Yes, cancel",
+    "cancelConfirmNo": "No, keep my booking",
+    "cancelSuccessTitle": "Booking cancelled",
+    "cancelSuccessMessage": "Your booking has been successfully cancelled."
   },
   "quotes": {
     "title": "My Quotes",
