@@ -592,6 +592,6 @@ Je n'ai pas d'accès direct au VPS ni à votre compte GitHub : ces étapes ne pe
 
    Ensuite, dans l'onglet *Actions* du dépôt GitHub, le workflow "Déploiement production (VPS)" peut être lancé manuellement (bouton *Run workflow*) — il exécute exactement `scripts/deploy.sh` sur le serveur. Le build de l'image (`npm run build`) prenant plusieurs minutes, le `command_timeout` de l'étape SSH dans `.github/workflows/deploy.yml` est réglé à 30 minutes — à augmenter si le build venait à durer plus longtemps.
 4. ~~Mettre en place une surveillance externe (uptime monitoring)~~ — **fait le 2026-08-28** (voir "Déjà fait" ci-dessus).
-5. **Décider d'un environnement de pré-production (staging)** : contrairement aux points ci-dessus, ceci est une décision d'organisation/budget (nécessite soit un second VPS, moins cher, soit un sous-domaine + base de données séparée sur le même VPS) avant de pouvoir être mis en place techniquement — à trancher avec vous avant que je puisse le configurer.
+5. ~~Décider d'un environnement de pré-production (staging)~~ — **décision prise le 2026-08-28 : pas nécessaire pour l'instant.** À reconsidérer plus tard si le besoin se présente (ex. tests risqués avant une mise en prod, équipe plus grande).
 
-> Chaque fois qu'une de ces actions est faite en prod, cochez-la mentalement ou notez-le dans le [chapitre 15](#15-journal-des-évolutions-nécessitant-une-configuration) pour que ce guide reste le reflet fidèle de l'état réel.
+> Toutes les actions de ce chapitre sont désormais réalisées. Chaque fois qu'une **nouvelle** évolution nécessite une action en prod, notez-la dans le [chapitre 15](#15-journal-des-évolutions-nécessitant-une-configuration) pour que ce guide reste le reflet fidèle de l'état réel.
