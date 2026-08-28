@@ -90,6 +90,24 @@
       "empty": {
         "title": "Ningún viaje pendiente",
         "description": "Se le notificará en cuanto se le asigne una nueva misión."
+      },
+      "refuse": {
+        "button": "Rechazar la misión",
+        "modalTitle": "Rechazar la misión",
+        "modalRef": "Ref. NX-{id}",
+        "warning": "Esta misión se eliminará de su planning y será reasignada por el administrador. El cliente y el administrador serán notificados del rechazo.",
+        "reasonLabel": "Motivo del rechazo",
+        "reasons": {
+          "vehicleIssue": "Problema técnico con el vehículo",
+          "traffic": "Tráfico intenso / carretera bloqueada",
+          "emergency": "Emergencia personal",
+          "tooFar": "Trayecto demasiado lejano / incompatible con el planning",
+          "other": "Otro motivo"
+        },
+        "otherPlaceholder": "Especifique el motivo…",
+        "cancel": "Cancelar",
+        "confirm": "Confirmar el rechazo",
+        "confirming": "Rechazando…"
       }
     },
     "kpis": {

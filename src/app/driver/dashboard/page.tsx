@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from "next-intl"
 import { toIntlLocale } from "@/lib/intl-locale"
 import { CorridorBanner } from "@/app/driver/dashboard/components/CorridorBanner"
 import { CourseCard, type CoursePhase } from "@/app/driver/dashboard/components/CourseCard"
+import { RefuseMissionModal } from "@/app/driver/dashboard/components/RefuseMissionModal"
 import { KpiBand } from "@/app/driver/dashboard/components/KpiBand"
 import { MissionsToday } from "@/app/driver/dashboard/components/MissionsToday"
 import { WeekEarnings } from "@/app/driver/dashboard/components/WeekEarnings"
@@ -39,6 +40,8 @@ export default function DriverDashboardPage() {
   const [phase, setPhase] = useState<CoursePhase>("nouvelle")
   const [busy, setBusy] = useState(false)
   const [incidentReported, setIncidentReported] = useState(false)
+  const [refuseModalOpen, setRefuseModalOpen] = useState(false)
+  const [refusing, setRefusing] = useState(false)
 
   const fetchBookings = useCallback(async () => {
     try {
@@ -109,13 +112,13 @@ export default function DriverDashboardPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current?.id, current?.status])
 
-  const patchStatus = useCallback(async (id: number, status: string) => {
+  const patchStatus = useCallback(async (id: number, status: string, extra?: Record<string, unknown>) => {
     setBusy(true)
     try {
       const response = await fetch(`/api/driver/bookings/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
+        body: JSON.stringify({ status, ...extra }),
       })
       if (response.ok) {
         await fetchBookings()
@@ -126,6 +129,26 @@ export default function DriverDashboardPage() {
       setBusy(false)
     }
   }, [fetchBookings])
+
+  const handleRefuse = useCallback(async (reason: string) => {
+    if (!current) return
+    setRefusing(true)
+    try {
+      const response = await fetch(`/api/driver/bookings/${current.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "cancelled", cancellationReason: reason }),
+      })
+      if (response.ok) {
+        setRefuseModalOpen(false)
+        await fetchBookings()
+      }
+    } catch (error) {
+      console.error("Erreur lors du refus de la mission:", error)
+    } finally {
+      setRefusing(false)
+    }
+  }, [current, fetchBookings])
 
   const handleAdvance = useCallback(() => {
     if (!current) return
@@ -243,7 +266,17 @@ export default function DriverDashboardPage() {
           incidentReported={incidentReported}
           onAdvance={handleAdvance}
           onReportIncident={() => setIncidentReported(true)}
+          onRequestRefuse={() => setRefuseModalOpen(true)}
         />
+
+        {refuseModalOpen && current && (
+          <RefuseMissionModal
+            bookingId={current.id}
+            isLoading={refusing}
+            onCancel={() => setRefuseModalOpen(false)}
+            onConfirm={handleRefuse}
+          />
+        )}
 
         <KpiBand kpis={kpis} />
 

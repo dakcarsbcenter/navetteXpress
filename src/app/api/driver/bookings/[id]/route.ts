@@ -77,13 +77,24 @@ export async function PATCH(
       }, { status: 400 })
     }
 
+    // Un refus d'assignation (assigned -> cancelled) ne doit pas tuer la
+    // réservation : elle doit revenir dans la file d'assignation admin, sans
+    // chauffeur, plutôt que rester bloquée sur un statut "cancelled" terminal
+    // (voir allowedTransitions ci-dessus : rien ne part de 'cancelled').
+    const isDriverRefusal = status === 'cancelled' && currentStatus === 'assigned'
+    const persistedStatus = isDriverRefusal ? 'pending' : status
+
     // Mettre à jour le statut
     const updateData: Partial<typeof bookingsTable.$inferInsert> = {
-      status,
+      status: persistedStatus,
       updatedAt: new Date()
     }
 
-    // Si c'est une annulation, enregistrer le motif et les détails
+    if (isDriverRefusal) {
+      updateData.driverId = null
+    }
+
+    // Si c'est une annulation ou un refus, enregistrer le motif et les détails
     if (status === 'cancelled') {
       updateData.cancellationReason = cancellationReason || 'Aucune raison spécifiée'
       updateData.cancelledBy = session.user.id
@@ -120,14 +131,51 @@ export async function PATCH(
           pickupTime: new Date(booking.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
         }
       ]);
+
+      await sendWithRetry('whatsapp', 'whatsapp.sendBookingConfirmedWhatsAppToClient', [
+        {
+          id: booking.id,
+          customerName: booking.customerName,
+          pickupAddress: booking.pickupAddress,
+          dropoffAddress: booking.dropoffAddress,
+          scheduledDateTime: booking.scheduledDateTime.toISOString(),
+          passengers: 1,
+        },
+        booking.customerPhone,
+        driverInfo[0]?.name || 'Votre chauffeur'
+      ]);
     }
 
-    return NextResponse.json({ 
-      success: true, 
+    // Notifier l'admin (WhatsApp uniquement) si le chauffeur refuse une course
+    // qui lui était assignée — distinct d'une annulation après confirmation
+    if (isDriverRefusal) {
+      const driverInfo = await db.select({ name: users.name })
+        .from(users)
+        .where(eq(users.id, session.user.id))
+        .limit(1);
+
+      const booking = existingBooking[0];
+
+      await sendWithRetry('whatsapp', 'whatsapp.sendBookingRejectedWhatsAppToAdmin', [
+        {
+          id: booking.id,
+          customerName: booking.customerName,
+          pickupAddress: booking.pickupAddress,
+          dropoffAddress: booking.dropoffAddress,
+          scheduledDateTime: booking.scheduledDateTime.toISOString(),
+          passengers: 1,
+        },
+        driverInfo[0]?.name || 'Un chauffeur',
+        cancellationReason || undefined
+      ]);
+    }
+
+    return NextResponse.json({
+      success: true,
       message: 'Statut mis à jour avec succès',
       data: {
         id: bookingId,
-        status,
+        status: persistedStatus,
         updatedAt: new Date()
       }
     })

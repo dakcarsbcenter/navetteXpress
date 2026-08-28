@@ -134,6 +134,12 @@
         "driver": "Chauffeur",
         "customer": "Client"
       }
+    },
+    "notificationHealth": {
+      "title": "Notifications en échec",
+      "empty": "Aucune notification en échec.",
+      "retrying": "{count, plural, one {# en réessai} other {# en réessai}}",
+      "attempts": "{count, plural, one {# tentative} other {# tentatives}}"
     }
   }
 }

@@ -16,8 +16,17 @@ interface WhatsAppResult {
  * trop court pour être valide.
  */
 function toChatId(phone: string): string | null {
-  const digits = phone.replace(/[^0-9]/g, '')
+  let digits = phone.replace(/[^0-9]/g, '')
   if (digits.length < 8) return null
+
+  // Les numéros sénégalais sont souvent saisis en base sans indicatif pays
+  // (9 chiffres, ex: 771234567), alors que l'API WhatsApp exige le MSISDN
+  // complet. On préfixe 221 dans ce cas précis pour éviter un envoi silencieux
+  // vers un identifiant invalide.
+  if (digits.length === 9) {
+    digits = `221${digits}`
+  }
+
   return `${digits}@c.us`
 }
 
@@ -121,6 +130,62 @@ export async function sendBookingAssignedWhatsAppToDriver(
     `Date: ${scheduledDate}`
 
   return sendWhatsAppMessage(driverPhone, text)
+}
+
+/**
+ * Notifie le client que le chauffeur a confirmé/approuvé sa course.
+ */
+export async function sendBookingConfirmedWhatsAppToClient(
+  booking: WhatsAppBookingData,
+  clientPhone: string | null | undefined,
+  driverName: string
+): Promise<WhatsAppResult> {
+  if (!clientPhone) {
+    return { success: false, error: 'Numéro du client non renseigné' }
+  }
+
+  const scheduledDate = new Date(booking.scheduledDateTime).toLocaleString('fr-FR', {
+    dateStyle: 'long',
+    timeStyle: 'short',
+  })
+
+  const text =
+    `✅ Votre course #${booking.id} est confirmée !\n\n` +
+    `Chauffeur: ${driverName}\n` +
+    `Départ: ${booking.pickupAddress}\n` +
+    `Arrivée: ${booking.dropoffAddress}\n` +
+    `Date: ${scheduledDate}`
+
+  return sendWhatsAppMessage(clientPhone, text)
+}
+
+/**
+ * Notifie l'admin (ADMIN_WHATSAPP_NUMBER) qu'un chauffeur a refusé une course qui lui était assignée.
+ */
+export async function sendBookingRejectedWhatsAppToAdmin(
+  booking: WhatsAppBookingData,
+  driverName: string,
+  reason?: string
+): Promise<WhatsAppResult> {
+  if (!ADMIN_WHATSAPP_NUMBER) {
+    return { success: false, error: 'ADMIN_WHATSAPP_NUMBER non configuré' }
+  }
+
+  const scheduledDate = new Date(booking.scheduledDateTime).toLocaleString('fr-FR', {
+    dateStyle: 'long',
+    timeStyle: 'short',
+  })
+
+  const text =
+    `⚠️ Course #${booking.id} refusée par le chauffeur\n\n` +
+    `Chauffeur: ${driverName}\n` +
+    `Client: ${booking.customerName}\n` +
+    `Départ: ${booking.pickupAddress}\n` +
+    `Arrivée: ${booking.dropoffAddress}\n` +
+    `Date: ${scheduledDate}\n` +
+    (reason ? `Motif: ${reason}` : 'À réassigner manuellement.')
+
+  return sendWhatsAppMessage(ADMIN_WHATSAPP_NUMBER, text)
 }
 
 interface WhatsAppQuoteData {

@@ -90,6 +90,24 @@
       "empty": {
         "title": "No ride waiting",
         "description": "You'll be notified as soon as a new mission is assigned to you."
+      },
+      "refuse": {
+        "button": "Decline mission",
+        "modalTitle": "Decline mission",
+        "modalRef": "Ref. NX-{id}",
+        "warning": "This mission will be removed from your schedule and reassigned by the admin. The client and admin will be notified of the refusal.",
+        "reasonLabel": "Reason for declining",
+        "reasons": {
+          "vehicleIssue": "Vehicle technical issue",
+          "traffic": "Heavy traffic / blocked road",
+          "emergency": "Personal emergency",
+          "tooFar": "Ride too far / conflicts with schedule",
+          "other": "Other reason"
+        },
+        "otherPlaceholder": "Specify the reason…",
+        "cancel": "Cancel",
+        "confirm": "Confirm refusal",
+        "confirming": "Declining…"
       }
     },
     "kpis": {

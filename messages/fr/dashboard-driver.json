@@ -90,6 +90,24 @@
       "empty": {
         "title": "Aucune course en attente",
         "description": "Vous serez notifié dès qu'une nouvelle mission vous sera assignée."
+      },
+      "refuse": {
+        "button": "Refuser la mission",
+        "modalTitle": "Refuser la mission",
+        "modalRef": "Réf. NX-{id}",
+        "warning": "Cette mission sera retirée de votre planning et réattribuée par l'administrateur. Le client et l'administrateur seront notifiés du refus.",
+        "reasonLabel": "Motif du refus",
+        "reasons": {
+          "vehicleIssue": "Problème technique avec le véhicule",
+          "traffic": "Embouteillages importants / route bloquée",
+          "emergency": "Urgence personnelle",
+          "tooFar": "Trajet trop éloigné / incompatible avec le planning",
+          "other": "Autre raison"
+        },
+        "otherPlaceholder": "Précisez la raison…",
+        "cancel": "Annuler",
+        "confirm": "Confirmer le refus",
+        "confirming": "Refus en cours…"
       }
     },
     "kpis": {

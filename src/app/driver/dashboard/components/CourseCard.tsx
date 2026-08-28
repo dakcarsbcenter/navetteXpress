@@ -23,6 +23,7 @@ interface CourseCardProps {
   incidentReported: boolean
   onAdvance: () => void
   onReportIncident: () => void
+  onRequestRefuse?: () => void
 }
 
 function formatTime(dateInput: string | Date, intlLocale: string) {
@@ -38,7 +39,7 @@ function formatDuration(hours: number) {
   return `~${m} MIN`
 }
 
-export function CourseCard({ booking, phase, busy, incidentReported, onAdvance, onReportIncident }: CourseCardProps) {
+export function CourseCard({ booking, phase, busy, incidentReported, onAdvance, onReportIncident, onRequestRefuse }: CourseCardProps) {
   const t = useTranslations("driver.home.course")
   const locale = useLocale()
   const intlLocale = toIntlLocale(locale)
@@ -151,6 +152,16 @@ export function CourseCard({ booking, phase, busy, incidentReported, onAdvance, 
                 style={{ height: "48px", background: "#1F5245", border: "none", borderRadius: "4px", color: "#FFFFFF", fontFamily: "Archivo, sans-serif", fontSize: "14px", fontWeight: 600, cursor: busy ? "wait" : "pointer", letterSpacing: "0.01em", opacity: busy ? 0.7 : 1 }}
               >
                 {t(`actions.${phase}`)}
+              </button>
+            )}
+            {phase === "nouvelle" && onRequestRefuse && (
+              <button
+                type="button"
+                disabled={busy}
+                onClick={onRequestRefuse}
+                style={{ height: "42px", background: "#FFFFFF", border: "1px solid #B8493C", borderRadius: "4px", color: "#B8493C", fontFamily: "Archivo, sans-serif", fontSize: "13px", fontWeight: 600, cursor: busy ? "wait" : "pointer", opacity: busy ? 0.7 : 1 }}
+              >
+                {t("refuse.button")}
               </button>
             )}
             <div style={{ display: "flex", gap: "10px" }}>

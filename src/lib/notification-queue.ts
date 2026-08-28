@@ -108,6 +108,22 @@ const registry: Record<string, Handler> = {
       args[1] as Parameters<typeof sendBookingAssignedWhatsAppToDriver>[1]
     );
   },
+  'whatsapp.sendBookingConfirmedWhatsAppToClient': async (args) => {
+    const { sendBookingConfirmedWhatsAppToClient } = await import('./whatsapp');
+    return sendBookingConfirmedWhatsAppToClient(
+      args[0] as Parameters<typeof sendBookingConfirmedWhatsAppToClient>[0],
+      args[1] as Parameters<typeof sendBookingConfirmedWhatsAppToClient>[1],
+      args[2] as string
+    );
+  },
+  'whatsapp.sendBookingRejectedWhatsAppToAdmin': async (args) => {
+    const { sendBookingRejectedWhatsAppToAdmin } = await import('./whatsapp');
+    return sendBookingRejectedWhatsAppToAdmin(
+      args[0] as Parameters<typeof sendBookingRejectedWhatsAppToAdmin>[0],
+      args[1] as string,
+      args[2] as string | undefined
+    );
+  },
   'whatsapp.sendQuoteWhatsAppNotification': async (args) => {
     const { sendQuoteWhatsAppNotification } = await import('./whatsapp');
     return sendQuoteWhatsAppNotification(

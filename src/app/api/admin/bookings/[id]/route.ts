@@ -171,6 +171,19 @@ export async function PATCH(
         },
         driver
       ]);
+
+      await sendWithRetry('whatsapp', 'whatsapp.sendBookingConfirmedWhatsAppToClient', [
+        {
+          id: booking.id,
+          customerName: booking.customerName,
+          pickupAddress: booking.pickupAddress,
+          dropoffAddress: booking.dropoffAddress,
+          scheduledDateTime: booking.scheduledDateTime.toISOString(),
+          passengers: 1,
+        },
+        booking.customerPhone,
+        driver?.name || 'Votre chauffeur'
+      ]);
     }
 
     // Envoyer notification au chauffeur si un chauffeur est assigné
@@ -201,6 +214,18 @@ export async function PATCH(
             notes: booking.notes || undefined
           },
           driver
+        ]);
+
+        await sendWithRetry('whatsapp', 'whatsapp.sendBookingAssignedWhatsAppToDriver', [
+          {
+            id: booking.id,
+            customerName: booking.customerName,
+            pickupAddress: booking.pickupAddress,
+            dropoffAddress: booking.dropoffAddress,
+            scheduledDateTime: booking.scheduledDateTime.toISOString(),
+            passengers: 1,
+          },
+          driverData[0].phone
         ]);
       }
     }

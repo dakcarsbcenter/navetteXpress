@@ -8,7 +8,7 @@ import { authOptions } from '@/lib/auth';
 import { db } from '@/db';
 import { bookingsTable, users } from '@/schema';
 import { eq, and } from 'drizzle-orm';
-// TODO: Réimplémenter sendBookingApprovalNotificationToCustomer avec un nouveau service d'email
+import { sendWithRetry } from '@/lib/notification-queue';
 
 // PUT - Approuver ou rejeter une réservation (chauffeur uniquement)
 export async function PUT(
@@ -61,70 +61,89 @@ export async function PUT(
       }, { status: 404 });
     }
 
-    // Mettre à jour le statut de la réservation
-    const newStatus = action === 'approve' ? 'approved' : 'rejected';
-    
+    // Mettre à jour le statut de la réservation.
+    // On aligne le vocabulaire sur celui du flux principal (PATCH /api/driver/bookings/[id])
+    // au lieu des anciens statuts 'approved'/'rejected' : ceux-ci ne sont reconnus par
+    // aucun des ACTIVE_STATUSES du tableau de bord chauffeur redessiné (voir
+    // src/app/driver/dashboard/components/DriverDashboardHome.tsx), donc une réservation
+    // approuvée ici disparaissait silencieusement du suivi de mission en cours.
+    // Un refus ne doit pas non plus tuer la réservation : elle repart dans la file
+    // d'assignation admin (statut 'pending', sans chauffeur) au lieu de rester bloquée
+    // sur un statut terminal.
+    const newStatus = action === 'approve' ? 'confirmed' : 'pending';
+
+    const updateData: Partial<typeof bookingsTable.$inferInsert> = {
+      status: newStatus,
+      updatedAt: new Date(),
+    };
+    if (action === 'reject') {
+      updateData.driverId = null;
+    }
+
     const updatedBooking = await db
       .update(bookingsTable)
-      .set({
-        status: newStatus,
-        updatedAt: new Date(),
-      })
+      .set(updateData)
       .where(eq(bookingsTable.id, id))
       .returning();
 
     const responseBooking = updatedBooking[0];
     const originalBooking = existingBooking[0];
-    
+
     console.log(`✅ Réservation #${responseBooking.id} ${action === 'approve' ? 'approuvée' : 'rejetée'} par le chauffeur`);
 
-    // TODO: Réimplémenter l'envoi de notification au client
+    const driverInfo = await db
+      .select({ name: users.name, phone: users.phone })
+      .from(users)
+      .where(eq(users.id, userSession.user.id))
+      .limit(1);
+    const driver = driverInfo[0];
+
     if (action === 'approve') {
-      console.log(`⚠️ Service d'email non configuré - Notification non envoyée pour réservation #${responseBooking.id}`);
-      /*
-      // Code à réimplémenter:
-      try {
-        const driverInfo = await db
-          .select()
-          .from(users)
-          .where(eq(users.id, userSession.user.id))
-          .limit(1);
-
-        const driver = driverInfo[0];
-        
-        console.log(`📧 Envoi notification client pour approbation #${responseBooking.id}...`);
-        
-        const emailResult = await sendBookingApprovalNotificationToCustomer(
-          originalBooking.customerEmail,
-          originalBooking.customerName,
-          {
-            id: responseBooking.id,
-            driverName: driver.name || 'Votre chauffeur',
-            driverPhone: driver.phone || undefined,
-            pickupAddress: originalBooking.pickupAddress,
-            dropoffAddress: originalBooking.dropoffAddress,
-            scheduledDateTime: originalBooking.scheduledDateTime.toISOString(),
-            price: originalBooking.price || "0",
-            vehicleInfo: undefined,
-            notes: originalBooking.notes || undefined
-          }
-        );
-
-        if (emailResult.success) {
-          console.log(`✅ Notification client envoyée - Message ID: ${emailResult.messageId}`);
-        } else {
-          console.error(`❌ Erreur notification client: ${emailResult.error}`);
+      await sendWithRetry('email', 'resend-mailer.sendBookingConfirmedByDriverEmail', [
+        originalBooking.customerEmail,
+        {
+          bookingId: `BOOK-${responseBooking.id}`,
+          customerName: originalBooking.customerName,
+          driverName: driver?.name || 'Votre chauffeur',
+          driverPhone: driver?.phone || undefined,
+          pickupLocation: originalBooking.pickupAddress,
+          dropoffLocation: originalBooking.dropoffAddress,
+          pickupDate: new Date(originalBooking.scheduledDateTime).toLocaleDateString('fr-FR'),
+          pickupTime: new Date(originalBooking.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
         }
-      } catch (emailError) {
-        console.error('❌ Erreur lors de l\'envoi de la notification client:', emailError);
-      }
-      */
+      ]);
+
+      await sendWithRetry('whatsapp', 'whatsapp.sendBookingConfirmedWhatsAppToClient', [
+        {
+          id: responseBooking.id,
+          customerName: originalBooking.customerName,
+          pickupAddress: originalBooking.pickupAddress,
+          dropoffAddress: originalBooking.dropoffAddress,
+          scheduledDateTime: originalBooking.scheduledDateTime.toISOString(),
+          passengers: 1,
+        },
+        originalBooking.customerPhone,
+        driver?.name || 'Votre chauffeur'
+      ]);
+    } else {
+      await sendWithRetry('whatsapp', 'whatsapp.sendBookingRejectedWhatsAppToAdmin', [
+        {
+          id: responseBooking.id,
+          customerName: originalBooking.customerName,
+          pickupAddress: originalBooking.pickupAddress,
+          dropoffAddress: originalBooking.dropoffAddress,
+          scheduledDateTime: originalBooking.scheduledDateTime.toISOString(),
+          passengers: 1,
+        },
+        driver?.name || 'Un chauffeur',
+        undefined
+      ]);
     }
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       data: responseBooking,
-      message: `Réservation ${action === 'approve' ? 'approuvée' : 'rejetée'} avec succès${action === 'approve' ? ' (notification email désactivée)' : ''}`
+      message: `Réservation ${action === 'approve' ? 'approuvée' : 'rejetée'} avec succès`
     });
   } catch (error) {
     console.error('Erreur lors de la réponse à la réservation:', error);

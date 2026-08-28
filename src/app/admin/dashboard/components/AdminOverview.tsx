@@ -5,6 +5,7 @@ import { useTranslations, useLocale } from "next-intl"
 import { AssignmentQueueCard, type DriverInfo, type QueueItem } from "./AssignmentQueueCard"
 import { RecentBookingsTable, type RecentBooking } from "./RecentBookingsTable"
 import { AwaitingDecisionPanel, CorridorLoadPanel, NewAccountsPanel, type AwaitingDecision, type CorridorSegment, type NewAccount } from "./OverviewSidePanels"
+import { NotificationHealthPanel } from "./NotificationHealthPanel"
 import { toIntlLocale } from "@/lib/intl-locale"
 
 interface OverviewData {
@@ -221,6 +222,7 @@ export function AdminOverview() {
           <AwaitingDecisionPanel decisions={overview.awaitingDecision} />
           <CorridorLoadPanel segments={overview.corridorSegments} />
           <NewAccountsPanel accounts={overview.recentUsers} />
+          <NotificationHealthPanel />
         </div>
       </section>
     </div>
