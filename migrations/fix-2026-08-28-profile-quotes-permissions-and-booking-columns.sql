@@ -31,12 +31,14 @@ ALTER TABLE "bookings" ADD COLUMN IF NOT EXISTS "client_response_at" timestamp;
 ALTER TABLE "bookings" ADD COLUMN IF NOT EXISTS "client_response_message" text;
 
 -- 2) S'assurer que les rôles de base existent (custom_roles.name est déjà UNIQUE)
-INSERT INTO "custom_roles" (name, display_name, is_system)
+--    updated_at/created_at fournis explicitement : la colonne updated_at est
+--    NOT NULL sans défaut réel en prod malgré defaultNow() dans schema.ts.
+INSERT INTO "custom_roles" (name, display_name, is_system, created_at, updated_at)
 VALUES
-  ('admin', 'Administrateur', true),
-  ('manager', 'Manager', true),
-  ('customer', 'Client', true),
-  ('driver', 'Chauffeur', true)
+  ('admin', 'Administrateur', true, now(), now()),
+  ('manager', 'Manager', true, now(), now()),
+  ('customer', 'Client', true, now(), now()),
+  ('driver', 'Chauffeur', true, now(), now())
 ON CONFLICT (name) DO NOTHING;
 
 -- 3) Dédoublonner role_permissions avant de poser une contrainte unique
@@ -55,22 +57,23 @@ CREATE UNIQUE INDEX IF NOT EXISTS "role_permissions_role_resource_action_idx"
   ON "role_permissions" ("role_name", "resource", "action");
 
 -- 5) Permissions "profile" (lecture + modification de son propre profil)
-INSERT INTO "role_permissions" (role_name, resource, action, allowed) VALUES
-  ('admin',    'profile', 'read',   true),
-  ('admin',    'profile', 'update', true),
-  ('manager',  'profile', 'read',   true),
-  ('manager',  'profile', 'update', true),
-  ('customer', 'profile', 'read',   true),
-  ('customer', 'profile', 'update', true),
-  ('driver',   'profile', 'read',   true),
-  ('driver',   'profile', 'update', true)
+--    created_at fourni explicitement pour la même raison qu'au point 2.
+INSERT INTO "role_permissions" (role_name, resource, action, allowed, created_at) VALUES
+  ('admin',    'profile', 'read',   true, now()),
+  ('admin',    'profile', 'update', true, now()),
+  ('manager',  'profile', 'read',   true, now()),
+  ('manager',  'profile', 'update', true, now()),
+  ('customer', 'profile', 'read',   true, now()),
+  ('customer', 'profile', 'update', true, now()),
+  ('driver',   'profile', 'read',   true, now()),
+  ('driver',   'profile', 'update', true, now())
 ON CONFLICT ("role_name", "resource", "action") DO UPDATE SET allowed = true;
 
 -- 6) Permission "quotes" en lecture pour customer (+ réaffirmation admin/manager)
-INSERT INTO "role_permissions" (role_name, resource, action, allowed) VALUES
-  ('admin',    'quotes', 'read', true),
-  ('manager',  'quotes', 'read', true),
-  ('customer', 'quotes', 'read', true)
+INSERT INTO "role_permissions" (role_name, resource, action, allowed, created_at) VALUES
+  ('admin',    'quotes', 'read', true, now()),
+  ('manager',  'quotes', 'read', true, now()),
+  ('customer', 'quotes', 'read', true, now())
 ON CONFLICT ("role_name", "resource", "action") DO UPDATE SET allowed = true;
 
 COMMIT;
