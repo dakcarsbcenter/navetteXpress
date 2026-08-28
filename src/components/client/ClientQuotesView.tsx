@@ -26,6 +26,9 @@ interface Quote {
   updatedAt: string
 }
 
+const cardStyle = { backgroundColor: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '4px' }
+const surfaceStyle = { backgroundColor: '#F7F3EC', border: '1px solid #E2DACD', borderRadius: '3px' }
+
 export function ClientQuotesView() {
   const { data: session } = useSession()
   const locale = useLocale()
@@ -70,19 +73,19 @@ export function ClientQuotesView() {
   const getStatusConfig = (status: string) => {
     switch (status) {
       case 'pending':
-        return { label: t('status.pending'), color: '#F59E0B', bg: 'rgba(245,158,11,0.1)', icon: <Clock size={12} /> }
+        return { label: t('status.pending'), color: '#B4643A', bg: 'rgba(180,100,58,.10)', icon: <Clock size={12} /> }
       case 'in_progress':
-        return { label: t('status.inProgress'), color: '#3B82F6', bg: 'rgba(59,130,246,0.1)', icon: <MagnifyingGlass size={12} /> }
+        return { label: t('status.inProgress'), color: '#3B82F6', bg: 'rgba(59,130,246,.10)', icon: <MagnifyingGlass size={12} /> }
       case 'sent':
-        return { label: t('status.sent'), color: 'var(--color-client-accent)', bg: 'var(--color-client-accent-bg)', icon: <Tag size={12} /> }
+        return { label: t('status.sent'), color: '#1F5245', bg: 'rgba(31,82,69,.10)', icon: <Tag size={12} /> }
       case 'accepted':
-        return { label: t('status.accepted'), color: 'var(--color-client-accent)', bg: 'var(--color-client-accent-bg)', icon: <CheckCircle size={12} /> }
+        return { label: t('status.accepted'), color: '#1F5245', bg: 'rgba(31,82,69,.10)', icon: <CheckCircle size={12} /> }
       case 'rejected':
-        return { label: t('status.rejected'), color: '#EF4444', bg: 'rgba(239,68,68,0.1)', icon: <XCircle size={12} /> }
+        return { label: t('status.rejected'), color: '#B8493C', bg: 'rgba(184,73,60,.10)', icon: <XCircle size={12} /> }
       case 'expired':
-        return { label: t('status.expired'), color: '#6B7280', bg: 'rgba(107,114,128,0.1)', icon: <Clock size={12} /> }
+        return { label: t('status.expired'), color: '#6E6A63', bg: 'rgba(110,106,99,.10)', icon: <Clock size={12} /> }
       default:
-        return { label: status, color: '#6B7280', bg: 'rgba(107,114,128,0.1)', icon: <Clock size={12} /> }
+        return { label: status, color: '#6E6A63', bg: 'rgba(110,106,99,.10)', icon: <Clock size={12} /> }
     }
   }
 
@@ -140,220 +143,206 @@ export function ClientQuotesView() {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px]">
-        <div className="w-12 h-12 rounded-full border-2 border-transparent border-t-[var(--color-client-accent)] animate-spin mb-4" />
-        <p className="text-sm font-medium" style={{ color: 'var(--color-client-text-secondary)' }}>{t('loading')}</p>
+        <div className="w-10 h-10 rounded-full border-2 border-transparent border-t-[#1F5245] animate-spin mb-4" />
+        <p className="text-sm font-medium" style={{ color: '#6E6A63' }}>{t('loading')}</p>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header Premium */}
-      <div className="client-card-enter relative rounded-2xl overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, var(--color-client-accent-bg) 0%, var(--color-client-card) 60%)', border: '1px solid var(--color-client-accent-border)' }}>
-        <div className="h-1 w-full" style={{ background: 'linear-gradient(to right, var(--color-client-accent), transparent)' }} />
-        <div className="p-4 sm:p-6 lg:p-8">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6">
-            <div className="flex items-center gap-4 sm:gap-5">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shadow-lg shrink-0" style={{ backgroundColor: 'var(--color-client-accent-bg)', border: '1px solid var(--color-client-accent-glow)' }}>
-                <FileText size={24} weight="duotone" style={{ color: 'var(--color-client-accent)' }} />
-              </div>
-              <div className="min-w-0">
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 truncate" style={{ color: 'var(--color-client-text-primary)' }}>{t('title')}</h1>
-                <p className="text-xs sm:text-sm font-medium" style={{ color: 'var(--color-client-text-secondary)' }}>
-                  {t('subtitle')}
-                </p>
-              </div>
+    <div className="flex flex-col gap-6">
+      {/* En-tête */}
+      <div style={{ ...cardStyle, overflow: 'hidden' }}>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3" style={{ padding: '18px 24px', borderBottom: '1px solid #E2DACD' }}>
+          <div>
+            <h3 style={{ margin: 0, fontSize: '17px', fontWeight: 600, color: '#12100E' }}>{t('title')}</h3>
+            <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#6E6A63' }}>{t('subtitle')}</p>
+          </div>
+          <div className="flex gap-3 items-center flex-wrap">
+            <div className="text-center px-3 py-2" style={{ ...surfaceStyle }}>
+              <div style={{ fontSize: '16px', fontWeight: 700, color: '#12100E' }}>{quotes.length}</div>
+              <div style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6E6A63' }}>{t('total')}</div>
             </div>
-
-            <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
-              <div className="text-center px-3 sm:px-6 py-2 sm:py-3 rounded-xl" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
-                <div className="text-xl sm:text-2xl font-bold" style={{ color: 'var(--color-client-text-primary)' }}>{quotes.length}</div>
-                <div className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-client-text-secondary)' }}>{t('total')}</div>
-              </div>
-              <div className="text-center px-3 sm:px-6 py-2 sm:py-3 rounded-xl" style={{ backgroundColor: 'var(--color-client-accent-bg)', border: '1px solid var(--color-client-accent-glow)' }}>
-                <div className="text-xl sm:text-2xl font-bold" style={{ color: 'var(--color-client-accent)' }}>{quotes.filter(q => q.status === 'accepted').length}</div>
-                <div className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--color-client-accent)' }}>{t('accepted')}</div>
-              </div>
-              <button
-                onClick={() => setShowNewQuoteForm(true)}
-                className="flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl text-sm font-semibold transition-all hover:brightness-110 min-h-[44px]"
-                style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}>
-                <Plus size={16} weight="bold" /> {t('newRequest')}
-              </button>
+            <div className="text-center px-3 py-2" style={{ backgroundColor: 'rgba(31,82,69,.08)', border: '1px solid rgba(31,82,69,.2)', borderRadius: '3px' }}>
+              <div style={{ fontSize: '16px', fontWeight: 700, color: '#1F5245' }}>{quotes.filter(q => q.status === 'accepted').length}</div>
+              <div style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1F5245' }}>{t('accepted')}</div>
             </div>
+            <button
+              type="button"
+              onClick={() => setShowNewQuoteForm(true)}
+              className="flex items-center gap-2"
+              style={{ height: '40px', padding: '0 16px', background: '#1F5245', border: 'none', borderRadius: '4px', color: '#FFFFFF', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
+            >
+              <Plus size={14} weight="bold" /> {t('newRequest')}
+            </button>
           </div>
         </div>
+
+        {/* Liste des devis */}
+        {quotes.length === 0 ? (
+          <div className="text-center py-20 px-6">
+            <div className="w-16 h-16 flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: '#F7F3EC', border: '1px solid #E2DACD', borderRadius: '4px' }}>
+              <FileText size={28} weight="light" style={{ color: '#6E6A63' }} />
+            </div>
+            <h4 className="text-base font-semibold mb-1" style={{ color: '#12100E' }}>{t('noQuoteYet')}</h4>
+            <p className="text-sm max-w-xs mx-auto mb-6" style={{ color: '#6E6A63' }}>
+              {t('noQuoteDescription')}
+            </p>
+            <button
+              type="button"
+              onClick={() => setShowNewQuoteForm(true)}
+              className="inline-flex items-center gap-2"
+              style={{ padding: '10px 20px', background: 'transparent', border: '1px solid #1F5245', borderRadius: '4px', color: '#1F5245', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
+            >
+              {t('requestQuote')}
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 sm:p-6">
+            {quotes.map((quote) => {
+              const config = getStatusConfig(quote.status)
+              return (
+                <div key={quote.id} style={cardStyle}>
+                  <div className="px-4 py-4 sm:px-6 sm:py-5">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 flex items-center justify-center shrink-0" style={{ backgroundColor: '#F7F3EC', border: '1px solid #E2DACD', borderRadius: '3px' }}>
+                          <ClipboardText size={20} weight="duotone" style={{ color: '#12100E' }} />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-base" style={{ color: '#12100E' }}>
+                            {t('quoteNumber')} <span style={{ fontFamily: 'var(--font-mono)' }}>#{quote.id}</span>
+                          </h3>
+                          <p className="text-xs font-medium uppercase tracking-wider mt-0.5" style={{ color: '#1F5245' }}>
+                            {quote.service}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider shrink-0"
+                        style={{ backgroundColor: config.bg, color: config.color, borderRadius: '2px' }}>
+                        {config.icon}
+                        {config.label}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 mb-4">
+                      <div className="p-3" style={surfaceStyle}>
+                        <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: '#6E6A63' }}>{t('preferredDate')}</p>
+                        <div className="flex items-center gap-2">
+                          <Calendar size={14} style={{ color: '#1F5245' }} />
+                          <span className="text-sm font-semibold" style={{ color: '#12100E' }}>
+                            {quote.preferredDate ? new Date(quote.preferredDate).toLocaleDateString(intlLocale, { day: '2-digit', month: 'short', year: 'numeric' }) : t('toBeDefined')}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="p-3" style={surfaceStyle}>
+                        <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: '#6E6A63' }}>{t('estimatedPrice')}</p>
+                        <div className="flex items-center gap-2">
+                          <Tag size={14} style={{ color: '#1F5245' }} />
+                          <span className="text-sm font-bold" style={{ color: quote.estimatedPrice ? '#12100E' : '#6E6A63' }}>
+                            {quote.estimatedPrice ? `${parseFloat(quote.estimatedPrice).toLocaleString(intlLocale)} FCFA` : t('awaiting')}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mb-4">
+                      <p className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: '#6E6A63' }}>{t('requestDetails')}</p>
+                      <p className="text-sm leading-relaxed line-clamp-2" style={{ color: '#6E6A63' }}>
+                        {quote.message}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <button
+                        type="button"
+                        onClick={() => { setSelectedQuote(quote); setShowDetails(true) }}
+                        className="flex-1 flex items-center justify-center gap-2 min-h-[40px]"
+                        style={{ backgroundColor: '#F7F3EC', color: '#12100E', border: '1px solid #E2DACD', borderRadius: '4px', fontSize: '12px', fontWeight: 600 }}
+                      >
+                        <Eye size={16} /> {t('viewDetails')}
+                      </button>
+
+                      {quote.status === 'sent' && (
+                        <button
+                          type="button"
+                          onClick={() => openActionModal('accept', quote.id)}
+                          disabled={isProcessing}
+                          className="w-full sm:w-auto flex items-center justify-center gap-2 min-h-[40px]"
+                          style={{ padding: '0 20px', background: '#1F5245', border: 'none', borderRadius: '4px', color: '#FFFFFF', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
+                        >
+                          {t('accept')} <CaretRight size={14} weight="bold" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
       </div>
 
-      {/* Liste des devis */}
-      {quotes.length === 0 ? (
-        <div className="client-card-enter text-center py-20 px-6 rounded-2xl"
-          style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
-          <div className="w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6"
-            style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)' }}>
-            <FileText size={40} weight="light" style={{ color: 'var(--color-client-text-secondary)' }} />
-          </div>
-          <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--color-client-text-primary)' }}>{t('noQuoteYet')}</h3>
-          <p className="text-sm font-medium max-w-sm mx-auto mb-8" style={{ color: 'var(--color-client-text-secondary)' }}>
-            {t('noQuoteDescription')}
-          </p>
-          <button
-            onClick={() => setShowNewQuoteForm(true)}
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold transition-all"
-            style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)', border: '1px solid var(--color-client-accent-glow)' }}>
-            {t('requestQuote')}
-          </button>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {quotes.map((quote) => {
-            const config = getStatusConfig(quote.status)
-            return (
-              <div key={quote.id} className="client-card-enter group rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1"
-                style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
-
-                <div className="px-3 py-3 sm:px-6 sm:py-4">
-                  <div className="flex items-start justify-between mb-4 sm:mb-5">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center"
-                        style={{ backgroundColor: 'var(--color-client-surface)', color: 'var(--color-client-text-primary)', border: '1px solid var(--color-client-border)' }}>
-                        <ClipboardText size={24} weight="duotone" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-lg" style={{ color: 'var(--color-client-text-primary)' }}>
-                          {t('quoteNumber')} <span style={{ fontFamily: 'var(--font-mono)' }}>#{quote.id}</span>
-                        </h3>
-                        <p className="text-xs font-medium uppercase tracking-wider mt-0.5" style={{ color: 'var(--color-client-accent)' }}>
-                          {quote.service}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider"
-                      style={{ backgroundColor: config.bg, color: config.color, border: `1px solid ${config.color}20` }}>
-                      {config.icon}
-                      {config.label}
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div className="p-3.5 rounded-xl" style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)' }}>
-                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('preferredDate')}</p>
-                      <div className="flex items-center gap-2">
-                        <Calendar size={14} style={{ color: 'var(--color-client-accent)' }} />
-                        <span className="text-sm font-semibold" style={{ color: 'var(--color-client-text-primary)' }}>
-                          {quote.preferredDate ? new Date(quote.preferredDate).toLocaleDateString(intlLocale, { day: '2-digit', month: 'short', year: 'numeric' }) : t('toBeDefined')}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="p-3.5 rounded-xl" style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)' }}>
-                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('estimatedPrice')}</p>
-                      <div className="flex items-center gap-2">
-                        <Tag size={14} style={{ color: 'var(--color-client-accent)' }} />
-                        <span className="text-sm font-bold" style={{ color: quote.estimatedPrice ? 'var(--color-client-text-primary)' : 'var(--color-client-text-secondary)' }}>
-                          {quote.estimatedPrice ? `${parseFloat(quote.estimatedPrice).toLocaleString(intlLocale)} FCFA` : t('awaiting')}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mb-6">
-                    <p className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: 'var(--color-client-text-secondary)' }}>{t('requestDetails')}</p>
-                    <p className="text-sm font-medium leading-relaxed line-clamp-2" style={{ color: 'var(--color-client-text-secondary)' }}>
-                      {quote.message}
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row gap-2">
-                    <button
-                      onClick={() => { setSelectedQuote(quote); setShowDetails(true) }}
-                      className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold transition-all shadow-md group-hover:brightness-110 min-h-[44px]"
-                      style={{ backgroundColor: 'var(--color-client-surface)', color: 'var(--color-client-text-primary)', border: '1px solid var(--color-client-border)' }}
-                    >
-                      <Eye size={16} /> {t('viewDetails')}
-                    </button>
-
-                    {quote.status === 'sent' && (
-                      <button
-                        onClick={() => openActionModal('accept', quote.id)}
-                        disabled={isProcessing}
-                        className="w-full sm:w-auto px-6 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-lg min-h-[44px]"
-                        style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}
-                      >
-                        {t('accept')} <CaretRight size={14} weight="bold" />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      )}
-
-      {/* Modal Détails Premium */}
+      {/* Modal Détails */}
       {showDetails && selectedQuote && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[60] p-4 animate-fadeIn">
-          <div className="rounded-3xl shadow-2xl w-[95vw] max-w-2xl max-h-[90vh] overflow-hidden animate-scaleIn"
-            style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4">
+          <div className="w-[95vw] max-w-2xl max-h-[90vh] overflow-hidden flex flex-col" style={{ ...cardStyle, borderRadius: '6px' }}>
 
-            {/* Modal Header */}
-            <div className="p-4 sm:p-6 lg:p-8 flex items-center justify-between" style={{ borderBottom: '1px solid var(--color-client-border)' }}>
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'var(--color-client-accent-bg)', border: '1px solid var(--color-client-accent-glow)' }}>
-                  <FileText size={24} style={{ color: 'var(--color-client-accent)' }} />
+            <div className="p-4 sm:p-6 flex items-center justify-between shrink-0" style={{ borderBottom: '1px solid #E2DACD' }}>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 flex items-center justify-center" style={{ backgroundColor: '#F7F3EC', border: '1px solid #E2DACD', borderRadius: '3px' }}>
+                  <FileText size={20} style={{ color: '#1F5245' }} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold" style={{ color: 'var(--color-client-text-primary)' }}>
+                  <h2 className="text-lg font-semibold" style={{ color: '#12100E' }}>
                     {t('detailsModalTitle')} <span style={{ fontFamily: 'var(--font-mono)' }}>#{selectedQuote.id}</span>
                   </h2>
-                  <p className="text-xs font-medium" style={{ color: 'var(--color-client-text-secondary)' }}>{t('updatedOn')} {new Date(selectedQuote.updatedAt).toLocaleDateString(intlLocale)}</p>
+                  <p className="text-xs font-medium" style={{ color: '#6E6A63' }}>{t('updatedOn')} {new Date(selectedQuote.updatedAt).toLocaleDateString(intlLocale)}</p>
                 </div>
               </div>
-              <button onClick={() => setShowDetails(false)} className="w-10 h-10 rounded-full flex items-center justify-center transition-colors" style={{ color: 'var(--color-client-text-secondary)' }}>
-                <XCircle size={24} />
+              <button type="button" onClick={() => setShowDetails(false)} className="w-9 h-9 flex items-center justify-center" style={{ color: '#6E6A63' }}>
+                <X size={20} weight="bold" />
               </button>
             </div>
 
-            <div className="p-4 sm:p-6 lg:p-8 overflow-y-auto max-h-[calc(90vh-100px)] custom-scrollbar">
-              <div className="space-y-8">
-                {/* Status and Price Highlight */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl"
-                  style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)' }}>
+            <div className="p-4 sm:p-6 overflow-y-auto">
+              <div className="space-y-6">
+                {/* Statut et prix */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4" style={surfaceStyle}>
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-client-text-secondary)' }}>{t('currentStatus')}</span>
-                    <span className="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-2"
-                      style={{ backgroundColor: getStatusConfig(selectedQuote.status).bg, color: getStatusConfig(selectedQuote.status).color }}>
+                    <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#6E6A63' }}>{t('currentStatus')}</span>
+                    <span className="px-2.5 py-1 text-xs font-semibold uppercase tracking-wider flex items-center gap-2"
+                      style={{ backgroundColor: getStatusConfig(selectedQuote.status).bg, color: getStatusConfig(selectedQuote.status).color, borderRadius: '2px' }}>
                       {getStatusConfig(selectedQuote.status).icon}
                       {getStatusConfig(selectedQuote.status).label}
                     </span>
                   </div>
                   {selectedQuote.estimatedPrice && (
                     <div className="flex items-center gap-3">
-                      <span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-client-text-secondary)' }}>{t('proposedPrice')}</span>
-                      <span className="text-xl font-black italic" style={{ color: 'var(--color-client-accent)', fontFamily: 'var(--font-mono)' }}>
+                      <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#6E6A63' }}>{t('proposedPrice')}</span>
+                      <span className="text-lg font-bold" style={{ color: '#1F5245', fontFamily: 'var(--font-mono)' }}>
                         {parseFloat(selectedQuote.estimatedPrice).toLocaleString(intlLocale)} FCFA
                       </span>
                     </div>
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <h3 className="text-[10px] uppercase tracking-widest font-bold mb-3 flex items-center gap-2" style={{ color: 'var(--color-client-accent)' }}>
+                    <h3 className="text-[10px] uppercase tracking-widest font-bold mb-2 flex items-center gap-2" style={{ color: '#1F5245' }}>
                       <Tag size={12} weight="fill" /> {t('serviceRequested')}
                     </h3>
-                    <p className="text-sm font-semibold p-4 rounded-xl" style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}>
+                    <p className="text-sm font-semibold p-3" style={{ ...surfaceStyle, color: '#12100E' }}>
                       {selectedQuote.service}
                     </p>
                   </div>
                   <div>
-                    <h3 className="text-[10px] uppercase tracking-widest font-bold mb-3 flex items-center gap-2" style={{ color: 'var(--color-client-accent)' }}>
+                    <h3 className="text-[10px] uppercase tracking-widest font-bold mb-2 flex items-center gap-2" style={{ color: '#1F5245' }}>
                       <Calendar size={12} weight="fill" /> {t('serviceDate')}
                     </h3>
-                    <div className="p-4 rounded-xl flex items-center gap-3" style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)' }}>
-                      <Calendar size={20} style={{ color: 'var(--color-client-accent)' }} />
-                      <span className="text-sm font-semibold" style={{ color: 'var(--color-client-text-primary)' }}>
+                    <div className="p-3 flex items-center gap-3" style={surfaceStyle}>
+                      <Calendar size={18} style={{ color: '#1F5245' }} />
+                      <span className="text-sm font-semibold" style={{ color: '#12100E' }}>
                         {selectedQuote.preferredDate ? new Date(selectedQuote.preferredDate).toLocaleDateString(intlLocale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : t('notSpecified')}
                       </span>
                     </div>
@@ -361,50 +350,49 @@ export function ClientQuotesView() {
                 </div>
 
                 <div>
-                  <h3 className="text-[10px] uppercase tracking-widest font-bold mb-3 flex items-center gap-2" style={{ color: 'var(--color-client-accent)' }}>
+                  <h3 className="text-[10px] uppercase tracking-widest font-bold mb-2 flex items-center gap-2" style={{ color: '#1F5245' }}>
                     <ChatCircle size={12} weight="fill" /> {t('requestDetails')}
                   </h3>
-                  <div className="p-6 rounded-2xl leading-relaxed text-sm font-medium"
-                    style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-secondary)' }}>
+                  <div className="p-4 leading-relaxed text-sm" style={{ ...surfaceStyle, color: '#6E6A63' }}>
                     {selectedQuote.message}
                   </div>
                 </div>
 
                 {selectedQuote.adminNotes && (
-                  <div className="p-6 rounded-2xl" style={{ backgroundColor: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.15)' }}>
-                    <h3 className="text-[10px] uppercase tracking-widest font-bold mb-3 flex items-center gap-2" style={{ color: '#3B82F6' }}>
+                  <div className="p-4" style={{ backgroundColor: 'rgba(59,130,246,.06)', border: '1px solid rgba(59,130,246,.15)', borderRadius: '3px' }}>
+                    <h3 className="text-[10px] uppercase tracking-widest font-bold mb-2 flex items-center gap-2" style={{ color: '#3B82F6' }}>
                       <Tag size={12} weight="fill" /> {t('adminNote')}
                     </h3>
-                    <p className="text-sm leading-relaxed" style={{ color: 'var(--color-client-text-secondary)' }}>
+                    <p className="text-sm leading-relaxed" style={{ color: '#6E6A63' }}>
                       {selectedQuote.adminNotes}
                     </p>
                   </div>
                 )}
 
-                {/* Quick Actions Panel */}
+                {/* Actions rapides */}
                 {selectedQuote.status === 'sent' && (
-                  <div className="p-8 rounded-3xl space-y-6" style={{ background: 'linear-gradient(to bottom right, var(--color-client-accent-bg), transparent)', border: '1px solid var(--color-client-accent-border)' }}>
-                    <h4 className="font-bold text-center text-sm" style={{ color: 'var(--color-client-text-primary)' }}>
+                  <div className="p-5 space-y-4" style={{ backgroundColor: 'rgba(31,82,69,.05)', border: '1px solid rgba(31,82,69,.15)', borderRadius: '4px' }}>
+                    <h4 className="font-semibold text-center text-sm" style={{ color: '#12100E' }}>
                       {t('doesThisWorkForYou')}
                     </h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <button onClick={() => openActionModal('accept', selectedQuote.id)} className="group flex flex-col items-center gap-2 p-4 rounded-2xl transition-all border border-transparent hover:border-[var(--color-client-accent-glow)]" style={{ backgroundColor: 'transparent' }}>
-                        <div className="w-12 h-12 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform" style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)' }}>
-                          <CheckCircle size={28} weight="fill" />
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <button type="button" onClick={() => openActionModal('accept', selectedQuote.id)} className="flex flex-col items-center gap-2 p-3" style={{ backgroundColor: 'transparent', border: '1px solid transparent', borderRadius: '4px' }}>
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(31,82,69,.10)', color: '#1F5245' }}>
+                          <CheckCircle size={22} weight="fill" />
                         </div>
-                        <span className="text-xs font-bold" style={{ color: 'var(--color-client-text-primary)' }}>{t('accept')}</span>
+                        <span className="text-xs font-semibold" style={{ color: '#12100E' }}>{t('accept')}</span>
                       </button>
-                      <button onClick={() => openActionModal('negotiate', selectedQuote.id)} className="group flex flex-col items-center gap-2 p-4 rounded-2xl transition-all border border-transparent hover:border-blue-500/20">
-                        <div className="w-12 h-12 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform" style={{ backgroundColor: 'rgba(59,130,246,0.1)', color: '#3B82F6' }}>
-                          <ChatCircle size={28} weight="fill" />
+                      <button type="button" onClick={() => openActionModal('negotiate', selectedQuote.id)} className="flex flex-col items-center gap-2 p-3" style={{ borderRadius: '4px' }}>
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(59,130,246,.10)', color: '#3B82F6' }}>
+                          <ChatCircle size={22} weight="fill" />
                         </div>
-                        <span className="text-xs font-bold" style={{ color: 'var(--color-client-text-primary)' }}>{t('negotiate')}</span>
+                        <span className="text-xs font-semibold" style={{ color: '#12100E' }}>{t('negotiate')}</span>
                       </button>
-                      <button onClick={() => openActionModal('reject', selectedQuote.id)} className="group flex flex-col items-center gap-2 p-4 rounded-2xl transition-all border border-transparent hover:border-red-500/20">
-                        <div className="w-12 h-12 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform" style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#EF4444' }}>
-                          <XCircle size={28} weight="fill" />
+                      <button type="button" onClick={() => openActionModal('reject', selectedQuote.id)} className="flex flex-col items-center gap-2 p-3" style={{ borderRadius: '4px' }}>
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(184,73,60,.10)', color: '#B8493C' }}>
+                          <XCircle size={22} weight="fill" />
                         </div>
-                        <span className="text-xs font-bold" style={{ color: 'var(--color-client-text-primary)' }}>{t('reject')}</span>
+                        <span className="text-xs font-semibold" style={{ color: '#12100E' }}>{t('reject')}</span>
                       </button>
                     </div>
                   </div>
@@ -415,59 +403,58 @@ export function ClientQuotesView() {
         </div>
       )}
 
-      {/* Confirmation Modal */}
+      {/* Modal de confirmation */}
       {showActionModal && pendingAction && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-[70] p-4">
-          <div className="rounded-3xl w-[95vw] max-w-md p-4 sm:p-6 lg:p-8 shadow-2xl animate-scaleIn"
-            style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
-            <div className="text-center mb-8">
-              <div className="mx-auto w-20 h-20 rounded-3xl flex items-center justify-center mb-6 shadow-lg"
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[70] p-4">
+          <div className="w-[95vw] max-w-md p-4 sm:p-6" style={{ ...cardStyle, borderRadius: '6px' }}>
+            <div className="text-center mb-6">
+              <div className="mx-auto w-16 h-16 flex items-center justify-center mb-4"
                 style={{
-                  backgroundColor: pendingAction.action === 'accept' ? 'var(--color-client-accent-bg)' : pendingAction.action === 'reject' ? 'rgba(239,68,68,0.1)' : 'rgba(59,130,246,0.1)',
-                  color: pendingAction.action === 'accept' ? 'var(--color-client-accent)' : pendingAction.action === 'reject' ? '#EF4444' : '#3B82F6',
-                  border: `1px solid ${pendingAction.action === 'accept' ? 'var(--color-client-accent-border)' : pendingAction.action === 'reject' ? 'rgba(239,68,68,0.2)' : 'rgba(59,130,246,0.2)'}`
+                  backgroundColor: pendingAction.action === 'accept' ? 'rgba(31,82,69,.10)' : pendingAction.action === 'reject' ? 'rgba(184,73,60,.10)' : 'rgba(59,130,246,.10)',
+                  color: pendingAction.action === 'accept' ? '#1F5245' : pendingAction.action === 'reject' ? '#B8493C' : '#3B82F6',
+                  borderRadius: '4px'
                 }}>
-                {pendingAction.action === 'accept' && <CheckCircle size={40} weight="duotone" />}
-                {pendingAction.action === 'reject' && <XCircle size={40} weight="duotone" />}
-                {pendingAction.action === 'negotiate' && <ChatCircle size={40} weight="duotone" />}
+                {pendingAction.action === 'accept' && <CheckCircle size={32} weight="duotone" />}
+                {pendingAction.action === 'reject' && <XCircle size={32} weight="duotone" />}
+                {pendingAction.action === 'negotiate' && <ChatCircle size={32} weight="duotone" />}
               </div>
-              <h3 className="text-2xl font-bold mb-3" style={{ color: 'var(--color-client-text-primary)' }}>
+              <h3 className="text-lg font-semibold mb-2" style={{ color: '#12100E' }}>
                 {pendingAction.action === 'accept' && t('confirmAccept')}
                 {pendingAction.action === 'reject' && t('confirmReject')}
                 {pendingAction.action === 'negotiate' && t('negotiateRequest')}
               </h3>
-              <p className="text-sm font-medium leading-relaxed" style={{ color: 'var(--color-client-text-secondary)' }}>
+              <p className="text-sm leading-relaxed" style={{ color: '#6E6A63' }}>
                 {pendingAction.action === 'accept' && t('acceptDescription')}
                 {pendingAction.action === 'reject' && t('rejectDescription')}
                 {pendingAction.action === 'negotiate' && t('negotiateDescription')}
               </p>
             </div>
 
-            <div className="mb-8">
-              <label className="block text-[10px] uppercase tracking-widest font-bold mb-3" style={{ color: 'var(--color-client-text-secondary)' }}>
+            <div className="mb-6">
+              <label className="block text-[10px] uppercase tracking-widest font-bold mb-2" style={{ color: '#6E6A63' }}>
                 {pendingAction.action === 'accept' ? t('optionalNote') : t('yourMessage')}
               </label>
               <textarea
                 value={actionMessage}
                 onChange={(e) => setActionMessage(e.target.value)}
                 placeholder={t('messagePlaceholder')}
-                className="w-full px-5 py-4 border rounded-2xl text-sm italic focus:ring-2 focus:ring-[var(--color-client-accent)] focus:border-transparent outline-none transition-all"
-                style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                className="w-full px-4 py-3 outline-none text-sm"
+                style={{ backgroundColor: '#F7F3EC', border: '1px solid #E2DACD', borderRadius: '3px', color: '#12100E' }}
                 rows={3}
               />
             </div>
 
-            <div className="flex gap-4">
-              <button onClick={() => { setShowActionModal(false); setPendingAction(null) }}
-                className="flex-1 py-4 rounded-2xl text-sm font-bold transition-all"
-                style={{ color: 'var(--color-client-text-secondary)', border: '1px solid var(--color-client-border)' }}>
+            <div className="flex gap-3">
+              <button type="button" onClick={() => { setShowActionModal(false); setPendingAction(null) }}
+                className="flex-1 py-3"
+                style={{ color: '#6E6A63', border: '1px solid #E2DACD', borderRadius: '4px', fontSize: '13px', fontWeight: 600 }}>
                 {t('cancel')}
               </button>
-              <button onClick={confirmAction} disabled={isProcessing}
-                className="flex-1 py-4 rounded-2xl text-sm font-bold transition-all shadow-lg hover:brightness-110 disabled:opacity-50"
+              <button type="button" onClick={confirmAction} disabled={isProcessing}
+                className="flex-1 py-3 disabled:opacity-50"
                 style={{
-                  backgroundColor: pendingAction.action === 'accept' ? 'var(--color-client-accent)' : pendingAction.action === 'reject' ? '#EF4444' : '#3B82F6',
-                  color: '#fff'
+                  backgroundColor: pendingAction.action === 'accept' ? '#1F5245' : pendingAction.action === 'reject' ? '#B8493C' : '#3B82F6',
+                  color: '#fff', border: 'none', borderRadius: '4px', fontSize: '13px', fontWeight: 600
                 }}>
                 {isProcessing ? t('sending') : t('confirm')}
               </button>
@@ -478,18 +465,19 @@ export function ClientQuotesView() {
 
       {/* Modal formulaire nouveau devis */}
       {showNewQuoteForm && (
-        <div className="fixed inset-0 z-[80] flex flex-col" style={{ backgroundColor: 'var(--color-client-bg)' }}>
-          <div className="flex items-center justify-between px-6 py-4 shrink-0" style={{ borderBottom: '1px solid var(--color-client-border)', backgroundColor: 'var(--color-client-card)' }}>
+        <div className="fixed inset-0 z-[80] flex flex-col" style={{ backgroundColor: '#F7F3EC' }}>
+          <div className="flex items-center justify-between px-6 py-4 shrink-0" style={{ borderBottom: '1px solid #E2DACD', backgroundColor: '#FFFFFF' }}>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)' }}>
+              <div className="w-8 h-8 flex items-center justify-center" style={{ backgroundColor: 'rgba(31,82,69,.10)', color: '#1F5245', borderRadius: '3px' }}>
                 <FileText size={16} weight="duotone" />
               </div>
-              <h2 className="text-base font-bold" style={{ color: 'var(--color-client-text-primary)' }}>{t('newQuoteModalTitle')}</h2>
+              <h2 className="text-base font-semibold" style={{ color: '#12100E' }}>{t('newQuoteModalTitle')}</h2>
             </div>
             <button
+              type="button"
               onClick={() => setShowNewQuoteForm(false)}
-              className="w-9 h-9 rounded-xl flex items-center justify-center transition-all hover:bg-black/5"
-              style={{ color: 'var(--color-client-text-secondary)' }}
+              className="w-9 h-9 flex items-center justify-center"
+              style={{ color: '#6E6A63' }}
             >
               <X size={18} weight="bold" />
             </button>
@@ -501,13 +489,6 @@ export function ClientQuotesView() {
       )}
 
       <NotificationCenter notifications={notifications} onRemove={removeNotification} />
-
-      <style jsx>{`
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--color-client-border); border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--color-client-accent); }
-      `}</style>
     </div>
   )
 }

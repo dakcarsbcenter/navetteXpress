@@ -487,8 +487,12 @@ function ClientDashboardContent() {
   }
 
   // Bookings permissions - Chaque permission est indépendante
+  const userRole = (session?.user as { role?: string } | undefined)?.role
   const hasBookingsManagePermission = userPermissions.bookings?.includes('manage')
-  const hasBookingsCreatePermission = userPermissions.bookings?.includes('create') || hasBookingsManagePermission
+  // Politique métier (voir src/app/api/bookings/route.ts) : un client (customer) peut
+  // toujours créer une demande de réservation, même si la matrice de permissions ne
+  // lui accorde pas explicitement l'action "create".
+  const hasBookingsCreatePermission = userRole === 'customer' || userPermissions.bookings?.includes('create') || hasBookingsManagePermission
   const hasBookingsUpdatePermission = userPermissions.bookings?.includes('update') || hasBookingsManagePermission
 
   // Reviews permissions - Chaque permission est indépendante

@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react'
 import { useLocale, useTranslations } from 'next-intl'
 import { toIntlLocale } from '@/lib/intl-locale'
 import { downloadInvoicePDF } from '@/lib/invoice-pdf'
-import { CheckCircle, XCircle, Receipt, DownloadSimple, Clock, FileText, Funnel } from "@phosphor-icons/react"
+import { CheckCircle, XCircle, Receipt, DownloadSimple, Clock, Funnel } from "@phosphor-icons/react"
 
 interface Invoice {
   id: number
@@ -30,6 +30,9 @@ interface Invoice {
     clientNotes: string
   }
 }
+
+const cardStyle = { backgroundColor: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '4px' }
+const surfaceStyle = { backgroundColor: '#F7F3EC', border: '1px solid #E2DACD', borderRadius: '3px' }
 
 export function ClientInvoicesView() {
   const { data: session } = useSession()
@@ -114,11 +117,11 @@ export function ClientInvoicesView() {
 
   const getStatusConfig = (status: string) => {
     const configs = {
-      pending: { label: t('status.pending'), color: '#F59E0B', bg: 'rgba(245,158,11,0.1)' },
-      paid: { label: t('status.paid'), color: 'var(--color-client-accent)', bg: 'var(--color-client-accent-bg)' },
-      cancelled: { label: t('status.cancelled'), color: '#EF4444', bg: 'rgba(239,68,68,0.1)' },
-      overdue: { label: t('status.overdue'), color: '#EF4444', bg: 'rgba(239,68,68,0.1)' },
-      draft: { label: t('status.draft'), color: '#6B7280', bg: 'rgba(107,114,128,0.1)' }
+      pending: { label: t('status.pending'), color: '#B4643A', bg: 'rgba(180,100,58,.10)' },
+      paid: { label: t('status.paid'), color: '#1F5245', bg: 'rgba(31,82,69,.10)' },
+      cancelled: { label: t('status.cancelled'), color: '#B8493C', bg: 'rgba(184,73,60,.10)' },
+      overdue: { label: t('status.overdue'), color: '#B8493C', bg: 'rgba(184,73,60,.10)' },
+      draft: { label: t('status.draft'), color: '#6E6A63', bg: 'rgba(110,106,99,.10)' }
     }
     return configs[status as keyof typeof configs] || configs.pending
   }
@@ -139,57 +142,43 @@ export function ClientInvoicesView() {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-64">
-        <div className="w-10 h-10 rounded-full border-2 border-transparent border-t-[var(--color-client-accent)] animate-spin mb-4" />
-        <p className="text-xs font-medium" style={{ color: 'var(--color-client-text-secondary)' }}>{t('loading')}</p>
+        <div className="w-10 h-10 rounded-full border-2 border-transparent border-t-[#1F5245] animate-spin mb-4" />
+        <p className="text-xs font-medium" style={{ color: '#6E6A63' }}>{t('loading')}</p>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header Premium */}
-      <div className="client-card-enter relative rounded-2xl overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, var(--color-client-accent-bg) 0%, var(--color-client-card) 60%)', border: '1px solid var(--color-client-accent-border)' }}>
-        <div className="h-1 w-full" style={{ background: 'linear-gradient(to right, var(--color-client-accent), transparent)' }} />
-        <div className="p-4 sm:p-6 lg:p-8">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6">
-            <div className="flex items-center gap-5">
-              <div className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg shrink-0" style={{ backgroundColor: 'var(--color-client-accent-bg)', border: '1px solid var(--color-client-accent-glow)' }}>
-                <Receipt size={28} weight="duotone" style={{ color: 'var(--color-client-accent)' }} />
-              </div>
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-bold mb-1" style={{ color: 'var(--color-client-text-primary)' }}>{t('title')}</h1>
-                <p className="text-sm font-medium" style={{ color: 'var(--color-client-text-secondary)' }}>
-                  {t('subtitle')}
-                </p>
-              </div>
+    <div className="flex flex-col gap-6">
+      {/* En-tête */}
+      <div style={{ ...cardStyle, overflow: 'hidden' }}>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3" style={{ padding: '18px 24px', borderBottom: '1px solid #E2DACD' }}>
+          <div>
+            <h3 style={{ margin: 0, fontSize: '17px', fontWeight: 600, color: '#12100E' }}>{t('title')}</h3>
+            <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#6E6A63' }}>{t('subtitle')}</p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="text-center px-3 py-2" style={surfaceStyle}>
+              <div style={{ fontSize: '16px', fontWeight: 700, color: '#12100E' }}>{stats.total}</div>
+              <div style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6E6A63' }}>{t('total')}</div>
             </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="text-center px-4 py-3 rounded-xl" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
-                <div className="text-xl font-bold" style={{ color: 'var(--color-client-text-primary)' }}>{stats.total}</div>
-                <div className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-client-text-secondary)' }}>{t('total')}</div>
-              </div>
-              <div className="text-center px-4 py-3 rounded-xl" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
-                <div className="text-xl font-bold text-yellow-500">{stats.pending}</div>
-                <div className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-client-text-secondary)' }}>{t('toPay')}</div>
-              </div>
-              <div className="text-center px-4 py-3 rounded-xl" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
-                <div className="text-xl font-bold" style={{ color: 'var(--color-client-accent)' }}>{stats.paid}</div>
-                <div className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-client-text-secondary)' }}>{t('paid')}</div>
-              </div>
-              <div className="text-center px-4 py-3 rounded-xl" style={{ backgroundColor: 'var(--color-client-accent-bg)', border: '1px solid var(--color-client-accent-glow)' }}>
-                <div className="text-lg font-bold" style={{ color: 'var(--color-client-accent)', fontFamily: 'var(--font-mono)' }}>{stats.totalPaid.toLocaleString(intlLocale)}</div>
-                <div className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--color-client-accent)' }}>{t('totalPaid')}</div>
-              </div>
+            <div className="text-center px-3 py-2" style={surfaceStyle}>
+              <div style={{ fontSize: '16px', fontWeight: 700, color: '#B4643A' }}>{stats.pending}</div>
+              <div style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6E6A63' }}>{t('toPay')}</div>
+            </div>
+            <div className="text-center px-3 py-2" style={surfaceStyle}>
+              <div style={{ fontSize: '16px', fontWeight: 700, color: '#1F5245' }}>{stats.paid}</div>
+              <div style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6E6A63' }}>{t('paid')}</div>
+            </div>
+            <div className="text-center px-3 py-2" style={{ backgroundColor: 'rgba(31,82,69,.08)', border: '1px solid rgba(31,82,69,.2)', borderRadius: '3px' }}>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#1F5245', fontFamily: 'var(--font-mono)' }}>{stats.totalPaid.toLocaleString(intlLocale)}</div>
+              <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1F5245' }}>{t('totalPaid')}</div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Filtres Navigation — scrollable on mobile */}
-      <div className="overflow-x-auto scrollbar-none">
-        <div className="flex items-center gap-2 p-1 rounded-2xl w-max min-w-full sm:w-fit" style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
+        {/* Filtres */}
+        <div className="flex items-center gap-2 overflow-x-auto scrollbar-none" style={{ padding: '12px 24px', borderBottom: '1px solid #E2DACD' }}>
           {[
             { id: 'all', label: t('filters.all'), icon: <Funnel size={14} /> },
             { id: 'pending', label: t('filters.pending'), icon: <Clock size={14} /> },
@@ -198,122 +187,120 @@ export function ClientInvoicesView() {
           ].map((item) => (
             <button
               key={item.id}
+              type="button"
               onClick={() => setFilter(item.id as any)}
-              className="flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap min-h-[44px]"
+              className="flex items-center gap-2 whitespace-nowrap"
               style={filter === item.id
-                ? { backgroundColor: 'var(--color-client-accent)', color: '#fff' }
-                : { color: 'var(--color-client-text-secondary)' }}
+                ? { padding: '0 16px', height: '36px', backgroundColor: '#1F5245', color: '#fff', border: 'none', borderRadius: '4px', fontSize: '12px', fontWeight: 600 }
+                : { padding: '0 16px', height: '36px', backgroundColor: 'transparent', color: '#6E6A63', border: '1px solid #E2DACD', borderRadius: '4px', fontSize: '12px', fontWeight: 600 }}
             >
               {item.icon} {item.label}
             </button>
           ))}
         </div>
+
+        {/* Liste des factures */}
+        {filteredInvoices.length === 0 ? (
+          <div className="text-center py-20 px-6">
+            <div className="w-16 h-16 flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: '#F7F3EC', border: '1px solid #E2DACD', borderRadius: '4px' }}>
+              <Receipt size={28} weight="light" style={{ color: '#6E6A63' }} />
+            </div>
+            <h4 className="text-base font-semibold mb-1" style={{ color: '#12100E' }}>{t('noInvoiceYet')}</h4>
+            <p className="text-sm max-w-xs mx-auto" style={{ color: '#6E6A63' }}>
+              {t('noInvoiceDescription')}
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 sm:p-6">
+            {filteredInvoices.map((invoice) => {
+              const config = getStatusConfig(invoice.status)
+              return (
+                <div key={invoice.id} style={cardStyle}>
+                  <div className="px-4 py-4 sm:px-6 sm:py-5">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-4">
+                      <div>
+                        <h3 className="text-base font-semibold" style={{ color: '#12100E', fontFamily: 'var(--font-mono)' }}>
+                          {invoice.invoiceNumber}
+                        </h3>
+                        <p className="text-[10px] uppercase tracking-widest mt-1 font-bold" style={{ color: '#1F5245' }}>
+                          {invoice.service}
+                        </p>
+                      </div>
+                      <div className="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider flex items-center gap-2 shrink-0"
+                        style={{ backgroundColor: config.bg, color: config.color, borderRadius: '2px' }}>
+                        <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: config.color }} />
+                        {config.label}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-3 mb-4">
+                      <div className="col-span-1 p-3" style={surfaceStyle}>
+                        <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: '#6E6A63' }}>{t('issueDate')}</p>
+                        <p className="text-sm font-semibold" style={{ color: '#12100E' }}>
+                          {new Date(invoice.issueDate).toLocaleDateString(intlLocale, { day: '2-digit', month: 'short' })}
+                        </p>
+                      </div>
+                      <div className="col-span-1 p-3" style={surfaceStyle}>
+                        <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: '#6E6A63' }}>{t('dueDate')}</p>
+                        <p className="text-sm font-semibold" style={{ color: invoice.status === 'overdue' ? '#B8493C' : '#12100E' }}>
+                          {new Date(invoice.dueDate).toLocaleDateString(intlLocale, { day: '2-digit', month: 'short' })}
+                        </p>
+                      </div>
+                      <div className="col-span-1 p-3" style={{ backgroundColor: 'rgba(31,82,69,.08)', border: '1px solid rgba(31,82,69,.2)', borderRadius: '3px' }}>
+                        <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color: '#1F5245' }}>{t('totalTtc')}</p>
+                        <p className="text-xs font-bold" style={{ color: '#1F5245', fontFamily: 'var(--font-mono)' }}>
+                          {parseFloat(invoice.totalAmount).toLocaleString(intlLocale)}
+                        </p>
+                      </div>
+                    </div>
+
+                    {invoice.paidDate && (
+                      <div className="mb-4 p-3 flex items-center gap-3" style={{ backgroundColor: 'rgba(31,82,69,.06)', border: '1px solid rgba(31,82,69,.15)', borderRadius: '3px' }}>
+                        <CheckCircle size={16} style={{ color: '#1F5245' }} weight="fill" />
+                        <p className="text-sm font-medium" style={{ color: '#6E6A63' }}>
+                          {t('paidOn')} {new Date(invoice.paidDate).toLocaleDateString(intlLocale)} {invoice.paymentMethod && `${t('paidVia')} ${invoice.paymentMethod}`}
+                        </p>
+                      </div>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => handleDownloadPDF(invoice.id)}
+                      className="w-full flex items-center justify-center gap-2 min-h-[40px]"
+                      style={{ backgroundColor: '#F7F3EC', color: '#12100E', border: '1px solid #E2DACD', borderRadius: '4px', fontSize: '12px', fontWeight: 600 }}
+                    >
+                      <DownloadSimple size={16} /> {t('downloadPdf')}
+                    </button>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
       </div>
 
-      {/* Liste des Factures */}
-      {filteredInvoices.length === 0 ? (
-        <div className="client-card-enter text-center py-20 px-6 rounded-3xl"
-          style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
-          <div className="w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6"
-            style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)' }}>
-            <Receipt size={40} weight="light" style={{ color: 'var(--color-client-text-secondary)' }} />
-          </div>
-          <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--color-client-text-primary)' }}>{t('noInvoiceYet')}</h3>
-          <p className="text-sm font-medium max-w-sm mx-auto mb-8" style={{ color: 'var(--color-client-text-secondary)' }}>
-            {t('noInvoiceDescription')}
-          </p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredInvoices.map((invoice) => {
-            const config = getStatusConfig(invoice.status)
-            return (
-              <div key={invoice.id} className="client-card-enter group rounded-2xl overflow-hidden transition-all duration-300 hover:border-[var(--color-client-accent-glow)]"
-                style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
-
-                <div className="px-3 py-3 sm:px-6 sm:py-4">
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-4 sm:mb-6">
-                    <div>
-                      <h3 className="text-lg font-black italic tracking-tighter" style={{ color: 'var(--color-client-text-primary)' }}>
-                        {invoice.invoiceNumber}
-                      </h3>
-                      <p className="text-[10px] uppercase tracking-widest mt-1 font-bold" style={{ color: 'var(--color-client-accent)' }}>
-                        {invoice.service}
-                      </p>
-                    </div>
-                    <div className="px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider flex items-center gap-2"
-                      style={{ backgroundColor: config.bg, color: config.color, border: `1px solid ${config.color}20` }}>
-                      <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: config.color }} />
-                      {config.label}
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-4 mb-6">
-                    <div className="col-span-1 p-3 rounded-xl" style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)' }}>
-                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('issueDate')}</p>
-                      <p className="text-sm font-semibold" style={{ color: 'var(--color-client-text-primary)' }}>
-                        {new Date(invoice.issueDate).toLocaleDateString(intlLocale, { day: '2-digit', month: 'short' })}
-                      </p>
-                    </div>
-                    <div className="col-span-1 p-3 rounded-xl" style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)' }}>
-                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('dueDate')}</p>
-                      <p className="text-sm font-semibold" style={{ color: invoice.status === 'overdue' ? '#EF4444' : 'var(--color-client-text-primary)' }}>
-                        {new Date(invoice.dueDate).toLocaleDateString(intlLocale, { day: '2-digit', month: 'short' })}
-                      </p>
-                    </div>
-                    <div className="col-span-1 p-3 rounded-xl" style={{ backgroundColor: 'var(--color-client-accent-bg)', border: '1px solid var(--color-client-accent-glow)' }}>
-                      <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color: 'var(--color-client-accent)' }}>{t('totalTtc')}</p>
-                      <p className="text-xs font-bold" style={{ color: 'var(--color-client-accent)', fontFamily: 'var(--font-mono)' }}>
-                        {parseFloat(invoice.totalAmount).toLocaleString(intlLocale)}
-                      </p>
-                    </div>
-                  </div>
-
-                  {invoice.paidDate && (
-                    <div className="mb-6 p-3 rounded-xl flex items-center gap-3" style={{ backgroundColor: 'var(--color-client-accent-bg)', border: '1px solid var(--color-client-accent-border)' }}>
-                      <CheckCircle size={16} style={{ color: 'var(--color-client-accent)' }} weight="fill" />
-                      <p className="text-sm font-medium" style={{ color: 'var(--color-client-text-secondary)' }}>
-                        {t('paidOn')} {new Date(invoice.paidDate).toLocaleDateString(intlLocale)} {invoice.paymentMethod && `${t('paidVia')} ${invoice.paymentMethod}`}
-                      </p>
-                    </div>
-                  )}
-
-                  <button
-                    onClick={() => handleDownloadPDF(invoice.id)}
-                    className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-xs font-bold transition-all hover:bg-[var(--color-client-accent-bg)] hover:text-[var(--color-client-accent)] hover:border-[var(--color-client-accent-glow)]"
-                    style={{ backgroundColor: 'var(--color-client-surface)', color: 'var(--color-client-text-primary)', border: '1px solid var(--color-client-border)' }}
-                  >
-                    <DownloadSimple size={18} /> {t('downloadPdf')}
-                  </button>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      )}
-
-      {/* Premium Notification Modal */}
+      {/* Notification */}
       {showModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-md animate-fadeIn">
-          <div className="rounded-3xl p-8 max-w-sm w-full mx-4 shadow-2xl animate-scaleIn border"
-            style={{ backgroundColor: 'var(--color-client-card)', borderColor: modalType === 'success' ? 'var(--color-client-accent-glow)' : 'rgba(239,68,68,0.2)' }}>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50">
+          <div className="p-6 max-w-sm w-full mx-4" style={{ ...cardStyle, borderRadius: '6px' }}>
             <div className="flex flex-col items-center text-center">
-              <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-6 shadow-lg"
-                style={modalType === 'success' ? { backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)' } : { backgroundColor: 'rgba(239,68,68,0.1)', color: '#EF4444' }}>
-                {modalType === 'success' ? <CheckCircle size={44} weight="duotone" /> : <XCircle size={44} weight="duotone" />}
+              <div className="w-14 h-14 flex items-center justify-center mb-4"
+                style={modalType === 'success' ? { backgroundColor: 'rgba(31,82,69,.10)', color: '#1F5245', borderRadius: '4px' } : { backgroundColor: 'rgba(184,73,60,.10)', color: '#B8493C', borderRadius: '4px' }}>
+                {modalType === 'success' ? <CheckCircle size={32} weight="duotone" /> : <XCircle size={32} weight="duotone" />}
               </div>
-              <h3 className="text-2xl font-bold mb-2" style={{ color: 'var(--color-client-text-primary)' }}>
+              <h3 className="text-lg font-semibold mb-2" style={{ color: '#12100E' }}>
                 {modalType === 'success' ? t('operationSuccess') : t('technicalError')}
               </h3>
-              <p className="text-sm font-medium leading-relaxed mb-8" style={{ color: 'var(--color-client-text-secondary)' }}>
+              <p className="text-sm leading-relaxed mb-6" style={{ color: '#6E6A63' }}>
                 {modalMessage}
               </p>
               <button
+                type="button"
                 onClick={() => setShowModal(false)}
-                className="w-full py-4 rounded-2xl font-bold text-sm transition-all shadow-lg hover:brightness-110"
+                className="w-full py-3 font-semibold text-sm"
                 style={{
-                  backgroundColor: modalType === 'success' ? 'var(--color-client-accent)' : '#EF4444',
-                  color: '#fff'
+                  backgroundColor: modalType === 'success' ? '#1F5245' : '#B8493C',
+                  color: '#fff', border: 'none', borderRadius: '4px'
                 }}
               >
                 {t('continue')}
