@@ -41,6 +41,9 @@ interface UserProfile {
   image?: string
 }
 
+const surfaceStyle = { backgroundColor: '#F7F3EC', border: '1px solid #E2DACD', borderRadius: '4px' }
+const inputStyle = { backgroundColor: '#F7F3EC', border: '1px solid #E2DACD', borderRadius: '4px', color: '#12100E' }
+
 export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: EditProfileModalProps) {
   const { data: session } = useSession()
   const t = useTranslations('client.editProfile')
@@ -120,54 +123,55 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-black/50 transition-opacity"
         onClick={onClose}
       />
 
-      <div className="relative w-[95vw] max-w-3xl max-h-[90vh] overflow-hidden rounded-2xl sm:rounded-[2.5rem] shadow-2xl flex flex-col animate-scaleIn"
-        style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
+      <div className="relative w-[95vw] max-w-3xl max-h-[90vh] overflow-hidden flex flex-col"
+        style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '6px' }}>
 
-        {/* Header Section */}
-        <div className="p-4 sm:p-6 lg:p-8 pb-4 shrink-0 flex items-center justify-between"
-          style={{ borderBottom: '1px solid var(--color-client-border)', background: 'linear-gradient(135deg, var(--color-client-accent-bg) 0%, transparent 100%)' }}>
+        {/* En-tête */}
+        <div className="p-4 sm:p-6 shrink-0 flex items-center justify-between"
+          style={{ borderBottom: '1px solid #E2DACD' }}>
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: 'var(--color-client-accent-bg)', color: 'var(--color-client-accent)', border: '1px solid var(--color-client-accent-border)' }}>
-              <User size={28} weight="duotone" />
+            <div className="w-11 h-11 flex items-center justify-center" style={{ backgroundColor: '#F7F3EC', color: '#1F5245', border: '1px solid #E2DACD', borderRadius: '3px' }}>
+              <User size={22} weight="duotone" />
             </div>
             <div>
-              <h3 className="text-xl font-bold leading-tight" style={{ color: 'var(--color-client-text-primary)' }}>{t('title')}</h3>
-              <p className="text-sm mt-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('subtitle')}</p>
+              <h3 className="text-lg font-semibold leading-tight" style={{ color: '#12100E' }}>{t('title')}</h3>
+              <p className="text-sm mt-1" style={{ color: '#6E6A63' }}>{t('subtitle')}</p>
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="p-2 rounded-full transition-all"
-            style={{ color: 'var(--color-client-text-secondary)' }}
+            style={{ color: '#6E6A63' }}
           >
-            <X size={24} />
+            <X size={22} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-10">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 sm:space-y-8">
 
           {/* Section: Identité de base */}
-          <section className="space-y-6">
-            <div className="flex items-center gap-3 mb-2" style={{ color: 'var(--color-client-accent)' }}>
-              <IdentificationCard size={20} weight="bold" />
-              <h4 className="text-xs font-bold uppercase tracking-[0.2em]">{t('identityContact')}</h4>
+          <section className="space-y-4">
+            <div className="flex items-center gap-2 mb-1" style={{ color: '#1F5245' }}>
+              <IdentificationCard size={18} weight="bold" />
+              <h4 className="text-xs font-bold uppercase tracking-[0.18em]">{t('identityContact')}</h4>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('fullName')}</label>
+                <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: '#6E6A63' }}>{t('fullName')}</label>
                 <div className="relative">
-                  <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: 'var(--color-client-text-secondary)' }} />
+                  <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#6E6A63' }} />
                   <input
                     type="text"
                     value={formData.name}
                     onChange={e => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 rounded-2xl outline-none transition-all"
-                    style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                    className="w-full pl-12 pr-4 py-3 outline-none transition-all"
+                    style={inputStyle}
                     placeholder={t('fullNamePlaceholder')}
                     required
                   />
@@ -175,15 +179,15 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('email')}</label>
+                <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: '#6E6A63' }}>{t('email')}</label>
                 <div className="relative">
-                  <Envelope size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: 'var(--color-client-text-secondary)' }} />
+                  <Envelope size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#6E6A63' }} />
                   <input
                     type="email"
                     value={formData.email}
                     onChange={e => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 rounded-2xl outline-none transition-all"
-                    style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                    className="w-full pl-12 pr-4 py-3 outline-none transition-all"
+                    style={inputStyle}
                     placeholder={t('emailPlaceholder')}
                     required
                   />
@@ -191,30 +195,30 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('phone')}</label>
+                <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: '#6E6A63' }}>{t('phone')}</label>
                 <div className="relative">
-                  <DeviceMobile size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: 'var(--color-client-text-secondary)' }} />
+                  <DeviceMobile size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#6E6A63' }} />
                   <input
                     type="tel"
                     value={formData.phone}
                     onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 rounded-2xl outline-none transition-all"
-                    style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                    className="w-full pl-12 pr-4 py-3 outline-none transition-all"
+                    style={inputStyle}
                     placeholder={t('phonePlaceholder')}
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('address')}</label>
+                <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: '#6E6A63' }}>{t('address')}</label>
                 <div className="relative">
-                  <MapPin size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: 'var(--color-client-text-secondary)' }} />
+                  <MapPin size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#6E6A63' }} />
                   <input
                     type="text"
                     value={formData.address}
                     onChange={e => setFormData({ ...formData, address: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 rounded-2xl outline-none transition-all"
-                    style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                    className="w-full pl-12 pr-4 py-3 outline-none transition-all"
+                    style={inputStyle}
                     placeholder={t('addressPlaceholder')}
                   />
                 </div>
@@ -223,10 +227,10 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
           </section>
 
           {/* Section: Photo de profil */}
-          <section className="p-6 rounded-3xl" style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)' }}>
+          <section className="p-5" style={surfaceStyle}>
             <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
               <div className="shrink-0">
-                <p className="text-[10px] font-bold uppercase tracking-widest mb-3 text-center md:text-left" style={{ color: 'var(--color-client-text-secondary)' }}>{t('photoTitle')}</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest mb-3 text-center md:text-left" style={{ color: '#6E6A63' }}>{t('photoTitle')}</p>
                 <UniversalProfilePhotoUpload
                   currentImage={formData.image}
                   onImageUpdate={(url) => setFormData({ ...formData, image: url ?? "" })}
@@ -235,120 +239,120 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
                 />
               </div>
               <div className="text-center md:text-left">
-                <h5 className="text-sm font-bold" style={{ color: 'var(--color-client-text-primary)' }}>{t('photoHeadline')}</h5>
-                <p className="text-xs mt-1 max-w-sm leading-relaxed" style={{ color: 'var(--color-client-text-secondary)' }}>
+                <h5 className="text-sm font-semibold" style={{ color: '#12100E' }}>{t('photoHeadline')}</h5>
+                <p className="text-xs mt-1 max-w-sm leading-relaxed" style={{ color: '#6E6A63' }}>
                   {t('photoDescription')}
                 </p>
               </div>
             </div>
           </section>
 
-          {/* Section: Entreprise Toggle */}
-          <section className="space-y-8">
-            <div className="flex items-center justify-between p-6 rounded-3xl" style={{ backgroundColor: 'var(--color-client-accent-bg)', border: '1px solid var(--color-client-accent-border)' }}>
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--color-client-card)', color: 'var(--color-client-accent)' }}>
-                  <Buildings size={20} weight="fill" />
+          {/* Section: Entreprise */}
+          <section className="space-y-6">
+            <div className="flex items-center justify-between p-5" style={{ backgroundColor: 'rgba(31,82,69,.06)', border: '1px solid rgba(31,82,69,.2)', borderRadius: '4px' }}>
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ backgroundColor: '#FFFFFF', color: '#1F5245' }}>
+                  <Buildings size={18} weight="fill" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold" style={{ color: 'var(--color-client-text-primary)' }}>{t('companyToggleTitle')}</h4>
-                  <p className="text-xs mt-0.5" style={{ color: 'var(--color-client-text-secondary)' }}>{t('companyToggleDescription')}</p>
+                  <h4 className="text-sm font-semibold" style={{ color: '#12100E' }}>{t('companyToggleTitle')}</h4>
+                  <p className="text-xs mt-0.5" style={{ color: '#6E6A63' }}>{t('companyToggleDescription')}</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, isCompany: !formData.isCompany })}
                 className="relative w-14 h-8 rounded-full transition-all duration-300 shrink-0"
-                style={{ backgroundColor: formData.isCompany ? 'var(--color-client-accent)' : 'var(--color-client-border)' }}
+                style={{ backgroundColor: formData.isCompany ? '#1F5245' : '#E2DACD' }}
               >
-                <div className={`absolute top-1 left-1 w-6 h-6 rounded-full bg-white shadow-lg transition-transform duration-300 ${formData.isCompany ? 'translate-x-6' : 'translate-x-0'}`} />
+                <div className={`absolute top-1 left-1 w-6 h-6 rounded-full bg-white transition-transform duration-300 ${formData.isCompany ? 'translate-x-6' : 'translate-x-0'}`} />
               </button>
             </div>
 
             {formData.isCompany && (
-              <div className="space-y-6 animate-fadeIn">
+              <div className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('establishmentType')}</label>
+                  <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: '#6E6A63' }}>{t('establishmentType')}</label>
                   <div className="flex flex-wrap gap-2">
                     {establishmentTypes.map((opt) => (
                       <button
                         key={opt.value}
                         type="button"
                         onClick={() => setFormData({ ...formData, companyType: opt.value as typeof formData.companyType })}
-                        className="px-4 py-2.5 rounded-xl text-sm font-medium transition-colors"
+                        className="px-4 py-2.5 text-sm font-medium transition-colors"
                         style={formData.companyType === opt.value
-                          ? { backgroundColor: 'var(--color-client-accent)', border: '1px solid var(--color-client-accent)', color: '#fff' }
-                          : { backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-secondary)' }}
+                          ? { backgroundColor: '#1F5245', border: '1px solid #1F5245', color: '#fff', borderRadius: '4px' }
+                          : { backgroundColor: '#F7F3EC', border: '1px solid #E2DACD', color: '#6E6A63', borderRadius: '4px' }}
                       >
                         {opt.label}
                       </button>
                     ))}
                   </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('companyName')}</label>
+                    <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: '#6E6A63' }}>{t('companyName')}</label>
                     <input
                       type="text"
                       value={formData.companyName}
                       onChange={e => setFormData({ ...formData, companyName: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl outline-none transition-all"
-                      style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                      className="w-full px-4 py-3 outline-none transition-all"
+                      style={inputStyle}
                       placeholder={t('companyNamePlaceholder')}
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('ninea')}</label>
+                    <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: '#6E6A63' }}>{t('ninea')}</label>
                     <input
                       type="text"
                       value={formData.ninea}
                       onChange={e => setFormData({ ...formData, ninea: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl outline-none transition-all"
-                      style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                      className="w-full px-4 py-3 outline-none transition-all"
+                      style={inputStyle}
                       placeholder={t('nineaPlaceholder')}
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('raisonSociale')}</label>
+                    <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: '#6E6A63' }}>{t('raisonSociale')}</label>
                     <input
                       type="text"
                       value={formData.raisonSociale}
                       onChange={e => setFormData({ ...formData, raisonSociale: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl outline-none transition-all"
-                      style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                      className="w-full px-4 py-3 outline-none transition-all"
+                      style={inputStyle}
                       placeholder={t('raisonSocialePlaceholder')}
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('bp')}</label>
+                    <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: '#6E6A63' }}>{t('bp')}</label>
                     <input
                       type="text"
                       value={formData.bp}
                       onChange={e => setFormData({ ...formData, bp: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl outline-none transition-all"
-                      style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                      className="w-full px-4 py-3 outline-none transition-all"
+                      style={inputStyle}
                       placeholder={t('bpPlaceholder')}
                     />
                   </div>
                   <div className="space-y-2 md:col-span-2">
-                    <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('companyAddress')}</label>
+                    <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: '#6E6A63' }}>{t('companyAddress')}</label>
                     <input
                       type="text"
                       value={formData.companyAddress}
                       onChange={e => setFormData({ ...formData, companyAddress: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl outline-none transition-all"
-                      style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                      className="w-full px-4 py-3 outline-none transition-all"
+                      style={inputStyle}
                       placeholder={t('companyAddressPlaceholder')}
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: 'var(--color-client-text-secondary)' }}>{t('companyPhone')}</label>
+                    <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: '#6E6A63' }}>{t('companyPhone')}</label>
                     <input
                       type="tel"
                       value={formData.companyPhone}
                       onChange={e => setFormData({ ...formData, companyPhone: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl outline-none transition-all"
-                      style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+                      className="w-full px-4 py-3 outline-none transition-all"
+                      style={inputStyle}
                       placeholder={t('companyPhonePlaceholder')}
                     />
                   </div>
@@ -358,35 +362,36 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
           </section>
 
           {error && (
-            <div className="p-4 rounded-2xl text-sm flex items-center gap-3" style={{ backgroundColor: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#EF4444' }}>
+            <div className="p-4 text-sm flex items-center gap-3" style={{ backgroundColor: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#B8493C', borderRadius: '4px' }}>
               <Warning size={20} weight="fill" />
               {error}
             </div>
           )}
         </form>
 
-        {/* Footer Actions */}
-        <div className="p-4 sm:p-6 lg:p-8 shrink-0 flex gap-3 sm:gap-4" style={{ backgroundColor: 'var(--color-client-surface)', borderTop: '1px solid var(--color-client-border)' }}>
+        {/* Actions */}
+        <div className="p-4 sm:p-6 shrink-0 flex gap-3" style={{ backgroundColor: '#F7F3EC', borderTop: '1px solid #E2DACD' }}>
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-2xl font-semibold transition-all min-h-[44px]"
-            style={{ border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
+            className="flex-1 px-4 sm:px-6 py-3 font-semibold transition-all min-h-[44px]"
+            style={{ border: '1px solid #E2DACD', color: '#12100E', borderRadius: '4px' }}
             disabled={isSubmitting}
           >
             {t('cancel')}
           </button>
           <button
+            type="button"
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="flex-[1.5] px-4 sm:px-6 py-3 sm:py-4 rounded-2xl font-bold hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-3 min-h-[44px]"
-            style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}
+            className="flex-[1.5] px-4 sm:px-6 py-3 font-semibold transition-all disabled:opacity-50 flex items-center justify-center gap-2 min-h-[44px]"
+            style={{ backgroundColor: '#1F5245', color: '#fff', border: 'none', borderRadius: '4px' }}
           >
             {isSubmitting ? (
               <div className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
             ) : (
               <>
-                <FloppyDisk size={20} weight="bold" />
+                <FloppyDisk size={18} weight="bold" />
                 {t('save')}
               </>
             )}
