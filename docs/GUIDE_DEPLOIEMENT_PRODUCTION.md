@@ -167,7 +167,9 @@ Créez un fichier `.env` (sans extension, à la racine, à côté de `docker-com
 echo "OPENWA_API_MASTER_KEY=$(openssl rand -hex 32)" > .env
 ```
 
-> Pourquoi un fichier différent ? `docker-compose.yml` lit lui-même un fichier `.env` (celui-ci) pour remplacer les `${...}` qu'il contient — c'est un mécanisme de `docker compose`, différent du fichier `.env.docker` qui, lui, n'est transmis qu'au conteneur `app`. Sans cette étape, la clé API de la passerelle WhatsApp change à chaque redémarrage du conteneur `openwa`, ce qui casse les notifications (voir [chapitre 10](#10-whatsapp-openwa--configuration-et-rattachement-du-numéro)).
+> Pourquoi un fichier différent ? `docker-compose.yml` lit lui-même un fichier `.env` (celui-ci) pour remplacer les `${...}` qu'il contient — c'est un mécanisme de `docker compose`, différent du fichier `.env.docker` qui, lui, n'est transmis qu'au conteneur `app`.
+
+> ⚠️ **Sur la version d'OpenWA utilisée (v0.23.1), cette clé (`API_MASTER_KEY`) ne sert PAS à se connecter au tableau de bord.** OpenWA génère sa **propre** clé au premier démarrage du conteneur (format `owa_k1_...`), stockée dans `data/.api-key` — voir [chapitre 10](#10-whatsapp-openwa--configuration-et-rattachement-du-numéro) pour la récupérer. Cette clé auto-générée, elle, reste stable tant que le volume `openwa_data` n'est pas supprimé (elle ne se régénère pas à chaque redémarrage).
 
 **Étape 5 — Démarrer toute la stack**
 
@@ -337,7 +339,12 @@ Vous arrivez sur le tableau de bord OpenWA de production (pas celui de développ
 
 **Rattacher un numéro WhatsApp (une seule fois, ou si le numéro se déconnecte) :**
 
-1. Sur le tableau de bord, connectez-vous avec la clé maître (`OPENWA_API_MASTER_KEY` définie au [chapitre 6, étape 4](#6-installation-initiale-complète-une-seule-fois) — sans cette étape, la clé change à chaque redémarrage et il faut la relire dans les logs : `docker compose logs openwa | grep -i "master key"`).
+1. Sur le tableau de bord, connectez-vous avec la clé d'API **auto-générée par OpenWA** (pas `OPENWA_API_MASTER_KEY` — voir l'avertissement du [chapitre 6, étape 4](#6-installation-initiale-complète-une-seule-fois)). Récupérez-la avec :
+   ```bash
+   docker compose exec openwa cat /app/data/.api-key
+   ```
+   Elle est aussi affichée (tronquée) dans les logs de démarrage : `docker compose logs openwa | grep -A2 "API Key"`.
+   > Si le tableau de bord affiche une page blanche (`ERR_EMPTY_RESPONSE`) en HTTP direct via le tunnel SSH, voir la variable `CSP_UPGRADE_INSECURE_REQUESTS=false` dans [docker-compose.yml](../docker-compose.yml) (nécessaire hors reverse-proxy TLS).
 2. Créer une session (nom conseillé : `navettexpress`).
 3. Démarrer la session — **la toute première tentative échoue souvent** avec une erreur de type "Timed out ... waiting for the WS endpoint" (le démarrage du navigateur interne est lent la première fois). C'est normal : relancez simplement le démarrage de la session une seconde fois.
 4. Un QR code s'affiche et **se renouvelle automatiquement toutes les 20-30 secondes** — ouvrez WhatsApp sur le téléphone du numéro à rattacher (Réglages → Appareils connectés → Connecter un appareil) et scannez-le directement sur l'écran du tableau de bord (ne prenez pas de capture d'écran à part, elle sera probablement déjà périmée).
