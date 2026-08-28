@@ -35,6 +35,7 @@ services:
       - API_MASTER_KEY=${OPENWA_API_MASTER_KEY:-}
       - AUTO_START_SESSIONS=true
       - SEND_PACING_ENABLED=true
+      - CSP_UPGRADE_INSECURE_REQUESTS=false
     volumes:
       - openwa_data:/app/data
     ports:
