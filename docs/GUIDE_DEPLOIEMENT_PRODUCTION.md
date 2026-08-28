@@ -526,6 +526,10 @@ Vous avez probablement utilisé le nom du **conteneur** (ex : `navettexpress_app
 | 2026-08-21 | Notifications WhatsApp (OpenWA) | Nouveau conteneur `openwa` + 4 variables (`OPENWA_*`, `ADMIN_WHATSAPP_NUMBER`) | Rattacher le numéro en prod (chapitre 10) — **statut : rattachement prod pas encore fait**, à faire dès que possible |
 | 2026-08-28 | Rédaction de ce guide | — | — |
 | 2026-08-28 | Automatisation du déploiement/sauvegarde | Ajout de `scripts/deploy.sh`, `scripts/setup-backup-cron.sh`, purge auto dans `scripts/backup.sh`, `.github/workflows/deploy.yml`, port PostgreSQL restreint à `127.0.0.1` | Sur le VPS : lancer `./scripts/setup-backup-cron.sh` une fois après le prochain déploiement. Dans GitHub : configurer les secrets `VPS_HOST`/`VPS_USER`/`VPS_SSH_KEY` si le déploiement en un clic est souhaité (chapitre 17) |
+| 2026-08-28 | Surveillance externe | Compte UptimeRobot créé, moniteur HTTP(s) sur `/api/health` (5 min, alerte email) | Aucune — fait |
+| 2026-08-28 | Sauvegarde planifiée activée en prod | `./scripts/setup-backup-cron.sh` exécuté sur le VPS | Aucune — fait |
+| 2026-08-28 | Restriction du port PostgreSQL appliquée en prod | `docker compose up -d postgres` relancé sur le VPS, conteneur recréé et `Running` | Aucune — fait |
+| 2026-08-28 | Déploiement en un clic mis en route | Secrets GitHub configurés ; remote Git du VPS passé de SSH à HTTPS (`git@github.com:...` → `https://github.com/...`, dépôt public, pas besoin de clé de déploiement) ; `command_timeout` de l'étape SSH porté à 30m dans `.github/workflows/deploy.yml` (le build seul prend ~7 min) | Aucune — fait, workflow testé avec succès |
 
 ## 16. Sécurité de base
 
@@ -544,15 +548,50 @@ Vous avez probablement utilisé le nom du **conteneur** (ex : `navettexpress_app
 - **Script de déploiement tout-en-un** : [`scripts/deploy.sh`](../scripts/deploy.sh) enchaîne sauvegarde, `git pull`, build, redémarrage et vérification de santé (chapitre 7).
 - **Déploiement en un clic (CI/CD manuel)** : [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml), déclenchable depuis l'onglet "Actions" de GitHub — voir mise en route ci-dessous.
 - **Nettoyage des documents obsolètes** : les anciens guides Coolify / scripts VPS inexistants (`DEPLOYMENT_COOLIFY.md`, `COOLIFY_DEPLOYMENT_FIX.md`, `COOLIFY_DEPLOYMENT_READY.md`, `DEPLOYMENT_MANUAL_VPS.md`, `PRODUCTION_GO_LIVE_CHECKLIST.md`, `MIGRATION_GUIDE.md`, `MIGRATION_README.md`) ont été supprimés ; `GUIDE_DEPLOIEMENT_DEV_PROD.md` a été nettoyé de sa partie Coolify obsolète (sa partie Dev local/Android reste valable).
+- **Surveillance externe (uptime monitoring)** : compte UptimeRobot créé le 2026-08-28, moniteur HTTP(s) actif sur `https://www.navettexpress.com/api/health` (intervalle 5 minutes, alerte email configurée).
+- **Sauvegarde planifiée activée en prod** : `./scripts/setup-backup-cron.sh` exécuté sur le VPS le 2026-08-28 (vérifié avec `crontab -l`).
+- **Restriction du port PostgreSQL appliquée en prod** : `docker compose up -d postgres` relancé sur le VPS le 2026-08-28, conteneur `navettexpress_db` recréé et `Running` avec la configuration restreinte à `127.0.0.1`.
+- **Déploiement en un clic opérationnel** : secrets `VPS_HOST`/`VPS_USER`/`VPS_SSH_KEY` configurés le 2026-08-28 avec une clé dédiée, workflow testé avec succès de bout en bout depuis l'onglet Actions de GitHub.
 
 ### Actions restantes — à faire une seule fois, sur le serveur ou les comptes externes
 
-Je n'ai pas d'accès direct au VPS ni à vos comptes GitHub/UptimeRobot : ces étapes ne peuvent pas être appliquées depuis le dépôt de code, il faut les exécuter vous-même (ou lors du prochain redéploiement).
+Je n'ai pas d'accès direct au VPS ni à votre compte GitHub : ces étapes ne peuvent pas être appliquées depuis le dépôt de code, il faut les exécuter vous-même (ou lors du prochain redéploiement).
 
-1. **Activer la sauvegarde planifiée** : après le prochain déploiement (qui apportera `setup-backup-cron.sh` sur le VPS), lancer une fois `./scripts/setup-backup-cron.sh`.
-2. **Appliquer la restriction du port PostgreSQL** : elle prendra effet au prochain `docker compose up -d postgres` (Docker Compose recrée automatiquement le conteneur si sa configuration a changé).
-3. **Activer le déploiement en un clic depuis GitHub** : dans GitHub → *Settings* → *Secrets and variables* → *Actions*, ajouter les secrets `VPS_HOST` (IP du serveur), `VPS_USER` (utilisateur SSH) et `VPS_SSH_KEY` (clé privée SSH **dédiée**, pas votre clé personnelle — en générer une nouvelle avec `ssh-keygen` et ajouter sa clé publique dans `~/.ssh/authorized_keys` sur le VPS). Ensuite, dans l'onglet *Actions* du dépôt GitHub, le workflow "Déploiement production (VPS)" peut être lancé manuellement (bouton *Run workflow*) — il exécute exactement `scripts/deploy.sh` sur le serveur.
-4. **Mettre en place une surveillance externe (uptime monitoring)** : créer un compte gratuit sur un service comme [UptimeRobot](https://uptimerobot.com), ajouter un moniteur HTTP(s) sur `https://www.navettexpress.com/api/health`, intervalle 5 minutes, et configurer une alerte email (et SMS si besoin) en cas de panne. Personne ne surveille les logs en continu — c'est ce moniteur qui préviendra en cas de problème.
+1. ~~Activer la sauvegarde planifiée~~ — **fait le 2026-08-28** (voir "Déjà fait" ci-dessus).
+2. ~~Appliquer la restriction du port PostgreSQL~~ — **fait le 2026-08-28** (voir "Déjà fait" ci-dessus).
+3. ~~Activer le déploiement en un clic depuis GitHub~~ — **fait le 2026-08-28** (voir "Déjà fait" ci-dessus, et procédure de mise en route conservée ci-dessous pour référence/reproduction future — ex. si la clé doit être régénérée).
+
+   a. **Générer une paire de clés SSH dédiée** (sur votre ordinateur, **pas** sur le VPS, et **pas** votre clé personnelle) :
+
+      ```bash
+      ssh-keygen -t ed25519 -f ./navettexpress_deploy -N "" -C "github-actions-deploy-navettexpress"
+      ```
+
+      `-N ""` crée la clé **sans mot de passe** (obligatoire ici : GitHub Actions doit pouvoir s'en servir seule, sans qu'on tape une phrase de passe). C'est justement pour ça que cette clé doit être **dédiée** à cet usage et n'avoir aucun autre droit que celui de lancer `scripts/deploy.sh`. Cette commande crée deux fichiers : `navettexpress_deploy` (la clé **privée**, secrète) et `navettexpress_deploy.pub` (la clé **publique**, sans risque à partager).
+
+   b. **Ajouter la clé publique au VPS** — copiez le contenu de `navettexpress_deploy.pub`, connectez-vous au VPS, et ajoutez-la aux clés autorisées :
+
+      ```bash
+      mkdir -p ~/.ssh && chmod 700 ~/.ssh
+      echo "CONTENU_DE_navettexpress_deploy.pub" >> ~/.ssh/authorized_keys
+      chmod 600 ~/.ssh/authorized_keys
+      ```
+
+      > Si `docker compose up -d` échoue avec `unable to authenticate ... no supported methods remain`, vérifiez d'abord avec `cat ~/.ssh/authorized_keys` que la clé est bien là, sur une seule ligne, et dans le `authorized_keys` du **même utilisateur** que celui mis dans `VPS_USER` (pas un autre compte du VPS).
+
+   c. **Ajouter les secrets dans GitHub** : dans GitHub → *Settings* → *Secrets and variables* → *Actions* → *Repository secrets* (pas la section "Environment secrets", inutile ici puisque le workflow ne référence aucun `environment:`), ajouter `VPS_HOST` (IP du serveur), `VPS_USER` (utilisateur SSH) et `VPS_SSH_KEY` (le contenu **complet** du fichier `navettexpress_deploy`, la clé **privée** — jamais la `.pub`).
+
+   d. **Supprimer la clé privée de votre ordinateur** une fois copiée dans GitHub (elle n'a plus besoin d'y rester : `rm ./navettexpress_deploy ./navettexpress_deploy.pub`).
+
+   e. **Le remote Git sur le VPS doit être en HTTPS, pas en SSH** — le dépôt étant public, `git pull` fonctionne sans authentification via HTTPS, alors qu'un remote `git@github.com:...` échoue avec `Permission denied (publickey)` (le VPS n'a pas de clé enregistrée côté GitHub, et n'en a pas besoin). Si `git remote -v` sur le VPS affiche une URL `git@github.com:...`, corrigez avec :
+
+      ```bash
+      cd /opt/navettexpress
+      git remote set-url origin https://github.com/dakcarsbcenter/navetteXpress.git
+      ```
+
+   Ensuite, dans l'onglet *Actions* du dépôt GitHub, le workflow "Déploiement production (VPS)" peut être lancé manuellement (bouton *Run workflow*) — il exécute exactement `scripts/deploy.sh` sur le serveur. Le build de l'image (`npm run build`) prenant plusieurs minutes, le `command_timeout` de l'étape SSH dans `.github/workflows/deploy.yml` est réglé à 30 minutes — à augmenter si le build venait à durer plus longtemps.
+4. ~~Mettre en place une surveillance externe (uptime monitoring)~~ — **fait le 2026-08-28** (voir "Déjà fait" ci-dessus).
 5. **Décider d'un environnement de pré-production (staging)** : contrairement aux points ci-dessus, ceci est une décision d'organisation/budget (nécessite soit un second VPS, moins cher, soit un sous-domaine + base de données séparée sur le même VPS) avant de pouvoir être mis en place techniquement — à trancher avec vous avant que je puisse le configurer.
 
 > Chaque fois qu'une de ces actions est faite en prod, cochez-la mentalement ou notez-le dans le [chapitre 15](#15-journal-des-évolutions-nécessitant-une-configuration) pour que ce guide reste le reflet fidèle de l'état réel.
