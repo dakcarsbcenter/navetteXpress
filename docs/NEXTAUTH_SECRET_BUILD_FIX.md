@@ -1,3 +1,5 @@
+> ℹ️ Note (2026-08-28) : ce document date de l'époque Coolify (abandonné le 2026-08-24). Le mécanisme décrit (valeurs `ARG` factices au build, vraies valeurs au runtime) est toujours d'actualité, mais les vraies valeurs sont désormais injectées via `.env.docker` (docker-compose `env_file`), pas par Coolify. Voir [`GUIDE_DEPLOIEMENT_PRODUCTION.md`](GUIDE_DEPLOIEMENT_PRODUCTION.md).
+
 # 🔐 Correction : NEXTAUTH_SECRET Build Error
 
 ## ❌ Problème

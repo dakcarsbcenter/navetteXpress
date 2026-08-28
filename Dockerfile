@@ -38,9 +38,9 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
-# Variables dummy pour le build (seront remplacées au runtime par Coolify)
+# Variables dummy pour le build (remplacées au runtime par .env.docker)
 # Ces valeurs ne sont utilisées QUE pendant la phase de build
-# Les vraies valeurs sécurisées seront injectées par Coolify au runtime
+# Les vraies valeurs sécurisées sont injectées au runtime via env_file (.env.docker)
 ARG NEXTAUTH_SECRET="build-time-dummy-secret-will-be-replaced-at-runtime"
 ARG NEXTAUTH_URL="http://localhost:3000"
 ARG DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"

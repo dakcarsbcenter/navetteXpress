@@ -2,8 +2,10 @@
 
 Ce guide couvre:
 - Le deploiement en environnement Dev (web + base + Android Capacitor)
-- Le deploiement en Production (Coolify)
+- Le deploiement Android en production
 - La liste precise de ce qu il faut changer avant la mise en production
+
+Pour le déploiement **web** en production, voir [`GUIDE_DEPLOIEMENT_PRODUCTION.md`](GUIDE_DEPLOIEMENT_PRODUCTION.md) (VPS + Docker Compose — l'ancienne procédure via Coolify décrite plus bas dans ce fichier a été retirée, Coolify ayant été abandonné le 2026-08-24).
 
 ## 1. Prerequis
 
@@ -11,7 +13,7 @@ Ce guide couvre:
 - Docker Desktop (pour la base locale)
 - Android Studio + SDK Android (si app mobile)
 - Un domaine production actif (exemple: navettexpress.com)
-- Un hebergeur (Coolify dans ce projet)
+- Un VPS avec Docker + docker compose (voir GUIDE_DEPLOIEMENT_PRODUCTION.md)
 - PostgreSQL de production
 - Comptes tiers configures: Google OAuth, Cloudinary, Resend
 
@@ -78,58 +80,14 @@ Verification Android:
 - Le login doit fonctionner
 - Les appels API doivent repondre
 
-## 3. Deploiement Production (Coolify)
+## 3. Deploiement Android en production
 
-## 3.1 Preparer les variables de production
+Pour les variables d'environnement, le rattachement OAuth Google et la procédure de déploiement web (VPS + Docker Compose), voir [`GUIDE_DEPLOIEMENT_PRODUCTION.md`](GUIDE_DEPLOIEMENT_PRODUCTION.md).
 
-Configurer dans Coolify (Environment Variables), avec valeurs PROD uniquement.
+Spécifique à l'app mobile (Capacitor) :
 
-Variables obligatoires:
-- NODE_ENV=production
-- NEXTAUTH_URL=https://votre-domaine
-- NEXTAUTH_SECRET=<secret-fort-32-octets-min>
-- DATABASE_URL=<postgres-production-ssl>
-- GOOGLE_CLIENT_ID=<prod>
-- GOOGLE_CLIENT_SECRET=<prod>
-- NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=<prod>
-- NEXT_PUBLIC_CLOUDINARY_API_KEY=<prod>
-- NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=<prod>
-- CLOUDINARY_API_SECRET=<prod>
-- RESEND_API_KEY=<prod>
-- RESEND_FROM_EMAIL=<expediteur-verifie>
-- ADMIN_EMAIL=<email-admin-production>
-
-Variables mobile webview:
-- CAPACITOR_SERVER_URL=https://votre-domaine
-
-## 3.2 Verifier OAuth Google
-
-Dans Google Cloud Console:
-- Ajouter URL autorisees JavaScript: https://votre-domaine
-- Ajouter URI de redirection: https://votre-domaine/api/auth/callback/google
-- Verifier package Android com.navettexpress.app (si mobile distribue)
-
-## 3.3 Deployer via Coolify
-
-- Push sur la branche de deploiement
-- Lancer Redeploy dans Coolify
-- Suivre les logs de build et runtime
-
-Commandes de verification utiles en post-deploiement:
-- Verifier page accueil
-- Verifier /auth/signin
-- Verifier une route API de sante (si disponible)
-
-## 3.4 Base de donnees en production
-
-Le conteneur execute les migrations au demarrage via start.sh.
-
-Bonnes pratiques:
-- Faire un backup avant deploiement
-- Tester les migrations sur un environnement de preproduction
-- Eviter les migrations destructives sans plan de rollback
-
-## 3.5 Deploiement Android en production
+- Variable `CAPACITOR_SERVER_URL=https://votre-domaine` (pointe vers le site web en production)
+- Vérifier dans Google Cloud Console le package Android `com.navettexpress.app` (si mobile distribué)
 
 Avant publication mobile:
 - CAPACITOR_SERVER_URL doit pointer vers https://votre-domaine
@@ -233,6 +191,5 @@ npm run build
 
 - ANDROID_DEPLOYMENT.md
 - ANDROID_OAUTH_E2E_CHECKLIST.md
-- COOLIFY_DEPLOYMENT_READY.md
-- MIGRATION_README.md
+- GUIDE_DEPLOIEMENT_PRODUCTION.md
 - README.md
