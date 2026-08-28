@@ -698,6 +698,16 @@ function ClientDashboardContent() {
               <section style={{ ...cardStyle, padding: '48px 24px', textAlign: 'center' }}>
                 <p style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#12100E' }}>{t('home.nextTrip.emptyTitle')}</p>
                 <p style={{ margin: '8px 0 0', fontSize: '13px', color: '#6E6A63' }}>{t('home.nextTrip.emptyDescription')}</p>
+                {hasBookingsCreatePermission && (
+                  <button
+                    type="button"
+                    onClick={() => setShowReservationModal(true)}
+                    className="inline-flex items-center gap-2"
+                    style={{ marginTop: '20px', padding: '10px 20px', background: '#1F5245', border: '1px solid #1F5245', borderRadius: '4px', color: '#FFFFFF', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
+                  >
+                    <Plus size={16} weight="bold" /> {t('bookings.bookTrip')}
+                  </button>
+                )}
               </section>
             )}
 

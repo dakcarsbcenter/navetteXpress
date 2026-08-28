@@ -24,6 +24,8 @@ interface CreateReviewModalProps {
   onSuccess: () => void
 }
 
+const surfaceStyle = { backgroundColor: '#F7F3EC', border: '1px solid #E2DACD', borderRadius: '3px' }
+
 export function CreateReviewModal({ isOpen, onClose, booking, onSuccess }: CreateReviewModalProps) {
   const locale = useLocale()
   const intlLocale = toIntlLocale(locale)
@@ -128,7 +130,7 @@ export function CreateReviewModal({ isOpen, onClose, booking, onSuccess }: Creat
           onMouseEnter={() => setHoverRating(starValue)}
           onMouseLeave={() => setHoverRating(0)}
         >
-          <Star size={28} weight={isActive ? 'fill' : 'regular'} style={{ color: isActive ? '#F59E0B' : 'var(--color-client-border)' }} />
+          <Star size={28} weight={isActive ? 'fill' : 'regular'} style={{ color: isActive ? '#F59E0B' : '#E2DACD' }} />
         </button>
       )
     })
@@ -137,137 +139,127 @@ export function CreateReviewModal({ isOpen, onClose, booking, onSuccess }: Creat
   if (!isOpen || !booking) return null
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
-        onClick={onClose}
-      />
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="w-[95vw] max-w-lg p-4 sm:p-6" style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '6px' }}>
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold" style={{ color: '#12100E' }}>
+            {t('title')}
+          </h3>
+          <button
+            type="button"
+            onClick={onClose}
+            style={{ color: '#6E6A63' }}
+          >
+            <span className="sr-only">{t('close')}</span>
+            <X size={22} />
+          </button>
+        </div>
 
-      {/* Modal */}
-      <div className="flex min-h-full items-center justify-center p-4">
-        <div className="relative w-[95vw] max-w-lg transform overflow-hidden rounded-2xl p-4 sm:p-6 text-left transition-all"
-          style={{ backgroundColor: 'var(--color-client-card)', border: '1px solid var(--color-client-border)' }}>
-          {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-semibold" style={{ color: 'var(--color-client-text-primary)' }}>
-              {t('title')}
-            </h3>
+        {/* Trip Info */}
+        <div className="p-4 mb-6" style={surfaceStyle}>
+          <div className="flex items-center gap-2 mb-2">
+            <Car size={22} style={{ color: '#1F5245' }} />
+            <div className="flex-1">
+              <p className="font-medium" style={{ color: '#12100E' }}>
+                {booking.pickupAddress} → {booking.dropoffAddress}
+              </p>
+              <p className="text-sm" style={{ color: '#6E6A63' }}>
+                {new Date(booking.scheduledDateTime).toLocaleDateString(intlLocale, {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 mt-3 pt-3" style={{ borderTop: '1px solid #E2DACD' }}>
+            <User size={18} style={{ color: '#6E6A63' }} />
+            <div>
+              <p className="font-medium" style={{ color: '#12100E' }}>
+                {t('driverLabel')}: {booking.driver.name}
+              </p>
+              <p className="text-sm" style={{ color: '#6E6A63' }}>
+                {booking.driver.email}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          {/* Rating */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium mb-3" style={{ color: '#12100E' }}>
+              {t('ratingLabel')}
+            </label>
+            <div className="flex items-center gap-1 mb-2">
+              {renderStars()}
+            </div>
+            <p className="text-sm" style={{ color: '#6E6A63' }}>
+              {ratingHints[rating]}
+            </p>
+          </div>
+
+          {/* Comment */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium mb-2" style={{ color: '#12100E' }}>
+              {t('commentLabel')}
+            </label>
+            <textarea
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              className="w-full px-3 py-2 outline-none transition-all"
+              style={{ backgroundColor: '#F7F3EC', border: '1px solid #E2DACD', borderRadius: '3px', color: '#12100E' }}
+              rows={4}
+              placeholder={t('commentPlaceholder')}
+              maxLength={500}
+            />
+            <p className="text-xs mt-1" style={{ color: '#6E6A63' }}>
+              {t('commentCounter', { count: comment.length })}
+            </p>
+          </div>
+
+          {/* Error */}
+          {error && (
+            <div className="mb-4 p-3" style={{ backgroundColor: 'rgba(184,73,60,.08)', border: '1px solid rgba(184,73,60,.2)', borderRadius: '3px' }}>
+              <p className="text-sm" style={{ color: '#B8493C' }}>{error}</p>
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex gap-3">
             <button
+              type="button"
               onClick={onClose}
-              className="transition-colors"
-              style={{ color: 'var(--color-client-text-secondary)' }}
+              className="flex-1 px-4 py-3 font-medium transition-colors min-h-[44px]"
+              style={{ backgroundColor: '#F7F3EC', color: '#12100E', border: '1px solid #E2DACD', borderRadius: '4px' }}
+              disabled={isSubmitting}
             >
-              <span className="sr-only">{t('close')}</span>
-              <X size={22} />
+              {t('cancel')}
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting || rating === 0}
+              className="flex-1 px-4 py-3 font-medium transition-colors flex items-center justify-center gap-2 min-h-[44px] disabled:opacity-50"
+              style={{ backgroundColor: '#1F5245', color: '#fff', border: 'none', borderRadius: '4px' }}
+            >
+              {isSubmitting ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  {t('publishing')}
+                </>
+              ) : (
+                <>
+                  <Star size={16} weight="fill" />
+                  {t('publish')}
+                </>
+              )}
             </button>
           </div>
-
-          {/* Trip Info */}
-          <div className="rounded-lg p-4 mb-6" style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)' }}>
-            <div className="flex items-center gap-2 mb-2">
-              <Car size={22} style={{ color: 'var(--color-client-accent)' }} />
-              <div className="flex-1">
-                <p className="font-medium" style={{ color: 'var(--color-client-text-primary)' }}>
-                  {booking.pickupAddress} → {booking.dropoffAddress}
-                </p>
-                <p className="text-sm" style={{ color: 'var(--color-client-text-secondary)' }}>
-                  {new Date(booking.scheduledDateTime).toLocaleDateString(intlLocale, {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 mt-3 pt-3" style={{ borderTop: '1px solid var(--color-client-border)' }}>
-              <User size={18} style={{ color: 'var(--color-client-text-secondary)' }} />
-              <div>
-                <p className="font-medium" style={{ color: 'var(--color-client-text-primary)' }}>
-                  {t('driverLabel')}: {booking.driver.name}
-                </p>
-                <p className="text-sm" style={{ color: 'var(--color-client-text-secondary)' }}>
-                  {booking.driver.email}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <form onSubmit={handleSubmit}>
-            {/* Rating */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium mb-3" style={{ color: 'var(--color-client-text-primary)' }}>
-                {t('ratingLabel')}
-              </label>
-              <div className="flex items-center gap-1 mb-2">
-                {renderStars()}
-              </div>
-              <p className="text-sm" style={{ color: 'var(--color-client-text-secondary)' }}>
-                {ratingHints[rating]}
-              </p>
-            </div>
-
-            {/* Comment */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-client-text-primary)' }}>
-                {t('commentLabel')}
-              </label>
-              <textarea
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg outline-none transition-all"
-                style={{ backgroundColor: 'var(--color-client-surface)', border: '1px solid var(--color-client-border)', color: 'var(--color-client-text-primary)' }}
-                rows={4}
-                placeholder={t('commentPlaceholder')}
-                maxLength={500}
-              />
-              <p className="text-xs mt-1" style={{ color: 'var(--color-client-text-secondary)' }}>
-                {t('commentCounter', { count: comment.length })}
-              </p>
-            </div>
-
-            {/* Error */}
-            {error && (
-              <div className="mb-4 p-3 rounded-lg" style={{ backgroundColor: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}>
-                <p className="text-sm" style={{ color: '#EF4444' }}>{error}</p>
-              </div>
-            )}
-
-            {/* Actions */}
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={onClose}
-                className="flex-1 px-4 py-3 rounded-lg font-medium transition-colors min-h-[44px]"
-                style={{ backgroundColor: 'var(--color-client-surface)', color: 'var(--color-client-text-primary)', border: '1px solid var(--color-client-border)' }}
-                disabled={isSubmitting}
-              >
-                {t('cancel')}
-              </button>
-              <button
-                type="submit"
-                disabled={isSubmitting || rating === 0}
-                className="flex-1 px-4 py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 min-h-[44px] disabled:opacity-50"
-                style={{ backgroundColor: 'var(--color-client-accent)', color: '#fff' }}
-              >
-                {isSubmitting ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    {t('publishing')}
-                  </>
-                ) : (
-                  <>
-                    <Star size={16} weight="fill" />
-                    {t('publish')}
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
-        </div>
+        </form>
       </div>
     </div>
   )
