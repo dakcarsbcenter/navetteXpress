@@ -25,9 +25,11 @@ interface AdminStats {
     completionRate: number
     earningsPerRide: number
   }>
-  weeklyRevenue?: Array<{ week: string; revenue: number }>
-  courseDistribution?: Array<{ type: string; count: number; percentage: number }>
+  revenueSeries: Array<{ label: string; date: string; revenue: number; rides: number }>
+  courseDistribution: Array<{ status: string; label: string; count: number; percentage: number }>
 }
+
+const DISTRIBUTION_COLORS = ['#1F5245', '#B4643A', '#6E6A63', '#9B8759']
 
 const getInitials = (name: string) =>
   name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
@@ -61,7 +63,9 @@ const AdminGlobalStats = () => {
 
       const statsData: AdminStats = {
         globalStats: response_data.data.globalMetrics || response_data.data.globalStats,
-        driverStats: response_data.data.driverStats || []
+        driverStats: response_data.data.driverStats || [],
+        revenueSeries: response_data.data.revenueSeries || [],
+        courseDistribution: response_data.data.courseDistribution || []
       }
 
       setStats(statsData)
@@ -114,6 +118,7 @@ const AdminGlobalStats = () => {
         totalRides: selectedDriver.totalRides,
         totalEarnings: selectedDriver.totalEarnings,
         totalDrivers: 1,
+        activeDrivers: 1,
         completionRate: selectedDriver.completionRate
       },
       driverStats: [selectedDriver]
@@ -121,6 +126,52 @@ const AdminGlobalStats = () => {
   }
 
   const filteredStats = getFilteredStats()
+
+  const getRevenueChartData = () => {
+    const series = stats?.revenueSeries || []
+    if (series.length === 0) {
+      return { linePath: '', areaPath: '', points: [] as { x: number; y: number }[], labels: [] as string[] }
+    }
+
+    const maxRevenue = Math.max(...series.map(p => p.revenue), 1)
+    const width = 800
+    const topMargin = 20
+    const baseline = 220
+
+    const points = series.map((p, i) => {
+      const x = series.length > 1 ? (i / (series.length - 1)) * width : width / 2
+      const y = baseline - (p.revenue / maxRevenue) * (baseline - topMargin)
+      return { x, y }
+    })
+
+    const linePath = points.map((pt, i) => `${i === 0 ? 'M' : 'L'} ${pt.x} ${pt.y}`).join(' ')
+    const areaPath = `${linePath} L ${points[points.length - 1].x} 250 L ${points[0].x} 250 Z`
+
+    // Limite le nombre de labels affichés pour éviter le chevauchement
+    const maxLabels = 8
+    const step = Math.max(1, Math.ceil(series.length / maxLabels))
+    const labels = series.filter((_, i) => i % step === 0 || i === series.length - 1).map(p => p.label)
+
+    return { linePath, areaPath, points, labels }
+  }
+
+  const revenueChart = getRevenueChartData()
+  const distribution = stats?.courseDistribution || []
+  const distributionTotal = distribution.reduce((sum, d) => sum + d.count, 0)
+
+  // Construit les segments du donut (circonférence = 2π×40 ≈ 251)
+  const getDonutSegments = () => {
+    const circumference = 251
+    let offset = 0
+    return distribution.map((d, i) => {
+      const dash = distributionTotal > 0 ? (d.count / distributionTotal) * circumference : 0
+      const segment = { ...d, dashArray: `${dash} ${circumference}`, dashOffset: -offset, color: DISTRIBUTION_COLORS[i % DISTRIBUTION_COLORS.length] }
+      offset += dash
+      return segment
+    })
+  }
+
+  const donutSegments = getDonutSegments()
 
   if (!session?.user) {
     return (
@@ -230,58 +281,70 @@ const AdminGlobalStats = () => {
             <div className="lg:col-span-2" style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '4px', padding: '22px' }}>
               <h3 style={{ margin: '0 0 20px', fontSize: '13px', fontWeight: 600, color: '#12100E' }}>Évolution des revenus</h3>
               <div style={{ height: '220px', position: 'relative' }}>
-                <svg className="w-full h-full" viewBox="0 0 800 250" preserveAspectRatio="none">
-                  <path
-                    d="M 0 150 L 114 130 L 228 140 L 342 110 L 456 125 L 570 95 L 684 120 L 800 85 L 800 250 L 0 250 Z"
-                    fill="rgba(31,82,69,.06)"
-                  />
-                  <path
-                    d="M 0 150 L 114 130 L 228 140 L 342 110 L 456 125 L 570 95 L 684 120 L 800 85"
-                    fill="none"
-                    stroke="#1F5245"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-                  {[0, 114, 228, 342, 456, 570, 684, 800].map((x, i) => (
-                    <circle key={i} cx={x} cy={150 - (i % 3) * 20} r="3" fill="#1F5245" />
-                  ))}
-                </svg>
-                <div className="flex justify-between" style={{ marginTop: '12px', fontFamily: 'var(--font-mono)', fontSize: '9.5px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#6E6A63' }}>
-                  {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map(d => <span key={d}>{d}</span>)}
-                </div>
+                {revenueChart.points.length > 0 ? (
+                  <>
+                    <svg className="w-full h-full" viewBox="0 0 800 250" preserveAspectRatio="none">
+                      <path d={revenueChart.areaPath} fill="rgba(31,82,69,.06)" />
+                      <path d={revenueChart.linePath} fill="none" stroke="#1F5245" strokeWidth="2" strokeLinecap="round" />
+                      {revenueChart.points.map((pt, i) => (
+                        <circle key={i} cx={pt.x} cy={pt.y} r="3" fill="#1F5245" />
+                      ))}
+                    </svg>
+                    <div className="flex justify-between" style={{ marginTop: '12px', fontFamily: 'var(--font-mono)', fontSize: '9.5px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#6E6A63' }}>
+                      {revenueChart.labels.map((label, i) => <span key={`${label}-${i}`}>{label}</span>)}
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex h-full items-center justify-center" style={{ fontSize: '12.5px', color: '#6E6A63' }}>
+                    Aucune donnée pour cette période
+                  </div>
+                )}
               </div>
             </div>
 
             <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '4px', padding: '22px' }}>
               <h3 style={{ margin: '0 0 20px', fontSize: '13px', fontWeight: 600, color: '#12100E' }}>Répartition courses</h3>
-              <div className="flex flex-col items-center justify-center" style={{ paddingBottom: '10px' }}>
-                <div className="relative" style={{ width: '150px', height: '150px', marginBottom: '20px' }}>
-                  <svg className="w-full h-full" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="40" fill="none" stroke="#F0EAE0" strokeWidth="12" />
-                    <circle cx="50" cy="50" r="40" fill="none" stroke="#1F5245" strokeWidth="12" strokeDasharray="180 251" strokeDashoffset="0" transform="rotate(-90 50 50)" />
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '19px', fontWeight: 600, color: '#12100E' }}>72%</span>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#6E6A63' }}>Usage</span>
+              {donutSegments.length > 0 ? (
+                <div className="flex flex-col items-center justify-center" style={{ paddingBottom: '10px' }}>
+                  <div className="relative" style={{ width: '150px', height: '150px', marginBottom: '20px' }}>
+                    <svg className="w-full h-full" viewBox="0 0 100 100">
+                      <circle cx="50" cy="50" r="40" fill="none" stroke="#F0EAE0" strokeWidth="12" />
+                      {donutSegments.map((seg, i) => (
+                        <circle
+                          key={seg.status}
+                          cx="50" cy="50" r="40" fill="none"
+                          stroke={seg.color}
+                          strokeWidth="12"
+                          strokeDasharray={seg.dashArray}
+                          strokeDashoffset={seg.dashOffset}
+                          transform="rotate(-90 50 50)"
+                        />
+                      ))}
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '19px', fontWeight: 600, color: '#12100E' }}>
+                        {filteredStats.globalStats.completionRate.toFixed(0)}%
+                      </span>
+                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#6E6A63' }}>Complétion</span>
+                    </div>
+                  </div>
+                  <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {donutSegments.map(seg => (
+                      <div key={seg.status} className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: seg.color }} />
+                          <span style={{ fontSize: '12px', color: '#3d3a35' }}>{seg.label}</span>
+                        </div>
+                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11.5px', color: '#12100E' }}>{seg.percentage}%</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
-                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#1F5245' }} />
-                      <span style={{ fontSize: '12px', color: '#3d3a35' }}>Transferts</span>
-                    </div>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11.5px', color: '#12100E' }}>45%</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#B4643A' }} />
-                      <span style={{ fontSize: '12px', color: '#3d3a35' }}>Privé</span>
-                    </div>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11.5px', color: '#12100E' }}>35%</span>
-                  </div>
+              ) : (
+                <div className="flex items-center justify-center" style={{ minHeight: '220px', fontSize: '12.5px', color: '#6E6A63' }}>
+                  Aucune donnée pour cette période
                 </div>
-              </div>
+              )}
             </div>
           </section>
 

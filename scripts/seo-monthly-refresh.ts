@@ -41,7 +41,7 @@ function buildRefreshRows(): RefreshTaskRow[] {
     return {
       pageType: page.kind,
       pagePath: page.canonicalPath,
-      intentKeyword: page.intentKeyword,
+      intentKeyword: page.translations.fr.intentKeyword,
       priority: isPriorityRoute ? 'P1' : 'P2',
       focusBlock: isPriorityRoute ? 'Title/H1 + FAQ objections + CTA reservation' : 'FAQ + maillage interne + preuves sociales',
     };

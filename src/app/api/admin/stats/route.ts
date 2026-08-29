@@ -149,7 +149,82 @@ export async function GET(request: NextRequest) {
       .groupBy(sql`TO_CHAR(${bookingsTable.createdAt}, 'YYYY-MM')`)
       .orderBy(sql`TO_CHAR(${bookingsTable.createdAt}, 'YYYY-MM')`)
 
-    // 6. Top routes globales
+    // 6. Série de revenus pour le graphique (bucketée selon la période)
+    type SeriesPoint = { label: string; date: string; revenue: number; rides: number }
+    let revenueSeries: SeriesPoint[] = []
+
+    if (period === 'year') {
+      const monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc']
+      const monthlyMap = new Map(monthlyPerformance.map(m => [m.month as string, m]))
+      for (let m = 0; m <= now.getMonth(); m++) {
+        const key = `${now.getFullYear()}-${String(m + 1).padStart(2, '0')}`
+        const row = monthlyMap.get(key)
+        revenueSeries.push({
+          label: monthNames[m],
+          date: key,
+          revenue: Number(row?.totalEarnings || 0),
+          rides: Number(row?.totalRides || 0)
+        })
+      }
+    } else {
+      const dailyRaw = await db
+        .select({
+          day: sql<string>`TO_CHAR(${bookingsTable.createdAt}, 'YYYY-MM-DD')`.as('day'),
+          revenue: sum(sql`CASE WHEN ${bookingsTable.status} = 'completed' THEN CAST(${bookingsTable.price} AS NUMERIC) ELSE 0 END`),
+          rides: count(bookingsTable.id)
+        })
+        .from(bookingsTable)
+        .where(
+          and(
+            ne(bookingsTable.status, 'pending'),
+            gte(bookingsTable.createdAt, startDate),
+            sql`${bookingsTable.driverId} IS NOT NULL`
+          )
+        )
+        .groupBy(sql`TO_CHAR(${bookingsTable.createdAt}, 'YYYY-MM-DD')`)
+
+      const dailyMap = new Map(dailyRaw.map(d => [d.day as string, d]))
+      const dayNamesShort = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
+      const cursor = new Date(startDate)
+      cursor.setHours(0, 0, 0, 0)
+      const endCursor = new Date(now)
+      endCursor.setHours(0, 0, 0, 0)
+
+      while (cursor <= endCursor) {
+        const key = cursor.toISOString().slice(0, 10)
+        const row = dailyMap.get(key)
+        const label = period === 'week' ? dayNamesShort[cursor.getDay()] : String(cursor.getDate())
+        revenueSeries.push({
+          label,
+          date: key,
+          revenue: Number(row?.revenue || 0),
+          rides: Number(row?.rides || 0)
+        })
+        cursor.setDate(cursor.getDate() + 1)
+      }
+    }
+
+    // 7. Répartition des courses par statut (pour le donut)
+    const statusLabels: Record<string, string> = {
+      completed: 'Terminées',
+      cancelled: 'Annulées',
+      in_progress: 'En cours',
+      confirmed: 'Confirmées',
+      assigned: 'Assignées',
+      approved: 'Approuvées',
+      rejected: 'Rejetées'
+    }
+    const courseDistribution = globalStatusStats
+      .map(s => ({
+        status: s.status,
+        label: statusLabels[s.status as string] || s.status,
+        count: s.count || 0,
+        percentage: globalStats[0]?.totalRides > 0 ?
+          Math.round(((s.count || 0) / globalStats[0].totalRides) * 100) : 0
+      }))
+      .sort((a, b) => b.count - a.count)
+
+    // 8. Top routes globales
     const topRoutes = await db
       .select({
         pickupAddress: bookingsTable.pickupAddress,
@@ -218,6 +293,12 @@ export async function GET(request: NextRequest) {
 
       // Statistiques détaillées par chauffeur
       driverStats: enrichedDriverStats,
+
+      // Série de revenus pour le graphique d'évolution
+      revenueSeries,
+
+      // Répartition des courses par statut (donut)
+      courseDistribution,
 
       // Performance mensuelle
       monthlyData: monthlyPerformance.map(m => ({
