@@ -171,6 +171,7 @@ export const bookingsTable = pgTable('bookings', {
   cancelledBy: text('cancelled_by').references(() => users.id, { onDelete: 'set null' }),
   cancelledAt: timestamp('cancelled_at'),
   tripPlanId: integer('trip_plan_id').references((): AnyPgColumn => tripPlansTable.id, { onDelete: 'set null' }), // occurrence générée par une planification (voir tripPlansTable)
+  whatsappReminderSentAt: timestamp('whatsapp_reminder_sent_at'), // marque l'envoi du rappel WhatsApp (rappel_depart), pour ne pas le renvoyer à chaque tick du cron
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
 }, (table) => ({

@@ -159,7 +159,8 @@ export async function PATCH(
         if (driverData.length > 0) {
           driver = {
             name: driverData[0].name,
-            email: driverData[0].email
+            email: driverData[0].email,
+            phone: driverData[0].phone
           };
         }
       }
@@ -178,6 +179,11 @@ export async function PATCH(
           notes: booking.notes || undefined
         },
         driver
+      ]);
+
+      await sendWithRetry('whatsapp', 'whatsapp.sendReservationValidee', [
+        booking,
+        { name: driver?.name || 'Votre chauffeur', phone: driver?.phone ?? null }
       ]);
     }
 
@@ -198,8 +204,12 @@ export async function PATCH(
       ]);
     }
 
-    // Envoyer notification au chauffeur si un chauffeur est assigné
-    if (body.driverId && body.driverId !== oldStatus) {
+    // Envoyer notification au chauffeur si un chauffeur est nouvellement assigné.
+    // Fix: la condition comparait auparavant body.driverId (un id chauffeur) à
+    // oldStatus (un statut de réservation) — toujours faux en pratique, ce qui
+    // aurait fait renvoyer les notifications à chaque sauvegarde du formulaire
+    // admin, même sans changement de chauffeur. On compare au bon avant/après.
+    if (body.driverId && body.driverId !== oldBooking.driverId) {
       const driverData = await db
         .select()
         .from(users)
@@ -209,7 +219,8 @@ export async function PATCH(
       if (driverData.length > 0) {
         const driver = {
           name: driverData[0].name,
-          email: driverData[0].email
+          email: driverData[0].email,
+          phone: driverData[0].phone
         };
 
         await sendWithRetry('email', 'resend-email.sendBookingAssignedToDriver', [
@@ -227,6 +238,9 @@ export async function PATCH(
           },
           driver
         ]);
+
+        await sendWithRetry('whatsapp', 'whatsapp.sendChauffeurAssigne', [booking, driver]);
+        await sendWithRetry('whatsapp', 'whatsapp.sendConfirmationChauffeur', [booking, driver]);
       }
     }
 

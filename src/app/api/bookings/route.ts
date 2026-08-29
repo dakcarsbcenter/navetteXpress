@@ -183,6 +183,11 @@ export async function POST(request: NextRequest) {
       }
     ]);
 
+    // Deux templates WhatsApp distincts pour le même événement : accusé de
+    // réception client + alerte dispatch admin (numéro fixe, GESKAP_ADMIN_PHONE).
+    await sendWithRetry('whatsapp', 'whatsapp.sendReservationCreeeClient', [createdBooking]);
+    await sendWithRetry('whatsapp', 'whatsapp.sendNouvelleReservationAdmin', [createdBooking]);
+
     return NextResponse.json({
       success: true, 
       data: createdBooking,

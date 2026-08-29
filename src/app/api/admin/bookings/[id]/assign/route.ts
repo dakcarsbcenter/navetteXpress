@@ -126,6 +126,10 @@ export async function PUT(
       }
     ]);
 
+    const driverWhatsAppInfo = { name: assignedDriver.name, phone: assignedDriver.phone };
+    await sendWithRetry('whatsapp', 'whatsapp.sendChauffeurAssigne', [assignedBooking, driverWhatsAppInfo]);
+    await sendWithRetry('whatsapp', 'whatsapp.sendConfirmationChauffeur', [assignedBooking, driverWhatsAppInfo]);
+
     return NextResponse.json({
       success: true, 
       data: assignedBooking,

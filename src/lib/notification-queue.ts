@@ -1,25 +1,25 @@
 /**
- * File d'attente avec retry pour les notifications (email).
+ * File d'attente avec retry pour les notifications (email + WhatsApp).
  *
  * Le chemin normal reste synchrone : sendWithRetry() essaie l'envoi immédiat,
  * comme avant. Ce n'est qu'en cas d'échec que le job est persisté en base et
  * rejoué par le worker (processNotificationQueueOnce), avec un backoff
  * exponentiel, au lieu d'être silencieusement perdu.
  *
- * Le canal WhatsApp (OpenWA) a été retiré (numéro bloqué par Meta) — voir
- * git log pour l'historique. D'éventuels jobs 'whatsapp' encore en base
- * échoueront proprement via la branche "Handler inconnu" ci-dessous.
+ * Le canal WhatsApp (ex: OpenWA, numéro bloqué par Meta — voir git log) est
+ * réactivé via Geskap (wrapper officiel de l'API Cloud Meta, templates
+ * pré-approuvés) : voir src/lib/whatsapp/.
  *
- * L'envoyeur réel (Resend) est importé dynamiquement dans le registre pour
- * ne pas faire planter le boot du serveur si une variable d'environnement
- * (ex: RESEND_API_KEY) manque — ce module lève une erreur dès son import.
+ * Les envoyeurs réels (Resend, Geskap) sont importés dynamiquement dans le
+ * registre pour ne pas faire planter le boot du serveur si une variable
+ * d'environnement (ex: RESEND_API_KEY, GESKAP_API_KEY) manque.
  */
 
 import { and, eq, lte } from 'drizzle-orm';
 import { db } from '@/db';
 import { notificationQueueTable } from '@/schema';
 
-type NotificationChannel = 'email' | 'whatsapp'; // 'whatsapp' conservé pour la contrainte d'enum en base (jobs historiques)
+type NotificationChannel = 'email' | 'whatsapp';
 type Handler = (args: unknown[]) => Promise<unknown>;
 
 // Backoff: 1min, 5min, 15min, 1h, 3h, 12h — puis échec définitif (maxAttempts = 6)
@@ -132,6 +132,43 @@ const registry: Record<string, Handler> = {
   'resend-mailer.sendNewChatMessageToAdminEmail': async (args) => {
     const { sendNewChatMessageToAdminEmail } = await import('./resend-mailer');
     return sendNewChatMessageToAdminEmail(args[0] as Parameters<typeof sendNewChatMessageToAdminEmail>[0]);
+  },
+  'whatsapp.sendReservationCreeeClient': async (args) => {
+    const { sendReservationCreeeClient } = await import('./whatsapp/templates');
+    return sendReservationCreeeClient(args[0] as Parameters<typeof sendReservationCreeeClient>[0]);
+  },
+  'whatsapp.sendNouvelleReservationAdmin': async (args) => {
+    const { sendNouvelleReservationAdmin } = await import('./whatsapp/templates');
+    return sendNouvelleReservationAdmin(args[0] as Parameters<typeof sendNouvelleReservationAdmin>[0]);
+  },
+  'whatsapp.sendChauffeurAssigne': async (args) => {
+    const { sendChauffeurAssigne } = await import('./whatsapp/templates');
+    return sendChauffeurAssigne(
+      args[0] as Parameters<typeof sendChauffeurAssigne>[0],
+      args[1] as Parameters<typeof sendChauffeurAssigne>[1]
+    );
+  },
+  'whatsapp.sendConfirmationChauffeur': async (args) => {
+    const { sendConfirmationChauffeur } = await import('./whatsapp/templates');
+    return sendConfirmationChauffeur(
+      args[0] as Parameters<typeof sendConfirmationChauffeur>[0],
+      args[1] as Parameters<typeof sendConfirmationChauffeur>[1]
+    );
+  },
+  'whatsapp.sendReservationValidee': async (args) => {
+    const { sendReservationValidee } = await import('./whatsapp/templates');
+    return sendReservationValidee(
+      args[0] as Parameters<typeof sendReservationValidee>[0],
+      args[1] as Parameters<typeof sendReservationValidee>[1]
+    );
+  },
+  'whatsapp.sendRappelDepart': async (args) => {
+    const { sendRappelDepart } = await import('./whatsapp/templates');
+    return sendRappelDepart(
+      args[0] as Parameters<typeof sendRappelDepart>[0],
+      args[1] as Parameters<typeof sendRappelDepart>[1],
+      args[2] as Parameters<typeof sendRappelDepart>[2]
+    );
   },
 };
 

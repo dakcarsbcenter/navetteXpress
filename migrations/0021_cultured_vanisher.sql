@@ -1,0 +1,1 @@
+ALTER TABLE "bookings" ADD COLUMN "whatsapp_reminder_sent_at" timestamp;

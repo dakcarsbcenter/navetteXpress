@@ -131,6 +131,11 @@ export async function PATCH(
           pickupTime: new Date(booking.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
         }
       ]);
+
+      await sendWithRetry('whatsapp', 'whatsapp.sendReservationValidee', [
+        booking,
+        { name: driverInfo[0]?.name || 'Votre chauffeur', phone: driverInfo[0]?.phone ?? null }
+      ]);
     }
 
     // Notifier l'admin par email si le chauffeur refuse une course qui lui

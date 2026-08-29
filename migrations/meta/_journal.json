@@ -148,6 +148,13 @@
       "when": 1787971659060,
       "tag": "0020_abnormal_clint_barton",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1788035515185,
+      "tag": "0021_cultured_vanisher",
+      "breakpoints": true
     }
   ]
 }
