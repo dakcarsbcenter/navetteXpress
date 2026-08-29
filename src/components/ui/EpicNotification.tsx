@@ -61,36 +61,32 @@ export function EpicNotification({
     switch (type) {
       case 'success':
         return {
-          icon: <CheckCircle size={32} weight="fill" className="text-emerald-400 drop-shadow-[0_0_10px_rgba(52,211,153,0.5)]" />,
-          wrapperBg: "from-emerald-950/40 to-obsidian/90",
-          border: "border-emerald-500/30",
-          progressBar: "bg-emerald-500",
-          glow: "shadow-[0_8px_30px_rgba(52,211,153,0.15)]"
+          icon: <CheckCircle size={28} weight="fill" className="text-accent" />,
+          border: "border-accent",
+          iconBg: "bg-accent/10",
+          progressBar: "bg-accent"
         }
       case 'error':
         return {
-          icon: <XCircle size={32} weight="fill" className="text-red-400 drop-shadow-[0_0_10px_rgba(248,113,113,0.5)]" />,
-          wrapperBg: "from-red-950/40 to-obsidian/90",
-          border: "border-red-500/30",
-          progressBar: "bg-red-500",
-          glow: "shadow-[0_8px_30px_rgba(248,113,113,0.15)]"
+          icon: <XCircle size={28} weight="fill" className="text-[#B8493C]" />,
+          border: "border-[#B8493C]",
+          iconBg: "bg-[#B8493C]/10",
+          progressBar: "bg-[#B8493C]"
         }
       case 'warning':
         return {
-          icon: <Warning size={32} weight="fill" className="text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)]" />,
-          wrapperBg: "from-amber-950/40 to-obsidian/90",
-          border: "border-amber-500/30",
-          progressBar: "bg-amber-500",
-          glow: "shadow-[0_8px_30px_rgba(251,191,36,0.15)]"
+          icon: <Warning size={28} weight="fill" className="text-[#B4643A]" />,
+          border: "border-[#B4643A]",
+          iconBg: "bg-[#B4643A]/10",
+          progressBar: "bg-[#B4643A]"
         }
       case 'info':
       default:
         return {
-          icon: <Info size={32} weight="fill" className="text-gold drop-shadow-[0_0_10px_rgba(201,168,76,0.5)]" />,
-          wrapperBg: "from-gold-900/20 to-obsidian/90",
-          border: "border-gold/30",
-          progressBar: "bg-gold",
-          glow: "shadow-[0_8px_30px_rgba(201,168,76,0.15)]"
+          icon: <Info size={28} weight="fill" className="text-accent" />,
+          border: "border-accent",
+          iconBg: "bg-accent/10",
+          progressBar: "bg-accent"
         }
     }
   }
@@ -105,31 +101,31 @@ export function EpicNotification({
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95, y: -10 }}
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed top-6 right-6 z-100 w-full max-w-sm"
+          className="fixed top-6 right-6 z-120 w-full max-w-sm"
         >
-          <div className={`overflow-hidden rounded-2xl backdrop-blur-xl border ${styles.border} bg-linear-to-br ${styles.wrapperBg} ${styles.glow}`}>
-            <div className="p-5 flex items-start gap-4">
-              <div className="shrink-0 animate-pulse-slow">
+          <div className={`overflow-hidden rounded-xl border ${styles.border} bg-[#F7F3EC] shadow-lg`}>
+            <div className="p-4 flex items-start gap-3">
+              <div className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${styles.iconBg}`}>
                 {styles.icon}
               </div>
-              <div className="flex-1 min-w-0 pt-0.5">
-                <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-1">
+              <div className="flex-1 min-w-0 pt-1">
+                <h4 className="text-[#12100E] font-bold text-sm mb-0.5">
                   {title}
                 </h4>
-                <p className="text-slate-300 text-sm leading-relaxed">
+                <p className="text-[#3d3a35] text-sm leading-relaxed">
                   {message}
                 </p>
               </div>
               <button
                 onClick={onClose}
-                className="shrink-0 p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
-                aria-label="Close"
+                className="shrink-0 p-1 rounded-lg text-[#6E6A63] hover:text-[#12100E] hover:bg-black/5 transition-colors"
+                aria-label="Fermer"
               >
                 <X size={18} weight="bold" />
               </button>
             </div>
             {/* Progress Bar */}
-            <div className="h-1 w-full bg-black/40">
+            <div className="h-1 w-full bg-black/10">
               <motion.div
                 className={`h-full ${styles.progressBar}`}
                 style={{ width: `${progress}%` }}
