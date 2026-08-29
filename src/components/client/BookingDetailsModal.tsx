@@ -69,7 +69,9 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
         dropoffAddress: '',
         scheduledDateTime: '',
         customerPhone: '',
-        notes: ''
+        notes: '',
+        flightNumber: '',
+        airline: ''
     })
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [errorModal, setErrorModal] = useState<{ open: boolean; message: string }>({ open: false, message: '' })
@@ -98,7 +100,9 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                 dropoffAddress: booking.dropoffAddress || '',
                 scheduledDateTime: localDateTime,
                 customerPhone: booking.customerPhone || '',
-                notes: booking.notes || ''
+                notes: booking.notes || '',
+                flightNumber: booking.flightNumber || '',
+                airline: booking.airline || ''
             })
             setIsEditing(false)
             setFlightInfo({
@@ -153,7 +157,9 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                     dropoffAddress: formData.dropoffAddress,
                     scheduledDateTime: new Date(formData.scheduledDateTime).toISOString(),
                     customerPhone: formData.customerPhone,
-                    notes: formData.notes
+                    notes: formData.notes,
+                    flightNumber: formData.flightNumber,
+                    airline: formData.airline
                 }),
             })
 
@@ -471,6 +477,34 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                                                 className="w-full px-4 py-3 outline-none transition-all"
                                                 style={inputStyle}
                                                 placeholder={t('editContactPlaceholder')}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: '#6E6A63' }}>{t('editFlightNumberLabel')}</label>
+                                            <div className="relative">
+                                                <Airplane size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#6E6A63' }} />
+                                                <input
+                                                    type="text"
+                                                    value={formData.flightNumber}
+                                                    onChange={(e) => setFormData({ ...formData, flightNumber: e.target.value.toUpperCase() })}
+                                                    className="w-full pl-12 pr-4 py-3 outline-none transition-all"
+                                                    style={inputStyle}
+                                                    placeholder={t('editFlightNumberPlaceholder')}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: '#6E6A63' }}>{t('editAirlineLabel')}</label>
+                                            <input
+                                                type="text"
+                                                value={formData.airline}
+                                                onChange={(e) => setFormData({ ...formData, airline: e.target.value })}
+                                                className="w-full px-4 py-3 outline-none transition-all"
+                                                style={inputStyle}
+                                                placeholder={t('editAirlinePlaceholder')}
                                             />
                                         </div>
                                     </div>

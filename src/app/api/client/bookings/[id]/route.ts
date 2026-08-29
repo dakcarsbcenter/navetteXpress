@@ -197,6 +197,19 @@ export async function PUT(
     }
     if (body.customerPhone !== undefined) updateData.customerPhone = body.customerPhone;
     if (body.notes !== undefined) updateData.notes = body.notes;
+    if (body.flightNumber !== undefined) {
+      const newFlightNumber = body.flightNumber || null;
+      if (newFlightNumber !== booking.flightNumber) {
+        // Le numéro de vol a changé : on invalide le cache de suivi de vol
+        updateData.flightStatus = null;
+        updateData.flightScheduledTime = null;
+        updateData.flightEstimatedTime = null;
+        updateData.flightLastCheckedAt = null;
+        updateData.flightRawData = null;
+      }
+      updateData.flightNumber = newFlightNumber;
+    }
+    if (body.airline !== undefined) updateData.airline = body.airline || null;
 
     // Empêcher le client de modifier certains champs critiques
     // (status, driverId, vehicleId, price sont réservés à l'admin)

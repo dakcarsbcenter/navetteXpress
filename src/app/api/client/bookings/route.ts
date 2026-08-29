@@ -78,6 +78,7 @@ export async function GET() {
         id: booking.id,
         customerName: booking.customerName,
         customerEmail: booking.customerEmail,
+        customerPhone: booking.customerPhone,
         pickupAddress: booking.pickupAddress,
         dropoffAddress: booking.dropoffAddress,
         scheduledDateTime: booking.scheduledDateTime,
