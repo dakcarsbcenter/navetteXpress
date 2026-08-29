@@ -101,33 +101,6 @@ export default function HomeClient({ faqs }: HomeClientProps) {
     { route: t("segments.dayHire"), price: "75 000", meta: `${t("segments.day")} · 10 H · 150 KM` },
   ];
 
-  const featuredVehicles = [
-    {
-      name: "Mercedes Classe S",
-      category: t("fleet.categories.luxurySupreme"),
-      price: "45,000",
-      image: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=800",
-      passengers: 3,
-      luggage: 2
-    },
-    {
-      name: "Range Rover Vogue",
-      category: t("fleet.categories.prestigeSuv"),
-      price: "55,000",
-      image: "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=800",
-      passengers: 4,
-      luggage: 3
-    },
-    {
-      name: "Mercedes Classe V",
-      category: t("fleet.categories.businessVan"),
-      price: "65,000",
-      image: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=800",
-      passengers: 7,
-      luggage: 6
-    }
-  ];
-
   return (
     <div className="min-h-screen bg-background font-sans selection:bg-gold/30 selection:text-gold">
       <Navigation variant="transparent" />
@@ -449,6 +422,12 @@ export default function HomeClient({ faqs }: HomeClientProps) {
                   {t("fleet.loading")}
                 </div>
               </div>
+            ) : vehicles.length === 0 ? (
+              <div className="flex justify-center items-center py-20">
+                <div className="font-[family-name:var(--font-ibm-plex-mono)] text-sm tracking-[0.16em] uppercase text-text-muted">
+                  {t("fleet.empty")}
+                </div>
+              </div>
             ) : (
               <div
                 ref={carouselRef}
@@ -456,15 +435,7 @@ export default function HomeClient({ faqs }: HomeClientProps) {
                 onMouseLeave={() => setIsCarouselHovered(false)}
                 className="flex gap-8 overflow-x-auto pb-4 pt-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
               >
-                {(vehicles.length > 0 ? vehicles : featuredVehicles.map((v: any, index) => ({
-                  id: index,
-                  make: v.name.split(' ')[0],
-                  model: v.name.split(' ').slice(1).join(' '),
-                  category: v.category,
-                  photo: v.image,
-                  capacity: v.passengers,
-                  price: v.price
-                }))).map((vehicle: any, i: number) => (
+                {vehicles.map((vehicle: any, i: number) => (
                   <div
                     key={vehicle.id || i}
                     className="min-w-[85vw] md:min-w-[360px] flex-shrink-0 snap-center rounded-lg bg-white border border-[#e2dacd] flex flex-col overflow-hidden"
