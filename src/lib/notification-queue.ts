@@ -1,22 +1,25 @@
 /**
- * File d'attente avec retry pour les notifications (email + WhatsApp).
+ * File d'attente avec retry pour les notifications (email).
  *
  * Le chemin normal reste synchrone : sendWithRetry() essaie l'envoi immédiat,
  * comme avant. Ce n'est qu'en cas d'échec que le job est persisté en base et
  * rejoué par le worker (processNotificationQueueOnce), avec un backoff
  * exponentiel, au lieu d'être silencieusement perdu.
  *
- * Les envoyeurs réels (Resend, OpenWA) sont importés dynamiquement dans le
- * registre pour ne pas faire planter le boot du serveur si une variable
- * d'environnement (ex: RESEND_API_KEY) manque — ces modules lèvent une
- * erreur dès leur import.
+ * Le canal WhatsApp (OpenWA) a été retiré (numéro bloqué par Meta) — voir
+ * git log pour l'historique. D'éventuels jobs 'whatsapp' encore en base
+ * échoueront proprement via la branche "Handler inconnu" ci-dessous.
+ *
+ * L'envoyeur réel (Resend) est importé dynamiquement dans le registre pour
+ * ne pas faire planter le boot du serveur si une variable d'environnement
+ * (ex: RESEND_API_KEY) manque — ce module lève une erreur dès son import.
  */
 
 import { and, eq, lte } from 'drizzle-orm';
 import { db } from '@/db';
 import { notificationQueueTable } from '@/schema';
 
-type NotificationChannel = 'email' | 'whatsapp';
+type NotificationChannel = 'email' | 'whatsapp'; // 'whatsapp' conservé pour la contrainte d'enum en base (jobs historiques)
 type Handler = (args: unknown[]) => Promise<unknown>;
 
 // Backoff: 1min, 5min, 15min, 1h, 3h, 12h — puis échec définitif (maxAttempts = 6)
@@ -104,56 +107,13 @@ const registry: Record<string, Handler> = {
       args[1] as string | undefined
     );
   },
-  'whatsapp.sendBookingWhatsAppToAdmin': async (args) => {
-    const { sendBookingWhatsAppToAdmin } = await import('./whatsapp');
-    return sendBookingWhatsAppToAdmin(args[0] as Parameters<typeof sendBookingWhatsAppToAdmin>[0]);
+  'resend-mailer.sendBookingRejectedByDriverEmail': async (args) => {
+    const { sendBookingRejectedByDriverEmail } = await import('./resend-mailer');
+    return sendBookingRejectedByDriverEmail(args[0] as Parameters<typeof sendBookingRejectedByDriverEmail>[0]);
   },
-  'whatsapp.sendBookingAssignedWhatsAppToDriver': async (args) => {
-    const { sendBookingAssignedWhatsAppToDriver } = await import('./whatsapp');
-    return sendBookingAssignedWhatsAppToDriver(
-      args[0] as Parameters<typeof sendBookingAssignedWhatsAppToDriver>[0],
-      args[1] as Parameters<typeof sendBookingAssignedWhatsAppToDriver>[1]
-    );
-  },
-  'whatsapp.sendBookingConfirmedWhatsAppToClient': async (args) => {
-    const { sendBookingConfirmedWhatsAppToClient } = await import('./whatsapp');
-    return sendBookingConfirmedWhatsAppToClient(
-      args[0] as Parameters<typeof sendBookingConfirmedWhatsAppToClient>[0],
-      args[1] as Parameters<typeof sendBookingConfirmedWhatsAppToClient>[1],
-      args[2] as string
-    );
-  },
-  'whatsapp.sendBookingRejectedWhatsAppToAdmin': async (args) => {
-    const { sendBookingRejectedWhatsAppToAdmin } = await import('./whatsapp');
-    return sendBookingRejectedWhatsAppToAdmin(
-      args[0] as Parameters<typeof sendBookingRejectedWhatsAppToAdmin>[0],
-      args[1] as string,
-      args[2] as string | undefined
-    );
-  },
-  'whatsapp.sendBookingCancelledByClientWhatsAppToAdmin': async (args) => {
-    const { sendBookingCancelledByClientWhatsAppToAdmin } = await import('./whatsapp');
-    return sendBookingCancelledByClientWhatsAppToAdmin(
-      args[0] as Parameters<typeof sendBookingCancelledByClientWhatsAppToAdmin>[0],
-      args[1] as string | undefined,
-      args[2] as string | undefined
-    );
-  },
-  'whatsapp.sendBookingCancelledWhatsAppToClient': async (args) => {
-    const { sendBookingCancelledWhatsAppToClient } = await import('./whatsapp');
-    return sendBookingCancelledWhatsAppToClient(
-      args[0] as Parameters<typeof sendBookingCancelledWhatsAppToClient>[0],
-      args[1] as Parameters<typeof sendBookingCancelledWhatsAppToClient>[1],
-      args[2] as string | undefined
-    );
-  },
-  'whatsapp.sendQuoteWhatsAppNotification': async (args) => {
-    const { sendQuoteWhatsAppNotification } = await import('./whatsapp');
-    return sendQuoteWhatsAppNotification(
-      args[0] as string,
-      args[1] as Parameters<typeof sendQuoteWhatsAppNotification>[1],
-      args[2] as boolean
-    );
+  'resend-mailer.sendBookingCancelledByClientEmail': async (args) => {
+    const { sendBookingCancelledByClientEmail } = await import('./resend-mailer');
+    return sendBookingCancelledByClientEmail(args[0] as Parameters<typeof sendBookingCancelledByClientEmail>[0]);
   },
   'resend-mailer.sendCompanyRequestNotificationToAdmin': async (args) => {
     const { sendCompanyRequestNotificationToAdmin } = await import('./resend-mailer');
@@ -161,10 +121,6 @@ const registry: Record<string, Handler> = {
       args[0] as string,
       args[1] as Parameters<typeof sendCompanyRequestNotificationToAdmin>[1]
     );
-  },
-  'whatsapp.sendCompanyRequestWhatsAppToAdmin': async (args) => {
-    const { sendCompanyRequestWhatsAppToAdmin } = await import('./whatsapp');
-    return sendCompanyRequestWhatsAppToAdmin(args[0] as Parameters<typeof sendCompanyRequestWhatsAppToAdmin>[0]);
   },
   'resend-mailer.sendNewChatMessageToRecipientEmail': async (args) => {
     const { sendNewChatMessageToRecipientEmail } = await import('./resend-mailer');

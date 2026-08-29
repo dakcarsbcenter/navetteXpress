@@ -758,6 +758,157 @@ export async function sendBookingPriceRejectedEmail(
   }
 }
 
+// Email à l'admin : un chauffeur a refusé une course qui lui était assignée
+export async function sendBookingRejectedByDriverEmail(
+  bookingData: {
+    bookingId: number;
+    customerName: string;
+    driverName: string;
+    pickupAddress: string;
+    dropoffAddress: string;
+    scheduledDateTime: string;
+    reason?: string;
+  }
+) {
+  try {
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@navettexpress.com';
+
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: [adminEmail],
+      subject: `⚠️ Course refusée par le chauffeur - Réservation #${bookingData.bookingId}`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+          <body style="font-family: Arial, sans-serif; background: #e8f0f8; padding: 20px;">
+            <div style="max-width: 600px; margin: 0 auto; background: white; border: 2px solid #f59e0b; border-radius: 8px; overflow: hidden;">
+              <div style="background: #f59e0b; padding: 32px 20px; text-align: center;">
+                <h1 style="color: white; margin: 0;">Navette Express</h1>
+              </div>
+              <div style="padding: 32px 24px;">
+                <h2 style="color: #2c3e50; text-align: center;">⚠️ Course Refusée</h2>
+                <p><strong>${escapeHtml(bookingData.driverName)}</strong> a refusé la course qui lui était assignée :</p>
+                <div style="background: #fef3c7; border: 2px solid #f59e0b; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                  <h3 style="color: #92400e; margin-top: 0;">📋 Réservation #${bookingData.bookingId}</h3>
+                  <p><strong>👤 Client :</strong> ${escapeHtml(bookingData.customerName)}</p>
+                  <p><strong>📍 Départ :</strong> ${escapeHtml(bookingData.pickupAddress)}</p>
+                  <p><strong>📍 Arrivée :</strong> ${escapeHtml(bookingData.dropoffAddress)}</p>
+                  <p><strong>📅 Date :</strong> ${new Date(bookingData.scheduledDateTime).toLocaleDateString('fr-FR', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}</p>
+                  ${bookingData.reason ? `<p><strong>💬 Motif :</strong> ${escapeHtml(bookingData.reason)}</p>` : ''}
+                </div>
+                <div style="background: #dbeafe; border: 2px solid #3b82f6; border-radius: 8px; padding: 15px; margin: 20px 0;">
+                  <p style="color: #1e3a8a; margin: 0;">La réservation est repassée en attente : il faut la réassigner à un autre chauffeur.</p>
+                </div>
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="${process.env.NEXT_PUBLIC_APP_URL}/admin/dashboard?tab=bookings"
+                     style="background: #1F5245; color: white; padding: 14px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+                    📊 Réassigner la réservation
+                  </a>
+                </div>
+                <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;">
+                <p style="text-align: center; color: #6b7280;">Système de notification automatique<br><strong>NavetteXpress</strong></p>
+              </div>
+            </div>
+          </body>
+        </html>
+      `,
+    });
+
+    if (error) {
+      console.error('❌ Erreur envoi email course refusée:', error);
+      throw error;
+    }
+
+    console.log('✅ Email course refusée envoyé:', data?.id);
+    return data;
+  } catch (error) {
+    console.error('❌ Erreur:', error);
+    throw error;
+  }
+}
+
+// Email à l'admin : un client a annulé lui-même sa réservation
+export async function sendBookingCancelledByClientEmail(
+  bookingData: {
+    bookingId: number;
+    customerName: string;
+    pickupAddress: string;
+    dropoffAddress: string;
+    scheduledDateTime: string;
+    reason?: string;
+    assignedDriverName?: string;
+  }
+) {
+  try {
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@navettexpress.com';
+
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: [adminEmail],
+      subject: `🚫 Réservation annulée par le client - #${bookingData.bookingId}`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+          <body style="font-family: Arial, sans-serif; background: #e8f0f8; padding: 20px;">
+            <div style="max-width: 600px; margin: 0 auto; background: white; border: 2px solid #ef4444; border-radius: 8px; overflow: hidden;">
+              <div style="background: #ef4444; padding: 32px 20px; text-align: center;">
+                <h1 style="color: white; margin: 0;">Navette Express</h1>
+              </div>
+              <div style="padding: 32px 24px;">
+                <h2 style="color: #2c3e50; text-align: center;">🚫 Réservation Annulée par le Client</h2>
+                <div style="background: #fee2e2; border: 2px solid #ef4444; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                  <h3 style="color: #ef4444; margin-top: 0;">📋 Réservation #${bookingData.bookingId}</h3>
+                  <p><strong>👤 Client :</strong> ${escapeHtml(bookingData.customerName)}</p>
+                  <p><strong>📍 Départ :</strong> ${escapeHtml(bookingData.pickupAddress)}</p>
+                  <p><strong>📍 Arrivée :</strong> ${escapeHtml(bookingData.dropoffAddress)}</p>
+                  <p><strong>📅 Date :</strong> ${new Date(bookingData.scheduledDateTime).toLocaleDateString('fr-FR', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}</p>
+                  ${bookingData.reason ? `<p><strong>💬 Motif :</strong> ${escapeHtml(bookingData.reason)}</p>` : ''}
+                </div>
+                ${bookingData.assignedDriverName ? `
+                  <div style="background: #fef3c7; border: 2px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+                    <p style="color: #92400e; margin: 0;">⚠️ Un chauffeur était assigné (<strong>${escapeHtml(bookingData.assignedDriverName)}</strong>) — pensez à l'informer.</p>
+                  </div>
+                ` : ''}
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="${process.env.NEXT_PUBLIC_APP_URL}/admin/dashboard?tab=bookings"
+                     style="background: #1F5245; color: white; padding: 14px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+                    📊 Voir les réservations
+                  </a>
+                </div>
+                <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;">
+                <p style="text-align: center; color: #6b7280;">Système de notification automatique<br><strong>NavetteXpress</strong></p>
+              </div>
+            </div>
+          </body>
+        </html>
+      `,
+    });
+
+    if (error) {
+      console.error('❌ Erreur envoi email annulation client:', error);
+      throw error;
+    }
+
+    console.log('✅ Email annulation client envoyé:', data?.id);
+    return data;
+  } catch (error) {
+    console.error('❌ Erreur:', error);
+    throw error;
+  }
+}
+
 /**
  * Notifie l'admin qu'un client demande le passage en compte professionnel (hôtel/entreprise/ONG)
  */

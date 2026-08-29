@@ -353,7 +353,7 @@ la liste des chauffeurs avec leur état à l'heure de la course.
 `DRIVER_NOT_AVAILABLE`** si le créneau ne convient pas. Ce refus doit être visible dans
 l'interface, avec la raison, à l'endroit où l'admin a cliqué — pas dans un toast qui
 disparaît. En cas de succès : `status: 'assigned'`, et notification au chauffeur par email
-puis WhatsApp via `sendWithRetry`. La file avance ; quand elle est vide, l'écran le dit.
+via `sendWithRetry`. La file avance ; quand elle est vide, l'écran le dit.
 
 Puis : bandeau de 5 indicateurs (`/api/admin/overview` fournit tout), tableau des
 réservations récentes (client, chauffeur, montant, statut), et en colonne étroite un bloc

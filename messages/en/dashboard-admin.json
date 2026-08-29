@@ -70,7 +70,7 @@
     },
     "queue": {
       "title": "Assignment queue",
-      "description": "Driver availability is checked before assignment. A notification goes out by email and WhatsApp.",
+      "description": "Driver availability is checked before assignment. A notification goes out by email.",
       "waiting": "{count, plural, =0 {0 waiting} one {# waiting} other {# waiting}}",
       "oldest": "the oldest was {time} ago",
       "toAssign": "To assign",
@@ -92,7 +92,7 @@
       "proposePricePlaceholder": "Amount in FCFA",
       "skip": "Handle later",
       "emptyTitle": "Queue empty — everything is assigned",
-      "emptyDescription": "Every pending booking now has a driver. Assigned drivers receive their notification by email and WhatsApp.",
+      "emptyDescription": "Every pending booking now has a driver. Assigned drivers receive their notification by email.",
       "pax": "{passengers} PAX · {luggage} BAGS",
       "assignError": "Error while assigning.",
       "assigning": "Assigning…"

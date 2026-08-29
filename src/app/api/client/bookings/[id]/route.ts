@@ -155,17 +155,16 @@ export async function PUT(
       }
 
       // Seul l'admin est notifié : c'est à lui de réassigner ou d'avertir le chauffeur si besoin
-      await sendWithRetry('whatsapp', 'whatsapp.sendBookingCancelledByClientWhatsAppToAdmin', [
+      await sendWithRetry('email', 'resend-mailer.sendBookingCancelledByClientEmail', [
         {
-          id: booking.id,
+          bookingId: booking.id,
           customerName: booking.customerName,
           pickupAddress: booking.pickupAddress,
           dropoffAddress: booking.dropoffAddress,
           scheduledDateTime: booking.scheduledDateTime.toISOString(),
-          passengers: 1,
-        },
-        body.reason || undefined,
-        assignedDriverName
+          reason: body.reason || undefined,
+          assignedDriverName
+        }
       ]);
 
       return NextResponse.json({

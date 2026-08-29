@@ -169,14 +169,6 @@ export async function PUT(request: NextRequest) {
           companyName: updatedUser[0].companyName
         }
       ])
-      await sendWithRetry('whatsapp', 'whatsapp.sendCompanyRequestWhatsAppToAdmin', [
-        {
-          name: updatedUser[0].name,
-          email: updatedUser[0].email,
-          companyType: updatedUser[0].companyType,
-          companyName: updatedUser[0].companyName
-        }
-      ])
     }
 
     return NextResponse.json({

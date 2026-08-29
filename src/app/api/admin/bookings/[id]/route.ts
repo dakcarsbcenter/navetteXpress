@@ -179,19 +179,6 @@ export async function PATCH(
         },
         driver
       ]);
-
-      await sendWithRetry('whatsapp', 'whatsapp.sendBookingConfirmedWhatsAppToClient', [
-        {
-          id: booking.id,
-          customerName: booking.customerName,
-          pickupAddress: booking.pickupAddress,
-          dropoffAddress: booking.dropoffAddress,
-          scheduledDateTime: booking.scheduledDateTime.toISOString(),
-          passengers: 1,
-        },
-        booking.customerPhone,
-        driver?.name || 'Votre chauffeur'
-      ]);
     }
 
     // Annulation définitive : seul l'admin peut déclencher cette notification au client
@@ -207,19 +194,6 @@ export async function PATCH(
           scheduledDateTime: booking.scheduledDateTime.toISOString(),
           passengers: 1,
         },
-        booking.cancellationReason || undefined
-      ]);
-
-      await sendWithRetry('whatsapp', 'whatsapp.sendBookingCancelledWhatsAppToClient', [
-        {
-          id: booking.id,
-          customerName: booking.customerName,
-          pickupAddress: booking.pickupAddress,
-          dropoffAddress: booking.dropoffAddress,
-          scheduledDateTime: booking.scheduledDateTime.toISOString(),
-          passengers: 1,
-        },
-        booking.customerPhone,
         booking.cancellationReason || undefined
       ]);
     }
@@ -252,18 +226,6 @@ export async function PATCH(
             notes: booking.notes || undefined
           },
           driver
-        ]);
-
-        await sendWithRetry('whatsapp', 'whatsapp.sendBookingAssignedWhatsAppToDriver', [
-          {
-            id: booking.id,
-            customerName: booking.customerName,
-            pickupAddress: booking.pickupAddress,
-            dropoffAddress: booking.dropoffAddress,
-            scheduledDateTime: booking.scheduledDateTime.toISOString(),
-            passengers: 1,
-          },
-          driverData[0].phone
         ]);
       }
     }

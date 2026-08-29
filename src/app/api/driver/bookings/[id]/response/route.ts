@@ -112,31 +112,16 @@ export async function PUT(
           pickupTime: new Date(originalBooking.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
         }
       ]);
-
-      await sendWithRetry('whatsapp', 'whatsapp.sendBookingConfirmedWhatsAppToClient', [
-        {
-          id: responseBooking.id,
-          customerName: originalBooking.customerName,
-          pickupAddress: originalBooking.pickupAddress,
-          dropoffAddress: originalBooking.dropoffAddress,
-          scheduledDateTime: originalBooking.scheduledDateTime.toISOString(),
-          passengers: 1,
-        },
-        originalBooking.customerPhone,
-        driver?.name || 'Votre chauffeur'
-      ]);
     } else {
-      await sendWithRetry('whatsapp', 'whatsapp.sendBookingRejectedWhatsAppToAdmin', [
+      await sendWithRetry('email', 'resend-mailer.sendBookingRejectedByDriverEmail', [
         {
-          id: responseBooking.id,
+          bookingId: responseBooking.id,
           customerName: originalBooking.customerName,
+          driverName: driver?.name || 'Un chauffeur',
           pickupAddress: originalBooking.pickupAddress,
           dropoffAddress: originalBooking.dropoffAddress,
           scheduledDateTime: originalBooking.scheduledDateTime.toISOString(),
-          passengers: 1,
-        },
-        driver?.name || 'Un chauffeur',
-        undefined
+        }
       ]);
     }
 

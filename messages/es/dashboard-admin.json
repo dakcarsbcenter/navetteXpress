@@ -70,7 +70,7 @@
     },
     "queue": {
       "title": "Cola de asignación",
-      "description": "La disponibilidad del conductor se verifica antes de la asignación. Se envía una notificación por email y WhatsApp.",
+      "description": "La disponibilidad del conductor se verifica antes de la asignación. Se envía una notificación por email.",
       "waiting": "{count, plural, =0 {0 en espera} one {# en espera} other {# en espera}}",
       "oldest": "la más antigua hace {time}",
       "toAssign": "Por asignar",
@@ -92,7 +92,7 @@
       "proposePricePlaceholder": "Monto en FCFA",
       "skip": "Atender más tarde",
       "emptyTitle": "Cola vacía — todo asignado",
-      "emptyDescription": "Todas las reservas pendientes ya tienen conductor. Los conductores asignados reciben su notificación por email y WhatsApp.",
+      "emptyDescription": "Todas las reservas pendientes ya tienen conductor. Los conductores asignados reciben su notificación por email.",
       "pax": "{passengers} PAX · {luggage} MALETAS",
       "assignError": "Error al asignar.",
       "assigning": "Asignando…"

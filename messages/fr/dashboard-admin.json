@@ -70,7 +70,7 @@
     },
     "queue": {
       "title": "File d'assignation",
-      "description": "La disponibilité du chauffeur est vérifiée avant l'assignation. Une notification part par email et WhatsApp.",
+      "description": "La disponibilité du chauffeur est vérifiée avant l'assignation. Une notification part par email.",
       "waiting": "{count, plural, =0 {0 en attente} one {# en attente} other {# en attente}}",
       "oldest": "la plus ancienne il y a {time}",
       "toAssign": "À assigner",
@@ -92,7 +92,7 @@
       "proposePricePlaceholder": "Montant en FCFA",
       "skip": "Traiter plus tard",
       "emptyTitle": "File vide — tout est assigné",
-      "emptyDescription": "Toutes les réservations en attente ont désormais un chauffeur. Les chauffeurs assignés reçoivent leur notification par email et WhatsApp.",
+      "emptyDescription": "Toutes les réservations en attente ont désormais un chauffeur. Les chauffeurs assignés reçoivent leur notification par email.",
       "pax": "{passengers} PAX · {luggage} BAGAGES",
       "assignError": "Erreur lors de l'assignation.",
       "assigning": "Assignation…"

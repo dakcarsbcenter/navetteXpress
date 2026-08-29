@@ -131,23 +131,10 @@ export async function PATCH(
           pickupTime: new Date(booking.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
         }
       ]);
-
-      await sendWithRetry('whatsapp', 'whatsapp.sendBookingConfirmedWhatsAppToClient', [
-        {
-          id: booking.id,
-          customerName: booking.customerName,
-          pickupAddress: booking.pickupAddress,
-          dropoffAddress: booking.dropoffAddress,
-          scheduledDateTime: booking.scheduledDateTime.toISOString(),
-          passengers: 1,
-        },
-        booking.customerPhone,
-        driverInfo[0]?.name || 'Votre chauffeur'
-      ]);
     }
 
-    // Notifier l'admin (WhatsApp uniquement) si le chauffeur refuse une course
-    // qui lui était assignée — distinct d'une annulation après confirmation
+    // Notifier l'admin par email si le chauffeur refuse une course qui lui
+    // était assignée — distinct d'une annulation après confirmation
     if (isDriverRefusal) {
       const driverInfo = await db.select({ name: users.name })
         .from(users)
@@ -156,17 +143,16 @@ export async function PATCH(
 
       const booking = existingBooking[0];
 
-      await sendWithRetry('whatsapp', 'whatsapp.sendBookingRejectedWhatsAppToAdmin', [
+      await sendWithRetry('email', 'resend-mailer.sendBookingRejectedByDriverEmail', [
         {
-          id: booking.id,
+          bookingId: booking.id,
           customerName: booking.customerName,
+          driverName: driverInfo[0]?.name || 'Un chauffeur',
           pickupAddress: booking.pickupAddress,
           dropoffAddress: booking.dropoffAddress,
           scheduledDateTime: booking.scheduledDateTime.toISOString(),
-          passengers: 1,
-        },
-        driverInfo[0]?.name || 'Un chauffeur',
-        cancellationReason || undefined
+          reason: cancellationReason || undefined
+        }
       ]);
     }
 

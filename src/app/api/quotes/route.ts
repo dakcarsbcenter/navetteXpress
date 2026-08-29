@@ -88,19 +88,6 @@ export async function POST(request: NextRequest) {
       false
     ]);
 
-    if (customerPhone) {
-      await sendWithRetry('whatsapp', 'whatsapp.sendQuoteWhatsAppNotification', [
-        customerPhone,
-        {
-          id: newQuote[0].id,
-          customerName,
-          service,
-          preferredDate: preferredDate ? new Date(preferredDate).toLocaleDateString('fr-FR') : undefined,
-        },
-        false
-      ]);
-    }
-
     // Envoyer notification à l'admin
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@navettexpress.com';
     await sendWithRetry('email', 'resend-mailer.sendNewQuoteRequestEmail', [
@@ -114,19 +101,6 @@ export async function POST(request: NextRequest) {
       },
       true
     ]);
-
-    if (process.env.ADMIN_WHATSAPP_NUMBER) {
-      await sendWithRetry('whatsapp', 'whatsapp.sendQuoteWhatsAppNotification', [
-        process.env.ADMIN_WHATSAPP_NUMBER,
-        {
-          id: newQuote[0].id,
-          customerName,
-          service,
-          preferredDate: preferredDate ? new Date(preferredDate).toLocaleDateString('fr-FR') : undefined,
-        },
-        true
-      ]);
-    }
 
     return NextResponse.json({
       success: true, 

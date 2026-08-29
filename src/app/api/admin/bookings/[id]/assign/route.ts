@@ -126,18 +126,6 @@ export async function PUT(
       }
     ]);
 
-    await sendWithRetry('whatsapp', 'whatsapp.sendBookingAssignedWhatsAppToDriver', [
-      {
-        id: assignedBooking.id,
-        customerName: assignedBooking.customerName,
-        pickupAddress: assignedBooking.pickupAddress,
-        dropoffAddress: assignedBooking.dropoffAddress,
-        scheduledDateTime: assignedBooking.scheduledDateTime.toISOString(),
-        passengers: 1,
-      },
-      assignedDriver.phone
-    ]);
-
     return NextResponse.json({
       success: true, 
       data: assignedBooking,

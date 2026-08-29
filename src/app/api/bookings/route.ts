@@ -183,17 +183,6 @@ export async function POST(request: NextRequest) {
       }
     ]);
 
-    await sendWithRetry('whatsapp', 'whatsapp.sendBookingWhatsAppToAdmin', [
-      {
-        id: createdBooking.id,
-        customerName: createdBooking.customerName,
-        pickupAddress: createdBooking.pickupAddress,
-        dropoffAddress: createdBooking.dropoffAddress,
-        scheduledDateTime: createdBooking.scheduledDateTime.toISOString(),
-        passengers: passengers || 1,
-      }
-    ]);
-
     return NextResponse.json({
       success: true, 
       data: createdBooking,

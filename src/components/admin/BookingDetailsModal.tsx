@@ -394,7 +394,7 @@ export function BookingDetailsModal({
                         style={{ ...selectStyle, height: 'auto', padding: '10px 12px', resize: 'none' }}
                       />
                       <p style={{ margin: '6px 0 0', fontSize: '11px', color: '#B8493C' }}>
-                        Le client recevra un email et un WhatsApp l&apos;informant de cette annulation définitive.
+                        Le client recevra un email l&apos;informant de cette annulation définitive.
                       </p>
                     </div>
                   )}

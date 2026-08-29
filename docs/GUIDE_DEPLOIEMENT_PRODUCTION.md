@@ -1,8 +1,8 @@
 # Guide de déploiement — NavetteXpress (VPS + Docker Compose)
 
-> **Dernière mise à jour :** 2026-08-28
+> **Dernière mise à jour :** 2026-08-29
 > **Statut de l'infra décrite :** en production (VPS direct, Docker Compose — Coolify a été abandonné le 2026-08-24)
-> **Ce document doit être tenu à jour.** Voir le [chapitre 15](#15-journal-des-évolutions-nécessitant-une-configuration) : à chaque fonctionnalité qui ajoute une variable d'environnement, un service externe ou une dépendance, une ligne doit être ajoutée ici.
+> **Ce document doit être tenu à jour.** Voir le [chapitre 14](#14-journal-des-évolutions-nécessitant-une-configuration) : à chaque fonctionnalité qui ajoute une variable d'environnement, un service externe ou une dépendance, une ligne doit être ajoutée ici.
 
 ## Sommaire
 
@@ -15,14 +15,13 @@
 7. [Redéploiement — mettre en ligne une nouvelle version du code](#7-redéploiement--mettre-en-ligne-une-nouvelle-version-du-code)
 8. [Variables d'environnement](#8-variables-denvironnement)
 9. [Migrations de base de données](#9-migrations-de-base-de-données)
-10. [WhatsApp (OpenWA) — configuration et rattachement du numéro](#10-whatsapp-openwa--configuration-et-rattachement-du-numéro)
-11. [Sauvegarde et restauration de la base de données](#11-sauvegarde-et-restauration-de-la-base-de-données)
-12. [Vérifications après un déploiement (checklist)](#12-vérifications-après-un-déploiement-checklist)
-13. [Rollback — annuler un déploiement raté](#13-rollback--annuler-un-déploiement-raté)
-14. [Pannes courantes et comment les résoudre](#14-pannes-courantes-et-comment-les-résoudre)
-15. [Journal des évolutions nécessitant une configuration](#15-journal-des-évolutions-nécessitant-une-configuration)
-16. [Sécurité de base](#16-sécurité-de-base)
-17. [Pistes d'amélioration proposées](#17-pistes-damélioration-proposées)
+10. [Sauvegarde et restauration de la base de données](#10-sauvegarde-et-restauration-de-la-base-de-données)
+11. [Vérifications après un déploiement (checklist)](#11-vérifications-après-un-déploiement-checklist)
+12. [Rollback — annuler un déploiement raté](#12-rollback--annuler-un-déploiement-raté)
+13. [Pannes courantes et comment les résoudre](#13-pannes-courantes-et-comment-les-résoudre)
+14. [Journal des évolutions nécessitant une configuration](#14-journal-des-évolutions-nécessitant-une-configuration)
+15. [Sécurité de base](#15-sécurité-de-base)
+16. [Pistes d'amélioration proposées](#16-pistes-damélioration-proposées)
 
 ---
 
@@ -36,7 +35,7 @@ Ce guide couvre uniquement le **déploiement web via Docker Compose sur le VPS d
 
 ## 2. Vue d'ensemble de l'architecture
 
-L'application tourne sur **un seul serveur (VPS)**, avec **4 "conteneurs" Docker** qui travaillent ensemble (définis dans le fichier [`docker-compose.yml`](../docker-compose.yml) à la racine du projet) :
+L'application tourne sur **un seul serveur (VPS)**, avec **3 "conteneurs" Docker** qui travaillent ensemble (définis dans le fichier [`docker-compose.yml`](../docker-compose.yml) à la racine du projet) :
 
 ```
                           Internet (HTTPS)
@@ -51,20 +50,19 @@ L'application tourne sur **un seul serveur (VPS)**, avec **4 "conteneurs" Docker
                     ┌───────────────────────┐
                     │  app                  │  l'application NavetteXpress
                     │  (Next.js, port 3000) │  (le code de ce dépôt Git)
-                    └───────┬───────────┬───┘
-                            │           │
-                            ▼           ▼
-              ┌───────────────────┐  ┌──────────────────────────┐
-              │  postgres         │  │  openwa                  │
-              │  base de données  │  │  passerelle WhatsApp      │
-              │                   │  │  (127.0.0.1:2785 seulement)│
-              └───────────────────┘  └──────────────────────────┘
+                    └───────────┬───────────┘
+                                │
+                                ▼
+                    ┌───────────────────────┐
+                    │  postgres             │  base de données
+                    └───────────────────────┘
 ```
 
 - **`caddy`** — reçoit tout le trafic web sur les ports 80/443, obtient et renouvelle automatiquement le certificat HTTPS, puis transmet les requêtes à `app`. Configuré dans [`Caddyfile`](../Caddyfile) (domaines `navettexpress.com` et `www.navettexpress.com`).
 - **`app`** — l'application elle-même (Next.js), construite à partir du code du dépôt via le [`Dockerfile`](../Dockerfile). C'est ce conteneur qu'on reconstruit à chaque déploiement.
 - **`postgres`** — la base de données PostgreSQL 15, qui stocke toutes les données (utilisateurs, réservations, factures, etc.). Ses données vivent dans un volume Docker qui survit aux redémarrages/mises à jour.
-- **`openwa`** — la passerelle qui envoie les notifications WhatsApp. Volontairement **non exposée publiquement** (accessible uniquement depuis le serveur lui-même, port `127.0.0.1:2785`) — voir [chapitre 10](#10-whatsapp-openwa--configuration-et-rattachement-du-numéro) pour y accéder de l'extérieur en toute sécurité.
+
+> Un 4ᵉ conteneur (`openwa`, passerelle de notifications WhatsApp) a existé jusqu'au 2026-08-29 ; il a été retiré après le blocage du numéro associé par Meta — voir [chapitre 14](#14-journal-des-évolutions-nécessitant-une-configuration).
 
 Tout est piloté par la commande `docker compose` (avec un espace, pas un tiret — voir chapitre 5) exécutée directement sur le VPS, sans plateforme intermédiaire (l'ancienne solution "Coolify" a été abandonnée).
 
@@ -159,37 +157,25 @@ openssl rand -base64 32
 
 Copiez le résultat dans la ligne `NEXTAUTH_SECRET=` du fichier `.env.docker`.
 
-**Étape 4 — (Si le rattachement WhatsApp prod est prévu) fixer la clé maître OpenWA**
-
-Créez un fichier `.env` (sans extension, à la racine, à côté de `docker-compose.yml` — **différent** de `.env.docker**) contenant une seule ligne :
-
-```bash
-echo "OPENWA_API_MASTER_KEY=$(openssl rand -hex 32)" > .env
-```
-
-> Pourquoi un fichier différent ? `docker-compose.yml` lit lui-même un fichier `.env` (celui-ci) pour remplacer les `${...}` qu'il contient — c'est un mécanisme de `docker compose`, différent du fichier `.env.docker` qui, lui, n'est transmis qu'au conteneur `app`.
-
-> ⚠️ **Sur la version d'OpenWA utilisée (v0.23.1), cette clé (`API_MASTER_KEY`) ne sert PAS à se connecter au tableau de bord.** OpenWA génère sa **propre** clé au premier démarrage du conteneur (format `owa_k1_...`), stockée dans `data/.api-key` — voir [chapitre 10](#10-whatsapp-openwa--configuration-et-rattachement-du-numéro) pour la récupérer. Cette clé auto-générée, elle, reste stable tant que le volume `openwa_data` n'est pas supprimé (elle ne se régénère pas à chaque redémarrage).
-
-**Étape 5 — Démarrer toute la stack**
+**Étape 4 — Démarrer toute la stack**
 
 ```bash
 docker compose up -d --build
 ```
 
-Cette commande télécharge/construit les images puis démarre les 4 conteneurs en arrière-plan (`-d`). La première fois, cela peut prendre plusieurs minutes (construction de l'image `app`).
+Cette commande télécharge/construit les images puis démarre les 3 conteneurs en arrière-plan (`-d`). La première fois, cela peut prendre plusieurs minutes (construction de l'image `app`).
 
-**Étape 6 — Vérifier que tout tourne**
+**Étape 5 — Vérifier que tout tourne**
 
 ```bash
 docker compose ps
 ```
 
-Les 4 services (`app`, `postgres`, `openwa`, `caddy`) doivent apparaître avec un statut `Up` (et `healthy` pour `postgres`/`app`/`openwa` après ~30 secondes).
+Les 3 services (`app`, `postgres`, `caddy`) doivent apparaître avec un statut `Up` (et `healthy` pour `postgres`/`app` après ~30 secondes).
 
-Puis suivez le [chapitre 12 — Vérifications après un déploiement](#12-vérifications-après-un-déploiement-checklist).
+Puis suivez le [chapitre 11 — Vérifications après un déploiement](#11-vérifications-après-un-déploiement-checklist).
 
-**Étape 7 — DNS**
+**Étape 6 — DNS**
 
 Assurez-vous que le domaine (`navettexpress.com` et `www.navettexpress.com`) pointe bien, chez votre registrar/DNS, vers l'adresse IP du VPS (enregistrement de type `A`). Sans cela, Caddy ne pourra pas obtenir de certificat HTTPS valide.
 
@@ -218,7 +204,7 @@ Notez quelque part (bloc-notes, message à vous-même) le code affiché (ex : `0
 ./scripts/backup.sh
 ```
 
-Voir [chapitre 11](#11-sauvegarde-et-restauration-de-la-base-de-données). Dans le doute, faites-la systématiquement : elle ne prend que quelques secondes et ne perturbe pas le service.
+Voir [chapitre 10](#10-sauvegarde-et-restauration-de-la-base-de-données). Dans le doute, faites-la systématiquement : elle ne prend que quelques secondes et ne perturbe pas le service.
 
 **Étape 4 — Récupérer le nouveau code**
 
@@ -233,7 +219,7 @@ docker compose build app
 docker compose up -d app
 ```
 
-> `.env.docker` n'est **jamais** touché par `git pull` (il n'est pas suivi par Git) : vos secrets de production sont donc en sécurité lors d'une mise à jour. En revanche, si la nouvelle version du code introduit une **nouvelle variable d'environnement obligatoire**, il faut l'ajouter manuellement dans `.env.docker` **avant** cette étape (voir [chapitre 15](#15-journal-des-évolutions-nécessitant-une-configuration) qui doit lister ces cas).
+> `.env.docker` n'est **jamais** touché par `git pull` (il n'est pas suivi par Git) : vos secrets de production sont donc en sécurité lors d'une mise à jour. En revanche, si la nouvelle version du code introduit une **nouvelle variable d'environnement obligatoire**, il faut l'ajouter manuellement dans `.env.docker` **avant** cette étape (voir [chapitre 14](#14-journal-des-évolutions-nécessitant-une-configuration) qui doit lister ces cas).
 
 **Étape 6 — Suivre le démarrage**
 
@@ -245,7 +231,7 @@ Vous devez voir successivement : `Base de données prête!`, puis `Migrations ap
 
 **Étape 7 — Vérifier**
 
-Passez au [chapitre 12 — Vérifications après un déploiement](#12-vérifications-après-un-déploiement-checklist). Si quelque chose ne va pas, allez au [chapitre 13 — Rollback](#13-rollback--annuler-un-déploiement-raté) ou au [chapitre 14 — Pannes courantes](#14-pannes-courantes-et-comment-les-résoudre).
+Passez au [chapitre 11 — Vérifications après un déploiement](#11-vérifications-après-un-déploiement-checklist). Si quelque chose ne va pas, allez au [chapitre 12 — Rollback](#12-rollback--annuler-un-déploiement-raté) ou au [chapitre 13 — Pannes courantes](#13-pannes-courantes-et-comment-les-résoudre).
 
 **Raccourci : script tout-en-un**
 
@@ -256,11 +242,11 @@ cd /opt/navettexpress
 ./scripts/deploy.sh
 ```
 
-Le script affiche le commit précédent (à noter pour un rollback éventuel), fait la sauvegarde, récupère le code, reconstruit et redémarre l'application, puis vérifie l'endpoint de santé. Il s'arrête et affiche un message d'erreur clair si une étape échoue — dans ce cas, reportez-vous au [chapitre 14](#14-pannes-courantes-et-comment-les-résoudre).
+Le script affiche le commit précédent (à noter pour un rollback éventuel), fait la sauvegarde, récupère le code, reconstruit et redémarre l'application, puis vérifie l'endpoint de santé. Il s'arrête et affiche un message d'erreur clair si une étape échoue — dans ce cas, reportez-vous au [chapitre 13](#13-pannes-courantes-et-comment-les-résoudre).
 
 Pour déployer une autre branche que `main` : `./scripts/deploy.sh nom-de-la-branche`.
 
-> Ce script ne remplace pas votre jugement : si la nouvelle version ajoute une variable d'environnement obligatoire, il faut toujours l'ajouter à la main dans `.env.docker` **avant** de lancer `deploy.sh` (voir chapitre 15).
+> Ce script ne remplace pas votre jugement : si la nouvelle version ajoute une variable d'environnement obligatoire, il faut toujours l'ajouter à la main dans `.env.docker` **avant** de lancer `deploy.sh` (voir chapitre 14).
 
 ## 8. Variables d'environnement
 
@@ -278,10 +264,6 @@ Toutes les variables ci-dessous se règlent dans le fichier **`.env.docker`** su
 | `RESEND_FROM_EMAIL` | Recommandé | Adresse d'expédition des emails | Adresse vérifiée dans Resend |
 | `ADMIN_EMAIL` | Recommandé | Destinataire des notifications internes | Adresse email de l'équipe |
 | `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` / `NEXT_PUBLIC_CLOUDINARY_API_KEY` / `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET` / `CLOUDINARY_API_SECRET` | Recommandé | Upload et hébergement des photos (véhicules, profils) | [console.cloudinary.com](https://console.cloudinary.com) |
-| `OPENWA_BASE_URL` | Optionnel | Adresse de la passerelle WhatsApp | `http://openwa:2785` (interne, ne pas changer) |
-| `OPENWA_API_KEY` | Optionnel | Authentification à la passerelle WhatsApp | Générée par OpenWA — voir [chapitre 10](#10-whatsapp-openwa--configuration-et-rattachement-du-numéro) |
-| `OPENWA_SESSION_ID` | Optionnel | Nom de la session WhatsApp liée | Choisi lors du rattachement (ex : `navettexpress`) |
-| `ADMIN_WHATSAPP_NUMBER` | Optionnel | Numéro qui reçoit les notifs WhatsApp internes | Format international sans `+` (ex : `221784651302`) |
 | `ANTHROPIC_API_KEY` | Optionnel | Assistant IA de l'espace admin | [console.anthropic.com](https://console.anthropic.com/settings/keys) |
 | `NEXT_PUBLIC_GA_ID` | Optionnel | Statistiques Google Analytics | [Google Analytics](https://analytics.google.com) |
 
@@ -319,47 +301,9 @@ docker compose exec app node scripts/run-migrations.mjs
 
 En cas de doute ou de blocage sur une migration, faites une [sauvegarde](#11-sauvegarde-et-restauration-de-la-base-de-données) avant toute intervention manuelle sur la base.
 
-## 10. WhatsApp (OpenWA) — configuration et rattachement du numéro
+## 10. Sauvegarde et restauration de la base de données
 
-La passerelle WhatsApp (`openwa`) tourne dans son propre conteneur mais n'est **volontairement pas accessible depuis internet** (elle n'écoute que sur `127.0.0.1:2785`, c'est-à-dire uniquement depuis le VPS lui-même). C'est pour la sécurité : son tableau de bord permet d'envoyer des messages WhatsApp, il ne doit pas être ouvert au public.
-
-**Pour accéder au tableau de bord OpenWA depuis votre ordinateur**, on crée un tunnel SSH temporaire :
-
-```bash
-ssh -L 2785:localhost:2785 UTILISATEUR@ADRESSE_IP_DU_VPS
-```
-
-Laissez cette fenêtre de terminal ouverte, puis ouvrez dans votre navigateur :
-
-```
-http://localhost:2785
-```
-
-Vous arrivez sur le tableau de bord OpenWA de production (pas celui de développement local).
-
-**Rattacher un numéro WhatsApp (une seule fois, ou si le numéro se déconnecte) :**
-
-1. Sur le tableau de bord, connectez-vous avec la clé d'API **auto-générée par OpenWA** (pas `OPENWA_API_MASTER_KEY` — voir l'avertissement du [chapitre 6, étape 4](#6-installation-initiale-complète-une-seule-fois)). Récupérez-la avec :
-   ```bash
-   docker compose exec openwa cat /app/data/.api-key
-   ```
-   Elle est aussi affichée (tronquée) dans les logs de démarrage : `docker compose logs openwa | grep -A2 "API Key"`.
-   > Si le tableau de bord affiche une page blanche (`ERR_EMPTY_RESPONSE`) en HTTP direct via le tunnel SSH, voir la variable `CSP_UPGRADE_INSECURE_REQUESTS=false` dans [docker-compose.yml](../docker-compose.yml) (nécessaire hors reverse-proxy TLS).
-2. Créer une session (nom conseillé : `navettexpress`).
-3. Démarrer la session — **la toute première tentative échoue souvent** avec une erreur de type "Timed out ... waiting for the WS endpoint" (le démarrage du navigateur interne est lent la première fois). C'est normal : relancez simplement le démarrage de la session une seconde fois.
-4. Un QR code s'affiche et **se renouvelle automatiquement toutes les 20-30 secondes** — ouvrez WhatsApp sur le téléphone du numéro à rattacher (Réglages → Appareils connectés → Connecter un appareil) et scannez-le directement sur l'écran du tableau de bord (ne prenez pas de capture d'écran à part, elle sera probablement déjà périmée).
-5. Une fois lié, notez le nom de session choisi et copiez la clé d'API affichée (`OPENWA_API_KEY`) dans `.env.docker` (voir [chapitre 8](#8-variables-denvironnement)), avec `OPENWA_SESSION_ID` et `ADMIN_WHATSAPP_NUMBER`.
-6. Redémarrez l'application pour prendre en compte ces valeurs :
-
-```bash
-docker compose up -d app
-```
-
-Vous pouvez fermer le tunnel SSH une fois terminé (fermer simplement la fenêtre de terminal, ou `Ctrl+C`).
-
-## 11. Sauvegarde et restauration de la base de données
-
-**Sauvegarder** (à faire avant chaque redéploiement qui touche la base, et idéalement tous les jours automatiquement — voir chapitre 17) :
+**Sauvegarder** (à faire avant chaque redéploiement qui touche la base, et idéalement tous les jours automatiquement — voir chapitre 16) :
 
 ```bash
 mkdir -p /opt/navettexpress/backups
@@ -390,7 +334,7 @@ Une sauvegarde saine fait généralement plusieurs centaines de Ko au minimum (p
 gunzip -c /opt/navettexpress/backups/NOM_DU_FICHIER.sql.gz | docker compose exec -T postgres psql -U navettexpress_user -d navettexpress
 ```
 
-## 12. Vérifications après un déploiement (checklist)
+## 11. Vérifications après un déploiement (checklist)
 
 À faire systématiquement après une installation initiale ou un redéploiement :
 
@@ -398,7 +342,7 @@ gunzip -c /opt/navettexpress/backups/NOM_DU_FICHIER.sql.gz | docker compose exec
    ```bash
    docker compose ps
    ```
-   → les 4 services en `Up`, sans redémarrages en boucle (`Restarting`).
+   → les 3 services en `Up`, sans redémarrages en boucle (`Restarting`).
 
 2. **L'application répond en interne :**
    ```bash
@@ -421,9 +365,9 @@ gunzip -c /opt/navettexpress/backups/NOM_DU_FICHIER.sql.gz | docker compose exec
    docker compose logs --tail=100 app
    ```
 
-Si l'un de ces points échoue, consultez le [chapitre 14 — Pannes courantes](#14-pannes-courantes-et-comment-les-résoudre).
+Si l'un de ces points échoue, consultez le [chapitre 13 — Pannes courantes](#13-pannes-courantes-et-comment-les-résoudre).
 
-## 13. Rollback — annuler un déploiement raté
+## 12. Rollback — annuler un déploiement raté
 
 Si après un redéploiement ([chapitre 7](#7-redéploiement--mettre-en-ligne-une-nouvelle-version-du-code)) quelque chose ne va pas et ne peut pas être corrigé rapidement :
 
@@ -447,16 +391,16 @@ docker compose up -d app
 git checkout main
 ```
 
-> ⚠️ Un rollback du **code** ne défait pas automatiquement une migration de base de données déjà appliquée (ex : une colonne ajoutée reste ajoutée). Si le problème vient d'une migration, la solution la plus sûre est de [restaurer la sauvegarde](#11-sauvegarde-et-restauration-de-la-base-de-données) prise juste avant le déploiement, plutôt que d'essayer d'annuler la migration à la main.
+> ⚠️ Un rollback du **code** ne défait pas automatiquement une migration de base de données déjà appliquée (ex : une colonne ajoutée reste ajoutée). Si le problème vient d'une migration, la solution la plus sûre est de [restaurer la sauvegarde](#10-sauvegarde-et-restauration-de-la-base-de-données) prise juste avant le déploiement, plutôt que d'essayer d'annuler la migration à la main.
 
-## 14. Pannes courantes et comment les résoudre
+## 13. Pannes courantes et comment les résoudre
 
 ### L'application redémarre en boucle (`Restarting` dans `docker compose ps`)
 
 ```bash
 docker compose logs --tail=100 app
 ```
-Cause la plus fréquente : `DATABASE_URL` absent ou invalide dans `.env.docker`, ou une variable obligatoire manquante après l'ajout d'une fonctionnalité (voir [chapitre 15](#15-journal-des-évolutions-nécessitant-une-configuration)). Corrigez `.env.docker` puis `docker compose up -d app`.
+Cause la plus fréquente : `DATABASE_URL` absent ou invalide dans `.env.docker`, ou une variable obligatoire manquante après l'ajout d'une fonctionnalité (voir [chapitre 14](#14-journal-des-évolutions-nécessitant-une-configuration)). Corrigez `.env.docker` puis `docker compose up -d app`.
 
 ### Le site affiche une erreur 502/503/504 (Bad Gateway)
 
@@ -492,14 +436,6 @@ Voir la procédure de vérification manuelle au [chapitre 9](#9-migrations-de-ba
 - Vérifiez `RESEND_API_KEY` et `RESEND_FROM_EMAIL` dans `.env.docker`.
 - Les envois passent par une file d'attente avec réessais automatiques (`notification_queue`, jusqu'à 6 tentatives sur ~12h). Un échec ponctuel se corrige souvent tout seul ; regardez les logs de l'application pour une erreur explicite de l'API Resend (clé invalide, expéditeur non vérifié).
 
-### Les notifications WhatsApp ne partent pas
-
-- La session s'est probablement déconnectée côté téléphone (désinstallation de WhatsApp, changement de téléphone, inactivité prolongée) : il faut la re-scanner, voir [chapitre 10](#10-whatsapp-openwa--configuration-et-rattachement-du-numéro).
-- Vérifiez `OPENWA_API_KEY`/`OPENWA_SESSION_ID` dans `.env.docker`, et l'état du conteneur :
-  ```bash
-  docker compose logs --tail=50 openwa
-  ```
-
 ### Le disque du VPS se remplit (images Docker accumulées au fil des déploiements)
 
 ```bash
@@ -513,25 +449,26 @@ docker image prune -af
 
 ### "no such service" en tapant une commande `docker compose ...`
 
-Vous avez probablement utilisé le nom du **conteneur** (ex : `navettexpress_app`) au lieu du nom du **service** dans `docker-compose.yml` (ex : `app`). Les commandes `docker compose build/up/logs/exec` attendent toujours le nom de service (`app`, `postgres`, `openwa`, `caddy`).
+Vous avez probablement utilisé le nom du **conteneur** (ex : `navettexpress_app`) au lieu du nom du **service** dans `docker-compose.yml` (ex : `app`). Les commandes `docker compose build/up/logs/exec` attendent toujours le nom de service (`app`, `postgres`, `caddy`).
 
-## 15. Journal des évolutions nécessitant une configuration
+## 14. Journal des évolutions nécessitant une configuration
 
 **Règle à appliquer pour toute nouvelle fonctionnalité qui ajoute une variable d'environnement, un service externe ou une dépendance de déploiement : ajouter une ligne ici, ET mettre à jour le tableau du [chapitre 8](#8-variables-denvironnement).**
 
 | Date | Fonctionnalité | Ce qui a changé | Action requise en prod |
 |---|---|---|---|
 | 2026-08-24 | Abandon de Coolify | Déploiement direct VPS via `docker compose` | Utiliser ce guide, plus les anciens guides Coolify (marqués obsolètes) |
-| ~2026-08 | File de notifications (email/WhatsApp) avec réessais | Table `notification_queue`, worker démarré dans `src/instrumentation.ts` | Rien de spécifique — fonctionne avec les variables Resend/OpenWA existantes |
-| 2026-08-21 | Notifications WhatsApp (OpenWA) | Nouveau conteneur `openwa` + 4 variables (`OPENWA_*`, `ADMIN_WHATSAPP_NUMBER`) | Rattacher le numéro en prod (chapitre 10) — **statut : rattachement prod pas encore fait**, à faire dès que possible |
+| ~2026-08 | File de notifications (email/WhatsApp) avec réessais | Table `notification_queue`, worker démarré dans `src/instrumentation.ts` | Obsolète pour le canal WhatsApp — voir la ligne du 2026-08-29 |
+| 2026-08-21 | Notifications WhatsApp (OpenWA) | Nouveau conteneur `openwa` + 4 variables (`OPENWA_*`, `ADMIN_WHATSAPP_NUMBER`) | **Obsolète — service retiré le 2026-08-29, voir ligne ci-dessous.** (le rattachement prod n'avait jamais été fait) |
 | 2026-08-28 | Rédaction de ce guide | — | — |
-| 2026-08-28 | Automatisation du déploiement/sauvegarde | Ajout de `scripts/deploy.sh`, `scripts/setup-backup-cron.sh`, purge auto dans `scripts/backup.sh`, `.github/workflows/deploy.yml`, port PostgreSQL restreint à `127.0.0.1` | Sur le VPS : lancer `./scripts/setup-backup-cron.sh` une fois après le prochain déploiement. Dans GitHub : configurer les secrets `VPS_HOST`/`VPS_USER`/`VPS_SSH_KEY` si le déploiement en un clic est souhaité (chapitre 17) |
+| 2026-08-29 | Retrait du service WhatsApp (OpenWA) | Numéro associé bloqué par Meta. Conteneur `openwa` et volume `openwa_data` retirés de `docker-compose.yml` ; `src/lib/whatsapp.ts` supprimé ; les 4 variables `OPENWA_*`/`ADMIN_WHATSAPP_NUMBER` ne sont plus lues ; les 2 notifications admin qui n'avaient pas d'équivalent email (refus chauffeur, annulation client) ont reçu un équivalent email (`sendBookingRejectedByDriverEmail`, `sendBookingCancelledByClientEmail` dans `src/lib/resend-mailer.ts`) | Sur le VPS : `docker compose up -d` recrée la stack sans `openwa` ; retirer les 4 variables `OPENWA_*`/`ADMIN_WHATSAPP_NUMBER` de `.env.docker` (facultatif, elles sont simplement ignorées sinon) ; supprimer manuellement le volume `openwa_data` si l'espace disque doit être récupéré (`docker volume rm navettexpress_openwa_data` — vérifier d'abord `docker volume ls`) |
+| 2026-08-28 | Automatisation du déploiement/sauvegarde | Ajout de `scripts/deploy.sh`, `scripts/setup-backup-cron.sh`, purge auto dans `scripts/backup.sh`, `.github/workflows/deploy.yml`, port PostgreSQL restreint à `127.0.0.1` | Sur le VPS : lancer `./scripts/setup-backup-cron.sh` une fois après le prochain déploiement. Dans GitHub : configurer les secrets `VPS_HOST`/`VPS_USER`/`VPS_SSH_KEY` si le déploiement en un clic est souhaité (chapitre 16) |
 | 2026-08-28 | Surveillance externe | Compte UptimeRobot créé, moniteur HTTP(s) sur `/api/health` (5 min, alerte email) | Aucune — fait |
 | 2026-08-28 | Sauvegarde planifiée activée en prod | `./scripts/setup-backup-cron.sh` exécuté sur le VPS | Aucune — fait |
 | 2026-08-28 | Restriction du port PostgreSQL appliquée en prod | `docker compose up -d postgres` relancé sur le VPS, conteneur recréé et `Running` | Aucune — fait |
 | 2026-08-28 | Déploiement en un clic mis en route | Secrets GitHub configurés ; remote Git du VPS passé de SSH à HTTPS (`git@github.com:...` → `https://github.com/...`, dépôt public, pas besoin de clé de déploiement) ; `command_timeout` de l'étape SSH porté à 30m dans `.github/workflows/deploy.yml` (le build seul prend ~7 min) | Aucune — fait, workflow testé avec succès |
 
-## 16. Sécurité de base
+## 15. Sécurité de base
 
 - **Ne jamais** committer `.env`, `.env.docker` ou tout fichier contenant un secret dans Git (déjà exclus par `.gitignore` — ne pas forcer leur ajout avec `git add -f`).
 - Changer `NEXTAUTH_SECRET` et le mot de passe PostgreSQL par des valeurs uniques en production (ne jamais réutiliser les valeurs par défaut du fichier modèle ou celles utilisées en développement local).
@@ -539,12 +476,12 @@ Vous avez probablement utilisé le nom du **conteneur** (ex : `navettexpress_app
 - Garder le VPS à jour (`sudo apt update && sudo apt upgrade`, régulièrement).
 - Le port PostgreSQL (5432) est restreint à `127.0.0.1` dans `docker-compose.yml` (non accessible depuis internet) — au prochain déploiement, `docker compose up -d postgres` recrée le conteneur avec cette restriction si ce n'est pas déjà fait.
 
-## 17. Améliorations appliquées et actions restantes
+## 16. Améliorations appliquées et actions restantes
 
 ### Déjà fait (présent dans le dépôt, rien à coder)
 
-- **Sauvegardes automatiques** : [`scripts/backup.sh`](../scripts/backup.sh) purge désormais lui-même les sauvegardes de plus de 30 jours, et [`scripts/setup-backup-cron.sh`](../scripts/setup-backup-cron.sh) programme son exécution quotidienne (chapitre 11).
-- **Port PostgreSQL restreint** : `docker-compose.yml` n'expose plus PostgreSQL que sur `127.0.0.1` (chapitre 16).
+- **Sauvegardes automatiques** : [`scripts/backup.sh`](../scripts/backup.sh) purge désormais lui-même les sauvegardes de plus de 30 jours, et [`scripts/setup-backup-cron.sh`](../scripts/setup-backup-cron.sh) programme son exécution quotidienne (chapitre 10).
+- **Port PostgreSQL restreint** : `docker-compose.yml` n'expose plus PostgreSQL que sur `127.0.0.1` (chapitre 15).
 - **Script de déploiement tout-en-un** : [`scripts/deploy.sh`](../scripts/deploy.sh) enchaîne sauvegarde, `git pull`, build, redémarrage et vérification de santé (chapitre 7).
 - **Déploiement en un clic (CI/CD manuel)** : [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml), déclenchable depuis l'onglet "Actions" de GitHub — voir mise en route ci-dessous.
 - **Nettoyage des documents obsolètes** : les anciens guides Coolify / scripts VPS inexistants (`DEPLOYMENT_COOLIFY.md`, `COOLIFY_DEPLOYMENT_FIX.md`, `COOLIFY_DEPLOYMENT_READY.md`, `DEPLOYMENT_MANUAL_VPS.md`, `PRODUCTION_GO_LIVE_CHECKLIST.md`, `MIGRATION_GUIDE.md`, `MIGRATION_README.md`) ont été supprimés ; `GUIDE_DEPLOIEMENT_DEV_PROD.md` a été nettoyé de sa partie Coolify obsolète (sa partie Dev local/Android reste valable).
@@ -594,4 +531,4 @@ Je n'ai pas d'accès direct au VPS ni à votre compte GitHub : ces étapes ne pe
 4. ~~Mettre en place une surveillance externe (uptime monitoring)~~ — **fait le 2026-08-28** (voir "Déjà fait" ci-dessus).
 5. ~~Décider d'un environnement de pré-production (staging)~~ — **décision prise le 2026-08-28 : pas nécessaire pour l'instant.** À reconsidérer plus tard si le besoin se présente (ex. tests risqués avant une mise en prod, équipe plus grande).
 
-> Toutes les actions de ce chapitre sont désormais réalisées. Chaque fois qu'une **nouvelle** évolution nécessite une action en prod, notez-la dans le [chapitre 15](#15-journal-des-évolutions-nécessitant-une-configuration) pour que ce guide reste le reflet fidèle de l'état réel.
+> Toutes les actions de ce chapitre sont désormais réalisées. Chaque fois qu'une **nouvelle** évolution nécessite une action en prod, notez-la dans le [chapitre 14](#14-journal-des-évolutions-nécessitant-une-configuration) pour que ce guide reste le reflet fidèle de l'état réel.
