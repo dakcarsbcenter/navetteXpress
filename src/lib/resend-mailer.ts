@@ -822,3 +822,122 @@ export async function sendCompanyRequestNotificationToAdmin(
     throw error;
   }
 }
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/**
+ * Notifie un participant (client ou chauffeur) qu'il a reçu un nouveau message de chat.
+ */
+export async function sendNewChatMessageToRecipientEmail(
+  to: string,
+  params: { toName?: string | null; senderName: string; content: string; conversationId: number }
+) {
+  try {
+    const preview = escapeHtml(params.content).slice(0, 500);
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: [to],
+      subject: `💬 Nouveau message de ${params.senderName} - NavetteXpress`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+          <body style="font-family: Arial, sans-serif; background: #e8f0f8; padding: 20px;">
+            <div style="max-width: 600px; margin: 0 auto; background: white; border: 2px solid #1F5245; border-radius: 8px; overflow: hidden;">
+              <div style="background: #1F5245; padding: 32px 20px; text-align: center;">
+                <h1 style="color: white; margin: 0; font-size: 24px;">Navette Express</h1>
+              </div>
+              <div style="padding: 32px 24px;">
+                <h2 style="color: #2c3e50;">💬 Nouveau message</h2>
+                <p style="color: #374151; font-size: 16px;">Bonjour ${escapeHtml(params.toName || '')},</p>
+                <p style="color: #374151; font-size: 16px;"><strong>${escapeHtml(params.senderName)}</strong> vous a envoyé un message :</p>
+                <div style="background: #f7f3ec; border: 2px solid #1F5245; border-radius: 8px; padding: 20px; margin: 20px 0; white-space: pre-wrap;">
+                  ${preview}
+                </div>
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="${process.env.NEXT_PUBLIC_APP_URL}"
+                     style="background: #1F5245; color: white; padding: 16px 48px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 16px;">
+                    Répondre sur NavetteXpress
+                  </a>
+                </div>
+                <p style="text-align: center; color: #9ca3af; font-size: 12px; margin: 16px 0;">Cet email a été envoyé automatiquement.</p>
+              </div>
+            </div>
+          </body>
+        </html>
+      `,
+    });
+
+    if (error) {
+      console.error('❌ Erreur envoi email nouveau message:', error);
+      throw error;
+    }
+
+    console.log('✅ Email nouveau message envoyé:', data?.id);
+    return data;
+  } catch (error) {
+    console.error('❌ Erreur:', error);
+    throw error;
+  }
+}
+
+/**
+ * Notifie l'équipe support (ADMIN_EMAIL) qu'un client a envoyé un message dans le chat support.
+ */
+export async function sendNewChatMessageToAdminEmail(
+  params: { senderName: string; content: string; conversationId: number }
+) {
+  try {
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@navettexpress.com';
+    const preview = escapeHtml(params.content).slice(0, 500);
+
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: [adminEmail],
+      subject: `💬 Nouveau message support de ${params.senderName}`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+          <body style="font-family: Arial, sans-serif; background: #e8f0f8; padding: 20px;">
+            <div style="max-width: 600px; margin: 0 auto; background: white; border: 2px solid #1F5245; border-radius: 8px; overflow: hidden;">
+              <div style="background: #1F5245; padding: 32px 20px; text-align: center;">
+                <h1 style="color: white; margin: 0; font-size: 24px;">Navette Express</h1>
+              </div>
+              <div style="padding: 32px 24px;">
+                <h2 style="color: #2c3e50;">💬 Nouveau message support</h2>
+                <p style="color: #374151; font-size: 16px;"><strong>${escapeHtml(params.senderName)}</strong> a écrit au support :</p>
+                <div style="background: #f7f3ec; border: 2px solid #1F5245; border-radius: 8px; padding: 20px; margin: 20px 0; white-space: pre-wrap;">
+                  ${preview}
+                </div>
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="${process.env.NEXT_PUBLIC_APP_URL}/admin/dashboard?tab=support"
+                     style="background: #1F5245; color: white; padding: 16px 48px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 16px;">
+                    Répondre depuis l'admin
+                  </a>
+                </div>
+                <p style="text-align: center; color: #9ca3af; font-size: 12px; margin: 16px 0;">Cet email a été envoyé automatiquement.</p>
+              </div>
+            </div>
+          </body>
+        </html>
+      `,
+    });
+
+    if (error) {
+      console.error('❌ Erreur envoi email support:', error);
+      throw error;
+    }
+
+    console.log('✅ Email support envoyé:', data?.id);
+    return data;
+  } catch (error) {
+    console.error('❌ Erreur:', error);
+    throw error;
+  }
+}

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { DashboardShell, type DashboardNavGroup } from "@/components/shared/DashboardShell"
 import { driverNavigation } from "@/config/dashboard-navigation"
+import { useConversations } from "@/hooks/useConversations"
 
 const pathTitleKeys: Record<string, string> = {
   "/driver/dashboard": "dashboard",
@@ -21,6 +22,7 @@ export function DriverShell({ children }: { children: React.ReactNode }) {
   const t = useTranslations("driver")
   const [onDuty, setOnDuty] = useState(true)
   const [pendingReports, setPendingReports] = useState(0)
+  const { unreadTotal } = useConversations()
 
   useEffect(() => {
     let cancelled = false
@@ -55,7 +57,11 @@ export function DriverShell({ children }: { children: React.ReactNode }) {
       href: item.href,
       label: t(item.labelKey),
       icon: item.icon,
-      badge: item.href === "/driver/rapport" && pendingReports > 0 ? pendingReports : undefined,
+      badge: item.href === "/driver/rapport" && pendingReports > 0
+        ? pendingReports
+        : item.href === "/driver/messages" && unreadTotal > 0
+          ? unreadTotal
+          : undefined,
     })),
   }))
 

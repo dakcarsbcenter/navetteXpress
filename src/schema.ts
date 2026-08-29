@@ -1,4 +1,4 @@
-import { integer, pgTable, serial, text, timestamp, decimal, boolean, check, pgEnum, jsonb, type AnyPgColumn } from 'drizzle-orm/pg-core';
+import { integer, pgTable, serial, text, timestamp, decimal, boolean, check, pgEnum, jsonb, uniqueIndex, type AnyPgColumn } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
 // Enums (unifiés)
@@ -25,6 +25,8 @@ export const companyRequestStatusEnum = pgEnum('company_request_status', ['none'
 
 export const notificationChannelEnum = pgEnum('notification_channel', ['email', 'whatsapp']);
 export const notificationQueueStatusEnum = pgEnum('notification_queue_status', ['pending', 'sent', 'failed']);
+
+export const conversationTypeEnum = pgEnum('conversation_type', ['booking', 'support']);
 
 export const flightStatusEnum = pgEnum('flight_status', ['scheduled', 'active', 'landed', 'cancelled', 'incident', 'diverted', 'unknown']);
 
@@ -175,6 +177,41 @@ export const bookingsTable = pgTable('bookings', {
   passengersCheck: check('passengers_check', sql`${table.passengers} > 0`),
   luggageCheck: check('luggage_check', sql`${table.luggage} >= 0`),
 }));
+
+// Conversations du chat intégré : soit liées à une réservation (client ↔ chauffeur assigné),
+// soit de type support (client ↔ équipe admin/manager, une seule conversation par client).
+export const conversationsTable = pgTable('conversations', {
+  id: serial('id').primaryKey(),
+  type: conversationTypeEnum('type').notNull(),
+  bookingId: integer('booking_id').references(() => bookingsTable.id, { onDelete: 'cascade' }),
+  clientId: text('client_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  driverId: text('driver_id').references(() => users.id, { onDelete: 'set null' }),
+  clientLastReadAt: timestamp('client_last_read_at'),
+  driverLastReadAt: timestamp('driver_last_read_at'),
+  adminLastReadAt: timestamp('admin_last_read_at'),
+  lastMessageAt: timestamp('last_message_at'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
+}, (table) => ({
+  // NULL n'entre pas en conflit avec lui-même en Postgres : cette contrainte n'empêche
+  // que les doublons "booking" (bookingId non NULL), pas les lignes "support" (bookingId NULL).
+  bookingIdUnique: uniqueIndex('conversations_booking_id_unique').on(table.bookingId),
+  // Une seule conversation support par client (index partiel : ne s'applique qu'à type='support').
+  clientSupportUnique: uniqueIndex('conversations_client_support_unique').on(table.clientId).where(sql`${table.type} = 'support'`),
+}));
+
+export const messagesTable = pgTable('messages', {
+  id: serial('id').primaryKey(),
+  conversationId: integer('conversation_id').notNull().references(() => conversationsTable.id, { onDelete: 'cascade' }),
+  senderId: text('sender_id').references(() => users.id, { onDelete: 'set null' }),
+  content: text('content').notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+export type InsertConversation = typeof conversationsTable.$inferInsert;
+export type SelectConversation = typeof conversationsTable.$inferSelect;
+export type InsertMessage = typeof messagesTable.$inferInsert;
+export type SelectMessage = typeof messagesTable.$inferSelect;
 
 // Compteur d'appels à l'API de suivi de vols (AviationStack), une ligne par mois
 // ('YYYY-MM'), pour ne jamais dépasser le quota du palier gratuit.

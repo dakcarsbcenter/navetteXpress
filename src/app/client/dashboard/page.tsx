@@ -14,6 +14,7 @@ import { ClientQuotesView } from "@/components/client/ClientQuotesView"
 import { ClientInvoicesView } from "@/components/client/ClientInvoicesView"
 import { VehiclesManagement } from "@/components/client/VehiclesManagement"
 import { ClientUsersManagement } from "@/components/client/ClientUsersManagement"
+import { ClientMessagesPanel } from "@/components/client/ClientMessagesPanel"
 import { StatusBadge } from "@/components/shared/StatusBadge"
 import {
   CalendarBlank, Star, PencilSimple, CheckCircle, X, Plus, MapPin, Clock,
@@ -116,7 +117,7 @@ interface UserProfile {
   createdAt: string
 }
 
-type TabType = 'overview' | 'bookings' | 'quotes' | 'invoices' | 'reviews' | 'create-reviews' | 'profile' | 'vehicles' | 'users'
+type TabType = 'overview' | 'bookings' | 'messages' | 'quotes' | 'invoices' | 'reviews' | 'create-reviews' | 'profile' | 'vehicles' | 'users'
 
 const UPCOMING_STATUSES = ['pending', 'assigned', 'confirmed', 'in_progress']
 const NEXT_TRIP_STATUSES = ['assigned', 'confirmed', 'in_progress']
@@ -232,13 +233,6 @@ function getInitials(name?: string | null) {
   return name.split(' ').map((part) => part[0]).join('').toUpperCase().slice(0, 2)
 }
 
-function waLink(phone: string | null | undefined) {
-  if (!phone) return null
-  const digits = phone.replace(/[^0-9]/g, '')
-  if (!digits) return null
-  return `https://wa.me/${digits}`
-}
-
 // snyk:ignore[javascript/DOMXSS] - UserProfile data is validated through getSafeProfileImageUrl, getSafeTextForAttribute, and getSafeTextContent helper functions
 function ClientDashboardContent() {
   const { data: session, status } = useSession()
@@ -321,7 +315,7 @@ function ClientDashboardContent() {
   // Gérer les paramètres d'URL pour l'onglet actif
   useEffect(() => {
     const tabFromUrl = searchParams?.get('tab')
-    if (tabFromUrl && ['overview', 'bookings', 'quotes', 'invoices', 'create-reviews', 'reviews', 'profile', 'vehicles', 'users'].includes(tabFromUrl)) {
+    if (tabFromUrl && ['overview', 'bookings', 'messages', 'quotes', 'invoices', 'create-reviews', 'reviews', 'profile', 'vehicles', 'users'].includes(tabFromUrl)) {
       setActiveTab(tabFromUrl as TabType)
     } else {
       setActiveTab('overview')
@@ -334,6 +328,10 @@ function ClientDashboardContent() {
   // le titre de la barre du haut de l'onglet réellement affiché.
   const goToTab = (tab: TabType) => {
     router.push(tab === 'overview' ? '/client/dashboard' : `/client/dashboard?tab=${tab}`)
+  }
+
+  const goToBookingChat = (bookingId: number) => {
+    router.push(`/client/dashboard?tab=messages&bookingId=${bookingId}`)
   }
 
   const loadClientData = async () => {
@@ -548,7 +546,6 @@ function ClientDashboardContent() {
         ]
 
         const nextTripPhone = nextTripBooking?.driver?.phone ?? null
-        const nextTripWaLink = waLink(nextTripPhone)
 
         return (
           <div className="flex flex-col gap-6">
@@ -672,11 +669,14 @@ function ClientDashboardContent() {
                               <Phone size={17} style={{ color: '#12100E' }} />
                             </a>
                           )}
-                          {nextTripWaLink && (
-                            <a href={nextTripWaLink} target="_blank" rel="noreferrer" title={t('home.nextTrip.message')} style={{ width: '40px', height: '40px', background: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '3px', display: 'grid', placeItems: 'center' }}>
-                              <ChatCircle size={17} style={{ color: '#12100E' }} />
-                            </a>
-                          )}
+                          <button
+                            type="button"
+                            onClick={() => goToBookingChat(nextTripBooking.id)}
+                            title={t('home.nextTrip.message')}
+                            style={{ width: '40px', height: '40px', background: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '3px', display: 'grid', placeItems: 'center', cursor: 'pointer' }}
+                          >
+                            <ChatCircle size={17} style={{ color: '#12100E' }} />
+                          </button>
                         </div>
                       )}
                     </div>
@@ -1142,6 +1142,14 @@ function ClientDashboardContent() {
               )}
             </div>
           </div>
+        )
+
+      case 'messages':
+        return (
+          <ClientMessagesPanel
+            bookings={bookings}
+            initialBookingId={searchParams?.get('bookingId') ? Number(searchParams.get('bookingId')) : null}
+          />
         )
 
       case 'quotes':

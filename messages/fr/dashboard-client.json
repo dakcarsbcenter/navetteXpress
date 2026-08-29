@@ -15,6 +15,8 @@
       "overviewMobile": "Accueil",
       "bookings": "Mes Réservations",
       "bookingsMobile": "Trajets",
+      "messages": "Messages",
+      "messagesMobile": "Messages",
       "quotes": "Mes Devis",
       "quotesMobile": "Devis",
       "invoices": "Mes Factures",
@@ -31,6 +33,7 @@
     "titles": {
       "overview": "Vue d'ensemble",
       "bookings": "Mes Réservations",
+      "messages": "Messages",
       "quotes": "Mes Devis",
       "invoices": "Mes Factures",
       "createReviews": "Évaluer des trajets",

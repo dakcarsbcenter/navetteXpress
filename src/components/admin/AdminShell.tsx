@@ -4,10 +4,12 @@ import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { DashboardShell, type DashboardNavGroup } from "@/components/shared/DashboardShell"
 import { adminNavigation } from "@/config/dashboard-navigation"
+import { useConversations } from "@/hooks/useConversations"
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const searchParams = useSearchParams()
   const t = useTranslations("admin")
+  const { unreadTotal } = useConversations()
 
   const groups: DashboardNavGroup[] = adminNavigation.map((group) => ({
     label: t(group.labelKey),
@@ -15,6 +17,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       href: item.href,
       label: t(item.labelKey),
       icon: item.icon,
+      badge: item.href === "/admin/dashboard?tab=support" && unreadTotal > 0 ? unreadTotal : undefined,
     })),
   }))
 

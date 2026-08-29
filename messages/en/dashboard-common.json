@@ -7,5 +7,25 @@
   },
   "status": {
     "available": "Available"
+  },
+  "chat": {
+    "title": "Messages",
+    "emptyConversation": "Select a conversation to start chatting",
+    "noConversations": "No conversations yet",
+    "placeholder": "Write your message…",
+    "send": "Send",
+    "you": "You",
+    "loading": "Loading…",
+    "error": "Something went wrong, please try again.",
+    "support": {
+      "title": "NavetteXpress Support",
+      "start": "Contact support"
+    },
+    "booking": {
+      "startWithDriver": "Contact driver",
+      "conversationWith": "Driver: {name}",
+      "conversationWithClient": "Client: {name}"
+    },
+    "unassignedDriver": "No driver assigned yet"
   }
 }

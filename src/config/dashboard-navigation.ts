@@ -18,6 +18,8 @@ import {
   LockKey,
   ChartLine,
   Buildings,
+  ChatCircle,
+  Headset,
 } from "@phosphor-icons/react"
 
 type PhosphorIcon = React.ComponentType<{
@@ -55,6 +57,7 @@ export const driverNavigation: DashboardNavGroupConfig[] = [
     items: [
       { href: "/driver/disponibilites", labelKey: "sidebar.nav.availability", icon: Clock },
       { href: "/driver/rapport", labelKey: "sidebar.nav.report", icon: Wrench },
+      { href: "/driver/messages", labelKey: "sidebar.nav.messages", icon: ChatCircle },
       { href: "/driver/statistiques", labelKey: "sidebar.nav.statistics", icon: ChartBar },
       { href: "/driver/profil", labelKey: "sidebar.nav.profile", icon: User },
     ],
@@ -67,6 +70,7 @@ export const clientNavigation: DashboardNavGroupConfig[] = [
     items: [
       { href: "/client/dashboard", labelKey: "sidebar.nav.overview", icon: SquaresFour },
       { href: "/client/dashboard?tab=bookings", labelKey: "sidebar.nav.bookings", icon: CalendarBlank },
+      { href: "/client/dashboard?tab=messages", labelKey: "sidebar.nav.messages", icon: ChatCircle },
     ],
   },
   {
@@ -120,6 +124,7 @@ export const adminNavigation: DashboardNavGroupConfig[] = [
       { href: "/admin/dashboard?tab=bookings", labelKey: "sidebar.nav.bookings", icon: CalendarBlank },
       { href: "/admin/dashboard?tab=quotes", labelKey: "sidebar.nav.quotes", icon: FileText },
       { href: "/admin/dashboard?tab=drivers", labelKey: "sidebar.nav.drivers", icon: SteeringWheel },
+      { href: "/admin/dashboard?tab=support", labelKey: "sidebar.nav.support", icon: Headset },
     ],
   },
   {

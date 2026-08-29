@@ -134,6 +134,20 @@
       "when": 1787961625079,
       "tag": "0018_smiling_firelord",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1787969087467,
+      "tag": "0019_chubby_frank_castle",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1787971659060,
+      "tag": "0020_abnormal_clint_barton",
+      "breakpoints": true
     }
   ]
 }

@@ -9,6 +9,7 @@
       "planning": "Schedule",
       "availability": "Availability",
       "report": "Vehicle Report",
+      "messages": "Messages",
       "statistics": "Statistics",
       "profile": "Profile"
     }
@@ -19,6 +20,7 @@
       "planning": "Schedule",
       "availability": "Availability",
       "report": "Vehicle Report",
+      "messages": "Messages",
       "statistics": "Statistics",
       "profile": "Profile",
       "history": "History"

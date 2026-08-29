@@ -1,0 +1,2 @@
+CREATE UNIQUE INDEX "conversations_booking_id_unique" ON "conversations" USING btree ("booking_id");--> statement-breakpoint
+CREATE UNIQUE INDEX "conversations_client_support_unique" ON "conversations" USING btree ("client_id") WHERE "conversations"."type" = 'support';

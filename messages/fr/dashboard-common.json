@@ -7,5 +7,25 @@
   },
   "status": {
     "available": "Disponible"
+  },
+  "chat": {
+    "title": "Messages",
+    "emptyConversation": "Sélectionnez une conversation pour commencer à discuter",
+    "noConversations": "Aucune conversation pour le moment",
+    "placeholder": "Écrivez votre message…",
+    "send": "Envoyer",
+    "you": "Vous",
+    "loading": "Chargement…",
+    "error": "Une erreur est survenue, réessayez.",
+    "support": {
+      "title": "Support NavetteXpress",
+      "start": "Contacter le support"
+    },
+    "booking": {
+      "startWithDriver": "Contacter le chauffeur",
+      "conversationWith": "Chauffeur : {name}",
+      "conversationWithClient": "Client : {name}"
+    },
+    "unassignedDriver": "Chauffeur non assigné pour le moment"
   }
 }
