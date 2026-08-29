@@ -757,3 +757,68 @@ export async function sendBookingPriceRejectedEmail(
     throw error;
   }
 }
+
+/**
+ * Notifie l'admin qu'un client demande le passage en compte professionnel (hôtel/entreprise/ONG)
+ */
+export async function sendCompanyRequestNotificationToAdmin(
+  to: string,
+  request: {
+    userId: string;
+    name: string;
+    email: string;
+    companyType?: string | null;
+    companyName?: string | null;
+  }
+) {
+  try {
+    const typeLabel: Record<string, string> = { hotel: 'Hôtel', entreprise: 'Entreprise', ong: 'ONG / mission' };
+
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: [to],
+      subject: `🏢 Nouvelle demande de compte professionnel`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+          <body style="font-family: Arial, sans-serif; background: #e8f0f8; padding: 20px;">
+            <div style="max-width: 600px; margin: 0 auto; background: white; border: 2px solid #1F5245; border-radius: 8px; overflow: hidden;">
+              <div style="background: #1F5245; padding: 32px 20px; text-align: center;">
+                <h1 style="color: white; margin: 0; font-size: 24px;">Navette Express</h1>
+              </div>
+              <div style="padding: 32px 24px;">
+                <h2 style="color: #2c3e50;">🏢 Demande de compte professionnel</h2>
+                <p style="color: #374151; font-size: 16px; line-height: 1.6;">
+                  Un client a demandé le passage en compte ${request.companyType ? typeLabel[request.companyType] || request.companyType : 'professionnel'} et attend votre validation.
+                </p>
+                <div style="background: #f7f3ec; border: 2px solid #1F5245; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                  <p style="margin: 6px 0;"><strong>👤 Client :</strong> ${request.name}</p>
+                  <p style="margin: 6px 0;"><strong>📧 Email :</strong> ${request.email}</p>
+                  ${request.companyName ? `<p style="margin: 6px 0;"><strong>🏢 Entreprise :</strong> ${request.companyName}</p>` : ''}
+                </div>
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="${process.env.NEXT_PUBLIC_APP_URL}/admin/dashboard?tab=company-requests"
+                     style="background: #1F5245; color: white; padding: 16px 48px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 16px;">
+                    Examiner la demande
+                  </a>
+                </div>
+                <p style="text-align: center; color: #9ca3af; font-size: 12px; margin: 16px 0;">Cet email a été envoyé automatiquement.</p>
+              </div>
+            </div>
+          </body>
+        </html>
+      `,
+    });
+
+    if (error) {
+      console.error('❌ Erreur envoi email demande compte pro:', error);
+      throw error;
+    }
+
+    console.log('✅ Email demande compte pro envoyé:', data?.id);
+    return data;
+  } catch (error) {
+    console.error('❌ Erreur:', error);
+    throw error;
+  }
+}

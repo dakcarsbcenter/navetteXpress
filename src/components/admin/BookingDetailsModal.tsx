@@ -16,7 +16,9 @@ import {
   FloppyDisk,
   PencilSimple,
   X,
-  MapPinLine
+  MapPinLine,
+  Airplane,
+  ArrowSquareOut
 } from "@phosphor-icons/react"
 import { StatusBadge } from "@/components/shared/StatusBadge"
 
@@ -35,6 +37,10 @@ interface Booking {
   luggage?: number | null
   price?: string | null
   notes?: string
+  flightNumber?: string | null
+  airline?: string | null
+  flightStatus?: string | null
+  flightLastCheckedAt?: string | null
   cancellationReason?: string | null
   cancelledBy?: string | null
   cancelledAt?: string | null
@@ -316,6 +322,35 @@ export function BookingDetailsModal({
                       <p style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#12100E' }}>{booking.luggage || 1}</p>
                     </div>
                   </div>
+
+                  {booking.flightNumber && (
+                    <div style={fieldWrap}>
+                      <div className="flex items-center justify-between gap-2" style={{ marginBottom: '6px' }}>
+                        <div className="flex items-center gap-2">
+                          <Airplane size={15} weight="fill" style={{ color: '#1F5245' }} />
+                          <p style={{ ...fieldLabel, marginBottom: 0 }}>Vol (lecture seule)</p>
+                        </div>
+                        <StatusBadge domain="flight" value={booking.flightStatus || 'unknown'} audience="admin" live={booking.flightStatus === 'active'} />
+                      </div>
+                      <p style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#12100E' }}>
+                        {booking.flightNumber}{booking.airline ? ` · ${booking.airline}` : ''}
+                      </p>
+                      <p style={{ margin: '4px 0 0', fontFamily: 'var(--font-mono)', fontSize: '10.5px', color: '#6E6A63' }}>
+                        {booking.flightLastCheckedAt
+                          ? `Dernière vérification: ${new Date(booking.flightLastCheckedAt).toLocaleString('fr-FR')}`
+                          : 'Statut jamais vérifié'}
+                      </p>
+                      <a
+                        href="https://www.skyscanner.fr/vols/arrivees-departs/dss/blaise-diagne-international-arrivees-departs"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1"
+                        style={{ marginTop: '8px', fontSize: '11px', fontWeight: 600, color: '#1F5245' }}
+                      >
+                        Voir les vols en direct <ArrowSquareOut size={12} />
+                      </a>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

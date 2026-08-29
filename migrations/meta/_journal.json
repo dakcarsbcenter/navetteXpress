@@ -120,6 +120,20 @@
       "when": 1787682183292,
       "tag": "0016_colossal_next_avengers",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1787944728927,
+      "tag": "0017_reflective_colossus",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1787961625079,
+      "tag": "0018_smiling_firelord",
+      "breakpoints": true
     }
   ]
 }

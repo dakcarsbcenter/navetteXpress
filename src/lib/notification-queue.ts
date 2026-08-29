@@ -155,6 +155,17 @@ const registry: Record<string, Handler> = {
       args[2] as boolean
     );
   },
+  'resend-mailer.sendCompanyRequestNotificationToAdmin': async (args) => {
+    const { sendCompanyRequestNotificationToAdmin } = await import('./resend-mailer');
+    return sendCompanyRequestNotificationToAdmin(
+      args[0] as string,
+      args[1] as Parameters<typeof sendCompanyRequestNotificationToAdmin>[1]
+    );
+  },
+  'whatsapp.sendCompanyRequestWhatsAppToAdmin': async (args) => {
+    const { sendCompanyRequestWhatsAppToAdmin } = await import('./whatsapp');
+    return sendCompanyRequestWhatsAppToAdmin(args[0] as Parameters<typeof sendCompanyRequestWhatsAppToAdmin>[0]);
+  },
 };
 
 /** Les envoyeurs "resend-email"/"resend-mailer"/whatsapp renvoient {success:false, error} sans lever d'exception. */

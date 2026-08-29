@@ -77,6 +77,23 @@
       "in_progress": "En cours",
       "completed": "Terminée",
       "cancelled": "Annulée"
+    },
+    "flight": {
+      "title": "Vol",
+      "numberLabel": "Numéro de vol",
+      "numberPlaceholder": "Ex: AF718",
+      "numberRequired": "Numéro de vol requis",
+      "airlineLabel": "Compagnie aérienne",
+      "airlinePlaceholder": "Ex: Air France",
+      "saveButton": "Enregistrer",
+      "saving": "Enregistrement...",
+      "refreshButton": "Vérifier en direct",
+      "refreshing": "Vérification...",
+      "lastChecked": "Dernière vérification : {time}",
+      "neverChecked": "Statut jamais vérifié",
+      "genericError": "Une erreur est survenue. Réessayez plus tard.",
+      "cta": "Voir les vols en direct (AIBD)",
+      "close": "Fermer"
     }
   },
   "planningTab": {

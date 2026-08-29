@@ -36,6 +36,12 @@ interface Booking {
   clientResponse?: string
   clientResponseAt?: string
   clientResponseMessage?: string
+  flightNumber?: string | null
+  airline?: string | null
+  flightStatus?: string | null
+  flightScheduledTime?: string | null
+  flightEstimatedTime?: string | null
+  flightLastCheckedAt?: string | null
   driver?: { id: string; name: string; phone: string | null } | null
 }
 
@@ -104,6 +110,8 @@ interface UserProfile {
   companyAddress?: string
   companyPhone?: string
   bp?: string
+  companyStatus?: 'none' | 'pending' | 'approved' | 'rejected'
+  companyRejectionReason?: string | null
   role: string
   createdAt: string
 }
@@ -1221,6 +1229,11 @@ function ClientDashboardContent() {
                           {t('profile.businessAccount')}
                         </span>
                       )}
+                      {!userProfile?.isCompany && userProfile?.companyStatus === 'pending' && (
+                        <span className="px-2.5 py-1 font-mono text-[10px] font-bold uppercase" style={{ backgroundColor: 'rgba(180,100,58,.10)', color: '#B4643A', border: '1px solid rgba(180,100,58,.3)', borderRadius: '2px', letterSpacing: '0.14em' }}>
+                          {t('profile.businessAccountPending')}
+                        </span>
+                      )}
                     </div>
                     <p className="flex items-center justify-center md:justify-start gap-2 text-sm font-medium" style={{ color: '#6E6A63' }}>
                       <Envelope size={16} weight="duotone" /> {userProfile?.email}
@@ -1332,6 +1345,14 @@ function ClientDashboardContent() {
                       </div>
                     </div>
                   </div>
+                ) : userProfile?.companyStatus === 'pending' ? (
+                  <div style={{ backgroundColor: 'rgba(180,100,58,.06)', border: '1px solid rgba(180,100,58,.3)', borderRadius: '4px', padding: '32px' }} className="flex flex-col items-center justify-center text-center">
+                    <Clock size={36} weight="thin" style={{ color: '#B4643A' }} className="mb-4" />
+                    <h4 className="text-sm font-bold" style={{ color: '#12100E' }}>{t('profile.pendingCompany')}</h4>
+                    <p className="text-xs mt-1 max-w-xs" style={{ color: '#6E6A63' }}>
+                      {t('profile.pendingCompanyHint')}
+                    </p>
+                  </div>
                 ) : (
                   <div style={{ backgroundColor: '#F7F3EC', border: '1px dashed #E2DACD', borderRadius: '4px', padding: '32px' }} className="flex flex-col items-center justify-center text-center">
                     <Buildings size={36} weight="thin" style={{ color: '#6E6A63' }} className="mb-4" />
@@ -1339,6 +1360,11 @@ function ClientDashboardContent() {
                     <p className="text-xs mt-1 max-w-xs" style={{ color: '#6E6A63' }}>
                       {t('profile.activateCompanyHint')}
                     </p>
+                    {userProfile?.companyStatus === 'rejected' && userProfile?.companyRejectionReason && (
+                      <p className="text-xs mt-3 max-w-xs" style={{ color: '#B8493C' }}>
+                        {t('profile.rejectedCompanyHint', { reason: userProfile.companyRejectionReason })}
+                      </p>
+                    )}
                     <button
                       type="button"
                       onClick={() => setIsEditProfileModalOpen(true)}

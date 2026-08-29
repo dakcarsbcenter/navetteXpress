@@ -32,6 +32,10 @@ interface Booking {
   notes?: string
   passengers?: number
   createdAt: string
+  flightNumber?: string | null
+  airline?: string | null
+  flightStatus?: string | null
+  flightLastCheckedAt?: string | null
   driver?: {
     id: string
     name: string
@@ -130,6 +134,10 @@ export function BookingsManagement() {
               notes: b.notes,
               passengers: b.passengers || 1,
               createdAt: b.createdAt,
+              flightNumber: b.flightNumber,
+              airline: b.airline,
+              flightStatus: b.flightStatus,
+              flightLastCheckedAt: b.flightLastCheckedAt,
               driver: row.driver,
               vehicle: row.vehicle
             }

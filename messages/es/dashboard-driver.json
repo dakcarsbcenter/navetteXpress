@@ -63,6 +63,11 @@
       "itinerary": "Itinerario",
       "reportIncident": "Reportar una espera o un incidente",
       "incidentReported": "Incidente reportado al despacho",
+      "flight": {
+        "title": "Vuelo",
+        "lastChecked": "Verificado a las {time}",
+        "neverChecked": "Estado nunca verificado"
+      },
       "steps": {
         "nouvelle": "Nueva",
         "acceptee": "Aceptada",

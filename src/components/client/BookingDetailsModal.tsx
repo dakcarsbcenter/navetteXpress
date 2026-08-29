@@ -17,7 +17,9 @@ import {
     XCircle,
     Car,
     Wallet,
-    Info
+    Info,
+    Airplane,
+    ArrowSquareOut
 } from "@phosphor-icons/react"
 
 interface Booking {
@@ -36,7 +38,15 @@ interface Booking {
     clientResponse?: string
     clientResponseAt?: string
     clientResponseMessage?: string
+    flightNumber?: string | null
+    airline?: string | null
+    flightStatus?: string | null
+    flightScheduledTime?: string | null
+    flightEstimatedTime?: string | null
+    flightLastCheckedAt?: string | null
 }
+
+const FLIGHT_LIVE_TRACKING_URL = "https://www.skyscanner.fr/vols/arrivees-departs/dss/blaise-diagne-international-arrivees-departs"
 
 interface BookingDetailsModalProps {
     isOpen: boolean
@@ -67,6 +77,14 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
     const [isCancelling, setIsCancelling] = useState(false)
     const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false)
     const [cancelSuccessOpen, setCancelSuccessOpen] = useState(false)
+    const [flightInfo, setFlightInfo] = useState<{
+        flightStatus?: string | null
+        flightScheduledTime?: string | null
+        flightEstimatedTime?: string | null
+        flightLastCheckedAt?: string | null
+    } | null>(null)
+    const [flightRefreshing, setFlightRefreshing] = useState(false)
+    const [flightError, setFlightError] = useState<string | null>(null)
 
     useEffect(() => {
         if (booking && isOpen) {
@@ -83,8 +101,43 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                 notes: booking.notes || ''
             })
             setIsEditing(false)
+            setFlightInfo({
+                flightStatus: booking.flightStatus,
+                flightScheduledTime: booking.flightScheduledTime,
+                flightEstimatedTime: booking.flightEstimatedTime,
+                flightLastCheckedAt: booking.flightLastCheckedAt
+            })
+            setFlightError(null)
         }
     }, [booking, isOpen])
+
+    const flightCooldownActive = Boolean(
+        flightInfo?.flightLastCheckedAt &&
+        Date.now() - new Date(flightInfo.flightLastCheckedAt).getTime() < 15 * 60 * 1000
+    )
+
+    const refreshFlight = async () => {
+        if (!booking) return
+        setFlightRefreshing(true)
+        setFlightError(null)
+
+        try {
+            const response = await fetch(`/api/flights/${booking.id}`, { method: 'POST' })
+            const result = await response.json()
+
+            if (result.success) {
+                setFlightInfo(result.data)
+                onSuccess()
+            } else {
+                setFlightError(result.error || t('flightGenericError'))
+            }
+        } catch (error) {
+            console.error('Erreur:', error)
+            setFlightError(t('flightGenericError'))
+        } finally {
+            setFlightRefreshing(false)
+        }
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -277,6 +330,62 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                                             <p className="text-sm leading-relaxed italic" style={{ color: '#6E6A63' }}>
                                                 &ldquo;{booking.notes}&rdquo;
                                             </p>
+                                        </div>
+                                    )}
+
+                                    {booking.flightNumber && (
+                                        <div className="p-4 space-y-3" style={surfaceStyle}>
+                                            <div className="flex items-center justify-between gap-2 flex-wrap">
+                                                <div className="flex items-center gap-2" style={{ color: '#1F5245' }}>
+                                                    <Airplane size={18} />
+                                                    <span className="text-[10px] font-bold uppercase tracking-widest">{t('flightTitle')}</span>
+                                                </div>
+                                                <StatusBadge domain="flight" value={flightInfo?.flightStatus || 'unknown'} audience="client" live={flightInfo?.flightStatus === 'active'} />
+                                            </div>
+
+                                            <div className="grid grid-cols-2 gap-3">
+                                                <div>
+                                                    <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: '#6E6A63' }}>{t('flightNumberLabel')}</p>
+                                                    <p className="text-sm font-semibold" style={{ color: '#12100E' }}>{booking.flightNumber}</p>
+                                                </div>
+                                                {booking.airline && (
+                                                    <div>
+                                                        <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: '#6E6A63' }}>{t('flightAirlineLabel')}</p>
+                                                        <p className="text-sm font-semibold" style={{ color: '#12100E' }}>{booking.airline}</p>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            <p className="text-xs" style={{ color: '#6E6A63' }}>
+                                                {flightInfo?.flightLastCheckedAt
+                                                    ? t('flightLastChecked', { time: new Date(flightInfo.flightLastCheckedAt).toLocaleString(intlLocale) })
+                                                    : t('flightNeverChecked')}
+                                            </p>
+
+                                            {flightError && (
+                                                <p className="text-xs font-medium" style={{ color: '#B8493C' }}>{flightError}</p>
+                                            )}
+
+                                            <div className="flex items-center gap-4 flex-wrap">
+                                                <button
+                                                    type="button"
+                                                    onClick={refreshFlight}
+                                                    disabled={flightRefreshing || flightCooldownActive}
+                                                    className="px-4 py-2 text-xs font-bold flex items-center gap-2 disabled:opacity-50"
+                                                    style={{ backgroundColor: '#1F5245', color: '#fff', border: 'none', borderRadius: '4px' }}
+                                                >
+                                                    {flightRefreshing ? t('flightRefreshing') : t('flightRefreshButton')}
+                                                </button>
+                                                <a
+                                                    href={FLIGHT_LIVE_TRACKING_URL}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-xs font-bold flex items-center gap-1"
+                                                    style={{ color: '#1F5245' }}
+                                                >
+                                                    {t('flightLiveTrackingCta')} <ArrowSquareOut size={14} />
+                                                </a>
+                                            </div>
                                         </div>
                                     )}
                                 </div>

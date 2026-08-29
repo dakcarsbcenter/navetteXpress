@@ -32,4 +32,10 @@ export interface Booking {
   scheduledDateTime: string;
   status: BookingStatus;
   price: string | null;
+  flightNumber?: string | null;
+  airline?: string | null;
+  flightStatus?: string | null;
+  flightScheduledTime?: string | null;
+  flightEstimatedTime?: string | null;
+  flightLastCheckedAt?: string | null;
 }

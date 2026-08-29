@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl"
 
-export type StatusDomain = "booking" | "quote" | "invoice" | "report" | "tripPlan"
+export type StatusDomain = "booking" | "quote" | "invoice" | "report" | "tripPlan" | "flight"
 export type StatusAudience = "client" | "driver" | "admin"
 
 export type Tone = "attente" | "valide" | "enCours" | "clos" | "arrete"
@@ -54,6 +54,15 @@ const DOMAIN_TONES: Record<StatusDomain, Record<string, Tone>> = {
     active: "valide",
     completed: "clos",
     cancelled: "arrete",
+  },
+  flight: {
+    scheduled: "attente",
+    active: "enCours",
+    landed: "clos",
+    cancelled: "arrete",
+    incident: "arrete",
+    diverted: "arrete",
+    unknown: "clos",
   },
 }
 

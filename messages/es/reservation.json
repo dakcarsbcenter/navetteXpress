@@ -52,6 +52,12 @@
     "subtitle": "Nosotros asignamos el vehículo según los pasajeros y el equipaje. Solo dinos qué necesitas a bordo.",
     "luggageLabel": "Equipaje",
     "luggageUnit": "{count, plural, one {maleta} other {maletas}}",
+    "flightSectionLabel": "Información del vuelo",
+    "flightNumberLabel": "Número de vuelo",
+    "flightNumberPlaceholder": "Ej: AF718",
+    "airlineLabel": "Aerolínea",
+    "airlinePlaceholder": "Ej: Air France",
+    "flightSectionHint": "Indica tu vuelo para seguir su estado en vivo desde tu panel de cliente.",
     "optionsLabel": "Opciones sin costo adicional",
     "notesLabel": "Indicaciones para el chofer — opcional",
     "notesPlaceholder": "Punto de encuentro exacto, código de la puerta, nombre del hotel, parada en el camino..."

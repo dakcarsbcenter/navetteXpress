@@ -13,7 +13,8 @@ import {
   IdentificationCard,
   DeviceMobile,
   FloppyDisk,
-  Warning
+  Warning,
+  Clock
 } from "@phosphor-icons/react"
 import UniversalProfilePhotoUpload from "@/components/ui/UniversalProfilePhotoUpload"
 
@@ -39,6 +40,8 @@ interface UserProfile {
   companyPhone?: string
   bp?: string
   image?: string
+  companyStatus?: 'none' | 'pending' | 'approved' | 'rejected'
+  companyRejectionReason?: string | null
 }
 
 const surfaceStyle = { backgroundColor: '#F7F3EC', border: '1px solid #E2DACD', borderRadius: '4px' }
@@ -64,6 +67,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState("")
+  const [successMessage, setSuccessMessage] = useState("")
 
   useEffect(() => {
     if (isOpen && initialData) {
@@ -82,6 +86,8 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
         bp: initialData.bp || "",
         image: initialData.image || ""
       })
+      setError("")
+      setSuccessMessage("")
     }
   }, [isOpen, initialData])
 
@@ -89,6 +95,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
     e.preventDefault()
     setIsSubmitting(true)
     setError("")
+    setSuccessMessage("")
 
     try {
       const response = await fetch('/api/client/profile', {
@@ -101,6 +108,12 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
 
       if (response.ok && data.success) {
         onSuccess()
+        if (data.companyRequestPending) {
+          setSuccessMessage(data.message || t('companyRequestSubmitted'))
+          setIsSubmitting(false)
+          setTimeout(onClose, 2200)
+          return
+        }
         onClose()
       } else {
         setError(data.error || t('updateError'))
@@ -269,6 +282,20 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
               </button>
             </div>
 
+            {formData.isCompany && initialData?.companyStatus === 'pending' && (
+              <div className="p-4 text-sm flex items-center gap-3" style={{ backgroundColor: 'rgba(180,100,58,.08)', border: '1px solid rgba(180,100,58,.3)', color: '#B4643A', borderRadius: '4px' }}>
+                <Clock size={20} weight="fill" />
+                {t('companyPendingNotice')}
+              </div>
+            )}
+
+            {formData.isCompany && initialData?.companyStatus === 'rejected' && initialData?.companyRejectionReason && (
+              <div className="p-4 text-sm flex items-center gap-3" style={{ backgroundColor: 'rgba(184,68,60,.08)', border: '1px solid rgba(184,68,60,.2)', color: '#B8493C', borderRadius: '4px' }}>
+                <Warning size={20} weight="fill" />
+                {t('companyRejectedNotice', { reason: initialData.companyRejectionReason })}
+              </div>
+            )}
+
             {formData.isCompany && (
               <div className="space-y-4">
                 <div className="space-y-2">
@@ -360,6 +387,13 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
               </div>
             )}
           </section>
+
+          {successMessage && (
+            <div className="p-4 text-sm flex items-center gap-3" style={{ backgroundColor: 'rgba(31,82,69,.08)', border: '1px solid rgba(31,82,69,.25)', color: '#1F5245', borderRadius: '4px' }}>
+              <Clock size={20} weight="fill" />
+              {successMessage}
+            </div>
+          )}
 
           {error && (
             <div className="p-4 text-sm flex items-center gap-3" style={{ backgroundColor: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#B8493C', borderRadius: '4px' }}>

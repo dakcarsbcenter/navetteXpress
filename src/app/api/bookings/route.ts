@@ -78,6 +78,8 @@ export async function POST(request: NextRequest) {
       contactEmail,
       clientName,
       clientEmail: fallbackClientEmail,
+      flightNumber,
+      airline,
       // Champs pour utilisateurs connectés
       userId
     } = body;
@@ -152,6 +154,8 @@ export async function POST(request: NextRequest) {
         driverId: null, // Sera assigné plus tard par l'admin
         vehicleId: null, // Sera assigné plus tard par l'admin
         price: '0', // Prix initial à 0, sera fixé par l'admin
+        flightNumber: flightNumber || null,
+        airline: airline || null,
         notes: `Service: ${serviceType}\nContact: ${contactPhone}${contactEmail ? ` - ${contactEmail}` : ''}\nServices additionnels: ${additionalServices?.join(', ') || 'Aucun'}\nDemandes spéciales: ${specialRequests || 'Aucune'}`,
         updatedAt: new Date()
       })

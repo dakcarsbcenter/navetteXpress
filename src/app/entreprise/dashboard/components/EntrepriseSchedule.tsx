@@ -2,9 +2,10 @@
 
 import { useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { CaretLeft, CaretRight } from "@phosphor-icons/react";
+import { CaretLeft, CaretRight, Airplane } from "@phosphor-icons/react";
 import { toIntlLocale } from "@/lib/intl-locale";
 import type { Booking } from "../types";
+import { EntrepriseBookingFlightModal } from "./EntrepriseBookingFlightModal";
 
 type Period = "day" | "week" | "month" | "year";
 
@@ -62,13 +63,15 @@ function formatRangeLabel(period: Period, anchor: Date, intlLocale: string): str
   return String(anchor.getFullYear());
 }
 
-export function EntrepriseSchedule({ bookings }: { bookings: Booking[] }) {
+export function EntrepriseSchedule({ bookings, onBookingChanged }: { bookings: Booking[]; onBookingChanged?: () => void }) {
   const t = useTranslations("entreprise.schedule");
   const tStatus = useTranslations("entreprise.schedule.status");
+  const tFlight = useTranslations("entreprise.schedule.flight");
   const locale = useLocale();
   const intlLocale = toIntlLocale(locale);
   const [period, setPeriod] = useState<Period>("month");
   const [anchor, setAnchor] = useState(new Date());
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
 
   const [start, end] = useMemo(() => getRange(period, anchor), [period, anchor]);
 
@@ -85,6 +88,16 @@ export function EntrepriseSchedule({ bookings }: { bookings: Booking[] }) {
 
   return (
     <div className="space-y-4">
+      <div className="flex justify-end">
+        <a
+          href="https://www.skyscanner.fr/vols/arrivees-departs/dss/blaise-diagne-international-arrivees-departs"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-accent"
+        >
+          <Airplane size={14} weight="bold" /> {tFlight("cta")}
+        </a>
+      </div>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="inline-flex rounded-lg border border-border bg-white p-1">
           {periods.map((p) => (
@@ -143,12 +156,14 @@ export function EntrepriseSchedule({ bookings }: { bookings: Booking[] }) {
           items.map((b) => (
             <div
               key={b.id}
-              className="grid grid-cols-[1fr_2fr_auto_auto] gap-2 px-5 py-3 border-b border-border last:border-0 text-sm items-center"
+              onClick={() => setSelectedBooking(b)}
+              className="grid grid-cols-[1fr_2fr_auto_auto] gap-2 px-5 py-3 border-b border-border last:border-0 text-sm items-center cursor-pointer hover:bg-[#F7F3EC]"
             >
               <span className="font-[family-name:var(--font-ibm-plex-mono)] text-[#6E6A63]">
                 {new Date(b.scheduledDateTime).toLocaleDateString(intlLocale, { day: "2-digit", month: "2-digit", year: period === "year" ? undefined : "numeric" })}
               </span>
-              <span className="text-foreground truncate pr-4">
+              <span className="text-foreground truncate pr-4 flex items-center gap-1.5">
+                {b.flightNumber && <Airplane size={13} className="text-accent shrink-0" />}
                 {b.pickupAddress} → {b.dropoffAddress}
               </span>
               <span className="text-xs font-medium text-[#6E6A63]">{tStatus(b.status)}</span>
@@ -159,6 +174,13 @@ export function EntrepriseSchedule({ bookings }: { bookings: Booking[] }) {
           ))
         )}
       </div>
+
+      <EntrepriseBookingFlightModal
+        booking={selectedBooking}
+        isOpen={Boolean(selectedBooking)}
+        onClose={() => setSelectedBooking(null)}
+        onSuccess={() => onBookingChanged?.()}
+      />
     </div>
   );
 }

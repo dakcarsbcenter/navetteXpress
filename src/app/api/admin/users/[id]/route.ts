@@ -200,6 +200,8 @@ export async function PUT(
         isCompany: !!normalizedCompanyType,
         companyType: normalizedCompanyType,
         companyName: normalizedCompanyType ? (companyName || null) : null,
+        // L'admin agit ici directement : pas de circuit de demande/validation à respecter.
+        companyStatus: normalizedCompanyType ? 'approved' : 'none',
         updatedAt: new Date()
       })
       .where(eq(users.id, (await params).id))

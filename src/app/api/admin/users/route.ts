@@ -233,6 +233,7 @@ export async function POST(request: NextRequest) {
       isCompany: boolean;
       companyType: 'hotel' | 'entreprise' | 'ong' | null;
       companyName?: string | null;
+      companyStatus: 'none' | 'approved';
     } = {
       id: userId,
       name,
@@ -245,6 +246,8 @@ export async function POST(request: NextRequest) {
       isCompany: !!normalizedCompanyType,
       companyType: normalizedCompanyType,
       companyName: normalizedCompanyType ? (companyName || null) : null,
+      // L'admin agit ici directement : pas de circuit de demande/validation à respecter.
+      companyStatus: normalizedCompanyType ? 'approved' : 'none',
     }
 
     const newUser = await db

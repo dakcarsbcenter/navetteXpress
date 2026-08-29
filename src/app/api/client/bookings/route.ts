@@ -90,6 +90,12 @@ export async function GET() {
         clientResponse: booking.clientResponse,
         clientResponseAt: booking.clientResponseAt,
         clientResponseMessage: booking.clientResponseMessage,
+        flightNumber: booking.flightNumber,
+        airline: booking.airline,
+        flightStatus: booking.flightStatus,
+        flightScheduledTime: booking.flightScheduledTime,
+        flightEstimatedTime: booking.flightEstimatedTime,
+        flightLastCheckedAt: booking.flightLastCheckedAt,
         driver: driver ? { id: driver.id, name: driver.name, phone: driver.phone } : null,
       }))
     })

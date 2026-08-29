@@ -52,6 +52,12 @@
     "subtitle": "We assign the vehicle for you based on passengers and luggage. Just tell us what you need on board.",
     "luggageLabel": "Luggage",
     "luggageUnit": "{count, plural, one {bag} other {bags}}",
+    "flightSectionLabel": "Flight information",
+    "flightNumberLabel": "Flight number",
+    "flightNumberPlaceholder": "e.g. AF718",
+    "airlineLabel": "Airline",
+    "airlinePlaceholder": "e.g. Air France",
+    "flightSectionHint": "Add your flight to track its status live from your client dashboard.",
     "optionsLabel": "Options at no extra cost",
     "notesLabel": "Notes for the driver — optional",
     "notesPlaceholder": "Exact meeting point, gate code, hotel name, stop along the way..."

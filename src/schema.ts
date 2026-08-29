@@ -21,9 +21,12 @@ export const adStatusEnum = pgEnum('ad_status', [
 ]);
 
 export const companyTypeEnum = pgEnum('company_type', ['hotel', 'entreprise', 'ong']);
+export const companyRequestStatusEnum = pgEnum('company_request_status', ['none', 'pending', 'approved', 'rejected']);
 
 export const notificationChannelEnum = pgEnum('notification_channel', ['email', 'whatsapp']);
 export const notificationQueueStatusEnum = pgEnum('notification_queue_status', ['pending', 'sent', 'failed']);
+
+export const flightStatusEnum = pgEnum('flight_status', ['scheduled', 'active', 'landed', 'cancelled', 'incident', 'diverted', 'unknown']);
 
 export const adPlacementEnum = pgEnum('ad_placement', [
   'home_hero',          // Page accueil — après la section hero
@@ -58,6 +61,12 @@ export const users = pgTable('users', {
   companyAddress: text('company_address'),
   companyPhone: text('company_phone'),
   bp: text('bp'),
+  // Demande de passage en compte pro : soumise par le client, activée par l'admin uniquement
+  companyStatus: companyRequestStatusEnum('company_status').notNull().default('none'),
+  companyRequestedAt: timestamp('company_requested_at'),
+  companyReviewedAt: timestamp('company_reviewed_at'),
+  companyReviewedBy: text('company_reviewed_by'),
+  companyRejectionReason: text('company_rejection_reason'),
   licenseNumber: text('license_number').unique(),
   isActive: boolean('is_active').notNull().default(true),
   resetToken: text('reset_token'),
@@ -149,6 +158,13 @@ export const bookingsTable = pgTable('bookings', {
   clientResponseAt: timestamp('client_response_at'), // Date de réponse du client
   clientResponseMessage: text('client_response_message'), // Message optionnel du client
   notes: text('notes'),
+  flightNumber: text('flight_number'),
+  airline: text('airline'),
+  flightStatus: flightStatusEnum('flight_status'),
+  flightScheduledTime: timestamp('flight_scheduled_time'),
+  flightEstimatedTime: timestamp('flight_estimated_time'),
+  flightLastCheckedAt: timestamp('flight_last_checked_at'),
+  flightRawData: jsonb('flight_raw_data'),
   cancellationReason: text('cancellation_reason'),
   cancelledBy: text('cancelled_by').references(() => users.id, { onDelete: 'set null' }),
   cancelledAt: timestamp('cancelled_at'),
@@ -159,6 +175,18 @@ export const bookingsTable = pgTable('bookings', {
   passengersCheck: check('passengers_check', sql`${table.passengers} > 0`),
   luggageCheck: check('luggage_check', sql`${table.luggage} >= 0`),
 }));
+
+// Compteur d'appels à l'API de suivi de vols (AviationStack), une ligne par mois
+// ('YYYY-MM'), pour ne jamais dépasser le quota du palier gratuit.
+export const flightApiUsageTable = pgTable('flight_api_usage', {
+  id: serial('id').primaryKey(),
+  monthKey: text('month_key').notNull().unique(),
+  callCount: integer('call_count').notNull().default(0),
+  updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
+});
+
+export type InsertFlightApiUsage = typeof flightApiUsageTable.$inferInsert;
+export type SelectFlightApiUsage = typeof flightApiUsageTable.$inferSelect;
 
 // Avis
 export const reviewsTable = pgTable('reviews', {

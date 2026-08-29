@@ -17,6 +17,7 @@ import {
   MapPin,
   LockKey,
   ChartLine,
+  Buildings,
 } from "@phosphor-icons/react"
 
 type PhosphorIcon = React.ComponentType<{
@@ -133,6 +134,7 @@ export const adminNavigation: DashboardNavGroupConfig[] = [
     labelKey: "sidebar.sectionAdministration",
     items: [
       { href: "/admin/dashboard?tab=users", labelKey: "sidebar.nav.users", icon: Users },
+      { href: "/admin/dashboard?tab=company-requests", labelKey: "sidebar.nav.companyRequests", icon: Buildings },
       { href: "/admin/dashboard?tab=permissions", labelKey: "sidebar.nav.permissions", icon: LockKey },
       { href: "/admin/dashboard?tab=invoices", labelKey: "sidebar.nav.invoices", icon: Receipt },
       { href: "/admin/dashboard?tab=reviews", labelKey: "sidebar.nav.reviews", icon: Star },

@@ -267,3 +267,36 @@ export async function sendQuoteWhatsAppNotification(
 
   return sendWhatsAppMessage(to, text)
 }
+
+interface WhatsAppCompanyRequestData {
+  name: string
+  email: string
+  companyType?: string | null
+  companyName?: string | null
+}
+
+const COMPANY_TYPE_LABELS: Record<string, string> = {
+  hotel: 'Hôtel',
+  entreprise: 'Entreprise',
+  ong: 'ONG / mission',
+}
+
+/**
+ * Notifie l'admin (ADMIN_WHATSAPP_NUMBER) d'une nouvelle demande de compte professionnel.
+ */
+export async function sendCompanyRequestWhatsAppToAdmin(request: WhatsAppCompanyRequestData): Promise<WhatsAppResult> {
+  if (!ADMIN_WHATSAPP_NUMBER) {
+    return { success: false, error: 'ADMIN_WHATSAPP_NUMBER non configuré' }
+  }
+
+  const typeLabel = request.companyType ? COMPANY_TYPE_LABELS[request.companyType] || request.companyType : 'professionnel'
+
+  const text =
+    `🏢 Nouvelle demande de compte ${typeLabel}\n\n` +
+    `Client: ${request.name}\n` +
+    `Email: ${request.email}` +
+    (request.companyName ? `\nEntreprise: ${request.companyName}` : '') +
+    `\n\nÀ valider dans Admin > Demandes compte pro`
+
+  return sendWhatsAppMessage(ADMIN_WHATSAPP_NUMBER, text)
+}

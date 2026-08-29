@@ -63,6 +63,11 @@
       "itinerary": "Directions",
       "reportIncident": "Report a delay or incident",
       "incidentReported": "Incident reported to dispatch",
+      "flight": {
+        "title": "Flight",
+        "lastChecked": "Checked at {time}",
+        "neverChecked": "Status never checked"
+      },
       "steps": {
         "nouvelle": "New",
         "acceptee": "Accepted",

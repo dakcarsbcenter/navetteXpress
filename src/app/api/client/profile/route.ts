@@ -8,6 +8,7 @@ import { authOptions } from "@/lib/auth"
 import { db } from "@/db"
 import { users, rolePermissionsTable } from "@/schema"
 import { eq, and } from "drizzle-orm"
+import { sendWithRetry } from "@/lib/notification-queue"
 
 // PUT - Mettre à jour le profil du client
 export async function PUT(request: NextRequest) {
@@ -93,6 +94,38 @@ export async function PUT(request: NextRequest) {
       }
     }
 
+    const currentUserId = (session as unknown as { user: { id: string } }).user.id
+    const currentRows = await db
+      .select({ isCompany: users.isCompany, companyStatus: users.companyStatus, name: users.name })
+      .from(users)
+      .where(eq(users.id, currentUserId))
+      .limit(1)
+
+    if (currentRows.length === 0) {
+      return NextResponse.json({ error: "Utilisateur non trouvé" }, { status: 404 })
+    }
+
+    const current = currentRows[0]
+
+    // Le passage en compte pro est une DEMANDE : elle ne devient effective (isCompany=true)
+    // qu'après validation par un admin dans "Demandes compte pro". Un compte déjà approuvé
+    // reste actif et peut simplement mettre à jour ses infos sans repasser en validation.
+    let nextIsCompany = current.isCompany
+    let nextCompanyStatus = current.companyStatus
+    let justRequested = false
+
+    if (!isCompany) {
+      nextIsCompany = false
+      nextCompanyStatus = 'none'
+    } else if (current.isCompany && current.companyStatus === 'approved') {
+      nextIsCompany = true
+      nextCompanyStatus = 'approved'
+    } else {
+      nextIsCompany = false
+      justRequested = current.companyStatus !== 'pending'
+      nextCompanyStatus = 'pending'
+    }
+
     // Mettre à jour le profil utilisateur
     const updatedUser = await db
       .update(users)
@@ -102,16 +135,19 @@ export async function PUT(request: NextRequest) {
         phone: phone?.trim() || null,
         image: image?.trim() || null,
         address: address?.trim() || null,
-        isCompany: !!isCompany,
+        isCompany: nextIsCompany,
         companyType: isCompany ? normalizedCompanyType : null,
         companyName: companyName?.trim() || null,
         ninea: ninea?.trim() || null,
         raisonSociale: raisonSociale?.trim() || null,
         companyAddress: companyAddress?.trim() || null,
         companyPhone: companyPhone?.trim() || null,
-        bp: bp?.trim() || null
+        bp: bp?.trim() || null,
+        companyStatus: nextCompanyStatus,
+        ...(justRequested ? { companyRequestedAt: new Date(), companyReviewedAt: null, companyRejectionReason: null } : {}),
+        ...(nextCompanyStatus === 'none' ? { companyReviewedAt: null, companyRejectionReason: null } : {})
       })
-      .where(eq(users.id, (session as unknown as { user: { id: string } }).user.id))
+      .where(eq(users.id, currentUserId))
       .returning()
 
     if (updatedUser.length === 0) {
@@ -121,16 +157,43 @@ export async function PUT(request: NextRequest) {
       )
     }
 
+    if (justRequested) {
+      const adminEmail = process.env.ADMIN_EMAIL || 'onboarding@resend.dev'
+      await sendWithRetry('email', 'resend-mailer.sendCompanyRequestNotificationToAdmin', [
+        adminEmail,
+        {
+          userId: updatedUser[0].id,
+          name: updatedUser[0].name,
+          email: updatedUser[0].email,
+          companyType: updatedUser[0].companyType,
+          companyName: updatedUser[0].companyName
+        }
+      ])
+      await sendWithRetry('whatsapp', 'whatsapp.sendCompanyRequestWhatsAppToAdmin', [
+        {
+          name: updatedUser[0].name,
+          email: updatedUser[0].email,
+          companyType: updatedUser[0].companyType,
+          companyName: updatedUser[0].companyName
+        }
+      ])
+    }
+
     return NextResponse.json({
       success: true,
-      message: "Profil mis à jour avec succès",
+      message: justRequested
+        ? "Votre demande de compte professionnel a été envoyée à l'administrateur pour validation."
+        : "Profil mis à jour avec succès",
+      companyRequestPending: nextCompanyStatus === 'pending',
       user: {
         id: updatedUser[0].id,
         name: updatedUser[0].name,
         email: updatedUser[0].email,
         phone: updatedUser[0].phone,
         image: updatedUser[0].image,
-        role: updatedUser[0].role
+        role: updatedUser[0].role,
+        isCompany: updatedUser[0].isCompany,
+        companyStatus: updatedUser[0].companyStatus
       }
     })
 
@@ -191,6 +254,8 @@ export async function GET() {
         companyAddress: users.companyAddress,
         companyPhone: users.companyPhone,
         bp: users.bp,
+        companyStatus: users.companyStatus,
+        companyRejectionReason: users.companyRejectionReason,
         role: users.role,
         createdAt: users.createdAt
       })

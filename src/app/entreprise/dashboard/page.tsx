@@ -121,7 +121,7 @@ function EntrepriseDashboardContent() {
         <EntrepriseOverview profile={profile} companyTypeLabels={companyTypeLabels} bookings={bookings} />
       )}
       {activeTab === "planning" && <EntreprisePlanning onPlanChanged={loadBookings} />}
-      {activeTab === "schedule" && <EntrepriseSchedule bookings={bookings} />}
+      {activeTab === "schedule" && <EntrepriseSchedule bookings={bookings} onBookingChanged={loadBookings} />}
       {activeTab === "quotes" && <EntrepriseQuotes />}
       {activeTab === "invoices" && <EntrepriseInvoices />}
       {activeTab === "profile" && <EntrepriseProfileTab profile={profile} onUpdated={loadProfile} />}

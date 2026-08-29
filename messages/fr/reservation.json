@@ -52,6 +52,12 @@
     "subtitle": "Le véhicule est attribué par nos soins selon les passagers et les bagages. Dites-nous seulement ce dont vous avez besoin à bord.",
     "luggageLabel": "Bagages",
     "luggageUnit": "{count, plural, one {valise} other {valises}}",
+    "flightSectionLabel": "Informations de vol",
+    "flightNumberLabel": "Numéro de vol",
+    "flightNumberPlaceholder": "Ex: AF718",
+    "airlineLabel": "Compagnie aérienne",
+    "airlinePlaceholder": "Ex: Air France",
+    "flightSectionHint": "Renseignez votre vol pour suivre son statut en direct depuis votre espace client.",
     "optionsLabel": "Options sans supplément",
     "notesLabel": "Précisions pour le chauffeur — facultatif",
     "notesPlaceholder": "Point de rendez-vous exact, code portail, nom de l'hôtel, arrêt en route..."

@@ -28,6 +28,10 @@ export interface DriverBookingApiItem {
     luggage: number
     duration: string | number | null
     notes: string | null
+    flightNumber: string | null
+    airline: string | null
+    flightStatus: string | null
+    flightLastCheckedAt: string | null
   }
 }
 

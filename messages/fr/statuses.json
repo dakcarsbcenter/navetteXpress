@@ -34,5 +34,14 @@
     "active": { "client": "Actif", "driver": "Actif", "admin": "Actif" },
     "completed": { "client": "Terminé", "driver": "Terminé", "admin": "Terminé" },
     "cancelled": { "client": "Annulé", "driver": "Annulé", "admin": "Annulé" }
+  },
+  "flight": {
+    "scheduled": { "client": "Programmé", "driver": "Programmé", "admin": "Programmé" },
+    "active": { "client": "En vol", "driver": "En vol", "admin": "En vol" },
+    "landed": { "client": "Atterri", "driver": "Atterri", "admin": "Atterri" },
+    "cancelled": { "client": "Annulé", "driver": "Annulé", "admin": "Annulé" },
+    "incident": { "client": "Incident", "driver": "Incident", "admin": "Incident" },
+    "diverted": { "client": "Dérouté", "driver": "Dérouté", "admin": "Dérouté" },
+    "unknown": { "client": "Statut inconnu", "driver": "Statut inconnu", "admin": "Statut inconnu" }
   }
 }

@@ -10,7 +10,7 @@ import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { Button } from "@/components/ui/Button";
 import { BookNowIcon } from "@/components/icons/custom-icons";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, CalendarBlank, Clock, Users, Bag, Phone, EnvelopeSimple, ArrowRight, ArrowLeft, CheckCircle, ChatCircle, User } from "@phosphor-icons/react";
+import { MapPin, CalendarBlank, Clock, Users, Bag, Phone, EnvelopeSimple, ArrowRight, ArrowLeft, CheckCircle, ChatCircle, User, Airplane } from "@phosphor-icons/react";
 import { serviceTypes, additionalServices, getServiceById } from "@/lib/services";
 import { useRouter } from "@/i18n/navigation";
 import NextLink from "next/link";
@@ -136,6 +136,9 @@ interface FormData {
   // Champs pour les utilisateurs non connectés
   clientName: string;
   clientEmail: string;
+  // Vol (transferts aéroport uniquement)
+  flightNumber: string;
+  airline: string;
 }
 
 // Composant interne qui utilise useSearchParams
@@ -172,7 +175,9 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
     specialRequests: "",
     contactPhone: "",
     clientName: "",
-    clientEmail: ""
+    clientEmail: "",
+    flightNumber: "",
+    airline: ""
   });
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -303,7 +308,9 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
           contactEmail: formData.clientEmail || user?.email || "",
           clientName: formData.clientName,
           clientEmail: formData.clientEmail,
-          userId: user?.id
+          userId: user?.id,
+          flightNumber: isAirportTrip ? formData.flightNumber.trim() || undefined : undefined,
+          airline: isAirportTrip ? formData.airline.trim() || undefined : undefined
         }),
       });
 
@@ -354,6 +361,14 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
 
   const isInvalidCombination = Boolean(
     formData.pickupAddress && formData.destinationAddress && !isRouteCombinationAllowed(formData.pickupAddress, formData.destinationAddress)
+  );
+
+  // Transfert impliquant l'aéroport AIBD : on propose la saisie du numéro de
+  // vol pour permettre le suivi en direct côté client une fois la demande créée.
+  const isAirportTrip = Boolean(
+    formData.serviceType === "transfert-aibd-dakar" ||
+    getRouteNodeFromName(formData.pickupAddress) === 'AIBD' ||
+    getRouteNodeFromName(formData.destinationAddress) === 'AIBD'
   );
 
   const isStep1Complete = Boolean(
@@ -627,6 +642,38 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                       </div>
                     </div>
 
+                    {isAirportTrip && (
+                      <div className="space-y-2">
+                        <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block">{t('step2.flightSectionLabel')}</span>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div className="bg-white border border-border rounded p-3">
+                            <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block mb-1">{t('step2.flightNumberLabel')}</span>
+                            <div className="flex items-center gap-2">
+                              <Airplane size={16} weight="light" className="text-[#6E6A63] shrink-0" />
+                              <input
+                                type="text"
+                                value={formData.flightNumber}
+                                onChange={(e) => handleInputChange('flightNumber', e.target.value.toUpperCase())}
+                                placeholder={t('step2.flightNumberPlaceholder')}
+                                className="w-full bg-transparent text-foreground font-medium focus:outline-none"
+                              />
+                            </div>
+                          </div>
+                          <div className="bg-white border border-border rounded p-3">
+                            <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block mb-1">{t('step2.airlineLabel')}</span>
+                            <input
+                              type="text"
+                              value={formData.airline}
+                              onChange={(e) => handleInputChange('airline', e.target.value)}
+                              placeholder={t('step2.airlinePlaceholder')}
+                              className="w-full bg-transparent text-foreground font-medium focus:outline-none"
+                            />
+                          </div>
+                        </div>
+                        <p className="text-[11px] text-[#6E6A63]">{t('step2.flightSectionHint')}</p>
+                      </div>
+                    )}
+
                     <div className="space-y-2">
                       <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block">{t('step2.optionsLabel')}</span>
                       <div className="flex flex-wrap gap-2">
@@ -842,7 +889,9 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                   specialRequests: "",
                   contactPhone: "",
                   clientName: "",
-                  clientEmail: ""
+                  clientEmail: "",
+                  flightNumber: "",
+                  airline: ""
                 });
                 router.push('/');
               }

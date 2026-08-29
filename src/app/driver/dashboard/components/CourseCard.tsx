@@ -2,7 +2,7 @@
 
 import { useTranslations, useLocale } from "next-intl"
 import { toIntlLocale } from "@/lib/intl-locale"
-import { TONE_STYLE, type Tone } from "@/components/shared/StatusBadge"
+import { StatusBadge, TONE_STYLE, type Tone } from "@/components/shared/StatusBadge"
 import type { DriverBookingApiItem } from "@/types/dashboard"
 
 export type CoursePhase = "nouvelle" | "acceptee" | "enroute" | "surplace" | "encours" | "terminee"
@@ -134,6 +134,23 @@ export function CourseCard({ booking, phase, busy, incidentReported, onAdvance, 
               </span>
             </div>
           </div>
+
+          {booking.flightNumber && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px", padding: "12px", background: "#F7F3EC", border: "1px solid #E2DACD", borderRadius: "4px" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px", flexWrap: "wrap" }}>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.14em", textTransform: "uppercase", color: "#6E6A63" }}>{t("flight.title")}</span>
+                <StatusBadge domain="flight" value={booking.flightStatus || "unknown"} audience="driver" live={booking.flightStatus === "active"} />
+              </div>
+              <span style={{ fontSize: "15px", fontWeight: 600 }}>
+                {booking.flightNumber}{booking.airline ? ` · ${booking.airline}` : ""}
+              </span>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", color: "#6E6A63" }}>
+                {booking.flightLastCheckedAt
+                  ? t("flight.lastChecked", { time: formatTime(booking.flightLastCheckedAt, intlLocale) })
+                  : t("flight.neverChecked")}
+              </span>
+            </div>
+          )}
 
           <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "12px", paddingTop: "18px", borderTop: "1px solid #E2DACD" }}>
             <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.14em", textTransform: "uppercase", color: "#6E6A63" }}>{t("priceLabel")}</span>

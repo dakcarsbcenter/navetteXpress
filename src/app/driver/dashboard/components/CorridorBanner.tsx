@@ -1,5 +1,9 @@
 "use client"
 
+import { Airplane } from "@phosphor-icons/react"
+
+const FLIGHT_LIVE_TRACKING_URL = "https://www.skyscanner.fr/vols/arrivees-departs/dss/blaise-diagne-international-arrivees-departs"
+
 // Bandeau de marque : le corridor de service (Dakar - AIBD - Mbour - Saly),
 // constant quel que soit le chauffeur ou la course du jour — pas de donnee live ici.
 const WAYPOINTS = [
@@ -12,7 +16,8 @@ const WAYPOINTS = [
 export function CorridorBanner() {
   return (
     <div style={{ borderBottom: "1px solid #E2DACD", background: "#F7F3EC" }} className="-mx-4 -mt-4 md:-mx-6 md:-mt-6">
-      <div className="mx-auto flex max-w-[1240px] items-center px-4 py-3 md:px-6">
+      <div className="mx-auto flex max-w-[1240px] items-center gap-4 px-4 py-3 md:px-6">
+        <div className="flex flex-1 items-center min-w-0">
         {WAYPOINTS.map((wp, index) => (
           <div key={wp.label} style={{ display: "flex", alignItems: "center", flex: index < WAYPOINTS.length - 1 ? 1 : undefined, flexShrink: index < WAYPOINTS.length - 1 ? undefined : 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
@@ -27,6 +32,16 @@ export function CorridorBanner() {
             )}
           </div>
         ))}
+        </div>
+        <a
+          href={FLIGHT_LIVE_TRACKING_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex shrink-0 items-center gap-1.5"
+          style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#1F5245", whiteSpace: "nowrap" }}
+        >
+          <Airplane size={14} weight="bold" /> Vols en direct
+        </a>
       </div>
     </div>
   )
