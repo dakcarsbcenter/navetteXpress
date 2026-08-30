@@ -235,7 +235,7 @@ Passez au [chapitre 11 — Vérifications après un déploiement](#11-vérificat
 
 **Raccourci : script tout-en-un**
 
-Les étapes 2 à 6 ci-dessus (sauvegarde, `git pull`, build, redémarrage, vérification santé) sont automatisées dans [`scripts/deploy.sh`](../scripts/deploy.sh). Une fois à l'aise avec le détail des étapes manuelles, vous pouvez simplement lancer :
+Les étapes 2 à 6 ci-dessus (sauvegarde, `git pull`, build, redémarrage, vérification santé) sont automatisées dans [`scripts/deploy.sh`](../scripts/deploy.sh), qui applique aussi les migrations explicitement juste après le `git pull` — avant même de reconstruire l'image — pour échouer vite (et sans avoir gaspillé un build) si une migration casse ; le conteneur `app` les réappliquera de toute façon à son démarrage (voir chapitre 9), cette étape ne fait qu'avancer le moment où un problème est détecté. Une fois à l'aise avec le détail des étapes manuelles, vous pouvez simplement lancer :
 
 ```bash
 cd /opt/navettexpress
