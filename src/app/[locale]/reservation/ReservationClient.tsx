@@ -86,6 +86,9 @@ const isRouteCombinationAllowed = (pickup: string, destination: string): boolean
   if (!pickupNode || !destinationNode) {
     return false;
   }
+  if (pickupNode === destinationNode) {
+    return true;
+  }
   return ROUTES_ALLOWED_PAIRS.has(`${pickupNode}|${destinationNode}`);
 };
 
