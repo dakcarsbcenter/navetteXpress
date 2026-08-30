@@ -495,6 +495,25 @@ export const servicesTable = pgTable('services', {
 export type InsertService = typeof servicesTable.$inferInsert;
 export type SelectService = typeof servicesTable.$inferSelect;
 
+// Tarifs publics par segment de trajet (page /tarifs, gérés par l'admin)
+export const pricingSegmentsTable = pgTable('pricing_segments', {
+  id: serial('id').primaryKey(),
+  route: text('route').notNull(), // Libellé du trajet (Ex: "Dakar Plateau → AIBD")
+  distance: text('distance').notNull(), // Ex: "47 km"
+  duree: text('duree').notNull(), // Ex: "55 min"
+  berline: integer('berline').notNull(), // Prix XOF berline
+  suv: integer('suv').notNull(), // Prix XOF SUV
+  dot: text('dot').notNull().default('accent'), // Couleur du repère : accent | ink | gold
+  zones: text('zones').array(), // dakar | aibd | petite-cote
+  sortOrder: integer('sort_order').notNull().default(0),
+  isActive: boolean('is_active').notNull().default(true),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
+});
+
+export type InsertPricingSegment = typeof pricingSegmentsTable.$inferInsert;
+export type SelectPricingSegment = typeof pricingSegmentsTable.$inferSelect;
+
 // File d'attente pour les notifications (email/WhatsApp) dont l'envoi immédiat a échoué.
 // Rejouée par le worker de src/lib/notification-queue.ts avec backoff exponentiel.
 export const notificationQueueTable = pgTable('notification_queue', {

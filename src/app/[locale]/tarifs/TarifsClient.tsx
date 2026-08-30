@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Navigation } from "@/components/navigation";
@@ -11,6 +11,7 @@ type DotColor = "accent" | "ink" | "gold";
 type ZoneKey = "dakar" | "aibd" | "petite-cote";
 
 interface Segment {
+  id?: number;
   route: string;
   distance: string;
   duree: string;
@@ -32,7 +33,26 @@ export default function TarifsClient() {
   const t = useTranslations("tarifs");
   const [activeFilter, setActiveFilter] = useState<"tous" | ZoneKey>("tous");
 
-  const segments = t.raw("segments") as Segment[];
+  const fallbackSegments = t.raw("segments") as Segment[];
+  const [segments, setSegments] = useState<Segment[]>(fallbackSegments);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/pricing-segments")
+      .then((res) => res.json())
+      .then((json) => {
+        if (cancelled) return;
+        if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+          setSegments(json.data);
+        }
+      })
+      .catch(() => {
+        // Silencieux : le tableau reste sur les tarifs par défaut (JSON i18n)
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const filters: { key: "tous" | ZoneKey; label: string }[] = [
     { key: "tous", label: t("filters.all") },
@@ -42,7 +62,7 @@ export default function TarifsClient() {
   ];
 
   const filtered =
-    activeFilter === "tous" ? segments : segments.filter((s) => s.zones.includes(activeFilter));
+    activeFilter === "tous" ? segments : segments.filter((s) => (s.zones || []).includes(activeFilter));
 
   return (
     <div className="min-h-screen bg-background">
@@ -96,7 +116,7 @@ export default function TarifsClient() {
             <div className="divide-y divide-border">
               {filtered.map((seg) => (
                 <div
-                  key={seg.route}
+                  key={seg.id ?? seg.route}
                   className="grid grid-cols-[2.4fr_1fr_1fr_1fr_1fr] items-center py-[17px]"
                 >
                   <div className="flex items-center gap-3">
@@ -123,7 +143,7 @@ export default function TarifsClient() {
           {/* Mobile list */}
           <div className="md:hidden divide-y divide-border border-t-2 border-foreground">
             {filtered.map((seg) => (
-              <div key={seg.route} className="flex items-center justify-between py-[15px] gap-3">
+              <div key={seg.id ?? seg.route} className="flex items-center justify-between py-[15px] gap-3">
                 <div className="flex items-center gap-2.5 min-w-0">
                   <span className={`w-2 h-2 rounded-full shrink-0 ${dotClasses[seg.dot]}`} />
                   <div className="min-w-0">

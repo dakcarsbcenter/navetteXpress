@@ -162,6 +162,13 @@
       "when": 1788197400000,
       "tag": "0022_add_default_updated_at",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1788130102120,
+      "tag": "0023_chemical_solo",
+      "breakpoints": true
     }
   ]
 }

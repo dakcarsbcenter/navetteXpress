@@ -20,6 +20,7 @@ import {
   Buildings,
   ChatCircle,
   Headset,
+  Tag,
 } from "@phosphor-icons/react"
 
 type PhosphorIcon = React.ComponentType<{
@@ -133,6 +134,7 @@ export const adminNavigation: DashboardNavGroupConfig[] = [
       { href: "/admin/dashboard?tab=vehicles", labelKey: "sidebar.nav.vehicles", icon: Car },
       { href: "/admin/dashboard?tab=services", labelKey: "sidebar.nav.services", icon: ListChecks },
       { href: "/admin/dashboard?tab=locations", labelKey: "sidebar.nav.locations", icon: MapPin },
+      { href: "/admin/dashboard?tab=pricing", labelKey: "sidebar.nav.pricing", icon: Tag },
     ],
   },
   {

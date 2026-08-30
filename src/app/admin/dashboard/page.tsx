@@ -12,6 +12,7 @@ import { UsersManagement } from "@/components/admin/UsersManagement"
 import { VehiclesManagement } from "@/components/admin/VehiclesManagement"
 import { ServicesManager } from "@/components/admin/ServicesManager"
 import { LocationsManagement } from "@/components/admin/LocationsManagement"
+import { PricingSegmentsManagement } from "@/components/admin/PricingSegmentsManagement"
 import PermissionsManagement from "@/components/admin/PermissionsManagement"
 import InvoicesManagement from "@/components/admin/InvoicesManagement"
 import ReviewsManagement from "@/components/admin/ReviewsManagement"
@@ -19,9 +20,9 @@ import AdminGlobalStats from "@/components/admin/AdminGlobalStats"
 import CompanyRequestsManagement from "@/components/admin/CompanyRequestsManagement"
 import SupportManagement from "@/components/admin/SupportManagement"
 
-type TabId = "overview" | "bookings" | "quotes" | "drivers" | "support" | "vehicles" | "services" | "locations" | "users" | "company-requests" | "permissions" | "invoices" | "reviews" | "stats"
+type TabId = "overview" | "bookings" | "quotes" | "drivers" | "support" | "vehicles" | "services" | "locations" | "pricing" | "users" | "company-requests" | "permissions" | "invoices" | "reviews" | "stats"
 
-const TAB_IDS: TabId[] = ["overview", "bookings", "quotes", "drivers", "support", "vehicles", "services", "locations", "users", "company-requests", "permissions", "invoices", "reviews", "stats"]
+const TAB_IDS: TabId[] = ["overview", "bookings", "quotes", "drivers", "support", "vehicles", "services", "locations", "pricing", "users", "company-requests", "permissions", "invoices", "reviews", "stats"]
 
 const TAB_ACCESS: Record<TabId, { resource?: string; adminOnly?: boolean; requireManage?: boolean }> = {
   overview: {},
@@ -32,6 +33,7 @@ const TAB_ACCESS: Record<TabId, { resource?: string; adminOnly?: boolean; requir
   vehicles: { resource: "vehicles" },
   services: { adminOnly: true },
   locations: { adminOnly: true },
+  pricing: { adminOnly: true },
   users: { resource: "users" },
   "company-requests": { resource: "users" },
   permissions: { resource: "users", requireManage: true, adminOnly: true },
@@ -116,6 +118,8 @@ function AdminDashboardContent() {
       return <ServicesManager />
     case "locations":
       return <LocationsManagement />
+    case "pricing":
+      return <PricingSegmentsManagement />
     case "users":
       return <UsersManagement userPermissions={permissions} />
     case "company-requests":
