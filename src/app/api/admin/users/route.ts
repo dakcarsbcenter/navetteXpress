@@ -251,6 +251,8 @@ export async function POST(request: NextRequest) {
       companyType: 'hotel' | 'entreprise' | 'ong' | null;
       companyName?: string | null;
       companyStatus: 'none' | 'approved';
+      createdAt: Date;
+      updatedAt: Date;
     } = {
       id: userId,
       name,
@@ -265,6 +267,11 @@ export async function POST(request: NextRequest) {
       companyName: normalizedCompanyType ? (companyName || null) : null,
       // L'admin agit ici directement : pas de circuit de demande/validation à respecter.
       companyStatus: normalizedCompanyType ? 'approved' : 'none',
+      // Fournis explicitement : certains environnements ont une colonne updated_at
+      // NOT NULL sans DEFAULT en base (voir migrations/add-default-updated-at.sql,
+      // jamais rejoué sur la base VPS), donc ne pas compter sur le DEFAULT SQL.
+      createdAt: new Date(),
+      updatedAt: new Date(),
     }
 
     const newUser = await db
