@@ -53,6 +53,16 @@ ENV DATABASE_URL=$DATABASE_URL
 ENV GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
 ENV GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
 
+# Variables NEXT_PUBLIC_* : contrairement aux variables ci-dessus, celles-ci sont
+# figées dans le bundle JS cote client PENDANT ce `npm run build` et ne peuvent
+# plus être changées au runtime via env_file. Il FAUT donc les fournir comme
+# build-args (voir docker-compose.yml) et non uniquement dans .env.docker.
+ARG NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=""
+ARG NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=""
+
+ENV NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=$NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
+ENV NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=$NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET
+
 # Build de l'application Next.js en mode standalone
 RUN npm run build
 

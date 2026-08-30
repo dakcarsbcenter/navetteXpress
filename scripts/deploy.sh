@@ -39,6 +39,13 @@ docker compose run --rm \
   app scripts/run-migrations.mjs
 
 echo "==> Construction de l'image de l'application..."
+# Les variables NEXT_PUBLIC_* (ex: Cloudinary) sont figées dans le bundle
+# client PENDANT ce build : docker-compose.yml les passe en build-args, donc
+# elles doivent exister dans l'environnement shell ici, pas seulement dans
+# .env.docker (qui n'est lu qu'au runtime via env_file).
+set -a
+source .env.docker
+set +a
 docker compose build app
 
 echo "==> Redémarrage de l'application..."

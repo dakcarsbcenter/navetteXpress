@@ -27,6 +27,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        # NEXT_PUBLIC_* : figées dans le bundle client au build, donc doivent
+        # être passées ici (résolues depuis l'environnement shell au moment de
+        # `docker compose build` — deploy.sh les exporte depuis .env.docker).
+        NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: ${NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME:-}
+        NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET: ${NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET:-}
     container_name: navettexpress_app
     restart: unless-stopped
     expose:

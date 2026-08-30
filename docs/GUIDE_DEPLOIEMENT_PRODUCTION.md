@@ -263,7 +263,7 @@ Toutes les variables ci-dessous se règlent dans le fichier **`.env.docker`** su
 | `RESEND_API_KEY` | Recommandé | Envoi des emails (confirmations, factures...) | [resend.com/api-keys](https://resend.com/api-keys) |
 | `RESEND_FROM_EMAIL` | Recommandé | Adresse d'expédition des emails | Adresse vérifiée dans Resend |
 | `ADMIN_EMAIL` | Recommandé | Destinataire des notifications internes | Adresse email de l'équipe |
-| `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` / `NEXT_PUBLIC_CLOUDINARY_API_KEY` / `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET` / `CLOUDINARY_API_SECRET` | Recommandé | Upload et hébergement des photos (véhicules, profils) | [console.cloudinary.com](https://console.cloudinary.com) |
+| `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` / `NEXT_PUBLIC_CLOUDINARY_API_KEY` / `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET` / `CLOUDINARY_API_SECRET` | Recommandé | Upload et hébergement des photos (véhicules, profils) | [console.cloudinary.com](https://console.cloudinary.com) — ⚠️ `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` et `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET` sont figées dans le bundle client au **build** (voir note ci-dessous), pas seulement au runtime |
 | `ANTHROPIC_API_KEY` | Optionnel | Assistant IA de l'espace admin | [console.anthropic.com](https://console.anthropic.com/settings/keys) |
 | `NEXT_PUBLIC_GA_ID` | Optionnel | Statistiques Google Analytics | [Google Analytics](https://analytics.google.com) |
 | `GESKAP_API_KEY` | Recommandé (WhatsApp) | Envoi des notifications WhatsApp via Geskap | Console Geskap, une fois le compte créé |
@@ -278,6 +278,8 @@ Toutes les variables ci-dessous se règlent dans le fichier **`.env.docker`** su
 ```bash
 docker compose up -d app
 ```
+
+> ⚠️ **Exception : les variables `NEXT_PUBLIC_*`** (ex. `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`, `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET`, `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_GA_ID`) sont figées dans le bundle JavaScript côté navigateur **au moment du `npm run build`**, pas au démarrage du conteneur. Un simple `docker compose up -d app` après les avoir ajoutées/modifiées dans `.env.docker` ne suffit **pas** — il faut relancer un build complet (`./scripts/deploy.sh` s'en charge automatiquement en exportant `.env.docker` avant `docker compose build app` ; en manuel : `set -a && source .env.docker && set +a && docker compose build app && docker compose up -d app`).
 
 ## 9. Migrations de base de données
 
@@ -474,6 +476,7 @@ Vous avez probablement utilisé le nom du **conteneur** (ex : `navettexpress_app
 | 2026-08-28 | Sauvegarde planifiée activée en prod | `./scripts/setup-backup-cron.sh` exécuté sur le VPS | Aucune — fait |
 | 2026-08-28 | Restriction du port PostgreSQL appliquée en prod | `docker compose up -d postgres` relancé sur le VPS, conteneur recréé et `Running` | Aucune — fait |
 | 2026-08-28 | Déploiement en un clic mis en route | Secrets GitHub configurés ; remote Git du VPS passé de SSH à HTTPS (`git@github.com:...` → `https://github.com/...`, dépôt public, pas besoin de clé de déploiement) ; `command_timeout` de l'étape SSH porté à 30m dans `.github/workflows/deploy.yml` (le build seul prend ~7 min) | Aucune — fait, workflow testé avec succès |
+| 2026-08-30 | Champ upload photo ajouté au formulaire véhicule admin | `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` et `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET` sont désormais passées en build-args (`Dockerfile` + `docker-compose.yml`), et `scripts/deploy.sh` les exporte depuis `.env.docker` avant `docker compose build app` — ces variables `NEXT_PUBLIC_*` sont figées au build, `env_file` seul (runtime) ne suffisait pas | Vérifier que `.env.docker` sur le VPS contient bien `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` et `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET` (voir chapitre 8), puis redéployer via `./scripts/deploy.sh` (rebuild complet nécessaire, pas juste un restart) |
 
 ## 15. Sécurité de base
 
