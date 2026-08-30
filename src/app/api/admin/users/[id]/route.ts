@@ -7,7 +7,8 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/db"
 import { users, rolePermissionsTable } from "@/schema"
-import { eq, and } from "drizzle-orm"
+import { eq, and, ne } from "drizzle-orm"
+import { friendlyDbError } from "@/lib/db-errors"
 
 // Fonction pour vérifier les permissions dynamiques
 async function hasUsersPermission(userRole: string, action: 'read' | 'create' | 'update' | 'delete'): Promise<boolean> {
@@ -187,6 +188,22 @@ export async function PUT(
       }
     }
 
+    // Vérifier si le numéro de permis est déjà utilisé par un autre utilisateur
+    if (licenseNumber && licenseNumber !== existingUser[0].licenseNumber) {
+      const licenseExists = await db
+        .select()
+        .from(users)
+        .where(and(eq(users.licenseNumber, licenseNumber), ne(users.id, (await params).id)))
+        .limit(1)
+
+      if (licenseExists.length > 0) {
+        return NextResponse.json(
+          { error: "Ce numéro de permis est déjà utilisé par un autre chauffeur" },
+          { status: 400 }
+        )
+      }
+    }
+
     // Mettre à jour l'utilisateur
     const updatedUser = await db
       .update(users)
@@ -214,7 +231,13 @@ export async function PUT(
   } catch (error) {
     console.error("Erreur lors de la mise à jour de l'utilisateur:", error)
     return NextResponse.json(
-      { error: "Erreur interne du serveur" },
+      {
+        error: friendlyDbError(error, {
+          users_email_unique: "Un utilisateur avec cet email existe déjà",
+          users_license_number_unique: "Ce numéro de permis est déjà utilisé par un autre chauffeur",
+          driver_license_check: "Un numéro de permis est requis pour créer un chauffeur",
+        }),
+      },
       { status: 500 }
     )
   }

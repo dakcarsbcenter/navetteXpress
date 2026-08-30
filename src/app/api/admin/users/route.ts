@@ -10,6 +10,7 @@ import { users, rolePermissionsTable } from "@/schema"
 import { eq, and } from "drizzle-orm"
 import bcrypt from "bcryptjs"
 import { randomUUID } from "crypto"
+import { friendlyDbError } from "@/lib/db-errors"
 
 // Function to generate a secure random password
 function generateSecurePassword(): string {
@@ -214,6 +215,22 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Vérifier si le numéro de permis est déjà utilisé (contrainte unique en base)
+    if (normalizedRole === 'driver' && licenseNumber) {
+      const existingLicense = await db
+        .select()
+        .from(users)
+        .where(eq(users.licenseNumber, licenseNumber))
+        .limit(1)
+
+      if (existingLicense.length > 0) {
+        return NextResponse.json(
+          { error: "Ce numéro de permis est déjà utilisé par un autre chauffeur" },
+          { status: 400 }
+        )
+      }
+    }
+
     // Créer le nouvel utilisateur
     const userId = randomUUID()
     const finalPassword = password || generateSecurePassword() // Utiliser le mot de passe fourni ou générer un sécurisé
@@ -265,7 +282,13 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("❌ [CREATE USER] Erreur lors de la création de l'utilisateur:", error)
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Erreur interne du serveur" },
+      {
+        error: friendlyDbError(error, {
+          users_email_unique: "Un utilisateur avec cet email existe déjà",
+          users_license_number_unique: "Ce numéro de permis est déjà utilisé par un autre chauffeur",
+          driver_license_check: "Un numéro de permis est requis pour créer un chauffeur",
+        }),
+      },
       { status: 500 }
     )
   }
