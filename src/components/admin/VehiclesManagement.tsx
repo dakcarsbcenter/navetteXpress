@@ -12,6 +12,7 @@ import {
 } from "@phosphor-icons/react"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { useNotification } from "@/hooks/useNotification"
+import { ImageUploader } from "@/components/ImageUploader"
 import Image from "next/image"
 import { BulkDeleteModal } from "@/components/ui/BulkDeleteModal"
 import DeleteVehicleModal from "./DeleteVehicleModal"
@@ -596,6 +597,26 @@ export function VehiclesManagement() {
                     <option value="luxury">Luxe (Hybride)</option>
                   </select>
                 </div>
+              </div>
+
+              <div>
+                <label style={fieldLabel}>Photo du véhicule</label>
+                <ImageUploader
+                  onUploadComplete={(url) => setFormData({ ...formData, photo: url })}
+                  currentImage={formData.photo}
+                  label=""
+                  className="mb-2"
+                />
+                <details className="mt-1">
+                  <summary style={{ fontSize: '11px', cursor: 'pointer', color: '#6E6A63' }}>URL manuelle</summary>
+                  <input
+                    type="url"
+                    value={formData.photo}
+                    onChange={(e) => setFormData({ ...formData, photo: e.target.value })}
+                    placeholder="https://..."
+                    style={{ ...fieldInput, height: '36px', marginTop: '6px', fontSize: '12px' }}
+                  />
+                </details>
               </div>
 
               <div>
