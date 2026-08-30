@@ -80,7 +80,12 @@ const ROUTES_ALLOWED_PAIRS = new Set<string>([
   'SOMONE|DAKAR',
 ]);
 
+const OTHER_LOCATION_VALUE = "AUTRE";
+
 const isRouteCombinationAllowed = (pickup: string, destination: string): boolean => {
+  if (pickup === OTHER_LOCATION_VALUE || destination === OTHER_LOCATION_VALUE) {
+    return true;
+  }
   const pickupNode = getRouteNodeFromName(pickup);
   const destinationNode = getRouteNodeFromName(destination);
   if (!pickupNode || !destinationNode) {
@@ -128,6 +133,8 @@ interface FormData {
   datetime: string;
   pickupAddress: string;
   destinationAddress: string;
+  pickupCustomLocation: string;
+  destinationCustomLocation: string;
   passengers: number;
   customPassengers: string;
   luggage: number;
@@ -169,6 +176,8 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
     datetime: "",
     pickupAddress: "",
     destinationAddress: "",
+    pickupCustomLocation: "",
+    destinationCustomLocation: "",
     passengers: 1,
     customPassengers: "",
     luggage: 1,
@@ -300,8 +309,8 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
           customServiceType: formData.customServiceType,
           date: date,
           time: time,
-          pickupAddress: formData.pickupAddress,
-          destinationAddress: formData.destinationAddress,
+          pickupAddress: formData.pickupAddress === OTHER_LOCATION_VALUE ? formData.pickupCustomLocation.trim() : formData.pickupAddress,
+          destinationAddress: formData.destinationAddress === OTHER_LOCATION_VALUE ? formData.destinationCustomLocation.trim() : formData.destinationAddress,
           passengers: formData.passengers === 11 ? parseInt(formData.customPassengers) || 11 : formData.passengers,
           luggage: formData.luggage === 11 ? parseInt(formData.customLuggage) || 11 : formData.luggage,
           duration: formData.duration,
@@ -378,10 +387,19 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
     formData.serviceType &&
     !(formData.serviceType === "autres" && !formData.customServiceType) &&
     formData.pickupAddress &&
+    !(formData.pickupAddress === OTHER_LOCATION_VALUE && !formData.pickupCustomLocation.trim()) &&
     formData.destinationAddress &&
+    !(formData.destinationAddress === OTHER_LOCATION_VALUE && !formData.destinationCustomLocation.trim()) &&
     !isInvalidCombination &&
     formData.datetime
   );
+
+  const displayPickupAddress = formData.pickupAddress === OTHER_LOCATION_VALUE
+    ? formData.pickupCustomLocation
+    : formData.pickupAddress;
+  const displayDestinationAddress = formData.destinationAddress === OTHER_LOCATION_VALUE
+    ? formData.destinationCustomLocation
+    : formData.destinationAddress;
 
   const isStep3Complete = Boolean(
     formData.contactPhone && (isSignedIn || (formData.clientName && formData.clientEmail))
@@ -524,6 +542,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                                 {pickupOptions.map(loc => (
                                   <option key={loc.id} value={loc.name}>{loc.name}</option>
                                 ))}
+                                <option value={OTHER_LOCATION_VALUE}>{t('step1.otherLocationOption')}</option>
                               </select>
                             ) : (
                               <input
@@ -532,6 +551,15 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                                 onChange={(e) => handleInputChange('pickupAddress', e.target.value)}
                                 placeholder={t('step1.pickupInputPlaceholder')}
                                 className="w-full bg-white border border-border rounded px-3 py-3 text-foreground font-medium focus:outline-none focus:ring-1 focus:ring-accent"
+                              />
+                            )}
+                            {formData.pickupAddress === OTHER_LOCATION_VALUE && (
+                              <input
+                                type="text"
+                                value={formData.pickupCustomLocation}
+                                onChange={(e) => handleInputChange('pickupCustomLocation', e.target.value)}
+                                placeholder={t('step1.pickupCustomPlaceholder')}
+                                className="mt-2 w-full bg-white border border-border rounded px-3 py-3 text-foreground font-medium placeholder:text-[#a8a199] focus:outline-none focus:ring-1 focus:ring-accent"
                               />
                             )}
                           </div>
@@ -553,6 +581,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                                 {destinationOptions.map(loc => (
                                   <option key={loc.id} value={loc.name}>{loc.name}</option>
                                 ))}
+                                <option value={OTHER_LOCATION_VALUE}>{t('step1.otherLocationOption')}</option>
                               </select>
                             ) : (
                               <input
@@ -561,6 +590,15 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                                 onChange={(e) => handleInputChange('destinationAddress', e.target.value)}
                                 placeholder={t('step1.destinationInputPlaceholder')}
                                 className="w-full bg-white border border-border rounded px-3 py-3 text-foreground font-medium focus:outline-none focus:ring-1 focus:ring-accent"
+                              />
+                            )}
+                            {formData.destinationAddress === OTHER_LOCATION_VALUE && (
+                              <input
+                                type="text"
+                                value={formData.destinationCustomLocation}
+                                onChange={(e) => handleInputChange('destinationCustomLocation', e.target.value)}
+                                placeholder={t('step1.destinationCustomPlaceholder')}
+                                className="mt-2 w-full bg-white border border-border rounded px-3 py-3 text-foreground font-medium placeholder:text-[#a8a199] focus:outline-none focus:ring-1 focus:ring-accent"
                               />
                             )}
                           </div>
@@ -774,7 +812,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                             <div className="w-px flex-1 bg-[#12100E]" />
                           </div>
                           <div className="pb-4">
-                            <p className="font-medium text-foreground">{formData.pickupAddress || t('step3.summary.notDefined')}</p>
+                            <p className="font-medium text-foreground">{displayPickupAddress || t('step3.summary.notDefined')}</p>
                             <p className="text-[11px] font-[family-name:var(--font-ibm-plex-mono)] text-[#6E6A63]">
                               {formData.datetime ? new Date(formData.datetime).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : '--'} · {formData.datetime ? new Date(formData.datetime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '--'}
                             </p>
@@ -785,7 +823,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                             <div className="w-[11px] h-[11px] rounded-full bg-[#B4643A]" />
                           </div>
                           <div>
-                            <p className="font-medium text-foreground">{formData.destinationAddress || t('step3.summary.notDefined')}</p>
+                            <p className="font-medium text-foreground">{displayDestinationAddress || t('step3.summary.notDefined')}</p>
                             <p className="text-[11px] font-[family-name:var(--font-ibm-plex-mono)] text-[#6E6A63]">{formData.passengers === 11 ? '10+' : formData.passengers} {t('step3.summary.passengersUnit', { count: formData.passengers })} · {formData.luggage === 11 ? '10+' : formData.luggage} {t('step3.summary.luggageUnit', { count: formData.luggage })}</p>
                           </div>
                         </div>
