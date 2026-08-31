@@ -8,7 +8,7 @@
  * de risque de blocage pour usage non conforme aux conditions de Meta.
  */
 
-const API_BASE_URL = process.env.GESKAP_API_BASE_URL || 'https://api-meta.geskap.com';
+const API_BASE_URL = process.env.GESKAP_API_BASE_URL || 'https://wa-api.geskap.com';
 
 interface SendTemplateParams {
   to: string;
@@ -85,12 +85,14 @@ export async function sendWhatsAppTemplate({
     headers: {
       Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
-      'Idempotency-Key': idempotencyKey,
     },
     body: JSON.stringify({
       to: phone,
-      template,
-      variables: safeVariables,
+      template: {
+        name: template,
+        language: 'fr',
+        variables: safeVariables,
+      },
       idempotency_key: idempotencyKey,
     }),
   });
@@ -100,7 +102,11 @@ export async function sendWhatsAppTemplate({
   if (!response.ok) {
     // Le template peut ne pas être encore APPROVED par Meta (24-48h après
     // soumission) : on ne suppose jamais qu'il l'est déjà.
-    const errorMessage = body?.error || body?.message || `Geskap a répondu ${response.status}`;
+    // 422 (HTTPValidationError) renvoie `detail` en tableau {loc, msg, type},
+    // pas `error`/`message` — cf. openapi.json de l'API.
+    const errorMessage = Array.isArray(body?.detail)
+      ? body.detail.map((d: { msg?: string }) => d.msg).filter(Boolean).join('; ')
+      : body?.detail || body?.error || body?.message || `Geskap a répondu ${response.status}`;
     console.error(
       `❌ [WhatsApp/Geskap] Échec envoi "${template}" → ${maskPhone(phone)}: ${errorMessage}`
     );

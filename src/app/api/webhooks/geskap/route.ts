@@ -12,14 +12,18 @@ import { findDriverIdByPhone, findPendingAssignedBooking, respondToAssignedBooki
  *  - message.inbound : réponse du destinataire — utilisé ici pour les quick
  *    replies "Accepter"/"Refuser" du template confirmation_chauffeur.
  *
- * ⚠️ Le nom exact de l'en-tête de signature et la forme exacte du payload
- * n'ont pas pu être vérifiés contre la doc Geskap (compte pas encore créé
- * au moment de l'écriture) — à confirmer dès que la console Geskap est
- * disponible. Le point d'ajustement est isolé dans verifySignature() et le
- * parsing ci-dessous.
+ * En-tête de signature et forme du payload confirmés contre l'OpenAPI de
+ * l'API (wa-api.geskap.com/openapi.json, marque blanche "CamaireTech") le
+ * 2026-08-31 : `X-Camairetech-Signature: sha256=<hmac>` et
+ * `{ event, data: { from, text, type, ... } }`. L'OpenAPI ne documente pas
+ * explicitement la forme d'une réponse à un bouton quick-reply
+ * (Accepter/Refuser) — par analogie avec les autres BSP WhatsApp, on suppose
+ * qu'elle arrive comme un message texte classique (`type: "text"`) dont
+ * `data.text` contient le libellé du bouton cliqué ; à confirmer au premier
+ * test réel.
  */
 
-const SIGNATURE_HEADER = 'x-geskap-signature';
+const SIGNATURE_HEADER = 'x-camairetech-signature';
 
 function verifySignature(rawBody: string, signatureHeader: string | null): boolean {
   const secret = process.env.GESKAP_WEBHOOK_SECRET;
@@ -61,8 +65,8 @@ export async function POST(request: NextRequest) {
   }
 
   if (event === 'message.inbound') {
-    const fromPhone = (data?.from as string) || (data?.phone as string);
-    const buttonReply = ((data?.button_text as string) || (data?.text as string) || '').trim().toLowerCase();
+    const fromPhone = data?.from as string;
+    const buttonReply = ((data?.text as string) || '').trim().toLowerCase();
 
     if (!fromPhone) {
       return NextResponse.json({ error: 'Numéro expéditeur manquant' }, { status: 400 });
