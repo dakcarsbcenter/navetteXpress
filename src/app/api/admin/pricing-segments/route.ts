@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { pricingSegmentsTable } from '@/schema';
 import { requireAdminRole } from '@/utils/admin-permissions';
+import { isRouteNodeKey } from '@/lib/route-nodes';
 import { asc } from 'drizzle-orm';
 
 const VALID_DOTS = ['accent', 'ink', 'gold'];
@@ -33,7 +34,7 @@ export async function POST(req: NextRequest) {
     try {
         await requireAdminRole();
         const body = await req.json();
-        const { route, distance, duree, berline, suv, dot, zones, sortOrder, isActive } = body;
+        const { route, distance, duree, berline, suv, dot, zones, departNode, arriveeNode, sortOrder, isActive } = body;
 
         if (!route?.trim() || !distance?.trim() || !duree?.trim()) {
             return NextResponse.json(
@@ -61,6 +62,8 @@ export async function POST(req: NextRequest) {
                 suv: suvNum,
                 dot: VALID_DOTS.includes(dot) ? dot : 'accent',
                 zones: Array.isArray(zones) ? zones : [],
+                departNode: isRouteNodeKey(departNode) ? departNode : null,
+                arriveeNode: isRouteNodeKey(arriveeNode) ? arriveeNode : null,
                 sortOrder: sortOrder ?? 0,
                 isActive: isActive !== undefined ? isActive : true,
             })

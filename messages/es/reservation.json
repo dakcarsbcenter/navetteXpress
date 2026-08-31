@@ -36,7 +36,7 @@
     "destinationInputPlaceholder": "Almadies, Hôtel Terrou-Bi...",
     "destinationCustomPlaceholder": "Especifica el lugar de llegada",
     "otherLocationOption": "Otro",
-    "invalidCombination": "Combinación no disponible. Elige únicamente DAKAR hacia/desde AIBD, MBOUR, SALY, NGAPAROU, THIES, NIANING, POINTE SARRENE, SOMONE.",
+    "invalidCombination": "Combinación no disponible. Elige DAKAR hacia/desde AIBD, MBOUR, SALY, NGAPAROU, THIES, NIANING, POINTE SARRENE, SOMONE, o AIBD hacia/desde MBOUR, SALY, SOMONE.",
     "datetimeLabel": "Fecha y hora",
     "passengersLabel": "Pasajeros",
     "mapPlaceholder": "Mapa del trayecto",
@@ -47,7 +47,9 @@
       "included": "INCLUIDO",
       "wait": "60 MIN DE ESPERA",
       "rate": "TARIFA",
-      "onQuote": "SEGÚN PRESUPUESTO"
+      "onQuote": "SEGÚN PRESUPUESTO",
+      "suvRate": "TARIFA SUV",
+      "estimateNote": "Precio indicativo para un sedán. Nuestro equipo confirma la tarifa exacta antes del viaje."
     }
   },
   "step2": {

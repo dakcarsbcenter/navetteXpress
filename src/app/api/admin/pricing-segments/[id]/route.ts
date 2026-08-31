@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { pricingSegmentsTable } from '@/schema';
 import { requireAdminRole } from '@/utils/admin-permissions';
+import { isRouteNodeKey } from '@/lib/route-nodes';
 import { eq } from 'drizzle-orm';
 
 const VALID_DOTS = ['accent', 'ink', 'gold'];
@@ -44,6 +45,8 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         }
         if (body.dot !== undefined) updateData.dot = VALID_DOTS.includes(body.dot) ? body.dot : 'accent';
         if (body.zones !== undefined) updateData.zones = Array.isArray(body.zones) ? body.zones : [];
+        if (body.departNode !== undefined) updateData.departNode = isRouteNodeKey(body.departNode) ? body.departNode : null;
+        if (body.arriveeNode !== undefined) updateData.arriveeNode = isRouteNodeKey(body.arriveeNode) ? body.arriveeNode : null;
         if (body.sortOrder !== undefined) updateData.sortOrder = body.sortOrder;
         if (body.isActive !== undefined) updateData.isActive = body.isActive;
 

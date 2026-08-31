@@ -6,6 +6,7 @@ import {
     FloppyDisk, X, ArrowUp, ArrowDown, MagnifyingGlass,
     Spinner, Tag
 } from '@phosphor-icons/react';
+import { ROUTE_NODE_KEYS, ROUTE_NODE_LABELS, type RouteNodeKey } from '@/lib/route-nodes';
 
 /* ─── Types ──────────────────────────────────────────────────── */
 type DotColor = 'accent' | 'ink' | 'gold';
@@ -20,6 +21,8 @@ interface PricingSegment {
     suv: number;
     dot: DotColor;
     zones: ZoneKey[] | null;
+    departNode: RouteNodeKey | null;
+    arriveeNode: RouteNodeKey | null;
     sortOrder: number;
     isActive: boolean;
     createdAt: string;
@@ -34,12 +37,14 @@ type FormState = {
     suv: string;
     dot: DotColor;
     zones: ZoneKey[];
+    departNode: RouteNodeKey | '';
+    arriveeNode: RouteNodeKey | '';
     sortOrder: number;
     isActive: boolean;
 };
 
 const EMPTY_FORM: FormState = {
-    route: '', distance: '', duree: '', berline: '', suv: '', dot: 'accent', zones: [], sortOrder: 0, isActive: true,
+    route: '', distance: '', duree: '', berline: '', suv: '', dot: 'accent', zones: [], departNode: '', arriveeNode: '', sortOrder: 0, isActive: true,
 };
 
 const DOT_OPTIONS: { key: DotColor; label: string; color: string }[] = [
@@ -108,6 +113,8 @@ export function PricingSegmentsManagement() {
             suv: String(s.suv),
             dot: s.dot,
             zones: s.zones || [],
+            departNode: s.departNode || '',
+            arriveeNode: s.arriveeNode || '',
             sortOrder: s.sortOrder,
             isActive: s.isActive,
         });
@@ -308,6 +315,15 @@ export function PricingSegmentsManagement() {
                                                     {s.zones.join(' · ')}
                                                 </p>
                                             )}
+                                            {s.departNode && s.arriveeNode ? (
+                                                <p style={{ margin: '4px 0 0', fontSize: '10px', color: '#1F5245' }}>
+                                                    Auto-prix : {ROUTE_NODE_LABELS[s.departNode]} ↔ {ROUTE_NODE_LABELS[s.arriveeNode]}
+                                                </p>
+                                            ) : (
+                                                <p style={{ margin: '4px 0 0', fontSize: '10px', color: '#B08D45' }}>
+                                                    Auto-prix désactivé
+                                                </p>
+                                            )}
                                         </td>
 
                                         <td className="hidden md:table-cell" style={{ padding: '12px 16px' }}>
@@ -422,6 +438,38 @@ export function PricingSegmentsManagement() {
                                         style={inputStyle}
                                     />
                                 </div>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label style={labelStyle}>Départ (auto-prix)</label>
+                                        <select
+                                            value={form.departNode}
+                                            onChange={e => setForm(f => ({ ...f, departNode: e.target.value as RouteNodeKey | '' }))}
+                                            style={inputStyle}
+                                        >
+                                            <option value="">— Non utilisé —</option>
+                                            {ROUTE_NODE_KEYS.map(key => (
+                                                <option key={key} value={key}>{ROUTE_NODE_LABELS[key]}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style={labelStyle}>Arrivée (auto-prix)</label>
+                                        <select
+                                            value={form.arriveeNode}
+                                            onChange={e => setForm(f => ({ ...f, arriveeNode: e.target.value as RouteNodeKey | '' }))}
+                                            style={inputStyle}
+                                        >
+                                            <option value="">— Non utilisé —</option>
+                                            {ROUTE_NODE_KEYS.map(key => (
+                                                <option key={key} value={key}>{ROUTE_NODE_LABELS[key]}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+                                <p style={{ margin: '-8px 0 0', fontSize: '11px', color: '#6E6A63' }}>
+                                    Si renseignés, ce prix s&apos;affiche automatiquement dans le formulaire de réservation quand le client choisit ce couple départ/arrivée (dans un sens ou l&apos;autre).
+                                </p>
 
                                 <div className="grid grid-cols-2 gap-3">
                                     <div>

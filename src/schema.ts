@@ -505,6 +505,12 @@ export const pricingSegmentsTable = pgTable('pricing_segments', {
   suv: integer('suv').notNull(), // Prix XOF SUV
   dot: text('dot').notNull().default('accent'), // Couleur du repère : accent | ink | gold
   zones: text('zones').array(), // dakar | aibd | petite-cote
+  // Points de départ/arrivée canoniques utilisés pour l'auto-complétion du prix en réservation
+  // (mêmes codes que ROUTES_ALLOWED_NODES dans ReservationClient.tsx : DAKAR, AIBD, MBOUR, SALY,
+  // NGAPAROU, THIES, NIANING, POINTE_SARRENE, SOMONE). Null si le segment n'est pas un trajet
+  // point-à-point (ex: mise à disposition) — il n'apparaît alors jamais en auto-prix.
+  departNode: text('depart_node'),
+  arriveeNode: text('arrivee_node'),
   sortOrder: integer('sort_order').notNull().default(0),
   isActive: boolean('is_active').notNull().default(true),
   createdAt: timestamp('created_at').notNull().defaultNow(),

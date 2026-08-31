@@ -14,8 +14,19 @@ import { MapPin, CalendarBlank, Clock, Users, Bag, Phone, EnvelopeSimple, ArrowR
 import { serviceTypes, additionalServices, getServiceById } from "@/lib/services";
 import { useRouter } from "@/i18n/navigation";
 import NextLink from "next/link";
+import type { RouteNodeKey } from "@/lib/route-nodes";
 
 type LocationOption = { id: string; name: string };
+
+interface PricingSegment {
+  id: number;
+  route: string;
+  berline: number;
+  suv: number;
+  departNode: RouteNodeKey | null;
+  arriveeNode: RouteNodeKey | null;
+  isActive: boolean;
+}
 
 const ROUTES_ALLOWED_NODES = {
   DAKAR: ['DAKAR'],
@@ -78,6 +89,13 @@ const ROUTES_ALLOWED_PAIRS = new Set<string>([
   'POINTE_SARRENE|DAKAR',
   'DAKAR|SOMONE',
   'SOMONE|DAKAR',
+  // Trajets Petite Côte depuis/vers AIBD (tarifs publiés sur /tarifs)
+  'AIBD|MBOUR',
+  'MBOUR|AIBD',
+  'AIBD|SALY',
+  'SALY|AIBD',
+  'AIBD|SOMONE',
+  'SOMONE|AIBD',
 ]);
 
 const OTHER_LOCATION_VALUE = "AUTRE";
@@ -198,6 +216,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
   const [errorModal, setErrorModal] = useState<{ open: boolean; title: string; message: string }>({ open: false, title: '', message: '' });
   const [locations, setLocations] = useState<LocationOption[]>([]);
   const [dbServices, setDbServices] = useState<any[]>([]);
+  const [pricingSegments, setPricingSegments] = useState<PricingSegment[]>([]);
 
   // Fetch services from DB
   useEffect(() => {
@@ -213,6 +232,22 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
       }
     };
     fetchServices();
+  }, []);
+
+  // Fetch pricing segments (pour l'auto-affichage du prix une fois départ/arrivée choisis)
+  useEffect(() => {
+    const fetchPricingSegments = async () => {
+      try {
+        const response = await fetch('/api/pricing-segments');
+        const data = await response.json();
+        if (data.success) {
+          setPricingSegments(data.data || []);
+        }
+      } catch (error) {
+        console.error("Erreur lors de la récupération des tarifs:", error);
+      }
+    };
+    fetchPricingSegments();
   }, []);
 
   // Fetch locations
@@ -374,6 +409,37 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
   const isInvalidCombination = Boolean(
     formData.pickupAddress && formData.destinationAddress && !isRouteCombinationAllowed(formData.pickupAddress, formData.destinationAddress)
   );
+
+  // Tarif indicatif : cherche les segments de tarifs (paramétrés en admin) qui correspondent
+  // au couple départ/arrivée choisi, dans un sens ou l'autre. "Autre" (adresse libre) ou une
+  // combinaison sans tarif paramétré ne matche rien — l'admin renseignera le prix manuellement.
+  const matchedPricingSegments = (() => {
+    if (
+      !formData.pickupAddress || !formData.destinationAddress ||
+      formData.pickupAddress === OTHER_LOCATION_VALUE || formData.destinationAddress === OTHER_LOCATION_VALUE
+    ) {
+      return [];
+    }
+    const pickupNode = getRouteNodeFromName(formData.pickupAddress);
+    const destinationNode = getRouteNodeFromName(formData.destinationAddress);
+    if (!pickupNode || !destinationNode) {
+      return [];
+    }
+    return pricingSegments.filter((seg) => {
+      if (!seg.isActive || !seg.departNode || !seg.arriveeNode) return false;
+      return (
+        (seg.departNode === pickupNode && seg.arriveeNode === destinationNode) ||
+        (seg.departNode === destinationNode && seg.arriveeNode === pickupNode)
+      );
+    });
+  })();
+
+  const estimatedPrice = matchedPricingSegments.length > 0 ? {
+    minBerline: Math.min(...matchedPricingSegments.map((s) => s.berline)),
+    maxBerline: Math.max(...matchedPricingSegments.map((s) => s.berline)),
+    minSuv: Math.min(...matchedPricingSegments.map((s) => s.suv)),
+    maxSuv: Math.max(...matchedPricingSegments.map((s) => s.suv)),
+  } : null;
 
   // Transfert impliquant l'aéroport AIBD : on propose la saisie du numéro de
   // vol pour permettre le suivi en direct côté client une fois la demande créée.
@@ -652,8 +718,32 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                         <div className="flex flex-col gap-1.5 text-[12px] font-[family-name:var(--font-ibm-plex-mono)] text-[#9a938a]">
                           <div className="flex justify-between"><span>{t('step1.requestSummary.toll')}</span><span>{t('step1.requestSummary.included')}</span></div>
                           <div className="flex justify-between"><span>{t('step1.requestSummary.wait')}</span><span>{t('step1.requestSummary.included')}</span></div>
-                          <div className="flex justify-between"><span>{t('step1.requestSummary.rate')}</span><span>{t('step1.requestSummary.onQuote')}</span></div>
+                          <div className="flex justify-between">
+                            <span>{t('step1.requestSummary.rate')}</span>
+                            <span className={estimatedPrice ? "text-white" : undefined}>
+                              {estimatedPrice
+                                ? (estimatedPrice.minBerline === estimatedPrice.maxBerline
+                                  ? `${estimatedPrice.minBerline.toLocaleString('fr-FR')} FCFA`
+                                  : `${estimatedPrice.minBerline.toLocaleString('fr-FR')} – ${estimatedPrice.maxBerline.toLocaleString('fr-FR')} FCFA`)
+                                : t('step1.requestSummary.onQuote')}
+                            </span>
+                          </div>
+                          {estimatedPrice && (
+                            <div className="flex justify-between text-[#6E6A63]">
+                              <span>{t('step1.requestSummary.suvRate')}</span>
+                              <span>
+                                {estimatedPrice.minSuv === estimatedPrice.maxSuv
+                                  ? `${estimatedPrice.minSuv.toLocaleString('fr-FR')} FCFA`
+                                  : `${estimatedPrice.minSuv.toLocaleString('fr-FR')} – ${estimatedPrice.maxSuv.toLocaleString('fr-FR')} FCFA`}
+                              </span>
+                            </div>
+                          )}
                         </div>
+                        {estimatedPrice && (
+                          <p className="text-[10px] text-[#6E6A63] leading-relaxed">
+                            {t('step1.requestSummary.estimateNote')}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -921,6 +1011,8 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                   datetime: "",
                   pickupAddress: "",
                   destinationAddress: "",
+                  pickupCustomLocation: "",
+                  destinationCustomLocation: "",
                   passengers: 1,
                   customPassengers: "",
                   luggage: 1,
