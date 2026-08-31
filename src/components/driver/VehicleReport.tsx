@@ -1,8 +1,7 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
-import { Warning, Car, Gauge, ShieldCheck, Wrench, ClockCountdown, PaperPlaneTilt } from "@phosphor-icons/react"
-import { ContentCard, EmptyState, MetricCard, SectionHeader } from "@/components/driver/shared"
+import { useEffect, useMemo, useState, type CSSProperties, type FormEvent } from "react"
+import { Car, ClockCountdown, PaperPlaneTilt, Warning } from "@phosphor-icons/react"
 import { StatusBadge } from "@/components/shared/StatusBadge"
 
 interface VehicleReportProps {
@@ -33,6 +32,12 @@ interface VehicleApiItem {
   year?: number
   mileage?: number
 }
+
+const cardStyle: CSSProperties = { background: "#FFFFFF", border: "1px solid #E2DACD", borderRadius: "4px" }
+const cardHeaderStyle: CSSProperties = { display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "16px", padding: "18px 24px", borderBottom: "1px solid #E2DACD" }
+const cardTitleStyle: CSSProperties = { margin: 0, fontSize: "17px", fontWeight: 600, letterSpacing: "-0.01em" }
+const monoMutedStyle: CSSProperties = { fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.14em", textTransform: "uppercase", color: "#6E6A63" }
+const fieldStyle: CSSProperties = { height: "44px", padding: "0 12px", border: "1px solid #E2DACD", borderRadius: "4px", fontSize: "13.5px", color: "#12100E", background: "#FFFFFF", outline: "none" }
 
 export function VehicleReport({ onBack }: VehicleReportProps) {
   const [reports, setReports] = useState<VehicleIssue[]>([])
@@ -69,7 +74,7 @@ export function VehicleReport({ onBack }: VehicleReportProps) {
     load()
   }, [])
 
-  const submitIncident = async (event: React.FormEvent<HTMLFormElement>) => {
+  const submitIncident = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!form.title.trim() || !form.description.trim() || !form.vehicleId) return
 
@@ -104,7 +109,6 @@ export function VehicleReport({ onBack }: VehicleReportProps) {
   }
 
   const vehicle = vehicles[0]
-  const incidentsOpen = reports.filter((item) => item.status === "open" || item.status === "in_progress").length
   const lastRevision = reports.find((item) => item.category === "mechanical" || item.category === "electrical")
   const nextControl = new Date()
   nextControl.setDate(nextControl.getDate() + 30)
@@ -113,47 +117,73 @@ export function VehicleReport({ onBack }: VehicleReportProps) {
 
   const rows = useMemo(() => reports.slice(0, 8), [reports])
 
-  return (
-    <div className="space-y-5 pb-20 md:pb-4">
-      <SectionHeader title="RAPPORT VÉHICULE" subtitle={subtitle} />
+  const metrics = [
+    { value: vehicle?.mileage ? `${vehicle.mileage} km` : "-- km", label: "Kilométrage du jour" },
+    { value: lastRevision ? new Date(lastRevision.reportedAt).toLocaleDateString("fr-FR") : "--", label: "Dernière révision" },
+    { value: nextControl.toLocaleDateString("fr-FR"), label: "Prochain contrôle" },
+  ]
 
-      <ContentCard title="Informations véhicule" indicator="gold">
+  return (
+    <div className="flex flex-col gap-7 pb-16 md:pb-0">
+      <section className="flex flex-col gap-2">
+        <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.16em", textTransform: "uppercase", color: "#B4643A" }}>
+          RAPPORT
+        </span>
+        <h2 style={{ margin: 0, fontSize: "clamp(22px, 2.4vw, 30px)", fontWeight: 600, letterSpacing: "-0.025em", lineHeight: 1.1 }}>
+          Rapport véhicule
+        </h2>
+        <p style={{ margin: 0, fontSize: "15px", color: "#3d3a35", lineHeight: 1.5 }}>{subtitle}</p>
+      </section>
+
+      <div style={cardStyle}>
+        <div style={cardHeaderStyle}>
+          <h3 style={cardTitleStyle}>Informations véhicule</h3>
+        </div>
         {vehicle ? (
-          <div className="grid gap-4 md:grid-cols-[220px_1fr]">
-            <div className="flex h-36 items-center justify-center rounded-xl border border-(--border) bg-[color-mix(in_srgb,var(--bg-primary)_60%,transparent)] text-(--text-muted)">
+          <div className="grid gap-6 p-6 md:grid-cols-[220px_1fr]">
+            <div style={{ display: "flex", height: "140px", alignItems: "center", justifyContent: "center", border: "1px solid #E2DACD", borderRadius: "4px", background: "#F7F3EC", color: "#6E6A63" }}>
               <Car size={42} />
             </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <p className="text-sm text-(--text-secondary)">Plaque<br /><span className="text-base font-semibold text-(--text-primary)">{vehicle.plateNumber}</span></p>
-              <p className="text-sm text-(--text-secondary)">Modèle<br /><span className="text-base font-semibold text-(--text-primary)">{vehicle.make} {vehicle.model}</span></p>
-              <p className="text-sm text-(--text-secondary)">Année<br /><span className="text-base font-semibold text-(--text-primary)">{vehicle.year ?? "--"}</span></p>
-              <p className="text-sm text-(--text-secondary)">Kilométrage<br /><span className="text-base font-semibold text-(--text-primary)">{vehicle.mileage ? `${vehicle.mileage} km` : "--"}</span></p>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <p style={{ margin: 0, fontSize: "13px", color: "#6E6A63" }}>Plaque<br /><span style={{ fontSize: "16px", fontWeight: 600, color: "#12100E" }}>{vehicle.plateNumber}</span></p>
+              <p style={{ margin: 0, fontSize: "13px", color: "#6E6A63" }}>Modèle<br /><span style={{ fontSize: "16px", fontWeight: 600, color: "#12100E" }}>{vehicle.make} {vehicle.model}</span></p>
+              <p style={{ margin: 0, fontSize: "13px", color: "#6E6A63" }}>Année<br /><span style={{ fontSize: "16px", fontWeight: 600, color: "#12100E" }}>{vehicle.year ?? "--"}</span></p>
+              <p style={{ margin: 0, fontSize: "13px", color: "#6E6A63" }}>Kilométrage<br /><span style={{ fontSize: "16px", fontWeight: 600, color: "#12100E" }}>{vehicle.mileage ? `${vehicle.mileage} km` : "--"}</span></p>
             </div>
           </div>
         ) : (
-          <EmptyState icon={<Car size={26} />} title="AUCUN VÉHICULE" description="Aucun véhicule associé pour le moment" />
+          <div style={{ padding: "48px 24px", textAlign: "center" }}>
+            <p style={{ margin: 0, fontSize: "14px", fontWeight: 600, color: "#12100E" }}>AUCUN VÉHICULE</p>
+            <p style={{ margin: "8px 0 0", fontSize: "13px", color: "#6E6A63" }}>Aucun véhicule associé pour le moment</p>
+          </div>
         )}
-      </ContentCard>
-
-      <div className="grid gap-4 md:grid-cols-3">
-        <MetricCard icon={Gauge} label="Kilométrage du jour" value={vehicle?.mileage ? `${vehicle.mileage} km` : "-- km"} badge="Stable" />
-        <MetricCard icon={Wrench} label="Dernière révision" value={lastRevision ? new Date(lastRevision.reportedAt).toLocaleDateString("fr-FR") : "--"} badge="Confirmée" iconTone="green" delay={50} />
-        <MetricCard icon={ShieldCheck} label="Prochain contrôle" value={nextControl.toLocaleDateString("fr-FR")} badge="En attente" delay={100} />
       </div>
 
-      <ContentCard title="Signaler un incident" indicator="gold">
-        <form className="space-y-3" onSubmit={submitIncident}>
-          <div className="grid gap-3 md:grid-cols-3">
+      <section style={{ display: "flex", flexWrap: "wrap", borderTop: "1px solid #E2DACD", borderBottom: "1px solid #E2DACD" }}>
+        {metrics.map((metric) => (
+          <div key={metric.label} style={{ flex: "1 1 200px", minWidth: "200px", padding: "20px 22px", borderRight: "1px solid #E2DACD", display: "flex", flexDirection: "column", gap: "8px" }}>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: "20px", fontWeight: 600, letterSpacing: "-0.01em", color: "#12100E" }}>{metric.value}</span>
+            <span style={monoMutedStyle}>{metric.label}</span>
+          </div>
+        ))}
+      </section>
+
+      <div style={cardStyle}>
+        <div style={cardHeaderStyle}>
+          <h3 style={cardTitleStyle}>Signaler un incident</h3>
+        </div>
+        <form className="flex flex-col gap-4 p-6" onSubmit={submitIncident}>
+          <div className="grid gap-4 md:grid-cols-3">
             <input
               value={form.title}
               onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))}
               placeholder="Titre"
-              className="rounded-lg border border-(--border) bg-(--bg-primary) px-3 py-2 text-sm text-(--text-primary) outline-none focus:border-(--accent)"
+              style={fieldStyle}
             />
             <select
               value={form.category}
               onChange={(event) => setForm((current) => ({ ...current, category: event.target.value }))}
-              className="rounded-lg border border-(--border) bg-(--bg-primary) px-3 py-2 text-sm text-(--text-primary) outline-none focus:border-(--accent)"
+              style={fieldStyle}
             >
               <option value="mechanical">Révision</option>
               <option value="electrical">Électrique</option>
@@ -164,7 +194,7 @@ export function VehicleReport({ onBack }: VehicleReportProps) {
             <select
               value={form.severity}
               onChange={(event) => setForm((current) => ({ ...current, severity: event.target.value }))}
-              className="rounded-lg border border-(--border) bg-(--bg-primary) px-3 py-2 text-sm text-(--text-primary) outline-none focus:border-(--accent)"
+              style={fieldStyle}
             >
               <option value="low">Faible</option>
               <option value="medium">Moyen</option>
@@ -178,39 +208,56 @@ export function VehicleReport({ onBack }: VehicleReportProps) {
             onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))}
             rows={4}
             placeholder="Décrivez l'incident"
-            className="w-full rounded-lg border border-(--border) bg-(--bg-primary) px-3 py-2 text-sm text-(--text-primary) outline-none focus:border-(--accent)"
+            style={{ width: "100%", resize: "none", border: "1px solid #E2DACD", borderRadius: "4px", padding: "10px 12px", fontSize: "13.5px", color: "#12100E", outline: "none" }}
           />
 
-          <button className="inline-flex items-center gap-2 rounded-lg bg-(--accent) px-4 py-2 text-sm font-bold text-black hover:brightness-110">
+          <button
+            type="submit"
+            style={{ display: "inline-flex", alignItems: "center", gap: "8px", alignSelf: "flex-start", height: "48px", padding: "0 20px", background: "#1F5245", border: "none", borderRadius: "4px", color: "#FFFFFF", fontSize: "14px", fontWeight: 600, cursor: "pointer" }}
+          >
             <PaperPlaneTilt size={15} /> Envoyer le signalement
           </button>
         </form>
-      </ContentCard>
+      </div>
 
-      <ContentCard title="Derniers rapports" indicator={incidentsOpen > 0 ? 'gold' : 'green'}>
+      <div style={cardStyle}>
+        <div style={cardHeaderStyle}>
+          <h3 style={cardTitleStyle}>Derniers rapports</h3>
+          <span style={monoMutedStyle}>{rows.length} rapport(s)</span>
+        </div>
         {loading ? (
-          <EmptyState icon={<ClockCountdown size={26} />} title="CHARGEMENT DES RAPPORTS" />
+          <div style={{ padding: "48px 24px", textAlign: "center" }}>
+            <ClockCountdown size={26} color="#6E6A63" style={{ margin: "0 auto 12px" }} />
+            <p style={{ margin: 0, fontSize: "14px", fontWeight: 600, color: "#12100E" }}>CHARGEMENT DES RAPPORTS</p>
+          </div>
         ) : rows.length === 0 ? (
-          <EmptyState icon={<Warning size={26} />} title="AUCUN RAPPORT" description="Aucun incident signalé" />
+          <div style={{ padding: "48px 24px", textAlign: "center" }}>
+            <Warning size={26} color="#6E6A63" style={{ margin: "0 auto 12px" }} />
+            <p style={{ margin: 0, fontSize: "14px", fontWeight: 600, color: "#12100E" }}>AUCUN RAPPORT</p>
+            <p style={{ margin: "8px 0 0", fontSize: "13px", color: "#6E6A63" }}>Aucun incident signalé</p>
+          </div>
         ) : (
-          <div className="space-y-2">
-            {rows.map((report) => (
-              <article key={report.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-(--border) bg-[color-mix(in_srgb,var(--bg-primary)_55%,transparent)] px-3 py-2">
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-(--text-primary)">{report.title}</p>
-                  <p className="text-xs text-(--text-secondary)">
-                    {new Date(report.reportedAt).toLocaleDateString('fr-FR')} • {report.vehicleInfo?.plateNumber ?? '—'}
+          <div>
+            {rows.map((report, index) => (
+              <div
+                key={report.id}
+                style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "12px", padding: "14px 24px", borderBottom: index < rows.length - 1 ? "1px solid #F0EAE0" : "none" }}
+              >
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <p style={{ margin: 0, fontSize: "14px", fontWeight: 600, color: "#12100E", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{report.title}</p>
+                  <p style={{ margin: "4px 0 0", fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#6E6A63" }}>
+                    {new Date(report.reportedAt).toLocaleDateString("fr-FR")} · {report.vehicleInfo?.plateNumber ?? "—"}
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
-                  <StatusBadge domain="report" value={report.status} audience="driver" live={report.status === 'in_progress'} />
-                  <span className="text-xs text-(--text-muted)">{report.category}</span>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <StatusBadge domain="report" value={report.status} audience="driver" live={report.status === "in_progress"} />
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#6E6A63" }}>{report.category}</span>
                 </div>
-              </article>
+              </div>
             ))}
           </div>
         )}
-      </ContentCard>
+      </div>
     </div>
   )
 }

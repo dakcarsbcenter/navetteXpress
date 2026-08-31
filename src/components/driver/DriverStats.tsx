@@ -1,9 +1,7 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
-import { ChartBar, Coins, Star, Target } from "@phosphor-icons/react"
+import { useEffect, useMemo, useState, type CSSProperties } from "react"
 import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
-import { ContentCard, EmptyState, MetricCard, SectionHeader } from "@/components/driver/shared"
 
 interface DriverStatsProps {
   onBack: () => void
@@ -25,6 +23,20 @@ const periods = [
   { key: "month", label: "Ce mois" },
   { key: "year", label: "Cette année" },
 ] as const
+
+const cardStyle: CSSProperties = { background: "#FFFFFF", border: "1px solid #E2DACD", borderRadius: "4px" }
+const cardHeaderStyle: CSSProperties = { display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "16px", padding: "18px 24px", borderBottom: "1px solid #E2DACD" }
+const cardTitleStyle: CSSProperties = { margin: 0, fontSize: "17px", fontWeight: 600, letterSpacing: "-0.01em" }
+const monoMutedStyle: CSSProperties = { fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.14em", textTransform: "uppercase", color: "#6E6A63" }
+
+function EmptyPanel({ title, description }: { title: string; description?: string }) {
+  return (
+    <div style={{ padding: "48px 24px", textAlign: "center" }}>
+      <p style={{ margin: 0, fontSize: "14px", fontWeight: 600, color: "#12100E" }}>{title}</p>
+      {description && <p style={{ margin: "8px 0 0", fontSize: "13px", color: "#6E6A63" }}>{description}</p>}
+    </div>
+  )
+}
 
 export function DriverStats({ onBack }: DriverStatsProps) {
   const [selectedPeriod, setSelectedPeriod] = useState<(typeof periods)[number]["key"]>("month")
@@ -80,106 +92,141 @@ export function DriverStats({ onBack }: DriverStatsProps) {
 
   const subtitle = new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "long", year: "numeric" }).format(new Date())
 
+  const kpis = [
+    { value: String(stats.totalRides), label: "Total courses", note: "Sur la période" },
+    { value: `${Math.round(stats.totalEarnings).toLocaleString("fr-FR")} F`, label: "Revenus", note: "Sur la période" },
+    { value: `${stats.averageRating.toFixed(1)}/5`, label: "Note moyenne", note: "Moyenne clients" },
+    { value: acceptance, label: "Taux d'acceptation", note: `${stats.completedRides} course(s) menée(s)` },
+  ]
+
   return (
-    <div className="space-y-5 pb-20 md:pb-4">
-      <SectionHeader
-        title="STATISTIQUES"
-        subtitle={subtitle}
-        action={
-          <div className="flex flex-wrap gap-2">
-            {periods.map((period) => (
+    <div className="flex flex-col gap-7 pb-16 md:pb-0">
+      <section className="flex flex-wrap items-baseline justify-between gap-4">
+        <div className="flex flex-col gap-2">
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.16em", textTransform: "uppercase", color: "#B4643A" }}>
+            STATISTIQUES
+          </span>
+          <h2 style={{ margin: 0, fontSize: "clamp(22px, 2.4vw, 30px)", fontWeight: 600, letterSpacing: "-0.025em", lineHeight: 1.1 }}>
+            Vos performances
+          </h2>
+          <p style={{ margin: 0, fontSize: "15px", color: "#3d3a35", lineHeight: 1.5 }}>{subtitle}</p>
+        </div>
+
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+          {periods.map((period) => {
+            const active = selectedPeriod === period.key
+            return (
               <button
                 key={period.key}
                 onClick={() => setSelectedPeriod(period.key)}
-                className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${selectedPeriod === period.key
-                  ? "border-[color-mix(in_srgb,var(--accent)_40%,transparent)] bg-[color-mix(in_srgb,var(--accent)_18%,transparent)] text-(--accent)"
-                  : "border-(--border) bg-[color-mix(in_srgb,var(--bg-primary)_50%,transparent)] text-(--text-secondary)"
-                  }`}
+                style={{
+                  height: "34px",
+                  padding: "0 14px",
+                  borderRadius: "4px",
+                  border: active ? "1px solid #12100E" : "1px solid #E2DACD",
+                  background: active ? "#12100E" : "#FFFFFF",
+                  color: active ? "#F7F3EC" : "#6E6A63",
+                  fontSize: "12.5px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
               >
                 {period.label}
               </button>
-            ))}
+            )
+          })}
+        </div>
+      </section>
+
+      <section style={{ display: "flex", flexWrap: "wrap", borderTop: "1px solid #E2DACD", borderBottom: "1px solid #E2DACD" }}>
+        {kpis.map((kpi) => (
+          <div key={kpi.label} style={{ flex: "1 1 168px", minWidth: "168px", padding: "20px 22px", borderRight: "1px solid #E2DACD", display: "flex", flexDirection: "column", gap: "8px" }}>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: "24px", fontWeight: 600, letterSpacing: "-0.01em", color: "#12100E" }}>{kpi.value}</span>
+            <span style={monoMutedStyle}>{kpi.label}</span>
+            <span style={{ fontSize: "12px", color: "#3d3a35" }}>{kpi.note}</span>
           </div>
-        }
-      />
+        ))}
+      </section>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <MetricCard icon={ChartBar} label="Total courses" value={stats.totalRides} badge="Active" />
-        <MetricCard icon={Coins} label="Revenus" value={`${Math.round(stats.totalEarnings).toLocaleString("fr-FR")} F`} badge="Stable" iconTone="green" delay={50} />
-        <MetricCard icon={Star} label="Note moyenne" value={`${stats.averageRating.toFixed(1)}/5`} badge="Confirmée" delay={100} />
-        <MetricCard icon={Target} label="Taux d'acceptation" value={acceptance} badge="Disponible" delay={150} />
-      </div>
-
-      <ContentCard title="Évolution des Revenus" indicator="gold">
+      <div style={cardStyle}>
+        <div style={cardHeaderStyle}>
+          <h3 style={cardTitleStyle}>Évolution des revenus</h3>
+          <span style={monoMutedStyle}>{isLoading ? "Chargement" : `${revenueLineData.length} période(s)`}</span>
+        </div>
         {isLoading ? (
-          <EmptyState icon={<Coins size={28} />} title="CHARGEMENT" description="Calcul des revenus" />
+          <EmptyPanel title="CHARGEMENT" description="Calcul des revenus" />
         ) : revenueLineData.length === 0 ? (
-          <EmptyState icon={<Coins size={28} />} title="AUCUNE DONNÉE" description="Pas de revenus sur cette période" />
+          <EmptyPanel title="AUCUNE DONNÉE" description="Pas de revenus sur cette période" />
         ) : (
-          <div className="h-72 w-full">
+          <div style={{ padding: "20px 24px", height: "280px" }}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={revenueLineData}>
-                <CartesianGrid stroke="var(--border)" strokeOpacity={0.3} vertical={false} />
-                <XAxis dataKey="label" stroke="var(--text-muted)" tick={{ fontSize: 11 }} />
-                <YAxis stroke="var(--text-muted)" tick={{ fontSize: 11 }} />
+                <CartesianGrid stroke="#E2DACD" strokeOpacity={0.7} vertical={false} />
+                <XAxis dataKey="label" stroke="#6E6A63" tick={{ fontSize: 11, fontFamily: "var(--font-mono)" }} />
+                <YAxis stroke="#6E6A63" tick={{ fontSize: 11, fontFamily: "var(--font-mono)" }} />
                 <Tooltip
-                  contentStyle={{
-                    background: "var(--bg-card)",
-                    border: "1px solid var(--border)",
-                    borderRadius: "10px",
-                    color: "var(--text-primary)",
-                  }}
+                  contentStyle={{ background: "#FFFFFF", border: "1px solid #E2DACD", borderRadius: "4px", color: "#12100E", fontSize: "12px" }}
                 />
-                <Line type="monotone" dataKey="value" stroke="#f5a623" strokeWidth={3} dot={{ r: 3, fill: "#f5a623" }} />
+                <Line type="monotone" dataKey="value" stroke="#B4643A" strokeWidth={3} dot={{ r: 3, fill: "#B4643A" }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
         )}
-      </ContentCard>
+      </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <ContentCard title="Courses par jour" indicator="gold">
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div style={cardStyle}>
+          <div style={cardHeaderStyle}>
+            <h3 style={cardTitleStyle}>Courses par heure</h3>
+            <span style={monoMutedStyle}>{ridesBarData.length} tranche(s)</span>
+          </div>
           {ridesBarData.length === 0 ? (
-            <EmptyState icon={<ChartBar size={22} />} title="AUCUNE COURSE" description="Aucune donnée de course disponible" />
+            <EmptyPanel title="AUCUNE COURSE" description="Aucune donnée disponible" />
           ) : (
-            <div className="h-64 w-full">
+            <div style={{ padding: "20px 24px", height: "240px" }}>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={ridesBarData}>
-                  <CartesianGrid stroke="var(--border)" strokeOpacity={0.3} vertical={false} />
-                  <XAxis dataKey="label" stroke="var(--text-muted)" tick={{ fontSize: 11 }} />
-                  <YAxis stroke="var(--text-muted)" tick={{ fontSize: 11 }} />
+                  <CartesianGrid stroke="#E2DACD" strokeOpacity={0.7} vertical={false} />
+                  <XAxis dataKey="label" stroke="#6E6A63" tick={{ fontSize: 11, fontFamily: "var(--font-mono)" }} />
+                  <YAxis stroke="#6E6A63" tick={{ fontSize: 11, fontFamily: "var(--font-mono)" }} />
                   <Tooltip
-                    contentStyle={{
-                      background: "var(--bg-card)",
-                      border: "1px solid var(--border)",
-                      borderRadius: "10px",
-                      color: "var(--text-primary)",
-                    }}
+                    contentStyle={{ background: "#FFFFFF", border: "1px solid #E2DACD", borderRadius: "4px", color: "#12100E", fontSize: "12px" }}
                   />
-                  <Bar dataKey="value" fill="#f5a623" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="value" fill="#B4643A" radius={[3, 3, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           )}
-        </ContentCard>
+        </div>
 
-        <ContentCard title="Top Trajets" indicator="green">
+        <div style={cardStyle}>
+          <div style={cardHeaderStyle}>
+            <h3 style={cardTitleStyle}>Top trajets</h3>
+            <span style={monoMutedStyle}>{stats.topRoutes.length} trajet(s)</span>
+          </div>
           {stats.topRoutes.length === 0 ? (
-            <EmptyState icon={<Target size={22} />} title="AUCUN TRAJET" description="Pas assez de données pour afficher un top" />
+            <EmptyPanel title="AUCUN TRAJET" description="Pas assez de données pour afficher un top" />
           ) : (
-            <div className="space-y-2">
+            <div>
               {stats.topRoutes.slice(0, 5).map((route, index) => (
-                <article key={`${route.from}-${route.to}-${index}`} className="flex items-center justify-between rounded-lg border border-(--border) bg-[color-mix(in_srgb,var(--bg-primary)_55%,transparent)] px-3 py-2">
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-(--text-primary)">{route.from} → {route.to}</p>
-                    <p className="text-xs text-(--text-secondary)">{route.count} fois</p>
+                <div
+                  key={`${route.from}-${route.to}-${index}`}
+                  style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", padding: "14px 24px", borderBottom: index < Math.min(stats.topRoutes.length, 5) - 1 ? "1px solid #F0EAE0" : "none" }}
+                >
+                  <div style={{ minWidth: 0 }}>
+                    <p style={{ margin: 0, fontSize: "14px", fontWeight: 600, color: "#12100E", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {route.from} → {route.to}
+                    </p>
+                    <p style={{ margin: "4px 0 0", fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#6E6A63" }}>{route.count} fois</p>
                   </div>
-                  <p className="text-xs font-semibold text-(--accent)">{Math.round(route.avgPrice * route.count).toLocaleString("fr-FR")} F</p>
-                </article>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "13px", fontWeight: 600, color: "#12100E", whiteSpace: "nowrap" }}>
+                    {Math.round(route.avgPrice * route.count).toLocaleString("fr-FR")} F
+                  </span>
+                </div>
               ))}
             </div>
           )}
-        </ContentCard>
+        </div>
       </div>
     </div>
   )
