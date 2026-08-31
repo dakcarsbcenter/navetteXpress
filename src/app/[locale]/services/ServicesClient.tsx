@@ -4,6 +4,7 @@ import { useTranslations, useLocale } from "next-intl";
 
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
+import { CorridorStrip } from "@/components/marketing/CorridorStrip";
 import {
   AirportIcon,
   LuxuryCarIcon,
@@ -60,119 +61,104 @@ export default function ServicesClient() {
 
     switch (slug) {
       case "transfert-aibd-dakar":
-        return <AirportIcon size={48} className="text-gold" />;
+        return <AirportIcon size={40} className="text-gold" />;
       case "chauffeur-prive-dakar":
-        return <PrivateDriverIcon size={48} className="text-gold" />;
+        return <PrivateDriverIcon size={40} className="text-gold" />;
       case "tours-excursions":
-        return <SafetyFirstIcon size={48} className="text-gold" />;
+        return <SafetyFirstIcon size={40} className="text-gold" />;
       case "services-vip":
-        return <LuxuryCarIcon size={48} className="text-gold" />;
+        return <LuxuryCarIcon size={40} className="text-gold" />;
       case "mise-a-disposition":
-        return <PrivateDriverIcon size={48} className="text-gold" />;
+        return <PrivateDriverIcon size={40} className="text-gold" />;
       default:
         // Render the icon string (emoji) if no custom SVG component
-        return <div className="text-5xl">{iconStr}</div>;
+        return <div className="text-4xl">{iconStr}</div>;
     }
   };
 
   const whyChooseItems = [
-    { icon: <ShieldCheck size={24} weight="thin" className="text-gold" />, title: t("why.item1.title"), desc: t("why.item1.desc") },
-    { icon: <Clock size={24} weight="thin" className="text-gold" />, title: t("why.item2.title"), desc: t("why.item2.desc") },
-    { icon: <Star size={24} weight="thin" className="text-gold" />, title: t("why.item3.title"), desc: t("why.item3.desc") },
-    { icon: <MapPin size={24} weight="thin" className="text-gold" />, title: t("why.item4.title"), desc: t("why.item4.desc") },
+    { icon: <ShieldCheck size={24} weight="light" className="text-gold" />, title: t("why.item1.title"), desc: t("why.item1.desc") },
+    { icon: <Clock size={24} weight="light" className="text-gold" />, title: t("why.item2.title"), desc: t("why.item2.desc") },
+    { icon: <Star size={24} weight="light" className="text-gold" />, title: t("why.item3.title"), desc: t("why.item3.desc") },
+    { icon: <MapPin size={24} weight="light" className="text-gold" />, title: t("why.item4.title"), desc: t("why.item4.desc") },
   ];
 
   return (
-    <div className="min-h-screen bg-midnight text-foreground selection:bg-gold/30">
-      {/* Noise Background Overlay */}
-      <div className="fixed inset-0 pointer-events-none z-1 opacity-[0.03] mix-blend-overlay"
-        style={{ backgroundImage: `url('/noise.png')` }}></div>
+    <div className="min-h-screen bg-background">
+      <Navigation variant="solid" />
 
-      <Navigation variant="transparent" />
+      <div className="pt-24 md:pt-36">
+        <CorridorStrip />
 
-      <main className="relative z-10">
-        {/* Hero Section */}
-        <section className="relative pt-40 pb-20 px-4 overflow-hidden">
-          {/* Decorative Elements */}
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gold/5 rounded-full blur-[128px] -z-10 animate-pulse-slow"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gold/5 rounded-full blur-[128px] -z-10 animate-pulse-slow ml-20"></div>
-
-          <div className="max-w-6xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <h1 className="font-serif text-5xl md:text-7xl mb-6 tracking-tight text-foreground">
-                {t("hero.titlePrefix")} <span className="text-gold italic">{t("hero.titleAccent")}</span>
-              </h1>
-              <p className="font-sans text-xl md:text-2xl text-foreground/70 max-w-3xl mx-auto leading-relaxed mb-12">
-                {t("hero.subtitle")}
-              </p>
-            </motion.div>
-          </div>
+        {/* Hero */}
+        <section className="max-w-4xl mx-auto px-6 pt-12 pb-10 md:pt-14 md:pb-14 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h1 className="font-bold text-4xl md:text-5xl leading-[1.06] tracking-tight text-foreground">
+              {t("hero.titlePrefix")} <span className="text-accent">{t("hero.titleAccent")}</span>
+            </h1>
+            <p className="mt-5 text-base md:text-lg text-[#3d3a35] max-w-2xl mx-auto leading-relaxed">
+              {t("hero.subtitle")}
+            </p>
+          </motion.div>
         </section>
 
         {/* Services Grid */}
-        <section className="py-20 px-4">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <section className="border-t border-[#e2dacd] py-16 md:py-20">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {loading ? (
-                <div className="col-span-full flex flex-col items-center justify-center py-20 grayscale opacity-50">
-                  <Spinner size={48} className="animate-spin text-gold mb-4" />
-                  <p className="text-foreground/40 tracking-widest uppercase text-xs">{t("grid.loading")}</p>
+                <div className="col-span-full flex flex-col items-center justify-center py-20">
+                  <Spinner size={40} className="animate-spin text-accent mb-4" />
+                  <p className="text-text-muted tracking-widest uppercase text-xs">{t("grid.loading")}</p>
                 </div>
               ) : dbServices.length === 0 && localizedServiceTypes.length === 0 ? (
                 <div className="col-span-full text-center py-20">
-                  <p className="text-foreground/50">{t("grid.empty")}</p>
+                  <p className="text-text-muted">{t("grid.empty")}</p>
                 </div>
               ) : (
                 (dbServices.length > 0 ? dbServices : localizedServiceTypes).map((service: any, index: number) => (
                   <motion.div
                     key={service.slug || service.id}
-                    initial={{ opacity: 0, y: 30 }}
+                    initial={{ opacity: 0, y: 24 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="group relative"
+                    transition={{ duration: 0.5, delay: Math.min(index, 6) * 0.05 }}
+                    className="h-full bg-white border border-[#e2dacd] rounded-lg p-7 flex flex-col"
                   >
-                    <div className="h-full bg-surface-2/50 backdrop-blur-xl border border-border rounded-2xl p-8 hover:border-gold/30 hover:bg-surface-2/70 transition-all duration-500 overflow-hidden">
-                      {/* Background Shine Effect */}
-                      <div className="absolute -top-24 -right-24 w-48 h-48 bg-gold/10 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-
-                      <div className="relative z-10">
-                        <div className="mb-6 p-4 bg-midnight/50 border border-border rounded-xl w-fit group-hover:scale-110 transition-transform duration-500 min-w-20 min-h-20 flex items-center justify-center">
-                          {getServiceIcon(service)}
-                        </div>
-
-                        <h3 className="font-serif text-3xl mb-4 text-foreground group-hover:text-gold transition-colors duration-300">
-                          {service.name}
-                        </h3>
-
-                        <p className="font-sans text-foreground/60 mb-8 leading-relaxed h-20 line-clamp-3">
-                          {service.description}
-                        </p>
-
-                        <ul className="space-y-3 mb-10 min-h-[140px]">
-                          {(service.features || []).map((feature: string, fIndex: number) => (
-                            <li key={fIndex} className="flex items-center gap-3 text-sm text-foreground/80">
-                              <span className="w-1.5 h-1.5 bg-gold rounded-full shrink-0"></span>
-                              {feature}
-                            </li>
-                          ))}
-                        </ul>
-
-                        <Link
-                          href={`/reservation?service=${service.slug || service.id}`}
-                          className="flex items-center gap-2 text-gold font-medium group/link"
-                        >
-                          <span className="border-b border-transparent group-hover/link:border-gold transition-all duration-300">
-                            {t("grid.bookCta")}
-                          </span>
-                          <CaretRight size={18} weight="light" className="translate-y-px group-hover/link:translate-x-1 transition-transform" />
-                        </Link>
-                      </div>
+                    <div className="mb-6 p-4 bg-background border border-[#e2dacd] rounded-lg w-fit min-w-16 min-h-16 flex items-center justify-center">
+                      {getServiceIcon(service)}
                     </div>
+
+                    <h3 className="text-xl font-semibold text-foreground mb-3">
+                      {service.name}
+                    </h3>
+
+                    <p className="text-text-muted text-sm mb-6 leading-relaxed">
+                      {service.description}
+                    </p>
+
+                    <ul className="space-y-2.5 mb-8 flex-grow">
+                      {(service.features || []).map((feature: string, fIndex: number) => (
+                        <li key={fIndex} className="flex items-center gap-3 text-sm text-[#3d3a35]">
+                          <span className="w-1.5 h-1.5 bg-gold rounded-full shrink-0"></span>
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+
+                    <Link
+                      href={`/reservation?service=${service.slug || service.id}`}
+                      className="inline-flex items-center gap-2 text-accent font-semibold text-sm group"
+                    >
+                      <span className="border-b border-transparent group-hover:border-accent transition-all duration-300">
+                        {t("grid.bookCta")}
+                      </span>
+                      <CaretRight size={16} weight="bold" className="group-hover:translate-x-1 transition-transform" />
+                    </Link>
                   </motion.div>
                 ))
               )}
@@ -181,23 +167,23 @@ export default function ServicesClient() {
         </section>
 
         {/* Comparison Table / Value Prop */}
-        <section className="py-24 px-4 bg-surface-2/20 border-y border-border">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="font-serif text-4xl md:text-5xl mb-6 text-foreground">
-                {t("why.titlePrefix")} <span className="text-gold italic">{t("why.titleAccent")}</span> ?
+        <section className="border-t border-[#e2dacd] py-16 md:py-20 bg-white">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="text-center mb-14">
+              <h2 className="font-bold text-3xl md:text-4xl mb-4 text-foreground">
+                {t("why.titlePrefix")} <span className="text-accent">{t("why.titleAccent")}</span> ?
               </h2>
-              <p className="text-foreground/60 max-w-2xl mx-auto">{t("why.subtitle")}</p>
+              <p className="text-text-muted max-w-2xl mx-auto">{t("why.subtitle")}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               {whyChooseItems.map((item, i) => (
                 <div key={i} className="text-center">
-                  <div className="w-16 h-16 bg-surface-2/50 border border-border rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <div className="w-14 h-14 bg-background border border-[#e2dacd] rounded-lg flex items-center justify-center mx-auto mb-5">
                     {item.icon}
                   </div>
-                  <h4 className="font-serif text-xl mb-2 text-foreground">{item.title}</h4>
-                  <p className="text-sm text-foreground/50 leading-relaxed">{item.desc}</p>
+                  <h4 className="font-semibold text-lg mb-2 text-foreground">{item.title}</h4>
+                  <p className="text-sm text-text-muted leading-relaxed">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -205,37 +191,28 @@ export default function ServicesClient() {
         </section>
 
         {/* Final CTA */}
-        <section className="py-32 px-4 text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-gold/5 blur-[120px] -z-10 rounded-full scale-150 transform translate-y-1/2"></div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="max-w-4xl mx-auto"
-          >
-            <h2 className="font-serif text-5xl md:text-6xl mb-10 leading-tight text-foreground">
-              {t("finalCta.titleLine1")} <br />
-              <span className="text-gold italic">{t("finalCta.titleAccent")}</span>
+        <section className="bg-accent">
+          <div className="max-w-7xl mx-auto px-6 py-14 md:py-16 text-center">
+            <h2 className="text-2xl md:text-4xl font-semibold text-white mb-8">
+              {t("finalCta.titleLine1")} {t("finalCta.titleAccent")}
             </h2>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
               <Link
                 href="/reservation"
-                className="group relative inline-flex items-center justify-center px-10 py-5 font-bold tracking-widest text-[#1A1A1A] uppercase overflow-hidden bg-gold rounded-full transition-all hover:scale-105 active:scale-95"
+                className="inline-flex items-center justify-center bg-background text-foreground px-8 py-3.5 rounded font-semibold text-sm hover:opacity-90 transition-opacity"
               >
-                <span className="absolute inset-0 w-full h-full bg-white/20 -translate-x-full group-hover:translate-x-0 skew-x-12 transition-transform duration-500"></span>
-                <span className="relative">{t("finalCta.bookCta")}</span>
+                {t("finalCta.bookCta")}
               </Link>
               <Link
                 href="/contact"
-                className="px-10 py-5 border border-border rounded-full font-bold tracking-widest uppercase text-foreground hover:bg-surface-2/50 transition-all"
+                className="inline-flex items-center justify-center border border-white/40 text-white px-8 py-3.5 rounded font-semibold text-sm hover:bg-white/10 transition-colors"
               >
                 {t("finalCta.contactCta")}
               </Link>
             </div>
-          </motion.div>
+          </div>
         </section>
-      </main>
+      </div>
 
       <Footer />
     </div>

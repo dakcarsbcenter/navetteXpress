@@ -48,9 +48,9 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
   return (
     <div
       className={cn(
-        "break-inside-avoid rounded-2xl p-6 mb-5 transition-all duration-300 group select-none",
-        "bg-surface-2/50 backdrop-blur-xl border border-border",
-        "hover:border-gold/20 hover:shadow-[0_8px_40px_rgba(0,0,0,0.3)] hover:-translate-y-0.5",
+        "break-inside-avoid rounded-lg p-6 mb-5 transition-all duration-300 group select-none",
+        "bg-white border border-[#e2dacd]",
+        "hover:border-accent/30 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:-translate-y-0.5",
         className
       )}
     >
@@ -114,7 +114,7 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
       </blockquote>
 
       {/* PIED : Date + Vérifié */}
-      <div className="flex items-center justify-between mt-5 pt-4 border-t border-border/10">
+      <div className="flex items-center justify-between mt-5 pt-4 border-t border-[#e2dacd]">
         <p className="text-xs text-foreground/40">
           {date}
         </p>

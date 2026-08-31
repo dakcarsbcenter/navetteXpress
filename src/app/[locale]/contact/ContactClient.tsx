@@ -3,10 +3,14 @@
 import { useTranslations } from "next-intl";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
+import { CorridorStrip } from "@/components/marketing/CorridorStrip";
+import { Button } from "@/components/ui/Button";
 import InteractiveMap from "@/components/ui/InteractiveMap";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PaperPlaneTilt, Phone, EnvelopeSimple, MapPin, CheckCircle, CaretRight, Globe, ShieldCheck, Star } from "@phosphor-icons/react";
+
+const monoLabel = "font-[family-name:var(--font-ibm-plex-mono)]";
 
 export default function ContactClient() {
   const t = useTranslations("contact");
@@ -73,21 +77,21 @@ export default function ContactClient() {
 
   const contactMethods = [
     {
-      icon: <Phone size={24} weight="light" className="text-gold" />,
+      icon: <Phone size={20} weight="light" className="text-accent" />,
       title: t("methods.phone.title"),
       details: "+221 78 465 13 02",
       sub: t("methods.phone.sub"),
       link: "tel:+221784651302"
     },
     {
-      icon: <EnvelopeSimple size={24} weight="light" className="text-gold" />,
+      icon: <EnvelopeSimple size={20} weight="light" className="text-accent" />,
       title: t("methods.email.title"),
       details: "contact@navettexpress.com",
       sub: t("methods.email.sub"),
       link: "mailto:contact@navettexpress.com"
     },
     {
-      icon: <MapPin size={24} weight="light" className="text-gold" />,
+      icon: <MapPin size={20} weight="light" className="text-accent" />,
       title: t("methods.office.title"),
       details: "Cité Magistrats, Cices Foire",
       sub: t("methods.office.sub"),
@@ -98,58 +102,53 @@ export default function ContactClient() {
   const services = t.raw("services") as string[];
 
   return (
-    <div className="min-h-screen bg-midnight text-foreground selection:bg-gold/30">
-      {/* Noise Background Overlay */}
-      <div className="fixed inset-0 pointer-events-none z-[1] opacity-[0.03] mix-blend-overlay"
-        style={{ backgroundImage: `url('/noise.png')` }}></div>
+    <div className="min-h-screen bg-background">
+      <Navigation variant="solid" />
 
-      <Navigation variant="transparent" />
+      <div className="pt-24 md:pt-36">
+        <CorridorStrip />
 
-      <main className="relative z-10">
-        {/* Hero Section */}
-        <section className="relative pt-40 pb-20 px-4 overflow-hidden text-center">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[400px] bg-gold/5 blur-[120px] -z-10 rounded-full"></div>
-
+        {/* Hero */}
+        <section className="max-w-4xl mx-auto px-6 pt-12 pb-10 md:pt-14 md:pb-14 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-4xl mx-auto"
+            transition={{ duration: 0.6 }}
           >
-            <h1 className="font-serif text-5xl md:text-7xl mb-8 tracking-tight text-foreground">
-              {t("hero.titleLine1")} <span className="text-gold italic">{t("hero.titleLine2")}</span>
+            <h1 className="font-bold text-4xl md:text-5xl leading-[1.06] tracking-tight text-foreground">
+              {t("hero.titleLine1")} <span className="text-accent">{t("hero.titleLine2")}</span>
             </h1>
-            <p className="font-sans text-xl text-foreground/70 max-w-2xl mx-auto leading-relaxed">
+            <p className="mt-5 text-base md:text-lg leading-relaxed text-[#3d3a35] max-w-2xl mx-auto">
               {t("hero.subtitle")}
             </p>
           </motion.div>
         </section>
 
-        <section className="py-12 px-4">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid lg:grid-cols-12 gap-12">
+        <section className="border-t border-[#e2dacd] py-12 md:py-16">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="grid lg:grid-cols-12 gap-10">
 
               {/* Contact Information & Methods */}
-              <div className="lg:col-span-5 space-y-8">
-                <div className="grid gap-6">
+              <div className="lg:col-span-5 space-y-6">
+                <div className="grid gap-4">
                   {contactMethods.map((method, idx) => (
                     <motion.a
                       key={idx}
                       href={method.link}
-                      initial={{ opacity: 0, x: -20 }}
+                      initial={{ opacity: 0, x: -16 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
-                      transition={{ delay: idx * 0.1 }}
-                      className="group bg-surface-2/50 border border-border rounded-2xl p-6 hover:bg-surface-2/70 hover:border-gold/30 transition-all duration-300"
+                      transition={{ delay: idx * 0.08 }}
+                      className="group bg-white border border-[#e2dacd] rounded-lg p-6 hover:border-accent/40 transition-colors"
                     >
-                      <div className="flex gap-6 items-start">
-                        <div className="w-12 h-12 bg-midnight/50 border border-border rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                      <div className="flex gap-4 items-start">
+                        <div className="w-11 h-11 bg-background border border-[#e2dacd] rounded flex items-center justify-center shrink-0">
                           {method.icon}
                         </div>
                         <div>
-                          <h4 className="font-serif text-xl mb-1 text-foreground/90">{method.title}</h4>
-                          <p className="font-sans text-gold font-medium mb-1 tracking-wide">{method.details}</p>
-                          <p className="text-xs text-foreground/40">{method.sub}</p>
+                          <h4 className="font-semibold text-foreground mb-1">{method.title}</h4>
+                          <p className="text-accent font-medium mb-1">{method.details}</p>
+                          <p className="text-xs text-text-muted">{method.sub}</p>
                         </div>
                       </div>
                     </motion.a>
@@ -158,26 +157,25 @@ export default function ContactClient() {
 
                 {/* Emergency Card */}
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  className="bg-gold/10 border border-gold/30 rounded-3xl p-8 relative overflow-hidden group"
+                  className="bg-accent rounded-lg p-7 text-white"
                 >
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gold/10 blur-3xl -z-10 rounded-full translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-700"></div>
-                  <div className="flex gap-4 items-center mb-4">
-                    <ShieldCheck className="text-gold h-8 w-8" weight="light" />
-                    <h3 className="font-serif text-2xl text-gold">{t("emergency.title")}</h3>
+                  <div className="flex gap-3 items-center mb-3">
+                    <ShieldCheck size={28} weight="light" />
+                    <h3 className="text-xl font-semibold">{t("emergency.title")}</h3>
                   </div>
-                  <p className="text-foreground/80 text-sm leading-relaxed mb-6 italic">
+                  <p className="text-white/80 text-sm leading-relaxed mb-5 italic">
                     &ldquo;{t("emergency.quote")}&rdquo;
                   </p>
-                  <a href="tel:+221784651302" className="flex items-center gap-2 text-gold font-bold uppercase tracking-widest text-xs hover:gap-3 transition-all">
-                    {t("emergency.cta")} <CaretRight size={16} weight="light" />
+                  <a href="tel:+221784651302" className="inline-flex items-center gap-2 font-semibold text-sm hover:gap-3 transition-all">
+                    {t("emergency.cta")} <CaretRight size={16} weight="bold" />
                   </a>
                 </motion.div>
 
                 {/* Map Component */}
-                <div className="bg-surface-2/50 border border-border rounded-3xl p-4 overflow-hidden aspect-video relative group">
+                <div className="bg-white border border-[#e2dacd] rounded-lg p-3 overflow-hidden aspect-video">
                   <InteractiveMap
                     center={[14.74342, -17.472408]}
                     zoom={15}
@@ -185,7 +183,6 @@ export default function ContactClient() {
                     showMarker={true}
                     markerTitle={t("map.markerTitle")}
                     markerDescription="Cité Magistrats, Cices Foire, Dakar"
-                    className="grayscale contrast-[1.2] opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700 rounded-2xl"
                   />
                 </div>
               </div>
@@ -193,135 +190,132 @@ export default function ContactClient() {
               {/* Inquiry Form */}
               <div className="lg:col-span-7">
                 <motion.div
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  className="bg-surface-2/50 border border-border rounded-[32px] p-8 md:p-12 backdrop-blur-xl relative overflow-hidden"
+                  className="bg-white border border-[#e2dacd] rounded-lg p-8 md:p-10 relative overflow-hidden"
                 >
-                  <div className="absolute top-0 right-0 p-8 opacity-5">
+                  <div className="absolute top-0 right-0 p-8 opacity-[0.04] text-foreground pointer-events-none">
                     <PaperPlaneTilt size={120} weight="thin" />
                   </div>
 
                   <div className="relative z-10">
-                    <h2 className="font-serif text-4xl mb-4 text-foreground">{t("form.titleLine1")} <span className="text-gold italic">{t("form.titleLine2")}</span></h2>
-                    <p className="text-foreground/50 mb-10 max-w-lg">
+                    <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
+                      {t("form.titleLine1")} <span className="text-accent">{t("form.titleLine2")}</span>
+                    </h2>
+                    <p className="text-text-muted mb-8 max-w-lg">
                       {t("form.subtitle")}
                     </p>
 
                     <AnimatePresence mode="wait">
                       {submitStatus === 'success' ? (
                         <motion.div
-                          initial={{ opacity: 0, scale: 0.9 }}
+                          initial={{ opacity: 0, scale: 0.95 }}
                           animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.9 }}
-                          className="bg-gold/10 border border-gold/30 rounded-2xl p-8 text-center"
+                          exit={{ opacity: 0, scale: 0.95 }}
+                          className="bg-accent/10 border border-accent/30 rounded-lg p-8 text-center"
                         >
-                          <div className="w-16 h-16 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <CheckCircle className="text-gold w-8 h-8" weight="regular" />
+                          <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <CheckCircle className="text-accent w-8 h-8" weight="regular" />
                           </div>
-                          <h3 className="font-serif text-2xl mb-2 text-gold">{t("form.success.title")}</h3>
-                          <p className="text-foreground/70 mb-6">{t("form.success.desc")}</p>
+                          <h3 className="text-2xl font-semibold text-foreground mb-2">{t("form.success.title")}</h3>
+                          <p className="text-text-muted mb-6">{t("form.success.desc")}</p>
                           <button
                             onClick={() => setSubmitStatus('idle')}
-                            className="text-gold font-bold uppercase tracking-widest text-xs border-b border-gold pb-1"
+                            className="text-accent font-semibold text-sm border-b border-accent pb-1"
                           >
                             {t("form.success.another")}
                           </button>
                         </motion.div>
                       ) : (
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                          <div className="grid md:grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-foreground/40 ml-4">{t("form.nameLabel")}</label>
+                        <form onSubmit={handleSubmit} className="space-y-5">
+                          <div className="grid md:grid-cols-2 gap-5">
+                            <div className="flex flex-col gap-2">
+                              <label className={`${monoLabel} text-[10px] uppercase tracking-[0.14em] text-text-muted`}>{t("form.nameLabel")}</label>
                               <input
                                 type="text"
                                 name="name"
                                 required
                                 value={formData.name}
                                 onChange={handleInputChange}
-                                className="w-full bg-surface-2/50 border border-border rounded-2xl px-6 py-4 focus:outline-none focus:border-gold/50 focus:bg-surface-2/70 transition-all text-sm text-foreground"
+                                className="w-full bg-background border border-[#d8d2c7] rounded px-4 py-3 text-foreground text-sm outline-none focus:border-accent transition-colors"
                                 placeholder={t("form.namePlaceholder")}
                               />
                             </div>
-                            <div className="space-y-2">
-                              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-foreground/40 ml-4">{t("form.emailLabel")}</label>
+                            <div className="flex flex-col gap-2">
+                              <label className={`${monoLabel} text-[10px] uppercase tracking-[0.14em] text-text-muted`}>{t("form.emailLabel")}</label>
                               <input
                                 type="email"
                                 name="email"
                                 required
                                 value={formData.email}
                                 onChange={handleInputChange}
-                                className="w-full bg-surface-2/50 border border-border rounded-2xl px-6 py-4 focus:outline-none focus:border-gold/50 focus:bg-surface-2/70 transition-all text-sm text-foreground"
+                                className="w-full bg-background border border-[#d8d2c7] rounded px-4 py-3 text-foreground text-sm outline-none focus:border-accent transition-colors"
                                 placeholder={t("form.emailPlaceholder")}
                               />
                             </div>
                           </div>
 
-                          <div className="grid md:grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-foreground/40 ml-4">{t("form.phoneLabel")}</label>
+                          <div className="grid md:grid-cols-2 gap-5">
+                            <div className="flex flex-col gap-2">
+                              <label className={`${monoLabel} text-[10px] uppercase tracking-[0.14em] text-text-muted`}>{t("form.phoneLabel")}</label>
                               <input
                                 type="tel"
                                 name="phone"
                                 value={formData.phone}
                                 onChange={handleInputChange}
-                                className="w-full bg-surface-2/50 border border-border rounded-2xl px-6 py-4 focus:outline-none focus:border-gold/50 focus:bg-surface-2/70 transition-all text-sm text-foreground"
+                                className="w-full bg-background border border-[#d8d2c7] rounded px-4 py-3 text-foreground text-sm outline-none focus:border-accent transition-colors"
                                 placeholder="+221 ..."
                               />
                             </div>
-                            <div className="space-y-2">
-                              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-foreground/40 ml-4">{t("form.serviceLabel")}</label>
+                            <div className="flex flex-col gap-2">
+                              <label className={`${monoLabel} text-[10px] uppercase tracking-[0.14em] text-text-muted`}>{t("form.serviceLabel")}</label>
                               <select
                                 name="service"
                                 required
                                 value={formData.service}
                                 onChange={handleInputChange}
-                                className="w-full bg-surface-2/50 border border-border rounded-2xl px-6 py-4 focus:outline-none focus:border-gold/50 focus:bg-surface-2/70 transition-all text-sm appearance-none text-foreground"
+                                className="w-full bg-background border border-[#d8d2c7] rounded px-4 py-3 text-foreground text-sm outline-none focus:border-accent transition-colors appearance-none cursor-pointer"
                               >
-                                <option value="" className="bg-midnight text-foreground">{t("form.servicePlaceholder")}</option>
+                                <option value="">{t("form.servicePlaceholder")}</option>
                                 {services.map((s) => (
-                                  <option key={s} value={s} className="bg-midnight text-foreground">{s}</option>
+                                  <option key={s} value={s}>{s}</option>
                                 ))}
                               </select>
                             </div>
                           </div>
 
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-foreground/40 ml-4">{t("form.messageLabel")}</label>
+                          <div className="flex flex-col gap-2">
+                            <label className={`${monoLabel} text-[10px] uppercase tracking-[0.14em] text-text-muted`}>{t("form.messageLabel")}</label>
                             <textarea
                               name="message"
                               required
                               rows={4}
                               value={formData.message}
                               onChange={handleInputChange}
-                              className="w-full bg-surface-2/50 border border-border rounded-2xl px-6 py-4 focus:outline-none focus:border-gold/50 focus:bg-surface-2/70 transition-all text-sm resize-none text-foreground"
+                              className="w-full bg-background border border-[#d8d2c7] rounded px-4 py-3 text-foreground text-sm outline-none focus:border-accent transition-colors resize-none"
                               placeholder={t("form.messagePlaceholder")}
                             />
                           </div>
 
-                          <button
+                          <Button
                             type="submit"
+                            variant="primary"
+                            size="lg"
+                            className="w-full"
                             disabled={isSubmitting}
-                            className="group w-full relative h-[64px] bg-gold rounded-2xl overflow-hidden active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            loading={isSubmitting}
+                            icon={<CaretRight size={18} weight="bold" />}
+                            iconPosition="right"
                           >
-                            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
-                            <div className="relative flex items-center justify-center gap-3 text-midnight font-bold uppercase tracking-widest text-xs">
-                              {isSubmitting ? (
-                                <div className="w-5 h-5 border-2 border-midnight/30 border-t-midnight rounded-full animate-spin" />
-                              ) : (
-                                <>
-                                  {t("form.submit")}
-                                  <CaretRight size={18} weight="light" className="translate-y-[1px]" />
-                                </>
-                              )}
-                            </div>
-                          </button>
+                            {t("form.submit")}
+                          </Button>
 
                           {submitStatus === 'error' && (
                             <motion.p
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
-                              className="text-center text-red-400 text-xs font-medium"
+                              className="text-center text-error text-xs font-medium"
                             >
                               {t("form.error")}
                             </motion.p>
@@ -337,23 +331,23 @@ export default function ContactClient() {
         </section>
 
         {/* Brand Promise Section */}
-        <section className="py-24 px-4 bg-surface-2/10">
-          <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-around gap-12 opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-700">
+        <section className="border-t border-[#e2dacd] py-14 md:py-16">
+          <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-around gap-10">
             <div className="flex flex-col items-center gap-2">
-              <Globe className="h-10 w-10 text-gold" weight="thin" />
-              <span className="font-serif text-sm tracking-widest uppercase">{t("brandPromise.prestige")}</span>
+              <Globe className="text-gold" size={32} weight="light" />
+              <span className={`${monoLabel} text-xs tracking-[0.14em] uppercase text-text-muted`}>{t("brandPromise.prestige")}</span>
             </div>
             <div className="flex flex-col items-center gap-2">
-              <ShieldCheck className="h-10 w-10 text-gold" weight="thin" />
-              <span className="font-serif text-sm tracking-widest uppercase">{t("brandPromise.security")}</span>
+              <ShieldCheck className="text-gold" size={32} weight="light" />
+              <span className={`${monoLabel} text-xs tracking-[0.14em] uppercase text-text-muted`}>{t("brandPromise.security")}</span>
             </div>
             <div className="flex flex-col items-center gap-2">
-              <Star className="h-10 w-10 text-gold" weight="thin" />
-              <span className="font-serif text-sm tracking-widest uppercase">{t("brandPromise.excellence")}</span>
+              <Star className="text-gold" size={32} weight="light" />
+              <span className={`${monoLabel} text-xs tracking-[0.14em] uppercase text-text-muted`}>{t("brandPromise.excellence")}</span>
             </div>
           </div>
         </section>
-      </main>
+      </div>
 
       <Footer />
     </div>

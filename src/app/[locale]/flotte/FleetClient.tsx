@@ -4,22 +4,11 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
+import { CorridorStrip } from "@/components/marketing/CorridorStrip";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import { Users, Bag, ShieldCheck, Pulse, Star, CaretRight } from "@phosphor-icons/react";
-import { LuxuryCarIcon, VanIcon } from "@/components/icons/custom-icons";
 import { motion } from "framer-motion";
-
-// Helper function to get vehicle icon based on category
-function getVehicleIcon(category: string, size: number = 24) {
-  const categoryLower = category.toLowerCase();
-
-  if (categoryLower.includes('van') || categoryLower.includes('minibus') || categoryLower.includes('9')) {
-    return <VanIcon size={size} className="text-gold" />;
-  } else {
-    return <LuxuryCarIcon size={size} className="text-gold" />;
-  }
-}
 
 // Client-side vehicle data fetching for the demonstration
 async function getVehicles() {
@@ -84,139 +73,126 @@ export default function FleetClient() {
   }, []);
 
   const benefits = [
-    { icon: <ShieldCheck size={32} weight="thin" className="text-gold" />, title: t("benefits.maintenance.title"), desc: t("benefits.maintenance.desc") },
-    { icon: <Star size={32} weight="thin" className="text-gold" />, title: t("benefits.comfort.title"), desc: t("benefits.comfort.desc") },
-    { icon: <Pulse size={32} weight="thin" className="text-gold" />, title: t("benefits.connectivity.title"), desc: t("benefits.connectivity.desc") },
+    { icon: <ShieldCheck size={28} weight="light" className="text-gold" />, title: t("benefits.maintenance.title"), desc: t("benefits.maintenance.desc") },
+    { icon: <Star size={28} weight="light" className="text-gold" />, title: t("benefits.comfort.title"), desc: t("benefits.comfort.desc") },
+    { icon: <Pulse size={28} weight="light" className="text-gold" />, title: t("benefits.connectivity.title"), desc: t("benefits.connectivity.desc") },
   ];
 
   return (
-    <div className="min-h-screen bg-midnight text-foreground selection:bg-gold/30">
-      {/* Noise Background Offset */}
-      <div className="fixed inset-0 pointer-events-none z-[1] opacity-[0.03] mix-blend-overlay"
-        style={{ backgroundImage: `url('/noise.png')` }}></div>
+    <div className="min-h-screen bg-background">
+      <Navigation variant="solid" />
 
-      <Navigation variant="transparent" />
+      <div className="pt-24 md:pt-36">
+        <CorridorStrip />
 
-      <main className="relative z-10">
-        {/* Hero Section */}
-        <section className="relative pt-40 pb-24 px-4 overflow-hidden">
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gold/5 rounded-full blur-[120px] -z-10 translate-x-1/2 -translate-y-1/2"></div>
-
-          <div className="max-w-6xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <h1 className="font-serif text-5xl md:text-7xl mb-8 tracking-tight text-foreground">
-                {t("hero.titleLine1")} <span className="text-gold italic">{t("hero.titleLine2")}</span>
-              </h1>
-              <p className="font-sans text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
-                {t("hero.subtitle")}
-              </p>
-            </motion.div>
-          </div>
+        {/* Hero */}
+        <section className="max-w-4xl mx-auto px-6 pt-12 pb-10 md:pt-14 md:pb-14 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h1 className="font-bold text-4xl md:text-5xl leading-[1.06] tracking-tight text-foreground">
+              {t("hero.titleLine1")} <span className="text-accent">{t("hero.titleLine2")}</span>
+            </h1>
+            <p className="mt-5 text-base md:text-lg leading-relaxed text-[#3d3a35] max-w-2xl mx-auto">
+              {t("hero.subtitle")}
+            </p>
+          </motion.div>
         </section>
 
-        {/* Benefits Grid */}
-        <section className="py-12 px-4">
-          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Benefits */}
+        <section className="max-w-7xl mx-auto px-6 pb-12 md:pb-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {benefits.map((benefit, bIndex) => (
               <motion.div
                 key={bIndex}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: bIndex * 0.1 }}
-                className="bg-surface-2/50 border border-border rounded-2xl p-8 text-center backdrop-blur-sm"
+                className="bg-white border border-[#e2dacd] rounded-lg p-7 text-center"
               >
-                <div className="mb-6 flex justify-center">{benefit.icon}</div>
-                <h3 className="font-serif text-xl mb-3 text-foreground">{benefit.title}</h3>
-                <p className="text-sm text-foreground/50 leading-relaxed">{benefit.desc}</p>
+                <div className="mb-4 flex justify-center">{benefit.icon}</div>
+                <h3 className="font-semibold text-lg text-foreground mb-2">{benefit.title}</h3>
+                <p className="text-sm text-text-muted leading-relaxed">{benefit.desc}</p>
               </motion.div>
             ))}
           </div>
         </section>
 
-        {/* Vehicle List */}
-        <section className="py-24 px-4">
-          <div className="max-w-7xl mx-auto">
+        {/* Vehicle Grid */}
+        <section className="border-t border-[#e2dacd] py-16 md:py-20">
+          <div className="max-w-7xl mx-auto px-6">
             {loading ? (
-              <div className="flex flex-col items-center justify-center py-20">
-                <div className="flex flex-col items-center gap-4">
-                  <div className="text-xl sm:text-2xl font-black italic tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gold via-white to-gold animate-pulse"
-                    style={{ backgroundImage: 'linear-gradient(to right, var(--color-gold), #ffffff, var(--color-gold))', textTransform: 'uppercase' }}>
-                    Navette Xpress
-                  </div>
+              <div className="flex justify-center items-center py-20">
+                <div className="font-[family-name:var(--font-ibm-plex-mono)] text-sm tracking-[0.16em] uppercase text-text-muted">
+                  {t("loading")}
                 </div>
-                <p className="text-gold tracking-widest text-xs uppercase">{t("loading")}</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {vehicles.map((vehicle, vIndex) => (
                   <motion.div
                     key={vehicle.id}
-                    initial={{ opacity: 0, y: 40 }}
+                    initial={{ opacity: 0, y: 24 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: vIndex * 0.1 }}
-                    className="group"
+                    transition={{ duration: 0.5, delay: Math.min(vIndex, 6) * 0.05 }}
+                    className="group h-full bg-white border border-[#e2dacd] rounded-lg overflow-hidden flex flex-col"
                   >
-                    <div className="h-full bg-white/[0.03] border border-white/10 rounded-3xl overflow-hidden hover:border-gold/30 hover:bg-white/[0.05] transition-all duration-500 flex flex-col">
-                      {/* Image Container */}
-                      <div className="relative aspect-[16/10] overflow-hidden">
-                        <Image
-                          src={vehicle.image}
-                          alt={vehicle.name}
-                          fill
-                          className="object-cover group-hover:scale-110 transition-transform duration-700"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-midnight/80 via-transparent to-transparent opacity-60"></div>
-                        <div className="absolute top-6 left-6">
-                          <span className="bg-midnight/60 backdrop-blur-md border border-border text-foreground text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-full">
-                            {vehicle.category}
-                          </span>
+                    {/* Image */}
+                    <div className="relative aspect-[16/10] overflow-hidden">
+                      <Image
+                        src={vehicle.image}
+                        alt={vehicle.name}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                      <div className="absolute top-4 left-4 px-3 py-1 rounded bg-background border border-[#e2dacd] text-gold text-[10px] font-semibold uppercase tracking-[0.1em]">
+                        {vehicle.category}
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-6 flex flex-col flex-grow gap-4">
+                      <div className="flex items-center gap-6 text-text-muted text-sm">
+                        <div className="flex items-center gap-2">
+                          <Users size={16} weight="light" className="text-accent" />
+                          <span>{vehicle.capacity} {t("pax")}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Bag size={16} weight="light" className="text-accent" />
+                          <span>{t("luggageIncluded")}</span>
                         </div>
                       </div>
 
-                      {/* Content */}
-                      <div className="p-8 flex flex-col flex-grow">
-                        <div className="flex items-center justify-between mb-4 text-gold/80">
-                          <div className="flex items-center gap-1.5 text-xs">
-                            <Users size={14} weight="light" />
-                            <span>{vehicle.capacity} {t("pax")}</span>
-                          </div>
-                          <div className="flex items-center gap-1.5 text-xs">
-                            <Bag size={14} weight="light" />
-                            <span>{t("luggageIncluded")}</span>
-                          </div>
-                        </div>
+                      <h3 className="text-xl font-semibold text-foreground">
+                        {vehicle.name}
+                      </h3>
 
-                        <h3 className="font-serif text-3xl mb-4 text-foreground group-hover:text-gold transition-colors">
-                          {vehicle.name}
-                        </h3>
+                      <p className="text-sm text-text-muted leading-relaxed flex-grow">
+                        {vehicle.description}
+                      </p>
 
-                        <p className="text-sm text-foreground/50 leading-relaxed mb-8 flex-grow">
-                          {vehicle.description}
-                        </p>
-
-                        <div className="flex flex-wrap gap-2 mb-8">
+                      {vehicle.features.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
                           {vehicle.features.slice(0, 3).map((feat: string, fi: number) => (
-                            <span key={fi} className="text-[10px] bg-surface-2/50 border border-border px-2.5 py-1 rounded-md text-foreground/70">
+                            <span key={fi} className="text-[10px] uppercase tracking-wide border border-[#e2dacd] px-2.5 py-1 rounded text-text-muted">
                               {feat}
                             </span>
                           ))}
                         </div>
+                      )}
 
-                        <Link
-                          href="/reservation"
-                          className="w-full flex items-center justify-center gap-2 py-4 border border-gold text-gold font-bold tracking-widest uppercase text-xs rounded-xl hover:bg-gold hover:text-midnight transition-all duration-300"
-                        >
-                          {t("bookVehicle")}
-                          <CaretRight size={14} weight="light" />
-                        </Link>
-                      </div>
+                      <Link
+                        href="/reservation"
+                        className="mt-2 w-full inline-flex items-center justify-center gap-2 bg-accent hover:bg-accent-hover text-white font-semibold rounded px-6 py-3 text-sm transition-colors"
+                      >
+                        {t("bookVehicle")}
+                        <CaretRight size={16} weight="bold" />
+                      </Link>
                     </div>
                   </motion.div>
                 ))}
@@ -225,33 +201,29 @@ export default function FleetClient() {
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="py-32 px-4 relative overflow-hidden">
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[300px] bg-gold/5 blur-[150px] -z-10"></div>
-
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="font-serif text-4xl md:text-6xl mb-12 leading-tight text-foreground">
-              {t("cta.titleLine1")} <br />
-              <span className="text-gold italic">{t("cta.titleLine2")}</span>
-            </h2>
-
-            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+        {/* Closing CTA band */}
+        <section className="bg-accent">
+          <div className="max-w-7xl mx-auto px-6 py-10 md:py-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <p className="text-xl md:text-2xl font-semibold text-white">
+              {t("cta.titleLine1")} {t("cta.titleLine2")}
+            </p>
+            <div className="flex flex-wrap gap-3 shrink-0">
               <Link
                 href="/reservation"
-                className="px-10 py-5 bg-gold text-[#1A1A1A] font-bold tracking-widest uppercase rounded-full hover:scale-105 transition-all text-sm"
+                className="inline-flex items-center justify-center bg-background text-foreground px-6 py-3.5 rounded font-semibold text-sm hover:opacity-90 transition-opacity"
               >
                 {t("cta.bookNow")}
               </Link>
               <a
                 href="tel:+221784651302"
-                className="px-10 py-5 border border-border text-foreground font-bold tracking-widest uppercase rounded-full hover:bg-surface-2/50 transition-all text-sm"
+                className="inline-flex items-center justify-center border border-white/40 text-white px-6 py-3.5 rounded font-semibold text-sm hover:bg-white/10 transition-colors"
               >
                 {t("cta.fleetAdvisor")}
               </a>
             </div>
           </div>
         </section>
-      </main>
+      </div>
 
       <Footer />
     </div>

@@ -140,8 +140,8 @@ export default function ResetPasswordClient() {
         <div className="auth-enter w-full max-w-[420px]">
           {/* Logo mobile */}
           <Link href="/" className="flex items-center gap-2.5 mb-10 lg:hidden text-center justify-center transition-opacity hover:opacity-80">
-            <div className="w-8 h-8 bg-white/10 border border-white/10 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">NX</span>
+            <div className="w-8 h-8 bg-[#12100E] border border-border rounded-lg flex items-center justify-center">
+              <span className="text-[#F7F3EC] font-bold text-sm">NX</span>
             </div>
             <p className="text-base font-semibold" style={{ color: 'var(--color-text-primary)' }}>
               Navette <span style={{ color: 'var(--color-gold)' }}>Xpress</span>
@@ -197,7 +197,7 @@ export default function ResetPasswordClient() {
                       className="w-full pl-11 pr-4 py-3.5 rounded-xl text-sm outline-none transition-all duration-200"
                       style={{
                         backgroundColor: 'var(--color-surface)',
-                        border: '1px solid rgba(255,255,255,0.08)',
+                        border: '1px solid var(--color-border)',
                         color: 'var(--color-text-primary)',
                       }}
                       placeholder={t('resetPassword.emailPlaceholder')}
