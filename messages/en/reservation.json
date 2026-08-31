@@ -42,6 +42,7 @@
     "vehicleTypeLabel": "Vehicle type",
     "vehicleTypeBerline": "Sedan",
     "vehicleTypeSuv": "SUV",
+    "zoneLabel": "Specify the area",
     "mapPlaceholder": "Route map",
     "notDefined": "Not set",
     "requestSummary": {

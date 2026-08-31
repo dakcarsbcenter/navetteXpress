@@ -42,6 +42,7 @@
     "vehicleTypeLabel": "Type de véhicule",
     "vehicleTypeBerline": "Berline",
     "vehicleTypeSuv": "SUV",
+    "zoneLabel": "Précisez le secteur",
     "mapPlaceholder": "Carte du trajet",
     "notDefined": "Non défini",
     "requestSummary": {

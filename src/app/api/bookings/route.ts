@@ -81,6 +81,7 @@ export async function POST(request: NextRequest) {
       flightNumber,
       airline,
       vehicleType,
+      zoneLabel,
       // Champs pour utilisateurs connectés
       userId
     } = body;
@@ -160,7 +161,7 @@ export async function POST(request: NextRequest) {
         price: '0', // Prix initial à 0, sera fixé par l'admin
         flightNumber: flightNumber || null,
         airline: airline || null,
-        notes: `Service: ${serviceType}\nVéhicule souhaité: ${requestedVehicleType === 'suv' ? 'SUV' : 'Berline'}\nContact: ${contactPhone}${contactEmail ? ` - ${contactEmail}` : ''}\nServices additionnels: ${additionalServices?.join(', ') || 'Aucun'}\nDemandes spéciales: ${specialRequests || 'Aucune'}`,
+        notes: `Service: ${serviceType}\nVéhicule souhaité: ${requestedVehicleType === 'suv' ? 'SUV' : 'Berline'}${zoneLabel ? `\nSecteur: ${zoneLabel}` : ''}\nContact: ${contactPhone}${contactEmail ? ` - ${contactEmail}` : ''}\nServices additionnels: ${additionalServices?.join(', ') || 'Aucun'}\nDemandes spéciales: ${specialRequests || 'Aucune'}`,
         updatedAt: new Date()
       })
       .returning();

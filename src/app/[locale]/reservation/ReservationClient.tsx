@@ -219,6 +219,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
   const [locations, setLocations] = useState<LocationOption[]>([]);
   const [dbServices, setDbServices] = useState<any[]>([]);
   const [pricingSegments, setPricingSegments] = useState<PricingSegment[]>([]);
+  const [selectedZoneSegmentId, setSelectedZoneSegmentId] = useState<number | null>(null);
 
   // Fetch services from DB
   useEffect(() => {
@@ -352,6 +353,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
           luggage: formData.luggage === 11 ? parseInt(formData.customLuggage) || 11 : formData.luggage,
           duration: formData.duration,
           vehicleType: formData.vehicleType,
+          zoneLabel: zoneOptions.length > 1 ? (zoneOptions.find((z) => z.segment.id === selectedZoneSegmentId)?.label ?? null) : null,
           additionalServices: formData.additionalServices,
           specialRequests: formData.specialRequests,
           contactPhone: formData.contactPhone,
@@ -437,19 +439,47 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
     });
   })();
 
-  const estimatedPrice = matchedPricingSegments.length > 0 ? {
-    minBerline: Math.min(...matchedPricingSegments.map((s) => s.berline)),
-    maxBerline: Math.max(...matchedPricingSegments.map((s) => s.berline)),
-    minSuv: Math.min(...matchedPricingSegments.map((s) => s.suv)),
-    maxSuv: Math.max(...matchedPricingSegments.map((s) => s.suv)),
-  } : null;
+  // Certains couples départ/arrivée (ex: DAKAR<->AIBD) ont plusieurs tarifs actifs
+  // paramétrés en admin (un par secteur : "Dakar Plateau", "Almadies / Ngor"...). On
+  // dérive dynamiquement, depuis le libellé "route" de chaque segment (format "A → B"),
+  // le nom du secteur qui varie d'un segment à l'autre — pour proposer un choix précis
+  // au client plutôt qu'une fourchette de prix.
+  const zoneOptions = (() => {
+    if (matchedPricingSegments.length <= 1) return [];
+    const pickupNode = getRouteNodeFromName(formData.pickupAddress);
+    const destinationNode = getRouteNodeFromName(formData.destinationAddress);
+    const legs = matchedPricingSegments.map((seg) => {
+      const [legA, legB] = seg.route.split('→').map((s) => s.trim());
+      const forward = seg.departNode === pickupNode && seg.arriveeNode === destinationNode;
+      return { segment: seg, pickupLeg: forward ? legA : legB, destinationLeg: forward ? legB : legA };
+    });
+    const pickupLegsDiffer = new Set(legs.map((l) => l.pickupLeg)).size > 1;
+    return legs.map((l) => ({ segment: l.segment, label: pickupLegsDiffer ? l.pickupLeg : l.destinationLeg }));
+  })();
 
-  // Tarif affiché selon le type de véhicule choisi par le client (Berline par défaut)
-  const selectedEstimatedPrice = estimatedPrice ? (
-    formData.vehicleType === 'suv'
-      ? { min: estimatedPrice.minSuv, max: estimatedPrice.maxSuv }
-      : { min: estimatedPrice.minBerline, max: estimatedPrice.maxBerline }
-  ) : null;
+  // Segment de tarif retenu pour l'affichage : le seul match s'il n'y en a qu'un,
+  // sinon celui correspondant au secteur choisi par le client (défaut: le premier).
+  const activeSegment: PricingSegment | null = matchedPricingSegments.length === 0
+    ? null
+    : matchedPricingSegments.length === 1
+      ? matchedPricingSegments[0]
+      : (zoneOptions.find((z) => z.segment.id === selectedZoneSegmentId)?.segment ?? matchedPricingSegments[0]);
+
+  // Tarif exact affiché selon le type de véhicule choisi par le client (Berline par défaut)
+  const selectedPrice = activeSegment ? (formData.vehicleType === 'suv' ? activeSegment.suv : activeSegment.berline) : null;
+
+  // Garde la sélection de secteur valide (et en pose une par défaut) quand le couple
+  // départ/arrivée matche plusieurs tarifs — se réinitialise si le trajet change.
+  useEffect(() => {
+    if (zoneOptions.length === 0) {
+      if (selectedZoneSegmentId !== null) setSelectedZoneSegmentId(null);
+      return;
+    }
+    if (!zoneOptions.some((z) => z.segment.id === selectedZoneSegmentId)) {
+      setSelectedZoneSegmentId(zoneOptions[0].segment.id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [zoneOptions.map((z) => z.segment.id).join(',')]);
 
   // Transfert impliquant l'aéroport AIBD : on propose la saisie du numéro de
   // vol pour permettre le suivi en direct côté client une fois la demande créée.
@@ -737,6 +767,31 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                           })}
                         </div>
                       </div>
+
+                      {/* Secteur — uniquement si plusieurs tarifs actifs couvrent ce couple départ/arrivée */}
+                      {zoneOptions.length > 1 && (
+                        <div className="space-y-2">
+                          <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block">{t('step1.zoneLabel')}</span>
+                          <div className="flex flex-wrap gap-2">
+                            {zoneOptions.map(({ segment, label }) => {
+                              const selected = selectedZoneSegmentId === segment.id;
+                              return (
+                                <button
+                                  key={segment.id}
+                                  type="button"
+                                  onClick={() => setSelectedZoneSegmentId(segment.id)}
+                                  className={`px-4 py-2.5 rounded text-sm font-medium font-[family-name:var(--font-ibm-plex-mono)] transition-colors ${selected
+                                    ? 'bg-[#12100E] text-white'
+                                    : 'border border-[#c9c3b8] text-[#3d3a35] hover:border-[#12100E]'
+                                    }`}
+                                >
+                                  {label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     {/* Estimation */}
@@ -753,16 +808,14 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                           <div className="flex justify-between"><span>{t('step1.requestSummary.wait')}</span><span>{t('step1.requestSummary.included')}</span></div>
                           <div className="flex justify-between">
                             <span>{t('step1.requestSummary.rate')}</span>
-                            <span className={selectedEstimatedPrice ? "text-white" : undefined}>
-                              {selectedEstimatedPrice
-                                ? (selectedEstimatedPrice.min === selectedEstimatedPrice.max
-                                  ? `${selectedEstimatedPrice.min.toLocaleString('fr-FR')} FCFA`
-                                  : `${selectedEstimatedPrice.min.toLocaleString('fr-FR')} – ${selectedEstimatedPrice.max.toLocaleString('fr-FR')} FCFA`)
+                            <span className={selectedPrice !== null ? "text-white" : undefined}>
+                              {selectedPrice !== null
+                                ? `${selectedPrice.toLocaleString('fr-FR')} FCFA`
                                 : t('step1.requestSummary.onQuote')}
                             </span>
                           </div>
                         </div>
-                        {selectedEstimatedPrice && (
+                        {selectedPrice !== null && (
                           <p className="text-[10px] text-[#6E6A63] leading-relaxed">
                             {t('step1.requestSummary.estimateNote', { vehicle: formData.vehicleType === 'suv' ? t('step1.vehicleTypeSuv') : t('step1.vehicleTypeBerline') })}
                           </p>
@@ -948,10 +1001,8 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                         <div className="flex justify-between">
                           <span>{t('step3.summary.rate')}</span>
                           <span className="text-foreground">
-                            {selectedEstimatedPrice
-                              ? (selectedEstimatedPrice.min === selectedEstimatedPrice.max
-                                ? `${selectedEstimatedPrice.min.toLocaleString('fr-FR')} FCFA`
-                                : `${selectedEstimatedPrice.min.toLocaleString('fr-FR')} – ${selectedEstimatedPrice.max.toLocaleString('fr-FR')} FCFA`)
+                            {selectedPrice !== null
+                              ? `${selectedPrice.toLocaleString('fr-FR')} FCFA`
                               : t('step3.summary.rateValue')}
                           </span>
                         </div>

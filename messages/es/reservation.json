@@ -42,6 +42,7 @@
     "vehicleTypeLabel": "Tipo de vehículo",
     "vehicleTypeBerline": "Sedán",
     "vehicleTypeSuv": "SUV",
+    "zoneLabel": "Especifica la zona",
     "mapPlaceholder": "Mapa del trayecto",
     "notDefined": "Sin definir",
     "requestSummary": {
