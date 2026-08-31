@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     }
     
     const body = await request.json();
-    const { 
+    const {
       serviceType,
       vehicle,
       date,
@@ -80,9 +80,12 @@ export async function POST(request: NextRequest) {
       clientEmail: fallbackClientEmail,
       flightNumber,
       airline,
+      vehicleType,
       // Champs pour utilisateurs connectés
       userId
     } = body;
+
+    const requestedVehicleType = vehicleType === 'suv' ? 'suv' : 'berline';
 
     // Validation des champs obligatoires
     if (!pickupAddress || !destinationAddress || !date || !time || !contactPhone) {
@@ -153,10 +156,11 @@ export async function POST(request: NextRequest) {
         duration: duration ? duration.toString() : '2',
         driverId: null, // Sera assigné plus tard par l'admin
         vehicleId: null, // Sera assigné plus tard par l'admin
+        requestedVehicleType,
         price: '0', // Prix initial à 0, sera fixé par l'admin
         flightNumber: flightNumber || null,
         airline: airline || null,
-        notes: `Service: ${serviceType}\nContact: ${contactPhone}${contactEmail ? ` - ${contactEmail}` : ''}\nServices additionnels: ${additionalServices?.join(', ') || 'Aucun'}\nDemandes spéciales: ${specialRequests || 'Aucune'}`,
+        notes: `Service: ${serviceType}\nVéhicule souhaité: ${requestedVehicleType === 'suv' ? 'SUV' : 'Berline'}\nContact: ${contactPhone}${contactEmail ? ` - ${contactEmail}` : ''}\nServices additionnels: ${additionalServices?.join(', ') || 'Aucun'}\nDemandes spéciales: ${specialRequests || 'Aucune'}`,
         updatedAt: new Date()
       })
       .returning();

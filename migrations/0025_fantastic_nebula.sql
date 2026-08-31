@@ -1,0 +1,2 @@
+CREATE TYPE "public"."requested_vehicle_type" AS ENUM('berline', 'suv');--> statement-breakpoint
+ALTER TABLE "bookings" ADD COLUMN "requested_vehicle_type" "requested_vehicle_type" DEFAULT 'berline' NOT NULL;

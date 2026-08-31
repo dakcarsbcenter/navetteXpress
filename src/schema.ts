@@ -5,6 +5,7 @@ import { sql } from 'drizzle-orm';
 export const userRoleEnum = pgEnum('user_role', ['admin', 'manager', 'driver', 'customer']);
 export const bookingStatusEnum = pgEnum('booking_status', ['pending', 'assigned', 'approved', 'rejected', 'confirmed', 'in_progress', 'completed', 'cancelled']);
 export const vehicleTypeEnum = pgEnum('vehicle_type', ['sedan', 'suv', 'van', 'luxury', 'bus']);
+export const requestedVehicleTypeEnum = pgEnum('requested_vehicle_type', ['berline', 'suv']); // Type de véhicule choisi par le client en réservation (tarif berline/suv de pricing_segments)
 export const quoteStatusEnum = pgEnum('quote_status', ['pending', 'in_progress', 'sent', 'accepted', 'rejected', 'expired']);
 export const adTypeEnum = pgEnum('ad_type', [
   'banner_image',    // Bannière image statique (JPG/PNG/WebP)
@@ -151,6 +152,7 @@ export const bookingsTable = pgTable('bookings', {
   status: bookingStatusEnum('status').notNull().default('pending'),
   driverId: text('driver_id').references(() => users.id, { onDelete: 'set null' }),
   vehicleId: integer('vehicle_id').references(() => vehiclesTable.id, { onDelete: 'set null' }),
+  requestedVehicleType: requestedVehicleTypeEnum('requested_vehicle_type').notNull().default('berline'), // Choix du client (berline/suv) fait en réservation, sert au calcul du tarif indicatif
   passengers: integer('passengers').notNull().default(1),
   luggage: integer('luggage').notNull().default(1),
   duration: decimal('duration', { precision: 4, scale: 2 }).default('2'),

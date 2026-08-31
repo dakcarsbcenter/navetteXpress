@@ -39,6 +39,9 @@
     "invalidCombination": "Combinaison non autorisée. Choisissez DAKAR vers AIBD, MBOUR, SALY, NGAPAROU, THIES, NIANING, POINTE SARRENE, SOMONE (et inverse), ou AIBD vers MBOUR, SALY, SOMONE (et inverse).",
     "datetimeLabel": "Date & heure",
     "passengersLabel": "Passagers",
+    "vehicleTypeLabel": "Type de véhicule",
+    "vehicleTypeBerline": "Berline",
+    "vehicleTypeSuv": "SUV",
     "mapPlaceholder": "Carte du trajet",
     "notDefined": "Non défini",
     "requestSummary": {
@@ -48,8 +51,7 @@
       "wait": "ATTENTE 60 MIN",
       "rate": "TARIF",
       "onQuote": "SUR DEVIS",
-      "suvRate": "TARIF SUV",
-      "estimateNote": "Prix indicatif pour une berline. L'équipe confirme le tarif exact avant la course."
+      "estimateNote": "Prix indicatif pour un véhicule {vehicle}. L'équipe confirme le tarif exact avant la course."
     }
   },
   "step2": {
@@ -83,7 +85,6 @@
       "luggageUnit": "{count, plural, one {bagage} other {bagages}}",
       "service": "SERVICE",
       "vehicle": "VÉHICULE",
-      "vehicleValue": "ATTRIBUÉ",
       "rate": "TARIF",
       "rateValue": "SUR DEVIS"
     }

@@ -39,6 +39,9 @@
     "invalidCombination": "This combination isn't available. Choose DAKAR to/from AIBD, MBOUR, SALY, NGAPAROU, THIES, NIANING, POINTE SARRENE, SOMONE, or AIBD to/from MBOUR, SALY, SOMONE.",
     "datetimeLabel": "Date & time",
     "passengersLabel": "Passengers",
+    "vehicleTypeLabel": "Vehicle type",
+    "vehicleTypeBerline": "Sedan",
+    "vehicleTypeSuv": "SUV",
     "mapPlaceholder": "Route map",
     "notDefined": "Not set",
     "requestSummary": {
@@ -48,8 +51,7 @@
       "wait": "60 MIN WAITING",
       "rate": "RATE",
       "onQuote": "ON REQUEST",
-      "suvRate": "SUV RATE",
-      "estimateNote": "Indicative price for a sedan. Our team confirms the exact fare before the trip."
+      "estimateNote": "Indicative price for a {vehicle}. Our team confirms the exact fare before the trip."
     }
   },
   "step2": {
@@ -83,7 +85,6 @@
       "luggageUnit": "{count, plural, one {bag} other {bags}}",
       "service": "SERVICE",
       "vehicle": "VEHICLE",
-      "vehicleValue": "ASSIGNED",
       "rate": "RATE",
       "rateValue": "ON REQUEST"
     }

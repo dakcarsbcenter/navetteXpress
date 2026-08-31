@@ -158,6 +158,7 @@ interface FormData {
   luggage: number;
   customLuggage: string;
   duration: number;
+  vehicleType: "berline" | "suv";
   additionalServices: string[];
   specialRequests: string;
   contactPhone: string;
@@ -201,6 +202,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
     luggage: 1,
     customLuggage: "",
     duration: 2,
+    vehicleType: "berline",
     additionalServices: [],
     specialRequests: "",
     contactPhone: "",
@@ -349,6 +351,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
           passengers: formData.passengers === 11 ? parseInt(formData.customPassengers) || 11 : formData.passengers,
           luggage: formData.luggage === 11 ? parseInt(formData.customLuggage) || 11 : formData.luggage,
           duration: formData.duration,
+          vehicleType: formData.vehicleType,
           additionalServices: formData.additionalServices,
           specialRequests: formData.specialRequests,
           contactPhone: formData.contactPhone,
@@ -440,6 +443,13 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
     minSuv: Math.min(...matchedPricingSegments.map((s) => s.suv)),
     maxSuv: Math.max(...matchedPricingSegments.map((s) => s.suv)),
   } : null;
+
+  // Tarif affiché selon le type de véhicule choisi par le client (Berline par défaut)
+  const selectedEstimatedPrice = estimatedPrice ? (
+    formData.vehicleType === 'suv'
+      ? { min: estimatedPrice.minSuv, max: estimatedPrice.maxSuv }
+      : { min: estimatedPrice.minBerline, max: estimatedPrice.maxBerline }
+  ) : null;
 
   // Transfert impliquant l'aéroport AIBD : on propose la saisie du numéro de
   // vol pour permettre le suivi en direct côté client une fois la demande créée.
@@ -704,6 +714,29 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                           </div>
                         </div>
                       </div>
+
+                      {/* Type de véhicule */}
+                      <div className="space-y-2">
+                        <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block">{t('step1.vehicleTypeLabel')}</span>
+                        <div className="flex flex-wrap gap-2">
+                          {(['berline', 'suv'] as const).map((type) => {
+                            const selected = formData.vehicleType === type;
+                            return (
+                              <button
+                                key={type}
+                                type="button"
+                                onClick={() => handleInputChange('vehicleType', type)}
+                                className={`px-4 py-2.5 rounded text-sm font-medium font-[family-name:var(--font-ibm-plex-mono)] transition-colors ${selected
+                                  ? 'bg-[#12100E] text-white'
+                                  : 'border border-[#c9c3b8] text-[#3d3a35] hover:border-[#12100E]'
+                                  }`}
+                              >
+                                {type === 'berline' ? t('step1.vehicleTypeBerline') : t('step1.vehicleTypeSuv')}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
                     </div>
 
                     {/* Estimation */}
@@ -720,28 +753,18 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                           <div className="flex justify-between"><span>{t('step1.requestSummary.wait')}</span><span>{t('step1.requestSummary.included')}</span></div>
                           <div className="flex justify-between">
                             <span>{t('step1.requestSummary.rate')}</span>
-                            <span className={estimatedPrice ? "text-white" : undefined}>
-                              {estimatedPrice
-                                ? (estimatedPrice.minBerline === estimatedPrice.maxBerline
-                                  ? `${estimatedPrice.minBerline.toLocaleString('fr-FR')} FCFA`
-                                  : `${estimatedPrice.minBerline.toLocaleString('fr-FR')} – ${estimatedPrice.maxBerline.toLocaleString('fr-FR')} FCFA`)
+                            <span className={selectedEstimatedPrice ? "text-white" : undefined}>
+                              {selectedEstimatedPrice
+                                ? (selectedEstimatedPrice.min === selectedEstimatedPrice.max
+                                  ? `${selectedEstimatedPrice.min.toLocaleString('fr-FR')} FCFA`
+                                  : `${selectedEstimatedPrice.min.toLocaleString('fr-FR')} – ${selectedEstimatedPrice.max.toLocaleString('fr-FR')} FCFA`)
                                 : t('step1.requestSummary.onQuote')}
                             </span>
                           </div>
-                          {estimatedPrice && (
-                            <div className="flex justify-between text-[#6E6A63]">
-                              <span>{t('step1.requestSummary.suvRate')}</span>
-                              <span>
-                                {estimatedPrice.minSuv === estimatedPrice.maxSuv
-                                  ? `${estimatedPrice.minSuv.toLocaleString('fr-FR')} FCFA`
-                                  : `${estimatedPrice.minSuv.toLocaleString('fr-FR')} – ${estimatedPrice.maxSuv.toLocaleString('fr-FR')} FCFA`}
-                              </span>
-                            </div>
-                          )}
                         </div>
-                        {estimatedPrice && (
+                        {selectedEstimatedPrice && (
                           <p className="text-[10px] text-[#6E6A63] leading-relaxed">
-                            {t('step1.requestSummary.estimateNote')}
+                            {t('step1.requestSummary.estimateNote', { vehicle: formData.vehicleType === 'suv' ? t('step1.vehicleTypeSuv') : t('step1.vehicleTypeBerline') })}
                           </p>
                         )}
                       </div>
@@ -921,8 +944,17 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                       <div className="h-px bg-border" />
                       <div className="flex flex-col gap-1.5 text-[12px] font-[family-name:var(--font-ibm-plex-mono)] text-[#6E6A63]">
                         <div className="flex justify-between"><span>{t('step3.summary.service')}</span><span className="text-foreground">{selectedServiceName}</span></div>
-                        <div className="flex justify-between"><span>{t('step3.summary.vehicle')}</span><span className="text-foreground">{t('step3.summary.vehicleValue')}</span></div>
-                        <div className="flex justify-between"><span>{t('step3.summary.rate')}</span><span className="text-foreground">{t('step3.summary.rateValue')}</span></div>
+                        <div className="flex justify-between"><span>{t('step3.summary.vehicle')}</span><span className="text-foreground">{formData.vehicleType === 'suv' ? t('step1.vehicleTypeSuv') : t('step1.vehicleTypeBerline')}</span></div>
+                        <div className="flex justify-between">
+                          <span>{t('step3.summary.rate')}</span>
+                          <span className="text-foreground">
+                            {selectedEstimatedPrice
+                              ? (selectedEstimatedPrice.min === selectedEstimatedPrice.max
+                                ? `${selectedEstimatedPrice.min.toLocaleString('fr-FR')} FCFA`
+                                : `${selectedEstimatedPrice.min.toLocaleString('fr-FR')} – ${selectedEstimatedPrice.max.toLocaleString('fr-FR')} FCFA`)
+                              : t('step3.summary.rateValue')}
+                          </span>
+                        </div>
                       </div>
                       {formData.specialRequests && (
                         <>
@@ -1018,6 +1050,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                   luggage: 1,
                   customLuggage: "",
                   duration: 2,
+                  vehicleType: "berline",
                   additionalServices: [],
                   specialRequests: "",
                   contactPhone: "",

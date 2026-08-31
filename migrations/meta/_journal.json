@@ -176,6 +176,13 @@
       "when": 1788133314353,
       "tag": "0024_thick_calypso",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1788182285333,
+      "tag": "0025_fantastic_nebula",
+      "breakpoints": true
     }
   ]
 }
