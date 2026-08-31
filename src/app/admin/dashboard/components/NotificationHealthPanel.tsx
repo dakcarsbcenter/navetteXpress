@@ -42,6 +42,15 @@ export function NotificationHealthPanel() {
     load()
   }, [load])
 
+  const dismiss = useCallback(async (id: number) => {
+    setFailed((current) => current.filter((job) => job.id !== id))
+    try {
+      await fetch(`/api/admin/notification-queue?id=${id}`, { method: "DELETE" })
+    } catch (error) {
+      console.error("Erreur lors de la suppression du job de notification:", error)
+    }
+  }, [])
+
   if (loading) return null
 
   return (
@@ -63,9 +72,19 @@ export function NotificationHealthPanel() {
             <div key={job.id} style={{ display: "flex", flexDirection: "column", gap: "4px", padding: "11px 14px", background: "#FFFFFF" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px" }}>
                 <span style={{ fontSize: "13px", fontWeight: 600 }}>{CHANNEL_LABEL[job.channel]} — {job.handler.split(".")[1] || job.handler}</span>
-                <span style={{ fontFamily: "var(--font-mono)", fontSize: "9.5px", letterSpacing: "0.08em", color: "#B8493C", flexShrink: 0 }}>
-                  {t("attempts", { count: job.attempts })}
-                </span>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "9.5px", letterSpacing: "0.08em", color: "#B8493C" }}>
+                    {t("attempts", { count: job.attempts })}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => dismiss(job.id)}
+                    title={t("dismiss")}
+                    style={{ background: "none", border: "none", cursor: "pointer", color: "#6E6A63", fontSize: "13px", lineHeight: 1, padding: "2px 4px" }}
+                  >
+                    ✕
+                  </button>
+                </div>
               </div>
               {job.lastError && (
                 <span style={{ fontSize: "12px", color: "#6E6A63", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{job.lastError}</span>

@@ -24,8 +24,15 @@ interface DriverInfo {
   phone: string | null;
 }
 
-function formatDateTime(date: Date): string {
-  return `${date.toLocaleDateString('fr-FR')} ${date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
+/**
+ * `date` peut arriver en string ISO (et non en Date) quand le job a transité
+ * par la file de retry : le payload est sérialisé en JSON pour le stockage
+ * (voir sendWithRetry dans notification-queue.ts), ce qui ne préserve pas
+ * le type Date au round-trip JSON.parse.
+ */
+function formatDateTime(date: Date | string): string {
+  const d = date instanceof Date ? date : new Date(date);
+  return `${d.toLocaleDateString('fr-FR')} ${d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
 }
 
 function formatLuggage(count: number): string {

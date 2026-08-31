@@ -145,7 +145,8 @@
       "title": "Notificaciones fallidas",
       "empty": "Ninguna notificación fallida.",
       "retrying": "{count, plural, one {# en reintento} other {# en reintento}}",
-      "attempts": "{count, plural, one {# intento} other {# intentos}}"
+      "attempts": "{count, plural, one {# intento} other {# intentos}}",
+      "dismiss": "Descartar"
     }
   }
 }

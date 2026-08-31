@@ -145,7 +145,8 @@
       "title": "Failed notifications",
       "empty": "No failed notifications.",
       "retrying": "{count, plural, one {# retrying} other {# retrying}}",
-      "attempts": "{count, plural, one {# attempt} other {# attempts}}"
+      "attempts": "{count, plural, one {# attempt} other {# attempts}}",
+      "dismiss": "Dismiss"
     }
   }
 }

@@ -8,24 +8,30 @@ import type { Session } from "next-auth";
 import { authOptions } from '@/lib/auth'
 import { db } from '@/db'
 import { users, notificationQueueTable } from '@/schema'
-import { eq, desc, count } from 'drizzle-orm'
+import { and, eq, desc, count } from 'drizzle-orm'
+
+async function requireAdmin(request: NextRequest) {
+  const session = (await getServerSession(authOptions)) as Session | null;
+  if (!session?.user?.email) {
+    return { error: NextResponse.json({ success: false, message: 'Non authentifié' }, { status: 401 }) };
+  }
+
+  const adminUser = await db.select()
+    .from(users)
+    .where(eq(users.email, session.user.email))
+    .limit(1)
+
+  if (!adminUser.length || (adminUser[0].role !== 'admin' && adminUser[0].role !== 'manager')) {
+    return { error: NextResponse.json({ success: false, message: 'Accès non autorisé' }, { status: 403 }) };
+  }
+
+  return { error: null };
+}
 
 export async function GET(request: NextRequest) {
   try {
-    const session = (await getServerSession(authOptions)) as Session | null;
-
-    if (!session?.user?.email) {
-      return NextResponse.json({ success: false, message: 'Non authentifié' }, { status: 401 })
-    }
-
-    const adminUser = await db.select()
-      .from(users)
-      .where(eq(users.email, session.user.email))
-      .limit(1)
-
-    if (!adminUser.length || (adminUser[0].role !== 'admin' && adminUser[0].role !== 'manager')) {
-      return NextResponse.json({ success: false, message: 'Accès non autorisé' }, { status: 403 })
-    }
+    const { error } = await requireAdmin(request);
+    if (error) return error;
 
     const failed = await db.select({
       id: notificationQueueTable.id,
@@ -60,6 +66,27 @@ export async function GET(request: NextRequest) {
     })
   } catch (error) {
     console.error('❌ [ADMIN] Erreur lors de la récupération de la file de notifications:', error)
+    return NextResponse.json({ success: false, message: 'Erreur serveur' }, { status: 500 })
+  }
+}
+
+/** Écarte un job définitivement échoué (ex: notification abandonnée de l'ancien canal OpenWA) de la liste. */
+export async function DELETE(request: NextRequest) {
+  try {
+    const { error } = await requireAdmin(request);
+    if (error) return error;
+
+    const id = Number(request.nextUrl.searchParams.get('id'));
+    if (!id) {
+      return NextResponse.json({ success: false, message: 'Paramètre id manquant' }, { status: 400 })
+    }
+
+    await db.delete(notificationQueueTable)
+      .where(and(eq(notificationQueueTable.id, id), eq(notificationQueueTable.status, 'failed')))
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('❌ [ADMIN] Erreur lors de la suppression du job de notification:', error)
     return NextResponse.json({ success: false, message: 'Erreur serveur' }, { status: 500 })
   }
 }

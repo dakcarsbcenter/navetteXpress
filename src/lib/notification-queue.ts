@@ -180,6 +180,20 @@ function assertSuccess(result: unknown) {
 }
 
 /**
+ * Les fonctions resend-mailer/resend-email font `throw error` avec l'objet
+ * d'erreur brut du SDK Resend ({name, message}, pas une instance Error) —
+ * error instanceof Error est alors faux et String(error) donne "[object
+ * Object]". On récupère le message texte si l'objet en expose un.
+ */
+function errorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  if (error && typeof error === 'object' && 'message' in error && typeof (error as { message: unknown }).message === 'string') {
+    return (error as { message: string }).message;
+  }
+  return String(error);
+}
+
+/**
  * Tente un envoi immédiat. En cas d'échec, met le job en file pour retry
  * au lieu de le perdre. Ne lève jamais d'exception.
  */
@@ -199,7 +213,7 @@ export async function sendWithRetry(
     assertSuccess(result);
     return { success: true };
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
+    const message = errorMessage(error);
     console.error(`❌ [Queue] Échec envoi immédiat (${handler}), mise en file d'attente:`, message);
 
     try {
@@ -251,7 +265,7 @@ export async function processNotificationQueueOnce(): Promise<{ processed: numbe
       sent++;
     } catch (error) {
       const attempts = job.attempts + 1;
-      const message = error instanceof Error ? error.message : String(error);
+      const message = errorMessage(error);
 
       if (attempts >= job.maxAttempts) {
         await db
