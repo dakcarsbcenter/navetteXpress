@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Navigation } from "@/components/navigation";
@@ -51,14 +52,16 @@ export default function DiasporaClient() {
             </div>
           </div>
 
-          <div
-            className="min-h-[220px] md:min-h-[400px] flex items-end p-5"
-            style={{
-              backgroundImage:
-                "repeating-linear-gradient(45deg, #E8DCC8 0px, #E8DCC8 10px, #E0D2B9 10px, #E0D2B9 20px)",
-            }}
-          >
-            <span className="font-mono text-[11px] tracking-[0.1em] uppercase text-[#6b6154] bg-background px-2.5 py-2 rounded-[3px]">
+          <div className="relative min-h-[220px] md:min-h-[400px] flex items-end p-5 overflow-hidden">
+            <Image
+              src="/images/retrouvailles-aeroport-diaspora.jpg"
+              alt={t("hero.imageCaption")}
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover"
+              priority
+            />
+            <span className="relative font-mono text-[11px] tracking-[0.1em] uppercase text-[#6b6154] bg-background px-2.5 py-2 rounded-[3px]">
               {t("hero.imageCaption")}
             </span>
           </div>
