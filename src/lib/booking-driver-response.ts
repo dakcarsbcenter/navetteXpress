@@ -11,7 +11,7 @@
 
 import { db } from '@/db';
 import { bookingsTable, users } from '@/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, desc } from 'drizzle-orm';
 import { sendWithRetry } from '@/lib/notification-queue';
 import { toGeskapPhone } from '@/lib/whatsapp/geskap';
 
@@ -36,12 +36,19 @@ interface RespondResult {
   booking?: typeof bookingsTable.$inferSelect;
 }
 
-/** Une course en attente de réponse du chauffeur donné (statut 'assigned'). */
+/**
+ * Une course en attente de réponse du chauffeur donné (statut 'assigned').
+ * Triée par `updatedAt` décroissant — l'assignation met `updatedAt` à jour
+ * (voir admin/bookings/[id]/assign/route.ts), donc c'est la plus récemment
+ * assignée qui remonte en premier si le chauffeur a plusieurs courses en
+ * attente de confirmation en même temps.
+ */
 export async function findPendingAssignedBooking(driverId: string) {
   const rows = await db
     .select()
     .from(bookingsTable)
     .where(and(eq(bookingsTable.driverId, driverId), eq(bookingsTable.status, 'assigned')))
+    .orderBy(desc(bookingsTable.updatedAt))
     .limit(1);
   return rows[0] ?? null;
 }

@@ -28,7 +28,11 @@ conforme aux CGU de Meta.
 GESKAP_API_KEY=sk_live_...
 GESKAP_API_BASE_URL=https://api-meta.geskap.com   # optionnel, valeur par défaut
 GESKAP_WEBHOOK_SECRET=...
-GESKAP_ADMIN_PHONE=+221...
+GESKAP_ADMIN_PHONE=+221...  # doit être DIFFÉRENT du numéro expéditeur WhatsApp
+                             # Business configuré dans la console Geskap : Meta
+                             # rejette l'envoi d'un template d'un numéro vers
+                             # lui-même ("(#100) Invalid parameter", confirmé
+                             # en test réel le 2026-09-01)
 WHATSAPP_REMINDER_LEAD_MINUTES=60                 # optionnel, défaut 60
 CRON_SECRET=...                                   # partagé avec /api/ads/expire
 ```

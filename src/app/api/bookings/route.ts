@@ -82,6 +82,7 @@ export async function POST(request: NextRequest) {
       airline,
       vehicleType,
       zoneLabel,
+      estimatedPrice,
       // Champs pour utilisateurs connectés
       userId
     } = body;
@@ -136,9 +137,14 @@ export async function POST(request: NextRequest) {
       return total + (servicePrices[serviceId] || 0);
     }, 0) || 0;
 
-    // Le prix est toujours à 0 pour une nouvelle demande
-    // C'est l'admin qui fixera le prix après validation
-    const estimatedPrice = 0;
+    // Si le formulaire de réservation a résolu un tarif indicatif (segment de
+    // tarif configuré en admin pour ce couple départ/arrivée), on le persiste
+    // directement : le client l'a déjà vu avant d'envoyer sa demande. Sinon
+    // (aucun tarif configuré, "SUR DEVIS") on reste à 0 et l'admin le fixera
+    // manuellement, comme avant.
+    const resolvedPrice = typeof estimatedPrice === 'number' && Number.isFinite(estimatedPrice) && estimatedPrice > 0
+      ? estimatedPrice
+      : 0;
 
     // Créer la réservation
     const newBooking = await db
@@ -158,7 +164,7 @@ export async function POST(request: NextRequest) {
         driverId: null, // Sera assigné plus tard par l'admin
         vehicleId: null, // Sera assigné plus tard par l'admin
         requestedVehicleType,
-        price: '0', // Prix initial à 0, sera fixé par l'admin
+        price: resolvedPrice.toString(),
         flightNumber: flightNumber || null,
         airline: airline || null,
         notes: `Service: ${serviceType}\nVéhicule souhaité: ${requestedVehicleType === 'suv' ? 'SUV' : 'Berline'}${zoneLabel ? `\nSecteur: ${zoneLabel}` : ''}\nContact: ${contactPhone}${contactEmail ? ` - ${contactEmail}` : ''}\nServices additionnels: ${additionalServices?.join(', ') || 'Aucun'}\nDemandes spéciales: ${specialRequests || 'Aucune'}`,

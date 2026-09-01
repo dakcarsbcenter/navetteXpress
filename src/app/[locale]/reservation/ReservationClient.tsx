@@ -354,6 +354,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
           duration: formData.duration,
           vehicleType: formData.vehicleType,
           zoneLabel: zoneOptions.length > 1 ? (zoneOptions.find((z) => z.segment.id === selectedZoneSegmentId)?.label ?? null) : null,
+          estimatedPrice: selectedPrice,
           additionalServices: formData.additionalServices,
           specialRequests: formData.specialRequests,
           contactPhone: formData.contactPhone,
