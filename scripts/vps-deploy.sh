@@ -26,6 +26,13 @@ echo "[1/6] Validate compose"
 docker compose -f "$COMPOSE_FILE" config >/dev/null
 
 echo "[2/6] Build images"
+# Les variables NEXT_PUBLIC_* (ex: Cloudinary) sont figées dans le bundle
+# client PENDANT ce build : docker-compose.yml les passe en build-args, donc
+# elles doivent exister dans l'environnement shell ici, pas seulement dans
+# .env.docker (qui n'est lu qu'au runtime via env_file). Voir scripts/deploy.sh.
+set -a
+source .env.docker
+set +a
 docker compose -f "$COMPOSE_FILE" build --pull
 
 echo "[3/6] Start database"
