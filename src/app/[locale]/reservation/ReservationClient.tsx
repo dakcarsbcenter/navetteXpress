@@ -10,13 +10,21 @@ import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { Button } from "@/components/ui/Button";
 import { BookNowIcon } from "@/components/icons/custom-icons";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, CalendarBlank, Clock, Users, Bag, Phone, EnvelopeSimple, ArrowRight, ArrowLeft, CheckCircle, ChatCircle, User, Airplane } from "@phosphor-icons/react";
+import { Users, Bag, Phone, EnvelopeSimple, ArrowRight, ArrowLeft, ChatCircle, User, Airplane } from "@phosphor-icons/react";
 import { serviceTypes, additionalServices, getServiceById } from "@/lib/services";
 import { useRouter } from "@/i18n/navigation";
 import NextLink from "next/link";
 import { type RouteNodeKey, getRouteNodeFromName } from "@/lib/route-nodes";
 
 type LocationOption = { id: string; name: string };
+
+// Service tel que renvoyé par /api/services (nom en une seule langue, contrairement
+// aux ServiceType statiques de @/lib/services qui portent des traductions par locale).
+interface DbServiceOption {
+  id: number;
+  slug: string;
+  name: string;
+}
 
 interface PricingSegment {
   id: number;
@@ -185,7 +193,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [errorModal, setErrorModal] = useState<{ open: boolean; title: string; message: string }>({ open: false, title: '', message: '' });
   const [locations, setLocations] = useState<LocationOption[]>([]);
-  const [dbServices, setDbServices] = useState<any[]>([]);
+  const [dbServices, setDbServices] = useState<DbServiceOption[]>([]);
   const [pricingSegments, setPricingSegments] = useState<PricingSegment[]>([]);
   const [selectedZoneSegmentId, setSelectedZoneSegmentId] = useState<number | null>(null);
 
@@ -573,8 +581,9 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                         <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block">{t('step1.serviceTypeLabel')}</span>
                         <div className="flex flex-wrap gap-2">
                           {(dbServices.length > 0 ? dbServices : serviceTypes).map((service) => {
-                            const id = service.slug || service.id;
+                            const id = 'slug' in service ? service.slug : service.id;
                             const selected = formData.serviceType === id;
+                            const name = 'name' in service ? service.name : (service.translations[locale]?.name ?? service.translations.fr.name);
                             return (
                               <button
                                 key={id}
@@ -585,7 +594,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                                   : 'border border-[#c9c3b8] text-[#3d3a35] hover:border-[#12100E]'
                                   }`}
                               >
-                                {(service as any).name ?? (service as any).translations?.[locale]?.name ?? (service as any).translations?.fr?.name}
+                                {name}
                               </button>
                             );
                           })}
@@ -981,7 +990,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                           <div className="h-px bg-border" />
                           <div className="flex items-start gap-2">
                             <ChatCircle size={14} weight="regular" className="text-[#6E6A63] mt-0.5 shrink-0" />
-                            <p className="text-xs text-[#3d3a35] italic">"{formData.specialRequests}"</p>
+                            <p className="text-xs text-[#3d3a35] italic">&ldquo;{formData.specialRequests}&rdquo;</p>
                           </div>
                         </>
                       )}
