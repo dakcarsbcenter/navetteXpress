@@ -451,6 +451,143 @@ export async function sendNewQuoteRequestEmail(
 }
 
 /**
+ * Envoie un email lors d'une nouvelle candidature chauffeur (/devenir-partenaire) :
+ * accusé de réception au candidat, notification à l'admin.
+ */
+export async function sendNewDriverApplicationEmail(
+  to: string,
+  data: {
+    name: string;
+    phone: string;
+    vehicleBrand: string;
+    vehicleModel: string;
+    vehiclePlateNumber: string;
+  },
+  isAdmin: boolean = false
+) {
+  try {
+    const subject = isAdmin
+      ? `🚗 Nouvelle candidature chauffeur — ${data.name}`
+      : '✅ Candidature reçue — Navette Xpress';
+
+    const title = isAdmin ? '🚗 Nouvelle Candidature Chauffeur' : '✅ Candidature Reçue';
+
+    const { data: sent, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: [to],
+      subject,
+      html: `
+        <!DOCTYPE html>
+        <html>
+          <body style="font-family: Arial, sans-serif; background: #e8f0f8; padding: 20px;">
+            <div style="max-width: 600px; margin: 0 auto; background: white; border: 2px solid #1F5245; border-radius: 8px; overflow: hidden;">
+              <div style="background: #1F5245; padding: 32px 20px; text-align: center;">
+                <h1 style="color: white; margin: 0;">Navette Express</h1>
+              </div>
+              <div style="padding: 32px 24px;">
+                <h2 style="color: #2c3e50; text-align: center;">${title}</h2>
+                <p>Bonjour ${isAdmin ? 'Admin' : `<strong>${data.name}</strong>`},</p>
+                <p>${isAdmin
+                  ? `<strong>${data.name}</strong> vient de candidater pour devenir chauffeur partenaire :`
+                  : 'Nous avons bien reçu votre candidature pour devenir chauffeur partenaire :'}</p>
+                <div style="background: #f8f9fa; border: 2px solid #1F5245; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                  <p><strong>📞 Téléphone / WhatsApp :</strong> ${data.phone}</p>
+                  <p><strong>🚙 Véhicule :</strong> ${data.vehicleBrand} ${data.vehicleModel}</p>
+                  <p><strong>🔢 Immatriculation :</strong> ${data.vehiclePlateNumber}</p>
+                </div>
+                ${!isAdmin ? `
+                  <div style="background: #dbeafe; border: 2px solid #3b82f6; border-radius: 8px; padding: 15px; margin: 20px 0;">
+                    <p style="color: #1e3a8a; margin: 0;">ℹ️ Notre équipe va étudier votre dossier et vous recontacter (permis, assurance, etc.) sous 48 heures ouvrées.</p>
+                  </div>
+                ` : ''}
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="${process.env.NEXT_PUBLIC_APP_URL}/${isAdmin ? 'admin/utilisateurs' : ''}"
+                     style="background: #1F5245; color: white; padding: 14px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+                    ${isAdmin ? '📊 Voir les candidatures' : '🌐 navettexpress.com'}
+                  </a>
+                </div>
+                <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;">
+                <p style="text-align: center; color: #6b7280;">Cordialement,<br><strong>L'équipe NavetteXpress</strong></p>
+              </div>
+            </div>
+          </body>
+        </html>
+      `,
+    });
+
+    if (error) {
+      console.error('❌ Erreur envoi email candidature chauffeur:', error);
+      throw error;
+    }
+
+    console.log('✅ Email candidature chauffeur envoyé:', sent?.id);
+    return sent;
+  } catch (error) {
+    console.error('❌ Erreur:', error);
+    throw error;
+  }
+}
+
+/**
+ * Envoie un email au candidat chauffeur une fois sa candidature traitée (approuvée ou rejetée).
+ */
+export async function sendDriverApplicationStatusEmail(
+  to: string,
+  data: {
+    name: string;
+    status: 'approved' | 'rejected';
+    rejectionReason?: string;
+  }
+) {
+  try {
+    const isApproved = data.status === 'approved';
+    const subject = isApproved
+      ? '🎉 Votre profil chauffeur est validé !'
+      : 'Votre candidature chauffeur';
+    const title = isApproved ? '🎉 Profil Chauffeur Validé' : 'Réponse à votre candidature';
+
+    const { data: sent, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: [to],
+      subject,
+      html: `
+        <!DOCTYPE html>
+        <html>
+          <body style="font-family: Arial, sans-serif; background: #e8f0f8; padding: 20px;">
+            <div style="max-width: 600px; margin: 0 auto; background: white; border: 2px solid #1F5245; border-radius: 8px; overflow: hidden;">
+              <div style="background: #1F5245; padding: 32px 20px; text-align: center;">
+                <h1 style="color: white; margin: 0;">Navette Express</h1>
+              </div>
+              <div style="padding: 32px 24px;">
+                <h2 style="color: #2c3e50; text-align: center;">${title}</h2>
+                <p>Bonjour <strong>${data.name}</strong>,</p>
+                ${isApproved
+                  ? `<p>Bonne nouvelle : votre profil chauffeur partenaire vient d'être validé par notre équipe. Vous allez recevoir séparément vos identifiants de connexion à l'espace chauffeur.</p>`
+                  : `<p>Après étude de votre dossier, nous ne pouvons pas donner suite à votre candidature pour le moment.</p>
+                     ${data.rejectionReason ? `<div style="background: #f8f9fa; border: 2px solid #e2dacd; border-radius: 8px; padding: 15px; margin: 20px 0;"><p style="margin:0;"><strong>Motif :</strong> ${data.rejectionReason}</p></div>` : ''}`}
+                <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;">
+                <p style="text-align: center; color: #6b7280;">Cordialement,<br><strong>L'équipe NavetteXpress</strong></p>
+              </div>
+            </div>
+          </body>
+        </html>
+      `,
+    });
+
+    if (error) {
+      console.error('❌ Erreur envoi email statut candidature chauffeur:', error);
+      throw error;
+    }
+
+    console.log('✅ Email statut candidature chauffeur envoyé:', sent?.id);
+    return sent;
+  } catch (error) {
+    console.error('❌ Erreur:', error);
+    throw error;
+  }
+}
+
+/**
  * Envoie un email à l'admin quand un client rejette un devis
  */
 export async function sendQuoteRejectedEmail(

@@ -111,6 +111,11 @@ export async function GET(request: NextRequest) {
       isCompany: users.isCompany,
       companyType: users.companyType,
       companyName: users.companyName,
+      driverStatus: users.driverStatus,
+      driverRejectionReason: users.driverRejectionReason,
+      vehicleBrand: users.vehicleBrand,
+      vehicleModel: users.vehicleModel,
+      vehiclePlateNumber: users.vehiclePlateNumber,
       createdAt: users.createdAt
     }).from(users)
 

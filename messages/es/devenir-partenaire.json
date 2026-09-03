@@ -66,7 +66,7 @@
     "items": [
       {
         "title": "Te presentas",
-        "text": "Identidad, vehículo y disponibilidad. El formulario se completa en pocos minutos."
+        "text": "Identidad y vehículo. El formulario se completa en un minuto."
       },
       {
         "title": "Te llamamos",
@@ -92,46 +92,23 @@
   "form": {
     "title": "Expediente de candidatura",
     "sections": {
-      "identity": "Tu identidad",
-      "vehicle": "Tu vehículo",
-      "motivation": "Motivación y disponibilidad"
+      "identity": "Tus datos de contacto",
+      "vehicle": "Tu vehículo"
     },
     "fields": {
-      "firstName": { "label": "Nombre", "placeholder": "Ej.: Amadou" },
-      "lastName": { "label": "Apellido", "placeholder": "Ej.: Fall" },
+      "fullName": { "label": "Nombre completo", "placeholder": "Ej.: Amadou Fall" },
       "email": { "label": "Correo electrónico", "placeholder": "amadou@gmail.com" },
       "phone": { "label": "Teléfono / WhatsApp", "placeholder": "+221 XX XXX XX XX" },
-      "experience": { "label": "Experiencia de conducción" },
       "brand": { "label": "Marca" },
       "model": { "label": "Modelo" },
-      "year": { "label": "Año" },
-      "plate": { "label": "Matrícula", "placeholder": "Ej.: AA-123-BB" },
-      "insurance": "Certifico que dispongo de un seguro válido",
-      "license": "Mi carnet de conducir es válido (más de 3 años)",
-      "availability": { "label": "Perfil de disponibilidad" },
-      "availabilityHint": "Las solicitudes se asignarán en función de las franjas horarias declaradas.",
-      "motivation": {
-        "label": "Tus motivaciones",
-        "placeholder": "Cuéntanos sobre ti y por qué quieres unirte a nosotros..."
-      }
-    },
-    "experienceOptions": {
-      "opt1": "1 a 3 años",
-      "opt2": "4 a 6 años",
-      "opt3": "7 a 10 años",
-      "opt4": "Más de 10 años"
-    },
-    "availabilityOptions": {
-      "fullTime": "Tiempo completo",
-      "partTime": "Tiempo parcial",
-      "weekend": "Fines de semana",
-      "evening": "Noches",
-      "occasional": "Ocasional"
+      "plate": { "label": "Matrícula", "placeholder": "Ej.: AA-123-BB" }
     },
     "selectPlaceholder": "Elegir...",
     "submit": "Enviar mi candidatura",
-    "submitting": "Procesando tu expediente...",
-    "footnote": "Respuesta en 48 h · Sin gastos de expediente"
+    "submitting": "Enviando...",
+    "footnote": "Respuesta en 48 h · Sin gastos de expediente",
+    "errorGeneric": "Ha ocurrido un error. Inténtalo de nuevo o contáctanos directamente.",
+    "errorEmailExists": "Ya existe una cuenta con este correo electrónico."
   },
   "success": {
     "title": "Candidatura recibida",

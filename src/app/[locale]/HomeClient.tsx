@@ -16,6 +16,7 @@ import {
   Van,
   CheckCircle,
   Question,
+  SteeringWheel,
 } from "@phosphor-icons/react";
 
 interface FaqItem {
@@ -318,6 +319,38 @@ export default function HomeClient({ faqs }: HomeClientProps) {
                 {t("b2b.footnote")}
               </p>
             </div>
+          </div>
+        </section>
+
+        {/* Devenir chauffeur partenaire */}
+        <section className="bg-[#E8DCC8] py-14 md:py-16 border-y border-[#d8d2c7]">
+          <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="flex items-start gap-4 max-w-xl">
+              <div className="w-12 h-12 rounded-lg bg-accent/10 border border-accent/25 flex items-center justify-center shrink-0">
+                <SteeringWheel size={22} className="text-accent" weight="light" />
+              </div>
+              <div className="flex flex-col gap-2">
+                <span className="font-[family-name:var(--font-ibm-plex-mono)] text-xs tracking-[0.16em] uppercase text-accent">
+                  {t("driverCta.eyebrow")}
+                </span>
+                <h2 className="text-2xl md:text-3xl font-semibold text-foreground tracking-tight leading-tight">
+                  {t("driverCta.title")}
+                </h2>
+                <p className="text-[#3d3a35] leading-relaxed">
+                  {t("driverCta.desc")}
+                </p>
+              </div>
+            </div>
+            <Button
+              variant="primary"
+              size="lg"
+              className="shrink-0"
+              icon={<ArrowRight size={20} />}
+              iconPosition="right"
+              onClick={() => router.push('/devenir-partenaire')}
+            >
+              {t("driverCta.cta")}
+            </Button>
           </div>
         </section>
 

@@ -49,6 +49,12 @@
     "cta": "Request an agreement",
     "footnote": "Already used by hotels and companies on the Petite Côte, as well as organizations based in Dakar."
   },
+  "driverCta": {
+    "eyebrow": "Partner drivers",
+    "title": "Own a vehicle? Become a partner driver.",
+    "desc": "Join our network on the Dakar — AIBD — Petite Côte corridor. Regular rides, fares known in advance, payment within 7 days.",
+    "cta": "Become a partner driver"
+  },
   "booking": {
     "title": "Ready for your trip?",
     "subtitle": "Book your airport transfer or private ride now with transparent pricing.",

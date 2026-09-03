@@ -66,7 +66,7 @@
     "items": [
       {
         "title": "You introduce yourself",
-        "text": "Identity, vehicle and availability. The form takes just a few minutes to fill in."
+        "text": "Identity and vehicle. The form takes just a minute to fill in."
       },
       {
         "title": "We call you back",
@@ -92,46 +92,23 @@
   "form": {
     "title": "Application file",
     "sections": {
-      "identity": "Your identity",
-      "vehicle": "Your vehicle",
-      "motivation": "Motivation & availability"
+      "identity": "Your contact details",
+      "vehicle": "Your vehicle"
     },
     "fields": {
-      "firstName": { "label": "First name", "placeholder": "E.g. Amadou" },
-      "lastName": { "label": "Last name", "placeholder": "E.g. Fall" },
+      "fullName": { "label": "Full name", "placeholder": "E.g. Amadou Fall" },
       "email": { "label": "Email", "placeholder": "amadou@gmail.com" },
       "phone": { "label": "Phone / WhatsApp", "placeholder": "+221 XX XXX XX XX" },
-      "experience": { "label": "Driving experience" },
       "brand": { "label": "Make" },
       "model": { "label": "Model" },
-      "year": { "label": "Year" },
-      "plate": { "label": "License plate", "placeholder": "E.g. AA-123-BB" },
-      "insurance": "I certify that I have valid insurance",
-      "license": "My driving license is valid (over 3 years)",
-      "availability": { "label": "Availability profile" },
-      "availabilityHint": "Requests will be assigned based on the time slots you declare.",
-      "motivation": {
-        "label": "Your motivations",
-        "placeholder": "Tell us about yourself and why you want to join us..."
-      }
-    },
-    "experienceOptions": {
-      "opt1": "1 to 3 years",
-      "opt2": "4 to 6 years",
-      "opt3": "7 to 10 years",
-      "opt4": "More than 10 years"
-    },
-    "availabilityOptions": {
-      "fullTime": "Full time",
-      "partTime": "Part time",
-      "weekend": "Weekends",
-      "evening": "Evenings",
-      "occasional": "Occasional"
+      "plate": { "label": "License plate", "placeholder": "E.g. AA-123-BB" }
     },
     "selectPlaceholder": "Choose...",
     "submit": "Send my application",
-    "submitting": "Processing your application...",
-    "footnote": "Response within 48 h · No application fee"
+    "submitting": "Sending...",
+    "footnote": "Response within 48 h · No application fee",
+    "errorGeneric": "Something went wrong. Please try again or contact us directly.",
+    "errorEmailExists": "An account already exists with this email."
   },
   "success": {
     "title": "Application received",

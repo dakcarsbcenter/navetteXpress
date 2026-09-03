@@ -10,7 +10,7 @@ import {
   CheckCircle,
   ArrowLeft,
   CaretRight,
-  Stack
+  WarningCircle
 } from "@phosphor-icons/react";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
@@ -138,57 +138,32 @@ const vehicleData = {
   ]
 };
 
-// Générer les années de 2002 à l'année actuelle
-const currentYear = new Date().getFullYear();
-const years = Array.from({ length: currentYear - 2001 }, (_, i) => currentYear - i);
-
 const monoLabel = "font-[family-name:var(--font-ibm-plex-mono)]";
 
 export default function DevenirPartenaireClient() {
   const t = useTranslations("devenir-partenaire");
 
   const [formData, setFormData] = useState({
-    nom: "",
-    prenom: "",
+    fullName: "",
     email: "",
     telephone: "",
-    experience: "",
     vehicule: {
       marque: "",
       modele: "",
-      annee: "",
       immatriculation: "",
-      assurance: false,
-      permis: false
     },
-    motivation: "",
-    disponibilite: ""
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const beneficesList = t.raw("benefits.items") as { label: string; text: string }[];
   const conditionsSpec = t.raw("conditions.items") as { label: string; value: string }[];
   const etapes = t.raw("steps.items") as { title: string; text: string }[];
 
-  const experienceOptions = [
-    { value: "1-3", label: t("form.experienceOptions.opt1") },
-    { value: "4-6", label: t("form.experienceOptions.opt2") },
-    { value: "7-10", label: t("form.experienceOptions.opt3") },
-    { value: "10+", label: t("form.experienceOptions.opt4") },
-  ];
-
-  const availabilityOptions = [
-    { value: "temps-plein", label: t("form.availabilityOptions.fullTime") },
-    { value: "temps-partiel", label: t("form.availabilityOptions.partTime") },
-    { value: "weekend", label: t("form.availabilityOptions.weekend") },
-    { value: "soiree", label: t("form.availabilityOptions.evening") },
-    { value: "ponctuel", label: t("form.availabilityOptions.occasional") },
-  ];
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target;
+    const { name, value } = e.target;
 
     if (name.startsWith("vehicule.")) {
       const vehiculeField = name.split(".")[1];
@@ -205,41 +180,58 @@ export default function DevenirPartenaireClient() {
       } else {
         setFormData(prev => ({
           ...prev,
-          vehicule: {
-            ...prev.vehicule,
-            [vehiculeField]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value
-          }
+          vehicule: { ...prev.vehicule, [vehiculeField]: value }
         }));
       }
     } else {
-      setFormData(prev => ({
-        ...prev,
-        [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value
-      }));
+      setFormData(prev => ({ ...prev, [name]: value }));
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setIsSubmitted(true);
-    setIsSubmitting(false);
+    setErrorMessage("");
+
+    try {
+      const response = await fetch("/api/driver-applications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.fullName,
+          email: formData.email,
+          phone: formData.telephone,
+          vehicleBrand: formData.vehicule.marque,
+          vehicleModel: formData.vehicule.modele,
+          vehiclePlateNumber: formData.vehicule.immatriculation,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        setIsSubmitted(true);
+      } else if (response.status === 400 && /email/i.test(result.error || "")) {
+        setErrorMessage(t("form.errorEmailExists"));
+      } else {
+        setErrorMessage(t("form.errorGeneric"));
+      }
+    } catch {
+      setErrorMessage(t("form.errorGeneric"));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Progression purement visuelle (n'affecte ni la validation, ni les données envoyées)
   const requiredStrings = [
-    formData.prenom, formData.nom, formData.email, formData.telephone, formData.experience,
-    formData.vehicule.marque, formData.vehicule.modele, formData.vehicule.annee, formData.vehicule.immatriculation,
-    formData.disponibilite, formData.motivation
+    formData.fullName, formData.email, formData.telephone,
+    formData.vehicule.marque, formData.vehicule.modele, formData.vehicule.immatriculation,
   ];
-  const requiredBooleans = [formData.vehicule.assurance, formData.vehicule.permis];
-  const totalRequired = requiredStrings.length + requiredBooleans.length;
-  const filledCount =
-    requiredStrings.filter((v) => v.trim().length > 0).length +
-    requiredBooleans.filter(Boolean).length;
-  const progressSegments = 6;
-  const filledSegments = Math.round((filledCount / totalRequired) * progressSegments);
+  const totalRequired = requiredStrings.length;
+  const filledCount = requiredStrings.filter((v) => v.trim().length > 0).length;
+  const progressSegments = totalRequired;
+  const filledSegments = filledCount;
 
   if (isSubmitted) {
     return (
@@ -427,31 +419,21 @@ export default function DevenirPartenaireClient() {
             </div>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-              {/* SECTION 1: IDENTITÉ */}
+              {/* SECTION 1: COORDONNÉES */}
               <div className="flex flex-col gap-5">
                 <div className="flex items-center gap-2.5 pb-2 border-b border-[#e2dacd]">
                   <User size={16} className="text-accent" />
                   <h4 className={`${monoLabel} text-foreground text-xs uppercase tracking-[0.14em]`}>{t("form.sections.identity")}</h4>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <FormInput
-                    label={t("form.fields.firstName.label")}
-                    name="prenom"
-                    placeholder={t("form.fields.firstName.placeholder")}
-                    value={formData.prenom}
-                    onChange={handleInputChange}
-                    required
-                  />
-                  <FormInput
-                    label={t("form.fields.lastName.label")}
-                    name="nom"
-                    placeholder={t("form.fields.lastName.placeholder")}
-                    value={formData.nom}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
+                <FormInput
+                  label={t("form.fields.fullName.label")}
+                  name="fullName"
+                  placeholder={t("form.fields.fullName.placeholder")}
+                  value={formData.fullName}
+                  onChange={handleInputChange}
+                  required
+                />
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <FormInput
@@ -473,15 +455,6 @@ export default function DevenirPartenaireClient() {
                     required
                   />
                 </div>
-
-                <PillRadioGroup
-                  label={t("form.fields.experience.label")}
-                  name="experience"
-                  value={formData.experience}
-                  onChange={handleInputChange}
-                  required
-                  options={experienceOptions}
-                />
               </div>
 
               {/* SECTION 2: VÉHICULE */}
@@ -513,78 +486,22 @@ export default function DevenirPartenaireClient() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <FormSelect
-                    label={t("form.fields.year.label")}
-                    name="vehicule.annee"
-                    value={formData.vehicule.annee}
-                    onChange={handleInputChange}
-                    required
-                    options={years.map(y => ({ value: y.toString(), label: y.toString() }))}
-                    selectPlaceholder={t("form.selectPlaceholder")}
-                  />
-                  <FormInput
-                    label={t("form.fields.plate.label")}
-                    name="vehicule.immatriculation"
-                    placeholder={t("form.fields.plate.placeholder")}
-                    value={formData.vehicule.immatriculation}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-
-                <div className="flex flex-col gap-3 pt-1">
-                  <FormCheckbox
-                    name="vehicule.assurance"
-                    checked={formData.vehicule.assurance}
-                    onChange={handleInputChange}
-                    label={t("form.fields.insurance")}
-                  />
-                  <FormCheckbox
-                    name="vehicule.permis"
-                    checked={formData.vehicule.permis}
-                    onChange={handleInputChange}
-                    label={t("form.fields.license")}
-                  />
-                </div>
+                <FormInput
+                  label={t("form.fields.plate.label")}
+                  name="vehicule.immatriculation"
+                  placeholder={t("form.fields.plate.placeholder")}
+                  value={formData.vehicule.immatriculation}
+                  onChange={handleInputChange}
+                  required
+                />
               </div>
 
-              {/* SECTION 3: MOTIVATION & DISPONIBILITÉ */}
-              <div className="flex flex-col gap-5">
-                <div className="flex items-center gap-2.5 pb-2 border-b border-[#e2dacd]">
-                  <Stack size={16} className="text-accent" />
-                  <h4 className={`${monoLabel} text-foreground text-xs uppercase tracking-[0.14em]`}>{t("form.sections.motivation")}</h4>
+              {errorMessage && (
+                <div className="flex items-start gap-2.5 bg-red-50 border border-red-200 rounded p-4">
+                  <WarningCircle size={18} className="text-red-600 shrink-0 mt-0.5" />
+                  <p className="text-sm text-red-700">{errorMessage}</p>
                 </div>
-
-                <div className="flex flex-col gap-2">
-                  <PillRadioGroup
-                    label={t("form.fields.availability.label")}
-                    name="disponibilite"
-                    value={formData.disponibilite}
-                    onChange={handleInputChange}
-                    required
-                    options={availabilityOptions}
-                  />
-                  <p className="text-[11px] text-text-muted italic px-0.5">
-                    {t("form.fields.availabilityHint")}
-                  </p>
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <label className={`${monoLabel} text-[10px] uppercase tracking-[0.14em] text-text-muted`}>
-                    {t("form.fields.motivation.label")} *
-                  </label>
-                  <textarea
-                    name="motivation"
-                    value={formData.motivation}
-                    onChange={handleInputChange}
-                    required
-                    rows={4}
-                    placeholder={t("form.fields.motivation.placeholder")}
-                    className="w-full bg-background border border-[#d8d2c7] rounded p-4 text-foreground text-sm outline-none focus:border-accent transition-colors resize-none"
-                  />
-                </div>
-              </div>
+              )}
 
               {/* SUBMIT */}
               <div className="flex flex-col gap-4 pt-2">
@@ -675,73 +592,6 @@ function FormSelect({ label, name, value, onChange, options, required = false, d
           <option key={opt.value} value={opt.value}>{opt.label}</option>
         ))}
       </select>
-    </div>
-  );
-}
-
-function FormCheckbox({ name, checked, onChange, label }: {
-  name: string;
-  checked: boolean;
-  onChange: FormFieldChangeHandler;
-  label: string;
-}) {
-  return (
-    <label className="flex items-center gap-3 cursor-pointer group">
-      <div className="relative shrink-0">
-        <input
-          type="checkbox"
-          name={name}
-          checked={checked}
-          onChange={onChange}
-          className="peer sr-only"
-        />
-        <div className="w-5 h-5 border border-[#d8d2c7] rounded bg-background peer-checked:bg-accent peer-checked:border-accent transition-colors" />
-        <CheckCircle size={12} weight="bold" className="absolute inset-0 m-auto text-white opacity-0 peer-checked:opacity-100 transition-opacity" />
-      </div>
-      <span className="text-[#3d3a35] text-sm group-hover:text-foreground transition-colors">{label}</span>
-    </label>
-  );
-}
-
-function PillRadioGroup({ label, name, value, onChange, options, required = false }: {
-  label: string;
-  name: string;
-  value: string;
-  onChange: FormFieldChangeHandler;
-  options: { value: string; label: string }[];
-  required?: boolean;
-}) {
-  return (
-    <div className="flex flex-col gap-2">
-      <p className={`${monoLabel} text-[10px] uppercase tracking-[0.14em] text-text-muted`}>
-        {label} {required && "*"}
-      </p>
-      <div className="flex flex-wrap gap-2">
-        {options.map((opt) => {
-          const isActive = value === opt.value;
-          return (
-            <label
-              key={opt.value}
-              className={`cursor-pointer rounded px-4 py-2.5 text-sm font-medium border transition-colors ${
-                isActive
-                  ? "border-foreground text-foreground"
-                  : "border-[#c9c3b8] text-[#3d3a35] hover:border-foreground/40"
-              }`}
-            >
-              <input
-                type="radio"
-                name={name}
-                value={opt.value}
-                checked={isActive}
-                onChange={onChange}
-                required={required}
-                className="sr-only"
-              />
-              {opt.label}
-            </label>
-          );
-        })}
-      </div>
     </div>
   );
 }

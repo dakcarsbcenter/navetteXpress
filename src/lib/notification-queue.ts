@@ -84,6 +84,21 @@ const registry: Record<string, Handler> = {
       args[2] as boolean
     );
   },
+  'resend-mailer.sendNewDriverApplicationEmail': async (args) => {
+    const { sendNewDriverApplicationEmail } = await import('./resend-mailer');
+    return sendNewDriverApplicationEmail(
+      args[0] as string,
+      args[1] as Parameters<typeof sendNewDriverApplicationEmail>[1],
+      args[2] as boolean
+    );
+  },
+  'resend-mailer.sendDriverApplicationStatusEmail': async (args) => {
+    const { sendDriverApplicationStatusEmail } = await import('./resend-mailer');
+    return sendDriverApplicationStatusEmail(
+      args[0] as string,
+      args[1] as Parameters<typeof sendDriverApplicationStatusEmail>[1]
+    );
+  },
   'resend-mailer.sendQuoteRejectedEmail': async (args) => {
     const { sendQuoteRejectedEmail } = await import('./resend-mailer');
     return sendQuoteRejectedEmail(args[0] as Parameters<typeof sendQuoteRejectedEmail>[0]);

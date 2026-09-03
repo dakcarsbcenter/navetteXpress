@@ -12,7 +12,9 @@ import {
   Key,
   Clock,
   X,
-  Buildings
+  Buildings,
+  Check,
+  HourglassMedium
 } from "@phosphor-icons/react"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { DeleteUserModal } from "@/components/ui/DeleteUserModal"
@@ -32,6 +34,11 @@ interface User {
   isCompany?: boolean
   companyType?: 'hotel' | 'entreprise' | 'ong' | null
   companyName?: string | null
+  driverStatus?: 'pending' | 'approved' | 'rejected'
+  driverRejectionReason?: string | null
+  vehicleBrand?: string | null
+  vehicleModel?: string | null
+  vehiclePlateNumber?: string | null
   createdAt: string
   lastLogin?: string
 }
@@ -77,6 +84,12 @@ export function UsersManagement({ userPermissions, openCreate, initialRoleFilter
   const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(new Set())
   const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false)
   const [newPassword, setNewPassword] = useState('')
+  const [isApproveModalOpen, setIsApproveModalOpen] = useState(false)
+  const [approvingUser, setApprovingUser] = useState<User | null>(null)
+  const [approveLicenseNumber, setApproveLicenseNumber] = useState('')
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false)
+  const [rejectingUser, setRejectingUser] = useState<User | null>(null)
+  const [rejectReason, setRejectReason] = useState('')
   const { notifications, showSuccess, showError, removeNotification } = useNotification()
 
   const [filters, setFilters] = useState<{ role: string; status: string; search: string }>({
@@ -139,7 +152,9 @@ export function UsersManagement({ userPermissions, openCreate, initialRoleFilter
       filtered = filtered.filter(u => u.role === filters.role)
     }
 
-    if (filters.status !== 'all') {
+    if (filters.status === 'pending' || filters.status === 'rejected') {
+      filtered = filtered.filter(u => u.driverStatus === filters.status)
+    } else if (filters.status !== 'all') {
       const isActive = filters.status === 'active'
       filtered = filtered.filter(u => u.isActive === isActive)
     }
@@ -164,8 +179,9 @@ export function UsersManagement({ userPermissions, openCreate, initialRoleFilter
         createdDate.getFullYear() === now.getFullYear()
     }).length
     const drivers = users.filter(u => u.role === 'driver').length
+    const pendingApplications = users.filter(u => u.role === 'driver' && u.driverStatus === 'pending').length
 
-    return { total, thisMonth, drivers }
+    return { total, thisMonth, drivers, pendingApplications }
   }
 
   const getInitials = (name: string) => {
@@ -306,6 +322,68 @@ export function UsersManagement({ userPermissions, openCreate, initialRoleFilter
     }
   }
 
+  const openApproveModal = (user: User) => {
+    setApprovingUser(user)
+    setApproveLicenseNumber(user.licenseNumber || '')
+    setIsApproveModalOpen(true)
+  }
+
+  const handleApprove = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!approvingUser) return
+
+    try {
+      const response = await fetch(`/api/admin/users/${approvingUser.id}/driver-status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'approve', licenseNumber: approveLicenseNumber })
+      })
+      const data = await response.json()
+
+      if (response.ok) {
+        showSuccess(`Profil de ${approvingUser.name} validé avec succès`, 'Succès')
+        setIsApproveModalOpen(false)
+        setApprovingUser(null)
+        fetchUsers()
+      } else {
+        showError(data.error || 'Erreur lors de la validation', 'Erreur')
+      }
+    } catch (error) {
+      showError('Erreur technique', 'Erreur')
+    }
+  }
+
+  const openRejectModal = (user: User) => {
+    setRejectingUser(user)
+    setRejectReason('')
+    setIsRejectModalOpen(true)
+  }
+
+  const handleReject = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!rejectingUser) return
+
+    try {
+      const response = await fetch(`/api/admin/users/${rejectingUser.id}/driver-status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'reject', rejectionReason: rejectReason })
+      })
+      const data = await response.json()
+
+      if (response.ok) {
+        showSuccess(`Candidature de ${rejectingUser.name} rejetée`, 'Succès')
+        setIsRejectModalOpen(false)
+        setRejectingUser(null)
+        fetchUsers()
+      } else {
+        showError(data.error || 'Erreur lors du rejet', 'Erreur')
+      }
+    } catch (error) {
+      showError('Erreur technique', 'Erreur')
+    }
+  }
+
   const openCreateModal = () => {
     setEditingUser(null)
     setFormData({
@@ -435,14 +513,15 @@ export function UsersManagement({ userPermissions, openCreate, initialRoleFilter
       {/* Stats */}
       <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))', borderTop: '1px solid #E2DACD', borderBottom: '1px solid #E2DACD' }}>
         {[
-          { label: 'Total', value: stats.total, icon: Users },
-          { label: 'Nouveaux', value: stats.thisMonth, icon: UserPlus },
-          { label: 'Chauffeurs', value: stats.drivers, icon: SteeringWheel },
+          { label: 'Total', value: stats.total, icon: Users, color: '#1F5245' },
+          { label: 'Nouveaux', value: stats.thisMonth, icon: UserPlus, color: '#1F5245' },
+          { label: 'Chauffeurs', value: stats.drivers, icon: SteeringWheel, color: '#1F5245' },
+          { label: 'Candidatures', value: stats.pendingApplications, icon: HourglassMedium, color: stats.pendingApplications > 0 ? '#B4643A' : '#1F5245' },
         ].map((stat, i) => {
           const Icon = stat.icon
           return (
-            <div key={i} style={{ padding: '18px 20px', borderRight: i < 2 ? '1px solid #E2DACD' : 'none', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <Icon size={17} style={{ color: '#1F5245' }} />
+            <div key={i} style={{ padding: '18px 20px', borderRight: i < 3 ? '1px solid #E2DACD' : 'none', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <Icon size={17} style={{ color: stat.color }} />
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: '23px', fontWeight: 600, letterSpacing: '-0.01em', color: '#12100E' }}>{stat.value}</span>
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: '9.5px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#6E6A63' }}>{stat.label}</span>
             </div>
@@ -477,6 +556,8 @@ export function UsersManagement({ userPermissions, openCreate, initialRoleFilter
             <option value="all">Tous statuts</option>
             <option value="active">Actifs</option>
             <option value="inactive">Inactifs</option>
+            <option value="pending">Candidatures en attente</option>
+            <option value="rejected">Candidatures rejetées</option>
           </select>
         </div>
 
@@ -566,18 +647,41 @@ export function UsersManagement({ userPermissions, openCreate, initialRoleFilter
                           <div style={{ fontSize: '11px', fontWeight: 500, color: '#12100E', marginTop: '6px' }}>{user.companyName}</div>
                         )}
                         {user.phone && <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10.5px', color: '#6E6A63', marginTop: '4px' }}>{user.phone}</div>}
+                        {user.role === 'driver' && (user.vehicleBrand || user.vehicleModel || user.vehiclePlateNumber) && (
+                          <div style={{ fontSize: '11px', color: '#6E6A63', marginTop: '4px' }}>
+                            {[user.vehicleBrand, user.vehicleModel].filter(Boolean).join(' ')}
+                            {user.vehiclePlateNumber && ` · ${user.vehiclePlateNumber}`}
+                          </div>
+                        )}
+                        {user.driverStatus === 'rejected' && user.driverRejectionReason && (
+                          <div style={{ fontSize: '10.5px', color: '#B8493C', marginTop: '4px', fontStyle: 'italic' }} title={user.driverRejectionReason}>
+                            Motif : {user.driverRejectionReason}
+                          </div>
+                        )}
                       </td>
                       <td style={{ padding: '12px 16px' }}>
-                        <span
-                          className="inline-flex items-center gap-1.5"
-                          style={{
-                            fontFamily: 'var(--font-mono)', fontSize: '9px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase',
-                            color: user.isActive ? '#1F5245' : '#B4643A',
-                          }}
-                        >
-                          <span className="h-[5px] w-[5px] shrink-0 rounded-full" style={{ backgroundColor: user.isActive ? '#1F5245' : '#B4643A' }} />
-                          {user.isActive ? 'Actif' : 'En pause'}
-                        </span>
+                        {user.driverStatus === 'pending' ? (
+                          <span className="inline-flex items-center gap-1.5" style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#B4643A' }}>
+                            <HourglassMedium size={11} />
+                            En attente
+                          </span>
+                        ) : user.driverStatus === 'rejected' ? (
+                          <span className="inline-flex items-center gap-1.5" style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#B8493C' }}>
+                            <span className="h-[5px] w-[5px] shrink-0 rounded-full" style={{ backgroundColor: '#B8493C' }} />
+                            Rejeté
+                          </span>
+                        ) : (
+                          <span
+                            className="inline-flex items-center gap-1.5"
+                            style={{
+                              fontFamily: 'var(--font-mono)', fontSize: '9px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase',
+                              color: user.isActive ? '#1F5245' : '#B4643A',
+                            }}
+                          >
+                            <span className="h-[5px] w-[5px] shrink-0 rounded-full" style={{ backgroundColor: user.isActive ? '#1F5245' : '#B4643A' }} />
+                            {user.isActive ? 'Actif' : 'En pause'}
+                          </span>
+                        )}
                       </td>
                       <td style={{ padding: '12px 16px' }}>
                         <div className="flex items-center gap-2" style={{ color: '#6E6A63' }}>
@@ -587,6 +691,26 @@ export function UsersManagement({ userPermissions, openCreate, initialRoleFilter
                       </td>
                       <td style={{ padding: '12px 16px' }}>
                         <div className="flex items-center justify-center gap-1.5">
+                          {user.driverStatus === 'pending' && (
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => openApproveModal(user)}
+                                title="Approuver"
+                                style={{ display: 'grid', placeItems: 'center', width: '30px', height: '30px', border: '1px solid rgba(31,82,69,.3)', borderRadius: '3px', color: '#1F5245', cursor: 'pointer' }}
+                              >
+                                <Check size={14} weight="bold" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => openRejectModal(user)}
+                                title="Rejeter"
+                                style={{ display: 'grid', placeItems: 'center', width: '30px', height: '30px', border: '1px solid rgba(184,73,60,.3)', borderRadius: '3px', color: '#B8493C', cursor: 'pointer' }}
+                              >
+                                <X size={14} />
+                              </button>
+                            </>
+                          )}
                           <button
                             type="button"
                             onClick={() => openEditModal(user)}
@@ -831,6 +955,108 @@ export function UsersManagement({ userPermissions, openCreate, initialRoleFilter
                   style={{ flex: 1, height: '42px', backgroundColor: '#1F5245', border: 'none', borderRadius: '3px', color: '#FFFFFF', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
                 >
                   Confirmer
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Approve Driver Modal */}
+      {isApproveModalOpen && approvingUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0" style={{ backgroundColor: 'rgba(18,16,14,.55)' }} onClick={() => setIsApproveModalOpen(false)} />
+          <div className="relative w-full max-w-sm" style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '4px', overflow: 'hidden' }}>
+            <div className="flex items-center gap-3" style={{ padding: '20px 24px', borderBottom: '1px solid #E2DACD' }}>
+              <div style={{ width: '38px', height: '38px', borderRadius: '3px', backgroundColor: 'rgba(31,82,69,.08)', display: 'grid', placeItems: 'center', color: '#1F5245' }}>
+                <Check size={18} weight="bold" />
+              </div>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: '#12100E' }}>Valider le profil chauffeur</h3>
+                <p style={{ margin: '2px 0 0', fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#6E6A63' }}>{approvingUser.name}</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleApprove} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <p style={{ margin: 0, fontSize: '12.5px', color: '#3d3a35', lineHeight: 1.5, borderLeft: '2px solid rgba(31,82,69,.3)', paddingLeft: '12px' }}>
+                Véhicule déclaré : <strong style={{ color: '#1F5245' }}>{[approvingUser.vehicleBrand, approvingUser.vehicleModel].filter(Boolean).join(' ') || '—'}</strong>
+                {approvingUser.vehiclePlateNumber && <> · {approvingUser.vehiclePlateNumber}</>}. Renseignez le numéro de permis vérifié pour activer le compte.
+              </p>
+
+              <div>
+                <label style={fieldLabel}>Numéro de permis</label>
+                <input
+                  type="text"
+                  value={approveLicenseNumber}
+                  onChange={(e) => setApproveLicenseNumber(e.target.value)}
+                  placeholder="Ex: SN-123456"
+                  style={{ ...fieldInput, fontFamily: 'var(--font-mono)' }}
+                  required
+                  autoFocus
+                />
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsApproveModalOpen(false)}
+                  style={{ flex: 1, height: '42px', backgroundColor: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '3px', color: '#6E6A63', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  style={{ flex: 1, height: '42px', backgroundColor: '#1F5245', border: 'none', borderRadius: '3px', color: '#FFFFFF', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
+                >
+                  Valider le profil
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Reject Driver Modal */}
+      {isRejectModalOpen && rejectingUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0" style={{ backgroundColor: 'rgba(18,16,14,.55)' }} onClick={() => setIsRejectModalOpen(false)} />
+          <div className="relative w-full max-w-sm" style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '4px', overflow: 'hidden' }}>
+            <div className="flex items-center gap-3" style={{ padding: '20px 24px', borderBottom: '1px solid #E2DACD' }}>
+              <div style={{ width: '38px', height: '38px', borderRadius: '3px', backgroundColor: 'rgba(184,73,60,.08)', display: 'grid', placeItems: 'center', color: '#B8493C' }}>
+                <X size={18} />
+              </div>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: '#12100E' }}>Rejeter la candidature</h3>
+                <p style={{ margin: '2px 0 0', fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#6E6A63' }}>{rejectingUser.name}</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleReject} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <label style={fieldLabel}>Motif (optionnel, envoyé au candidat)</label>
+                <textarea
+                  value={rejectReason}
+                  onChange={(e) => setRejectReason(e.target.value)}
+                  rows={3}
+                  placeholder="Ex : véhicule trop ancien pour le corridor"
+                  style={{ ...fieldInput, height: 'auto', padding: '10px 14px', resize: 'vertical' }}
+                  autoFocus
+                />
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsRejectModalOpen(false)}
+                  style={{ flex: 1, height: '42px', backgroundColor: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '3px', color: '#6E6A63', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  style={{ flex: 1, height: '42px', backgroundColor: '#B8493C', border: 'none', borderRadius: '3px', color: '#FFFFFF', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
+                >
+                  Rejeter
                 </button>
               </div>
             </form>

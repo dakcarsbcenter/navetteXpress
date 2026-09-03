@@ -1,0 +1,2 @@
+ALTER TABLE "users" DROP CONSTRAINT "driver_license_check";--> statement-breakpoint
+ALTER TABLE "users" ADD CONSTRAINT "driver_license_check" CHECK (("users"."role" != 'driver') OR ("users"."driver_status" != 'approved') OR ("users"."license_number" IS NOT NULL));

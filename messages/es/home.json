@@ -49,6 +49,12 @@
     "cta": "Solicitar un convenio",
     "footnote": "Ya utilizado por hoteles y empresas de la Petite Côte, así como por organizaciones instaladas en Dakar."
   },
+  "driverCta": {
+    "eyebrow": "Conductores socios",
+    "title": "¿Tiene un vehículo? Conviértase en conductor socio.",
+    "desc": "Únase a nuestra red en el corredor Dakar — AIBD — Petite Côte. Carreras regulares, tarifas conocidas de antemano, pago en 7 días.",
+    "cta": "Ser conductor socio"
+  },
   "booking": {
     "title": "¿Listo para su trayecto?",
     "subtitle": "Reserve ahora su traslado al aeropuerto o su trayecto privado con tarificación transparente.",

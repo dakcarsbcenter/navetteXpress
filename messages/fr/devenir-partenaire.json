@@ -66,7 +66,7 @@
     "items": [
       {
         "title": "Vous vous présentez",
-        "text": "Identité, véhicule et disponibilités. Le formulaire se remplit en quelques minutes."
+        "text": "Identité et véhicule. Le formulaire se remplit en une minute."
       },
       {
         "title": "On vous rappelle",
@@ -92,46 +92,23 @@
   "form": {
     "title": "Dossier de candidature",
     "sections": {
-      "identity": "Votre identité",
-      "vehicle": "Votre véhicule",
-      "motivation": "Motivation & disponibilité"
+      "identity": "Vos coordonnées",
+      "vehicle": "Votre véhicule"
     },
     "fields": {
-      "firstName": { "label": "Prénom", "placeholder": "Ex : Amadou" },
-      "lastName": { "label": "Nom", "placeholder": "Ex : Fall" },
+      "fullName": { "label": "Nom complet", "placeholder": "Ex : Amadou Fall" },
       "email": { "label": "Email", "placeholder": "amadou@gmail.com" },
       "phone": { "label": "Téléphone / WhatsApp", "placeholder": "+221 XX XXX XX XX" },
-      "experience": { "label": "Expérience de conduite" },
       "brand": { "label": "Marque" },
       "model": { "label": "Modèle" },
-      "year": { "label": "Année" },
-      "plate": { "label": "Immatriculation", "placeholder": "Ex : AA-123-BB" },
-      "insurance": "Je certifie posséder une assurance valide",
-      "license": "Mon permis de conduire est valide (plus de 3 ans)",
-      "availability": { "label": "Profil de disponibilité" },
-      "availabilityHint": "Les demandes vous seront assignées en fonction des créneaux déclarés.",
-      "motivation": {
-        "label": "Vos motivations",
-        "placeholder": "Parlez-nous de vous et de pourquoi vous souhaitez nous rejoindre..."
-      }
-    },
-    "experienceOptions": {
-      "opt1": "1 à 3 ans",
-      "opt2": "4 à 6 ans",
-      "opt3": "7 à 10 ans",
-      "opt4": "Plus de 10 ans"
-    },
-    "availabilityOptions": {
-      "fullTime": "Temps plein",
-      "partTime": "Temps partiel",
-      "weekend": "Week-ends",
-      "evening": "Soirées",
-      "occasional": "Ponctuel"
+      "plate": { "label": "Immatriculation", "placeholder": "Ex : AA-123-BB" }
     },
     "selectPlaceholder": "Choisir...",
     "submit": "Envoyer ma candidature",
-    "submitting": "Traitement de votre dossier...",
-    "footnote": "Réponse sous 48 h · Aucun frais de dossier"
+    "submitting": "Envoi en cours...",
+    "footnote": "Réponse sous 48 h · Aucun frais de dossier",
+    "errorGeneric": "Une erreur est survenue. Réessayez ou contactez-nous directement.",
+    "errorEmailExists": "Un compte existe déjà avec cet email."
   },
   "success": {
     "title": "Candidature reçue",

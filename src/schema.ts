@@ -24,6 +24,11 @@ export const adStatusEnum = pgEnum('ad_status', [
 export const companyTypeEnum = pgEnum('company_type', ['hotel', 'entreprise', 'ong']);
 export const companyRequestStatusEnum = pgEnum('company_request_status', ['none', 'pending', 'approved', 'rejected']);
 
+// Candidature chauffeur soumise depuis /devenir-partenaire (formulaire public) : le compte
+// existe déjà avec role='driver' dès la candidature, mais reste 'pending' (et isActive=false,
+// sans licenseNumber) tant que l'admin ne l'a pas validée depuis la vue Chauffeurs.
+export const driverRequestStatusEnum = pgEnum('driver_request_status', ['pending', 'approved', 'rejected']);
+
 export const notificationChannelEnum = pgEnum('notification_channel', ['email', 'whatsapp']);
 export const notificationQueueStatusEnum = pgEnum('notification_queue_status', ['pending', 'sent', 'failed']);
 
@@ -71,6 +76,18 @@ export const users = pgTable('users', {
   companyReviewedBy: text('company_reviewed_by'),
   companyRejectionReason: text('company_rejection_reason'),
   licenseNumber: text('license_number').unique(),
+  // Candidature chauffeur (uniquement pertinent si role='driver') : soumise via /devenir-partenaire,
+  // validée par l'admin depuis la vue Chauffeurs. 'approved' par défaut pour les chauffeurs créés
+  // directement par un admin (formulaire "Nouvel utilisateur"), qui n'ont pas de circuit à respecter.
+  driverStatus: driverRequestStatusEnum('driver_status').notNull().default('approved'),
+  driverRequestedAt: timestamp('driver_requested_at'),
+  driverReviewedAt: timestamp('driver_reviewed_at'),
+  driverReviewedBy: text('driver_reviewed_by'),
+  driverRejectionReason: text('driver_rejection_reason'),
+  // Véhicule déclaré par le chauffeur candidat (informatif, avant vérification par l'admin)
+  vehicleBrand: text('vehicle_brand'),
+  vehicleModel: text('vehicle_model'),
+  vehiclePlateNumber: text('vehicle_plate_number'),
   isActive: boolean('is_active').notNull().default(true),
   resetToken: text('reset_token'),
   resetTokenExpiry: timestamp('reset_token_expiry'),
@@ -81,7 +98,9 @@ export const users = pgTable('users', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
 }, (table) => ({
-  driverLicenseCheck: check('driver_license_check', sql`(${table.role} != 'driver') OR (${table.licenseNumber} IS NOT NULL)`),
+  // Un chauffeur en attente ou rejeté n'a pas de permis renseigné : seul le passage à
+  // driverStatus='approved' l'exige (c'est ce moment-là qui insère le numéro vérifié).
+  driverLicenseCheck: check('driver_license_check', sql`(${table.role} != 'driver') OR (${table.driverStatus} != 'approved') OR (${table.licenseNumber} IS NOT NULL)`),
 }));
 
 // Comptes OAuth (NextAuth)

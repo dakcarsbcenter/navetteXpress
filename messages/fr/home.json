@@ -49,6 +49,12 @@
     "cta": "Demander une convention",
     "footnote": "Déjà utilisé par des hôtels et entreprises de la Petite Côte, ainsi que par des organisations installées à Dakar."
   },
+  "driverCta": {
+    "eyebrow": "Chauffeurs partenaires",
+    "title": "Vous avez un véhicule ? Devenez chauffeur partenaire.",
+    "desc": "Rejoignez notre réseau sur le corridor Dakar — AIBD — Petite Côte. Courses régulières, tarifs connus à l'avance, paiement sous 7 jours.",
+    "cta": "Devenir chauffeur partenaire"
+  },
   "booking": {
     "title": "Prêt pour votre trajet ?",
     "subtitle": "Réservez maintenant votre transfert aéroport ou votre trajet privé avec une tarification transparente.",

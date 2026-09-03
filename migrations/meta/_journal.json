@@ -183,6 +183,20 @@
       "when": 1788182285333,
       "tag": "0025_fantastic_nebula",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1788465375321,
+      "tag": "0026_common_wildside",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1788467737371,
+      "tag": "0027_parallel_boomerang",
+      "breakpoints": true
     }
   ]
 }
