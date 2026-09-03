@@ -14,7 +14,7 @@ import { MapPin, CalendarBlank, Clock, Users, Bag, Phone, EnvelopeSimple, ArrowR
 import { serviceTypes, additionalServices, getServiceById } from "@/lib/services";
 import { useRouter } from "@/i18n/navigation";
 import NextLink from "next/link";
-import type { RouteNodeKey } from "@/lib/route-nodes";
+import { type RouteNodeKey, getRouteNodeFromName } from "@/lib/route-nodes";
 
 type LocationOption = { id: string; name: string };
 
@@ -28,18 +28,6 @@ interface PricingSegment {
   isActive: boolean;
 }
 
-const ROUTES_ALLOWED_NODES = {
-  DAKAR: ['DAKAR'],
-  AIBD: ['AIBD', 'AEROPORT AIBD', 'AEROPORT INTERNATIONAL BLAISE DIAGNE'],
-  MBOUR: ['MBOUR'],
-  SALY: ['SALY', 'SALLY', 'SALY PORTUDAL', 'SALLY PORTUDAL'],
-  NGAPAROU: ['NGAPAROU'],
-  THIES: ['THIES', 'THIÈS'],
-  NIANING: ['NIANING'],
-  POINTE_SARRENE: ['POINTE SARRENE', 'POINTE SARENE', 'POINTE SARENNE'],
-  SOMONE: ['SOMONE'],
-} as const;
-
 const ROUTES_LOCATION_FALLBACK: LocationOption[] = [
   { id: 'dakar', name: 'DAKAR' },
   { id: 'aibd', name: 'AEROPORT AIBD' },
@@ -51,26 +39,6 @@ const ROUTES_LOCATION_FALLBACK: LocationOption[] = [
   { id: 'pointe-sarrene', name: 'POINTE SARRENE' },
   { id: 'somone', name: 'SOMONE' },
 ];
-
-const normalizeLocationName = (value: string): string =>
-  value
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/[^A-Za-z0-9 ]+/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .toUpperCase();
-
-const getRouteNodeFromName = (name: string): keyof typeof ROUTES_ALLOWED_NODES | null => {
-  const normalized = normalizeLocationName(name);
-  const entries = Object.entries(ROUTES_ALLOWED_NODES) as [keyof typeof ROUTES_ALLOWED_NODES, readonly string[]][];
-  for (const [node, aliases] of entries) {
-    if (aliases.some((alias) => normalizeLocationName(alias) === normalized)) {
-      return node;
-    }
-  }
-  return null;
-};
 
 const ROUTES_ALLOWED_PAIRS = new Set<string>([
   'DAKAR|AIBD',

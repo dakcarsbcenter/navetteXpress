@@ -20,7 +20,9 @@ import {
   CircleNotch,
   X,
   PaperPlaneTilt,
+  Tag,
 } from '@phosphor-icons/react'
+import { getRouteNodeFromName } from '@/lib/route-nodes'
 
 const availableServices = [
   { id: 'transport', name: 'Transport standard', icon: '🚗', description: 'Service de transport classique' },
@@ -36,6 +38,16 @@ const OTHER_LOCATION_VALUE = '__other__'
 interface LocationOption {
   id: number
   name: string
+}
+
+interface PricingSegment {
+  id: number
+  route: string
+  berline: number
+  suv: number
+  departNode: string | null
+  arriveeNode: string | null
+  isActive: boolean
 }
 
 interface QuoteRequestFormProps {
@@ -96,6 +108,40 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
     fetchLocations()
   }, [])
 
+  const [pricingSegments, setPricingSegments] = useState<PricingSegment[]>([])
+
+  // Load pricing segments defined in the admin dashboard (/admin/dashboard?tab=pricing),
+  // used to auto-display an indicative price once departure and destination are chosen
+  useEffect(() => {
+    const fetchPricingSegments = async () => {
+      try {
+        const response = await fetch('/api/pricing-segments')
+        const result = await response.json()
+        if (result.success) {
+          setPricingSegments(result.data || [])
+        }
+      } catch (error) {
+        console.error('Erreur chargement des tarifs:', error)
+      }
+    }
+    fetchPricingSegments()
+  }, [])
+
+  const departureValue = formData.departure === OTHER_LOCATION_VALUE ? formData.departureCustom.trim() : formData.departure
+  const destinationValue = formData.destination === OTHER_LOCATION_VALUE ? formData.destinationCustom.trim() : formData.destination
+
+  const matchedPricingSegment = (() => {
+    if (!departureValue || !destinationValue) return null
+    const departureNode = getRouteNodeFromName(departureValue)
+    const destinationNode = getRouteNodeFromName(destinationValue)
+    if (!departureNode || !destinationNode || departureNode === destinationNode) return null
+    return pricingSegments.find(seg =>
+      seg.isActive &&
+      ((seg.departNode === departureNode && seg.arriveeNode === destinationNode) ||
+        (seg.departNode === destinationNode && seg.arriveeNode === departureNode))
+    ) || null
+  })()
+
   const handleFormChange = (field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
@@ -140,9 +186,6 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
-    const departureValue = formData.departure === OTHER_LOCATION_VALUE ? formData.departureCustom.trim() : formData.departure
-    const destinationValue = formData.destination === OTHER_LOCATION_VALUE ? formData.destinationCustom.trim() : formData.destination
 
     if (!formData.customerName || !formData.customerEmail ||
         !formData.numberOfPeople || formData.services.length === 0 ||
@@ -189,6 +232,7 @@ Destination: ${destinationValue}
 Mode de paiement souhaité: ${formData.paymentMode || 'Non spécifié'}
 
 Description: ${formData.description}`,
+        estimatedPrice: matchedPricingSegment ? matchedPricingSegment.berline : null,
         status: 'pending'
       }
 
@@ -563,6 +607,22 @@ Description: ${formData.description}`,
                 <span className="font-medium text-foreground truncate max-w-[160px]">
                   {(formData.destination === OTHER_LOCATION_VALUE ? formData.destinationCustom : formData.destination) || '—'}
                 </span>
+              </div>
+            )}
+
+            {/* Indicative price, auto-loaded from the admin pricing segments matching this route */}
+            {matchedPricingSegment && (
+              <div className="mt-4 flex items-start gap-3 px-4 py-3 rounded bg-[#F7F3EC] border border-border">
+                <Tag size={18} weight="fill" className="mt-0.5 shrink-0 text-accent" />
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-foreground">
+                    Tarif indicatif : à partir de {matchedPricingSegment.berline.toLocaleString('fr-FR')} FCFA
+                    <span className="font-normal text-[#6E6A63]"> (berline) · {matchedPricingSegment.suv.toLocaleString('fr-FR')} FCFA (SUV)</span>
+                  </p>
+                  <p className="mt-0.5 text-xs text-[#6E6A63] leading-snug">
+                    Estimation automatique basée sur le trajet sélectionné. Le tarif définitif vous sera confirmé dans votre devis.
+                  </p>
+                </div>
               </div>
             )}
           </div>
