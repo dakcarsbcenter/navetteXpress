@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -339,14 +340,16 @@ export default function DevenirPartenaireClient() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="relative min-h-[320px] lg:min-h-[440px] rounded-lg overflow-hidden border border-[#e2dacd] flex items-end p-5"
-            style={{
-              backgroundImage: "repeating-linear-gradient(45deg, #E8DCC8 0 10px, #E0D2B9 10px 20px)"
-            }}
+            className="relative min-h-[320px] lg:min-h-[440px] rounded-lg overflow-hidden border border-[#e2dacd]"
           >
-            <span className={`${monoLabel} text-[11px] uppercase tracking-wide text-[#6b6154] bg-background px-3 py-2 rounded`}>
-              {t("hero.imageAlt")}
-            </span>
+            <Image
+              src="/images/devenir-partenaire-chauffeur.jpg"
+              alt={t("hero.imageAlt")}
+              fill
+              priority
+              className="object-cover"
+              sizes="(min-width: 1024px) 50vw, 100vw"
+            />
           </motion.div>
         </div>
       </section>

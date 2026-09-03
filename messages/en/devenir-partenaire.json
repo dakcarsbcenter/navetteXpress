@@ -6,14 +6,14 @@
   "hero": {
     "eyebrow": "Drivers & vehicle owners",
     "title": "You know the road. We have the passengers.",
-    "subtitle": "We work with a limited number of drivers on the corridor. Regular rides, fares known before you accept, payment within seven days. Twelve spots open for 2026.",
+    "subtitle": "We work with a limited number of drivers on the corridor. Regular rides, fares known before you accept, payment as soon as the ride ends. Twelve spots open for 2026.",
     "cta": "Read the terms",
     "imageAlt": "Photo — partner driver, AIBD waiting area"
   },
   "stats": {
     "payment": {
-      "value": "7 d",
-      "text": "Payment delay after the ride. Bank transfer, Wave or Orange Money."
+      "value": "Instant",
+      "text": "Payment as soon as the ride ends. Bank transfer, Wave or Orange Money."
     },
     "commission": {
       "value": "15 %",
@@ -45,7 +45,7 @@
     "eyebrow": "Partner terms — 2026",
     "items": [
       { "label": "COMMISSION", "value": "15 % FIXED" },
-      { "label": "PAYMENT DELAY", "value": "7 DAYS", "note": "Payment is made at the end of the ride, by the driver, to the admin account or number provided to them." },
+      { "label": "PAYMENT", "value": "INSTANT", "note": "Payment is made as soon as the ride ends, to the account or number provided to admin." },
       { "label": "ENTRY FEE", "value": "NONE" },
       { "label": "VEHICLE", "value": "UNDER 8 YEARS" },
       { "label": "EQUIPMENT", "value": "A/C MANDATORY" },

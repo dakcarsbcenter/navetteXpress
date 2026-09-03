@@ -6,14 +6,14 @@
   "hero": {
     "eyebrow": "Chauffeurs & propriétaires de véhicules",
     "title": "Vous connaissez la route. Nous avons les passagers.",
-    "subtitle": "Nous travaillons avec un nombre limité de chauffeurs sur le corridor. Courses régulières, tarifs connus avant acceptation, paiement sous sept jours. Douze places ouvertes pour 2026.",
+    "subtitle": "Nous travaillons avec un nombre limité de chauffeurs sur le corridor. Courses régulières, tarifs connus avant acceptation, paiement dès la fin de la course. Douze places ouvertes pour 2026.",
     "cta": "Lire les conditions",
     "imageAlt": "Photo — chauffeur partenaire, aire d'attente AIBD"
   },
   "stats": {
     "payment": {
-      "value": "7 j",
-      "text": "Délai de paiement après la course. Virement, Wave ou Orange Money."
+      "value": "Immédiat",
+      "text": "Paiement dès la fin de la course. Virement, Wave ou Orange Money."
     },
     "commission": {
       "value": "15 %",
@@ -45,7 +45,7 @@
     "eyebrow": "Conditions partenaire — 2026",
     "items": [
       { "label": "COMMISSION", "value": "15 % FIXE" },
-      { "label": "DÉLAI DE PAIEMENT", "value": "7 JOURS", "note": "Le paiement se fait à la fin de la course, par le chauffeur, vers le compte ou numéro admin qui lui sera fourni." },
+      { "label": "PAIEMENT", "value": "IMMÉDIAT", "note": "Le paiement se fait dès la fin de la course, vers le compte ou numéro communiqué à l'administration." },
       { "label": "FRAIS D'ENTRÉE", "value": "AUCUN" },
       { "label": "VÉHICULE", "value": "MOINS DE 8 ANS" },
       { "label": "ÉQUIPEMENT", "value": "CLIM. OBLIGATOIRE" },

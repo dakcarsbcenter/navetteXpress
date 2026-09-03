@@ -6,14 +6,14 @@
   "hero": {
     "eyebrow": "Conductores y propietarios de vehículos",
     "title": "Tú conoces la carretera. Nosotros tenemos los pasajeros.",
-    "subtitle": "Trabajamos con un número limitado de conductores en el corredor. Carreras regulares, tarifas conocidas antes de aceptar, pago en un plazo de siete días. Doce plazas abiertas para 2026.",
+    "subtitle": "Trabajamos con un número limitado de conductores en el corredor. Carreras regulares, tarifas conocidas antes de aceptar, pago en cuanto termina la carrera. Doce plazas abiertas para 2026.",
     "cta": "Leer las condiciones",
     "imageAlt": "Foto — conductor socio, zona de espera de AIBD"
   },
   "stats": {
     "payment": {
-      "value": "7 d",
-      "text": "Plazo de pago tras la carrera. Transferencia, Wave u Orange Money."
+      "value": "Inmediato",
+      "text": "Pago en cuanto termina la carrera. Transferencia, Wave u Orange Money."
     },
     "commission": {
       "value": "15 %",
@@ -45,7 +45,7 @@
     "eyebrow": "Condiciones de socio — 2026",
     "items": [
       { "label": "COMISIÓN", "value": "15 % FIJA" },
-      { "label": "PLAZO DE PAGO", "value": "7 DÍAS", "note": "El pago se realiza al final de la carrera, por parte del conductor, a la cuenta o número admin que se le proporcionará." },
+      { "label": "PAGO", "value": "INMEDIATO", "note": "El pago se realiza en cuanto termina la carrera, a la cuenta o número comunicado a la administración." },
       { "label": "CUOTA DE ENTRADA", "value": "NINGUNA" },
       { "label": "VEHÍCULO", "value": "MENOS DE 8 AÑOS" },
       { "label": "EQUIPAMIENTO", "value": "A/A OBLIGATORIO" },
