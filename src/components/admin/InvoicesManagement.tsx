@@ -213,7 +213,6 @@ export default function InvoicesManagement() {
 
     try {
       const payload = {
-        invoiceNumber: formData.invoiceNumber,
         quoteId: parseInt(formData.quoteId),
         customerName: formData.customerName,
         customerEmail: formData.customerEmail,
@@ -251,13 +250,12 @@ export default function InvoicesManagement() {
   }
 
   const openCreateModal = () => {
-    const nextNumber = invoices.length + 1
     const today = new Date()
     const dueDate = new Date()
     dueDate.setDate(today.getDate() + 15)
 
     setFormData({
-      invoiceNumber: `INV-${today.getFullYear()}-${nextNumber.toString().padStart(5, '0')}`,
+      invoiceNumber: '',
       quoteId: '',
       customerName: '',
       customerEmail: '',
@@ -580,7 +578,7 @@ export default function InvoicesManagement() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label style={fieldLabel}>Numéro de facture</label>
-                  <input type="text" value={formData.invoiceNumber} readOnly style={{ ...fieldInput, fontFamily: 'var(--font-mono)', backgroundColor: '#F7F3EC', color: '#6E6A63' }} />
+                  <input type="text" value="Généré automatiquement à la validation" readOnly style={{ ...fieldInput, fontFamily: 'var(--font-mono)', backgroundColor: '#F7F3EC', color: '#6E6A63' }} />
                 </div>
 
                 <div>

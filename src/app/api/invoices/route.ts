@@ -7,7 +7,23 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { db } from '@/db';
 import { invoicesTable } from '@/schema';
-import { eq, desc, and } from 'drizzle-orm';
+import { eq, desc, and, like, sql } from 'drizzle-orm';
+
+// Génère le prochain numéro de facture pour l'année en cours en se basant sur
+// le plus grand numéro existant en base (jamais sur un décompte côté client,
+// qui dérive dès qu'une facture est supprimée).
+async function generateInvoiceNumber(): Promise<string> {
+  const year = new Date().getFullYear();
+  const prefix = `INV-${year}-`;
+
+  const [row] = await db
+    .select({ maxSeq: sql<number>`coalesce(max(cast(substring(${invoicesTable.invoiceNumber} from ${prefix.length + 1}::int) as integer)), 0)` })
+    .from(invoicesTable)
+    .where(like(invoicesTable.invoiceNumber, `${prefix}%`));
+
+  const nextSeq = (row?.maxSeq || 0) + 1;
+  return `${prefix}${nextSeq.toString().padStart(5, '0')}`;
+}
 
 // GET - Récupérer toutes les factures (avec filtres selon le rôle)
 export async function GET(request: NextRequest) {
@@ -130,9 +146,9 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    
-    // Validation des champs requis
-    const requiredFields = ['invoiceNumber', 'quoteId', 'customerName', 'customerEmail', 'service', 'amount', 'totalAmount', 'dueDate'];
+
+    // Validation des champs requis (invoiceNumber est généré côté serveur, jamais fourni par le client)
+    const requiredFields = ['quoteId', 'customerName', 'customerEmail', 'service', 'amount', 'totalAmount', 'dueDate'];
     for (const field of requiredFields) {
       if (!body[field]) {
         return NextResponse.json(
@@ -144,11 +160,32 @@ export async function POST(request: NextRequest) {
 
     console.log('📝 Création manuelle d\'une facture par l\'admin');
 
-    const [newInvoice] = await db.insert(invoicesTable).values({
-      ...body,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }).returning();
+    const { invoiceNumber: _ignoredInvoiceNumber, ...rest } = body;
+
+    // Jusqu'à 3 tentatives en cas de collision de numéro (course entre deux créations concurrentes)
+    let newInvoice;
+    let lastError: unknown;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const invoiceNumber = await generateInvoiceNumber();
+      try {
+        [newInvoice] = await db.insert(invoicesTable).values({
+          ...rest,
+          invoiceNumber,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }).returning();
+        lastError = undefined;
+        break;
+      } catch (err) {
+        lastError = err;
+        const message = (err as { message?: string })?.message || '';
+        if (!message.includes('invoice_number')) throw err;
+      }
+    }
+
+    if (lastError || !newInvoice) {
+      throw lastError || new Error('Échec de génération du numéro de facture');
+    }
 
     console.log(`✅ Facture ${newInvoice.invoiceNumber} créée avec succès`);
 
@@ -160,8 +197,9 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Erreur lors de la création de la facture:', error);
+    console.error('Stack:', (error as Error)?.stack);
     return NextResponse.json(
-      { success: false, error: 'Erreur interne du serveur' },
+      { success: false, error: 'Erreur interne du serveur', details: (error as Error)?.message },
       { status: 500 }
     );
   }
