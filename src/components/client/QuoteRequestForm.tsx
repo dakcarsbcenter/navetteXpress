@@ -31,6 +31,13 @@ const availableServices = [
   { id: 'event', name: 'Transport événementiel', icon: '🎉', description: 'Transport pour événements spéciaux' }
 ]
 
+const OTHER_LOCATION_VALUE = '__other__'
+
+interface LocationOption {
+  id: number
+  name: string
+}
+
 interface QuoteRequestFormProps {
   onClose?: () => void
 }
@@ -52,10 +59,14 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
     duration: '',
     startDate: '',
     departure: '',
+    departureCustom: '',
     destination: '',
+    destinationCustom: '',
     paymentMode: '',
     description: ''
   })
+
+  const [locations, setLocations] = useState<LocationOption[]>([])
 
   // Pre-fill fields from connected user session
   useEffect(() => {
@@ -68,6 +79,22 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
       }))
     }
   }, [user])
+
+  // Load locations defined in the admin dashboard (/admin/dashboard?tab=locations)
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        const response = await fetch('/api/locations')
+        const result = await response.json()
+        if (result.success) {
+          setLocations(result.data || [])
+        }
+      } catch (error) {
+        console.error('Erreur chargement des lieux:', error)
+      }
+    }
+    fetchLocations()
+  }, [])
 
   const handleFormChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -95,7 +122,9 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
       duration: '',
       startDate: '',
       departure: '',
+      departureCustom: '',
       destination: '',
+      destinationCustom: '',
       paymentMode: '',
       description: ''
     })
@@ -112,9 +141,12 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
+    const departureValue = formData.departure === OTHER_LOCATION_VALUE ? formData.departureCustom.trim() : formData.departure
+    const destinationValue = formData.destination === OTHER_LOCATION_VALUE ? formData.destinationCustom.trim() : formData.destination
+
     if (!formData.customerName || !formData.customerEmail ||
         !formData.numberOfPeople || formData.services.length === 0 ||
-        !formData.duration || !formData.departure || !formData.destination) {
+        !formData.duration || !departureValue || !destinationValue) {
       showError('Veuillez remplir tous les champs obligatoires', 'Formulaire incomplet')
       return
     }
@@ -152,8 +184,8 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
         message: `Demande de devis pour ${formData.numberOfPeople} personne(s).
 Services: ${formData.services.join(', ')}
 Durée: ${formData.duration} jour(s)
-Départ: ${formData.departure}
-Destination: ${formData.destination}
+Départ: ${departureValue}
+Destination: ${destinationValue}
 Mode de paiement souhaité: ${formData.paymentMode || 'Non spécifié'}
 
 Description: ${formData.description}`,
@@ -223,7 +255,7 @@ Description: ${formData.description}`,
         <section className="bg-white rounded border border-border overflow-hidden">
           <div className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b border-border">
             <span className="flex items-center justify-center w-8 h-8 rounded bg-[#F7F3EC] text-accent">
-              <User size={18} weight="regular" />
+              <User size={18} weight="bold" />
             </span>
             <h2 className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase">
               Vos informations
@@ -463,15 +495,29 @@ Description: ${formData.description}`,
                 </label>
                 <div className="relative">
                   <MapPin size={16} weight="fill" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-accent pointer-events-none" />
-                  <input
-                    type="text"
+                  <select
                     required
                     value={formData.departure}
                     onChange={(e) => handleFormChange('departure', e.target.value)}
-                    className={`${inputBase} pl-10`}
-                    placeholder="Adresse ou ville de départ"
-                  />
+                    className={`${inputBase} pl-10 appearance-none`}
+                  >
+                    <option value="">Sélectionner un lieu</option>
+                    {locations.map((loc) => (
+                      <option key={loc.id} value={loc.name}>{loc.name}</option>
+                    ))}
+                    <option value={OTHER_LOCATION_VALUE}>Autre lieu…</option>
+                  </select>
                 </div>
+                {formData.departure === OTHER_LOCATION_VALUE && (
+                  <input
+                    type="text"
+                    required
+                    value={formData.departureCustom}
+                    onChange={(e) => handleFormChange('departureCustom', e.target.value)}
+                    className={`${inputBase} mt-2`}
+                    placeholder="Précisez l'adresse ou la ville de départ"
+                  />
+                )}
               </div>
 
               {/* Destination */}
@@ -481,15 +527,29 @@ Description: ${formData.description}`,
                 </label>
                 <div className="relative">
                   <MapPin size={16} weight="fill" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#B4643A] pointer-events-none" />
-                  <input
-                    type="text"
+                  <select
                     required
                     value={formData.destination}
                     onChange={(e) => handleFormChange('destination', e.target.value)}
-                    className={`${inputBase} pl-10`}
-                    placeholder="Adresse ou ville de destination"
-                  />
+                    className={`${inputBase} pl-10 appearance-none`}
+                  >
+                    <option value="">Sélectionner un lieu</option>
+                    {locations.map((loc) => (
+                      <option key={loc.id} value={loc.name}>{loc.name}</option>
+                    ))}
+                    <option value={OTHER_LOCATION_VALUE}>Autre lieu…</option>
+                  </select>
                 </div>
+                {formData.destination === OTHER_LOCATION_VALUE && (
+                  <input
+                    type="text"
+                    required
+                    value={formData.destinationCustom}
+                    onChange={(e) => handleFormChange('destinationCustom', e.target.value)}
+                    className={`${inputBase} mt-2`}
+                    placeholder="Précisez l'adresse ou la ville de destination"
+                  />
+                )}
               </div>
             </div>
 
@@ -497,11 +557,11 @@ Description: ${formData.description}`,
             {(formData.departure || formData.destination) && (
               <div className="mt-4 flex items-center gap-2 text-xs text-[#6E6A63]">
                 <span className="font-medium text-foreground truncate max-w-[160px]">
-                  {formData.departure || '—'}
+                  {(formData.departure === OTHER_LOCATION_VALUE ? formData.departureCustom : formData.departure) || '—'}
                 </span>
                 <ArrowRight size={14} className="shrink-0 text-[#6E6A63]" />
                 <span className="font-medium text-foreground truncate max-w-[160px]">
-                  {formData.destination || '—'}
+                  {(formData.destination === OTHER_LOCATION_VALUE ? formData.destinationCustom : formData.destination) || '—'}
                 </span>
               </div>
             )}
