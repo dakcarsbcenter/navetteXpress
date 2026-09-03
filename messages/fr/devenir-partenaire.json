@@ -100,6 +100,7 @@
       "plate": { "label": "Immatriculation", "placeholder": "Ex : AA-123-BB" }
     },
     "selectPlaceholder": "Choisir...",
+    "selectNoResults": "Aucune marque trouvée",
     "submit": "Envoyer ma candidature",
     "submitting": "Envoi en cours...",
     "footnote": "Réponse sous 48 h · Aucun frais de dossier",
