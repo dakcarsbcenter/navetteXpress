@@ -38,10 +38,6 @@
       {
         "label": "DISPUTES",
         "text": "A human contact, reachable, and a written procedure in case of disagreement with a client. You're not alone facing an app."
-      },
-      {
-        "label": "FUEL",
-        "text": "Tolls and fuel reimbursed at cost on long rides, on presentation of the receipt."
       }
     ]
   },
@@ -49,7 +45,7 @@
     "eyebrow": "Partner terms — 2026",
     "items": [
       { "label": "COMMISSION", "value": "15 % FIXED" },
-      { "label": "PAYMENT DELAY", "value": "7 DAYS" },
+      { "label": "PAYMENT DELAY", "value": "7 DAYS", "note": "Payment is made at the end of the ride, by the driver, to the admin account or number provided to them." },
       { "label": "ENTRY FEE", "value": "NONE" },
       { "label": "VEHICLE", "value": "UNDER 8 YEARS" },
       { "label": "EQUIPMENT", "value": "A/C MANDATORY" },

@@ -38,10 +38,6 @@
       {
         "label": "LITIGES",
         "text": "Un interlocuteur humain, joignable, et une procédure écrite en cas de désaccord avec un client. Vous n'êtes pas seul face à une application."
-      },
-      {
-        "label": "CARBURANT",
-        "text": "Péage et carburant remboursés au réel sur les courses longues, sur présentation du ticket."
       }
     ]
   },
@@ -49,7 +45,7 @@
     "eyebrow": "Conditions partenaire — 2026",
     "items": [
       { "label": "COMMISSION", "value": "15 % FIXE" },
-      { "label": "DÉLAI DE PAIEMENT", "value": "7 JOURS" },
+      { "label": "DÉLAI DE PAIEMENT", "value": "7 JOURS", "note": "Le paiement se fait à la fin de la course, par le chauffeur, vers le compte ou numéro admin qui lui sera fourni." },
       { "label": "FRAIS D'ENTRÉE", "value": "AUCUN" },
       { "label": "VÉHICULE", "value": "MOINS DE 8 ANS" },
       { "label": "ÉQUIPEMENT", "value": "CLIM. OBLIGATOIRE" },

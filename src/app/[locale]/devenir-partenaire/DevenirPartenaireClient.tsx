@@ -135,6 +135,69 @@ const vehicleData = {
   Volvo: [
     "XC40", "XC60", "XC90", "V40", "V60", "V90", "S60", "S90",
     "C40", "EX30"
+  ],
+  // Américaines
+  Chevrolet: [
+    "Spark", "Aveo", "Cruze", "Malibu", "Camaro", "Trailblazer",
+    "Captiva", "Equinox", "Tahoe", "Silverado"
+  ],
+  Jeep: [
+    "Renegade", "Compass", "Cherokee", "Grand Cherokee", "Wrangler", "Gladiator"
+  ],
+  Chrysler: [
+    "300", "Pacifica", "Voyager"
+  ],
+  Dodge: [
+    "Charger", "Challenger", "Journey", "Durango", "Ram"
+  ],
+  Cadillac: [
+    "Escalade", "XT4", "XT5", "XT6", "CT5"
+  ],
+  GMC: [
+    "Sierra", "Yukon", "Acadia", "Terrain"
+  ],
+  // Coréennes
+  Kia: [
+    "Picanto", "Rio", "Ceed", "Sportage", "Sorento", "Seltos",
+    "Stonic", "Soul", "Optima", "Carnival", "EV6"
+  ],
+  Genesis: [
+    "G70", "G80", "G90", "GV70", "GV80"
+  ],
+  SsangYong: [
+    "Tivoli", "Korando", "Rexton", "Musso", "Actyon"
+  ],
+  // Chinoises
+  Geely: [
+    "Coolray", "Emgrand", "Azkarra", "Tugella", "Okavango"
+  ],
+  Chery: [
+    "Tiggo 2", "Tiggo 4", "Tiggo 7", "Tiggo 8", "Arrizo"
+  ],
+  Haval: [
+    "H6", "Jolion", "H9", "Dargo"
+  ],
+  MG: [
+    "MG3", "MG5", "ZS", "HS", "RX5"
+  ],
+  JAC: [
+    "J7", "JS4", "S3", "T6"
+  ],
+  Changan: [
+    "CS35", "CS55", "CS75", "Alsvin"
+  ],
+  DFSK: [
+    "Glory 580", "K01", "C31"
+  ],
+  // Japonaises (complément)
+  Isuzu: [
+    "D-Max", "MU-X", "Trooper"
+  ],
+  Infiniti: [
+    "Q50", "Q60", "QX50", "QX60", "QX80"
+  ],
+  Datsun: [
+    "GO", "GO+", "redi-GO"
   ]
 };
 
@@ -159,7 +222,7 @@ export default function DevenirPartenaireClient() {
   const [errorMessage, setErrorMessage] = useState("");
 
   const beneficesList = t.raw("benefits.items") as { label: string; text: string }[];
-  const conditionsSpec = t.raw("conditions.items") as { label: string; value: string }[];
+  const conditionsSpec = t.raw("conditions.items") as { label: string; value: string; note?: string }[];
   const etapes = t.raw("steps.items") as { title: string; text: string }[];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -342,9 +405,16 @@ export default function DevenirPartenaireClient() {
             <div className="h-px bg-[#2e2b27]" />
             <dl className={`${monoLabel} flex flex-col gap-3 text-xs text-[#9a938a]`}>
               {conditionsSpec.map((spec) => (
-                <div key={spec.label} className="flex justify-between gap-4">
-                  <dt>{spec.label}</dt>
-                  <dd className="text-background">{spec.value}</dd>
+                <div key={spec.label} className="flex flex-col gap-1">
+                  <div className="flex justify-between gap-4">
+                    <dt>{spec.label}</dt>
+                    <dd className="text-background">{spec.value}</dd>
+                  </div>
+                  {spec.note && (
+                    <p className="normal-case tracking-normal text-[11px] leading-snug text-[#6f695f]">
+                      {spec.note}
+                    </p>
+                  )}
                 </div>
               ))}
             </dl>

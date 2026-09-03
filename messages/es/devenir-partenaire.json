@@ -38,10 +38,6 @@
       {
         "label": "DISPUTAS",
         "text": "Un interlocutor humano, localizable, y un procedimiento por escrito en caso de desacuerdo con un cliente. No estás solo frente a una aplicación."
-      },
-      {
-        "label": "COMBUSTIBLE",
-        "text": "Peajes y combustible reembolsados según el gasto real en las carreras largas, con presentación del recibo."
       }
     ]
   },
@@ -49,7 +45,7 @@
     "eyebrow": "Condiciones de socio — 2026",
     "items": [
       { "label": "COMISIÓN", "value": "15 % FIJA" },
-      { "label": "PLAZO DE PAGO", "value": "7 DÍAS" },
+      { "label": "PLAZO DE PAGO", "value": "7 DÍAS", "note": "El pago se realiza al final de la carrera, por parte del conductor, a la cuenta o número admin que se le proporcionará." },
       { "label": "CUOTA DE ENTRADA", "value": "NINGUNA" },
       { "label": "VEHÍCULO", "value": "MENOS DE 8 AÑOS" },
       { "label": "EQUIPAMIENTO", "value": "A/A OBLIGATORIO" },
