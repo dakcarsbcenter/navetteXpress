@@ -26,7 +26,7 @@ interface Booking {
     id: number
     customerName: string
     customerEmail: string
-    customerPhone?: string
+    customerPhone?: string | null
     pickupAddress: string
     dropoffAddress: string
     scheduledDateTime: string

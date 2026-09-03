@@ -19,7 +19,7 @@ export function ChatWindow({ conversationId, title, subtitle, onBack }: ChatWind
   const locale = useLocale()
   const intlLocale = toIntlLocale(locale)
   const { data: session } = useSession()
-  const currentUserId = session?.user?.id
+  const currentUserId = (session?.user as { id?: string } | undefined)?.id
   const { messages, loading, sending, error, sendMessage } = useChatConversation(conversationId)
   const [draft, setDraft] = useState("")
   const listRef = useRef<HTMLDivElement>(null)
