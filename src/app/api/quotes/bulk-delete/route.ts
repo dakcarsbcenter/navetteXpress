@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/db"
-import { quotesTable, rolePermissionsTable } from "@/schema"
+import { quotesTable, invoicesTable, rolePermissionsTable } from "@/schema"
 import { inArray, and, eq } from "drizzle-orm"
 
 async function hasQuotesPermission(userRole: string, action: 'read' | 'create' | 'update' | 'delete'): Promise<boolean> {
@@ -48,15 +48,37 @@ export async function DELETE(request: NextRequest) {
             return NextResponse.json({ error: "Aucun identifiant fourni" }, { status: 400 })
         }
 
-        const deletedQuotes = await db
-            .delete(quotesTable)
-            .where(inArray(quotesTable.id, ids))
-            .returning({ id: quotesTable.id })
+        // Les devis liés à une facture ne peuvent pas être supprimés (contrainte "restrict")
+        const linkedInvoices = await db
+            .select({ quoteId: invoicesTable.quoteId })
+            .from(invoicesTable)
+            .where(inArray(invoicesTable.quoteId, ids))
+
+        const blockedIds = new Set(linkedInvoices.map(i => i.quoteId))
+        const deletableIds = ids.filter((id: number) => !blockedIds.has(id))
+
+        const deletedQuotes = deletableIds.length > 0
+            ? await db
+                .delete(quotesTable)
+                .where(inArray(quotesTable.id, deletableIds))
+                .returning({ id: quotesTable.id })
+            : []
+
+        if (deletedQuotes.length === 0) {
+            return NextResponse.json({
+                error: "Ce(s) devis ne peuvent pas être supprimés car ils ont une facture associée"
+            }, { status: 409 })
+        }
+
+        const message = blockedIds.size > 0
+            ? `${deletedQuotes.length} devis supprimé(s), ${blockedIds.size} ignoré(s) car lié(s) à une facture`
+            : `${deletedQuotes.length} devis supprimé(s)`
 
         return NextResponse.json({
             success: true,
-            message: `${deletedQuotes.length} devis supprimé(s)`,
-            deletedIds: deletedQuotes.map(q => q.id)
+            message,
+            deletedIds: deletedQuotes.map(q => q.id),
+            skippedIds: Array.from(blockedIds)
         })
     } catch (error) {
         console.error("Erreur bulk delete quotes:", error)

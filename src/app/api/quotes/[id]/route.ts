@@ -4,7 +4,7 @@ export const revalidate = 0;
 
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { quotesTable, rolePermissionsTable } from '@/schema';
+import { quotesTable, invoicesTable, rolePermissionsTable } from '@/schema';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { eq, and } from 'drizzle-orm';
@@ -219,9 +219,24 @@ export async function DELETE(
       }, { status: 403 });
     }
 
+    const quoteId = parseInt((await params).id);
+
+    const linkedInvoice = await db
+      .select({ id: invoicesTable.id })
+      .from(invoicesTable)
+      .where(eq(invoicesTable.quoteId, quoteId))
+      .limit(1);
+
+    if (linkedInvoice.length > 0) {
+      return NextResponse.json({
+        success: false,
+        error: 'Ce devis ne peut pas être supprimé car il a une facture associée'
+      }, { status: 409 });
+    }
+
     const deletedQuote = await db
       .delete(quotesTable)
-      .where(eq(quotesTable.id, parseInt((await params).id)))
+      .where(eq(quotesTable.id, quoteId))
       .returning();
 
     if (deletedQuote.length === 0) {
