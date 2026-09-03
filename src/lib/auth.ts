@@ -14,6 +14,16 @@ interface JwtDecodeParams {
   maxAge?: number
 }
 
+interface JwtEncodeParams {
+  token?: { role?: string; [key: string]: unknown }
+  secret: string | Buffer
+  salt?: string
+  maxAge?: number
+}
+
+// Les sessions admin expirent après 12h (au lieu des 30 jours par défaut)
+const ADMIN_SESSION_MAX_AGE = 12 * 60 * 60
+
 // Vérifier les variables d'environnement au démarrage
 const { NEXTAUTH_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, NEXTAUTH_URL } = process.env
 
@@ -312,6 +322,12 @@ export const authOptions = {
     error: "/auth/signin", // Rediriger vers la page de connexion en cas d'erreur
   },
   jwt: {
+    // Raccourcit la durée de session des admins à 12h (les autres rôles gardent la durée par défaut)
+    async encode(params: JwtEncodeParams) {
+      const maxAge = params.token?.role === "admin" ? ADMIN_SESSION_MAX_AGE : params.maxAge
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return await (nextAuthJwt as any).encode({ ...params, maxAge })
+    },
     // Gracefully handle malformed/expired JWT cookies instead of crashing
     async decode(params: JwtDecodeParams) {
       try {
