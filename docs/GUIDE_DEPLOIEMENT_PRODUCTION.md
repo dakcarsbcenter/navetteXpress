@@ -318,7 +318,7 @@ mkdir -p /opt/navettexpress/backups
 docker compose exec -T postgres pg_dump -U navettexpress_user navettexpress | gzip > /opt/navettexpress/backups/navettexpress_$(date +%Y%m%d_%H%M%S).sql.gz
 ```
 
-Cela crée un fichier compressé horodaté dans `/opt/navettexpress/backups/`. Le script [`scripts/backup.sh`](../scripts/backup.sh) fait exactement cette commande (et supprime automatiquement les sauvegardes de plus de 30 jours) — vous pouvez utiliser `./scripts/backup.sh` à la place.
+Cela crée un fichier compressé horodaté dans `/opt/navettexpress/backups/`. Le script [`scripts/backup.sh`](../scripts/backup.sh) fait exactement cette commande (et ne garde automatiquement que les 2 sauvegardes les plus récentes, réglable via `RETENTION_COUNT`) — vous pouvez utiliser `./scripts/backup.sh` à la place.
 
 **Automatiser la sauvegarde quotidienne** (à faire une fois sur le VPS) :
 
@@ -490,7 +490,7 @@ Vous avez probablement utilisé le nom du **conteneur** (ex : `navettexpress_app
 
 ### Déjà fait (présent dans le dépôt, rien à coder)
 
-- **Sauvegardes automatiques** : [`scripts/backup.sh`](../scripts/backup.sh) purge désormais lui-même les sauvegardes de plus de 30 jours, et [`scripts/setup-backup-cron.sh`](../scripts/setup-backup-cron.sh) programme son exécution quotidienne (chapitre 10).
+- **Sauvegardes automatiques** : [`scripts/backup.sh`](../scripts/backup.sh) purge désormais lui-même les sauvegardes au-delà des 2 plus récentes (capacité disque limitée du VPS), et [`scripts/setup-backup-cron.sh`](../scripts/setup-backup-cron.sh) programme son exécution quotidienne (chapitre 10).
 - **Port PostgreSQL restreint** : `docker-compose.yml` n'expose plus PostgreSQL que sur `127.0.0.1` (chapitre 15).
 - **Script de déploiement tout-en-un** : [`scripts/deploy.sh`](../scripts/deploy.sh) enchaîne sauvegarde, `git pull`, build, redémarrage et vérification de santé (chapitre 7).
 - **Déploiement en un clic (CI/CD manuel)** : [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml), déclenchable depuis l'onglet "Actions" de GitHub — voir mise en route ci-dessous.
