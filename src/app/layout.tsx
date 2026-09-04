@@ -105,10 +105,9 @@ export const metadata: Metadata = {
   },
 
   // ── Verification ──
-  // verification: {
-  //   google: 'GOOGLE_SEARCH_CONSOLE_CODE',
-  //   other: { 'msvalidate.01': 'BING_CODE' },
-  // },
+  verification: {
+    google: '5nOkgRfUJmawd60vAqApGz-swJ-Z44cyF8-_D844i4w',
+  },
 
   // ── Canonique ──
   alternates: {
