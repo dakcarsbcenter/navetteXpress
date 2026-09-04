@@ -1,4 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth/next';
+import type { Session } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { signCloudinaryParams } from '@/lib/cloudinary';
 
 /**
  * Validate and sanitize image URL to prevent SSRF attacks
@@ -55,6 +59,11 @@ function isValidImageUrl(imageUrl: string): { valid: boolean; sanitizedUrl?: str
  */
 export async function POST(request: NextRequest) {
   try {
+    const session = (await getServerSession(authOptions)) as Session | null;
+    if (!session?.user || (session.user as any).role !== 'admin') {
+      return NextResponse.json({ success: false, error: 'Non autorisé' }, { status: 401 });
+    }
+
     const { imageUrl } = await request.json();
 
     if (!imageUrl) {
@@ -116,11 +125,19 @@ export async function POST(request: NextRequest) {
     
     console.log(`✅ Image téléchargée: ${(imageBlob.size / 1024).toFixed(2)} KB`);
 
-    // Créer un FormData pour Cloudinary
+    // Créer un FormData pour Cloudinary (preset en mode "Signed")
+    const { signature, timestamp } = signCloudinaryParams({
+      folder: 'navette-xpress/vehicles',
+      upload_preset: uploadPreset,
+    });
+
     const formData = new FormData();
     formData.append('file', imageBlob);
     formData.append('upload_preset', uploadPreset);
     formData.append('folder', 'navette-xpress/vehicles');
+    formData.append('timestamp', String(timestamp));
+    formData.append('signature', signature);
+    formData.append('api_key', process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY || '');
 
     console.log(`☁️  Upload vers Cloudinary...`);
 

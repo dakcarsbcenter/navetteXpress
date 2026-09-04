@@ -56,22 +56,31 @@ export function ImageUploader({
       setPreview(previewUrl);
       setProgress(30);
 
-      // Vérifier la configuration Cloudinary
-      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-      const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+      // Dossier de destination intelligent
+      const targetFolder = folder || (label.includes('utilisateur') || label.includes('profil') ? 'navette-xpress/users' : 'navette-xpress/vehicles');
 
-      if (!cloudName || !uploadPreset) {
-        throw new Error('Configuration Cloudinary manquante. Vérifiez vos variables d\'environnement.');
+      // Demander une signature au serveur (le preset Cloudinary est en mode "Signed")
+      const signResponse = await fetch('/api/cloudinary/sign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ folder: targetFolder }),
+      });
+
+      if (!signResponse.ok) {
+        const signError = await signResponse.json().catch(() => ({}));
+        throw new Error(signError.error || 'Impossible de préparer l\'upload');
       }
+
+      const { signature, timestamp, apiKey, cloudName, uploadPreset, folder: signedFolder } = await signResponse.json();
 
       // Préparer les données
       const formData = new FormData();
       formData.append('file', file);
       formData.append('upload_preset', uploadPreset);
-
-      // Dossier de destination intelligent
-      const targetFolder = folder || (label.includes('utilisateur') || label.includes('profil') ? 'navette-xpress/users' : 'navette-xpress/vehicles');
-      formData.append('folder', targetFolder);
+      formData.append('folder', signedFolder);
+      formData.append('timestamp', String(timestamp));
+      formData.append('signature', signature);
+      formData.append('api_key', apiKey);
 
       setProgress(50);
 

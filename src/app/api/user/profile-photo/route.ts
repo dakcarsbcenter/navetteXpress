@@ -9,6 +9,7 @@ import { authOptions } from '@/lib/auth'
 import { db } from '@/db'
 import { users } from '@/schema'
 import { eq } from 'drizzle-orm'
+import { signCloudinaryParams } from '@/lib/cloudinary'
 
 export async function POST(request: NextRequest) {
   try {
@@ -95,12 +96,22 @@ export async function POST(request: NextRequest) {
       }, { status: 500 })
     }
 
-    // Préparation des données pour Cloudinary
+    // Préparation des données pour Cloudinary (preset en mode "Signed")
+    const publicId = `profile-${userId}-${Date.now()}`
+    const { signature, timestamp } = signCloudinaryParams({
+      folder: 'navette-xpress/profiles',
+      public_id: publicId,
+      upload_preset: uploadPreset,
+    })
+
     const cloudinaryFormData = new FormData()
     cloudinaryFormData.append('file', file)
     cloudinaryFormData.append('upload_preset', uploadPreset)
     cloudinaryFormData.append('folder', 'navette-xpress/profiles')
-    cloudinaryFormData.append('public_id', `profile-${userId}-${Date.now()}`)
+    cloudinaryFormData.append('public_id', publicId)
+    cloudinaryFormData.append('timestamp', String(timestamp))
+    cloudinaryFormData.append('signature', signature)
+    cloudinaryFormData.append('api_key', process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY || '')
 
     console.log(`☁️ [USER-UPLOAD] Upload vers Cloudinary...`)
 

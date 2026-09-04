@@ -10,9 +10,17 @@ export const runtime = 'nodejs';
 export const revalidate = 0;
 
 import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth/next';
+import type { Session } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 import { db } from '@/db';
 import { vehiclesTable } from '@/schema';
 import { isNotNull } from 'drizzle-orm';
+
+async function requireAdmin() {
+  const session = (await getServerSession(authOptions)) as Session | null;
+  return !!session?.user && (session.user as any).role === 'admin';
+}
 
 async function analyzeImages() {
   try {
@@ -65,6 +73,9 @@ async function analyzeImages() {
 }
 
 export async function GET() {
+  if (!(await requireAdmin())) {
+    return NextResponse.json({ success: false, error: 'Non autorisé' }, { status: 401 });
+  }
   try {
     const result = await analyzeImages();
     return NextResponse.json(result);
@@ -78,6 +89,9 @@ export async function GET() {
 }
 
 export async function POST() {
+  if (!(await requireAdmin())) {
+    return NextResponse.json({ success: false, error: 'Non autorisé' }, { status: 401 });
+  }
   try {
     const result = await analyzeImages();
     return NextResponse.json(result);
