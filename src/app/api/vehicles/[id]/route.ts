@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { vehiclesTable } from '@/schema';
 import { eq } from 'drizzle-orm';
+import { requireVehiclesUpdate, requireVehiclesDelete } from '@/utils/admin-permissions';
 
 /**
  * API pour gérer un véhicule spécifique
@@ -62,9 +63,17 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    try {
+      await requireVehiclesUpdate();
+    } catch (permError) {
+      const errorMessage = permError instanceof Error ? permError.message : 'Permission refusée';
+      const statusCode = errorMessage.includes('Unauthorized') ? 401 : 403;
+      return NextResponse.json({ success: false, error: errorMessage }, { status: statusCode });
+    }
+
     const { id } = await params;
     const vehicleId = parseInt(id);
-    
+
     if (isNaN(vehicleId)) {
       return NextResponse.json(
         { success: false, error: 'ID de véhicule invalide' },
@@ -139,9 +148,17 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    try {
+      await requireVehiclesDelete();
+    } catch (permError) {
+      const errorMessage = permError instanceof Error ? permError.message : 'Permission refusée';
+      const statusCode = errorMessage.includes('Unauthorized') ? 401 : 403;
+      return NextResponse.json({ success: false, error: errorMessage }, { status: statusCode });
+    }
+
     const { id } = await params;
     const vehicleId = parseInt(id);
-    
+
     if (isNaN(vehicleId)) {
       return NextResponse.json(
         { success: false, error: 'ID de véhicule invalide' },
