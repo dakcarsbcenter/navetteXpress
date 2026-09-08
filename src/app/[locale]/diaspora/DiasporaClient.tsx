@@ -32,8 +32,8 @@ export default function DiasporaClient() {
         <CorridorStrip />
 
         {/* Hero */}
-        <section className="grid grid-cols-1 md:grid-cols-2">
-          <div className="flex flex-col justify-center gap-5 px-6 md:px-10 py-12 md:py-16">
+        <section className="max-w-7xl mx-auto px-6 py-12 md:py-16 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12">
+          <div className="flex flex-col justify-center gap-5">
             <p className="font-mono text-[11px] tracking-[0.16em] text-accent">
               {t("hero.eyebrow")}
             </p>
@@ -52,7 +52,7 @@ export default function DiasporaClient() {
             </div>
           </div>
 
-          <div className="relative min-h-[220px] md:min-h-[400px] flex items-end p-5 overflow-hidden">
+          <div className="relative min-h-[220px] md:min-h-[400px] rounded-md flex items-end p-5 overflow-hidden">
             <Image
               src="/images/retrouvailles-aeroport-diaspora.jpg"
               alt={t("hero.imageCaption")}
