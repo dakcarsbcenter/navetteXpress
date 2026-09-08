@@ -158,8 +158,9 @@ export const config = {
   // Le rate limiting/honeypot s'appuie sur `dns` (Node) et sur des compteurs
   // en mémoire qui doivent survivre entre requêtes : le runtime Edge ne
   // convient pas. Le déploiement est un conteneur Docker autonome sur le
-  // VPS (next start), pas Vercel Edge, donc le runtime Node est disponible.
-  runtime: 'nodejs',
+  // VPS (next start), pas Vercel Edge. Pas besoin de le préciser ici : dans
+  // Next.js 16, proxy.ts tourne toujours en runtime Node (voir l'erreur de
+  // build "Route segment config is not allowed in Proxy file" si on le remet).
   matcher: [
     // Anti-scraping (rate limit + honeypot + blacklist) sur toutes les
     // routes API — celles-ci ne sont pas listées plus bas car elles ne
