@@ -459,11 +459,11 @@ export default function DevenirPartenaireClient() {
             </p>
             <div className="flex flex-col gap-3 pt-2">
               <div className="flex gap-3.5 items-baseline">
-                <div className={`${monoLabel} text-[11px] text-gold w-14 shrink-0`}>{t("application.perk1.value")}</div>
+                <div className={`${monoLabel} text-[11px] text-gold-deep w-14 shrink-0`}>{t("application.perk1.value")}</div>
                 <p className="text-sm text-[#3d3a35]">{t("application.perk1.text")}</p>
               </div>
               <div className="flex gap-3.5 items-baseline">
-                <div className={`${monoLabel} text-[11px] text-gold w-14 shrink-0`}>{t("application.perk2.value")}</div>
+                <div className={`${monoLabel} text-[11px] text-gold-deep w-14 shrink-0`}>{t("application.perk2.value")}</div>
                 <p className="text-sm text-[#3d3a35]">{t("application.perk2.text")}</p>
               </div>
             </div>

@@ -36,6 +36,7 @@ export function FleetShowcase() {
 
   useEffect(() => {
     if (loading || isCarouselHovered) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const interval = setInterval(() => {
       if (carouselRef.current) {
         const { scrollLeft, scrollWidth, clientWidth, children } = carouselRef.current;
@@ -76,6 +77,8 @@ export function FleetShowcase() {
       ref={carouselRef}
       onMouseEnter={() => setIsCarouselHovered(true)}
       onMouseLeave={() => setIsCarouselHovered(false)}
+      onFocus={() => setIsCarouselHovered(true)}
+      onBlur={() => setIsCarouselHovered(false)}
       className="flex gap-8 overflow-x-auto pb-4 pt-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
     >
       {vehicles.map((vehicle: any, i: number) => (
@@ -91,7 +94,7 @@ export function FleetShowcase() {
               height={400}
               className="w-full h-full object-cover"
             />
-            <div className="absolute top-3 right-3 px-3 py-1 rounded bg-background border border-[#e2dacd] text-gold text-[10px] font-semibold uppercase tracking-[0.1em]">
+            <div className="absolute top-3 right-3 px-3 py-1 rounded bg-background border border-[#e2dacd] text-gold-deep text-[10px] font-semibold uppercase tracking-[0.1em]">
               {vehicle.category || vehicle.vehicleType || t("fleet.categories.vip")}
             </div>
           </div>

@@ -61,7 +61,7 @@ export default async function HomeClient({ faqs }: HomeClientProps) {
       <PageViewTracker page="home" />
       <Navigation variant="transparent" />
 
-      <main className="pt-28 md:pt-36">
+      <main id="main-content" tabIndex={-1} className="pt-28 md:pt-36 focus:outline-none">
         {/* Corridor strip */}
         <div className="border-b border-[#e2dacd]">
           <div className="max-w-7xl mx-auto px-6 py-3 flex items-center overflow-x-auto">
@@ -169,7 +169,7 @@ export default async function HomeClient({ faqs }: HomeClientProps) {
                 }`}
                 style={{ animationDelay: `${i * 0.1}s`, animationFillMode: "backwards" }}
               >
-                <span className="font-[family-name:var(--font-ibm-plex-mono)] text-xs tracking-[0.14em] text-gold">
+                <span className="font-[family-name:var(--font-ibm-plex-mono)] text-xs tracking-[0.14em] text-gold-deep">
                   {d.n}
                 </span>
                 <h3 className="text-lg font-semibold text-foreground">{d.title}</h3>

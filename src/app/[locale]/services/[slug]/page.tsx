@@ -92,7 +92,7 @@ export default async function ServiceMoneyPage({ params }: Params) {
 
         <main className="max-w-5xl mx-auto px-6 pt-32 pb-20 space-y-12">
           <header className="space-y-4">
-            <p className="text-sm uppercase tracking-widest text-gold">{t('eyebrow')}</p>
+            <p className="text-sm uppercase tracking-widest text-gold-deep">{t('eyebrow')}</p>
             <h1 className="text-4xl md:text-5xl font-display leading-tight">{translation.h1}</h1>
             <p className="text-lg text-text-secondary">{translation.description}</p>
             <div className="flex flex-wrap gap-3 pt-2 text-sm text-text-muted">
@@ -130,7 +130,7 @@ export default async function ServiceMoneyPage({ params }: Params) {
                 <p className="text-text-secondary">{faq.answer}</p>
               </article>
             ))}
-            <Link href="/faq" className="inline-block text-gold font-medium hover:underline">
+            <Link href="/faq" className="inline-block text-gold-deep font-medium hover:underline">
               {t('faqViewAll')}
             </Link>
           </section>
@@ -166,10 +166,10 @@ export default async function ServiceMoneyPage({ params }: Params) {
               </div>
             </div>
             <div className="pt-2 flex flex-wrap gap-4">
-              <Link href="/routes" className="text-gold hover:underline">
+              <Link href="/routes" className="text-gold-deep hover:underline">
                 {t('routesHub')}
               </Link>
-              <Link href="/reservation" className="text-gold hover:underline">
+              <Link href="/reservation" className="text-gold-deep hover:underline">
                 {t('bookNow')}
               </Link>
             </div>

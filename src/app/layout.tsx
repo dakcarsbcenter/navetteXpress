@@ -7,7 +7,7 @@ import { GoogleAnalytics } from "./google-analytics";
 import { JsonLd } from '@/components/seo/JsonLd';
 import { schemaLocalBusiness, schemaWebSite } from '@/lib/schema';
 import { CapacitorAppUrlListener } from '@/components/mobile/CapacitorAppUrlListener';
-import { getLocale } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 
 const archivo = Archivo({
   variable: "--font-archivo",
@@ -141,10 +141,17 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const locale = await getLocale();
+  const t = await getTranslations('Navigation');
   return (
     <html lang={locale} suppressHydrationWarning className={`scroll-smooth ${archivo.variable} ${ibmPlexMono.variable}`} data-scroll-behavior="smooth">
       <head />
       <body className="antialiased font-body bg-background text-foreground">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-accent focus:text-white focus:px-4 focus:py-2 focus:rounded focus:font-semibold"
+        >
+          {t('skipToContent')}
+        </a>
         <JsonLd data={schemaLocalBusiness} />
         <JsonLd data={schemaWebSite} />
         <CapacitorAppUrlListener />

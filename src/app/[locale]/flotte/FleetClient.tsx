@@ -151,7 +151,7 @@ export default function FleetClient() {
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
-                      <div className="absolute top-4 left-4 px-3 py-1 rounded bg-background border border-[#e2dacd] text-gold text-[10px] font-semibold uppercase tracking-[0.1em]">
+                      <div className="absolute top-4 left-4 px-3 py-1 rounded bg-background border border-[#e2dacd] text-gold-deep text-[10px] font-semibold uppercase tracking-[0.1em]">
                         {vehicle.category}
                       </div>
                     </div>

@@ -49,7 +49,7 @@ export function Footer() {
                             <span className="text-background font-semibold text-lg tracking-tight">Navette Xpress</span>
                         </Link>
 
-                        <p className="font-[family-name:var(--font-ibm-plex-mono)] text-xs leading-[1.7] tracking-[0.02em] text-[#6b645c] uppercase max-w-xs">
+                        <p className="font-[family-name:var(--font-ibm-plex-mono)] text-xs leading-[1.7] tracking-[0.02em] text-[#8a8378] uppercase max-w-xs">
                             {t("tagline")}<br />
                             +221 78 465 13 02<br />
                             contact@navettexpress.com
@@ -73,7 +73,7 @@ export function Footer() {
 
                     {/* Trajets Column */}
                     <div>
-                        <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#6b645c] mb-4">
+                        <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#8a8378] mb-4">
                             {t("routesHeading")}
                         </h3>
                         <ul className="space-y-3">
@@ -89,7 +89,7 @@ export function Footer() {
 
                     {/* Société Column */}
                     <div>
-                        <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#6b645c] mb-4">
+                        <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#8a8378] mb-4">
                             {t("companyHeading")}
                         </h3>
                         <ul className="space-y-3">
@@ -110,16 +110,16 @@ export function Footer() {
 
                     {/* Langue Column */}
                     <div>
-                        <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#6b645c] mb-4">
+                        <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#8a8378] mb-4">
                             {t("languageHeading")}
                         </h3>
                         <LanguageSwitcher variant="inline" className="flex-col items-start gap-3 [&_button]:text-[#9a938a] [&_button.text-accent]:text-gold" />
 
                         <div className="mt-8">
-                            <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#6b645c] mb-3">
+                            <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#8a8378] mb-3">
                                 {t("supportHeading")}
                             </h3>
-                            <a href="https://wa.me/221784651302" className="flex items-center gap-2 text-gold text-sm font-semibold hover:underline">
+                            <a href="https://wa.me/221784651302" className="flex items-center gap-2 text-gold-light text-sm font-semibold hover:underline">
                                 <Phone size={14} weight="fill" />
                                 +221 78 465 13 02
                             </a>
@@ -138,7 +138,7 @@ export function Footer() {
                             { name: "Sacré-Cœur", slug: "sacre-coeur" },
                             { name: "Yoff", slug: "yoff" },
                         ].map((zone, i, arr) => (
-                            <span key={i} className="text-[#6b645c] text-xs">
+                            <span key={i} className="text-[#8a8378] text-xs">
                                 <Link href={`/zones/${zone.slug}`} className="hover:text-gold transition-colors">
                                     {zone.name}
                                 </Link>
@@ -160,7 +160,7 @@ export function Footer() {
                 </div>
 
                 {/* Bottom bar */}
-                <div className="pt-6 border-t border-[#2e2b27] flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-[#6b645c]">
+                <div className="pt-6 border-t border-[#2e2b27] flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-[#8a8378]">
                     <p className="flex items-center gap-2">
                         <MapPin size={12} weight="light" />
                         © {currentYear} Navette Xpress Sénégal. {t("rightsReserved")}

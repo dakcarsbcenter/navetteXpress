@@ -129,7 +129,10 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
                 </div>
               ) : (
                 <div className="relative group/user">
-                  <button className="flex items-center gap-2 text-foreground hover:text-accent transition-colors">
+                  <button
+                    className="flex items-center gap-2 text-foreground hover:text-accent transition-colors"
+                    aria-haspopup="true"
+                  >
                     <div className="w-8 h-8 rounded-full border border-accent/30 flex items-center justify-center bg-surface-2/50">
                       <UserCircle size={16} weight="light" className="text-accent" />
                     </div>
@@ -137,7 +140,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
                   </button>
 
                   {/* Dropdown Menu */}
-                  <div className="absolute right-0 mt-2 w-56 bg-background border border-border rounded-xl shadow-2xl opacity-0 invisible group-hover/user:opacity-100 group-hover/user:visible transition-all duration-300 backdrop-blur-xl">
+                  <div className="absolute right-0 mt-2 w-56 bg-background border border-border rounded-xl shadow-2xl opacity-0 invisible group-hover/user:opacity-100 group-hover/user:visible group-focus-within/user:opacity-100 group-focus-within/user:visible transition-all duration-300 backdrop-blur-xl">
                     <div className="p-4 border-b border-border">
                       <p className="text-foreground text-sm font-bold truncate">{session.user?.name}</p>
                       <p className="text-text-muted text-xs truncate">{session.user?.email}</p>
@@ -168,6 +171,8 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
               className="lg:hidden text-foreground"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label={t("menu")}
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-menu"
             >
               {isMobileMenuOpen ? <X size={28} weight="light" /> : <List size={28} weight="regular" />}
             </button>
@@ -175,7 +180,11 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
         </div>
 
         {/* Mobile Menu */}
-        <div className={`lg:hidden fixed inset-0 z-40 bg-background/95 backdrop-blur-2xl transition-transform duration-500 ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+        <div
+          id="mobile-menu"
+          inert={!isMobileMenuOpen}
+          className={`lg:hidden fixed inset-0 z-40 bg-background/95 backdrop-blur-2xl transition-transform duration-500 ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
+        >
           <div className="h-full flex flex-col p-8 pt-28">
             <nav className="space-y-6">
               {navLinks.map((link) => (

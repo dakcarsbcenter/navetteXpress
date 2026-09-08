@@ -90,7 +90,7 @@ export default function EntreprisesClient() {
         <section className="border-t border-border grid grid-cols-1 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-border">
           {benefits.map((b) => (
             <div key={b.n} className="px-6 md:px-10 py-8 flex flex-col gap-2">
-              <p className="font-mono text-[11px] tracking-[0.14em] text-gold">{b.n}</p>
+              <p className="font-mono text-[11px] tracking-[0.14em] text-gold-deep">{b.n}</p>
               <h3 className="font-semibold text-lg text-foreground">{b.title}</h3>
               <p className="text-sm leading-relaxed text-[#3d3a35]">{b.text}</p>
             </div>

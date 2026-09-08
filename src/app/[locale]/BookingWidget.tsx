@@ -21,6 +21,7 @@ export function BookingWidget() {
       <div className="flex gap-2 mb-8 p-1 bg-background rounded border border-[#e2dacd]">
         <button
           onClick={() => setBookingService('transfert-aibd-dakar')}
+          aria-pressed={bookingService === 'transfert-aibd-dakar'}
           className={`flex-1 py-3 px-6 rounded font-semibold transition-colors ${
             bookingService === 'transfert-aibd-dakar'
               ? 'bg-accent text-white'
@@ -31,6 +32,7 @@ export function BookingWidget() {
         </button>
         <button
           onClick={() => setBookingService('chauffeur-prive-dakar')}
+          aria-pressed={bookingService === 'chauffeur-prive-dakar'}
           className={`flex-1 py-3 px-6 rounded font-semibold transition-colors ${
             bookingService === 'chauffeur-prive-dakar'
               ? 'bg-accent text-white'

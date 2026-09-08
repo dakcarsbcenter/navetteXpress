@@ -63,7 +63,8 @@ et les statuts de la session 1, donc les suivants sont des différences, pas des
 Ajoute ces trois lignes à la fin de n'importe quel prompt si tu le vois déraper :
 
 ```
-Ne lis pas les fichiers .dc.html en entier sans raison : ce sont 35 ko chacun. Le README
+| 8 | `Lis docs/redesign/README.md section "Relevé mensuel entreprise". Implémente la génération du relevé mensuel consolidé (un document par mois et par convention, pas une facture par course). Référence : docs/redesign/Releve Mensuel Entreprise.dc.html` |
+ Ne lis pas les fichiers .dc.html en entier sans raison : ce sont 35 ko chacun. Le README
 contient les valeurs. Si tu as besoin d'un détail précis, grep la valeur dans le fichier.
 
 Ne crée pas de nouvelle variante d'un composant existant (pas de "Modern...", pas de

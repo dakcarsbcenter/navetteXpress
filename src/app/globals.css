@@ -43,6 +43,9 @@
   /* ─── IDENTITÉ TERRE (Landing Page) ─── */
   --gold: #B4643A;
   --gold-light: #C98761;
+  /* Variante texte, plus foncée : #B4643A sur fond clair (#F7F3EC) ne fait que 3.93:1 (< seuil AA 4.5:1).
+     Réservée aux petits textes (labels, badges, liens) sur fond clair — le gold décoratif reste inchangé. */
+  --gold-deep: #A35A34;
   --crimson: #1F5245;
   --text-primary: #12100E;
   --text-secondary: #3d3a35;
@@ -367,6 +370,7 @@ html {
   /* ── Accent Terre ── */
   --color-gold: var(--gold);
   --color-gold-light: var(--gold-light);
+  --color-gold-deep: var(--gold-deep);
   --color-gold-glow: rgba(180, 100, 58, 0.25);
   --color-gold-subtle: rgba(180, 100, 58, 0.08);
 
