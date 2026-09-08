@@ -5,6 +5,7 @@ import { eq, desc } from 'drizzle-orm';
 import { getServerSession } from 'next-auth/next';
 import type { Session } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { isAuthorizedPublicApiCall } from '@/lib/security/appToken';
 
 /**
  * Récupère tous les lieux actifs ou tous les lieux selon le rôle
@@ -13,6 +14,18 @@ export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
         const all = searchParams.get('all') === 'true';
+
+        if (all) {
+            // 'all=true' expose aussi les lieux inactifs/brouillons : réservé
+            // au back-office (admin/manager), jamais aux visiteurs anonymes.
+            const session = (await getServerSession(authOptions)) as Session | null;
+            const userRole = (session?.user as any)?.role;
+            if (!session || (userRole !== 'admin' && userRole !== 'manager')) {
+                return NextResponse.json({ success: false, error: 'Non autorisé' }, { status: 401 });
+            }
+        } else if (!(await isAuthorizedPublicApiCall(request))) {
+            return NextResponse.json({ success: false, error: 'Accès refusé' }, { status: 403 });
+        }
 
         // Rendre la table plus ordonnée pour l'admin, on récupère tout
         let query = db.select().from(locationsTable).orderBy(desc(locationsTable.createdAt));

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { useNotification } from '@/hooks/useNotification'
+import { fetchPublicApi } from '@/lib/apiClient'
 import { NotificationCenter } from '@/components/ui/NotificationCenter'
 import {
   User,
@@ -96,7 +97,7 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
   useEffect(() => {
     const fetchLocations = async () => {
       try {
-        const response = await fetch('/api/locations')
+        const response = await fetchPublicApi('/api/locations')
         const result = await response.json()
         if (result.success) {
           setLocations(result.data || [])
@@ -115,7 +116,7 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
   useEffect(() => {
     const fetchPricingSegments = async () => {
       try {
-        const response = await fetch('/api/pricing-segments')
+        const response = await fetchPublicApi('/api/pricing-segments')
         const result = await response.json()
         if (result.success) {
           setPricingSegments(result.data || [])

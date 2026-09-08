@@ -15,6 +15,7 @@ import { serviceTypes, additionalServices, getServiceById } from "@/lib/services
 import { useRouter } from "@/i18n/navigation";
 import NextLink from "next/link";
 import { type RouteNodeKey, getRouteNodeFromName } from "@/lib/route-nodes";
+import { fetchPublicApi } from "@/lib/apiClient";
 
 type LocationOption = { id: string; name: string };
 
@@ -217,7 +218,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
   useEffect(() => {
     const fetchPricingSegments = async () => {
       try {
-        const response = await fetch('/api/pricing-segments');
+        const response = await fetchPublicApi('/api/pricing-segments');
         const data = await response.json();
         if (data.success) {
           setPricingSegments(data.data || []);
@@ -233,7 +234,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
   useEffect(() => {
     const fetchLocations = async () => {
       try {
-        const response = await fetch('/api/locations');
+        const response = await fetchPublicApi('/api/locations');
         const data = await response.json();
         if (data.success) {
           setLocations(toAllowedRouteLocations(data.data || []));

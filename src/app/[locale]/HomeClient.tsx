@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { Link, useRouter } from "@/i18n/navigation";
 import Image from "next/image";
 import AdSlot from "@/components/public/AdSlot";
+import { fetchPublicApi } from "@/lib/apiClient";
 import {
   ArrowRight,
   UserCircle,
@@ -64,7 +65,7 @@ export default function HomeClient({ faqs }: HomeClientProps) {
     trackPageView('home');
     const fetchVehicles = async () => {
       try {
-        const response = await fetch('/api/vehicles');
+        const response = await fetchPublicApi('/api/vehicles');
         const data = await response.json();
         setVehicles(data.data || []);
       } catch (error) {
@@ -567,6 +568,20 @@ export default function HomeClient({ faqs }: HomeClientProps) {
           </div>
         </section>
       </main>
+
+      {/* Honeypot anti-scraping : lien volontairement invisible, non lié dans
+          la navigation/sitemap. Un vrai visiteur ou crawler SEO ne le suit
+          jamais ; seul un scraper qui explore le HTML brut y tombe et se
+          fait blacklister (voir src/app/api/internal-catalog/route.ts). */}
+      <a
+        href="/api/internal-catalog"
+        style={{ display: "none" }}
+        aria-hidden="true"
+        tabIndex={-1}
+        rel="nofollow"
+      >
+        Internal catalog
+      </a>
 
       <Footer />
     </div>

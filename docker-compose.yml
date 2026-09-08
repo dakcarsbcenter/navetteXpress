@@ -33,6 +33,7 @@ services:
         # `docker compose build` — deploy.sh les exporte depuis .env.docker).
         NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: ${NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME:-}
         NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET: ${NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET:-}
+        NEXT_PUBLIC_APP_API_TOKEN: ${NEXT_PUBLIC_APP_API_TOKEN:-}
     container_name: navettexpress_app
     restart: unless-stopped
     expose:

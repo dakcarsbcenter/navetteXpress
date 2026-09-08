@@ -6,12 +6,17 @@ import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { vehiclesTable } from '@/schema';
 import { eq, desc } from 'drizzle-orm';
+import { isAuthorizedPublicApiCall } from '@/lib/security/appToken';
 
 /**
  * API publique pour récupérer tous les véhicules actifs
  * Utilisée par la page Flotte pour afficher les véhicules disponibles
  */
-export async function GET() {
+export async function GET(request: Request) {
+  if (!(await isAuthorizedPublicApiCall(request))) {
+    return NextResponse.json({ success: false, error: 'Accès refusé' }, { status: 403 });
+  }
+
   try {
     // Récupérer tous les véhicules actifs (les plus récents en premier)
     const vehicles = await db

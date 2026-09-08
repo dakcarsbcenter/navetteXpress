@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { CorridorStrip } from "@/components/marketing/CorridorStrip";
+import { fetchPublicApi } from "@/lib/apiClient";
 
 type DotColor = "accent" | "ink" | "gold";
 type ZoneKey = "dakar" | "aibd" | "petite-cote";
@@ -38,7 +39,7 @@ export default function TarifsClient() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/pricing-segments")
+    fetchPublicApi("/api/pricing-segments")
       .then((res) => res.json())
       .then((json) => {
         if (cancelled) return;

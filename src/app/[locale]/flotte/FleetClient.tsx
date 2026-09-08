@@ -6,6 +6,7 @@ import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { CorridorStrip } from "@/components/marketing/CorridorStrip";
 import { Link } from "@/i18n/navigation";
+import { fetchPublicApi } from "@/lib/apiClient";
 import Image from "next/image";
 import { Users, Bag, ShieldCheck, Pulse, Star, CaretRight } from "@phosphor-icons/react";
 import { motion } from "framer-motion";
@@ -13,7 +14,7 @@ import { motion } from "framer-motion";
 // Client-side vehicle data fetching for the demonstration
 async function getVehicles() {
   try {
-    const res = await fetch(`/api/vehicles`);
+    const res = await fetchPublicApi(`/api/vehicles`);
     if (!res.ok) return [];
     const data = await res.json();
     return data.success ? data.data : [];
