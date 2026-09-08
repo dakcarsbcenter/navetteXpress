@@ -20,11 +20,6 @@ const nextConfig: NextConfig = {
     '/**': ['./messages/**'],
   },
 
-  // Désactiver TypeScript checks pendant le build (pour Coolify)
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-
   // Optimisations SEO
   compress: true,
   poweredByHeader: false,
