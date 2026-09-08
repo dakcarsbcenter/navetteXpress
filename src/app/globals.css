@@ -813,6 +813,11 @@ body {
   animation: authFadeIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
+.auth-input:focus {
+  border-color: var(--color-gold) !important;
+  box-shadow: 0 0 0 3px rgba(180, 100, 58, 0.15);
+}
+
 @keyframes floatOrb {
 
   0%,

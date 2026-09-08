@@ -282,10 +282,10 @@ export default function SignUpClient() {
                     value={formData.firstName}
                     onChange={handleChange}
                     required
-                    className="w-full pl-11 pr-4 py-3.5 rounded-xl text-sm outline-none transition-all duration-200"
+                    className="auth-input w-full pl-11 pr-4 py-3.5 rounded-xl text-sm outline-none transition-all duration-200"
                     style={{
-                      backgroundColor: 'var(--color-surface)',
-                      border: '1px solid rgba(255,255,255,0.08)',
+                      backgroundColor: 'var(--color-surface-2)',
+                      border: '1px solid rgba(18,16,14,0.14)',
                       color: 'var(--color-text-primary)',
                     }}
                     placeholder={t('signup.firstNamePlaceholder')}
@@ -308,10 +308,10 @@ export default function SignUpClient() {
                     value={formData.lastName}
                     onChange={handleChange}
                     required
-                    className="w-full pl-11 pr-4 py-3.5 rounded-xl text-sm outline-none transition-all duration-200"
+                    className="auth-input w-full pl-11 pr-4 py-3.5 rounded-xl text-sm outline-none transition-all duration-200"
                     style={{
-                      backgroundColor: 'var(--color-surface)',
-                      border: '1px solid rgba(255,255,255,0.08)',
+                      backgroundColor: 'var(--color-surface-2)',
+                      border: '1px solid rgba(18,16,14,0.14)',
                       color: 'var(--color-text-primary)',
                     }}
                     placeholder={t('signup.lastNamePlaceholder')}
@@ -336,10 +336,10 @@ export default function SignUpClient() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full pl-11 pr-4 py-3.5 rounded-xl text-sm outline-none transition-all duration-200"
+                  className="auth-input w-full pl-11 pr-4 py-3.5 rounded-xl text-sm outline-none transition-all duration-200"
                   style={{
-                    backgroundColor: 'var(--color-surface)',
-                    border: '1px solid rgba(255,255,255,0.08)',
+                    backgroundColor: 'var(--color-surface-2)',
+                    border: '1px solid rgba(18,16,14,0.14)',
                     color: 'var(--color-text-primary)',
                   }}
                   placeholder={t('signup.emailPlaceholder')}
@@ -363,10 +363,10 @@ export default function SignUpClient() {
                   value={formData.phone}
                   onChange={handleChange}
                   required
-                  className="w-full pl-11 pr-4 py-3.5 rounded-xl text-sm outline-none transition-all duration-200"
+                  className="auth-input w-full pl-11 pr-4 py-3.5 rounded-xl text-sm outline-none transition-all duration-200"
                   style={{
-                    backgroundColor: 'var(--color-surface)',
-                    border: '1px solid rgba(255,255,255,0.08)',
+                    backgroundColor: 'var(--color-surface-2)',
+                    border: '1px solid rgba(18,16,14,0.14)',
                     color: 'var(--color-text-primary)',
                   }}
                   placeholder={t('signup.phonePlaceholder')}
@@ -390,10 +390,10 @@ export default function SignUpClient() {
                   value={formData.password}
                   onChange={handleChange}
                   required
-                  className="w-full pl-11 pr-12 py-3.5 rounded-xl text-sm outline-none transition-all duration-200"
+                  className="auth-input w-full pl-11 pr-12 py-3.5 rounded-xl text-sm outline-none transition-all duration-200"
                   style={{
-                    backgroundColor: 'var(--color-surface)',
-                    border: '1px solid rgba(255,255,255,0.08)',
+                    backgroundColor: 'var(--color-surface-2)',
+                    border: '1px solid rgba(18,16,14,0.14)',
                     color: 'var(--color-text-primary)',
                   }}
                   placeholder="••••••••"
@@ -410,7 +410,7 @@ export default function SignUpClient() {
               {formData.password && (
                 <div className="flex gap-1 mt-2">
                   {[1, 2, 3, 4].map(i => (
-                    <div key={i} className="flex-1 h-1 rounded-full bg-white/5 transition-all">
+                    <div key={i} className="flex-1 h-1 rounded-full transition-all" style={{ backgroundColor: 'rgba(18,16,14,0.14)' }}>
                       <div className="h-full rounded-full transition-all"
                         style={{
                           width: i <= passwordStrength ? '100%' : '0%',
@@ -438,10 +438,10 @@ export default function SignUpClient() {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   required
-                  className="w-full pl-11 pr-4 py-3.5 rounded-xl text-sm outline-none transition-all duration-200"
+                  className="auth-input w-full pl-11 pr-4 py-3.5 rounded-xl text-sm outline-none transition-all duration-200"
                   style={{
-                    backgroundColor: 'var(--color-surface)',
-                    border: '1px solid rgba(255,255,255,0.08)',
+                    backgroundColor: 'var(--color-surface-2)',
+                    border: '1px solid rgba(18,16,14,0.14)',
                     color: 'var(--color-text-primary)',
                   }}
                   placeholder="••••••••"
@@ -466,9 +466,9 @@ export default function SignUpClient() {
           </form>
 
           <div className="flex items-center gap-4 my-8">
-            <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(255,255,255,0.07)' }} />
+            <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(18,16,14,0.14)' }} />
             <span className="text-[11px]" style={{ color: 'var(--color-text-muted)' }}>{t('signup.orDivider')}</span>
-            <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(255,255,255,0.07)' }} />
+            <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(18,16,14,0.14)' }} />
           </div>
 
           <button
@@ -476,8 +476,8 @@ export default function SignUpClient() {
             type="button"
             className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl text-sm font-medium transition-all duration-200 mb-8"
             style={{
-              backgroundColor: 'var(--color-surface)',
-              border: '1px solid rgba(255,255,255,0.1)',
+              backgroundColor: 'var(--color-surface-2)',
+              border: '1px solid rgba(18,16,14,0.14)',
               color: 'var(--color-text-primary)',
             }}
           >
