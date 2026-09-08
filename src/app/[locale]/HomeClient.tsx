@@ -1,23 +1,14 @@
-"use client";
-
-import { useEffect, useState, useRef } from "react";
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
-import { Button } from "@/components/ui/Button";
-import { trackPageView } from "@/lib/analytics";
-import { Link, useRouter } from "@/i18n/navigation";
+import { ButtonLink } from "@/components/ui/ButtonLink";
+import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import AdSlot from "@/components/public/AdSlot";
-import { fetchPublicApi } from "@/lib/apiClient";
-import {
-  ArrowRight,
-  UserCircle,
-  Van,
-  CheckCircle,
-  Question,
-  SteeringWheel,
-} from "@phosphor-icons/react";
+import { BookingWidget } from "./BookingWidget";
+import { FleetShowcase } from "./FleetShowcase";
+import { PageViewTracker } from "./PageViewTracker";
+import { ArrowRight, CheckCircle, Question, SteeringWheel } from "./home-icons";
 
 interface FaqItem {
   question: string;
@@ -32,49 +23,12 @@ const stripePattern = {
   backgroundImage: "repeating-linear-gradient(45deg, #E8DCC8 0 10px, #E0D2B9 10px 20px)",
 };
 
-export default function HomeClient({ faqs }: HomeClientProps) {
-  const router = useRouter();
-  const t = useTranslations("home");
-  const [vehicles, setVehicles] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  // Widget state
-  const [bookingService, setBookingService] = useState('transfert-aibd-dakar');
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const [isCarouselHovered, setIsCarouselHovered] = useState(false);
-
-  useEffect(() => {
-    if (loading || isCarouselHovered) return;
-    const interval = setInterval(() => {
-      if (carouselRef.current) {
-        const { scrollLeft, scrollWidth, clientWidth, children } = carouselRef.current;
-        if (scrollLeft + clientWidth >= scrollWidth - 10) {
-          carouselRef.current.scrollTo({ left: 0, behavior: "smooth" });
-        } else {
-          const firstChild = children[0] as HTMLElement;
-          const scrollAmount = firstChild ? firstChild.offsetWidth + 32 : 400; // gap-8 = 32px
-          carouselRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
-        }
-      }
-    }, 6000);
-    return () => clearInterval(interval);
-  }, [loading, isCarouselHovered, vehicles]);
-
-  useEffect(() => {
-    trackPageView('home');
-    const fetchVehicles = async () => {
-      try {
-        const response = await fetchPublicApi('/api/vehicles');
-        const data = await response.json();
-        setVehicles(data.data || []);
-      } catch (error) {
-        console.error("Error fetching vehicles:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchVehicles();
-  }, []);
+// Server Component : seules les 3 zones reellement interactives de la home
+// (BookingWidget, FleetShowcase, PageViewTracker) sont hydratees cote
+// client. Le reste (textes, sections statiques, CTA de navigation) est
+// rendu et livre en HTML pur, ce qui reduit le JS envoye au navigateur.
+export default async function HomeClient({ faqs }: HomeClientProps) {
+  const t = await getTranslations("home");
 
   const waypoints = [
     { label: "Dakar", dot: "bg-accent" },
@@ -104,6 +58,7 @@ export default function HomeClient({ faqs }: HomeClientProps) {
 
   return (
     <div className="min-h-screen bg-background font-sans selection:bg-gold/30 selection:text-gold">
+      <PageViewTracker page="home" />
       <Navigation variant="transparent" />
 
       <main className="pt-28 md:pt-36">
@@ -158,18 +113,18 @@ export default function HomeClient({ faqs }: HomeClientProps) {
               className="animate-fade-in-up flex flex-wrap gap-3 pt-2"
               style={{ animationDelay: "0.3s", animationFillMode: "backwards" }}
             >
-              <Button
+              <ButtonLink
+                href="/reservation"
                 variant="primary"
                 size="lg"
                 icon={<ArrowRight size={18} weight="bold" />}
                 iconPosition="right"
-                onClick={() => router.push('/reservation')}
               >
                 {t("hero.bookCta")}
-              </Button>
-              <Button variant="outline" size="lg" onClick={() => router.push('/tarifs')}>
+              </ButtonLink>
+              <ButtonLink href="/tarifs" variant="outline" size="lg">
                 {t("hero.ratesCta")}
-              </Button>
+              </ButtonLink>
             </div>
 
             <div className="flex items-center gap-8 pt-6 flex-wrap">
@@ -233,9 +188,9 @@ export default function HomeClient({ faqs }: HomeClientProps) {
               <h2 className="text-2xl md:text-4xl font-semibold text-foreground tracking-tight">
                 {t("segments.heading")}
               </h2>
-              <Button variant="ghost" onClick={() => router.push('/tarifs')}>
+              <ButtonLink href="/tarifs" variant="ghost">
                 {t("segments.viewAll")}
-              </Button>
+              </ButtonLink>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {segments.map((seg) => (
@@ -275,13 +230,13 @@ export default function HomeClient({ faqs }: HomeClientProps) {
                 {t("b2b.desc")}
               </p>
               <div className="pt-2">
-                <Button
+                <ButtonLink
+                  href="/entreprises"
                   variant="outline"
                   className="border-background text-background hover:bg-background hover:text-foreground"
-                  onClick={() => router.push('/entreprises')}
                 >
                   {t("b2b.cta")}
-                </Button>
+                </ButtonLink>
               </div>
             </div>
 
@@ -325,16 +280,16 @@ export default function HomeClient({ faqs }: HomeClientProps) {
                 </p>
               </div>
             </div>
-            <Button
+            <ButtonLink
+              href="/devenir-partenaire"
               variant="primary"
               size="lg"
               className="shrink-0"
               icon={<ArrowRight size={20} />}
               iconPosition="right"
-              onClick={() => router.push('/devenir-partenaire')}
             >
               {t("driverCta.cta")}
-            </Button>
+            </ButtonLink>
           </div>
         </section>
 
@@ -366,51 +321,7 @@ export default function HomeClient({ faqs }: HomeClientProps) {
               </div>
 
               <div className="lg:col-span-3">
-                <div className="bg-white border border-[#e2dacd] rounded-lg p-8 md:p-10">
-                  <div className="flex gap-2 mb-8 p-1 bg-background rounded border border-[#e2dacd]">
-                    <button
-                      onClick={() => setBookingService('transfert-aibd-dakar')}
-                      className={`flex-1 py-3 px-6 rounded font-semibold transition-colors ${
-                        bookingService === 'transfert-aibd-dakar'
-                          ? 'bg-accent text-white'
-                          : 'text-foreground hover:bg-[#F0ECE2]'
-                      }`}
-                    >
-                      {t("booking.tabAirport")}
-                    </button>
-                    <button
-                      onClick={() => setBookingService('chauffeur-prive-dakar')}
-                      className={`flex-1 py-3 px-6 rounded font-semibold transition-colors ${
-                        bookingService === 'chauffeur-prive-dakar'
-                          ? 'bg-accent text-white'
-                          : 'text-foreground hover:bg-[#F0ECE2]'
-                      }`}
-                    >
-                      {t("booking.tabCity")}
-                    </button>
-                  </div>
-
-                  <div className="p-6 rounded border border-[#e2dacd] bg-background text-center mb-6">
-                    <p className="text-[#3d3a35] text-lg">
-                      {t("booking.placeholder")}
-                    </p>
-                  </div>
-
-                  <Button
-                    variant="primary"
-                    size="lg"
-                    className="w-full"
-                    icon={<ArrowRight size={22} weight="regular" />}
-                    iconPosition="right"
-                    onClick={() => {
-                      const queryParams = new URLSearchParams();
-                      if (bookingService) queryParams.append('service', bookingService);
-                      router.push(`/reservation?${queryParams.toString()}`);
-                    }}
-                  >
-                    {t("booking.cta")}
-                  </Button>
-                </div>
+                <BookingWidget />
               </div>
             </div>
           </div>
@@ -428,83 +339,12 @@ export default function HomeClient({ faqs }: HomeClientProps) {
                   {t("fleet.subtitle")}
                 </p>
               </div>
-              <Button variant="ghost" onClick={() => router.push('/flotte')}>
+              <ButtonLink href="/flotte" variant="ghost">
                 {t("fleet.viewAll")}
-              </Button>
+              </ButtonLink>
             </div>
 
-            {loading ? (
-              <div className="flex justify-center items-center py-20">
-                <div className="font-[family-name:var(--font-ibm-plex-mono)] text-sm tracking-[0.16em] uppercase text-text-muted">
-                  {t("fleet.loading")}
-                </div>
-              </div>
-            ) : vehicles.length === 0 ? (
-              <div className="flex justify-center items-center py-20">
-                <div className="font-[family-name:var(--font-ibm-plex-mono)] text-sm tracking-[0.16em] uppercase text-text-muted">
-                  {t("fleet.empty")}
-                </div>
-              </div>
-            ) : (
-              <div
-                ref={carouselRef}
-                onMouseEnter={() => setIsCarouselHovered(true)}
-                onMouseLeave={() => setIsCarouselHovered(false)}
-                className="flex gap-8 overflow-x-auto pb-4 pt-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
-              >
-                {vehicles.map((vehicle: any, i: number) => (
-                  <div
-                    key={vehicle.id || i}
-                    className="min-w-[85vw] md:min-w-[360px] flex-shrink-0 snap-center rounded-lg bg-white border border-[#e2dacd] flex flex-col overflow-hidden"
-                  >
-                    <div className="h-56 relative overflow-hidden">
-                      <Image
-                        src={vehicle.photo || vehicle.image || 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=800'}
-                        alt={`${vehicle.make} ${vehicle.model}`}
-                        width={600}
-                        height={400}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute top-3 right-3 px-3 py-1 rounded bg-background border border-[#e2dacd] text-gold text-[10px] font-semibold uppercase tracking-[0.1em]">
-                        {vehicle.category || vehicle.vehicleType || t("fleet.categories.vip")}
-                      </div>
-                    </div>
-                    <div className="p-6 flex flex-col gap-4">
-                      <h3 className="text-xl font-semibold text-foreground">{vehicle.make} {vehicle.model}</h3>
-                      <div className="flex items-center gap-6 text-text-muted text-sm">
-                        <div className="flex items-center gap-2">
-                          <UserCircle size={16} weight="light" className="text-accent" />
-                          <span>{vehicle.capacity || 4} {t("fleet.pax")}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Van size={16} weight="light" className="text-accent" />
-                          <span>{t("fleet.luggageIncluded")}</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between pt-2 border-t border-[#e2dacd]">
-                        <div>
-                          <div className="text-text-muted text-[10px] uppercase tracking-[0.14em] mb-1">{t("fleet.from")}</div>
-                          {vehicle.price ? (
-                            <div className="text-foreground font-semibold text-lg font-[family-name:var(--font-ibm-plex-mono)]">
-                              {vehicle.price} <span className="text-xs text-text-muted font-normal">FCFA</span>
-                            </div>
-                          ) : (
-                            <div className="text-foreground font-semibold text-lg">{t("fleet.onRequest")}</div>
-                          )}
-                        </div>
-                        <Link
-                          href="/reservation"
-                          className="w-11 h-11 rounded-full border border-[#e2dacd] flex items-center justify-center text-foreground hover:bg-accent hover:text-white hover:border-accent transition-colors"
-                          aria-label={t("fleet.bookVehicleAria")}
-                        >
-                          <ArrowRight size={18} weight="regular" />
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+            <FleetShowcase />
           </div>
         </section>
 
@@ -541,13 +381,13 @@ export default function HomeClient({ faqs }: HomeClientProps) {
                 {t("finalCta.availability")}
               </div>
             </div>
-            <button
-              onClick={() => router.push('/reservation')}
+            <Link
+              href="/reservation"
               className="inline-flex items-center gap-2 bg-background text-foreground px-7 py-3.5 rounded font-semibold text-base hover:bg-background/90 transition-colors shrink-0"
             >
               {t("finalCta.cta")}
               <ArrowRight size={18} weight="bold" />
-            </button>
+            </Link>
           </div>
         </section>
       </main>
