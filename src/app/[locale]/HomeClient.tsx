@@ -6,7 +6,6 @@ import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/Button";
 import { trackPageView } from "@/lib/analytics";
-import { motion } from "framer-motion";
 import { Link, useRouter } from "@/i18n/navigation";
 import Image from "next/image";
 import AdSlot from "@/components/public/AdSlot";
@@ -135,37 +134,29 @@ export default function HomeClient({ faqs }: HomeClientProps) {
         {/* Hero */}
         <section className="max-w-7xl mx-auto px-6 py-14 md:py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="font-[family-name:var(--font-ibm-plex-mono)] text-xs tracking-[0.16em] uppercase text-accent"
+            <p
+              className="animate-fade-in-up font-[family-name:var(--font-ibm-plex-mono)] text-xs tracking-[0.16em] uppercase text-accent"
             >
               {t("corridor")}
-            </motion.p>
+            </p>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-4xl md:text-6xl font-semibold text-foreground leading-[1.05] tracking-tight"
+            <h1
+              className="animate-fade-in-up text-4xl md:text-6xl font-semibold text-foreground leading-[1.05] tracking-tight"
+              style={{ animationDelay: "0.1s", animationFillMode: "backwards" }}
             >
               {t("hero.titleLine1")}<br />{t("hero.titleLine2")}
-            </motion.h1>
+            </h1>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-[#3d3a35] text-lg max-w-lg leading-relaxed"
+            <p
+              className="animate-fade-in-up text-[#3d3a35] text-lg max-w-lg leading-relaxed"
+              style={{ animationDelay: "0.2s", animationFillMode: "backwards" }}
             >
               {t("hero.subtitle")}
-            </motion.p>
+            </p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="flex flex-wrap gap-3 pt-2"
+            <div
+              className="animate-fade-in-up flex flex-wrap gap-3 pt-2"
+              style={{ animationDelay: "0.3s", animationFillMode: "backwards" }}
             >
               <Button
                 variant="primary"
@@ -179,7 +170,7 @@ export default function HomeClient({ faqs }: HomeClientProps) {
               <Button variant="outline" size="lg" onClick={() => router.push('/tarifs')}>
                 {t("hero.ratesCta")}
               </Button>
-            </motion.div>
+            </div>
 
             <div className="flex items-center gap-8 pt-6 flex-wrap">
               {stats.map((s, i) => (
@@ -198,12 +189,7 @@ export default function HomeClient({ faqs }: HomeClientProps) {
             </div>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.8 }}
-            className="relative h-[320px] md:h-[400px] rounded-lg overflow-hidden border border-[#e2dacd]"
-          >
+          <div className="relative h-[320px] md:h-[400px] rounded-lg overflow-hidden border border-[#e2dacd]">
             <Image
               src="/images/Chauffeur-Services-dakar-senegal-navette-xpress.jpg"
               alt={t("hero.imageAlt")}
@@ -212,7 +198,7 @@ export default function HomeClient({ faqs }: HomeClientProps) {
               priority
               className="object-cover"
             />
-          </motion.div>
+          </div>
         </section>
 
         <AdSlot placement="home_hero" />
@@ -221,22 +207,19 @@ export default function HomeClient({ faqs }: HomeClientProps) {
         <section className="border-t border-[#e2dacd]">
           <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3">
             {differentiators.map((d, i) => (
-              <motion.div
+              <div
                 key={d.n}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className={`px-6 md:px-10 py-10 flex flex-col gap-3 border-b md:border-b-0 border-[#e2dacd] ${
+                className={`animate-fade-in-up px-6 md:px-10 py-10 flex flex-col gap-3 border-b md:border-b-0 border-[#e2dacd] ${
                   i < differentiators.length - 1 ? 'md:border-r' : ''
                 }`}
+                style={{ animationDelay: `${i * 0.1}s`, animationFillMode: "backwards" }}
               >
                 <span className="font-[family-name:var(--font-ibm-plex-mono)] text-xs tracking-[0.14em] text-gold">
                   {d.n}
                 </span>
                 <h3 className="text-lg font-semibold text-foreground">{d.title}</h3>
                 <p className="text-sm text-[#3d3a35] leading-relaxed">{d.desc}</p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </section>

@@ -24,6 +24,12 @@ const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
 
+  // Evite d'embarquer des barrel files entiers (icones, UI, animations)
+  // dans le bundle client quand seules quelques exports sont utilisees
+  experimental: {
+    optimizePackageImports: ['@phosphor-icons/react', '@headlessui/react', 'framer-motion'],
+  },
+
   // Redirections pour SEO
   async redirects() {
     return [

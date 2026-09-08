@@ -1,7 +1,8 @@
 /* Fonts managed via next/font/google in layout.tsx */
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "leaflet/dist/leaflet.css";
+/* leaflet.css importé localement dans InteractiveMap.tsx (évite de bloquer
+   le rendu des pages qui n'affichent pas de carte) */
 
 :root {
   --bg-primary: #0f0f13;

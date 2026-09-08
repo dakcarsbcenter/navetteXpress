@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
+import 'leaflet/dist/leaflet.css';
 
 // Coordonnées de Dakar, Sénégal (Plateau)
 const DEFAULT_CENTER: [number, number] = [14.6928, -17.4467];
