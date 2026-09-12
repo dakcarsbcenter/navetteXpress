@@ -88,7 +88,7 @@ function ConfirmResetPasswordContent() {
             <div className="w-10 h-10 bg-gold rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(201,168,76,0.3)]">
               <span className="text-midnight font-bold text-lg">NX</span>
             </div>
-            <p className="text-xl font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+            <p className="text-xl font-semibold" style={{ color: '#F0EDE8' }}>
               Navette <span style={{ color: 'var(--color-gold)' }}>Xpress</span>
             </p>
           </div>
@@ -97,7 +97,7 @@ function ConfirmResetPasswordContent() {
             <h2 className="text-4xl leading-tight mb-8"
               style={{
                 fontFamily: 'var(--font-display)',
-                color: 'var(--color-text-primary)',
+                color: '#F0EDE8',
                 fontWeight: 300,
               }}>
               {t('resetPasswordConfirm.panel.headlineBefore')}{' '}
@@ -109,14 +109,14 @@ function ConfirmResetPasswordContent() {
                 <ShieldCheck size={24} className="text-gold" />
                 <p className="text-sm font-bold uppercase tracking-widest text-gold">{t('resetPasswordConfirm.panel.securityBadgeTitle')}</p>
               </div>
-              <p className="text-sm text-text-secondary leading-relaxed">
+              <p className="text-sm leading-relaxed" style={{ color: '#A09CB0' }}>
                 {t('resetPasswordConfirm.panel.securityBadgeText')}
               </p>
             </div>
           </div>
 
           <div className="mt-auto py-8 border-t border-white/5 opacity-50">
-            <p className="text-[10px] uppercase tracking-widest">{t('resetPasswordConfirm.panel.footerText')}</p>
+            <p className="text-[10px] uppercase tracking-widest" style={{ color: '#6B6880' }}>{t('resetPasswordConfirm.panel.footerText')}</p>
           </div>
         </div>
       </div>

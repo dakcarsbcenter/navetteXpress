@@ -86,7 +86,7 @@ export default function ResetPasswordClient() {
             </div>
             <div>
               <p className="text-lg font-semibold"
-                style={{ color: 'var(--color-text-primary)' }}>
+                style={{ color: '#F0EDE8' }}>
                 Navette <span style={{ color: 'var(--color-gold)' }}>Xpress</span>
               </p>
             </div>
@@ -97,7 +97,7 @@ export default function ResetPasswordClient() {
             <p className="text-4xl leading-tight mb-8"
               style={{
                 fontFamily: 'var(--font-display)',
-                color: 'var(--color-text-primary)',
+                color: '#F0EDE8',
                 fontWeight: 300,
               }}>
               {t('resetPassword.panel.headlineBefore')}{' '}
@@ -106,7 +106,7 @@ export default function ResetPasswordClient() {
               </span>{' '}
               {t('resetPassword.panel.headlineAfter')}
             </p>
-            <p className="text-sm font-light leading-relaxed max-w-sm" style={{ color: 'var(--color-text-secondary)' }}>
+            <p className="text-sm font-light leading-relaxed max-w-sm" style={{ color: '#A09CB0' }}>
               {t('resetPassword.panel.description')}
             </p>
           </div>
@@ -121,7 +121,7 @@ export default function ResetPasswordClient() {
                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
               </svg>
             </div>
-            <p className="text-[10px] uppercase tracking-widest" style={{ color: 'var(--color-text-muted)' }}>
+            <p className="text-[10px] uppercase tracking-widest" style={{ color: '#6B6880' }}>
               {t('resetPassword.panel.sslBadge')}
             </p>
           </div>

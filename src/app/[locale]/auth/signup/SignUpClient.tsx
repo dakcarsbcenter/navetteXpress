@@ -169,10 +169,10 @@ export default function SignUpClient() {
             </div>
             <div>
               <p className="text-lg font-semibold"
-                style={{ color: 'var(--color-text-primary)' }}>
+                style={{ color: '#F0EDE8' }}>
                 Navette <span style={{ color: 'var(--color-gold)' }}>Xpress</span>
               </p>
-              <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
+              <p className="text-xs mt-0.5" style={{ color: '#6B6880' }}>
                 {t('signup.panel.tagline')}
               </p>
             </div>
@@ -183,7 +183,7 @@ export default function SignUpClient() {
             <p className="text-4xl leading-tight mb-8"
               style={{
                 fontFamily: 'var(--font-display)',
-                color: 'var(--color-text-primary)',
+                color: '#F0EDE8',
                 fontWeight: 300,
               }}>
               {t('signup.panel.headlineBefore')}{' '}
@@ -198,7 +198,7 @@ export default function SignUpClient() {
               {benefits.map((benefit, i) => (
                 <div key={i} className="flex items-center gap-3">
                   <CheckCircle size={18} style={{ color: 'var(--color-gold)' }} />
-                  <p className="text-sm font-light" style={{ color: 'var(--color-text-secondary)' }}>
+                  <p className="text-sm font-light" style={{ color: '#A09CB0' }}>
                     {benefit}
                   </p>
                 </div>
@@ -209,7 +209,7 @@ export default function SignUpClient() {
           {/* Pied de page panneau gauche */}
           <div className="mt-auto pt-8"
             style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-            <p className="text-[10px] uppercase tracking-[0.2em] mb-4" style={{ color: 'var(--color-text-muted)' }}>{t('signup.panel.footerLabel')}</p>
+            <p className="text-[10px] uppercase tracking-[0.2em] mb-4" style={{ color: '#6B6880' }}>{t('signup.panel.footerLabel')}</p>
             <div className="flex gap-8 items-center opacity-40 grayscale">
               <div className="text-sm font-bold text-white tracking-widest">AIBD</div>
               <div className="text-sm font-bold text-white tracking-widest">STRIPE</div>
