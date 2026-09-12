@@ -311,11 +311,11 @@ function SignInForm() {
         <div className="auth-enter w-full max-w-[420px]">
           {/* Logo mobile */}
           <Link href="/" className="flex items-center gap-2.5 mb-10 lg:hidden transition-opacity hover:opacity-80">
-            <div className="w-8 h-8 bg-white/10 border border-white/10 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-[#1A1A1A] border border-white/10 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">NX</span>
             </div>
             <p className="text-base font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-              Navette <span style={{ color: 'var(--color-gold)' }}>Xpress</span>
+              Navette <span style={{ color: 'var(--color-gold-deep)' }}>Xpress</span>
             </p>
           </Link>
 
@@ -347,7 +347,7 @@ function SignInForm() {
                   {showResetOption && (
                     <Link href="/auth/reset-password"
                       className="inline-block text-xs font-medium mt-2 underline transition-colors"
-                      style={{ color: 'var(--color-gold)' }}>
+                      style={{ color: 'var(--color-gold-deep)' }}>
                       {t('signin.resetPasswordLink')}
                     </Link>
                   )}
@@ -357,7 +357,7 @@ function SignInForm() {
 
             <div className="mb-5">
               <label htmlFor="email"
-                className="block text-[10px] tracking-[0.12em] uppercase mb-2.5"
+                className="block text-[11px] font-semibold tracking-[0.1em] uppercase mb-2.5"
                 style={{ color: 'var(--color-text-secondary)' }}>
                 {t('signin.emailLabel')}
               </label>
@@ -373,10 +373,10 @@ function SignInForm() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   autoComplete="email"
-                  className="w-full pl-11 pr-4 py-3.5 rounded-xl text-sm outline-none transition-all duration-200"
+                  className="auth-input w-full pl-11 pr-4 py-3.5 rounded-xl text-sm outline-none transition-all duration-200"
                   style={{
-                    backgroundColor: 'var(--color-surface)',
-                    border: '1px solid rgba(255,255,255,0.08)',
+                    backgroundColor: 'var(--color-surface-2)',
+                    border: '1px solid rgba(18,16,14,0.14)',
                     color: 'var(--color-text-primary)',
                   }}
                   placeholder={t('signin.emailPlaceholder')}
@@ -387,13 +387,13 @@ function SignInForm() {
             <div className="mb-7">
               <div className="flex items-center justify-between mb-2.5">
                 <label htmlFor="password"
-                  className="text-[10px] tracking-[0.12em] uppercase"
+                  className="text-[11px] font-semibold tracking-[0.1em] uppercase"
                   style={{ color: 'var(--color-text-secondary)' }}>
                   {t('signin.passwordLabel')}
                 </label>
                 <Link href="/auth/reset-password"
                   className="text-[10px] transition-colors hover:opacity-80"
-                  style={{ color: 'var(--color-gold)' }}>
+                  style={{ color: 'var(--color-gold-deep)' }}>
                   {t('signin.forgotPassword')}
                 </Link>
               </div>
@@ -409,10 +409,10 @@ function SignInForm() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   autoComplete="current-password"
-                  className="w-full pl-11 pr-12 py-3.5 rounded-xl text-sm outline-none transition-all duration-200"
+                  className="auth-input w-full pl-11 pr-12 py-3.5 rounded-xl text-sm outline-none transition-all duration-200"
                   style={{
-                    backgroundColor: 'var(--color-surface)',
-                    border: '1px solid rgba(255,255,255,0.08)',
+                    backgroundColor: 'var(--color-surface-2)',
+                    border: '1px solid rgba(18,16,14,0.14)',
                     color: 'var(--color-text-primary)',
                   }}
                   placeholder="••••••••"
@@ -444,9 +444,9 @@ function SignInForm() {
           </form>
 
           <div className="flex items-center gap-4 my-8">
-            <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(255,255,255,0.07)' }} />
+            <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(18,16,14,0.14)' }} />
             <span className="text-[11px]" style={{ color: 'var(--color-text-muted)' }}>{t('signin.orDivider')}</span>
-            <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(255,255,255,0.07)' }} />
+            <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(18,16,14,0.14)' }} />
           </div>
 
           <button
@@ -454,8 +454,8 @@ function SignInForm() {
             type="button"
             className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl text-sm font-medium transition-all duration-200 mb-8"
             style={{
-              backgroundColor: 'var(--color-surface)',
-              border: '1px solid rgba(255,255,255,0.1)',
+              backgroundColor: 'var(--color-surface-2)',
+              border: '1px solid rgba(18,16,14,0.14)',
               color: 'var(--color-text-primary)',
             }}
           >
@@ -472,7 +472,7 @@ function SignInForm() {
             {t('signin.noAccountText')}{' '}
             <Link href="/auth/signup"
               className="font-medium transition-colors hover:opacity-80"
-              style={{ color: 'var(--color-gold)' }}>
+              style={{ color: 'var(--color-gold-deep)' }}>
               {t('signin.createAccountLink')}
             </Link>
           </p>

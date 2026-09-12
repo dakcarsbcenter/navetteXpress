@@ -139,7 +139,7 @@ function ConfirmResetPasswordContent() {
                 fontWeight: 400,
               }}>
               {t('resetPasswordConfirm.headingBefore')}{' '}
-              <span style={{ color: 'var(--color-gold)', fontStyle: 'italic' }}>{t('resetPasswordConfirm.headingHighlight')}</span>
+              <span style={{ color: 'var(--color-gold-deep)', fontStyle: 'italic' }}>{t('resetPasswordConfirm.headingHighlight')}</span>
             </h1>
             <p className="text-text-secondary">
               {t('resetPasswordConfirm.subtitle')}

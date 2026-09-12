@@ -144,7 +144,7 @@ export default function ResetPasswordClient() {
               <span className="text-[#F7F3EC] font-bold text-sm">NX</span>
             </div>
             <p className="text-base font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-              Navette <span style={{ color: 'var(--color-gold)' }}>Xpress</span>
+              Navette <span style={{ color: 'var(--color-gold-deep)' }}>Xpress</span>
             </p>
           </Link>
 
@@ -158,7 +158,7 @@ export default function ResetPasswordClient() {
                     fontWeight: 400,
                   }}>
                   {t('resetPassword.headingBefore')}{' '}
-                  <span style={{ color: 'var(--color-gold)', fontStyle: 'italic' }}>{t('resetPassword.headingHighlight')}</span>
+                  <span style={{ color: 'var(--color-gold-deep)', fontStyle: 'italic' }}>{t('resetPassword.headingHighlight')}</span>
                 </h1>
                 <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
                   {t('resetPassword.subtitle')}
@@ -179,7 +179,7 @@ export default function ResetPasswordClient() {
 
                 <div className="space-y-2">
                   <label htmlFor="email"
-                    className="block text-[10px] tracking-[0.12em] uppercase mb-2.5"
+                    className="block text-[11px] font-semibold tracking-[0.1em] uppercase mb-2.5"
                     style={{ color: 'var(--color-text-secondary)' }}>
                     {t('resetPassword.emailLabel')}
                   </label>
@@ -194,10 +194,10 @@ export default function ResetPasswordClient() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="w-full pl-11 pr-4 py-3.5 rounded-xl text-sm outline-none transition-all duration-200"
+                      className="auth-input w-full pl-11 pr-4 py-3.5 rounded-xl text-sm outline-none transition-all duration-200"
                       style={{
-                        backgroundColor: 'var(--color-surface)',
-                        border: '1px solid var(--color-border)',
+                        backgroundColor: 'var(--color-surface-2)',
+                        border: '1px solid rgba(18,16,14,0.14)',
                         color: 'var(--color-text-primary)',
                       }}
                       placeholder={t('resetPassword.emailPlaceholder')}
@@ -235,7 +235,7 @@ export default function ResetPasswordClient() {
                   color: 'var(--color-text-primary)',
                   fontWeight: 400,
                 }}>
-                {t('resetPassword.success.headingBefore')} <span style={{ color: 'var(--color-gold)', fontStyle: 'italic' }}>{t('resetPassword.success.headingHighlight')}</span>
+                {t('resetPassword.success.headingBefore')} <span style={{ color: 'var(--color-gold-deep)', fontStyle: 'italic' }}>{t('resetPassword.success.headingHighlight')}</span>
               </h2>
               <p className="text-sm leading-relaxed mb-8" style={{ color: 'var(--color-text-secondary)' }}>
                 {t('resetPassword.success.message')}
@@ -251,7 +251,7 @@ export default function ResetPasswordClient() {
                 <button
                   onClick={() => setSuccess(false)}
                   className="font-medium underline hover:opacity-80"
-                  style={{ color: 'var(--color-gold)' }}>
+                  style={{ color: 'var(--color-gold-deep)' }}>
                   {t('resetPassword.success.retryLink')}
                 </button>
               </p>

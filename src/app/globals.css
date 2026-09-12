@@ -818,6 +818,11 @@ body {
   box-shadow: 0 0 0 3px rgba(180, 100, 58, 0.15);
 }
 
+.auth-input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
 @keyframes floatOrb {
 
   0%,

@@ -230,11 +230,11 @@ export default function SignUpClient() {
         <div className="auth-enter w-full max-w-[480px] mx-auto py-8">
           {/* Logo mobile */}
           <Link href="/" className="flex items-center gap-2.5 mb-10 lg:hidden text-center justify-center transition-opacity hover:opacity-80">
-            <div className="w-8 h-8 bg-white/10 border border-white/10 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-[#1A1A1A] border border-white/10 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">NX</span>
             </div>
             <p className="text-base font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-              Navette <span style={{ color: 'var(--color-gold)' }}>Xpress</span>
+              Navette <span style={{ color: 'var(--color-gold-deep)' }}>Xpress</span>
             </p>
           </Link>
 
@@ -246,7 +246,7 @@ export default function SignUpClient() {
                 fontWeight: 400,
               }}>
               {t('signup.headingBefore')}{' '}
-              <span style={{ color: 'var(--color-gold)', fontStyle: 'italic' }}>{t('signup.headingHighlight')}</span>
+              <span style={{ color: 'var(--color-gold-deep)', fontStyle: 'italic' }}>{t('signup.headingHighlight')}</span>
             </h1>
             <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
               {t('signup.subtitle')}
@@ -267,7 +267,7 @@ export default function SignUpClient() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="block text-[10px] tracking-[0.12em] uppercase"
+                <label className="block text-[11px] font-semibold tracking-[0.1em] uppercase"
                   style={{ color: 'var(--color-text-secondary)' }}>
                   {t('signup.firstNameLabel')}
                 </label>
@@ -293,7 +293,7 @@ export default function SignUpClient() {
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="block text-[10px] tracking-[0.12em] uppercase"
+                <label className="block text-[11px] font-semibold tracking-[0.1em] uppercase"
                   style={{ color: 'var(--color-text-secondary)' }}>
                   {t('signup.lastNameLabel')}
                 </label>
@@ -321,7 +321,7 @@ export default function SignUpClient() {
             </div>
 
             <div className="space-y-2">
-              <label className="block text-[10px] tracking-[0.12em] uppercase"
+              <label className="block text-[11px] font-semibold tracking-[0.1em] uppercase"
                 style={{ color: 'var(--color-text-secondary)' }}>
                 {t('signup.emailLabel')}
               </label>
@@ -348,7 +348,7 @@ export default function SignUpClient() {
             </div>
 
             <div className="space-y-2">
-              <label className="block text-[10px] tracking-[0.12em] uppercase"
+              <label className="block text-[11px] font-semibold tracking-[0.1em] uppercase"
                 style={{ color: 'var(--color-text-secondary)' }}>
                 {t('signup.phoneLabel')}
               </label>
@@ -375,7 +375,7 @@ export default function SignUpClient() {
             </div>
 
             <div className="space-y-2">
-              <label className="block text-[10px] tracking-[0.12em] uppercase"
+              <label className="block text-[11px] font-semibold tracking-[0.1em] uppercase"
                 style={{ color: 'var(--color-text-secondary)' }}>
                 {t('signup.passwordLabel')}
               </label>
@@ -423,7 +423,7 @@ export default function SignUpClient() {
             </div>
 
             <div className="space-y-2">
-              <label className="block text-[10px] tracking-[0.12em] uppercase"
+              <label className="block text-[11px] font-semibold tracking-[0.1em] uppercase"
                 style={{ color: 'var(--color-text-secondary)' }}>
                 {t('signup.confirmPasswordLabel')}
               </label>
@@ -494,7 +494,7 @@ export default function SignUpClient() {
             {t('signup.alreadyAccountText')}{' '}
             <Link href="/auth/signin"
               className="font-medium transition-colors hover:opacity-80"
-              style={{ color: 'var(--color-gold)' }}>
+              style={{ color: 'var(--color-gold-deep)' }}>
               {t('signup.signinLink')}
             </Link>
           </p>
