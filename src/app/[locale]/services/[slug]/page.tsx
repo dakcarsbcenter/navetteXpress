@@ -7,7 +7,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { Link } from '@/i18n/navigation';
 import { routing, type Locale } from '@/i18n/routing';
 import { buildAlternates } from '@/lib/seo/localized-metadata';
-import { schemaBreadcrumb, schemaFAQ, schemaLocalBusiness, schemaService } from '@/lib/schema';
+import { schemaBreadcrumb, schemaFAQ, schemaService } from '@/lib/schema';
 import {
   getMoneyRouteBySlug,
   getMoneyServiceBySlug,
@@ -82,7 +82,6 @@ export default async function ServiceMoneyPage({ params }: Params) {
 
   return (
     <>
-      <JsonLd data={schemaLocalBusiness} />
       <JsonLd data={schemaService({ name: translation.h1, description: translation.description, url: canonical })} />
       <JsonLd data={schemaFAQ(translation.faqs)} />
       <JsonLd data={schemaBreadcrumb(breadcrumbs)} />
