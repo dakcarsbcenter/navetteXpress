@@ -5,7 +5,7 @@ import { signIn } from "next-auth/react"
 import { useRouter as useNextRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Link, useRouter } from "@/i18n/navigation"
-import { User, Envelope, Phone, Lock, Eye, EyeSlash, WarningCircle, ArrowLeft, CircleNotch, CheckCircle } from "@phosphor-icons/react"
+import { User, Envelope, Phone, Lock, Eye, EyeSlash, WarningCircle, ArrowLeft, CircleNotch, CheckCircle, EnvelopeOpen } from "@phosphor-icons/react"
 
 export default function SignUpClient() {
   const t = useTranslations("auth")
@@ -21,6 +21,8 @@ export default function SignUpClient() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [passwordStrength, setPasswordStrength] = useState(0)
+  const [registered, setRegistered] = useState(false)
+  const [resendStatus, setResendStatus] = useState<'idle' | 'sending' | 'sent'>('idle')
   // "/auth/signin" is in-scope (localized) so it goes through the i18n
   // router; "/dashboard" is an out-of-scope, unlocalized route, so it uses
   // the plain next/navigation router instead.
@@ -80,24 +82,29 @@ export default function SignUpClient() {
         return
       }
 
-      // Connexion automatique après inscription réussie
-      const result = await signIn("credentials", {
-        email: formData.email.toLowerCase().trim(),
-        password: formData.password,
-        redirect: false,
-      })
-
-      if (result?.ok) {
-        nextRouter.push("/dashboard")
-      } else {
-        setError(t('signup.errors.accountCreatedPendingLogin'))
-        setTimeout(() => router.push("/auth/signin"), 2000)
-      }
+      // Le compte reste inactif tant que l'email n'est pas confirmé : pas de
+      // connexion automatique, on affiche l'écran "vérifiez votre boîte mail".
+      setRegistered(true)
     } catch (error) {
       console.error("Erreur d'inscription:", error)
       setError(t('signup.errors.unexpected'))
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleResendVerification = async () => {
+    setResendStatus('sending')
+    try {
+      await fetch('/api/auth/resend-verification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: formData.email.toLowerCase().trim() }),
+      })
+    } catch {
+      // Réponse générique anti-énumération : on affiche le succès dans tous les cas.
+    } finally {
+      setResendStatus('sent')
     }
   }
 
@@ -238,6 +245,44 @@ export default function SignUpClient() {
             </p>
           </Link>
 
+          {registered ? (
+            <div className="text-center py-8">
+              <EnvelopeOpen size={56} className="mx-auto mb-6" style={{ color: 'var(--color-gold)' }} />
+              <h1 className="text-3xl mb-3"
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  color: 'var(--color-text-primary)',
+                  fontWeight: 400,
+                }}>
+                {t('signup.success.headingBefore')}{' '}
+                <span style={{ color: 'var(--color-gold-deep)', fontStyle: 'italic' }}>{t('signup.success.headingHighlight')}</span>
+              </h1>
+              <p className="text-sm mb-8" style={{ color: 'var(--color-text-secondary)' }}>
+                {t('signup.success.message')}
+              </p>
+              <button
+                onClick={() => router.push('/auth/signin')}
+                className="btn-gold w-full py-3.5 rounded-xl text-base font-semibold transition-all duration-200 mb-4">
+                {t('signup.success.backToSigninButton')}
+              </button>
+              {resendStatus === 'sent' ? (
+                <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>{t('verifyEmail.resendSuccessMessage')}</p>
+              ) : (
+                <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                  {t('signup.success.noEmailText')}{' '}
+                  <button
+                    type="button"
+                    onClick={handleResendVerification}
+                    disabled={resendStatus === 'sending'}
+                    className="underline font-medium transition-colors hover:opacity-80"
+                    style={{ color: 'var(--color-gold-deep)' }}>
+                    {resendStatus === 'sending' ? t('verifyEmail.resendLoadingButton') : t('signup.success.retryLink')}
+                  </button>
+                </p>
+              )}
+            </div>
+          ) : (
+            <>
           <div className="mb-10 text-center lg:text-left">
             <h1 className="text-3xl mb-3"
               style={{
@@ -498,6 +543,8 @@ export default function SignUpClient() {
               {t('signup.signinLink')}
             </Link>
           </p>
+            </>
+          )}
 
           <p className="text-center mt-6">
             <Link href="/"

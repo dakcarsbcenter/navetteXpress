@@ -193,6 +193,14 @@ const providers = [
           }
         }
 
+        // Bloquer la connexion tant que l'email n'est pas confirmé (comptes
+        // créés via /api/auth/register — les comptes Google sont pré-vérifiés,
+        // voir le callback signIn ci-dessous)
+        if (!user.emailVerified) {
+          console.log("📧 [NextAuth] Email non vérifié:", user.email)
+          throw new Error("EmailNotVerified")
+        }
+
         // Connexion réussie : réinitialiser les tentatives
         if (user.loginAttempts && user.loginAttempts > 0) {
           await resetLoginAttempts(user.id)

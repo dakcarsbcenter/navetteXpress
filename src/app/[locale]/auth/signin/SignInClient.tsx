@@ -16,6 +16,8 @@ function SignInForm() {
   const [error, setError] = useState("")
   const [failedAttempts, setFailedAttempts] = useState(0)
   const [showResetOption, setShowResetOption] = useState(false)
+  const [showResendVerification, setShowResendVerification] = useState(false)
+  const [resendStatus, setResendStatus] = useState<'idle' | 'sending' | 'sent'>('idle')
   // NextAuth internally redirects to the bare "/auth/signin" path regardless
   // of locale (see src/lib/auth.ts authOptions.pages.signIn); the redirect
   // target here ("/dashboard") is an out-of-scope, unlocalized route, so we
@@ -73,6 +75,9 @@ function SignInForm() {
         return t('signin.errors.accessDenied')
       case 'Verification':
         return t('signin.errors.verification')
+      case 'EmailNotVerified':
+        setShowResendVerification(true)
+        return t('signin.errors.emailNotVerified')
       case 'UserNotFound':
         return t('signin.errors.userNotFound')
       case 'InvalidPassword':
@@ -90,6 +95,8 @@ function SignInForm() {
     e.preventDefault()
     setIsLoading(true)
     setError("")
+    setShowResendVerification(false)
+    setResendStatus('idle')
 
     // Validation côté client
     if (!email.trim() || !password.trim()) {
@@ -149,6 +156,22 @@ function SignInForm() {
       setError(t('signin.errors.unexpected'))
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleResendVerification = async () => {
+    setResendStatus('sending')
+    try {
+      await fetch('/api/auth/resend-verification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim().toLowerCase() }),
+      })
+    } catch {
+      // La réponse de l'API est générique (anti-énumération) : on affiche le
+      // message de succès dans tous les cas, comme pour reset-password.
+    } finally {
+      setResendStatus('sent')
     }
   }
 
@@ -350,6 +373,22 @@ function SignInForm() {
                       style={{ color: 'var(--color-gold-deep)' }}>
                       {t('signin.resetPasswordLink')}
                     </Link>
+                  )}
+                  {showResendVerification && (
+                    resendStatus === 'sent' ? (
+                      <p className="text-xs mt-2" style={{ color: 'var(--color-text-secondary)' }}>
+                        {t('verifyEmail.resendSuccessMessage')}
+                      </p>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleResendVerification}
+                        disabled={resendStatus === 'sending'}
+                        className="inline-block text-xs font-medium mt-2 underline transition-colors"
+                        style={{ color: 'var(--color-gold-deep)' }}>
+                        {resendStatus === 'sending' ? t('verifyEmail.resendLoadingButton') : t('signin.errors.resendVerificationLink')}
+                      </button>
+                    )
                   )}
                 </div>
               </div>

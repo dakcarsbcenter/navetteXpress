@@ -91,6 +91,10 @@ export const users = pgTable('users', {
   isActive: boolean('is_active').notNull().default(true),
   resetToken: text('reset_token'),
   resetTokenExpiry: timestamp('reset_token_expiry'),
+  // Activation de compte par email (inscription client uniquement — les comptes
+  // Google sont pré-vérifiés, voir src/lib/auth.ts signIn callback)
+  emailVerificationToken: text('email_verification_token'),
+  emailVerificationTokenExpiry: timestamp('email_verification_token_expiry'),
   // Champs pour le système de tentatives de connexion
   loginAttempts: integer('login_attempts').notNull().default(0),
   accountLockedUntil: timestamp('account_locked_until'),
@@ -559,6 +563,20 @@ export const notificationQueueTable = pgTable('notification_queue', {
 
 export type InsertNotificationQueue = typeof notificationQueueTable.$inferInsert;
 export type SelectNotificationQueue = typeof notificationQueueTable.$inferSelect;
+
+// Liste noire d'emails alimentée automatiquement par le webhook Resend
+// (src/app/api/webhooks/resend/route.ts) quand un email envoyé par le
+// système fait l'objet d'un vrai rebond ("bounced"). Consultée à l'inscription
+// (src/lib/security/email-validation.ts) en complément de la liste statique.
+export const blockedEmailsTable = pgTable('blocked_emails', {
+  id: serial('id').primaryKey(),
+  email: text('email').notNull().unique(), // normalisé lower/trim
+  reason: text('reason').notNull(), // ex: 'hard_bounce'
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+export type InsertBlockedEmail = typeof blockedEmailsTable.$inferInsert;
+export type SelectBlockedEmail = typeof blockedEmailsTable.$inferSelect;
 
 // Alias pour les exports
 export const quotes = quotesTable;

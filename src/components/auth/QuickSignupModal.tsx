@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { signIn } from "next-auth/react"
 
 interface QuickSignupModalProps {
   isOpen: boolean
@@ -14,7 +13,7 @@ interface QuickSignupModalProps {
   }
 }
 
-export function QuickSignupModal({ isOpen, onClose, onSuccess, prefillData }: QuickSignupModalProps) {
+export function QuickSignupModal({ isOpen, onClose, prefillData }: QuickSignupModalProps) {
   const [formData, setFormData] = useState({
     name: prefillData?.name || "",
     email: prefillData?.email || "",
@@ -23,6 +22,7 @@ export function QuickSignupModal({ isOpen, onClose, onSuccess, prefillData }: Qu
   })
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const [registered, setRegistered] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -89,20 +89,10 @@ export function QuickSignupModal({ isOpen, onClose, onSuccess, prefillData }: Qu
         return
       }
 
-      // Connecter l'utilisateur automatiquement
-      const result = await signIn("credentials", {
-        email: formData.email,
-        password: formData.password,
-        redirect: false,
-      })
-
-      if (result?.error) {
-        setError("Compte créé mais erreur de connexion")
-        console.error("Erreur NextAuth:", result.error)
-      } else {
-        onSuccess()
-        onClose()
-      }
+      // Le compte reste inactif tant que l'email n'est pas confirmé : pas de
+      // connexion automatique, on affiche l'écran "vérifiez votre boîte mail"
+      // et on laisse l'utilisateur continuer sa réservation en tant qu'invité.
+      setRegistered(true)
     } catch (error) {
       setError("Une erreur est survenue")
       console.error("Erreur:", error)
@@ -158,13 +148,26 @@ export function QuickSignupModal({ isOpen, onClose, onSuccess, prefillData }: Qu
             </button>
           </div>
 
-                <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg mb-4">
-                  <p className="text-green-800 dark:text-green-200 text-sm flex items-center gap-2">
-                    <span className="text-lg">✨</span>
-                    Votre compte client sera créé automatiquement
-                  </p>
-                </div>
-
+          {registered ? (
+            <div className="text-center py-4">
+              <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg mb-4">
+                <p className="text-green-800 dark:text-green-200 text-sm flex items-center gap-2 justify-center">
+                  <span className="text-lg">✉️</span>
+                  Compte créé ! Un email d&apos;activation vient de vous être envoyé.
+                </p>
+              </div>
+              <p className="text-sm text-slate-600 dark:text-slate-300 mb-6">
+                Cliquez sur le lien reçu par email pour activer votre compte. Vous pouvez continuer votre réservation en tant qu&apos;invité en attendant.
+              </p>
+              <button
+                onClick={() => { setRegistered(false); onClose() }}
+                className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
+              >
+                Continuer ma réservation
+              </button>
+            </div>
+          ) : (
+            <>
                 {error && (
                   <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200 rounded-lg text-sm">
                     {error}
@@ -258,6 +261,8 @@ export function QuickSignupModal({ isOpen, onClose, onSuccess, prefillData }: Qu
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-4 text-center">
             En créant un compte, vous pourrez suivre vos réservations et accéder à des fonctionnalités avancées.
           </p>
+            </>
+          )}
         </div>
       </div>
     </div>

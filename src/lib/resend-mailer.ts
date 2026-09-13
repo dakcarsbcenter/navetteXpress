@@ -368,6 +368,104 @@ export async function sendNewBookingRequestEmail(
 }
 
 /**
+ * Notifie l'admin de la création d'un nouveau compte client
+ */
+export async function sendNewAccountNotificationToAdmin(
+  to: string,
+  accountData: {
+    userName: string;
+    userEmail: string;
+    userPhone?: string;
+    createdAt: string;
+  }
+) {
+  try {
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: [to],
+      subject: `👤 Nouveau compte client créé`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+          <body style="font-family: Arial, sans-serif; background: #e8f0f8; padding: 20px;">
+            <div style="max-width: 600px; margin: 0 auto; background: white; border: 2px solid #2563eb; border-radius: 8px; overflow: hidden;">
+              <div style="background: #1F5245; padding: 32px 20px; text-align: center;">
+                <h1 style="color: white; margin: 0; font-size: 28px;">Navette Express</h1>
+              </div>
+              <div style="padding: 32px 24px;">
+                <div style="text-align: left; margin-bottom: 30px;">
+                  <div style="display: inline-block; background: white; padding: 8px 16px; border-radius: 4px;">
+                    <span style="font-size: 40px; vertical-align: middle;">👤</span>
+                    <span style="color: #1F5245; font-size: 24px; font-weight: bold; margin-left: 10px; vertical-align: middle;">Nouveau compte client</span>
+                  </div>
+                </div>
+
+                <p style="color: #374151; font-size: 16px; line-height: 1.6;">Bonjour,</p>
+                <p style="color: #374151; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">
+                  Un nouveau compte client vient d'être créé sur NavetteXpress. Le compte reste inactif tant que l'utilisateur n'a pas confirmé son adresse email.
+                </p>
+
+                <div style="background: #f3f4f6; padding: 24px; border-radius: 8px; margin: 24px 0;">
+                  <h3 style="color: #1f2937; margin: 0 0 20px 0; padding-bottom: 12px; border-bottom: 2px solid #d1d5db; font-size: 18px;">Détails du compte :</h3>
+                  <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                      <td style="padding: 8px 0; color: #374151; font-weight: bold; width: 140px;">Nom :</td>
+                      <td style="padding: 8px 0; color: #1f2937;">${accountData.userName}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 8px 0; color: #374151; font-weight: bold;">Email :</td>
+                      <td style="padding: 8px 0; color: #1f2937;">${accountData.userEmail}</td>
+                    </tr>
+                    ${accountData.userPhone ? `<tr>
+                      <td style="padding: 8px 0; color: #374151; font-weight: bold;">Téléphone :</td>
+                      <td style="padding: 8px 0; color: #1f2937;">${accountData.userPhone}</td>
+                    </tr>` : ''}
+                    <tr>
+                      <td style="padding: 8px 0; color: #374151; font-weight: bold;">Créé le :</td>
+                      <td style="padding: 8px 0; color: #1f2937;">${accountData.createdAt}</td>
+                    </tr>
+                  </table>
+                </div>
+
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="${process.env.NEXT_PUBLIC_APP_URL}/admin/clients"
+                     style="background: #1F5245; color: white; padding: 16px 48px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 16px;">
+                    Voir les clients
+                  </a>
+                </div>
+
+                <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;">
+
+                <p style="text-align: center; color: #6b7280; font-size: 14px; margin: 8px 0;">Cordialement,</p>
+                <p style="text-align: center; color: #1f2937; font-weight: bold; font-size: 16px; margin: 8px 0;">Système NavetteXpress</p>
+                <p style="text-align: center; color: #9ca3af; font-size: 12px; margin: 16px 0;">Cet email a été envoyé automatiquement.</p>
+
+                <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;">
+
+                <p style="text-align: center; color: #9ca3af; font-size: 12px; margin: 4px 0;">© 2025 NavetteXpress. Tous droits réservés.</p>
+                <p style="text-align: center; color: #9ca3af; font-size: 12px; margin: 4px 0;">[NavetteXpress, Cité Magistrats, Dakar, Sénégal]</p>
+                <p style="text-align: center; color: #9ca3af; font-size: 11px; margin: 16px 0;">Vous recevez cet email en tant qu'administrateur.</p>
+              </div>
+            </div>
+          </body>
+        </html>
+      `,
+    });
+
+    if (error) {
+      console.error('❌ Erreur envoi email nouveau compte:', error);
+      throw error;
+    }
+
+    console.log('✅ Email nouveau compte envoyé:', data?.id);
+    return data;
+  } catch (error) {
+    console.error('❌ Erreur:', error);
+    throw error;
+  }
+}
+
+/**
  * Envoie un email au client et à l'admin quand une nouvelle demande de devis est créée
  */
 export async function sendNewQuoteRequestEmail(

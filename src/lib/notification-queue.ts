@@ -39,6 +39,17 @@ const registry: Record<string, Handler> = {
     const { sendPasswordChangedEmail } = await import('./email');
     return sendPasswordChangedEmail(args[0] as string, args[1] as string);
   },
+  'email.sendVerificationEmail': async (args) => {
+    const { sendVerificationEmail } = await import('./email');
+    return sendVerificationEmail(args[0] as string, args[1] as string, args[2] as string);
+  },
+  'resend-mailer.sendNewAccountNotificationToAdmin': async (args) => {
+    const { sendNewAccountNotificationToAdmin } = await import('./resend-mailer');
+    return sendNewAccountNotificationToAdmin(
+      args[0] as string,
+      args[1] as Parameters<typeof sendNewAccountNotificationToAdmin>[1]
+    );
+  },
   'resend-email.sendBookingNotificationToAdmin': async (args) => {
     const { sendBookingNotificationToAdmin } = await import('./resend-email');
     return sendBookingNotificationToAdmin(args[0] as Parameters<typeof sendBookingNotificationToAdmin>[0]);

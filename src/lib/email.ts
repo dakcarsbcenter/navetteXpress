@@ -1,6 +1,7 @@
 import { Resend } from 'resend';
 import PasswordResetEmail from '@/emails/PasswordResetEmail';
 import AccountLockedEmail from '@/emails/AccountLockedEmail';
+import VerificationEmail from '@/emails/VerificationEmail';
 
 // Init paresseuse : évite de lever une erreur au chargement du module quand
 // RESEND_API_KEY est absent (ex: au build Next.js, où les env vars runtime
@@ -61,6 +62,47 @@ export async function sendPasswordResetEmail(
     }
 
     console.log('✅ [EMAIL] Email envoyé avec succès:', data?.id);
+    return { success: true, data };
+  } catch (error) {
+    console.error('❌ [EMAIL] Erreur inattendue:', error);
+    return { success: false, error };
+  }
+}
+
+/**
+ * Envoie un email d'activation de compte (vérification d'adresse à l'inscription)
+ * @param email - Email du destinataire
+ * @param verificationToken - Token d'activation
+ * @param userName - Nom de l'utilisateur
+ * @returns Promise avec le résultat de l'envoi
+ */
+export async function sendVerificationEmail(
+  email: string,
+  verificationToken: string,
+  userName: string
+) {
+  const verifyUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/verify-email?token=${verificationToken}`;
+
+  try {
+    console.log('📧 [EMAIL] Envoi email d\'activation de compte à:', email);
+
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: [email],
+      subject: '✉️ Activez votre compte - NavetteXpress',
+      react: VerificationEmail({
+        userName,
+        verifyUrl,
+        expiresIn: '24 heures'
+      }),
+    });
+
+    if (error) {
+      console.error('❌ [EMAIL] Erreur lors de l\'envoi:', error);
+      return { success: false, error };
+    }
+
+    console.log('✅ [EMAIL] Email d\'activation envoyé avec succès:', data?.id);
     return { success: true, data };
   } catch (error) {
     console.error('❌ [EMAIL] Erreur inattendue:', error);
