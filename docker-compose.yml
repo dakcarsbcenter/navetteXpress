@@ -12,7 +12,12 @@ services:
       - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+      # Pas de montage de ./init-db.sql : ce fichier n'a jamais existé dans le
+      # dépôt, donc Docker le recréait en *dossier* sur l'hôte, et le conteneur
+      # refusait alors de démarrer ("not a directory", incident du 2026-09-19).
+      # Le schéma vient de toute façon des migrations (scripts/run-migrations.mjs),
+      # pas de /docker-entrypoint-initdb.d/ — qui n'est lu qu'à la toute première
+      # initialisation d'un volume vide.
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U navettexpress_user -d navettexpress"]
       interval: 5s

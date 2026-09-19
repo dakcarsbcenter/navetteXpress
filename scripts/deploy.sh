@@ -15,6 +15,27 @@ PREVIOUS_COMMIT="$(git log -1 --oneline)"
 echo "$PREVIOUS_COMMIT"
 echo "   (notez ce commit pour un rollback éventuel : docs/GUIDE_DEPLOIEMENT_PRODUCTION.md, chapitre 13)"
 
+echo "==> Vérification de l'état de la base de données..."
+# Après un redémarrage du VPS, un OOM-kill ou un `docker compose down`, le
+# conteneur postgres peut être arrêté : la sauvegarde ci-dessous échouerait
+# alors sur « service "postgres" is not running ». On le relance et on attend
+# qu'il soit "healthy" (healthcheck pg_isready du docker-compose.yml).
+docker compose up -d postgres
+
+POSTGRES_WAIT_SECONDS="${POSTGRES_WAIT_SECONDS:-90}"
+elapsed=0
+until [ "$(docker compose ps -q postgres | xargs -r docker inspect -f '{{.State.Health.Status}}' 2>/dev/null)" = "healthy" ]; do
+  if [ "$elapsed" -ge "$POSTGRES_WAIT_SECONDS" ]; then
+    echo "==> ERREUR : postgres n'est toujours pas prêt après ${POSTGRES_WAIT_SECONDS}s." >&2
+    echo "    Diagnostiquez avant de redéployer : docker compose logs --tail=100 postgres" >&2
+    echo "    (causes fréquentes : disque plein — df -h, ou volume postgres_data corrompu)" >&2
+    exit 1
+  fi
+  sleep 3
+  elapsed=$((elapsed + 3))
+done
+echo "    postgres est prêt."
+
 echo "==> Sauvegarde de la base de données..."
 ./scripts/backup.sh
 
@@ -48,8 +69,18 @@ source .env.docker
 set +a
 docker compose build app
 
-echo "==> Redémarrage de l'application..."
-docker compose up -d app
+echo "==> Nettoyage du cache de build Docker..."
+# Sans ça le cache BuildKit grossit à chaque déploiement sans jamais être purgé
+# (constaté le 2026-09-19 : 116 Go de cache pour 1,7 Go d'images, disque à 80 %).
+# Un disque plein sur ce VPS fait tomber postgres, donc on purge ici, après un
+# build réussi. `until=168h` garde une semaine de cache : les déploiements
+# rapprochés restent rapides, seul le vieux cache part.
+docker builder prune -f --filter until=168h || echo "    (purge du cache ignorée)"
+
+echo "==> Redémarrage de la stack (app + postgres + caddy)..."
+# `up -d` sans nom de service : idempotent (ne recrée que ce qui a changé) et
+# remet debout un conteneur resté arrêté après un incident ou un `down`.
+docker compose up -d
 
 echo "==> Attente du démarrage (15s)..."
 sleep 15
