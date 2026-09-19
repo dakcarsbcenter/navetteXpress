@@ -48,14 +48,24 @@ export async function DELETE(request: NextRequest) {
             return NextResponse.json({ error: "Aucun identifiant fourni" }, { status: 400 })
         }
 
+        // Normaliser les identifiants : le client peut envoyer des chaînes, et une
+        // comparaison string/number ferait passer un devis facturé au travers du filtre
+        const quoteIds = Array.from(new Set(
+            ids.map((id: unknown) => parseInt(String(id), 10)).filter((id: number) => !isNaN(id) && id > 0)
+        ))
+
+        if (quoteIds.length === 0) {
+            return NextResponse.json({ error: "Aucun identifiant valide fourni" }, { status: 400 })
+        }
+
         // Les devis liés à une facture ne peuvent pas être supprimés (contrainte "restrict")
         const linkedInvoices = await db
             .select({ quoteId: invoicesTable.quoteId })
             .from(invoicesTable)
-            .where(inArray(invoicesTable.quoteId, ids))
+            .where(inArray(invoicesTable.quoteId, quoteIds))
 
         const blockedIds = new Set(linkedInvoices.map(i => i.quoteId))
-        const deletableIds = ids.filter((id: number) => !blockedIds.has(id))
+        const deletableIds = quoteIds.filter((id: number) => !blockedIds.has(id))
 
         const deletedQuotes = deletableIds.length > 0
             ? await db
@@ -80,8 +90,14 @@ export async function DELETE(request: NextRequest) {
             deletedIds: deletedQuotes.map(q => q.id),
             skippedIds: Array.from(blockedIds)
         })
-    } catch (error) {
+    } catch (error: any) {
         console.error("Erreur bulk delete quotes:", error)
+        // Filet de sécurité : une facture peut avoir été créée entre la vérification et le DELETE
+        if (error?.code === '23503') {
+            return NextResponse.json({
+                error: "Ce(s) devis ne peuvent pas être supprimés car ils ont une facture associée"
+            }, { status: 409 })
+        }
         return NextResponse.json({ error: "Erreur interne" }, { status: 500 })
     }
 }

@@ -57,7 +57,7 @@ export function QuotesManagement() {
   const [selectedQuoteIds, setSelectedQuoteIds] = useState<Set<number>>(new Set())
   const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false)
 
-  const { notifications, showSuccess, showError, removeNotification } = useNotification()
+  const { notifications, showSuccess, showError, showWarning, removeNotification } = useNotification()
 
   const [filters, setFilters] = useState({ search: '' })
 
@@ -157,7 +157,12 @@ export function QuotesManagement() {
       const data = await response.json()
 
       if (response.ok) {
-        showSuccess(data.message || 'Devis supprimés', 'Succès')
+        // Suppression partielle : certains devis sont liés à une facture et ont été ignorés
+        if (data.skippedIds?.length > 0) {
+          showWarning(data.message || "Certains devis n’ont pas pu être supprimés", 'Suppression partielle')
+        } else {
+          showSuccess(data.message || 'Devis supprimés', 'Succès')
+        }
         setSelectedQuoteIds(new Set())
         fetchQuotes()
       } else {

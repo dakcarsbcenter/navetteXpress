@@ -219,7 +219,14 @@ export async function DELETE(
       }, { status: 403 });
     }
 
-    const quoteId = parseInt((await params).id);
+    const quoteId = parseInt((await params).id, 10);
+
+    if (isNaN(quoteId) || quoteId <= 0) {
+      return NextResponse.json({
+        success: false,
+        error: 'Identifiant de devis invalide'
+      }, { status: 400 });
+    }
 
     const linkedInvoice = await db
       .select({ id: invoicesTable.id })
@@ -251,8 +258,15 @@ export async function DELETE(
       message: 'Demande de devis supprimée avec succès'
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Erreur lors de la suppression de la demande de devis:', error);
+    // Filet de sécurité : une facture peut avoir été créée entre la vérification et le DELETE
+    if (error?.code === '23503') {
+      return NextResponse.json({
+        success: false,
+        error: 'Ce devis ne peut pas être supprimé car il a une facture associée'
+      }, { status: 409 });
+    }
     return NextResponse.json({ 
       success: false, 
       error: 'Erreur interne du serveur' 
