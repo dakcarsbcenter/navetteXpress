@@ -42,13 +42,11 @@ export const schemaLocalBusiness = {
     paymentAccepted: 'Orange Money, Wave, Cash, Bank Transfer',
     image: 'https://navettexpress.com/og/og-default.jpg',
     logo: 'https://navettexpress.com/icons/logo.png',
-    aggregateRating: {
-        '@type': 'AggregateRating',
-        ratingValue: '4.9',
-        reviewCount: '127',
-        bestRating: '5',
-        worstRating: '1',
-    },
+    // Pas d'aggregateRating ici tant qu'aucun avis n'est affiche sur le site.
+    // Google exige que la note declaree soit visible sur la page et reellement
+    // collectee ; une note codee en dur expose a une action manuelle
+    // "structured data spam". A rebrancher sur la table reviews le jour ou
+    // /temoignages affichera les avis.
     sameAs: [
         'https://www.facebook.com/navettexpress',
         'https://www.instagram.com/navettexpress',
@@ -124,3 +122,74 @@ export const schemaBreadcrumb = (items: { name: string; item: string }[]) => ({
         item: item.item,
     })),
 });
+
+/**
+ * JobPosting — eligibilite Google for Jobs (encart emploi dans les SERP).
+ *
+ * Google impose title / description / datePosted / hiringOrganization /
+ * jobLocation. `validThrough` n'est pas obligatoire mais sans lui l'annonce
+ * reste indefiniment "ouverte", ce que Google finit par deprioriser ; avec une
+ * date depassee elle disparait de l'encart. On la fait donc rouler sur la fin
+ * du 2e mois suivant : stable a l'interieur d'un mois donne, et toujours
+ * valide tant que le recrutement partenaire reste ouvert.
+ *
+ * `baseSalary` est volontairement absent : la remuneration depend du volume de
+ * courses, on ne declare pas un montant qu'on ne garantit pas.
+ */
+export const schemaJobPosting = (data: {
+    title: string;
+    description: string;
+    url: string;
+    locale: string;
+    now?: Date;
+}) => {
+    const now = data.now ?? new Date();
+    const datePosted = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+    const validThrough = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 3, 0));
+
+    return {
+        '@context': 'https://schema.org',
+        '@type': 'JobPosting',
+        title: data.title,
+        description: data.description,
+        identifier: {
+            '@type': 'PropertyValue',
+            name: 'Navette Xpress',
+            value: `NX-CHAUFFEUR-PARTENAIRE-${datePosted.getUTCFullYear()}${String(datePosted.getUTCMonth() + 1).padStart(2, '0')}`,
+        },
+        datePosted: datePosted.toISOString().slice(0, 10),
+        validThrough: validThrough.toISOString().slice(0, 10),
+        employmentType: 'CONTRACTOR',
+        hiringOrganization: {
+            '@type': 'Organization',
+            name: 'Navette Xpress',
+            sameAs: 'https://navettexpress.com',
+            logo: 'https://navettexpress.com/icons/logo.png',
+        },
+        jobLocation: [
+            {
+                '@type': 'Place',
+                address: {
+                    '@type': 'PostalAddress',
+                    addressLocality: 'Dakar',
+                    addressRegion: 'Dakar',
+                    addressCountry: 'SN',
+                },
+            },
+            {
+                '@type': 'Place',
+                address: {
+                    '@type': 'PostalAddress',
+                    addressLocality: 'Mbour',
+                    addressRegion: 'Thies',
+                    addressCountry: 'SN',
+                },
+            },
+        ],
+        occupationalCategory: '53-3053.00 Shuttle Drivers and Chauffeurs',
+        industry: 'Transport de personnes',
+        directApply: true,
+        url: data.url,
+        inLanguage: data.locale,
+    };
+};

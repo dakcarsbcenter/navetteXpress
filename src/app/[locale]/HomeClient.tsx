@@ -37,9 +37,12 @@ export default async function HomeClient({ faqs }: HomeClientProps) {
     { label: "Petite Côte", dot: "bg-gold", distance: "92 KM" },
   ];
 
+  // La note client (4.9/5) a ete retiree : aucun avis n'est collecte ni affiche
+  // sur le site, l'annoncer relevait de l'allegation invérifiable. A remettre
+  // le jour ou des avis reels sont publies, au meme titre que l'aggregateRating
+  // retire de schemaLocalBusiness.
   const stats = [
     { value: "15k+", label: t("stats.trips") },
-    { value: "4.9/5", label: t("stats.rating") },
     { value: "24/7", label: t("stats.support") },
   ];
 

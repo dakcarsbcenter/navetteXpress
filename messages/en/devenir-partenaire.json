@@ -1,14 +1,15 @@
 {
   "meta": {
-    "title": "Become a Partner Driver in Dakar | Navette Xpress",
-    "description": "Join the Navette Xpress network. Become a partner private driver in Dakar and enjoy attractive earnings, flexible hours and 24/7 support."
+    "title": "Become a Partner Driver in Dakar — 12 Places | Navette Xpress",
+    "description": "Partner driver recruitment in Dakar and on the AIBD — Petite Côte corridor. Flat 15% commission, payment as soon as the ride ends, no sign-up fee. Reply within 48h."
   },
   "hero": {
     "eyebrow": "Drivers & vehicle owners",
-    "title": "You know the road. We have the passengers.",
+    "title": "Become a partner driver in Dakar",
     "subtitle": "We work with a limited number of drivers on the corridor. Regular rides, fares known before you accept, payment as soon as the ride ends. Twelve spots open for 2026.",
     "cta": "Read the terms",
-    "imageAlt": "Photo — partner driver, AIBD waiting area"
+    "imageAlt": "Photo — partner driver, AIBD waiting area",
+    "tagline": "You know the road. We have the passengers."
   },
   "stats": {
     "payment": {
@@ -44,14 +45,39 @@
   "conditions": {
     "eyebrow": "Partner terms — 2026",
     "items": [
-      { "label": "COMMISSION", "value": "15 % FIXED" },
-      { "label": "PAYMENT", "value": "INSTANT", "note": "Payment is made as soon as the ride ends, to the account or number provided to admin." },
-      { "label": "ENTRY FEE", "value": "NONE" },
-      { "label": "VEHICLE", "value": "UNDER 8 YEARS" },
-      { "label": "EQUIPMENT", "value": "A/C MANDATORY" },
-      { "label": "LICENSE", "value": "CLASS B, 3 YEARS MIN." },
-      { "label": "INSURANCE", "value": "PASSENGER TRANSPORT" },
-      { "label": "ZONE", "value": "DKR–MBR CORRIDOR" }
+      {
+        "label": "COMMISSION",
+        "value": "15 % FIXED"
+      },
+      {
+        "label": "PAYMENT",
+        "value": "INSTANT",
+        "note": "Payment is made as soon as the ride ends, to the account or number provided to admin."
+      },
+      {
+        "label": "ENTRY FEE",
+        "value": "NONE"
+      },
+      {
+        "label": "VEHICLE",
+        "value": "UNDER 8 YEARS"
+      },
+      {
+        "label": "EQUIPMENT",
+        "value": "A/C MANDATORY"
+      },
+      {
+        "label": "LICENSE",
+        "value": "CLASS B, 3 YEARS MIN."
+      },
+      {
+        "label": "INSURANCE",
+        "value": "PASSENGER TRANSPORT"
+      },
+      {
+        "label": "ZONE",
+        "value": "DKR–MBR CORRIDOR"
+      }
     ],
     "openSpots": "Open spots",
     "openSpotsValue": "12"
@@ -82,8 +108,14 @@
     "eyebrow": "Application",
     "title": "Do the terms work for you?",
     "desc": "Fill in your application opposite. No documents to upload at this stage: we go over the paperwork together on the day of the meeting.",
-    "perk1": { "value": "48 H", "text": "Response time, whatever the answer." },
-    "perk2": { "value": "0 F", "text": "No application fee, at any point." }
+    "perk1": {
+      "value": "48 H",
+      "text": "Response time, whatever the answer."
+    },
+    "perk2": {
+      "value": "0 F",
+      "text": "No application fee, at any point."
+    }
   },
   "form": {
     "title": "Application file",
@@ -92,12 +124,28 @@
       "vehicle": "Your vehicle"
     },
     "fields": {
-      "fullName": { "label": "Full name", "placeholder": "E.g. Amadou Fall" },
-      "email": { "label": "Email", "placeholder": "amadou@gmail.com" },
-      "phone": { "label": "Phone / WhatsApp", "placeholder": "+221 XX XXX XX XX" },
-      "brand": { "label": "Make" },
-      "model": { "label": "Model" },
-      "plate": { "label": "License plate", "placeholder": "E.g. AA-123-BB" }
+      "fullName": {
+        "label": "Full name",
+        "placeholder": "E.g. Amadou Fall"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "amadou@gmail.com"
+      },
+      "phone": {
+        "label": "Phone / WhatsApp",
+        "placeholder": "+221 XX XXX XX XX"
+      },
+      "brand": {
+        "label": "Make"
+      },
+      "model": {
+        "label": "Model"
+      },
+      "plate": {
+        "label": "License plate",
+        "placeholder": "E.g. AA-123-BB"
+      }
     },
     "selectPlaceholder": "Choose...",
     "selectNoResults": "No brand found",
@@ -112,5 +160,38 @@
     "desc": "Thank you for your interest in Navette Xpress. Our partner team will review your application.",
     "descHighlight": "You will receive a response within 48 h.",
     "backHome": "Back to home"
+  },
+  "jobPosting": {
+    "title": "Partner driver (private hire / AIBD airport transfer)",
+    "description": "<p>Navette Xpress is recruiting independent partner drivers on the Dakar — AIBD Airport — Petite Côte corridor (Saly, Somone, Mbour, Ngaparou, Nianing).</p><h3>The role</h3><p>You carry out airport transfers and private trips for our individual, hotel and corporate clients, using your own vehicle. Between 12 and 20 rides a week depending on the availability you declare. The schedule goes out on Friday for the following week.</p><h3>Terms</h3><ul><li>Flat 15% commission, stated before your first ride.</li><li>Payment as soon as the ride ends — bank transfer, Wave or Orange Money.</li><li>No sign-up fee and no application fee, at any point.</li><li>Every fare is known before you accept it: no bidding, no blind rides, no fare revised after the fact.</li><li>You stay on the corridor you know; you are not sent at random across Dakar.</li><li>A reachable human contact and a written procedure if a dispute arises with a client.</li></ul><h3>Requirements</h3><ul><li>Category B licence held for at least 3 years.</li><li>Vehicle under 8 years old, air conditioning mandatory.</li><li>Valid passenger transport insurance.</li><li>Knowledge of the Dakar — AIBD — Mbour corridor.</li></ul><h3>Hiring process</h3><ol><li>You fill in the online application form (one minute).</li><li>We call you back within 48 working hours. We answer everyone, including when the answer is no.</li><li>Meeting in Dakar or Mbour: document check and vehicle inspection.</li><li>First ride accompanied on a short leg, then you join the schedule.</li></ol><p>12 places open for 2026.</p>"
+  },
+  "faq": {
+    "title": "Driver questions",
+    "items": [
+      {
+        "question": "How much does a Navette Xpress partner driver earn?",
+        "answer": "You receive the fare minus a flat 15% commission. That amount is shown to you before you accept the ride, never after. On the Dakar — AIBD corridor, published legs range from 25,000 to 45,000 FCFA. Your income then depends on how many rides you accept: we offer between 12 and 20 rides a week depending on the availability you declare."
+      },
+      {
+        "question": "When do I get paid?",
+        "answer": "As soon as the ride ends, to the bank account or the Wave / Orange Money number you give to the office. There is no weekly or monthly payout delay."
+      },
+      {
+        "question": "Is there any fee to become a partner?",
+        "answer": "No. No sign-up fee, no application fee, no subscription, at any point. If anyone asks you to pay to join Navette Xpress, it is not us."
+      },
+      {
+        "question": "Which documents are required?",
+        "answer": "A category B licence valid and held for at least 3 years, the vehicle registration document, insurance covering passenger transport, and an ID. Nothing to upload when you apply: documents are checked together on the day of the meeting, in Dakar or Mbour."
+      },
+      {
+        "question": "My vehicle is more than 8 years old — can I still apply?",
+        "answer": "The 8-year limit and working air conditioning are firm requirements: our clients book a premium fixed-price transfer. If your vehicle does not qualify yet, send your application anyway and say so; we will get back to you if your situation changes."
+      },
+      {
+        "question": "Can I keep my current job alongside this?",
+        "answer": "Yes. You are an independent partner driver, not an employee. You declare your availability and receive the schedule on Friday for the following week. You are only committed to the rides you have accepted."
+      }
+    ]
   }
 }

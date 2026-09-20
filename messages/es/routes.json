@@ -24,5 +24,21 @@
     "bookNow": "Reservar este trayecto",
     "breadcrumbHome": "Inicio",
     "breadcrumbRoutes": "Rutas"
+  },
+  "hub": {
+    "eyebrow": "Centro de rutas",
+    "h1": "Todas nuestras rutas desde y hacia el aeropuerto AIBD",
+    "intro": "Cada tramo del corredor Dakar — AIBD — Petite Côte tiene su página: tiempo real de trayecto, precio fijo confirmado antes de la salida y proceso de recepción en el aeropuerto. Elija su ruta para ver el detalle y reservar.",
+    "routesHeading": "Rutas AIBD",
+    "servicesHeading": "Servicios de chofer privado",
+    "travelTimeLabel": "Tiempo medio",
+    "seeRoute": "Ver la ruta",
+    "seeService": "Ver el servicio",
+    "ctaHeading": "¿Su trayecto no aparece en la lista?",
+    "ctaText": "Cubrimos todo el corredor y más allá. Solicite un precio en firme para su itinerario exacto.",
+    "ctaBook": "Reservar un trayecto",
+    "ctaQuote": "Solicitar presupuesto",
+    "tarifsLink": "Ver la tarifa completa",
+    "faqLink": "Consultar la FAQ"
   }
 }

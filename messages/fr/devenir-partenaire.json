@@ -1,14 +1,15 @@
 {
   "meta": {
-    "title": "Devenir Partenaire Chauffeur à Dakar | Navette Xpress",
-    "description": "Rejoignez le réseau Navette Xpress. Devenez chauffeur privé partenaire à Dakar et bénéficiez de revenus attractifs, d'horaires flexibles et d'un support 24h/24."
+    "title": "Devenir Chauffeur Partenaire à Dakar — 12 Places | Navette Xpress",
+    "description": "Recrutement chauffeur partenaire à Dakar et sur le corridor AIBD — Petite Côte. Commission fixe 15 %, paiement dès la fin de la course, aucun frais d'inscription. Réponse sous 48 h."
   },
   "hero": {
     "eyebrow": "Chauffeurs & propriétaires de véhicules",
-    "title": "Vous connaissez la route. Nous avons les passagers.",
+    "title": "Devenir chauffeur partenaire à Dakar",
     "subtitle": "Nous travaillons avec un nombre limité de chauffeurs sur le corridor. Courses régulières, tarifs connus avant acceptation, paiement dès la fin de la course. Douze places ouvertes pour 2026.",
     "cta": "Lire les conditions",
-    "imageAlt": "Photo — chauffeur partenaire, aire d'attente AIBD"
+    "imageAlt": "Photo — chauffeur partenaire, aire d'attente AIBD",
+    "tagline": "Vous connaissez la route. Nous avons les passagers."
   },
   "stats": {
     "payment": {
@@ -44,14 +45,39 @@
   "conditions": {
     "eyebrow": "Conditions partenaire — 2026",
     "items": [
-      { "label": "COMMISSION", "value": "15 % FIXE" },
-      { "label": "PAIEMENT", "value": "IMMÉDIAT", "note": "Le paiement se fait dès la fin de la course, vers le compte ou numéro communiqué à l'administration." },
-      { "label": "FRAIS D'ENTRÉE", "value": "AUCUN" },
-      { "label": "VÉHICULE", "value": "MOINS DE 8 ANS" },
-      { "label": "ÉQUIPEMENT", "value": "CLIM. OBLIGATOIRE" },
-      { "label": "PERMIS", "value": "B, 3 ANS MINIMUM" },
-      { "label": "ASSURANCE", "value": "TRANSPORT DE PERS." },
-      { "label": "ZONE", "value": "CORRIDOR DKR–MBR" }
+      {
+        "label": "COMMISSION",
+        "value": "15 % FIXE"
+      },
+      {
+        "label": "PAIEMENT",
+        "value": "IMMÉDIAT",
+        "note": "Le paiement se fait dès la fin de la course, vers le compte ou numéro communiqué à l'administration."
+      },
+      {
+        "label": "FRAIS D'ENTRÉE",
+        "value": "AUCUN"
+      },
+      {
+        "label": "VÉHICULE",
+        "value": "MOINS DE 8 ANS"
+      },
+      {
+        "label": "ÉQUIPEMENT",
+        "value": "CLIM. OBLIGATOIRE"
+      },
+      {
+        "label": "PERMIS",
+        "value": "B, 3 ANS MINIMUM"
+      },
+      {
+        "label": "ASSURANCE",
+        "value": "TRANSPORT DE PERS."
+      },
+      {
+        "label": "ZONE",
+        "value": "CORRIDOR DKR–MBR"
+      }
     ],
     "openSpots": "Places ouvertes",
     "openSpotsValue": "12"
@@ -82,8 +108,14 @@
     "eyebrow": "Candidature",
     "title": "Les conditions vous conviennent ?",
     "desc": "Remplissez votre dossier ci-contre. Aucune pièce à téléverser à ce stade : les papiers, on les regarde ensemble le jour du rendez-vous.",
-    "perk1": { "value": "48 H", "text": "Délai de réponse, quelle qu'elle soit." },
-    "perk2": { "value": "0 F", "text": "Aucun frais de dossier, à aucun moment." }
+    "perk1": {
+      "value": "48 H",
+      "text": "Délai de réponse, quelle qu'elle soit."
+    },
+    "perk2": {
+      "value": "0 F",
+      "text": "Aucun frais de dossier, à aucun moment."
+    }
   },
   "form": {
     "title": "Dossier de candidature",
@@ -92,12 +124,28 @@
       "vehicle": "Votre véhicule"
     },
     "fields": {
-      "fullName": { "label": "Nom complet", "placeholder": "Ex : Amadou Fall" },
-      "email": { "label": "Email", "placeholder": "amadou@gmail.com" },
-      "phone": { "label": "Téléphone / WhatsApp", "placeholder": "+221 XX XXX XX XX" },
-      "brand": { "label": "Marque" },
-      "model": { "label": "Modèle" },
-      "plate": { "label": "Immatriculation", "placeholder": "Ex : AA-123-BB" }
+      "fullName": {
+        "label": "Nom complet",
+        "placeholder": "Ex : Amadou Fall"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "amadou@gmail.com"
+      },
+      "phone": {
+        "label": "Téléphone / WhatsApp",
+        "placeholder": "+221 XX XXX XX XX"
+      },
+      "brand": {
+        "label": "Marque"
+      },
+      "model": {
+        "label": "Modèle"
+      },
+      "plate": {
+        "label": "Immatriculation",
+        "placeholder": "Ex : AA-123-BB"
+      }
     },
     "selectPlaceholder": "Choisir...",
     "selectNoResults": "Aucune marque trouvée",
@@ -112,5 +160,38 @@
     "desc": "Merci de votre intérêt pour Navette Xpress. Notre équipe partenaires va analyser votre dossier.",
     "descHighlight": "Vous recevrez une réponse sous 48 h.",
     "backHome": "Retour à l'accueil"
+  },
+  "jobPosting": {
+    "title": "Chauffeur partenaire (VTC / transfert aéroport AIBD)",
+    "description": "<p>Navette Xpress recrute des chauffeurs partenaires indépendants sur le corridor Dakar — Aéroport AIBD — Petite Côte (Saly, Somone, Mbour, Ngaparou, Nianing).</p><h3>Le poste</h3><p>Vous assurez des transferts aéroport et des trajets privés pour nos clients particuliers, hôtels et entreprises, avec votre propre véhicule. Entre 12 et 20 courses par semaine selon la disponibilité que vous déclarez. Le planning part le vendredi pour la semaine suivante.</p><h3>Conditions</h3><ul><li>Commission fixe de 15 %, annoncée avant la première course.</li><li>Paiement dès la fin de la course — virement, Wave ou Orange Money.</li><li>Aucun frais d'inscription ni frais de dossier, à aucun moment.</li><li>Le montant de chaque course est connu avant que vous l'acceptiez : pas d'enchère, pas de course à l'aveugle, pas de tarif révisé après coup.</li><li>Vous restez sur le corridor que vous connaissez, vous n'êtes pas envoyé au hasard dans Dakar.</li><li>Un interlocuteur humain joignable et une procédure écrite en cas de litige avec un client.</li></ul><h3>Profil recherché</h3><ul><li>Permis B depuis 3 ans minimum.</li><li>Véhicule de moins de 8 ans, climatisation obligatoire.</li><li>Assurance transport de personnes à jour.</li><li>Connaissance du corridor Dakar — AIBD — Mbour.</li></ul><h3>Processus de recrutement</h3><ol><li>Vous remplissez le formulaire de candidature en ligne (une minute).</li><li>Nous vous rappelons sous 48 heures ouvrées. Nous répondons à tout le monde, même quand c'est non.</li><li>Rencontre à Dakar ou Mbour : vérification des papiers et de l'état du véhicule.</li><li>Première course accompagnée sur un segment court, puis entrée dans le planning.</li></ol><p>12 places ouvertes pour 2026.</p>"
+  },
+  "faq": {
+    "title": "Questions des chauffeurs",
+    "items": [
+      {
+        "question": "Combien gagne un chauffeur partenaire Navette Xpress ?",
+        "answer": "Vous percevez le montant de la course moins une commission fixe de 15 %. Ce montant vous est annoncé avant que vous acceptiez la course, jamais après. Sur le corridor Dakar — AIBD, les segments publics vont de 25 000 à 45 000 FCFA. Le revenu dépend ensuite du nombre de courses que vous acceptez : nous proposons entre 12 et 20 courses par semaine selon la disponibilité que vous déclarez."
+      },
+      {
+        "question": "Quand suis-je payé ?",
+        "answer": "Dès la fin de la course, sur le compte bancaire ou le numéro Wave / Orange Money que vous communiquez à l'administration. Il n'y a pas de délai de reversement hebdomadaire ou mensuel."
+      },
+      {
+        "question": "Y a-t-il des frais pour devenir partenaire ?",
+        "answer": "Non. Aucun frais d'inscription, aucun frais de dossier, aucun abonnement, à aucun moment. Si quelqu'un vous demande de payer pour rejoindre Navette Xpress, ce n'est pas nous."
+      },
+      {
+        "question": "Quels documents faut-il fournir ?",
+        "answer": "Permis B en cours de validité depuis au moins 3 ans, carte grise du véhicule, assurance couvrant le transport de personnes et pièce d'identité. Rien à téléverser au moment de la candidature : les papiers sont vérifiés ensemble le jour du rendez-vous, à Dakar ou à Mbour."
+      },
+      {
+        "question": "Mon véhicule a plus de 8 ans, puis-je quand même postuler ?",
+        "answer": "La limite de 8 ans et la climatisation en état de marche sont des conditions fermes : nos clients réservent un transfert premium à prix fixe. Si votre véhicule ne correspond pas encore, envoyez quand même votre candidature en le précisant, nous vous recontacterons si votre situation change."
+      },
+      {
+        "question": "Puis-je continuer mon activité actuelle en parallèle ?",
+        "answer": "Oui. Vous êtes chauffeur partenaire indépendant, pas salarié. Vous déclarez vos disponibilités et vous recevez le planning le vendredi pour la semaine suivante. Vous n'êtes tenu que par les courses que vous avez acceptées."
+      }
+    ]
   }
 }

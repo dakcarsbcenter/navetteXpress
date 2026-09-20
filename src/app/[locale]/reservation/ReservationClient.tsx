@@ -16,6 +16,7 @@ import { useRouter } from "@/i18n/navigation";
 import NextLink from "next/link";
 import { type RouteNodeKey, getRouteNodeFromName } from "@/lib/route-nodes";
 import { fetchPublicApi } from "@/lib/apiClient";
+import { trackBookingSubmitted } from "@/lib/analytics";
 
 type LocationOption = { id: string; name: string };
 
@@ -347,6 +348,12 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
       const result = await response.json();
 
       if (result.success) {
+        // Conversion : reservation reellement enregistree cote API.
+        trackBookingSubmitted({
+          serviceType: formData.serviceType,
+          vehicleType: formData.vehicleType,
+          price: selectedPrice ?? undefined,
+        });
         setIsSubmitting(false);
         setShowSuccessModal(true);
       } else {

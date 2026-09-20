@@ -6,7 +6,6 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { schemaService, schemaBreadcrumb } from '@/lib/schema';
 import { serviceTypes, type ServiceLocale } from '@/lib/services';
 import { buildAlternates } from '@/lib/seo/localized-metadata';
-import { Link } from '@/i18n/navigation';
 
 export async function generateMetadata({
     params,
@@ -46,35 +45,13 @@ export default async function Page({
         url: `https://navettexpress.com/services#${s.id}`,
     }));
 
-    const priorityLinks = [
-        { href: '/services/transfert-aeroport-aibd', label: t('priorityPages.airportTransfer') },
-        { href: '/services/chauffeur-prive-dakar', label: t('priorityPages.privateDriver') },
-        { href: '/services/mise-a-disposition-chauffeur', label: t('priorityPages.chauffeurDisposal') },
-        { href: '/routes', label: t('priorityPages.routesHub') },
-        { href: '/faq', label: t('priorityPages.faq') },
-    ];
-
+    // Le bloc de maillage interne est rendu par ServicesClient, dans le flux de
+    // la page : ici il se serait place avant la <Navigation> et son <h2> aurait
+    // precede le <h1>.
     return (
         <>
             <JsonLd data={schemaService(schemaServices[0])} /> {/* Main service focus */}
             <JsonLd data={schemaBreadcrumb(breadcrumbs)} />
-            <section className="max-w-6xl mx-auto px-6 pt-28 pb-8 space-y-4">
-                <h2 className="text-3xl font-display">{t('priorityHeading')}</h2>
-                <p className="text-text-secondary max-w-3xl">
-                    {t('priorityIntro')}
-                </p>
-                <div className="flex flex-wrap gap-3 text-sm">
-                    {priorityLinks.map((link) => (
-                        <Link
-                            key={link.href}
-                            href={link.href}
-                            className="px-3 py-2 rounded-lg border border-border hover:border-gold hover:text-gold transition-colors"
-                        >
-                            {link.label}
-                        </Link>
-                    ))}
-                </div>
-            </section>
             <ServicesClient />
         </>
     );

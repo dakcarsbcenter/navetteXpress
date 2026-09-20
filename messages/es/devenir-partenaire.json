@@ -1,14 +1,15 @@
 {
   "meta": {
-    "title": "Conviértete en Conductor Socio en Dakar | Navette Xpress",
-    "description": "Únete a la red Navette Xpress. Conviértete en chófer privado socio en Dakar y disfruta de ingresos atractivos, horarios flexibles y soporte 24/7."
+    "title": "Ser Chófer Asociado en Dakar — 12 Plazas | Navette Xpress",
+    "description": "Selección de chóferes asociados en Dakar y en el corredor AIBD — Petite Côte. Comisión fija del 15 %, pago al finalizar la carrera, sin gastos de inscripción. Respuesta en 48 h."
   },
   "hero": {
     "eyebrow": "Conductores y propietarios de vehículos",
-    "title": "Tú conoces la carretera. Nosotros tenemos los pasajeros.",
+    "title": "Ser chófer asociado en Dakar",
     "subtitle": "Trabajamos con un número limitado de conductores en el corredor. Carreras regulares, tarifas conocidas antes de aceptar, pago en cuanto termina la carrera. Doce plazas abiertas para 2026.",
     "cta": "Leer las condiciones",
-    "imageAlt": "Foto — conductor socio, zona de espera de AIBD"
+    "imageAlt": "Foto — conductor socio, zona de espera de AIBD",
+    "tagline": "Usted conoce la ruta. Nosotros tenemos los pasajeros."
   },
   "stats": {
     "payment": {
@@ -44,14 +45,39 @@
   "conditions": {
     "eyebrow": "Condiciones de socio — 2026",
     "items": [
-      { "label": "COMISIÓN", "value": "15 % FIJA" },
-      { "label": "PAGO", "value": "INMEDIATO", "note": "El pago se realiza en cuanto termina la carrera, a la cuenta o número comunicado a la administración." },
-      { "label": "CUOTA DE ENTRADA", "value": "NINGUNA" },
-      { "label": "VEHÍCULO", "value": "MENOS DE 8 AÑOS" },
-      { "label": "EQUIPAMIENTO", "value": "A/A OBLIGATORIO" },
-      { "label": "CARNET", "value": "B, 3 AÑOS MÍNIMO" },
-      { "label": "SEGURO", "value": "TRANSPORTE DE PERSONAS" },
-      { "label": "ZONA", "value": "CORREDOR DKR–MBR" }
+      {
+        "label": "COMISIÓN",
+        "value": "15 % FIJA"
+      },
+      {
+        "label": "PAGO",
+        "value": "INMEDIATO",
+        "note": "El pago se realiza en cuanto termina la carrera, a la cuenta o número comunicado a la administración."
+      },
+      {
+        "label": "CUOTA DE ENTRADA",
+        "value": "NINGUNA"
+      },
+      {
+        "label": "VEHÍCULO",
+        "value": "MENOS DE 8 AÑOS"
+      },
+      {
+        "label": "EQUIPAMIENTO",
+        "value": "A/A OBLIGATORIO"
+      },
+      {
+        "label": "CARNET",
+        "value": "B, 3 AÑOS MÍNIMO"
+      },
+      {
+        "label": "SEGURO",
+        "value": "TRANSPORTE DE PERSONAS"
+      },
+      {
+        "label": "ZONA",
+        "value": "CORREDOR DKR–MBR"
+      }
     ],
     "openSpots": "Plazas abiertas",
     "openSpotsValue": "12"
@@ -82,8 +108,14 @@
     "eyebrow": "Candidatura",
     "title": "¿Te convencen las condiciones?",
     "desc": "Completa tu expediente al lado. Ningún documento que subir en esta etapa: repasamos juntos la documentación el día de la cita.",
-    "perk1": { "value": "48 H", "text": "Plazo de respuesta, sea cual sea." },
-    "perk2": { "value": "0 F", "text": "Ningún gasto de expediente, en ningún momento." }
+    "perk1": {
+      "value": "48 H",
+      "text": "Plazo de respuesta, sea cual sea."
+    },
+    "perk2": {
+      "value": "0 F",
+      "text": "Ningún gasto de expediente, en ningún momento."
+    }
   },
   "form": {
     "title": "Expediente de candidatura",
@@ -92,12 +124,28 @@
       "vehicle": "Tu vehículo"
     },
     "fields": {
-      "fullName": { "label": "Nombre completo", "placeholder": "Ej.: Amadou Fall" },
-      "email": { "label": "Correo electrónico", "placeholder": "amadou@gmail.com" },
-      "phone": { "label": "Teléfono / WhatsApp", "placeholder": "+221 XX XXX XX XX" },
-      "brand": { "label": "Marca" },
-      "model": { "label": "Modelo" },
-      "plate": { "label": "Matrícula", "placeholder": "Ej.: AA-123-BB" }
+      "fullName": {
+        "label": "Nombre completo",
+        "placeholder": "Ej.: Amadou Fall"
+      },
+      "email": {
+        "label": "Correo electrónico",
+        "placeholder": "amadou@gmail.com"
+      },
+      "phone": {
+        "label": "Teléfono / WhatsApp",
+        "placeholder": "+221 XX XXX XX XX"
+      },
+      "brand": {
+        "label": "Marca"
+      },
+      "model": {
+        "label": "Modelo"
+      },
+      "plate": {
+        "label": "Matrícula",
+        "placeholder": "Ej.: AA-123-BB"
+      }
     },
     "selectPlaceholder": "Elegir...",
     "selectNoResults": "Ninguna marca encontrada",
@@ -112,5 +160,38 @@
     "desc": "Gracias por tu interés en Navette Xpress. Nuestro equipo de socios va a analizar tu expediente.",
     "descHighlight": "Recibirás una respuesta en un plazo de 48 h.",
     "backHome": "Volver al inicio"
+  },
+  "jobPosting": {
+    "title": "Chófer asociado (VTC / traslado aeropuerto AIBD)",
+    "description": "<p>Navette Xpress busca chóferes asociados independientes en el corredor Dakar — Aeropuerto AIBD — Petite Côte (Saly, Somone, Mbour, Ngaparou, Nianing).</p><h3>El puesto</h3><p>Usted realiza traslados al aeropuerto y trayectos privados para nuestros clientes particulares, hoteles y empresas, con su propio vehículo. Entre 12 y 20 carreras por semana según la disponibilidad que declare. La planificación se envía el viernes para la semana siguiente.</p><h3>Condiciones</h3><ul><li>Comisión fija del 15 %, anunciada antes de la primera carrera.</li><li>Pago al finalizar la carrera — transferencia, Wave u Orange Money.</li><li>Sin gastos de inscripción ni de tramitación, en ningún momento.</li><li>El importe de cada carrera se conoce antes de aceptarla: sin subastas, sin carreras a ciegas, sin tarifas revisadas a posteriori.</li><li>Usted permanece en el corredor que conoce, no se le envía al azar por Dakar.</li><li>Un interlocutor humano localizable y un procedimiento escrito en caso de litigio con un cliente.</li></ul><h3>Perfil buscado</h3><ul><li>Permiso B con al menos 3 años de antigüedad.</li><li>Vehículo de menos de 8 años, aire acondicionado obligatorio.</li><li>Seguro de transporte de personas en vigor.</li><li>Conocimiento del corredor Dakar — AIBD — Mbour.</li></ul><h3>Proceso de selección</h3><ol><li>Rellene el formulario de candidatura en línea (un minuto).</li><li>Le llamamos en un plazo de 48 horas laborables. Respondemos a todo el mundo, incluso cuando es que no.</li><li>Reunión en Dakar o Mbour: verificación de documentos y estado del vehículo.</li><li>Primera carrera acompañada en un tramo corto, y luego entrada en la planificación.</li></ol><p>12 plazas abiertas para 2026.</p>"
+  },
+  "faq": {
+    "title": "Preguntas de los chóferes",
+    "items": [
+      {
+        "question": "¿Cuánto gana un chófer asociado de Navette Xpress?",
+        "answer": "Usted percibe el importe de la carrera menos una comisión fija del 15 %. Ese importe se le comunica antes de que acepte la carrera, nunca después. En el corredor Dakar — AIBD, los tramos públicos van de 25 000 a 45 000 FCFA. Los ingresos dependen luego del número de carreras que acepte: ofrecemos entre 12 y 20 carreras por semana según la disponibilidad que declare."
+      },
+      {
+        "question": "¿Cuándo se me paga?",
+        "answer": "Al finalizar la carrera, en la cuenta bancaria o el número de Wave / Orange Money que comunique a la administración. No hay plazo de liquidación semanal ni mensual."
+      },
+      {
+        "question": "¿Hay gastos para convertirse en asociado?",
+        "answer": "No. Ningún gasto de inscripción, de tramitación ni de suscripción, en ningún momento. Si alguien le pide pagar para unirse a Navette Xpress, no somos nosotros."
+      },
+      {
+        "question": "¿Qué documentos hay que aportar?",
+        "answer": "Permiso B en vigor desde hace al menos 3 años, permiso de circulación del vehículo, seguro que cubra el transporte de personas y documento de identidad. No hay que subir nada al presentar la candidatura: los documentos se verifican juntos el día de la reunión, en Dakar o en Mbour."
+      },
+      {
+        "question": "Mi vehículo tiene más de 8 años, ¿puedo presentarme igualmente?",
+        "answer": "El límite de 8 años y el aire acondicionado en funcionamiento son condiciones firmes: nuestros clientes reservan un traslado premium a precio fijo. Si su vehículo aún no cumple, envíe igualmente su candidatura indicándolo; le contactaremos si su situación cambia."
+      },
+      {
+        "question": "¿Puedo mantener mi actividad actual en paralelo?",
+        "answer": "Sí. Usted es chófer asociado independiente, no asalariado. Declara su disponibilidad y recibe la planificación el viernes para la semana siguiente. Solo está comprometido con las carreras que haya aceptado."
+      }
+    ]
   }
 }

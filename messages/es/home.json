@@ -16,7 +16,6 @@
   },
   "stats": {
     "trips": "VIAJES",
-    "rating": "VALORACIÓN CLIENTE",
     "support": "SOPORTE"
   },
   "differentiators": {
@@ -52,7 +51,7 @@
   "driverCta": {
     "eyebrow": "Conductores socios",
     "title": "¿Tiene un vehículo? Conviértase en conductor socio.",
-    "desc": "Únase a nuestra red en el corredor Dakar — AIBD — Petite Côte. Carreras regulares, tarifas conocidas de antemano, pago en 7 días.",
+    "desc": "Únase a nuestra red en el corredor Dakar — AIBD — Petite Côte. Carreras regulares, tarifas conocidas antes de aceptar, pago al finalizar la carrera. Comisión fija del 15 %, sin gastos de inscripción.",
     "cta": "Ser conductor socio"
   },
   "booking": {

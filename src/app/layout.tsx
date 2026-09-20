@@ -34,7 +34,11 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://navettexpress.com'),
   title: {
     default: 'Navette Xpress | Chauffeur Privé Dakar & Transfert Aéroport AIBD',
-    template: '%s | Navette Xpress — Chauffeur Privé Dakar',
+    // Pass-through volontaire : chaque page porte déjà la marque dans son
+    // propre titre (messages/<locale>/*.json et seo-money-pages.ts). Un
+    // suffixe ici produisait des titres de 94 à 121 caractères, tronqués par
+    // Google et dupliquant « Navette Xpress » deux fois dans le SERP.
+    template: '%s',
   },
   description:
     'Service de chauffeur privé N°1 à Dakar. Transfert aéroport AIBD 24h/24, navette privée, mise à disposition. Réservation en ligne, prix fixe, chauffeurs certifiés. +221 78 465 13 02',

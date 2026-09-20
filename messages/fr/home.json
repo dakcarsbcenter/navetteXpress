@@ -16,7 +16,6 @@
   },
   "stats": {
     "trips": "VOYAGES",
-    "rating": "NOTE CLIENT",
     "support": "SUPPORT"
   },
   "differentiators": {
@@ -52,7 +51,7 @@
   "driverCta": {
     "eyebrow": "Chauffeurs partenaires",
     "title": "Vous avez un véhicule ? Devenez chauffeur partenaire.",
-    "desc": "Rejoignez notre réseau sur le corridor Dakar — AIBD — Petite Côte. Courses régulières, tarifs connus à l'avance, paiement sous 7 jours.",
+    "desc": "Rejoignez notre réseau sur le corridor Dakar — AIBD — Petite Côte. Courses régulières, tarifs connus avant acceptation, paiement dès la fin de la course. Commission fixe de 15 %, aucun frais d'inscription.",
     "cta": "Devenir chauffeur partenaire"
   },
   "booking": {

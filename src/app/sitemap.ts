@@ -24,7 +24,10 @@ const staticRoutes: StaticRoute[] = [
   { path: '/contact', changeFrequency: 'monthly', priority: 0.6 },
   { path: '/reservation', changeFrequency: 'daily', priority: 0.5 },
   { path: '/faq', changeFrequency: 'weekly', priority: 0.7 },
-  { path: '/devenir-partenaire', changeFrequency: 'monthly', priority: 0.4 },
+  // Page de recrutement chauffeurs : c'est une annonce JobPosting active, donc
+  // un crawl frequent et une priorite haute — l'acquisition de partenaires est
+  // au meme niveau que l'acquisition de clients.
+  { path: '/devenir-partenaire', changeFrequency: 'weekly', priority: 0.9 },
   { path: '/entreprises', changeFrequency: 'monthly', priority: 0.6 },
   { path: '/diaspora', changeFrequency: 'monthly', priority: 0.6 },
   { path: '/tarifs', changeFrequency: 'weekly', priority: 0.7 },

@@ -190,6 +190,36 @@ export default function ServicesClient() {
           </div>
         </section>
 
+        {/* Maillage interne vers les pages a forte intention.
+            Ce bloc etait rendu depuis page.tsx, donc AVANT la <Navigation> :
+            son <h2> precedait le <h1> de la page et il s'affichait hors du
+            gabarit. Il vit desormais dans le flux, apres les services. */}
+        <section className="border-t border-[#e2dacd] py-14 md:py-16">
+          <div className="max-w-7xl mx-auto px-6 space-y-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
+              {t("priorityHeading")}
+            </h2>
+            <p className="text-[#3d3a35] max-w-3xl leading-relaxed">{t("priorityIntro")}</p>
+            <div className="flex flex-wrap gap-3 text-sm pt-2">
+              {[
+                { href: "/services/transfert-aeroport-aibd", label: t("priorityPages.airportTransfer") },
+                { href: "/services/chauffeur-prive-dakar", label: t("priorityPages.privateDriver") },
+                { href: "/services/mise-a-disposition-chauffeur", label: t("priorityPages.chauffeurDisposal") },
+                { href: "/routes", label: t("priorityPages.routesHub") },
+                { href: "/faq", label: t("priorityPages.faq") },
+              ].map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="px-3 py-2 rounded-lg border border-[#e2dacd] hover:border-accent hover:text-accent transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Final CTA */}
         <section className="bg-accent">
           <div className="max-w-7xl mx-auto px-6 py-14 md:py-16 text-center">

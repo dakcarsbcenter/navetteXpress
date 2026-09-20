@@ -24,6 +24,7 @@ import {
   Tag,
 } from '@phosphor-icons/react'
 import { getRouteNodeFromName } from '@/lib/route-nodes'
+import { trackQuoteSubmitted } from '@/lib/analytics'
 
 const availableServices = [
   { id: 'transport', name: 'Transport standard', icon: '🚗', description: 'Service de transport classique' },
@@ -250,6 +251,9 @@ Description: ${formData.description}`,
       if (response.ok) {
         const result = await response.json()
         console.log('Demande de devis envoyée avec succès:', result)
+
+        // Conversion : devis reellement enregistre cote API.
+        trackQuoteSubmitted(quoteData.service)
 
         showSuccess('Votre demande de devis a été envoyée avec succès ! Nous vous répondrons dans les plus brefs délais.', 'Demande envoyée')
         resetForm()

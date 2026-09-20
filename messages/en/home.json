@@ -16,7 +16,6 @@
   },
   "stats": {
     "trips": "TRIPS",
-    "rating": "CUSTOMER RATING",
     "support": "SUPPORT"
   },
   "differentiators": {
@@ -52,7 +51,7 @@
   "driverCta": {
     "eyebrow": "Partner drivers",
     "title": "Own a vehicle? Become a partner driver.",
-    "desc": "Join our network on the Dakar — AIBD — Petite Côte corridor. Regular rides, fares known in advance, payment within 7 days.",
+    "desc": "Join our network on the Dakar — AIBD — Petite Côte corridor. Regular rides, fares known before you accept, payment as soon as the ride ends. Flat 15% commission, no sign-up fee.",
     "cta": "Become a partner driver"
   },
   "booking": {

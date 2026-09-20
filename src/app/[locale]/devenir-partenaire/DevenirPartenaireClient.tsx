@@ -16,6 +16,7 @@ import {
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/Button";
+import { captureDriverReferral, getDriverReferral, trackDriverApplication } from "@/lib/analytics";
 
 // Données des marques et modèles, triées par ordre alphabétique
 const vehicleData = {
@@ -218,6 +219,11 @@ export default function DevenirPartenaireClient() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  // Memorise ?ref= des l'arrivee : le candidat peut naviguer avant de postuler.
+  useEffect(() => {
+    captureDriverReferral();
+  }, []);
+
   const beneficesList = t.raw("benefits.items") as { label: string; text: string }[];
   const conditionsSpec = t.raw("conditions.items") as { label: string; value: string; note?: string }[];
   const etapes = t.raw("steps.items") as { title: string; text: string }[];
@@ -270,6 +276,9 @@ export default function DevenirPartenaireClient() {
       const result = await response.json();
 
       if (response.ok && result.success) {
+        // Conversion : on mesure ici, pas au clic sur le bouton, pour ne
+        // compter que les candidatures reellement enregistrees.
+        trackDriverApplication(getDriverReferral());
         setIsSubmitted(true);
       } else if (response.status === 400 && /email/i.test(result.error || "")) {
         setErrorMessage(t("form.errorEmailExists"));
@@ -322,6 +331,11 @@ export default function DevenirPartenaireClient() {
             <h1 className="text-4xl sm:text-5xl font-bold text-foreground tracking-tight leading-[1.08]">
               {t("hero.title")}
             </h1>
+            {/* L'accroche editoriale descend d'un cran : le H1 doit porter le
+                mot-cle que tapent les chauffeurs, pas seulement la punchline. */}
+            <p className="text-xl sm:text-2xl text-foreground font-medium leading-snug max-w-md">
+              {t("hero.tagline")}
+            </p>
             <p className="text-base text-[#3d3a35] leading-relaxed max-w-md">
               {t("hero.subtitle")}
             </p>
@@ -440,6 +454,26 @@ export default function DevenirPartenaireClient() {
                 </p>
                 <h3 className="text-[17px] font-semibold text-foreground">{etape.title}</h3>
                 <p className="text-sm text-[#3d3a35] leading-relaxed">{etape.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ CHAUFFEURS ── */}
+      {/* Rendue avant le formulaire : elle leve les objections (commission,
+          delai de paiement, frais caches) juste avant le moment de decision,
+          et alimente le JSON-LD FAQPage pose par la page serveur. */}
+      <section id="faq-chauffeurs" className="border-b border-[#e2dacd] scroll-mt-24">
+        <div className="max-w-7xl mx-auto px-6 py-16">
+          <h2 className="text-3xl sm:text-[34px] font-bold text-foreground tracking-tight mb-10">
+            {t("faq.title")}
+          </h2>
+          <div className="grid lg:grid-cols-2 gap-x-12 gap-y-8">
+            {(t.raw("faq.items") as { question: string; answer: string }[]).map((item) => (
+              <div key={item.question} className="pt-4 border-t border-[#e2dacd] flex flex-col gap-2.5">
+                <h3 className="text-[17px] font-semibold text-foreground">{item.question}</h3>
+                <p className="text-sm text-[#3d3a35] leading-relaxed">{item.answer}</p>
               </div>
             ))}
           </div>

@@ -302,9 +302,10 @@ function SignInForm() {
           {/* Stats en bas */}
           <div className="flex gap-12 mt-auto pt-8"
             style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+            {/* Meme raison que sur l'accueil : la note 4.9/5 n'est adossee a
+                aucun avis collecte, on ne l'affiche plus. */}
             {[
               { value: t('signin.panel.statTransfersValue'), label: t('signin.panel.statTransfersLabel') },
-              { value: t('signin.panel.statSatisfactionValue'), label: t('signin.panel.statSatisfactionLabel') },
               { value: t('signin.panel.statAvailableValue'), label: t('signin.panel.statAvailableLabel') },
             ].map(stat => (
               <div key={stat.label}>
