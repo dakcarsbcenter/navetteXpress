@@ -21,6 +21,7 @@ import {
   ArrowSquareOut
 } from "@phosphor-icons/react"
 import { StatusBadge } from "@/components/shared/StatusBadge"
+import { isRouteCombinationAllowed } from "@/lib/pricing"
 
 interface Booking {
   id: number
@@ -35,6 +36,7 @@ interface Booking {
   vehicleId: number | null
   passengers?: number | null
   luggage?: number | null
+  requestedVehicleType?: 'berline' | 'suv' | null
   price?: string | null
   notes?: string
   flightNumber?: string | null
@@ -101,6 +103,26 @@ function SectionTitle({ icon: Icon, label }: { icon: React.ComponentType<{ size?
   )
 }
 
+interface LocationOption {
+  id: number
+  name: string
+}
+
+interface PricingQuote {
+  price: number | null
+  segment: { id: number; route: string } | null
+  alternatives: { segmentId: number; label: string; route: string; price: number }[]
+}
+
+// Convertit une date ISO en valeur acceptée par <input type="datetime-local">
+// (AAAA-MM-JJTHH:MM, en heure locale du navigateur).
+const toDateTimeLocal = (iso: string): string => {
+  const d = new Date(iso)
+  if (isNaN(d.getTime())) return ''
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
 export function BookingDetailsModal({
   booking,
   isOpen,
@@ -112,20 +134,88 @@ export function BookingDetailsModal({
   const [isEditing, setIsEditing] = useState(false)
   const [editedBooking, setEditedBooking] = useState<Booking | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
+  const [locations, setLocations] = useState<LocationOption[]>([])
+  // Notifier le client et le chauffeur des modifications. Décochable pour corriger
+  // une simple coquille sans déclencher d'envoi.
+  const [notifyOnUpdate, setNotifyOnUpdate] = useState(true)
+  const [quote, setQuote] = useState<PricingQuote | null>(null)
+  const [isQuoting, setIsQuoting] = useState(false)
 
   useEffect(() => {
     if (booking) {
       setEditedBooking({ ...booking })
       setIsEditing(false)
+      setSaveError(null)
+      setNotifyOnUpdate(true)
+      setQuote(null)
     }
   }, [booking])
 
+  // Les lieux ne servent qu'au formulaire d'édition : on ne les charge qu'à son ouverture.
+  useEffect(() => {
+    if (!isEditing || locations.length > 0) return
+    let cancelled = false
+    fetch('/api/locations?all=true')
+      .then((res) => res.json())
+      .then((json) => {
+        if (!cancelled && json?.success && Array.isArray(json.data)) {
+          setLocations(json.data.map((l: { id: number; name: string }) => ({ id: l.id, name: l.name })))
+        }
+      })
+      .catch(() => { /* le champ reste utilisable en saisie libre */ })
+    return () => { cancelled = true }
+  }, [isEditing, locations.length])
+
+  const pickupAddress = editedBooking?.pickupAddress
+  const dropoffAddress = editedBooking?.dropoffAddress
+  const vehicleTypeKey = editedBooking?.requestedVehicleType === 'suv' ? 'suv' : 'berline'
+
+  // Repropose le tarif paramétré (/tarifs) dès que le trajet ou le type de véhicule change,
+  // via la même logique de matching que le formulaire public (src/lib/pricing.ts).
+  useEffect(() => {
+    if (!isEditing || !pickupAddress || !dropoffAddress) {
+      setQuote(null)
+      return
+    }
+    let cancelled = false
+    setIsQuoting(true)
+    const params = new URLSearchParams({
+      pickup: pickupAddress,
+      dropoff: dropoffAddress,
+      vehicleType: vehicleTypeKey,
+    })
+    fetch(`/api/admin/pricing/quote?${params.toString()}`)
+      .then((res) => res.json())
+      .then((json) => {
+        if (!cancelled) setQuote(json?.success ? json.data : null)
+      })
+      .catch(() => { if (!cancelled) setQuote(null) })
+      .finally(() => { if (!cancelled) setIsQuoting(false) })
+    return () => { cancelled = true }
+  }, [isEditing, pickupAddress, dropoffAddress, vehicleTypeKey])
+
   if (!isOpen || !booking || !editedBooking) return null
+
+  const patch = (changes: Partial<Booking>) =>
+    setEditedBooking(prev => prev ? { ...prev, ...changes } : null)
+
+  const locationNames = locations.map((l) => l.name)
+  const isCustomPickup = Boolean(editedBooking.pickupAddress) && !locationNames.includes(editedBooking.pickupAddress)
+  const isCustomDropoff = Boolean(editedBooking.dropoffAddress) && !locationNames.includes(editedBooking.dropoffAddress)
+  const routeIsUnusual = Boolean(
+    editedBooking.pickupAddress &&
+    editedBooking.dropoffAddress &&
+    !isCustomPickup &&
+    !isCustomDropoff &&
+    !isRouteCombinationAllowed(editedBooking.pickupAddress, editedBooking.dropoffAddress)
+  )
 
   const handleSave = async () => {
     if (!editedBooking) return
 
     setIsLoading(true)
+    setSaveError(null)
     try {
       const response = await fetch(`/api/admin/bookings/${editedBooking.id}`, {
         method: 'PATCH',
@@ -140,17 +230,37 @@ export function BookingDetailsModal({
           price: editedBooking.price,
           notes: editedBooking.notes,
           cancellationReason: editedBooking.status === 'cancelled' ? editedBooking.cancellationReason : undefined,
+          // Champs métier corrigeables : indispensables pour les réservations créées
+          // par des visiteurs non connectés, qui ne peuvent pas rectifier leur saisie.
+          customerName: editedBooking.customerName,
+          customerEmail: editedBooking.customerEmail,
+          customerPhone: editedBooking.customerPhone,
+          pickupAddress: editedBooking.pickupAddress,
+          dropoffAddress: editedBooking.dropoffAddress,
+          scheduledDateTime: editedBooking.scheduledDateTime,
+          passengers: editedBooking.passengers ?? 1,
+          luggage: editedBooking.luggage ?? 0,
+          requestedVehicleType: editedBooking.requestedVehicleType ?? 'berline',
+          flightNumber: editedBooking.flightNumber || null,
+          airline: editedBooking.airline || null,
+          notifyOnUpdate,
         }),
       })
 
-      if (response.ok) {
+      const json = await response.json().catch(() => null)
+
+      if (response.ok && json?.success) {
         setIsEditing(false)
         onUpdate()
       } else {
-        console.error('Erreur lors de la mise à jour')
+        const details = json?.details
+          ? Object.values(json.details as Record<string, string[]>).flat().join(' · ')
+          : null
+        setSaveError(details || json?.error || 'Erreur lors de la mise à jour')
       }
     } catch (error) {
       console.error('Erreur:', error)
+      setSaveError("Erreur réseau : la modification n'a pas pu être enregistrée")
     } finally {
       setIsLoading(false)
     }
@@ -226,6 +336,32 @@ export function BookingDetailsModal({
 
         {/* Content */}
         <div className="dash-scroll" style={{ padding: '24px', overflowY: 'auto', maxHeight: 'calc(90vh - 100px)' }}>
+          {isEditing && (
+            <div className="flex items-center justify-between gap-4 flex-wrap" style={{ marginBottom: '20px', padding: '12px 14px', backgroundColor: '#F7F3EC', border: '1px solid #E2DACD', borderRadius: '4px' }}>
+              <label className="flex items-center gap-2" style={{ fontSize: '12.5px', color: '#12100E', cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={notifyOnUpdate}
+                  onChange={(e) => setNotifyOnUpdate(e.target.checked)}
+                  style={{ width: '15px', height: '15px', accentColor: '#1F5245' }}
+                />
+                Notifier le client et le chauffeur des modifications
+              </label>
+              <span style={{ fontSize: '11px', color: '#6E6A63' }}>
+                Décochez pour corriger une coquille sans envoyer de message.
+              </span>
+            </div>
+          )}
+
+          {saveError && (
+            <div style={{ marginBottom: '20px', padding: '12px 14px', backgroundColor: 'rgba(184,73,60,.06)', border: '1px solid rgba(184,73,60,.3)', borderRadius: '4px' }}>
+              <p className="flex items-center gap-2" style={{ margin: 0, fontSize: '12.5px', color: '#B8493C' }}>
+                <Warning size={15} weight="fill" />
+                {saveError}
+              </p>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
             {/* COLONNE GAUCHE */}
@@ -236,31 +372,65 @@ export function BookingDetailsModal({
                 <SectionTitle icon={User} label="Informations client" />
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <div className="flex items-start gap-3">
-                    <div style={{ width: '38px', height: '38px', borderRadius: '3px', backgroundColor: 'rgba(31,82,69,.10)', display: 'grid', placeItems: 'center', fontSize: '15px', fontWeight: 600, color: '#1F5245', flexShrink: 0 }}>
-                      {booking.customerName.charAt(0).toUpperCase()}
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={fieldLabel}>Nom complet</p>
-                      <p style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#12100E' }} className="truncate">{booking.customerName}</p>
-                    </div>
-                  </div>
+                  {isEditing ? (
+                    <>
+                      <div>
+                        <label style={fieldLabel}>Nom complet</label>
+                        <input
+                          type="text"
+                          value={editedBooking.customerName}
+                          onChange={(e) => patch({ customerName: e.target.value })}
+                          style={selectStyle}
+                        />
+                      </div>
+                      <div>
+                        <label style={fieldLabel}>Email</label>
+                        <input
+                          type="email"
+                          value={editedBooking.customerEmail}
+                          onChange={(e) => patch({ customerEmail: e.target.value })}
+                          style={selectStyle}
+                        />
+                      </div>
+                      <div>
+                        <label style={fieldLabel}>Téléphone</label>
+                        <input
+                          type="tel"
+                          value={editedBooking.customerPhone}
+                          onChange={(e) => patch({ customerPhone: e.target.value })}
+                          style={{ ...selectStyle, fontFamily: 'var(--font-mono)' }}
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-start gap-3">
+                        <div style={{ width: '38px', height: '38px', borderRadius: '3px', backgroundColor: 'rgba(31,82,69,.10)', display: 'grid', placeItems: 'center', fontSize: '15px', fontWeight: 600, color: '#1F5245', flexShrink: 0 }}>
+                          {booking.customerName.charAt(0).toUpperCase()}
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={fieldLabel}>Nom complet</p>
+                          <p style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#12100E' }} className="truncate">{booking.customerName}</p>
+                        </div>
+                      </div>
 
-                  <div className="flex items-center gap-3" style={fieldWrap}>
-                    <Envelope size={16} style={{ color: '#1F5245' }} />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={fieldLabel}>Email</p>
-                      <p style={{ margin: 0, fontSize: '13px', color: '#12100E' }} className="truncate">{booking.customerEmail}</p>
-                    </div>
-                  </div>
+                      <div className="flex items-center gap-3" style={fieldWrap}>
+                        <Envelope size={16} style={{ color: '#1F5245' }} />
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={fieldLabel}>Email</p>
+                          <p style={{ margin: 0, fontSize: '13px', color: '#12100E' }} className="truncate">{booking.customerEmail}</p>
+                        </div>
+                      </div>
 
-                  <div className="flex items-center gap-3" style={fieldWrap}>
-                    <Phone size={16} style={{ color: '#1F5245' }} />
-                    <div style={{ flex: 1 }}>
-                      <p style={fieldLabel}>Téléphone</p>
-                      <p style={{ margin: 0, fontFamily: 'var(--font-mono)', fontSize: '13px', color: '#12100E' }}>{booking.customerPhone}</p>
-                    </div>
-                  </div>
+                      <div className="flex items-center gap-3" style={fieldWrap}>
+                        <Phone size={16} style={{ color: '#1F5245' }} />
+                        <div style={{ flex: 1 }}>
+                          <p style={fieldLabel}>Téléphone</p>
+                          <p style={{ margin: 0, fontFamily: 'var(--font-mono)', fontSize: '13px', color: '#12100E' }}>{booking.customerPhone}</p>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -269,61 +439,244 @@ export function BookingDetailsModal({
                 <SectionTitle icon={MapPinLine} label="Détails du trajet" />
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <div>
-                    <div className="flex items-start gap-3" style={{ marginBottom: '10px' }}>
-                      <div className="flex flex-col items-center gap-1" style={{ paddingTop: '4px' }}>
-                        <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#1F5245' }} />
-                        <div style={{ width: '1.5px', height: '28px', backgroundColor: '#E2DACD' }} />
+                  {isEditing ? (
+                    <>
+                      <div>
+                        <label style={fieldLabel}>Départ</label>
+                        <select
+                          value={isCustomPickup ? '__custom__' : editedBooking.pickupAddress}
+                          onChange={(e) => patch({ pickupAddress: e.target.value === '__custom__' ? '' : e.target.value })}
+                          style={selectStyle}
+                        >
+                          {locations.map((loc) => (
+                            <option key={loc.id} value={loc.name}>{loc.name}</option>
+                          ))}
+                          <option value="__custom__">Autre lieu (saisie libre)…</option>
+                        </select>
+                        {isCustomPickup && (
+                          <input
+                            type="text"
+                            value={editedBooking.pickupAddress}
+                            onChange={(e) => patch({ pickupAddress: e.target.value })}
+                            placeholder="Adresse de départ"
+                            style={{ ...selectStyle, marginTop: '8px' }}
+                          />
+                        )}
                       </div>
-                      <div style={{ flex: 1, ...fieldWrap }}>
-                        <p style={fieldLabel}>Départ</p>
-                        <p style={{ margin: 0, fontSize: '13px', color: '#12100E' }}>{booking.pickupAddress}</p>
-                      </div>
-                    </div>
 
-                    <div className="flex items-start gap-3">
-                      <div className="flex flex-col items-center" style={{ paddingTop: '4px' }}>
-                        <MapPin size={11} weight="fill" style={{ color: '#B8493C' }} />
+                      <div>
+                        <label style={fieldLabel}>Destination</label>
+                        <select
+                          value={isCustomDropoff ? '__custom__' : editedBooking.dropoffAddress}
+                          onChange={(e) => patch({ dropoffAddress: e.target.value === '__custom__' ? '' : e.target.value })}
+                          style={selectStyle}
+                        >
+                          {locations.map((loc) => (
+                            <option key={loc.id} value={loc.name}>{loc.name}</option>
+                          ))}
+                          <option value="__custom__">Autre lieu (saisie libre)…</option>
+                        </select>
+                        {isCustomDropoff && (
+                          <input
+                            type="text"
+                            value={editedBooking.dropoffAddress}
+                            onChange={(e) => patch({ dropoffAddress: e.target.value })}
+                            placeholder="Adresse de destination"
+                            style={{ ...selectStyle, marginTop: '8px' }}
+                          />
+                        )}
                       </div>
-                      <div style={{ flex: 1, ...fieldWrap }}>
-                        <p style={fieldLabel}>Destination</p>
-                        <p style={{ margin: 0, fontSize: '13px', color: '#12100E' }}>{booking.dropoffAddress}</p>
+
+                      {routeIsUnusual && (
+                        <p style={{ margin: 0, fontSize: '11.5px', color: '#B4643A' }}>
+                          Ce couple départ/destination ne fait pas partie des trajets tarifés : le prix devra être saisi à la main.
+                        </p>
+                      )}
+
+                      <div>
+                        <label style={fieldLabel}>Date et heure programmées</label>
+                        <input
+                          type="datetime-local"
+                          value={toDateTimeLocal(editedBooking.scheduledDateTime)}
+                          onChange={(e) => {
+                            const d = new Date(e.target.value)
+                            if (!isNaN(d.getTime())) patch({ scheduledDateTime: d.toISOString() })
+                          }}
+                          style={selectStyle}
+                        />
                       </div>
-                    </div>
-                  </div>
 
-                  <div className="flex items-center gap-3" style={fieldWrap}>
-                    <CalendarDots size={18} weight="fill" style={{ color: '#1F5245' }} />
-                    <div style={{ flex: 1 }}>
-                      <p style={fieldLabel}>Date programmée</p>
-                      <p style={{ margin: 0, fontSize: '13px', fontWeight: 500, color: '#12100E' }}>
-                        {new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-                      </p>
-                      <p style={{ margin: '2px 0 0', fontFamily: 'var(--font-mono)', fontSize: '11.5px', color: '#1F5245' }}>
-                        {new Date(booking.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div style={fieldWrap}>
-                      <div className="flex items-center gap-2" style={{ marginBottom: '6px' }}>
-                        <UsersThree size={15} weight="fill" style={{ color: '#1F5245' }} />
-                        <p style={{ ...fieldLabel, marginBottom: 0 }}>Passagers</p>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label style={fieldLabel}>Passagers</label>
+                          <input
+                            type="number"
+                            min={1}
+                            max={50}
+                            value={editedBooking.passengers ?? 1}
+                            onChange={(e) => patch({ passengers: Math.max(1, Number(e.target.value) || 1) })}
+                            style={selectStyle}
+                          />
+                        </div>
+                        <div>
+                          <label style={fieldLabel}>Bagages</label>
+                          <input
+                            type="number"
+                            min={0}
+                            max={50}
+                            value={editedBooking.luggage ?? 0}
+                            onChange={(e) => patch({ luggage: Math.max(0, Number(e.target.value) || 0) })}
+                            style={selectStyle}
+                          />
+                        </div>
                       </div>
-                      <p style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#12100E' }}>{booking.passengers || 1}</p>
-                    </div>
 
-                    <div style={fieldWrap}>
-                      <div className="flex items-center gap-2" style={{ marginBottom: '6px' }}>
-                        <Suitcase size={15} weight="fill" style={{ color: '#B4643A' }} />
-                        <p style={{ ...fieldLabel, marginBottom: 0 }}>Bagages</p>
+                      <div>
+                        <label style={fieldLabel}>Type de véhicule demandé</label>
+                        <select
+                          value={editedBooking.requestedVehicleType ?? 'berline'}
+                          onChange={(e) => patch({ requestedVehicleType: e.target.value as 'berline' | 'suv' })}
+                          style={selectStyle}
+                        >
+                          <option value="berline">Berline</option>
+                          <option value="suv">SUV</option>
+                        </select>
                       </div>
-                      <p style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#12100E' }}>{booking.luggage || 1}</p>
-                    </div>
-                  </div>
 
-                  {booking.flightNumber && (
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label style={fieldLabel}>N° de vol</label>
+                          <input
+                            type="text"
+                            value={editedBooking.flightNumber || ''}
+                            onChange={(e) => patch({ flightNumber: e.target.value })}
+                            placeholder="Ex: AF718"
+                            style={selectStyle}
+                          />
+                        </div>
+                        <div>
+                          <label style={fieldLabel}>Compagnie</label>
+                          <input
+                            type="text"
+                            value={editedBooking.airline || ''}
+                            onChange={(e) => patch({ airline: e.target.value })}
+                            placeholder="Ex: Air France"
+                            style={selectStyle}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Tarif paramétré (/tarifs) correspondant au trajet courant */}
+                      {isQuoting ? (
+                        <p style={{ margin: 0, fontSize: '11.5px', color: '#6E6A63' }}>Recherche du tarif paramétré…</p>
+                      ) : quote && quote.price !== null ? (
+                        <div style={{ backgroundColor: 'rgba(31,82,69,.06)', border: '1px solid rgba(31,82,69,.25)', borderRadius: '3px', padding: '12px' }}>
+                          <p style={{ ...fieldLabel, marginBottom: '8px' }}>Tarif paramétré pour ce trajet</p>
+                          <div className="flex items-center justify-between gap-3">
+                            <div>
+                              <p style={{ margin: 0, fontFamily: 'var(--font-mono)', fontSize: '16px', fontWeight: 600, color: '#1F5245' }}>
+                                {quote.price.toLocaleString('fr-FR')} FCFA
+                              </p>
+                              {quote.segment && (
+                                <p style={{ margin: '2px 0 0', fontSize: '11px', color: '#6E6A63' }}>{quote.segment.route}</p>
+                              )}
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => patch({ price: String(quote.price) })}
+                              style={{ height: '34px', padding: '0 14px', backgroundColor: '#1F5245', border: 'none', borderRadius: '3px', color: '#FFFFFF', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
+                            >
+                              Appliquer
+                            </button>
+                          </div>
+
+                          {quote.alternatives.length > 1 && (
+                            <div style={{ marginTop: '10px' }}>
+                              <p style={{ ...fieldLabel, marginBottom: '6px' }}>Autres secteurs tarifés</p>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                                {quote.alternatives.map((alt) => (
+                                  <button
+                                    key={alt.segmentId}
+                                    type="button"
+                                    onClick={() => patch({ price: String(alt.price) })}
+                                    style={{ padding: '6px 10px', backgroundColor: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '3px', fontSize: '11.5px', color: '#12100E', cursor: 'pointer' }}
+                                  >
+                                    {alt.label} — {alt.price.toLocaleString('fr-FR')} F
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          <p style={{ margin: '10px 0 0', fontSize: '11px', color: '#B4643A' }}>
+                            Appliquer un nouveau prix relance la validation du client.
+                          </p>
+                        </div>
+                      ) : (
+                        <p style={{ margin: 0, fontSize: '11.5px', color: '#6E6A63' }}>
+                          Aucun tarif paramétré pour ce trajet — prix à saisir manuellement.
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <div>
+                        <div className="flex items-start gap-3" style={{ marginBottom: '10px' }}>
+                          <div className="flex flex-col items-center gap-1" style={{ paddingTop: '4px' }}>
+                            <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#1F5245' }} />
+                            <div style={{ width: '1.5px', height: '28px', backgroundColor: '#E2DACD' }} />
+                          </div>
+                          <div style={{ flex: 1, ...fieldWrap }}>
+                            <p style={fieldLabel}>Départ</p>
+                            <p style={{ margin: 0, fontSize: '13px', color: '#12100E' }}>{booking.pickupAddress}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3">
+                          <div className="flex flex-col items-center" style={{ paddingTop: '4px' }}>
+                            <MapPin size={11} weight="fill" style={{ color: '#B8493C' }} />
+                          </div>
+                          <div style={{ flex: 1, ...fieldWrap }}>
+                            <p style={fieldLabel}>Destination</p>
+                            <p style={{ margin: 0, fontSize: '13px', color: '#12100E' }}>{booking.dropoffAddress}</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3" style={fieldWrap}>
+                        <CalendarDots size={18} weight="fill" style={{ color: '#1F5245' }} />
+                        <div style={{ flex: 1 }}>
+                          <p style={fieldLabel}>Date programmée</p>
+                          <p style={{ margin: 0, fontSize: '13px', fontWeight: 500, color: '#12100E' }}>
+                            {new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                          </p>
+                          <p style={{ margin: '2px 0 0', fontFamily: 'var(--font-mono)', fontSize: '11.5px', color: '#1F5245' }}>
+                            {new Date(booking.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div style={fieldWrap}>
+                          <div className="flex items-center gap-2" style={{ marginBottom: '6px' }}>
+                            <UsersThree size={15} weight="fill" style={{ color: '#1F5245' }} />
+                            <p style={{ ...fieldLabel, marginBottom: 0 }}>Passagers</p>
+                          </div>
+                          <p style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#12100E' }}>{booking.passengers || 1}</p>
+                        </div>
+
+                        <div style={fieldWrap}>
+                          <div className="flex items-center gap-2" style={{ marginBottom: '6px' }}>
+                            <Suitcase size={15} weight="fill" style={{ color: '#B4643A' }} />
+                            <p style={{ ...fieldLabel, marginBottom: 0 }}>Bagages</p>
+                          </div>
+                          <p style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#12100E' }}>{booking.luggage ?? 1}</p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {!isEditing && booking.flightNumber && (
                     <div style={fieldWrap}>
                       <div className="flex items-center justify-between gap-2" style={{ marginBottom: '6px' }}>
                         <div className="flex items-center gap-2">

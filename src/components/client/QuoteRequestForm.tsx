@@ -24,6 +24,7 @@ import {
   Tag,
 } from '@phosphor-icons/react'
 import { getRouteNodeFromName } from '@/lib/route-nodes'
+import { matchPricingSegments } from '@/lib/pricing'
 import { trackQuoteSubmitted } from '@/lib/analytics'
 
 const availableServices = [
@@ -132,16 +133,13 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
   const departureValue = formData.departure === OTHER_LOCATION_VALUE ? formData.departureCustom.trim() : formData.departure
   const destinationValue = formData.destination === OTHER_LOCATION_VALUE ? formData.destinationCustom.trim() : formData.destination
 
+  // Même logique de matching que la réservation et le back-office (src/lib/pricing.ts) :
+  // un aller-retour sur le même noeud n'a pas de tarif segment, d'où le garde-fou en amont.
   const matchedPricingSegment = (() => {
-    if (!departureValue || !destinationValue) return null
-    const departureNode = getRouteNodeFromName(departureValue)
-    const destinationNode = getRouteNodeFromName(destinationValue)
+    const departureNode = departureValue ? getRouteNodeFromName(departureValue) : null
+    const destinationNode = destinationValue ? getRouteNodeFromName(destinationValue) : null
     if (!departureNode || !destinationNode || departureNode === destinationNode) return null
-    return pricingSegments.find(seg =>
-      seg.isActive &&
-      ((seg.departNode === departureNode && seg.arriveeNode === destinationNode) ||
-        (seg.departNode === destinationNode && seg.arriveeNode === departureNode))
-    ) || null
+    return matchPricingSegments(pricingSegments, departureValue, destinationValue)[0] || null
   })()
 
   const handleFormChange = (field: string, value: string) => {

@@ -1,4 +1,18 @@
 import { Resend } from 'resend'
+import {
+  biSubject,
+  formatDateTimeBilingual,
+  formatFCFA,
+  headingBlock,
+  paragraphBlock,
+  dataTable,
+  referenceBlock,
+  ctaButton,
+  emailShell,
+  esc,
+  TEXT_DARK,
+  TEXT_MUTED,
+} from './email-i18n'
 
 // Init paresseuse : évite de lever une erreur au chargement du module quand
 // RESEND_API_KEY est absent (ex: au build Next.js, où les env vars runtime
@@ -42,6 +56,30 @@ interface BookingData {
 interface DriverData {
   name: string
   email: string
+  phone?: string | null
+}
+
+const reference = (booking: BookingData) => `NX-${booking.id}`
+
+/** Encart d'astuces / d'avertissement, bilingue. */
+function tipsBlock(title: { fr: string; en: string }, items: { fr: string; en: string }[]): string {
+  const rows = items
+    .map(
+      (i) => `
+      <li style="margin-bottom: 8px; color: ${TEXT_DARK}; font-size: 14px;">
+        ${esc(i.fr)}<br>
+        <span style="color: ${TEXT_MUTED};">${esc(i.en)}</span>
+      </li>`
+    )
+    .join('')
+
+  return `
+    <div style="background: #FFF7ED; border: 1px solid #FDBA74; border-radius: 8px; padding: 18px; margin: 24px 0;">
+      <p style="margin: 0 0 12px 0; font-weight: bold; color: ${TEXT_DARK}; font-size: 15px;">
+        ${esc(title.fr)} <span style="color: ${TEXT_MUTED}; font-weight: normal;">/ ${esc(title.en)}</span>
+      </p>
+      <ul style="margin: 0; padding-left: 18px;">${rows}</ul>
+    </div>`
 }
 
 /**
@@ -49,99 +87,38 @@ interface DriverData {
  */
 export async function sendBookingNotificationToAdmin(booking: BookingData) {
   try {
-    const scheduledDate = new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
+    const content = `
+      ${headingBlock('🚖', 'Nouvelle demande de réservation', 'New booking request')}
+      ${paragraphBlock(
+        "Une nouvelle demande de réservation vient d'être soumise et attend un traitement.",
+        'A new booking request has just been submitted and is awaiting processing.'
+      )}
+      ${referenceBlock(reference(booking))}
+      ${dataTable(
+        [
+          { fr: 'Client', en: 'Customer', value: booking.customerName },
+          { fr: 'Email', en: 'Email', value: booking.customerEmail },
+          { fr: 'Téléphone', en: 'Phone', value: booking.customerPhone },
+          { fr: 'Départ', en: 'Pick-up', value: booking.pickupAddress },
+          { fr: 'Arrivée', en: 'Drop-off', value: booking.dropoffAddress },
+          { fr: 'Date et heure', en: 'Date and time', value: formatDateTimeBilingual(booking.scheduledDateTime) },
+          { fr: 'Passagers', en: 'Passengers', value: booking.passengers },
+          { fr: 'Prix', en: 'Price', value: booking.price ? formatFCFA(booking.price) : undefined },
+          { fr: 'Notes', en: 'Notes', value: booking.notes },
+        ],
+        { fr: 'Détails de la réservation', en: 'Booking details' }
+      )}
+      ${ctaButton(`${process.env.NEXTAUTH_URL}/admin/dashboard?tab=bookings`, 'Voir dans le dashboard', 'Open dashboard')}
+    `
 
     const { data, error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: ADMIN_EMAIL,
-      subject: `📅 Nouvelle demande de réservation #${booking.id}`,
-      html: `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta charset="utf-8">
-            <style>
-              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-              .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-              .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }
-              .info-box { background: white; padding: 20px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #667eea; }
-              .info-row { margin: 10px 0; }
-              .label { font-weight: bold; color: #667eea; }
-              .button { display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px; }
-              .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <div class="header">
-                <h1>🚖 Nouvelle Réservation</h1>
-                <p>Une nouvelle demande de réservation a été soumise</p>
-              </div>
-              <div class="content">
-                <div class="info-box">
-                  <h2>📋 Détails de la réservation #${booking.id}</h2>
-                  <div class="info-row">
-                    <span class="label">Client:</span> ${booking.customerName}
-                  </div>
-                  <div class="info-row">
-                    <span class="label">Email:</span> ${booking.customerEmail}
-                  </div>
-                  ${booking.customerPhone ? `
-                  <div class="info-row">
-                    <span class="label">Téléphone:</span> ${booking.customerPhone}
-                  </div>
-                  ` : ''}
-                  <div class="info-row">
-                    <span class="label">Date:</span> ${scheduledDate}
-                  </div>
-                  <div class="info-row">
-                    <span class="label">Passagers:</span> ${booking.passengers}
-                  </div>
-                </div>
-                
-                <div class="info-box">
-                  <h3>📍 Itinéraire</h3>
-                  <div class="info-row">
-                    <span class="label">Départ:</span> ${booking.pickupAddress}
-                  </div>
-                  <div class="info-row">
-                    <span class="label">Arrivée:</span> ${booking.dropoffAddress}
-                  </div>
-                  ${booking.price ? `
-                  <div class="info-row">
-                    <span class="label">Prix:</span> ${booking.price} €
-                  </div>
-                  ` : ''}
-                </div>
-
-                ${booking.notes ? `
-                <div class="info-box">
-                  <h3>📝 Notes</h3>
-                  <p>${booking.notes}</p>
-                </div>
-                ` : ''}
-
-                <div style="text-align: center;">
-                  <a href="${process.env.NEXTAUTH_URL}/admin/dashboard?tab=bookings" class="button">
-                    Voir dans le dashboard
-                  </a>
-                </div>
-              </div>
-              <div class="footer">
-                <p>Navette Xpress - Système de gestion des réservations</p>
-              </div>
-            </div>
-          </body>
-        </html>
-      `,
+      subject: biSubject(
+        `📅 Nouvelle demande de réservation ${reference(booking)}`,
+        `New booking request ${reference(booking)}`
+      ),
+      html: emailShell(content, 'admin'),
     })
 
     if (error) {
@@ -162,102 +139,49 @@ export async function sendBookingNotificationToAdmin(booking: BookingData) {
  */
 export async function sendBookingAssignedToDriver(booking: BookingData, driver: DriverData) {
   try {
-    const scheduledDate = new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
+    const content = `
+      ${headingBlock('🚗', 'Nouvelle course assignée', 'New ride assigned')}
+      ${paragraphBlock(
+        `Bonjour ${driver.name}, une nouvelle course vous a été assignée. En voici le détail.`,
+        `Hello ${driver.name}, a new ride has been assigned to you. Here are the details.`
+      )}
+      ${referenceBlock(reference(booking))}
+      ${dataTable(
+        [
+          { fr: 'Départ', en: 'Pick-up', value: booking.pickupAddress },
+          { fr: 'Arrivée', en: 'Drop-off', value: booking.dropoffAddress },
+          { fr: 'Date et heure', en: 'Date and time', value: formatDateTimeBilingual(booking.scheduledDateTime) },
+          { fr: 'Passagers', en: 'Passengers', value: booking.passengers },
+          { fr: 'Prix', en: 'Price', value: booking.price ? formatFCFA(booking.price) : undefined },
+        ],
+        { fr: 'Détails de la course', en: 'Ride details' }
+      )}
+      ${dataTable(
+        [
+          { fr: 'Nom', en: 'Name', value: booking.customerName },
+          { fr: 'Email', en: 'Email', value: booking.customerEmail },
+          { fr: 'Téléphone', en: 'Phone', value: booking.customerPhone },
+        ],
+        { fr: 'Client', en: 'Customer' }
+      )}
+      ${
+        booking.notes
+          ? tipsBlock({ fr: 'Notes importantes', en: 'Important notes' }, [
+              { fr: booking.notes, en: booking.notes },
+            ])
+          : ''
+      }
+      ${ctaButton(`${process.env.NEXTAUTH_URL}/driver/dashboard`, 'Voir dans mon espace', 'Open my dashboard')}
+    `
 
     const { data, error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: driver.email,
-      subject: `🚗 Nouvelle course assignée #${booking.id}`,
-      html: `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta charset="utf-8">
-            <style>
-              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-              .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-              .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }
-              .info-box { background: white; padding: 20px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #10b981; }
-              .info-row { margin: 10px 0; }
-              .label { font-weight: bold; color: #10b981; }
-              .button { display: inline-block; padding: 12px 30px; background: #10b981; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px; }
-              .alert { background: #fef3c7; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #f59e0b; }
-              .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <div class="header">
-                <h1>🚗 Nouvelle Course</h1>
-                <p>Une course vous a été assignée</p>
-              </div>
-              <div class="content">
-                <p>Bonjour <strong>${driver.name}</strong>,</p>
-                <p>Une nouvelle course vous a été assignée. Voici les détails :</p>
-
-                <div class="info-box">
-                  <h2>📋 Détails de la course #${booking.id}</h2>
-                  <div class="info-row">
-                    <span class="label">Date:</span> ${scheduledDate}
-                  </div>
-                  <div class="info-row">
-                    <span class="label">Passagers:</span> ${booking.passengers}
-                  </div>
-                </div>
-                
-                <div class="info-box">
-                  <h3>📍 Itinéraire</h3>
-                  <div class="info-row">
-                    <span class="label">Départ:</span> ${booking.pickupAddress}
-                  </div>
-                  <div class="info-row">
-                    <span class="label">Arrivée:</span> ${booking.dropoffAddress}
-                  </div>
-                </div>
-
-                <div class="info-box">
-                  <h3>👤 Client</h3>
-                  <div class="info-row">
-                    <span class="label">Nom:</span> ${booking.customerName}
-                  </div>
-                  <div class="info-row">
-                    <span class="label">Email:</span> ${booking.customerEmail}
-                  </div>
-                  ${booking.customerPhone ? `
-                  <div class="info-row">
-                    <span class="label">Téléphone:</span> ${booking.customerPhone}
-                  </div>
-                  ` : ''}
-                </div>
-
-                ${booking.notes ? `
-                <div class="alert">
-                  <strong>📝 Notes importantes:</strong><br>
-                  ${booking.notes}
-                </div>
-                ` : ''}
-
-                <div style="text-align: center;">
-                  <a href="${process.env.NEXTAUTH_URL}/driver/dashboard" class="button">
-                    Voir dans mon dashboard
-                  </a>
-                </div>
-              </div>
-              <div class="footer">
-                <p>Navette Xpress - Bon voyage !</p>
-              </div>
-            </div>
-          </body>
-        </html>
-      `,
+      subject: biSubject(
+        `🚗 Nouvelle course assignée ${reference(booking)}`,
+        `New ride assigned ${reference(booking)}`
+      ),
+      html: emailShell(content, 'customer'),
     })
 
     if (error) {
@@ -278,106 +202,54 @@ export async function sendBookingAssignedToDriver(booking: BookingData, driver: 
  */
 export async function sendBookingConfirmedToClient(booking: BookingData, driver?: DriverData) {
   try {
-    const scheduledDate = new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
+    const content = `
+      ${headingBlock('✅', 'Réservation confirmée', 'Booking confirmed')}
+      ${paragraphBlock(
+        `Bonjour ${booking.customerName}, nous avons le plaisir de vous confirmer votre réservation. Voici le récapitulatif.`,
+        `Hello ${booking.customerName}, we are pleased to confirm your booking. Here is the summary.`
+      )}
+      ${referenceBlock(reference(booking))}
+      ${dataTable(
+        [
+          { fr: 'Départ', en: 'Pick-up', value: booking.pickupAddress },
+          { fr: 'Arrivée', en: 'Drop-off', value: booking.dropoffAddress },
+          { fr: 'Date et heure', en: 'Date and time', value: formatDateTimeBilingual(booking.scheduledDateTime) },
+          { fr: 'Passagers', en: 'Passengers', value: booking.passengers },
+          { fr: 'Prix', en: 'Price', value: booking.price ? formatFCFA(booking.price) : undefined },
+          { fr: 'Chauffeur', en: 'Driver', value: driver?.name },
+          { fr: 'Téléphone chauffeur', en: 'Driver phone', value: driver?.phone || undefined },
+        ],
+        { fr: 'Votre réservation', en: 'Your booking' }
+      )}
+      ${tipsBlock({ fr: '💡 Conseils', en: '💡 Tips' }, [
+        {
+          fr: "Soyez prêt 5 minutes avant l'heure prévue.",
+          en: 'Be ready 5 minutes before the scheduled time.',
+        },
+        {
+          fr: 'Gardez votre téléphone à portée de main.',
+          en: 'Keep your phone within reach.',
+        },
+        {
+          fr: "En cas d'imprévu, contactez-nous rapidement.",
+          en: 'If anything changes, contact us as soon as possible.',
+        },
+      ])}
+      ${ctaButton(`${process.env.NEXTAUTH_URL}/client/dashboard`, 'Voir ma réservation', 'View my booking')}
+      ${paragraphBlock(
+        `Besoin d'aide ? Écrivez-nous à ${ADMIN_EMAIL}.`,
+        `Need help? Write to us at ${ADMIN_EMAIL}.`
+      )}
+    `
 
     const { data, error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: booking.customerEmail,
-      subject: `✅ Réservation confirmée #${booking.id} - Navette Xpress`,
-      html: `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta charset="utf-8">
-            <style>
-              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-              .header { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-              .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }
-              .success-badge { background: #d1fae5; color: #065f46; padding: 10px 20px; border-radius: 20px; display: inline-block; margin: 10px 0; font-weight: bold; }
-              .info-box { background: white; padding: 20px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #10b981; }
-              .info-row { margin: 10px 0; }
-              .label { font-weight: bold; color: #10b981; }
-              .button { display: inline-block; padding: 12px 30px; background: #10b981; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px; }
-              .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <div class="header">
-                <h1>✅ Réservation Confirmée</h1>
-                <div class="success-badge">
-                  Votre réservation est confirmée !
-                </div>
-              </div>
-              <div class="content">
-                <p>Bonjour <strong>${booking.customerName}</strong>,</p>
-                <p>Nous avons le plaisir de vous confirmer votre réservation. Voici un récapitulatif :</p>
-
-                <div class="info-box">
-                  <h2>📋 Votre réservation #${booking.id}</h2>
-                  <div class="info-row">
-                    <span class="label">Date:</span> ${scheduledDate}
-                  </div>
-                  <div class="info-row">
-                    <span class="label">Passagers:</span> ${booking.passengers}
-                  </div>
-                  ${booking.price ? `
-                  <div class="info-row">
-                    <span class="label">Prix:</span> ${booking.price} €
-                  </div>
-                  ` : ''}
-                </div>
-                
-                <div class="info-box">
-                  <h3>📍 Itinéraire</h3>
-                  <div class="info-row">
-                    <span class="label">Départ:</span> ${booking.pickupAddress}
-                  </div>
-                  <div class="info-row">
-                    <span class="label">Arrivée:</span> ${booking.dropoffAddress}
-                  </div>
-                </div>
-
-                ${driver ? `
-                <div class="info-box">
-                  <h3>🚗 Votre chauffeur</h3>
-                  <div class="info-row">
-                    <span class="label">Nom:</span> ${driver.name}
-                  </div>
-                </div>
-                ` : ''}
-
-                <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin: 15px 0;">
-                  <strong>💡 Conseils :</strong>
-                  <ul>
-                    <li>Soyez prêt 5 minutes avant l'heure prévue</li>
-                    <li>Gardez votre téléphone à portée de main</li>
-                    <li>En cas d'imprévu, contactez-nous rapidement</li>
-                  </ul>
-                </div>
-
-                <div style="text-align: center;">
-                  <a href="${process.env.NEXTAUTH_URL}/client/dashboard" class="button">
-                    Voir ma réservation
-                  </a>
-                </div>
-              </div>
-              <div class="footer">
-                <p>Navette Xpress - Merci de votre confiance !</p>
-                <p>Besoin d'aide ? Contactez-nous à ${ADMIN_EMAIL}</p>
-              </div>
-            </div>
-          </body>
-        </html>
-      `,
+      subject: biSubject(
+        `✅ Réservation confirmée ${reference(booking)}`,
+        `Booking confirmed ${reference(booking)}`
+      ),
+      html: emailShell(content, 'customer'),
     })
 
     if (error) {
@@ -398,73 +270,37 @@ export async function sendBookingConfirmedToClient(booking: BookingData, driver?
  */
 export async function sendBookingCancelledToClient(booking: BookingData, reason?: string) {
   try {
-    const scheduledDate = new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
+    const content = `
+      ${headingBlock('❌', 'Réservation annulée', 'Booking cancelled')}
+      ${paragraphBlock(
+        `Bonjour ${booking.customerName}, nous vous informons que votre réservation a été annulée.`,
+        `Hello ${booking.customerName}, we are writing to let you know that your booking has been cancelled.`
+      )}
+      ${referenceBlock(reference(booking))}
+      ${dataTable(
+        [
+          { fr: 'Départ', en: 'Pick-up', value: booking.pickupAddress },
+          { fr: 'Arrivée', en: 'Drop-off', value: booking.dropoffAddress },
+          { fr: 'Date et heure', en: 'Date and time', value: formatDateTimeBilingual(booking.scheduledDateTime) },
+          { fr: 'Passagers', en: 'Passengers', value: booking.passengers },
+          { fr: "Motif de l'annulation", en: 'Cancellation reason', value: reason },
+        ],
+        { fr: 'Réservation annulée', en: 'Cancelled booking' }
+      )}
+      ${paragraphBlock(
+        `Pour toute question, contactez-nous à ${ADMIN_EMAIL}. Nous restons à votre disposition pour organiser un nouveau trajet.`,
+        `For any question, contact us at ${ADMIN_EMAIL}. We remain available to arrange another ride.`
+      )}
+    `
 
     const { data, error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: booking.customerEmail,
-      subject: `❌ Réservation annulée #${booking.id} - Navette Xpress`,
-      html: `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta charset="utf-8">
-            <style>
-              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-              .header { background: linear-gradient(135deg, #B8493C 0%, #8f342a 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-              .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }
-              .info-box { background: white; padding: 20px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #B8493C; }
-              .info-row { margin: 10px 0; }
-              .label { font-weight: bold; color: #B8493C; }
-              .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <div class="header">
-                <h1>❌ Réservation Annulée</h1>
-              </div>
-              <div class="content">
-                <p>Bonjour <strong>${booking.customerName}</strong>,</p>
-                <p>Nous vous informons que votre réservation a été annulée.</p>
-
-                <div class="info-box">
-                  <h2>📋 Réservation #${booking.id}</h2>
-                  <div class="info-row">
-                    <span class="label">Date:</span> ${scheduledDate}
-                  </div>
-                  <div class="info-row">
-                    <span class="label">Départ:</span> ${booking.pickupAddress}
-                  </div>
-                  <div class="info-row">
-                    <span class="label">Arrivée:</span> ${booking.dropoffAddress}
-                  </div>
-                </div>
-
-                ${reason ? `
-                <div class="info-box">
-                  <h3>Motif</h3>
-                  <p>${reason}</p>
-                </div>
-                ` : ''}
-
-                <p>Pour toute question, contactez-nous à ${ADMIN_EMAIL}.</p>
-              </div>
-              <div class="footer">
-                <p>Navette Xpress</p>
-              </div>
-            </div>
-          </body>
-        </html>
-      `,
+      subject: biSubject(
+        `❌ Réservation annulée ${reference(booking)}`,
+        `Booking cancelled ${reference(booking)}`
+      ),
+      html: emailShell(content, 'customer'),
     })
 
     if (error) {

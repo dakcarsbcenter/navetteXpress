@@ -66,14 +66,22 @@ export async function POST(request: NextRequest) {
 
   if (event === 'message.inbound') {
     const fromPhone = data?.from as string;
-    const buttonReply = ((data?.text as string) || '').trim().toLowerCase();
+    // Les libellés des boutons sont bilingues ("Accepter / Accept", "Refuser / Decline") :
+    // on normalise (minuscules, accents retirés) avant de chercher les racines des deux langues.
+    const buttonReply = ((data?.text as string) || '')
+      .trim()
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .toLowerCase();
 
     if (!fromPhone) {
       return NextResponse.json({ error: 'Numéro expéditeur manquant' }, { status: 400 });
     }
 
-    const isAccept = buttonReply.includes('accept');
-    const isReject = buttonReply.includes('refus');
+    // Le refus est testé en premier : "Refuser / Decline" ne contient aucune racine
+    // d'acceptation, mais l'inverse n'est pas garanti sur tous les libellés possibles.
+    const isReject = ['refus', 'declin', 'decline', 'reject'].some((w) => buttonReply.includes(w));
+    const isAccept = !isReject && ['accept', 'confirm', 'oui', 'yes'].some((w) => buttonReply.includes(w));
 
     if (!isAccept && !isReject) {
       // Message entrant qui n'est pas une réponse au quick reply attendu (ex:

@@ -7,17 +7,12 @@
 
 import { sendWhatsAppTemplate, orDash } from './geskap';
 import { getServiceById, additionalServices } from '@/lib/services';
+import {
+  bi,
+  flightStatusBilingual,
+  formatDateTimeBilingual,
+} from '@/lib/email-i18n';
 import type { SelectBooking } from '@/schema';
-
-const FLIGHT_STATUS_LABELS_FR: Record<string, string> = {
-  scheduled: 'Prévu',
-  active: 'En vol',
-  landed: 'Atterri',
-  cancelled: 'Annulé',
-  incident: 'Incident',
-  diverted: 'Dérouté',
-  unknown: 'Inconnu',
-};
 
 interface DriverInfo {
   name: string;
@@ -31,12 +26,13 @@ interface DriverInfo {
  * le type Date au round-trip JSON.parse.
  */
 function formatDateTime(date: Date | string): string {
-  const d = date instanceof Date ? date : new Date(date);
-  return `${d.toLocaleDateString('fr-FR')} ${d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
+  // JJ/MM/AAAA HH:MM — non ambigu entre lecteurs francophones et anglophones,
+  // contrairement aux formats localisés.
+  return formatDateTimeBilingual(date);
 }
 
 function formatLuggage(count: number): string {
-  return `${count} valise${count > 1 ? 's' : ''}`;
+  return `${count} valise${count > 1 ? 's' : ''} / ${count} bag${count > 1 ? 's' : ''}`;
 }
 
 function reference(booking: SelectBooking): string {
@@ -44,8 +40,7 @@ function reference(booking: SelectBooking): string {
 }
 
 function flightStatusLabel(status: string | null): string {
-  if (!status) return 'Non renseigné';
-  return FLIGHT_STATUS_LABELS_FR[status] || status;
+  return flightStatusBilingual(status);
 }
 
 /**
@@ -62,7 +57,12 @@ function parseBookingNotes(notes: string | null): {
   if (!notes) return { serviceTypeLabel: '—', optionsLabel: '—', driverNotesLabel: '—' };
 
   const serviceId = notes.match(/Service:\s*(.+)/)?.[1]?.trim();
-  const serviceTypeLabel = serviceId ? getServiceById(serviceId)?.translations.fr.name || serviceId : '—';
+  const service = serviceId ? getServiceById(serviceId) : undefined;
+  const serviceTypeLabel = serviceId
+    ? service
+      ? bi(service.translations.fr.name, service.translations.en.name)
+      : serviceId
+    : '—';
 
   const optionsRaw = notes.match(/Services additionnels:\s*(.+)/)?.[1]?.trim();
   const optionsLabel =
@@ -70,7 +70,10 @@ function parseBookingNotes(notes: string | null): {
       ? '—'
       : optionsRaw
           .split(',')
-          .map((id) => additionalServices.find((s) => s.id === id.trim())?.translations.fr.name || id.trim())
+          .map((id) => {
+            const extra = additionalServices.find((s) => s.id === id.trim());
+            return extra ? bi(extra.translations.fr.name, extra.translations.en.name) : id.trim();
+          })
           .join(', ');
 
   const specialRaw = notes.match(/Demandes spéciales:\s*(.+)/)?.[1]?.trim();
@@ -234,6 +237,49 @@ export async function sendRappelDepart(booking: SelectBooking, driver: DriverInf
       driverNotesLabel,
       driver.name,
       orDash(driver.phone),
+    ],
+  });
+}
+
+/**
+ * 6. Avis de modification envoyé après une correction en back-office (trajet, date,
+ * passagers...). Destinataire : le client, et le chauffeur déjà assigné le cas échéant.
+ *
+ * Contrainte Meta : une variable de template ne peut pas contenir de saut de ligne, la
+ * liste des changements est donc aplatie sur une seule ligne séparée par " · ".
+ */
+export async function sendReservationModifiee(
+  booking: SelectBooking,
+  changes: { labelFr: string; labelEn: string; before: string; after: string }[],
+  recipient: 'client' | 'driver',
+  driver?: DriverInfo
+) {
+  const to = recipient === 'driver' ? driver?.phone : booking.customerPhone;
+  if (!to) return;
+
+  const firstName =
+    recipient === 'driver'
+      ? (driver?.name?.split(' ')[0] || driver?.name || '—')
+      : (booking.customerName.split(' ')[0] || booking.customerName);
+
+  const changesSummary =
+    changes
+      .map((c) => `${c.labelFr}/${c.labelEn}: ${c.before} → ${c.after}`)
+      .join(' · ') || '—';
+
+  await sendWhatsAppTemplate({
+    to,
+    template: 'reservation_modifiee',
+    // L'idempotency key inclut updatedAt : une réservation peut être corrigée plusieurs
+    // fois, chaque correction doit donner lieu à un envoi distinct.
+    idempotencyKey: `${booking.id}-reservation_modifiee-${recipient}-${new Date(booking.updatedAt).getTime()}`,
+    variables: [
+      firstName,
+      reference(booking),
+      changesSummary,
+      booking.pickupAddress,
+      booking.dropoffAddress,
+      formatDateTime(booking.scheduledDateTime),
     ],
   });
 }

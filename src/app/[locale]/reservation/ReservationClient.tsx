@@ -15,6 +15,13 @@ import { serviceTypes, additionalServices, getServiceById } from "@/lib/services
 import { useRouter } from "@/i18n/navigation";
 import NextLink from "next/link";
 import { type RouteNodeKey, getRouteNodeFromName } from "@/lib/route-nodes";
+import {
+  OTHER_LOCATION_VALUE,
+  isRouteCombinationAllowed,
+  matchPricingSegments,
+  deriveZoneOptions,
+  segmentPrice,
+} from "@/lib/pricing";
 import { fetchPublicApi } from "@/lib/apiClient";
 import { trackBookingSubmitted } from "@/lib/analytics";
 
@@ -49,49 +56,6 @@ const ROUTES_LOCATION_FALLBACK: LocationOption[] = [
   { id: 'pointe-sarrene', name: 'POINTE SARRENE' },
   { id: 'somone', name: 'SOMONE' },
 ];
-
-const ROUTES_ALLOWED_PAIRS = new Set<string>([
-  'DAKAR|AIBD',
-  'AIBD|DAKAR',
-  'DAKAR|MBOUR',
-  'MBOUR|DAKAR',
-  'DAKAR|SALY',
-  'SALY|DAKAR',
-  'DAKAR|NGAPAROU',
-  'NGAPAROU|DAKAR',
-  'DAKAR|THIES',
-  'THIES|DAKAR',
-  'DAKAR|NIANING',
-  'NIANING|DAKAR',
-  'DAKAR|POINTE_SARRENE',
-  'POINTE_SARRENE|DAKAR',
-  'DAKAR|SOMONE',
-  'SOMONE|DAKAR',
-  // Trajets Petite Côte depuis/vers AIBD (tarifs publiés sur /tarifs)
-  'AIBD|MBOUR',
-  'MBOUR|AIBD',
-  'AIBD|SALY',
-  'SALY|AIBD',
-  'AIBD|SOMONE',
-  'SOMONE|AIBD',
-]);
-
-const OTHER_LOCATION_VALUE = "AUTRE";
-
-const isRouteCombinationAllowed = (pickup: string, destination: string): boolean => {
-  if (pickup === OTHER_LOCATION_VALUE || destination === OTHER_LOCATION_VALUE) {
-    return true;
-  }
-  const pickupNode = getRouteNodeFromName(pickup);
-  const destinationNode = getRouteNodeFromName(destination);
-  if (!pickupNode || !destinationNode) {
-    return false;
-  }
-  if (pickupNode === destinationNode) {
-    return true;
-  }
-  return ROUTES_ALLOWED_PAIRS.has(`${pickupNode}|${destinationNode}`);
-};
 
 const toAllowedRouteLocations = (locations: LocationOption[]): LocationOption[] => {
   const filtered = locations.filter((loc) => Boolean(getRouteNodeFromName(loc.name)));
@@ -400,47 +364,25 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
     formData.pickupAddress && formData.destinationAddress && !isRouteCombinationAllowed(formData.pickupAddress, formData.destinationAddress)
   );
 
-  // Tarif indicatif : cherche les segments de tarifs (paramétrés en admin) qui correspondent
-  // au couple départ/arrivée choisi, dans un sens ou l'autre. "Autre" (adresse libre) ou une
-  // combinaison sans tarif paramétré ne matche rien — l'admin renseignera le prix manuellement.
-  const matchedPricingSegments = (() => {
-    if (
-      !formData.pickupAddress || !formData.destinationAddress ||
-      formData.pickupAddress === OTHER_LOCATION_VALUE || formData.destinationAddress === OTHER_LOCATION_VALUE
-    ) {
-      return [];
-    }
-    const pickupNode = getRouteNodeFromName(formData.pickupAddress);
-    const destinationNode = getRouteNodeFromName(formData.destinationAddress);
-    if (!pickupNode || !destinationNode) {
-      return [];
-    }
-    return pricingSegments.filter((seg) => {
-      if (!seg.isActive || !seg.departNode || !seg.arriveeNode) return false;
-      return (
-        (seg.departNode === pickupNode && seg.arriveeNode === destinationNode) ||
-        (seg.departNode === destinationNode && seg.arriveeNode === pickupNode)
-      );
-    });
-  })();
+  // Tarif indicatif : les segments de tarifs (paramétrés en admin) correspondant au couple
+  // départ/arrivée choisi, dans un sens ou l'autre. La logique de matching est partagée avec
+  // le back-office (src/lib/pricing.ts) pour que l'admin repropose exactement le même tarif
+  // quand il corrige le trajet d'une réservation. "Autre" (adresse libre) ou une combinaison
+  // sans tarif paramétré ne matche rien — l'admin renseignera le prix manuellement.
+  const matchedPricingSegments = matchPricingSegments(
+    pricingSegments,
+    formData.pickupAddress,
+    formData.destinationAddress,
+  );
 
-  // Certains couples départ/arrivée (ex: DAKAR<->AIBD) ont plusieurs tarifs actifs
-  // paramétrés en admin (un par secteur : "Dakar Plateau", "Almadies / Ngor"...). On
-  // dérive dynamiquement, depuis le libellé "route" de chaque segment (format "A → B"),
-  // le nom du secteur qui varie d'un segment à l'autre — pour proposer un choix précis
-  // au client plutôt qu'une fourchette de prix.
-  const zoneOptions = (() => {
-    if (matchedPricingSegments.length <= 1) return [];
-    const pickupNode = getRouteNodeFromName(formData.pickupAddress);
-    const destinationNode = getRouteNodeFromName(formData.destinationAddress);
-    const legs = matchedPricingSegments.map((seg) => {
-      const [legA, legB] = seg.route.split('→').map((s) => s.trim());
-      const forward = seg.departNode === pickupNode && seg.arriveeNode === destinationNode;
-      return { segment: seg, pickupLeg: forward ? legA : legB, destinationLeg: forward ? legB : legA };
-    });
-    const pickupLegsDiffer = new Set(legs.map((l) => l.pickupLeg)).size > 1;
-    return legs.map((l) => ({ segment: l.segment, label: pickupLegsDiffer ? l.pickupLeg : l.destinationLeg }));
-  })();
+  // Certains couples départ/arrivée (ex: DAKAR<->AIBD) ont plusieurs tarifs actifs paramétrés
+  // en admin (un par secteur : "Dakar Plateau", "Almadies / Ngor"...) : on propose alors un
+  // choix de secteur au client plutôt qu'une fourchette de prix.
+  const zoneOptions = deriveZoneOptions(
+    matchedPricingSegments,
+    formData.pickupAddress,
+    formData.destinationAddress,
+  );
 
   // Segment de tarif retenu pour l'affichage : le seul match s'il n'y en a qu'un,
   // sinon celui correspondant au secteur choisi par le client (défaut: le premier).
@@ -451,7 +393,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
       : (zoneOptions.find((z) => z.segment.id === selectedZoneSegmentId)?.segment ?? matchedPricingSegments[0]);
 
   // Tarif exact affiché selon le type de véhicule choisi par le client (Berline par défaut)
-  const selectedPrice = activeSegment ? (formData.vehicleType === 'suv' ? activeSegment.suv : activeSegment.berline) : null;
+  const selectedPrice = activeSegment ? segmentPrice(activeSegment, formData.vehicleType === 'suv' ? 'suv' : 'berline') : null;
 
   // Garde la sélection de secteur valide (et en pose une par défaut) quand le couple
   // départ/arrivée matche plusieurs tarifs — se réinitialise si le trajet change.

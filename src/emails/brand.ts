@@ -52,6 +52,25 @@ export const shellStyles = {
     color: brand.textSecondary,
     margin: '0',
   },
+  // Variante anglaise d'un paragraphe : même gabarit, teinte plus discrète. Les emails
+  // sont bilingues (bloc FR puis bloc EN) — voir src/lib/email-i18n.ts pour les règles.
+  textEn: {
+    fontFamily: fonts.body,
+    fontSize: '15px',
+    lineHeight: '26px',
+    color: brand.textMuted,
+    margin: '6px 0 0',
+  },
+  // Sous-titre anglais placé sous un Heading français.
+  headingEn: {
+    fontFamily: fonts.heading,
+    fontSize: '17px',
+    fontWeight: '400',
+    lineHeight: '1.3',
+    color: brand.textMuted,
+    margin: '0 0 10px',
+    textAlign: 'center' as const,
+  },
   cta: {
     fontFamily: fonts.body,
     fontSize: '15px',

@@ -2,6 +2,13 @@ import { Resend } from 'resend';
 import PasswordResetEmail from '@/emails/PasswordResetEmail';
 import AccountLockedEmail from '@/emails/AccountLockedEmail';
 import VerificationEmail from '@/emails/VerificationEmail';
+import {
+  biSubject,
+  formatDateTimeBilingual,
+  headingBlock,
+  paragraphBlock,
+  emailShell,
+} from './email-i18n';
 
 // Init paresseuse : évite de lever une erreur au chargement du module quand
 // RESEND_API_KEY est absent (ex: au build Next.js, où les env vars runtime
@@ -48,11 +55,11 @@ export async function sendPasswordResetEmail(
     const { data, error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: [email],
-      subject: '🔐 Réinitialisation de votre mot de passe - NavetteXpress',
+      subject: biSubject('🔐 Réinitialisation de votre mot de passe', 'Reset your password'),
       react: PasswordResetEmail({ 
         userName, 
         resetUrl,
-        expiresIn: '1 heure'
+        expiresIn: '1 heure / 1 hour'
       }),
     });
 
@@ -89,11 +96,11 @@ export async function sendVerificationEmail(
     const { data, error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: [email],
-      subject: '✉️ Activez votre compte - NavetteXpress',
+      subject: biSubject('✉️ Activez votre compte', 'Activate your account'),
       react: VerificationEmail({
         userName,
         verifyUrl,
-        expiresIn: '24 heures'
+        expiresIn: '24 heures / 24 hours'
       }),
     });
 
@@ -124,11 +131,8 @@ export async function sendAccountLockedEmail(
 ) {
   const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/reset-password`;
   
-  // Formater la date en français
-  const unlockTimeFormatted = new Intl.DateTimeFormat('fr-FR', {
-    dateStyle: 'full',
-    timeStyle: 'short',
-  }).format(unlockTime);
+  // JJ/MM/AAAA HH:MM : lisible dans les deux langues, contrairement à un format localisé
+  const unlockTimeFormatted = formatDateTimeBilingual(unlockTime);
 
   try {
     console.log('🔒 [EMAIL] Envoi notification de blocage à:', email);
@@ -136,7 +140,10 @@ export async function sendAccountLockedEmail(
     const { data, error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: [email],
-      subject: '🔒 Alerte sécurité - Votre compte a été temporairement bloqué - NavetteXpress',
+      subject: biSubject(
+        '🔒 Alerte sécurité — compte temporairement bloqué',
+        'Security alert — account temporarily locked'
+      ),
       react: AccountLockedEmail({
         userName,
         unlockTime: unlockTimeFormatted,
@@ -173,51 +180,21 @@ export async function sendPasswordChangedEmail(
     const { data, error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: [email],
-      subject: '✅ Votre mot de passe a été modifié - NavetteXpress',
-      html: `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta charset="utf-8">
-          </head>
-          <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Ubuntu, sans-serif; background-color: #f6f9fc; padding: 20px;">
-            <div style="max-width: 600px; margin: 0 auto; background-color: white; border-radius: 8px; padding: 40px;">
-              <h1 style="color: #333; font-size: 24px; text-align: center; margin-bottom: 30px;">
-                ✅ Mot de passe modifié avec succès
-              </h1>
-              
-              <p style="color: #333; font-size: 16px; line-height: 26px; margin: 16px 0;">
-                Bonjour ${userName},
-              </p>
-              
-              <div style="background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 5px; padding: 16px; margin: 24px 0;">
-                <p style="color: #155724; font-size: 16px; margin: 0; text-align: center;">
-                  ✓ Votre mot de passe NavetteXpress a été modifié avec succès.
-                </p>
-              </div>
-
-              <p style="color: #333; font-size: 16px; line-height: 26px; margin: 16px 0;">
-                Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.
-              </p>
-
-              <p style="color: #333; font-size: 16px; line-height: 26px; margin: 16px 0;">
-                Si vous n'êtes pas à l'origine de cette modification, veuillez contacter notre support immédiatement.
-              </p>
-
-              <hr style="border: none; border-top: 1px solid #e6ebf1; margin: 32px 0;">
-
-              <p style="color: #525f7f; font-size: 16px; margin: 24px 0 8px;">
-                Cordialement,<br>
-                <strong>L'équipe NavetteXpress</strong>
-              </p>
-
-              <p style="color: #8898aa; font-size: 12px; margin: 0;">
-                Cet email a été envoyé automatiquement. Merci de ne pas répondre à ce message.
-              </p>
-            </div>
-          </body>
-        </html>
+      subject: biSubject('✅ Votre mot de passe a été modifié', 'Your password has been changed'),
+      html: emailShell(
+        `
+        ${headingBlock('✅', 'Mot de passe modifié', 'Password changed')}
+        ${paragraphBlock(
+          `Bonjour ${userName}, votre mot de passe NavetteXpress a été modifié avec succès. Vous pouvez dès maintenant vous connecter avec votre nouveau mot de passe.`,
+          `Hello ${userName}, your NavetteXpress password has been changed successfully. You can now log in with your new password.`
+        )}
+        ${paragraphBlock(
+          "Si vous n'êtes pas à l'origine de cette modification, contactez notre support immédiatement.",
+          'If you did not make this change, please contact our support immediately.'
+        )}
       `,
+        'customer'
+      ),
     });
 
     if (error) {

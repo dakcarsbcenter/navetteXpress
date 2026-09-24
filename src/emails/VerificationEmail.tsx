@@ -21,12 +21,12 @@ interface VerificationEmailProps {
 export default function VerificationEmail({
   userName = 'Utilisateur',
   verifyUrl,
-  expiresIn = '24 heures',
+  expiresIn = '24 heures / 24 hours',
 }: VerificationEmailProps) {
   return (
     <Html lang="fr" dir="ltr">
       <Head />
-      <Preview>Activez votre compte NavetteXpress</Preview>
+      <Preview>Activez votre compte NavetteXpress · Activate your NavetteXpress account</Preview>
       <Body style={shellStyles.body}>
         <Section style={{ backgroundColor: brand.background, padding: '40px 16px 60px' }}>
           <Container style={shellStyles.container}>
@@ -44,33 +44,42 @@ export default function VerificationEmail({
                 Navette <span style={{ color: brand.gold }}>Xpress</span>
               </Text>
               <Text style={{ fontFamily: fonts.body, fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: brand.textMuted, margin: '6px 0 0' }}>
-                Surete · Assistance
+                Sûreté · Assistance
               </Text>
             </Section>
 
             <Section style={{ padding: '20px 40px 16px', textAlign: 'center' }}>
               <Text style={{ fontSize: '32px', margin: '0 0 16px', color: brand.gold }}>✉️</Text>
               <Heading style={shellStyles.heading}>Activez votre compte</Heading>
+              <Text style={shellStyles.headingEn}>Activate your account</Text>
             </Section>
 
             <Section style={{ padding: '28px 40px 0' }}>
-              <Text style={{ ...shellStyles.text, color: brand.textPrimary, fontSize: '16px', lineHeight: '28px' }}>Bonjour {userName},</Text>
+              <Text style={{ ...shellStyles.text, color: brand.textPrimary, fontSize: '16px', lineHeight: '28px' }}>
+                Bonjour {userName}, / Hello {userName},
+              </Text>
               <Text style={{ ...shellStyles.text, marginTop: '16px' }}>
-                Merci de votre inscription sur NavetteXpress. Pour finaliser la creation de votre compte et pouvoir vous connecter, veuillez confirmer votre adresse email en cliquant sur le bouton ci-dessous.
+                Merci de votre inscription sur NavetteXpress. Pour finaliser la création de votre compte et pouvoir vous connecter, veuillez confirmer votre adresse email en cliquant sur le bouton ci-dessous.
+              </Text>
+              <Text style={shellStyles.textEn}>
+                Thank you for signing up with NavetteXpress. To complete your account and be able to log in, please confirm your email address using the button below.
               </Text>
             </Section>
 
             <Section style={{ textAlign: 'center', padding: '40px 40px' }}>
-              <Button href={verifyUrl} style={shellStyles.cta}>Activer mon compte</Button>
+              <Button href={verifyUrl} style={shellStyles.cta}>Activer mon compte / Activate my account</Button>
               <Text style={{ fontFamily: fonts.body, fontSize: '12px', color: brand.textMuted, margin: '24px 0 0' }}>
-                Ce lien expirera dans {expiresIn}.
+                Ce lien expirera dans {expiresIn}. / This link expires in {expiresIn}.
               </Text>
             </Section>
 
             <Section style={{ padding: '0 40px 40px' }}>
               <Section style={{ backgroundColor: 'rgba(201,168,76,0.05)', borderRadius: '12px', padding: '20px', border: '1px dashed rgba(201,168,76,0.3)' }}>
                 <Text style={{ ...shellStyles.text, fontSize: '13px', lineHeight: '20px' }}>
-                  🛡️ <strong>Vous n&apos;etes pas a l&apos;origine de cette inscription ?</strong> Vous pouvez ignorer cet email en toute securite, aucun compte ne sera active sans confirmation.
+                  🛡️ <strong>Vous n&apos;êtes pas à l&apos;origine de cette inscription ?</strong> Vous pouvez ignorer cet email en toute sécurité, aucun compte ne sera activé sans confirmation.
+                </Text>
+                <Text style={{ ...shellStyles.textEn, fontSize: '13px', lineHeight: '20px' }}>
+                  🛡️ <strong>Didn&apos;t sign up?</strong> You can safely ignore this email — no account will be activated without confirmation.
                 </Text>
               </Section>
             </Section>
@@ -83,7 +92,8 @@ export default function VerificationEmail({
               <Text style={{ fontFamily: fonts.body, fontSize: '11px', lineHeight: '18px', color: brand.textMuted, margin: '0' }}>
                 Pour toute assistance, contactez notre support client.
                 <br />
-                © 2025 NavetteXpress. Tous droits reserves.
+                For any help, contact our customer support.
+                <br />© 2025 NavetteXpress. Tous droits réservés. / All rights reserved.
               </Text>
             </Section>
           </Container>

@@ -188,6 +188,19 @@ const registry: Record<string, Handler> = {
       args[1] as Parameters<typeof sendReservationValidee>[1]
     );
   },
+  'resend-mailer.sendBookingUpdatedEmail': async (args) => {
+    const { sendBookingUpdatedEmail } = await import('./resend-mailer');
+    return sendBookingUpdatedEmail(args[0] as string, args[1] as Parameters<typeof sendBookingUpdatedEmail>[1]);
+  },
+  'whatsapp.sendReservationModifiee': async (args) => {
+    const { sendReservationModifiee } = await import('./whatsapp/templates');
+    return sendReservationModifiee(
+      args[0] as Parameters<typeof sendReservationModifiee>[0],
+      args[1] as Parameters<typeof sendReservationModifiee>[1],
+      args[2] as Parameters<typeof sendReservationModifiee>[2],
+      args[3] as Parameters<typeof sendReservationModifiee>[3]
+    );
+  },
   'whatsapp.sendRappelDepart': async (args) => {
     const { sendRappelDepart } = await import('./whatsapp/templates');
     return sendRappelDepart(
