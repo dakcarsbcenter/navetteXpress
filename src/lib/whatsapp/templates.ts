@@ -1,5 +1,5 @@
 /**
- * Un envoi par événement métier, mappé sur les 6 templates WhatsApp
+ * Un envoi par événement métier, mappé sur les templates WhatsApp
  * pré-approuvés Meta (voir docs/GESKAP_WHATSAPP.md pour le corps exact de
  * chaque template et l'ordre des variables — cet ordre doit rester identique
  * entre la console Geskap et les tableaux `variables` ci-dessous).
@@ -82,7 +82,7 @@ function parseBookingNotes(notes: string | null): {
   return { serviceTypeLabel, optionsLabel, driverNotesLabel };
 }
 
-/** 1a. Accusé de réception envoyé au client à la création de la réservation. */
+/** 1. Accusé de réception envoyé au client à la création de la réservation. */
 export async function sendReservationCreeeClient(booking: SelectBooking) {
   if (!booking.customerPhone) return;
   const { serviceTypeLabel, optionsLabel, driverNotesLabel } = parseBookingNotes(booking.notes);
@@ -105,38 +105,6 @@ export async function sendReservationCreeeClient(booking: SelectBooking) {
       optionsLabel,
       driverNotesLabel,
       reference(booking),
-    ],
-  });
-}
-
-/** 1b. Alerte dispatch envoyée à l'admin (même événement que 1a, destinataire fixe). */
-export async function sendNouvelleReservationAdmin(booking: SelectBooking) {
-  const adminPhone = process.env.GESKAP_ADMIN_PHONE;
-  if (!adminPhone) {
-    console.warn('⚠️ [WhatsApp/Geskap] GESKAP_ADMIN_PHONE non configuré — alerte dispatch non envoyée');
-    return;
-  }
-  const { serviceTypeLabel, optionsLabel, driverNotesLabel } = parseBookingNotes(booking.notes);
-
-  await sendWhatsAppTemplate({
-    to: adminPhone,
-    template: 'nouvelle_reservation_admin',
-    idempotencyKey: `${booking.id}-nouvelle_reservation_admin`,
-    variables: [
-      reference(booking),
-      booking.customerName,
-      booking.customerPhone,
-      serviceTypeLabel,
-      booking.pickupAddress,
-      booking.dropoffAddress,
-      formatDateTime(booking.scheduledDateTime),
-      String(booking.passengers),
-      formatLuggage(booking.luggage),
-      orDash(booking.flightNumber),
-      orDash(booking.airline),
-      flightStatusLabel(booking.flightStatus),
-      optionsLabel,
-      driverNotesLabel,
     ],
   });
 }

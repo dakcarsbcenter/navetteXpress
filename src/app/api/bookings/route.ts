@@ -194,10 +194,11 @@ export async function POST(request: NextRequest) {
       }
     ]);
 
-    // Deux templates WhatsApp distincts pour le même événement : accusé de
-    // réception client + alerte dispatch admin (numéro fixe, GESKAP_ADMIN_PHONE).
+    // Accusé de réception WhatsApp au client uniquement. Il n'y a pas d'alerte
+    // dispatch WhatsApp vers l'admin : le numéro qui émet les notifications est
+    // celui configuré dans Geskap, et un numéro ne peut pas s'envoyer un message
+    // à lui-même. L'admin est prévenu par email (sendNewBookingRequestEmail ci-dessus).
     await sendWithRetry('whatsapp', 'whatsapp.sendReservationCreeeClient', [createdBooking]);
-    await sendWithRetry('whatsapp', 'whatsapp.sendNouvelleReservationAdmin', [createdBooking]);
 
     return NextResponse.json({
       success: true, 

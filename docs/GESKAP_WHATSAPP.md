@@ -23,6 +23,14 @@ Les valeurs injectées sont elles aussi bilingues quand c'est un libellé métie
 statut de vol, bagages) — voir `src/lib/email-i18n.ts` (`bi()`, `flightStatusBilingual()`,
 `luggageBilingual()`).
 
+## Pas d'alerte WhatsApp vers l'admin
+
+Les notifications partent toutes du numéro configuré dans Geskap. Ce numéro ne peut pas
+s'envoyer un message à lui-même : il n'existe donc **aucun template WhatsApp à destination
+de l'admin**. L'admin est prévenu par email (`sendNewBookingRequestEmail` et les autres
+envois de `src/lib/resend-mailer.ts`). Ne pas réintroduire de template de type
+`nouvelle_reservation_admin`.
+
 ## Contraintes Meta à respecter
 
 - Une variable **vide fait rejeter tout le message** : `orDash()` remplace toute valeur vide par `—`.
@@ -36,7 +44,7 @@ statut de vol, bagages) — voir `src/lib/email-i18n.ts` (`bi()`, `flightStatusB
 
 ---
 
-## 1a. `reservation_creee` — client, à la création
+## 1. `reservation_creee` — client, à la création
 
 Fonction : `sendReservationCreeeClient(booking)`
 
@@ -74,34 +82,6 @@ Réf. / Ref. : {{13}}
 | 11 | services additionnels |
 | 12 | demandes spéciales |
 | 13 | référence (`NX-<id>`) |
-
----
-
-## 1b. `nouvelle_reservation_admin` — admin, même événement
-
-Fonction : `sendNouvelleReservationAdmin(booking)` → `GESKAP_ADMIN_PHONE`
-
-```
-Nouvelle réservation {{1}} à traiter.
-———
-New booking {{1}} to process.
-
-Client / Customer : {{2}}
-Téléphone / Phone : {{3}}
-Service : {{4}}
-Départ / Pick-up : {{5}}
-Arrivée / Drop-off : {{6}}
-Date : {{7}}
-Passagers / Passengers : {{8}}
-Bagages / Luggage : {{9}}
-Vol / Flight : {{10}} — {{11}} ({{12}})
-Options : {{13}}
-Précisions / Notes : {{14}}
-```
-
-Variables : `1` référence, `2` nom client, `3` téléphone client, `4` service, `5` départ,
-`6` arrivée, `7` date/heure, `8` passagers, `9` bagages, `10` n° de vol, `11` compagnie,
-`12` statut du vol, `13` options, `14` précisions.
 
 ---
 
@@ -261,6 +241,5 @@ retry : la notification **email** de modification, elle, part normalement.
 |---|---|
 | `GESKAP_API_KEY` | clé d'API (obligatoire, sinon l'envoi lève) |
 | `GESKAP_API_BASE_URL` | défaut `https://wa-api.geskap.com` |
-| `GESKAP_ADMIN_PHONE` | destinataire de `nouvelle_reservation_admin` |
 | `GESKAP_WEBHOOK_SECRET` | signature HMAC-SHA256 du header `x-camairetech-signature` |
 | `WHATSAPP_REMINDER_LEAD_MINUTES` | délai du rappel avant départ |

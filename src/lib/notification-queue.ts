@@ -163,10 +163,6 @@ const registry: Record<string, Handler> = {
     const { sendReservationCreeeClient } = await import('./whatsapp/templates');
     return sendReservationCreeeClient(args[0] as Parameters<typeof sendReservationCreeeClient>[0]);
   },
-  'whatsapp.sendNouvelleReservationAdmin': async (args) => {
-    const { sendNouvelleReservationAdmin } = await import('./whatsapp/templates');
-    return sendNouvelleReservationAdmin(args[0] as Parameters<typeof sendNouvelleReservationAdmin>[0]);
-  },
   'whatsapp.sendChauffeurAssigne': async (args) => {
     const { sendChauffeurAssigne } = await import('./whatsapp/templates');
     return sendChauffeurAssigne(
