@@ -178,7 +178,19 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
         const response = await fetch('/api/services');
         const data = await response.json();
         if (data.success) {
-          setDbServices(data.data || []);
+          const services: DbServiceOption[] = data.data || [];
+          setDbServices(services);
+          // Le service pré-sélectionné peut avoir été désactivé ou renommé en admin :
+          // le <select> afficherait alors une valeur vide alors que formData porte
+          // toujours un slug absent de la liste, et l'étape 1 resterait validable avec
+          // un service que le client n'a jamais vu. On retombe sur le premier service.
+          if (services.length > 0) {
+            setFormData((prev) =>
+              services.some((service) => service.slug === prev.serviceType)
+                ? prev
+                : { ...prev, serviceType: services[0].slug }
+            );
+          }
         }
       } catch (error) {
         console.error("Erreur lors de la récupération des services:", error);
@@ -348,7 +360,11 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
           // Quand le trajet couvre plusieurs secteurs tarifaires, aucun prix ferme n'est
           // envoyé : on transmet la fourchette à l'admin pour qu'il propose le tarif exact.
           specialRequests: selectedPrice === null && priceLabel
-            ? [formData.specialRequests, `Tarif indicatif: ${priceLabel}`].filter(Boolean).join('\n')
+            // Séparateur " · " et non un saut de ligne : la mention est concaténée dans la
+            // ligne « Demandes spéciales » de `notes`, que parseBookingNotes() relit avec
+            // /Demandes spéciales:\s*(.+)/ — `.` ne matchant pas \n, un retour à la ligne
+            // faisait disparaître la fourchette dès que le client avait écrit quelque chose.
+            ? [formData.specialRequests, `Tarif indicatif: ${priceLabel}`].filter(Boolean).join(' · ')
             : formData.specialRequests,
           contactPhone: formData.contactPhone,
           contactEmail: formData.clientEmail || user?.email || "",

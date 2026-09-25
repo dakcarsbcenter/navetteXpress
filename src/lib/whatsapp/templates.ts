@@ -67,9 +67,13 @@ function firstNameOf(fullName: string | null | undefined): string {
  * trois variables séparées et n'utilise donc pas ce helper.
  */
 function flightLabel(booking: SelectBooking): string {
-  if (!booking.flightNumber && !booking.airline) return '—';
-  const parts = [orDash(booking.flightNumber), orDash(booking.airline)].join(' — ');
-  return `${parts} (${flightStatusLabel(booking.flightStatus)})`;
+  // Seules les valeurs renseignées sont jointes : avec orDash() sur chacune, un vol
+  // sans compagnie sortait « AF718 — — (À l'heure) » dans le message du client.
+  const parts = [booking.flightNumber, booking.airline]
+    .map((v) => v?.trim())
+    .filter(Boolean);
+  if (parts.length === 0) return '—';
+  return `${parts.join(' — ')} (${flightStatusLabel(booking.flightStatus)})`;
 }
 
 /** « Toyota Corolla — DK-1234-AB », en tolérant les champs non renseignés. */

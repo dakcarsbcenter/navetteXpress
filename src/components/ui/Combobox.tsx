@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 export interface ComboboxOption {
   value: string;
@@ -55,6 +55,12 @@ export function Combobox({
   listClassName = "",
   leading,
 }: ComboboxProps) {
+  // Sans `id` fourni, les identifiants ARIA étaient tous `undefined` : la liste
+  // n'était reliée ni par aria-controls ni par aria-activedescendant, et l'option
+  // survolée au clavier n'était donc pas annoncée. On en dérive un d'office.
+  const autoId = useId();
+  const fieldId = id ?? autoId;
+  const listId = `${fieldId}-listbox`;
   const [query, setQuery] = useState(value);
   const [isOpen, setIsOpen] = useState(false);
   const [highlighted, setHighlighted] = useState(0);
@@ -136,14 +142,12 @@ export function Combobox({
     el?.scrollIntoView({ block: "nearest" });
   }, [highlighted, isOpen]);
 
-  const listId = id ? `${id}-listbox` : undefined;
-
   return (
     <div className={`relative ${className}`}>
       <div className={leading ? "flex items-center gap-2" : undefined}>
         {leading}
         <input
-          id={id}
+          id={fieldId}
           name={name}
           type="text"
           role="combobox"
@@ -151,9 +155,7 @@ export function Combobox({
           aria-controls={listId}
           aria-autocomplete="list"
           aria-activedescendant={
-            isOpen && filtered[highlighted] && listId
-              ? `${listId}-${highlighted}`
-              : undefined
+            isOpen && filtered[highlighted] ? `${listId}-${highlighted}` : undefined
           }
           value={query}
           onChange={(e) => handleChange(e.target.value)}
@@ -177,7 +179,7 @@ export function Combobox({
             filtered.map((opt, index) => (
               <li
                 key={opt.value}
-                id={listId ? `${listId}-${index}` : undefined}
+                id={`${listId}-${index}`}
                 role="option"
                 aria-selected={index === highlighted}
               >

@@ -151,6 +151,14 @@ export async function POST(request: NextRequest) {
       return total + (servicePrices[serviceId] || 0);
     }, 0) || 0;
 
+    // `notes` est un format à une ligne par champ, relu par parseBookingNotes()
+    // (src/lib/whatsapp/templates.ts) avec /Demandes spéciales:\s*(.+)/ : `.` ne
+    // matchant pas \n, un retour à la ligne tapé dans le textarea tronquerait la
+    // demande du client dans les e-mails et les messages WhatsApp. On l'aplatit ici,
+    // seul point où ce format est construit.
+    const flatSpecialRequests =
+      typeof specialRequests === 'string' ? specialRequests.replace(/\s*\n+\s*/g, ' · ').trim() : '';
+
     // Si le formulaire de réservation a résolu un tarif indicatif (segment de
     // tarif configuré en admin pour ce couple départ/arrivée), on le persiste
     // directement : le client l'a déjà vu avant d'envoyer sa demande. Sinon
@@ -183,7 +191,7 @@ export async function POST(request: NextRequest) {
         passengerPhone: finalPassengerPhone || null,
         flightNumber: flightNumber || null,
         airline: airline || null,
-        notes: `Service: ${serviceType}\nVéhicule souhaité: ${requestedVehicleType === 'suv' ? 'SUV' : 'Berline'}\nContact: ${contactPhone}${contactEmail ? ` - ${contactEmail}` : ''}\nServices additionnels: ${additionalServices?.join(', ') || 'Aucun'}\nDemandes spéciales: ${specialRequests || 'Aucune'}`,
+        notes: `Service: ${serviceType}\nVéhicule souhaité: ${requestedVehicleType === 'suv' ? 'SUV' : 'Berline'}\nContact: ${contactPhone}${contactEmail ? ` - ${contactEmail}` : ''}\nServices additionnels: ${additionalServices?.join(', ') || 'Aucun'}\nDemandes spéciales: ${flatSpecialRequests || 'Aucune'}`,
         updatedAt: new Date()
       })
       .returning();
