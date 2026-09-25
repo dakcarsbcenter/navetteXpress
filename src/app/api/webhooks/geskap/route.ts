@@ -10,7 +10,7 @@ import { findDriverIdByPhone, findPendingAssignedBooking, respondToAssignedBooki
  * Webhook entrant Geskap. Deux événements gérés :
  *  - message.status  : accusé de livraison/lecture/échec d'un envoi.
  *  - message.inbound : réponse du destinataire — utilisé ici pour les quick
- *    replies "Accepter"/"Refuser" du template confirmation_chauffeur.
+ *    replies "Accepter"/"Refuser" du template 2chauffeur_assigne.
  *
  * En-tête de signature et forme du payload confirmés contre l'OpenAPI de
  * l'API (wa-api.geskap.com/openapi.json, marque blanche "CamaireTech") le
@@ -78,10 +78,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Numéro expéditeur manquant' }, { status: 400 });
     }
 
-    // Le refus est testé en premier : "Refuser / Decline" ne contient aucune racine
+    // reservation_modifiee porte ses propres boutons "Confirmer / Confirm" et
+    // "Annuler / Cancel", envoyés au client ET au chauffeur. Ils sont traités en
+    // premier et ne changent aucun état : sans ce test, un chauffeur cliquant
+    // "Confirmer" sur un avis de modification acceptait à son insu la course en
+    // attente détectée plus bas ("confirm" matchait l'acceptation).
+    const isUpdateAck = ['confirmer', 'confirm', 'annuler', 'cancel'].some((w) =>
+      buttonReply.includes(w)
+    );
+    if (isUpdateAck) {
+      console.log(
+        `ℹ️ [Webhook/Geskap] Accusé de lecture sur un avis de modification ("${buttonReply}") — aucun changement d'état`
+      );
+      return NextResponse.json({ ok: true, ignored: true });
+    }
+
+    // Le refus est testé avant l'acceptation : "Refuser / Decline" ne contient aucune racine
     // d'acceptation, mais l'inverse n'est pas garanti sur tous les libellés possibles.
     const isReject = ['refus', 'declin', 'decline', 'reject'].some((w) => buttonReply.includes(w));
-    const isAccept = !isReject && ['accept', 'confirm', 'oui', 'yes'].some((w) => buttonReply.includes(w));
+    const isAccept = !isReject && ['accept'].some((w) => buttonReply.includes(w));
 
     if (!isAccept && !isReject) {
       // Message entrant qui n'est pas une réponse au quick reply attendu (ex:

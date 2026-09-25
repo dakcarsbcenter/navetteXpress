@@ -2,7 +2,7 @@
  * Logique partagée pour la réponse d'un chauffeur à une course assignée
  * (accepter/refuser), utilisée à la fois par PUT /api/driver/bookings/[id]/response
  * (session chauffeur authentifiée) et par le webhook Geskap (réponse via les
- * boutons WhatsApp "Accepter"/"Refuser" du template confirmation_chauffeur).
+ * boutons WhatsApp "Accepter"/"Refuser" du template 2chauffeur_assigne).
  *
  * Extrait ici pour éviter une troisième implémentation divergente du même
  * état — voir project-driver-booking-response-flows (mémoire) sur les deux
@@ -84,7 +84,17 @@ export async function respondToAssignedBooking(
 
   console.log(`✅ Réservation #${responseBooking.id} ${action === 'approve' ? 'approuvée' : 'rejetée'} par le chauffeur`);
 
-  const driverInfo = await db.select({ name: users.name, phone: users.phone }).from(users).where(eq(users.id, driverId)).limit(1);
+  const driverInfo = await db
+    .select({
+      name: users.name,
+      phone: users.phone,
+      vehicleBrand: users.vehicleBrand,
+      vehicleModel: users.vehicleModel,
+      vehiclePlateNumber: users.vehiclePlateNumber,
+    })
+    .from(users)
+    .where(eq(users.id, driverId))
+    .limit(1);
   const driver = driverInfo[0];
 
   if (action === 'approve') {
@@ -104,7 +114,13 @@ export async function respondToAssignedBooking(
 
     await sendWithRetry('whatsapp', 'whatsapp.sendReservationValidee', [
       responseBooking,
-      { name: driver?.name || 'Votre chauffeur', phone: driver?.phone ?? null },
+      {
+        name: driver?.name || 'Votre chauffeur',
+        phone: driver?.phone ?? null,
+        vehicleBrand: driver?.vehicleBrand ?? null,
+        vehicleModel: driver?.vehicleModel ?? null,
+        vehiclePlateNumber: driver?.vehiclePlateNumber ?? null,
+      },
     ]);
   } else {
     await sendWithRetry('email', 'resend-mailer.sendBookingRejectedByDriverEmail', [

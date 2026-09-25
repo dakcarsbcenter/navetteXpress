@@ -128,9 +128,17 @@ export async function PUT(
       }
     ]);
 
-    const driverWhatsAppInfo = { name: assignedDriver.name, phone: assignedDriver.phone };
+    // Le gabarit 2chauffeur_assigne porte lui-même les boutons Accepter/Refuser :
+    // plus de second message 2confirmation_chauffeur, qui laissait deux jeux de
+    // boutons actifs pour la même course.
+    const driverWhatsAppInfo = {
+      name: assignedDriver.name,
+      phone: assignedDriver.phone,
+      vehicleBrand: assignedDriver.vehicleBrand,
+      vehicleModel: assignedDriver.vehicleModel,
+      vehiclePlateNumber: assignedDriver.vehiclePlateNumber,
+    };
     await sendWithRetry('whatsapp', 'whatsapp.sendChauffeurAssigne', [assignedBooking, driverWhatsAppInfo]);
-    await sendWithRetry('whatsapp', 'whatsapp.sendConfirmationChauffeur', [assignedBooking, driverWhatsAppInfo]);
 
     return NextResponse.json({
       success: true, 

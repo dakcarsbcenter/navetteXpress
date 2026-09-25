@@ -110,7 +110,10 @@ export async function PATCH(
       // Récupérer les informations du chauffeur
       const driverInfo = await db.select({
         name: users.name,
-        phone: users.phone
+        phone: users.phone,
+        vehicleBrand: users.vehicleBrand,
+        vehicleModel: users.vehicleModel,
+        vehiclePlateNumber: users.vehiclePlateNumber
       })
         .from(users)
         .where(eq(users.id, session.user.id))
@@ -134,7 +137,13 @@ export async function PATCH(
 
       await sendWithRetry('whatsapp', 'whatsapp.sendReservationValidee', [
         booking,
-        { name: driverInfo[0]?.name || 'Votre chauffeur', phone: driverInfo[0]?.phone ?? null }
+        {
+          name: driverInfo[0]?.name || 'Votre chauffeur',
+          phone: driverInfo[0]?.phone ?? null,
+          vehicleBrand: driverInfo[0]?.vehicleBrand ?? null,
+          vehicleModel: driverInfo[0]?.vehicleModel ?? null,
+          vehiclePlateNumber: driverInfo[0]?.vehiclePlateNumber ?? null
+        }
       ]);
     }
 

@@ -283,7 +283,10 @@ export async function PATCH(
           driver = {
             name: driverData[0].name,
             email: driverData[0].email,
-            phone: driverData[0].phone
+            phone: driverData[0].phone,
+            vehicleBrand: driverData[0].vehicleBrand,
+            vehicleModel: driverData[0].vehicleModel,
+            vehiclePlateNumber: driverData[0].vehiclePlateNumber
           };
         }
       }
@@ -306,7 +309,13 @@ export async function PATCH(
 
       await sendWithRetry('whatsapp', 'whatsapp.sendReservationValidee', [
         booking,
-        { name: driver?.name || 'Votre chauffeur', phone: driver?.phone ?? null }
+        {
+          name: driver?.name || 'Votre chauffeur',
+          phone: driver?.phone ?? null,
+          vehicleBrand: driver?.vehicleBrand ?? null,
+          vehicleModel: driver?.vehicleModel ?? null,
+          vehiclePlateNumber: driver?.vehiclePlateNumber ?? null
+        }
       ]);
     }
 
@@ -344,7 +353,10 @@ export async function PATCH(
         const driver = {
           name: driverData[0].name,
           email: driverData[0].email,
-          phone: driverData[0].phone
+          phone: driverData[0].phone,
+          vehicleBrand: driverData[0].vehicleBrand,
+          vehicleModel: driverData[0].vehicleModel,
+          vehiclePlateNumber: driverData[0].vehiclePlateNumber
         };
 
         await sendWithRetry('email', 'resend-email.sendBookingAssignedToDriver', [
@@ -365,8 +377,9 @@ export async function PATCH(
           driver
         ]);
 
+        // 2chauffeur_assigne porte désormais ses propres boutons Accepter/Refuser :
+        // 2confirmation_chauffeur ferait doublon (cf. assign/route.ts).
         await sendWithRetry('whatsapp', 'whatsapp.sendChauffeurAssigne', [booking, driver]);
-        await sendWithRetry('whatsapp', 'whatsapp.sendConfirmationChauffeur', [booking, driver]);
       }
     }
 
@@ -387,6 +400,22 @@ export async function PATCH(
         price: booking.price,
       };
 
+      // Le gabarit reservation_modifiee affiche le chauffeur, son véhicule et son
+      // téléphone y compris dans la version envoyée au client : la fiche est donc
+      // chargée avant les deux envois, et non plus seulement avant celui au chauffeur.
+      const assignedDriver = booking.driverId
+        ? (await db.select().from(users).where(eq(users.id, booking.driverId)).limit(1))[0]
+        : undefined;
+      const driverWhatsAppInfo = assignedDriver
+        ? {
+            name: assignedDriver.name,
+            phone: assignedDriver.phone,
+            vehicleBrand: assignedDriver.vehicleBrand,
+            vehicleModel: assignedDriver.vehicleModel,
+            vehiclePlateNumber: assignedDriver.vehiclePlateNumber,
+          }
+        : undefined;
+
       if (booking.customerEmail) {
         await sendWithRetry('email', 'resend-mailer.sendBookingUpdatedEmail', [
           booking.customerEmail,
@@ -394,29 +423,26 @@ export async function PATCH(
         ]);
       }
 
-      await sendWithRetry('whatsapp', 'whatsapp.sendReservationModifiee', [booking, changes, 'client']);
+      await sendWithRetry('whatsapp', 'whatsapp.sendReservationModifiee', [
+        booking,
+        changes,
+        'client',
+        driverWhatsAppInfo,
+      ]);
 
-      if (booking.driverId && !driverJustAssigned) {
-        const assignedDriver = await db
-          .select()
-          .from(users)
-          .where(eq(users.id, booking.driverId))
-          .limit(1);
-
-        if (assignedDriver.length > 0) {
-          if (assignedDriver[0].email) {
-            await sendWithRetry('email', 'resend-mailer.sendBookingUpdatedEmail', [
-              assignedDriver[0].email,
-              { ...bookingSummary, changes, recipient: 'driver' },
-            ]);
-          }
-          await sendWithRetry('whatsapp', 'whatsapp.sendReservationModifiee', [
-            booking,
-            changes,
-            'driver',
-            { name: assignedDriver[0].name, phone: assignedDriver[0].phone },
+      if (assignedDriver && !driverJustAssigned) {
+        if (assignedDriver.email) {
+          await sendWithRetry('email', 'resend-mailer.sendBookingUpdatedEmail', [
+            assignedDriver.email,
+            { ...bookingSummary, changes, recipient: 'driver' },
           ]);
         }
+        await sendWithRetry('whatsapp', 'whatsapp.sendReservationModifiee', [
+          booking,
+          changes,
+          'driver',
+          driverWhatsAppInfo,
+        ]);
       }
     }
 
