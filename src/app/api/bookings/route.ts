@@ -65,7 +65,6 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const {
       serviceType,
-      vehicle,
       date,
       time,
       pickupAddress,
@@ -126,30 +125,6 @@ export async function POST(request: NextRequest) {
 
     // Créer la date/heure combinée
     const scheduledDateTime = new Date(`${date}T${time}`);
-
-    // Calculer le prix estimé (logique simplifiée)
-    const basePrice = 100; // Prix de base
-    const vehicleMultiplier = vehicle === 'limousine' ? 2.0 : 
-                             vehicle === 'sprinter' ? 1.5 : 
-                             vehicle === 'mercedes-s' ? 1.2 : 
-                             vehicle === 'bmw-7' ? 1.1 : 
-                             vehicle === 'audi-a8' ? 1.15 : 1.0;
-    
-    const serviceMultiplier = serviceType === 'event' ? 1.5 :
-                             serviceType === 'airport' ? 1.2 :
-                             serviceType === 'business' ? 1.1 : 1.0;
-
-    const additionalServicesPrice = additionalServices?.reduce((total: number, serviceId: string) => {
-      const servicePrices: { [key: string]: number } = {
-        'wifi': 10,
-        'refreshments': 25,
-        'newspaper': 5,
-        'child_seat': 15,
-        'flowers': 35,
-        'champagne': 50
-      };
-      return total + (servicePrices[serviceId] || 0);
-    }, 0) || 0;
 
     // `notes` est un format à une ligne par champ, relu par parseBookingNotes()
     // (src/lib/whatsapp/templates.ts) avec /Demandes spéciales:\s*(.+)/ : `.` ne
