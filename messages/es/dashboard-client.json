@@ -353,6 +353,7 @@
     "additionalInfo": "Información adicional",
     "fare": "Tarifa",
     "contact": "Contacto",
+    "passenger": "Pasajero",
     "notPresent": "N/D",
     "notesLabel": "Notas y Peticiones",
     "pendingMessage": "Esta reserva está pendiente de procesamiento. Recibirá una notificación en cuanto se le asigne un conductor.",

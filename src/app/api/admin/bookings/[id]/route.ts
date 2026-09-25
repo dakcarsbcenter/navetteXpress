@@ -104,12 +104,17 @@ const BookingPatchSchema = z.object({
   flightNumber: nullableText,
   airline: nullableText,
 
+  // Réservation pour un tiers : une chaîne vide repasse la course en "le client voyage lui-même".
+  passengerName: z.union([z.string().trim().max(120), z.null()]).optional(),
+  passengerPhone: z.union([z.string().trim().max(30), z.null()]).optional(),
+
   /** Envoi (ou non) des notifications de modification au client et au chauffeur. */
   notifyOnUpdate: z.boolean().optional(),
 });
 
 /** Champs dont la modification intéresse réellement le client et le chauffeur. */
 const TRACKED_FIELDS = [
+  { key: 'passengerName', labelFr: 'Passager', labelEn: 'Passenger' },
   { key: 'pickupAddress', labelFr: 'Départ', labelEn: 'Pick-up' },
   { key: 'dropoffAddress', labelFr: 'Destination', labelEn: 'Drop-off' },
   { key: 'scheduledDateTime', labelFr: 'Date et heure', labelEn: 'Date and time' },
@@ -208,6 +213,8 @@ export async function PATCH(
     if (body.requestedVehicleType !== undefined) updateData.requestedVehicleType = body.requestedVehicleType;
     if (body.flightNumber !== undefined) updateData.flightNumber = body.flightNumber;
     if (body.airline !== undefined) updateData.airline = body.airline;
+    if (body.passengerName !== undefined) updateData.passengerName = body.passengerName || null;
+    if (body.passengerPhone !== undefined) updateData.passengerPhone = body.passengerPhone || null;
 
     // Annulation définitive déclenchée par l'admin : seule cette action notifie le client
     if (body.status === 'cancelled' && oldStatus !== 'cancelled') {
@@ -351,7 +358,9 @@ export async function PATCH(
             scheduledDateTime: booking.scheduledDateTime.toISOString(),
             passengers: booking.passengers,
             price: booking.price || undefined,
-            notes: booking.notes || undefined
+            notes: booking.notes || undefined,
+            passengerName: booking.passengerName,
+            passengerPhone: booking.passengerPhone
           },
           driver
         ]);

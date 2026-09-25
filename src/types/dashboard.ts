@@ -24,6 +24,8 @@ export interface DriverBookingApiItem {
     price: string | number | null
     customerName: string
     customerPhone: string
+    passengerName: string | null
+    passengerPhone: string | null
     passengers: number
     luggage: number
     duration: string | number | null

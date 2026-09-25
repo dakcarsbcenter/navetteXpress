@@ -85,6 +85,8 @@ export async function GET() {
         status: booking.status,
         price: booking.price,
         notes: booking.notes,
+        passengerName: booking.passengerName,
+        passengerPhone: booking.passengerPhone,
         createdAt: booking.createdAt,
         updatedAt: booking.updatedAt,
         priceProposedAt: booking.priceProposedAt,

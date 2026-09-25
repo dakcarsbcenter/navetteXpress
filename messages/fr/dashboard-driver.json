@@ -57,6 +57,7 @@
       "pickupAt": "PRISE EN CHARGE {time}",
       "dropoffEstimated": "DÉPOSE ESTIMÉE {time}",
       "passenger": "Passager",
+      "bookedBy": "Réservé par {name}",
       "passengersCount": "{count, plural, one {# passager} other {# passagers}}",
       "luggageCount": "{count, plural, one {# bagage} other {# bagages}}",
       "priceLabel": "Course",

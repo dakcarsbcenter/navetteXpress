@@ -39,6 +39,8 @@ interface Booking {
   requestedVehicleType?: 'berline' | 'suv' | null
   price?: string | null
   notes?: string
+  passengerName?: string | null
+  passengerPhone?: string | null
   flightNumber?: string | null
   airline?: string | null
   flightStatus?: string | null
@@ -214,6 +216,14 @@ export function BookingDetailsModal({
   const handleSave = async () => {
     if (!editedBooking) return
 
+    // « Un tiers » sélectionné sans nom saisi : on refuse plutôt que de repasser
+    // silencieusement la réservation en « le client lui-même ».
+    const passengerName = editedBooking.passengerName
+    if (passengerName !== null && passengerName !== undefined && passengerName.trim().length < 2) {
+      setSaveError('Nom du passager trop court — saisissez-le ou repassez sur « Le client lui-même »')
+      return
+    }
+
     setIsLoading(true)
     setSaveError(null)
     try {
@@ -243,6 +253,8 @@ export function BookingDetailsModal({
           requestedVehicleType: editedBooking.requestedVehicleType ?? 'berline',
           flightNumber: editedBooking.flightNumber || null,
           airline: editedBooking.airline || null,
+          passengerName: passengerName ? passengerName.trim() : null,
+          passengerPhone: editedBooking.passengerPhone || null,
           notifyOnUpdate,
         }),
       })
@@ -401,6 +413,46 @@ export function BookingDetailsModal({
                           style={{ ...selectStyle, fontFamily: 'var(--font-mono)' }}
                         />
                       </div>
+
+                      {/* Réservation pour un tiers : un proche réserve souvent pour une personne
+                          qui ne peut pas le faire elle-même. Le client reste le contact. */}
+                      <div>
+                        <label style={fieldLabel}>Réservation pour</label>
+                        <select
+                          value={editedBooking.passengerName === null || editedBooking.passengerName === undefined ? 'self' : 'other'}
+                          onChange={(e) => patch(e.target.value === 'other'
+                            ? { passengerName: '' }
+                            : { passengerName: null, passengerPhone: null })}
+                          style={selectStyle}
+                        >
+                          <option value="self">Le client lui-même</option>
+                          <option value="other">Un tiers</option>
+                        </select>
+                      </div>
+
+                      {editedBooking.passengerName !== null && editedBooking.passengerName !== undefined && (
+                        <>
+                          <div>
+                            <label style={fieldLabel}>Nom du passager</label>
+                            <input
+                              type="text"
+                              value={editedBooking.passengerName}
+                              onChange={(e) => patch({ passengerName: e.target.value })}
+                              placeholder="Prénom et nom"
+                              style={selectStyle}
+                            />
+                          </div>
+                          <div>
+                            <label style={fieldLabel}>Téléphone du passager (optionnel)</label>
+                            <input
+                              type="tel"
+                              value={editedBooking.passengerPhone || ''}
+                              onChange={(e) => patch({ passengerPhone: e.target.value })}
+                              style={{ ...selectStyle, fontFamily: 'var(--font-mono)' }}
+                            />
+                          </div>
+                        </>
+                      )}
                     </>
                   ) : (
                     <>
@@ -429,6 +481,27 @@ export function BookingDetailsModal({
                           <p style={{ margin: 0, fontFamily: 'var(--font-mono)', fontSize: '13px', color: '#12100E' }}>{booking.customerPhone}</p>
                         </div>
                       </div>
+
+                      {booking.passengerName && (
+                        <>
+                          <div className="flex items-center gap-3" style={fieldWrap}>
+                            <User size={16} style={{ color: '#B4643A' }} />
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <p style={fieldLabel}>Passager (réservé pour un tiers)</p>
+                              <p style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: '#12100E' }} className="truncate">{booking.passengerName}</p>
+                            </div>
+                          </div>
+                          {booking.passengerPhone && (
+                            <div className="flex items-center gap-3" style={fieldWrap}>
+                              <Phone size={16} style={{ color: '#B4643A' }} />
+                              <div style={{ flex: 1 }}>
+                                <p style={fieldLabel}>Tél. passager</p>
+                                <p style={{ margin: 0, fontFamily: 'var(--font-mono)', fontSize: '13px', color: '#12100E' }}>{booking.passengerPhone}</p>
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      )}
                     </>
                   )}
                 </div>

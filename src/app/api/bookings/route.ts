@@ -78,6 +78,8 @@ export async function POST(request: NextRequest) {
       contactEmail,
       clientName,
       clientEmail: fallbackClientEmail,
+      passengerName,
+      passengerPhone,
       flightNumber,
       airline,
       vehicleType,
@@ -102,6 +104,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ 
         success: false, 
         error: 'Nom et email requis pour les utilisateurs non connectés' 
+      }, { status: 400 });
+    }
+
+    // Réservation pour un tiers : le client qui réserve reste le contact et le
+    // destinataire des notifications, passengerName identifie la personne réellement
+    // transportée (cas courant : un proche réserve pour quelqu'un qui ne lit pas).
+    const finalPassengerName = typeof passengerName === 'string' ? passengerName.trim() : '';
+    const finalPassengerPhone = typeof passengerPhone === 'string' ? passengerPhone.trim() : '';
+
+    if (finalPassengerName && finalPassengerName.length < 2) {
+      return NextResponse.json({
+        success: false,
+        error: 'Nom du passager invalide'
       }, { status: 400 });
     }
 
@@ -165,6 +180,8 @@ export async function POST(request: NextRequest) {
         vehicleId: null, // Sera assigné plus tard par l'admin
         requestedVehicleType,
         price: resolvedPrice.toString(),
+        passengerName: finalPassengerName || null,
+        passengerPhone: finalPassengerPhone || null,
         flightNumber: flightNumber || null,
         airline: airline || null,
         notes: `Service: ${serviceType}\nVéhicule souhaité: ${requestedVehicleType === 'suv' ? 'SUV' : 'Berline'}${zoneLabel ? `\nSecteur: ${zoneLabel}` : ''}\nContact: ${contactPhone}${contactEmail ? ` - ${contactEmail}` : ''}\nServices additionnels: ${additionalServices?.join(', ') || 'Aucun'}\nDemandes spéciales: ${specialRequests || 'Aucune'}`,
@@ -190,7 +207,9 @@ export async function POST(request: NextRequest) {
         pickupDate: new Date(createdBooking.scheduledDateTime).toLocaleDateString('fr-FR'),
         pickupTime: new Date(createdBooking.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
         passengers: passengers || 1,
-        luggage: createdBooking.luggage || 1
+        luggage: createdBooking.luggage || 1,
+        passengerName: createdBooking.passengerName,
+        passengerPhone: createdBooking.passengerPhone
       }
     ]);
 

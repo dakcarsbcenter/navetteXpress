@@ -79,6 +79,14 @@
     "emailPlaceholder": "tu@email.com",
     "phoneLabel": "Teléfono / WhatsApp",
     "phonePlaceholder": "+221 77 XXX XX XX",
+    "bookingForLabel": "¿Para quién es la reserva?",
+    "bookingForSelf": "Para mí",
+    "bookingForOther": "Para otra persona",
+    "passengerNameLabel": "Nombre y apellido del pasajero",
+    "passengerNamePlaceholder": "Aminata Diallo",
+    "passengerPhoneLabel": "Teléfono del pasajero",
+    "passengerPhonePlaceholder": "+221 77 XXX XX XX",
+    "passengerOptional": "opcional",
     "summary": {
       "label": "Tu trayecto",
       "notDefined": "Sin definir",
@@ -87,7 +95,8 @@
       "service": "SERVICIO",
       "vehicle": "VEHÍCULO",
       "rate": "TARIFA",
-      "rateValue": "SEGÚN PRESUPUESTO"
+      "rateValue": "SEGÚN PRESUPUESTO",
+      "passenger": "PASAJERO"
     }
   },
   "nav": {

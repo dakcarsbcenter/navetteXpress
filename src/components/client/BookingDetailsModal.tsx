@@ -11,6 +11,7 @@ import {
     Calendar,
     Clock,
     Phone,
+    User,
     Note,
     PencilSimple,
     CheckCircle,
@@ -33,6 +34,8 @@ interface Booking {
     status: string
     price?: string
     notes?: string
+    passengerName?: string | null
+    passengerPhone?: string | null
     createdAt: string
     priceProposedAt?: string
     clientResponse?: string
@@ -325,6 +328,22 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                                                 <p className="text-sm font-medium" style={{ color: '#12100E' }}>{booking.customerPhone || t('notPresent')}</p>
                                             </div>
                                         </div>
+
+                                        {/* Réservation faite pour un tiers : le client retrouve pour qui il a réservé */}
+                                        {booking.passengerName && (
+                                            <div className="flex items-center gap-3 p-3" style={surfaceStyle}>
+                                                <div className="w-10 h-10 flex items-center justify-center" style={{ backgroundColor: '#FFFFFF', color: '#B4643A', borderRadius: '3px' }}>
+                                                    <User size={20} />
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: '#6E6A63' }}>{t('passenger')}</p>
+                                                    <p className="text-sm font-medium" style={{ color: '#12100E' }}>{booking.passengerName}</p>
+                                                    {booking.passengerPhone && (
+                                                        <p className="text-xs" style={{ color: '#6E6A63', fontFamily: 'var(--font-mono)' }}>{booking.passengerPhone}</p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
 
                                     {booking.notes && (

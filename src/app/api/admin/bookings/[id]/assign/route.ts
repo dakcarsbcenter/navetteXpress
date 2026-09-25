@@ -116,9 +116,11 @@ export async function PUT(
         pickupAddress: assignedBooking.pickupAddress,
         dropoffAddress: assignedBooking.dropoffAddress,
         scheduledDateTime: assignedBooking.scheduledDateTime.toISOString(),
-        passengers: 1, // À ajuster si disponible
+        passengers: assignedBooking.passengers,
         price: assignedBooking.price || undefined,
-        notes: assignedBooking.notes || undefined
+        notes: assignedBooking.notes || undefined,
+        passengerName: assignedBooking.passengerName,
+        passengerPhone: assignedBooking.passengerPhone
       },
       {
         name: assignedDriver.name,

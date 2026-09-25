@@ -22,6 +22,8 @@ interface DriverBooking {
   customerName: string
   customerEmail: string
   customerPhone: string
+  passengerName?: string | null
+  passengerPhone?: string | null
   pickupAddress: string
   dropoffAddress: string
   scheduledDateTime: string
@@ -96,6 +98,7 @@ export function DriverBookings() {
       const searchTerm = filters.search.toLowerCase()
       filtered = filtered.filter(booking =>
         booking.customerName.toLowerCase().includes(searchTerm) ||
+        (booking.passengerName || '').toLowerCase().includes(searchTerm) ||
         booking.customerEmail.toLowerCase().includes(searchTerm) ||
         booking.pickupAddress.toLowerCase().includes(searchTerm) ||
         booking.dropoffAddress.toLowerCase().includes(searchTerm)
@@ -267,8 +270,13 @@ export function DriverBookings() {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
                       <div className="text-sm font-medium text-gray-900 dark:text-white">
-                        {booking.customerName}
+                        {booking.passengerName || booking.customerName}
                       </div>
+                      {booking.passengerName && (
+                        <div className="text-sm text-gray-500 dark:text-gray-400">
+                          Réservé par {booking.customerName}
+                        </div>
+                      )}
                       <div className="text-sm text-gray-500 dark:text-gray-400">
                         {booking.customerEmail}
                       </div>

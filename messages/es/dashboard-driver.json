@@ -57,6 +57,7 @@
       "pickupAt": "RECOGIDA {time}",
       "dropoffEstimated": "LLEGADA ESTIMADA {time}",
       "passenger": "Pasajero",
+      "bookedBy": "Reservado por {name}",
       "passengersCount": "{count, plural, one {# pasajero} other {# pasajeros}}",
       "luggageCount": "{count, plural, one {# maleta} other {# maletas}}",
       "priceLabel": "Viaje",

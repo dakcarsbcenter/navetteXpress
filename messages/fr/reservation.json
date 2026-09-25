@@ -79,6 +79,14 @@
     "emailPlaceholder": "votre@email.com",
     "phoneLabel": "Téléphone / WhatsApp",
     "phonePlaceholder": "+221 77 XXX XX XX",
+    "bookingForLabel": "Pour qui réservez-vous ?",
+    "bookingForSelf": "Pour moi-même",
+    "bookingForOther": "Pour quelqu’un d’autre",
+    "passengerNameLabel": "Prénom et nom du passager",
+    "passengerNamePlaceholder": "Aminata Diallo",
+    "passengerPhoneLabel": "Téléphone du passager",
+    "passengerPhonePlaceholder": "+221 77 XXX XX XX",
+    "passengerOptional": "optionnel",
     "summary": {
       "label": "Votre course",
       "notDefined": "Non défini",
@@ -87,7 +95,8 @@
       "service": "SERVICE",
       "vehicle": "VÉHICULE",
       "rate": "TARIF",
-      "rateValue": "SUR DEVIS"
+      "rateValue": "SUR DEVIS",
+      "passenger": "PASSAGER"
     }
   },
   "nav": {

@@ -51,6 +51,9 @@ interface BookingData {
   passengers: number
   notes?: string
   price?: string
+  /** Réservation passée pour un tiers : personne réellement transportée. */
+  passengerName?: string | null
+  passengerPhone?: string | null
 }
 
 interface DriverData {
@@ -157,11 +160,21 @@ export async function sendBookingAssignedToDriver(booking: BookingData, driver: 
         { fr: 'Détails de la course', en: 'Ride details' }
       )}
       ${dataTable(
-        [
-          { fr: 'Nom', en: 'Name', value: booking.customerName },
-          { fr: 'Email', en: 'Email', value: booking.customerEmail },
-          { fr: 'Téléphone', en: 'Phone', value: booking.customerPhone },
-        ],
+        booking.passengerName
+          ? [
+              // Course réservée par un tiers : le chauffeur doit chercher le passager,
+              // pas la personne qui a passé la commande.
+              { fr: 'Passager', en: 'Passenger', value: booking.passengerName },
+              { fr: 'Tél. passager', en: 'Passenger phone', value: booking.passengerPhone || undefined },
+              { fr: 'Réservé par', en: 'Booked by', value: booking.customerName },
+              { fr: 'Email', en: 'Email', value: booking.customerEmail },
+              { fr: 'Téléphone', en: 'Phone', value: booking.customerPhone },
+            ]
+          : [
+              { fr: 'Nom', en: 'Name', value: booking.customerName },
+              { fr: 'Email', en: 'Email', value: booking.customerEmail },
+              { fr: 'Téléphone', en: 'Phone', value: booking.customerPhone },
+            ],
         { fr: 'Client', en: 'Customer' }
       )}
       ${
