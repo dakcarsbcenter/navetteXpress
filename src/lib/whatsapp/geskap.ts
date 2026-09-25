@@ -10,9 +10,29 @@
 
 const API_BASE_URL = process.env.GESKAP_API_BASE_URL || 'https://wa-api.geskap.com';
 
+/**
+ * Noms des templates tels qu'ils existent dans la console Geskap / Meta.
+ * Source unique : un renommage côté Meta ne doit toucher que cet objet.
+ *
+ * Le préfixe `2` vient de la seconde génération de gabarits (septembre 2026) :
+ * les templates ne pouvant pas être modifiés une fois soumis à Meta, une
+ * nouvelle rédaction impose un nouveau nom. `reservation_modifiee` n'en a pas
+ * car sa première version n'a jamais été approuvée.
+ */
+export const WHATSAPP_TEMPLATES = {
+  reservationCreee: '2reservation_creee',
+  chauffeurAssigne: '2chauffeur_assigne',
+  confirmationChauffeur: '2confirmation_chauffeur',
+  reservationValidee: '2reservation_validee',
+  rappelDepart: '2rappel_depart',
+  reservationModifiee: 'reservation_modifiee',
+} as const;
+
+export type WhatsAppTemplateName = (typeof WHATSAPP_TEMPLATES)[keyof typeof WHATSAPP_TEMPLATES];
+
 interface SendTemplateParams {
   to: string;
-  template: string;
+  template: WhatsAppTemplateName;
   variables: string[];
   idempotencyKey: string;
 }

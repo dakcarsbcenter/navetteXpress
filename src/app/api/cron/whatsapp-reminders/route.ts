@@ -9,7 +9,7 @@ import { eq, and, gte, lte, isNull } from 'drizzle-orm';
 import { sendWithRetry } from '@/lib/notification-queue';
 
 /**
- * Rappel WhatsApp avant départ (template rappel_depart), à déclencher par un
+ * Rappel WhatsApp avant départ (template 2rappel_depart), à déclencher par un
  * cron externe (crontab VPS, même modèle que POST /api/ads/expire) :
  *
  *   curl -X POST https://<domaine>/api/cron/whatsapp-reminders \
@@ -56,10 +56,26 @@ export async function POST(request: NextRequest) {
 
     let sent = 0;
     for (const booking of dueBookings) {
-      let driver = { name: 'Votre chauffeur', phone: null as string | null };
+      let driver = {
+        name: 'Votre chauffeur',
+        phone: null as string | null,
+        vehicleBrand: null as string | null,
+        vehicleModel: null as string | null,
+        vehiclePlateNumber: null as string | null,
+      };
       if (booking.driverId) {
-        const driverData = await db.select({ name: users.name, phone: users.phone }).from(users).where(eq(users.id, booking.driverId)).limit(1);
-        if (driverData.length > 0) driver = { name: driverData[0].name, phone: driverData[0].phone };
+        const driverData = await db
+          .select({
+            name: users.name,
+            phone: users.phone,
+            vehicleBrand: users.vehicleBrand,
+            vehicleModel: users.vehicleModel,
+            vehiclePlateNumber: users.vehiclePlateNumber,
+          })
+          .from(users)
+          .where(eq(users.id, booking.driverId))
+          .limit(1);
+        if (driverData.length > 0) driver = driverData[0];
       }
 
       await sendWithRetry('whatsapp', 'whatsapp.sendRappelDepart', [booking, driver, leadTimeLabel(REMINDER_LEAD_MINUTES)]);

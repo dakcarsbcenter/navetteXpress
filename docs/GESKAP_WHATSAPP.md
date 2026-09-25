@@ -9,6 +9,20 @@ alimente — `src/lib/whatsapp/templates.ts`.
 > tableau `variables` de la fonction correspondante dans `src/lib/whatsapp/templates.ts`.
 > Toute insertion de variable au milieu décale tout le message.
 
+## Nommage des templates (2e génération, septembre 2026)
+
+Un template soumis à Meta **ne peut plus être modifié** : toute réécriture impose un nouveau
+nom. D'où le préfixe `2` sur cinq des six gabarits. `reservation_modifiee` n'en a pas, sa
+première version n'ayant jamais été approuvée.
+
+Les noms ne sont écrits qu'à **un seul endroit** dans le code : la constante
+`WHATSAPP_TEMPLATES` de `src/lib/whatsapp/geskap.ts`, typée via `WhatsAppTemplateName`. Un
+prochain renommage ne touche que cet objet.
+
+Les **clés d'idempotence** (`idempotencyKey`) conservent volontairement les libellés de la 1re
+génération (`-rappel_depart`, `-reservation_creee_client`…) : les aligner sur les nouveaux noms
+ferait repartir des envois déjà effectués pour les réservations en cours.
+
 ## Principe bilingue
 
 Les messages sont **bilingues dans un seul template** : bloc français, séparateur `———`, bloc
@@ -42,18 +56,34 @@ envois de `src/lib/resend-mailer.ts`). Ne pas réintroduire de template de type
   template est déjà approuvé : un échec d'envoi part dans la file de retry
   (`src/lib/notification-queue.ts`).
 
+## Traitement des boutons (webhook)
+
+Deux gabarits portent des quick replies, avec des libellés **délibérément distincts** car le
+webhook `POST /api/webhooks/geskap` ne reçoit que le texte du bouton cliqué, sans savoir de
+quel template il provient :
+
+| Libellé | Template | Effet |
+|---|---|---|
+| `Accepter / Accept` | `2chauffeur_assigne` | approuve la course en attente du chauffeur |
+| `Refuser / Decline` | `2chauffeur_assigne` | refuse, la course retourne au pool admin |
+| `Confirmer / Confirm` | `reservation_modifiee` | journalisé, **aucun changement d'état** |
+| `Annuler / Cancel` | `reservation_modifiee` | journalisé, **aucun changement d'état** |
+
+Les racines `confirm`/`annul`/`cancel` sont testées **en premier** et sortent immédiatement :
+sans cela, un chauffeur cliquant « Confirmer » sur un avis de modification accepterait à son
+insu sa course en attente (`confirm` matchait l'acceptation). Ne pas renommer un bouton sans
+mettre à jour `src/app/api/webhooks/geskap/route.ts`.
+
 ---
 
-## 1. `reservation_creee` — client, à la création
+## 1. `2reservation_creee` — client, à la création
 
 Fonction : `sendReservationCreeeClient(booking)`
 
 ```
-Bonjour {{1}}, votre demande de réservation est bien enregistrée.
-Nous revenons vers vous rapidement avec le tarif.
+Bonjour {{1}}, nous avons bien reçu votre demande de réservation. Notre équipe la traite et revient vers vous très rapidement. Merci de votre confiance !
 ———
-Hello {{1}}, your booking request has been received.
-We will get back to you shortly with the fare.
+Hello {{1}}, we have received your reservation request. Our team processes it and gets back to you very quickly. Thank you for your trust!
 
 Service : {{2}}
 Départ / Pick-up : {{3}}
@@ -65,6 +95,8 @@ Vol / Flight : {{8}} — {{9}} ({{10}})
 Options : {{11}}
 Précisions / Notes : {{12}}
 Réf. / Ref. : {{13}}
+-------
+Pour toute question, répondez à ce message. / For any question, simply reply to this message.
 ```
 
 | # | Variable |
@@ -83,52 +115,32 @@ Réf. / Ref. : {{13}}
 | 12 | demandes spéciales |
 | 13 | référence (`NX-<id>`) |
 
+C'est le **seul gabarit qui garde les trois variables de vol séparées** (`8`, `9`, `10`). Tous
+les autres les fusionnent en une seule ligne via `flightLabel()`.
+
 ---
 
-## 2. `chauffeur_assigne` — chauffeur, à l'assignation
+## 2. `2chauffeur_assigne` — chauffeur, à l'assignation, boutons Accepter/Refuser
 
 Fonction : `sendChauffeurAssigne(booking, driver)`
 
 ```
-Bonjour {{1}}, une course vous est proposée : {{2}}.
+Bonjour {{1}}, une nouvelle course vous est proposée (réf. {{2}}). Merci de confirmer avant {{3}} via les boutons ci-dessous.
 ———
-Hello {{1}}, a ride has been offered to you: {{2}}.
+Hello {{1}}, a new ride is offered to you (ref. {{2}}). Please confirm before {{3}} using the buttons below.
 
-Client / Customer : {{3}}
 Service : {{4}}
-Départ / Pick-up : {{5}}
-Arrivée / Drop-off : {{6}}
-Date : {{7}}
-Passagers / Passengers : {{8}}
-Bagages / Luggage : {{9}}
-Vol / Flight : {{10}} — {{11}} ({{12}})
-Options : {{13}}
-Précisions / Notes : {{14}}
-```
+Client / Customer : {{5}}
+Départ / Pick-up : {{6}}
+Arrivée / Drop-off : {{7}}
+Date : {{8}}
+Passagers / Passengers : {{9}}
+Bagages / Luggage : {{10}}
+Vol / Flight : {{11}}
+Options : {{12}}
+Précisions / Notes : {{13}}
 
-Variables : `1` prénom du chauffeur, `2` référence, `3` nom client, `4` service, `5` départ,
-`6` arrivée, `7` date/heure, `8` passagers, `9` bagages, `10` n° de vol, `11` compagnie,
-`12` statut du vol, `13` options, `14` précisions.
-
----
-
-## 3. `confirmation_chauffeur` — chauffeur, boutons Accepter/Refuser
-
-Fonction : `sendConfirmationChauffeur(booking, driver)` — envoyé immédiatement après le n°2.
-
-**C'est le seul template à boutons.** Les réponses arrivent sur
-`POST /api/webhooks/geskap` (`src/app/api/webhooks/geskap/route.ts`), qui reconnaît les
-racines `refus`/`declin`/`reject` et `accept`/`confirm`/`oui`/`yes` après normalisation
-(minuscules, accents retirés). Ne pas renommer un bouton sans vérifier cette liste.
-
-```
-Bonjour {{1}}, confirmez-vous cette course ?
-———
-Hello {{1}}, do you confirm this ride?
-
-Trajet / Route : {{2}}
-Date : {{3}}
-Réf. / Ref. : {{4}}
+Merci pour votre réactivité. / Thank you for your quick response.
 ```
 
 Boutons (quick reply) :
@@ -137,70 +149,112 @@ Boutons (quick reply) :
 [ Accepter / Accept ]    [ Refuser / Decline ]
 ```
 
-Variables : `1` prénom du chauffeur, `2` `départ → arrivée`, `3` date/heure, `4` référence.
+Variables : `1` prénom du chauffeur, `2` référence, `3` échéance de confirmation, `4` service,
+`5` client, `6` départ, `7` arrivée, `8` date/heure, `9` passagers, `10` bagages, `11` vol
+(fusionné), `12` options, `13` précisions.
+
+- **Variable 3** : horodatage calculé à l'envoi (`maintenant + WHATSAPP_DRIVER_CONFIRM_MINUTES`,
+  défaut 30 min). Purement informative — **aucune réattribution automatique** n'est déclenchée
+  à son expiration.
+- **Variable 5** : sur une réservation pour un tiers, prend la forme
+  `<passager> (réservé par <client>)`, le chauffeur devant savoir qui il va chercher.
 
 ---
 
-## 4. `reservation_validee` — client, une fois le chauffeur confirmé
+## 3. `2confirmation_chauffeur` — chauffeur, rappel court à boutons
+
+Fonction : `sendConfirmationChauffeur(booking, driver)` — **plus appelée**.
+
+Le n°2 porte désormais lui-même les boutons ; envoyer ce rappel juste après laissait deux jeux
+de boutons actifs pour la même course. La fonction est conservée si un rappel séparé
+redevenait utile (relance d'un chauffeur silencieux, par exemple).
+
+```
+Bonjour {{1}}, merci de confirmer la course ci-dessous en utilisant les boutons.
+———
+Hello {{1}}, please confirm the ride below using the buttons.
+
+Réf. / Ref. : {{2}}
+Trajet / Route : {{3}}
+Date : {{4}}
+
+Sans réponse de votre part, la course pourra être réattribuée. / Without a reply, the ride may be reassigned.
+```
+
+Boutons (quick reply) :
+
+```
+[ Accepter / Accept ]    [ Refuser / Decline ]
+```
+
+Variables : `1` prénom du chauffeur, `2` référence, `3` `départ → arrivée`, `4` date/heure.
+
+---
+
+## 4. `2reservation_validee` — client, une fois le chauffeur confirmé
 
 Fonction : `sendReservationValidee(booking, driver)`
 
 ```
-Votre réservation {{1}} est confirmée. Bon voyage !
+Bonjour {{1}}, votre réservation {{2}} est confirmée. Voici le récapitulatif de votre course.
 ———
-Your booking {{1}} is confirmed. Have a good trip!
+Hello {{1}}, your booking {{2}} is confirmed. Here is your ride summary.
 
-Service : {{2}}
-Départ / Pick-up : {{3}}
-Arrivée / Drop-off : {{4}}
-Date : {{5}}
-Passagers / Passengers : {{6}}
-Bagages / Luggage : {{7}}
-Vol / Flight : {{8}} — {{9}} ({{10}})
-Options : {{11}}
-Précisions / Notes : {{12}}
-Chauffeur / Driver : {{13}}
-Téléphone / Phone : {{14}}
-```
-
-Variables : `1` référence, `2` service, `3` départ, `4` arrivée, `5` date/heure, `6` passagers,
-`7` bagages, `8` n° de vol, `9` compagnie, `10` statut du vol, `11` options, `12` précisions,
-`13` nom du chauffeur, `14` téléphone du chauffeur.
-
----
-
-## 5. `rappel_depart` — client, avant le départ (cron)
-
-Fonction : `sendRappelDepart(booking, driver, leadTimeLabel)` — déclenchée par
-`/api/cron/whatsapp-reminders`, dédoublonnée via `bookings.whatsapp_reminder_sent_at`.
-
-```
-Rappel : votre course part dans {{1}}.
-———
-Reminder: your ride departs in {{1}}.
-
-Réf. / Ref. : {{2}}
 Service : {{3}}
 Départ / Pick-up : {{4}}
 Arrivée / Drop-off : {{5}}
-Passagers / Passengers : {{6}}
-Bagages / Luggage : {{7}}
-Vol / Flight : {{8}} — {{9}} ({{10}})
+Date : {{6}}
+Passagers / Passengers : {{7}}
+Bagages / Luggage : {{8}}
+Vol / Flight : {{9}}
+Options : {{10}}
 Précisions / Notes : {{11}}
 Chauffeur / Driver : {{12}}
-Téléphone / Phone : {{13}}
+Véhicule / Vehicle : {{13}}
+Téléphone / Phone : {{14}}
+
+Votre chauffeur vous contactera avant la prise en charge. Bon voyage ! / Your driver will contact you before pick-up. Have a good trip!
 ```
 
-Variables : `1` délai avant départ, `2` référence, `3` service, `4` départ, `5` arrivée,
-`6` passagers, `7` bagages, `8` n° de vol, `9` compagnie, `10` statut du vol, `11` précisions,
-`12` nom du chauffeur, `13` téléphone du chauffeur.
-
-`leadTimeLabel` (variable 1) est construit côté cron : le rédiger en bilingue
-(ex. `2 heures / 2 hours`) pour rester cohérent avec le reste du message.
+Variables : `1` prénom du client, `2` référence, `3` service, `4` départ, `5` arrivée,
+`6` date/heure, `7` passagers, `8` bagages, `9` vol (fusionné), `10` options, `11` précisions,
+`12` nom du chauffeur, `13` véhicule, `14` téléphone du chauffeur.
 
 ---
 
-## 6. `reservation_modifiee` — **nouveau template à soumettre**
+## 5. `2rappel_depart` — client, avant le départ (cron)
+
+Fonction : `sendRappelDepart(booking, driver)` — déclenchée par
+`/api/cron/whatsapp-reminders`, dédoublonnée via `bookings.whatsapp_reminder_sent_at`.
+
+```
+Bonjour {{1}}, petit rappel : votre course {{2}} est prévue le {{3}}.
+———
+Hello {{1}}, a quick reminder: your ride {{2}} is scheduled on {{3}}.
+
+Départ / Pick-up : {{4}}
+Arrivée / Drop-off : {{5}}
+Vol / Flight : {{6}}
+Chauffeur / Driver : {{7}}
+Véhicule / Vehicle : {{8}}
+Téléphone / Phone : {{9}}
+Précisions / Notes : {{10}}
+
+En cas d'imprévu, contactez directement votre chauffeur. Bon voyage ! / If anything changes, contact your driver directly. Have a good trip!
+```
+
+Variables : `1` prénom du client, `2` référence, `3` date/heure de la course, `4` départ,
+`5` arrivée, `6` vol (fusionné), `7` nom du chauffeur, `8` véhicule, `9` téléphone du
+chauffeur, `10` précisions.
+
+Ce gabarit annonce **la date de la course** et non le délai restant : `leadTimeLabel` n'est
+plus affiché. Le 3e paramètre de `sendRappelDepart` est conservé mais ignoré, des jobs
+sérialisés avec trois arguments pouvant encore dormir dans la file de retry.
+`WHATSAPP_REMINDER_LEAD_MINUTES` continue de piloter **quand** le rappel part.
+
+---
+
+## 6. `reservation_modifiee` — client + chauffeur, après une correction
 
 Fonction : `sendReservationModifiee(booking, changes, recipient, driver?)` — envoyée au client
 et au chauffeur déjà assigné après une correction en back-office (trajet, date, passagers…).
@@ -209,16 +263,24 @@ La liste des changements est aplatie sur **une seule ligne** (séparateur ` · `
 refuse les sauts de ligne à l'intérieur d'une variable.
 
 ```
-Bonjour {{1}}, votre réservation {{2}} a été modifiée par notre équipe.
+Bonjour {{1}}, votre réservation {{2}} a été modifiée par notre équipe. Voici ce qui change : {{3}}.
 ———
-Hello {{1}}, your booking {{2}} has been updated by our team.
-
-Modifications / Changes :
-{{3}}
+Hello {{1}}, your booking {{2}} has been updated by our team. Here is what changed: {{3}}.
 
 Départ / Pick-up : {{4}}
 Arrivée / Drop-off : {{5}}
 Date : {{6}}
+Chauffeur / Driver : {{7}}
+Véhicule / Vehicle : {{8}}
+Téléphone / Phone : {{9}}
+
+Merci de confirmer ces changements avec les boutons ci-dessous. / Please confirm these changes using the buttons below.
+```
+
+Boutons (quick reply) :
+
+```
+[ Confirmer / Confirm ]    [ Annuler / Cancel]
 ```
 
 | # | Variable |
@@ -229,9 +291,25 @@ Date : {{6}}
 | 4 | nouvelle adresse de départ |
 | 5 | nouvelle adresse d'arrivée |
 | 6 | nouvelle date et heure |
+| 7 | nom du chauffeur assigné |
+| 8 | véhicule |
+| 9 | téléphone du chauffeur |
 
-Tant que ce template n'est pas approuvé par Meta, l'envoi échoue et part dans la file de
-retry : la notification **email** de modification, elle, part normalement.
+Les variables `7`, `8` et `9` sont renseignées **dans les deux versions du message**, client
+compris : la fiche chauffeur est donc chargée avant les deux envois dans
+`PATCH /api/admin/bookings/[id]`. Sans chauffeur assigné, elles valent `—`.
+
+Les deux boutons ne sont qu'un **accusé de lecture** : ils sont journalisés par le webhook
+sans changer l'état de la réservation (cf. « Traitement des boutons » plus haut).
+
+---
+
+## Source de la ligne « Véhicule / Vehicle »
+
+La fiche chauffeur (`users.vehicle_brand`, `vehicle_model`, `vehicle_plate_number`), pas le
+véhicule éventuellement rattaché à la course (`bookings.vehicle_id`). Ces trois colonnes sont
+déjà chargées à chaque site d'appel, ce qui évite une jointure supplémentaire. Le rendu est
+`Toyota Corolla — DK-1234-AB`, dégradé en `—` si rien n'est renseigné (`vehicleLabel()`).
 
 ---
 
@@ -242,4 +320,5 @@ retry : la notification **email** de modification, elle, part normalement.
 | `GESKAP_API_KEY` | clé d'API (obligatoire, sinon l'envoi lève) |
 | `GESKAP_API_BASE_URL` | défaut `https://wa-api.geskap.com` |
 | `GESKAP_WEBHOOK_SECRET` | signature HMAC-SHA256 du header `x-camairetech-signature` |
-| `WHATSAPP_REMINDER_LEAD_MINUTES` | délai du rappel avant départ |
+| `WHATSAPP_REMINDER_LEAD_MINUTES` | délai du rappel avant départ (défaut 60) |
+| `WHATSAPP_DRIVER_CONFIRM_MINUTES` | échéance affichée au chauffeur dans `2chauffeur_assigne` (défaut 30) |
