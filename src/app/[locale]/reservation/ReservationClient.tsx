@@ -19,11 +19,12 @@ import {
   OTHER_LOCATION_VALUE,
   isRouteCombinationAllowed,
   matchPricingSegments,
-  deriveZoneOptions,
   segmentPrice,
 } from "@/lib/pricing";
 import { fetchPublicApi } from "@/lib/apiClient";
 import { trackBookingSubmitted } from "@/lib/analytics";
+import { Combobox } from "@/components/ui/Combobox";
+import { AIRLINES, FLIGHTS, airlineFromFlightNumber } from "@/lib/flights";
 
 type LocationOption = { id: string; name: string };
 
@@ -87,6 +88,10 @@ const toAllowedRouteLocations = (locations: LocationOption[]): LocationOption[] 
   return deduped;
 };
 
+// Le transfert aéroport représente l'essentiel des demandes : on le pré-sélectionne
+// pour que le visiteur n'ait qu'à renseigner son trajet.
+const DEFAULT_SERVICE_TYPE = "transfert-aibd-dakar";
+
 interface FormData {
   serviceType: string;
   customServiceType: string;
@@ -96,9 +101,7 @@ interface FormData {
   pickupCustomLocation: string;
   destinationCustomLocation: string;
   passengers: number;
-  customPassengers: string;
   luggage: number;
-  customLuggage: string;
   duration: number;
   vehicleType: "berline" | "suv";
   additionalServices: string[];
@@ -137,7 +140,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
 
   // États du formulaire
   const [formData, setFormData] = useState<FormData>({
-    serviceType: "",
+    serviceType: DEFAULT_SERVICE_TYPE,
     customServiceType: "",
     datetime: "",
     pickupAddress: "",
@@ -145,9 +148,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
     pickupCustomLocation: "",
     destinationCustomLocation: "",
     passengers: 1,
-    customPassengers: "",
     luggage: 1,
-    customLuggage: "",
     duration: 2,
     vehicleType: "berline",
     additionalServices: [],
@@ -169,7 +170,6 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
   const [locations, setLocations] = useState<LocationOption[]>([]);
   const [dbServices, setDbServices] = useState<DbServiceOption[]>([]);
   const [pricingSegments, setPricingSegments] = useState<PricingSegment[]>([]);
-  const [selectedZoneSegmentId, setSelectedZoneSegmentId] = useState<number | null>(null);
 
   // Fetch services from DB
   useEffect(() => {
@@ -285,6 +285,41 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
     }));
   };
 
+  // Suggestions de vol : le code IATA de la compagnie sert aussi de filtre, pour que
+  // taper "air france" propose AF718 autant que "AF7".
+  const flightOptions = FLIGHTS.map((flight) => ({
+    value: flight.number,
+    label: flight.number,
+    hint: flight.route,
+    keywords: `${flight.airlineIata} ${AIRLINES.find((a) => a.iata === flight.airlineIata)?.name ?? ''}`,
+  }));
+
+  // On stocke le nom de la compagnie (et non son code) : c'est ce qu'affichent l'admin,
+  // les e-mails et les messages WhatsApp.
+  const airlineOptions = AIRLINES.map((airline) => ({
+    value: airline.name,
+    label: airline.name,
+    hint: airline.iata,
+    keywords: airline.iata,
+  }));
+
+  // Le préfixe du numéro de vol désigne la compagnie : on la pré-remplit tant que le
+  // client n'a pas saisi autre chose de son côté.
+  const handleFlightNumberChange = (value: string) => {
+    setFormData(prev => {
+      const next = { ...prev, flightNumber: value };
+      const deduced = airlineFromFlightNumber(value)?.name;
+      const previouslyDeduced = airlineFromFlightNumber(prev.flightNumber)?.name;
+      const airlineIsOurs = !prev.airline.trim() || prev.airline === previouslyDeduced;
+      // Une compagnie déduite ne doit pas survivre à un changement de vol : sinon
+      // "AF719 / Air France" corrigé en "XX999" partirait avec la mauvaise compagnie.
+      if (airlineIsOurs) {
+        next.airline = deduced ?? '';
+      }
+      return next;
+    });
+  };
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
 
@@ -304,14 +339,17 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
           time: time,
           pickupAddress: formData.pickupAddress === OTHER_LOCATION_VALUE ? formData.pickupCustomLocation.trim() : formData.pickupAddress,
           destinationAddress: formData.destinationAddress === OTHER_LOCATION_VALUE ? formData.destinationCustomLocation.trim() : formData.destinationAddress,
-          passengers: formData.passengers === 11 ? parseInt(formData.customPassengers) || 11 : formData.passengers,
-          luggage: formData.luggage === 11 ? parseInt(formData.customLuggage) || 11 : formData.luggage,
+          passengers: formData.passengers,
+          luggage: formData.luggage,
           duration: formData.duration,
           vehicleType: formData.vehicleType,
-          zoneLabel: zoneOptions.length > 1 ? (zoneOptions.find((z) => z.segment.id === selectedZoneSegmentId)?.label ?? null) : null,
           estimatedPrice: selectedPrice,
           additionalServices: formData.additionalServices,
-          specialRequests: formData.specialRequests,
+          // Quand le trajet couvre plusieurs secteurs tarifaires, aucun prix ferme n'est
+          // envoyé : on transmet la fourchette à l'admin pour qu'il propose le tarif exact.
+          specialRequests: selectedPrice === null && priceLabel
+            ? [formData.specialRequests, `Tarif indicatif: ${priceLabel}`].filter(Boolean).join('\n')
+            : formData.specialRequests,
           contactPhone: formData.contactPhone,
           contactEmail: formData.clientEmail || user?.email || "",
           clientName: formData.clientName,
@@ -391,42 +429,30 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
   );
 
   // Certains couples départ/arrivée (ex: DAKAR<->AIBD) ont plusieurs tarifs actifs paramétrés
-  // en admin (un par secteur : "Dakar Plateau", "Almadies / Ngor"...) : on propose alors un
-  // choix de secteur au client plutôt qu'une fourchette de prix.
-  const zoneOptions = deriveZoneOptions(
-    matchedPricingSegments,
-    formData.pickupAddress,
-    formData.destinationAddress,
+  // en admin (un par secteur : "Dakar Plateau", "Almadies / Ngor"...). Plutôt que de demander
+  // au client d'arbitrer un découpage interne qu'il ne connaît pas, on affiche une fourchette
+  // et l'équipe confirme le tarif exact avant la course.
+  const matchedPrices = matchedPricingSegments.map((segment) =>
+    segmentPrice(segment, formData.vehicleType === 'suv' ? 'suv' : 'berline'),
   );
+  const minPrice = matchedPrices.length > 0 ? Math.min(...matchedPrices) : null;
+  const maxPrice = matchedPrices.length > 0 ? Math.max(...matchedPrices) : null;
+  // Prix ferme seulement quand tous les segments s'accordent ; sinon l'admin tranchera.
+  const selectedPrice = minPrice !== null && minPrice === maxPrice ? minPrice : null;
 
-  // Segment de tarif retenu pour l'affichage : le seul match s'il n'y en a qu'un,
-  // sinon celui correspondant au secteur choisi par le client (défaut: le premier).
-  const activeSegment: PricingSegment | null = matchedPricingSegments.length === 0
-    ? null
-    : matchedPricingSegments.length === 1
-      ? matchedPricingSegments[0]
-      : (zoneOptions.find((z) => z.segment.id === selectedZoneSegmentId)?.segment ?? matchedPricingSegments[0]);
-
-  // Tarif exact affiché selon le type de véhicule choisi par le client (Berline par défaut)
-  const selectedPrice = activeSegment ? segmentPrice(activeSegment, formData.vehicleType === 'suv' ? 'suv' : 'berline') : null;
-
-  // Garde la sélection de secteur valide (et en pose une par défaut) quand le couple
-  // départ/arrivée matche plusieurs tarifs — se réinitialise si le trajet change.
-  useEffect(() => {
-    if (zoneOptions.length === 0) {
-      if (selectedZoneSegmentId !== null) setSelectedZoneSegmentId(null);
-      return;
-    }
-    if (!zoneOptions.some((z) => z.segment.id === selectedZoneSegmentId)) {
-      setSelectedZoneSegmentId(zoneOptions[0].segment.id);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [zoneOptions.map((z) => z.segment.id).join(',')]);
+  const formatPrice = (value: number) => `${value.toLocaleString('fr-FR')} FCFA`;
+  // Libellé de tarif partagé par les récapitulatifs des étapes 1 et 3.
+  const priceLabel =
+    minPrice === null || maxPrice === null
+      ? null
+      : minPrice === maxPrice
+        ? formatPrice(minPrice)
+        : `${minPrice.toLocaleString('fr-FR')} – ${formatPrice(maxPrice)}`;
 
   // Transfert impliquant l'aéroport AIBD : on propose la saisie du numéro de
   // vol pour permettre le suivi en direct côté client une fois la demande créée.
   const isAirportTrip = Boolean(
-    formData.serviceType === "transfert-aibd-dakar" ||
+    formData.serviceType === DEFAULT_SERVICE_TYPE ||
     getRouteNodeFromName(formData.pickupAddress) === 'AIBD' ||
     getRouteNodeFromName(formData.destinationAddress) === 'AIBD'
   );
@@ -546,26 +572,18 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                       {/* Type de service */}
                       <div className="space-y-2">
                         <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block">{t('step1.serviceTypeLabel')}</span>
-                        <div className="flex flex-wrap gap-2">
+                        <select
+                          value={formData.serviceType}
+                          onChange={(e) => handleInputChange('serviceType', e.target.value)}
+                          className="w-full bg-white border border-border rounded px-3 py-3 text-foreground font-medium focus:outline-none focus:ring-1 focus:ring-accent cursor-pointer"
+                        >
+                          <option value="" disabled>{t('step1.serviceTypeSelectPlaceholder')}</option>
                           {(dbServices.length > 0 ? dbServices : serviceTypes).map((service) => {
                             const id = 'slug' in service ? service.slug : service.id;
-                            const selected = formData.serviceType === id;
                             const name = 'name' in service ? service.name : (service.translations[locale]?.name ?? service.translations.fr.name);
-                            return (
-                              <button
-                                key={id}
-                                type="button"
-                                onClick={() => handleInputChange('serviceType', id)}
-                                className={`px-4 py-2.5 rounded text-sm font-medium font-[family-name:var(--font-ibm-plex-mono)] transition-colors ${selected
-                                  ? 'bg-[#12100E] text-white'
-                                  : 'border border-[#c9c3b8] text-[#3d3a35] hover:border-[#12100E]'
-                                  }`}
-                              >
-                                {name}
-                              </button>
-                            );
+                            return <option key={id} value={id}>{name}</option>;
                           })}
-                        </div>
+                        </select>
                         {formData.serviceType === "autres" && (
                           <input
                             type="text"
@@ -661,9 +679,9 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                         )}
                       </div>
 
-                      {/* Date, heure, passagers */}
+                      {/* Date, heure, passagers, bagages */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div className="bg-white border border-border rounded p-3">
+                        <div className="bg-white border border-border rounded p-3 sm:col-span-2">
                           <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block mb-1">{t('step1.datetimeLabel')}</span>
                           <input
                             type="datetime-local"
@@ -684,6 +702,21 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                             >
                               {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(n => (
                                 <option key={n} value={n}>{n === 11 ? '10+' : n}</option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        <div className="bg-white border border-border rounded p-3 flex items-center gap-2">
+                          <Bag size={16} weight="light" className="text-[#6E6A63]" />
+                          <div className="flex-1">
+                            <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block mb-1">{t('step1.luggageLabel')}</span>
+                            <select
+                              value={formData.luggage}
+                              onChange={(e) => handleInputChange('luggage', Number(e.target.value))}
+                              className="bg-transparent text-foreground font-medium focus:outline-none w-full cursor-pointer"
+                            >
+                              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(n => (
+                                <option key={n} value={n}>{n === 11 ? '10+' : n} {t('step1.luggageUnit', { count: n })}</option>
                               ))}
                             </select>
                           </div>
@@ -713,30 +746,6 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                         </div>
                       </div>
 
-                      {/* Secteur — uniquement si plusieurs tarifs actifs couvrent ce couple départ/arrivée */}
-                      {zoneOptions.length > 1 && (
-                        <div className="space-y-2">
-                          <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block">{t('step1.zoneLabel')}</span>
-                          <div className="flex flex-wrap gap-2">
-                            {zoneOptions.map(({ segment, label }) => {
-                              const selected = selectedZoneSegmentId === segment.id;
-                              return (
-                                <button
-                                  key={segment.id}
-                                  type="button"
-                                  onClick={() => setSelectedZoneSegmentId(segment.id)}
-                                  className={`px-4 py-2.5 rounded text-sm font-medium font-[family-name:var(--font-ibm-plex-mono)] transition-colors ${selected
-                                    ? 'bg-[#12100E] text-white'
-                                    : 'border border-[#c9c3b8] text-[#3d3a35] hover:border-[#12100E]'
-                                    }`}
-                                >
-                                  {label}
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      )}
                     </div>
 
                     {/* Estimation */}
@@ -753,14 +762,12 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                           <div className="flex justify-between"><span>{t('step1.requestSummary.wait')}</span><span>{t('step1.requestSummary.included')}</span></div>
                           <div className="flex justify-between">
                             <span>{t('step1.requestSummary.rate')}</span>
-                            <span className={selectedPrice !== null ? "text-white" : undefined}>
-                              {selectedPrice !== null
-                                ? `${selectedPrice.toLocaleString('fr-FR')} FCFA`
-                                : t('step1.requestSummary.onQuote')}
+                            <span className={priceLabel !== null ? "text-white" : undefined}>
+                              {priceLabel ?? t('step1.requestSummary.onQuote')}
                             </span>
                           </div>
                         </div>
-                        {selectedPrice !== null && (
+                        {priceLabel !== null && (
                           <p className="text-[10px] text-[#6E6A63] leading-relaxed">
                             {t('step1.requestSummary.estimateNote', { vehicle: formData.vehicleType === 'suv' ? t('step1.vehicleTypeSuv') : t('step1.vehicleTypeBerline') })}
                           </p>
@@ -778,47 +785,34 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                       <p className="text-[#3d3a35]">{t('step2.subtitle')}</p>
                     </div>
 
-                    <div className="space-y-2">
-                      <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block">{t('step2.luggageLabel')}</span>
-                      <div className="flex items-center gap-2 bg-white border border-border rounded p-2 w-fit">
-                        <Bag size={16} weight="light" className="text-[#6E6A63]" />
-                        <select
-                          value={formData.luggage}
-                          onChange={(e) => handleInputChange('luggage', Number(e.target.value))}
-                          className="bg-transparent text-foreground font-medium focus:outline-none cursor-pointer pr-2"
-                        >
-                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(n => (
-                            <option key={n} value={n}>{n === 11 ? '10+' : n} {t('step2.luggageUnit', { count: n })}</option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-
                     {isAirportTrip && (
                       <div className="space-y-2">
                         <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block">{t('step2.flightSectionLabel')}</span>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <div className="bg-white border border-border rounded p-3">
                             <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block mb-1">{t('step2.flightNumberLabel')}</span>
-                            <div className="flex items-center gap-2">
-                              <Airplane size={16} weight="light" className="text-[#6E6A63] shrink-0" />
-                              <input
-                                type="text"
-                                value={formData.flightNumber}
-                                onChange={(e) => handleInputChange('flightNumber', e.target.value.toUpperCase())}
-                                placeholder={t('step2.flightNumberPlaceholder')}
-                                className="w-full bg-transparent text-foreground font-medium focus:outline-none"
-                              />
-                            </div>
+                            <Combobox
+                              value={formData.flightNumber}
+                              onValueChange={handleFlightNumberChange}
+                              options={flightOptions}
+                              transform={(raw) => raw.toUpperCase()}
+                              allowFreeText
+                              placeholder={t('step2.flightNumberPlaceholder')}
+                              noResultsLabel={t('step2.flightNoResults')}
+                              leading={<Airplane size={16} weight="light" className="text-[#6E6A63] shrink-0" />}
+                              inputClassName="w-full bg-transparent text-foreground font-medium focus:outline-none"
+                            />
                           </div>
                           <div className="bg-white border border-border rounded p-3">
                             <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block mb-1">{t('step2.airlineLabel')}</span>
-                            <input
-                              type="text"
+                            <Combobox
                               value={formData.airline}
-                              onChange={(e) => handleInputChange('airline', e.target.value)}
+                              onValueChange={(value) => handleInputChange('airline', value)}
+                              options={airlineOptions}
+                              allowFreeText
                               placeholder={t('step2.airlinePlaceholder')}
-                              className="w-full bg-transparent text-foreground font-medium focus:outline-none"
+                              noResultsLabel={t('step2.airlineNoResults')}
+                              inputClassName="w-full bg-transparent text-foreground font-medium focus:outline-none"
                             />
                           </div>
                         </div>
@@ -1007,9 +1001,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                         <div className="flex justify-between">
                           <span>{t('step3.summary.rate')}</span>
                           <span className="text-foreground">
-                            {selectedPrice !== null
-                              ? `${selectedPrice.toLocaleString('fr-FR')} FCFA`
-                              : t('step3.summary.rateValue')}
+                            {priceLabel ?? t('step3.summary.rateValue')}
                           </span>
                         </div>
                       </div>
@@ -1095,7 +1087,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
               } else {
                 setCurrentStep(1);
                 setFormData({
-                  serviceType: "",
+                  serviceType: DEFAULT_SERVICE_TYPE,
                   customServiceType: "",
                   datetime: "",
                   pickupAddress: "",
@@ -1103,9 +1095,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                   pickupCustomLocation: "",
                   destinationCustomLocation: "",
                   passengers: 1,
-                  customPassengers: "",
                   luggage: 1,
-                  customLuggage: "",
                   duration: 2,
                   vehicleType: "berline",
                   additionalServices: [],

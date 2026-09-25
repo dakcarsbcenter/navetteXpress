@@ -16,6 +16,7 @@ import {
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/Button";
+import { Combobox } from "@/components/ui/Combobox";
 import { captureDriverReferral, getDriverReferral, trackDriverApplication } from "@/lib/analytics";
 
 // Données des marques et modèles, triées par ordre alphabétique
@@ -711,74 +712,22 @@ function FormBrandCombobox({ label, name, value, onChange, options, required = f
   selectPlaceholder: string;
   noResultsLabel: string;
 }) {
-  const [query, setQuery] = useState(value);
-  const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    setQuery(value);
-  }, [value]);
-
-  const filtered = query.trim()
-    ? options.filter((opt) => opt.label.toLowerCase().includes(query.trim().toLowerCase()))
-    : options;
-
-  const emitChange = (newValue: string) => {
-    onChange({ target: { name, value: newValue } } as unknown as React.ChangeEvent<HTMLSelectElement>);
-  };
-
-  const handleSelect = (opt: { value: string; label: string }) => {
-    emitChange(opt.value);
-    setQuery(opt.label);
-    setIsOpen(false);
-  };
-
-  const handleBlur = () => {
-    const match = options.find((opt) => opt.label.toLowerCase() === query.trim().toLowerCase());
-    if (match) {
-      emitChange(match.value);
-      setQuery(match.label);
-    } else {
-      emitChange("");
-      setQuery("");
-    }
-    setIsOpen(false);
-  };
-
   return (
-    <div className="flex flex-col gap-2 relative">
+    <div className="flex flex-col gap-2">
       <label className={`${monoLabel} text-[10px] uppercase tracking-[0.14em] text-text-muted`}>
         {label} {required && "*"}
       </label>
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => { setQuery(e.target.value); setIsOpen(true); }}
-        onFocus={() => setIsOpen(true)}
-        onBlur={handleBlur}
+      <Combobox
+        name={name}
+        value={value}
+        onValueChange={(newValue) =>
+          onChange({ target: { name, value: newValue } } as unknown as React.ChangeEvent<HTMLSelectElement>)
+        }
+        options={options}
         placeholder={selectPlaceholder}
+        noResultsLabel={noResultsLabel}
         required={required}
-        autoComplete="off"
-        className="w-full bg-background border border-[#d8d2c7] rounded px-4 py-3 text-foreground text-sm outline-none focus:border-accent transition-colors"
       />
-      {isOpen && (
-        <ul className="absolute top-full left-0 right-0 z-20 mt-1 max-h-56 overflow-y-auto bg-background border border-[#d8d2c7] rounded shadow-lg">
-          {filtered.length > 0 ? (
-            filtered.map((opt) => (
-              <li key={opt.value}>
-                <button
-                  type="button"
-                  onMouseDown={(e) => { e.preventDefault(); handleSelect(opt); }}
-                  className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-accent/10 transition-colors"
-                >
-                  {opt.label}
-                </button>
-              </li>
-            ))
-          ) : (
-            <li className="px-4 py-2.5 text-sm text-text-muted">{noResultsLabel}</li>
-          )}
-        </ul>
-      )}
     </div>
   );
 }
