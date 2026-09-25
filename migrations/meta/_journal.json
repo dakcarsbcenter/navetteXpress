@@ -204,6 +204,13 @@
       "when": 1789309378289,
       "tag": "0028_silky_psylocke",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1790339019079,
+      "tag": "0029_fancy_scream",
+      "breakpoints": true
     }
   ]
 }

@@ -33,6 +33,8 @@ interface Booking {
   status: string
   price?: string
   notes?: string
+  passengerName?: string | null
+  passengerPhone?: string | null
   createdAt: string
   priceProposedAt?: string
   clientResponse?: string

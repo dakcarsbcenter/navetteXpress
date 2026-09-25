@@ -121,7 +121,12 @@ export async function sendChauffeurAssigne(booking: SelectBooking, driver: Drive
     variables: [
       driver.name.split(' ')[0] || driver.name,
       reference(booking),
-      booking.customerName,
+      // Réservation pour un tiers : le chauffeur doit voir le passager qu'il va chercher,
+      // et qui a commandé la course. On réutilise la variable existante du gabarit Meta
+      // (leur nombre est figé par l'approbation du template, cf. docs/GESKAP_WHATSAPP.md).
+      booking.passengerName
+        ? `${booking.passengerName} (réservé par ${booking.customerName})`
+        : booking.customerName,
       serviceTypeLabel,
       booking.pickupAddress,
       booking.dropoffAddress,

@@ -185,6 +185,8 @@ export const bookingsTable = pgTable('bookings', {
   clientResponseAt: timestamp('client_response_at'), // Date de réponse du client
   clientResponseMessage: text('client_response_message'), // Message optionnel du client
   notes: text('notes'),
+  passengerName: text('passenger_name'), // Réservation pour un tiers : nom du passager réellement transporté. NULL = le client voyage lui-même.
+  passengerPhone: text('passenger_phone'), // Optionnel : permet au chauffeur de joindre directement le passager sur place.
   flightNumber: text('flight_number'),
   airline: text('airline'),
   flightStatus: flightStatusEnum('flight_status'),

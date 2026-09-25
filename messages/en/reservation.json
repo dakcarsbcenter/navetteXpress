@@ -79,6 +79,14 @@
     "emailPlaceholder": "your@email.com",
     "phoneLabel": "Phone / WhatsApp",
     "phonePlaceholder": "+221 77 XXX XX XX",
+    "bookingForLabel": "Who is this booking for?",
+    "bookingForSelf": "For myself",
+    "bookingForOther": "For someone else",
+    "passengerNameLabel": "Passenger first and last name",
+    "passengerNamePlaceholder": "Aminata Diallo",
+    "passengerPhoneLabel": "Passenger phone",
+    "passengerPhonePlaceholder": "+221 77 XXX XX XX",
+    "passengerOptional": "optional",
     "summary": {
       "label": "Your ride",
       "notDefined": "Not set",
@@ -87,7 +95,8 @@
       "service": "SERVICE",
       "vehicle": "VEHICLE",
       "rate": "RATE",
-      "rateValue": "ON REQUEST"
+      "rateValue": "ON REQUEST",
+      "passenger": "PASSENGER"
     }
   },
   "nav": {

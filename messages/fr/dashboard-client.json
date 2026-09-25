@@ -353,6 +353,7 @@
     "additionalInfo": "Informations complémentaires",
     "fare": "Tarif",
     "contact": "Contact",
+    "passenger": "Passager",
     "notPresent": "N/A",
     "notesLabel": "Notes & Demandes",
     "pendingMessage": "Cette réservation est en attente de traitement. Vous recevrez une notification dès qu'un chauffeur vous sera assigné.",

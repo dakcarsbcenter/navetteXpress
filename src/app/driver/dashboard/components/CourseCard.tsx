@@ -124,7 +124,16 @@ export function CourseCard({ booking, phase, busy, incidentReported, onAdvance, 
         <div style={{ padding: "28px 24px", background: "#FFFFFF", display: "flex", flexDirection: "column", gap: "22px" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.14em", textTransform: "uppercase", color: "#6E6A63" }}>{t("passenger")}</span>
-            <span style={{ fontSize: "17px", fontWeight: 600 }}>{booking.customerName}</span>
+            <span style={{ fontSize: "17px", fontWeight: 600 }}>{booking.passengerName || booking.customerName}</span>
+            {booking.passengerName && (
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "11px", letterSpacing: "0.06em", color: "#6E6A63" }}>
+                {t("bookedBy", { name: booking.customerName })}
+                {booking.passengerPhone ? " · " : ""}
+                {booking.passengerPhone && (
+                  <a href={`tel:${booking.passengerPhone}`} style={{ color: "#B4643A", textDecoration: "none" }}>{booking.passengerPhone}</a>
+                )}
+              </span>
+            )}
             <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
               <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#12100E", border: "1px solid #E2DACD", borderRadius: "2px", padding: "4px 8px" }}>
                 {t("passengersCount", { count: booking.passengers })}

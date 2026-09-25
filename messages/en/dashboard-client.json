@@ -353,6 +353,7 @@
     "additionalInfo": "Additional information",
     "fare": "Fare",
     "contact": "Contact",
+    "passenger": "Passenger",
     "notPresent": "N/A",
     "notesLabel": "Notes & Requests",
     "pendingMessage": "This booking is awaiting processing. You'll receive a notification as soon as a driver is assigned to you.",

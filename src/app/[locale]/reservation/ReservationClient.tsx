@@ -107,6 +107,11 @@ interface FormData {
   // Champs pour les utilisateurs non connectés
   clientName: string;
   clientEmail: string;
+  // Réservation pour un tiers (cas fréquent : un proche réserve pour quelqu'un
+  // qui ne lit pas ou n'a pas d'accès numérique). 'self' n'envoie aucun passager.
+  bookingFor: 'self' | 'other';
+  passengerName: string;
+  passengerPhone: string;
   // Vol (transferts aéroport uniquement)
   flightNumber: string;
   airline: string;
@@ -150,6 +155,9 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
     contactPhone: "",
     clientName: "",
     clientEmail: "",
+    bookingFor: "self",
+    passengerName: "",
+    passengerPhone: "",
     flightNumber: "",
     airline: ""
   });
@@ -245,6 +253,11 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
       if (field === 'serviceType' && value !== 'autres') {
         return { ...prev, [field]: value as string, customServiceType: '' };
       }
+      // Revenir à "je réserve pour moi" ne doit laisser aucun résidu de passager
+      // dans le payload envoyé à l'API.
+      if (field === 'bookingFor' && value === 'self') {
+        return { ...prev, bookingFor: 'self', passengerName: '', passengerPhone: '' };
+      }
       return { ...prev, [field]: value as string | number | boolean | string[] };
     });
   };
@@ -303,6 +316,8 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
           contactEmail: formData.clientEmail || user?.email || "",
           clientName: formData.clientName,
           clientEmail: formData.clientEmail,
+          passengerName: formData.bookingFor === 'other' ? formData.passengerName.trim() : null,
+          passengerPhone: formData.bookingFor === 'other' ? formData.passengerPhone.trim() || null : null,
           userId: user?.id,
           flightNumber: isAirportTrip ? formData.flightNumber.trim() || undefined : undefined,
           airline: isAirportTrip ? formData.airline.trim() || undefined : undefined
@@ -435,7 +450,9 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
     : formData.destinationAddress;
 
   const isStep3Complete = Boolean(
-    formData.contactPhone && (isSignedIn || (formData.clientName && formData.clientEmail))
+    formData.contactPhone &&
+    (isSignedIn || (formData.clientName && formData.clientEmail)) &&
+    (formData.bookingFor === 'self' || formData.passengerName.trim().length >= 2)
   );
 
   if (!isLoaded) {
@@ -850,6 +867,64 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                         <p className="text-[#3d3a35]">{t('step3.subtitle')}</p>
                       </div>
 
+                      {/* Réservation pour soi-même ou pour un tiers : permet à un proche de
+                          commander la course pour quelqu'un qui ne peut pas le faire lui-même. */}
+                      <div className="space-y-3">
+                        <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block">{t('step3.bookingForLabel')}</span>
+                        <div className="flex flex-wrap gap-2">
+                          {(['self', 'other'] as const).map((choice) => {
+                            const selected = formData.bookingFor === choice;
+                            return (
+                              <button
+                                key={choice}
+                                type="button"
+                                onClick={() => handleInputChange('bookingFor', choice)}
+                                aria-pressed={selected}
+                                className={`px-4 py-2.5 rounded text-sm font-medium font-[family-name:var(--font-ibm-plex-mono)] transition-colors ${selected
+                                  ? 'bg-[#12100E] text-white'
+                                  : 'border border-[#c9c3b8] text-[#3d3a35] hover:border-[#12100E]'
+                                  }`}
+                              >
+                                {choice === 'self' ? t('step3.bookingForSelf') : t('step3.bookingForOther')}
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        {formData.bookingFor === 'other' && (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="bg-white border border-border rounded p-3">
+                              <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block mb-1">{t('step3.passengerNameLabel')}</span>
+                              <div className="flex items-center gap-2">
+                                <User size={16} weight="light" className="text-[#6E6A63] shrink-0" />
+                                <input
+                                  type="text"
+                                  value={formData.passengerName}
+                                  onChange={(e) => handleInputChange('passengerName', e.target.value)}
+                                  placeholder={t('step3.passengerNamePlaceholder')}
+                                  className="w-full bg-transparent text-foreground font-medium focus:outline-none"
+                                />
+                              </div>
+                            </div>
+                            <div className="bg-white border border-border rounded p-3">
+                              <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block mb-1">
+                                {t('step3.passengerPhoneLabel')} <span className="text-[#a8a199] normal-case tracking-normal">· {t('step3.passengerOptional')}</span>
+                              </span>
+                              <div className="flex items-center gap-2">
+                                <Phone size={16} weight="light" className="text-[#6E6A63] shrink-0" />
+                                <input
+                                  type="tel"
+                                  value={formData.passengerPhone}
+                                  onChange={(e) => handleInputChange('passengerPhone', e.target.value)}
+                                  placeholder={t('step3.passengerPhonePlaceholder')}
+                                  className="w-full bg-transparent text-foreground font-medium focus:outline-none"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
                       {!isSignedIn && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div className="bg-white border border-border rounded p-3">
@@ -924,6 +999,9 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                       </div>
                       <div className="h-px bg-border" />
                       <div className="flex flex-col gap-1.5 text-[12px] font-[family-name:var(--font-ibm-plex-mono)] text-[#6E6A63]">
+                        {formData.bookingFor === 'other' && formData.passengerName.trim() && (
+                          <div className="flex justify-between gap-3"><span>{t('step3.summary.passenger')}</span><span className="text-foreground text-right">{formData.passengerName.trim()}</span></div>
+                        )}
                         <div className="flex justify-between"><span>{t('step3.summary.service')}</span><span className="text-foreground">{selectedServiceName}</span></div>
                         <div className="flex justify-between"><span>{t('step3.summary.vehicle')}</span><span className="text-foreground">{formData.vehicleType === 'suv' ? t('step1.vehicleTypeSuv') : t('step1.vehicleTypeBerline')}</span></div>
                         <div className="flex justify-between">
@@ -1035,6 +1113,9 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                   contactPhone: "",
                   clientName: "",
                   clientEmail: "",
+                  bookingFor: "self",
+                  passengerName: "",
+                  passengerPhone: "",
                   flightNumber: "",
                   airline: ""
                 });

@@ -283,6 +283,9 @@ export async function sendNewBookingRequestEmail(
     pickupTime: string;
     passengers?: number;
     luggage?: number;
+    /** Réservation passée pour un tiers : personne réellement transportée. */
+    passengerName?: string | null;
+    passengerPhone?: string | null;
   }
 ) {
   try {
@@ -296,6 +299,8 @@ export async function sendNewBookingRequestEmail(
       ${dataTable(
         [
           { fr: 'Client', en: 'Customer', value: bookingData.customerName },
+          { fr: 'Passager', en: 'Passenger', value: bookingData.passengerName || undefined },
+          { fr: 'Tél. passager', en: 'Passenger phone', value: bookingData.passengerPhone || undefined },
           { fr: 'Départ', en: 'Pick-up', value: bookingData.pickupLocation },
           { fr: 'Arrivée', en: 'Drop-off', value: bookingData.dropoffLocation },
           { fr: 'Date', en: 'Date', value: bookingData.pickupDate },

@@ -31,6 +31,10 @@ interface Booking {
   price?: string | null
   notes?: string
   passengers?: number
+  luggage?: number
+  requestedVehicleType?: 'berline' | 'suv' | null
+  passengerName?: string | null
+  passengerPhone?: string | null
   createdAt: string
   flightNumber?: string | null
   airline?: string | null
@@ -133,6 +137,12 @@ export function BookingsManagement() {
               price: b.price,
               notes: b.notes,
               passengers: b.passengers || 1,
+              // Tout champ omis ici revient undefined dans la modale et serait réécrit
+              // à vide au prochain PATCH : la liste doit rester alignée sur les champs éditables.
+              luggage: typeof b.luggage === 'number' ? b.luggage : 1,
+              requestedVehicleType: b.requestedVehicleType || 'berline',
+              passengerName: b.passengerName,
+              passengerPhone: b.passengerPhone,
               createdAt: b.createdAt,
               flightNumber: b.flightNumber,
               airline: b.airline,

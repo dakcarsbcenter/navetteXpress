@@ -57,6 +57,7 @@
       "pickupAt": "PICKUP {time}",
       "dropoffEstimated": "ESTIMATED DROP-OFF {time}",
       "passenger": "Passenger",
+      "bookedBy": "Booked by {name}",
       "passengersCount": "{count, plural, one {# passenger} other {# passengers}}",
       "luggageCount": "{count, plural, one {# bag} other {# bags}}",
       "priceLabel": "Ride",
