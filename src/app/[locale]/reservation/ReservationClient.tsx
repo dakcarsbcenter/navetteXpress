@@ -18,8 +18,7 @@ import { type RouteNodeKey, getRouteNodeFromName } from "@/lib/route-nodes";
 import {
   OTHER_LOCATION_VALUE,
   isRouteCombinationAllowed,
-  matchPricingSegments,
-  segmentPrice,
+  resolvePrice,
 } from "@/lib/pricing";
 import { fetchPublicApi } from "@/lib/apiClient";
 import { trackBookingSubmitted } from "@/lib/analytics";
@@ -118,6 +117,10 @@ interface FormData {
   // Vol (transferts aéroport uniquement)
   flightNumber: string;
   airline: string;
+  // Secteur tarifaire retenu quand plusieurs tarifs couvrent le même couple de
+  // noeuds (ex: DAKAR<->AIBD, un tarif par quartier). null tant que le client n'a
+  // pas tranché : sans ce choix aucun prix ferme ne peut être annoncé.
+  pricingSegmentId: number | null;
 }
 
 // Composant interne qui utilise useSearchParams
@@ -160,7 +163,8 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
     passengerName: "",
     passengerPhone: "",
     flightNumber: "",
-    airline: ""
+    airline: "",
+    pricingSegmentId: null
   });
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -276,7 +280,9 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
 
   const handleLocationChange = (field: 'pickupAddress' | 'destinationAddress', value: string) => {
     setFormData((prev) => {
-      const next = { ...prev, [field]: value };
+      // Le secteur appartient au couple départ/arrivée précédent : le conserver
+      // afficherait le tarif d'un trajet que le client vient de quitter.
+      const next = { ...prev, [field]: value, pricingSegmentId: null };
       if (next.pickupAddress && next.destinationAddress && !isRouteCombinationAllowed(next.pickupAddress, next.destinationAddress)) {
         if (field === 'pickupAddress') {
           next.destinationAddress = '';
@@ -357,15 +363,10 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
           vehicleType: formData.vehicleType,
           estimatedPrice: selectedPrice,
           additionalServices: formData.additionalServices,
-          // Quand le trajet couvre plusieurs secteurs tarifaires, aucun prix ferme n'est
-          // envoyé : on transmet la fourchette à l'admin pour qu'il propose le tarif exact.
-          specialRequests: selectedPrice === null && priceLabel
-            // Séparateur " · " et non un saut de ligne : la mention est concaténée dans la
-            // ligne « Demandes spéciales » de `notes`, que parseBookingNotes() relit avec
-            // /Demandes spéciales:\s*(.+)/ — `.` ne matchant pas \n, un retour à la ligne
-            // faisait disparaître la fourchette dès que le client avait écrit quelque chose.
-            ? [formData.specialRequests, `Tarif indicatif: ${priceLabel}`].filter(Boolean).join(' · ')
-            : formData.specialRequests,
+          // Le secteur étant tranché à l'étape 1, `estimatedPrice` porte toujours le montant
+          // exact quand un tarif est paramétré. La fourchette autrefois recopiée dans les
+          // demandes spéciales n'a plus d'objet : elle polluait la ligne lue par le chauffeur.
+          specialRequests: formData.specialRequests,
           contactPhone: formData.contactPhone,
           contactEmail: formData.clientEmail || user?.email || "",
           clientName: formData.clientName,
@@ -433,37 +434,34 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
     formData.pickupAddress && formData.destinationAddress && !isRouteCombinationAllowed(formData.pickupAddress, formData.destinationAddress)
   );
 
-  // Tarif indicatif : les segments de tarifs (paramétrés en admin) correspondant au couple
-  // départ/arrivée choisi, dans un sens ou l'autre. La logique de matching est partagée avec
+  // Tarif : les segments de tarifs (paramétrés en admin) correspondant au couple
+  // départ/arrivée choisi, dans un sens ou l'autre. La résolution est partagée avec
   // le back-office (src/lib/pricing.ts) pour que l'admin repropose exactement le même tarif
   // quand il corrige le trajet d'une réservation. "Autre" (adresse libre) ou une combinaison
   // sans tarif paramétré ne matche rien — l'admin renseignera le prix manuellement.
-  const matchedPricingSegments = matchPricingSegments(
+  //
+  // Certains couples (ex: DAKAR<->AIBD) ont plusieurs tarifs actifs, un par secteur
+  // ("Dakar Plateau", "Almadies / Ngor"...). On affichait alors une fourchette, que le
+  // client devait accepter sans connaître le montant réel. Le secteur lui est désormais
+  // demandé, ce qui rend le prix ferme, affiché avant envoi et persisté sur la réservation.
+  const priceResolution = resolvePrice(
     pricingSegments,
     formData.pickupAddress,
     formData.destinationAddress,
+    formData.vehicleType === 'suv' ? 'suv' : 'berline',
+    formData.pricingSegmentId,
   );
-
-  // Certains couples départ/arrivée (ex: DAKAR<->AIBD) ont plusieurs tarifs actifs paramétrés
-  // en admin (un par secteur : "Dakar Plateau", "Almadies / Ngor"...). Plutôt que de demander
-  // au client d'arbitrer un découpage interne qu'il ne connaît pas, on affiche une fourchette
-  // et l'équipe confirme le tarif exact avant la course.
-  const matchedPrices = matchedPricingSegments.map((segment) =>
-    segmentPrice(segment, formData.vehicleType === 'suv' ? 'suv' : 'berline'),
-  );
-  const minPrice = matchedPrices.length > 0 ? Math.min(...matchedPrices) : null;
-  const maxPrice = matchedPrices.length > 0 ? Math.max(...matchedPrices) : null;
-  // Prix ferme seulement quand tous les segments s'accordent ; sinon l'admin tranchera.
-  const selectedPrice = minPrice !== null && minPrice === maxPrice ? minPrice : null;
+  const zoneOptions = priceResolution.alternatives;
+  const needsZoneChoice = zoneOptions.length > 1;
+  const hasZoneChoice =
+    !needsZoneChoice || zoneOptions.some((zone) => zone.segment.id === formData.pricingSegmentId);
+  // Tant que le secteur n'est pas tranché, aucun montant n'est annoncé : afficher le tarif
+  // d'un secteur non choisi reviendrait à annoncer un prix qui n'est pas celui de la course.
+  const selectedPrice = hasZoneChoice ? priceResolution.price : null;
 
   const formatPrice = (value: number) => `${value.toLocaleString('fr-FR')} FCFA`;
   // Libellé de tarif partagé par les récapitulatifs des étapes 1 et 3.
-  const priceLabel =
-    minPrice === null || maxPrice === null
-      ? null
-      : minPrice === maxPrice
-        ? formatPrice(minPrice)
-        : `${minPrice.toLocaleString('fr-FR')} – ${formatPrice(maxPrice)}`;
+  const priceLabel = selectedPrice === null ? null : formatPrice(selectedPrice);
 
   // Transfert impliquant l'aéroport AIBD : on propose la saisie du numéro de
   // vol pour permettre le suivi en direct côté client une fois la demande créée.
@@ -481,6 +479,8 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
     formData.destinationAddress &&
     !(formData.destinationAddress === OTHER_LOCATION_VALUE && !formData.destinationCustomLocation.trim()) &&
     !isInvalidCombination &&
+    // Le secteur conditionne le montant annoncé : on ne laisse pas avancer sans lui.
+    hasZoneChoice &&
     formData.datetime
   );
 
@@ -695,6 +695,35 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                         )}
                       </div>
 
+                      {/* Secteur tarifaire. Plusieurs tarifs couvrent ce couple de noeuds
+                          (un par quartier) : sans ce choix, le client ne verrait qu'une
+                          fourchette et découvrirait le montant réel après la réservation. */}
+                      {needsZoneChoice && (
+                        <div className="space-y-2">
+                          <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block">{t('step1.zoneLabel')}</span>
+                          <div className="bg-white border border-border rounded p-3">
+                            <select
+                              value={formData.pricingSegmentId ?? ''}
+                              onChange={(e) => setFormData((prev) => ({
+                                ...prev,
+                                pricingSegmentId: e.target.value ? Number(e.target.value) : null,
+                              }))}
+                              className="bg-transparent text-foreground font-medium focus:outline-none w-full cursor-pointer"
+                            >
+                              <option value="">{t('step1.zoneSelectPlaceholder')}</option>
+                              {zoneOptions.map((zone) => (
+                                <option key={zone.segment.id} value={zone.segment.id}>
+                                  {zone.label} — {formatPrice(zone.price)}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                          {!hasZoneChoice && (
+                            <p className="text-xs text-[#6E6A63]">{t('step1.zoneHint')}</p>
+                          )}
+                        </div>
+                      )}
+
                       {/* Date, heure, passagers, bagages */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div className="bg-white border border-border rounded p-3 sm:col-span-2">
@@ -779,7 +808,11 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                           <div className="flex justify-between">
                             <span>{t('step1.requestSummary.rate')}</span>
                             <span className={priceLabel !== null ? "text-white" : undefined}>
-                              {priceLabel ?? t('step1.requestSummary.onQuote')}
+                              {/* "SUR DEVIS" annoncerait à tort qu'aucun tarif n'existe pour ce
+                                  trajet, alors qu'il n'attend que le choix du quartier. */}
+                              {priceLabel ?? (needsZoneChoice
+                                ? t('step1.requestSummary.ratePendingZone')
+                                : t('step1.requestSummary.onQuote'))}
                             </span>
                           </div>
                         </div>
@@ -1114,6 +1147,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                   luggage: 1,
                   duration: 2,
                   vehicleType: "berline",
+                  pricingSegmentId: null,
                   additionalServices: [],
                   specialRequests: "",
                   contactPhone: "",

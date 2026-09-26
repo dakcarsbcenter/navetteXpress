@@ -37,6 +37,9 @@
     "destinationInputPlaceholder": "Almadies, Hôtel Terrou-Bi...",
     "destinationCustomPlaceholder": "Précisez le lieu d'arrivée",
     "otherLocationOption": "Autre",
+    "zoneLabel": "Quartier / secteur",
+    "zoneSelectPlaceholder": "Précisez votre quartier...",
+    "zoneHint": "Le tarif dépend du quartier : précisez-le pour voir le montant exact.",
     "invalidCombination": "Combinaison non autorisée. Choisissez DAKAR vers AIBD, MBOUR, SALY, NGAPAROU, THIES, NIANING, POINTE SARRENE, SOMONE (et inverse), ou AIBD vers MBOUR, SALY, SOMONE (et inverse).",
     "datetimeLabel": "Date & heure",
     "passengersLabel": "Passagers",
@@ -54,7 +57,8 @@
       "wait": "ATTENTE 60 MIN",
       "rate": "TARIF",
       "onQuote": "SUR DEVIS",
-      "estimateNote": "Prix indicatif pour un véhicule {vehicle}. L'équipe confirme le tarif exact avant la course."
+      "ratePendingZone": "À préciser",
+      "estimateNote": "Prix ferme pour un véhicule {vehicle}, péage et carburant inclus."
     }
   },
   "step2": {
