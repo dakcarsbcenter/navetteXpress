@@ -62,6 +62,23 @@ export function toGeskapPhone(raw: string): string {
   return `+${digits}`;
 }
 
+/**
+ * Numéro affiché *dans le corps* d'un message, là où toGeskapPhone() ne normalise que le
+ * destinataire de l'envoi. Sans ça le client lisait le téléphone du chauffeur tel qu'il est
+ * saisi en fiche (ex: "774010890"), sans indicatif ni séparateur, donc non cliquable.
+ * Les numéros sénégalais (9 chiffres) sont groupés "+221 77 401 08 90" ; tout autre format
+ * international est rendu en "+<chiffres>" sans regroupement, faute de règle fiable.
+ */
+export function phoneForDisplay(value: string | null | undefined): string {
+  const trimmed = value?.trim();
+  if (!trimmed) return '—';
+  const e164 = toGeskapPhone(trimmed);
+  const senegal = e164.match(/^\+221(\d{9})$/);
+  if (!senegal) return e164;
+  const [, n] = senegal;
+  return `+221 ${n.slice(0, 2)} ${n.slice(2, 5)} ${n.slice(5, 7)} ${n.slice(7, 9)}`;
+}
+
 function maskPhone(phone: string): string {
   return phone.length > 4 ? `${phone.slice(0, -4).replace(/\d/g, '*')}${phone.slice(-4)}` : phone;
 }

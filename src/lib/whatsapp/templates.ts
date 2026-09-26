@@ -8,7 +8,7 @@
  * WHATSAPP_TEMPLATES (geskap.ts), seule source à modifier lors d'un renommage.
  */
 
-import { sendWhatsAppTemplate, orDash, WHATSAPP_TEMPLATES } from './geskap';
+import { sendWhatsAppTemplate, orDash, phoneForDisplay, WHATSAPP_TEMPLATES } from './geskap';
 import { getServiceById, additionalServices } from '@/lib/services';
 import {
   bi,
@@ -248,7 +248,7 @@ export async function sendReservationValidee(booking: SelectBooking, driver: Dri
       driverNotesLabel,
       driver.name,
       vehicleLabel(driver),
-      orDash(driver.phone),
+      phoneForDisplay(driver.phone),
     ],
   });
 }
@@ -282,7 +282,7 @@ export async function sendRappelDepart(
       flightLabel(booking),
       driver.name,
       vehicleLabel(driver),
-      orDash(driver.phone),
+      phoneForDisplay(driver.phone),
       driverNotesLabel,
     ],
   });
@@ -330,7 +330,7 @@ export async function sendReservationModifiee(
       formatDateTime(booking.scheduledDateTime),
       orDash(driver?.name),
       vehicleLabel(driver),
-      orDash(driver?.phone),
+      phoneForDisplay(driver?.phone),
     ],
   });
 }
