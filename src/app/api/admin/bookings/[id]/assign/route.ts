@@ -3,12 +3,8 @@ export const runtime = 'nodejs';
 export const revalidate = 0;
 
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
-import { bookingsTable, users } from '@/schema';
-import { eq, and } from 'drizzle-orm';
 import { requireBookingsUpdate } from '@/utils/admin-permissions';
-import { checkDriverAvailability } from '@/lib/driver-availability';
-import { sendWithRetry } from '@/lib/notification-queue';
+import { assignBookingToDriver } from '@/lib/booking-assignment';
 
 // PUT - Assigner une réservation à un chauffeur
 export async function PUT(
@@ -42,108 +38,22 @@ export async function PUT(
       }, { status: 400 });
     }
 
-    // Vérifier que le chauffeur existe et est actif
-    const driver = await db
-      .select()
-      .from(users)
-      .where(and(eq(users.id, driverId), eq(users.role, 'driver'), eq(users.isActive, true)))
-      .limit(1);
+    // Vérification de disponibilité, mise à jour et notifications au chauffeur :
+    // logique partagée avec la création d'une réservation par l'admin.
+    const result = await assignBookingToDriver(bookingId, driverId);
 
-    if (driver.length === 0) {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'Chauffeur non trouvé ou inactif' 
-      }, { status: 404 });
+    if (!result.success) {
+      return NextResponse.json({
+        success: false,
+        error: result.error,
+        ...(result.code ? { code: result.code } : {}),
+      }, { status: result.status });
     }
-
-    // Vérifier que la réservation existe
-    const existingBooking = await db
-      .select()
-      .from(bookingsTable)
-      .where(eq(bookingsTable.id, bookingId))
-      .limit(1);
-
-    if (existingBooking.length === 0) {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'Réservation non trouvée' 
-      }, { status: 404 });
-    }
-
-    const booking = existingBooking[0];
-
-    // Vérifier la disponibilité du chauffeur à la date/heure de la réservation
-    console.log(`🔍 Vérification de la disponibilité du chauffeur ${driver[0].name}...`);
-    const availabilityCheck = await checkDriverAvailability(
-      driverId, 
-      booking.scheduledDateTime
-    );
-
-    if (!availabilityCheck.available) {
-      console.log(`❌ Chauffeur non disponible: ${availabilityCheck.message}`);
-      return NextResponse.json({ 
-        success: false, 
-        error: availabilityCheck.message || 'Le chauffeur n\'est pas disponible à cette date et heure',
-        code: 'DRIVER_NOT_AVAILABLE'
-      }, { status: 409 });
-    }
-
-    console.log(`✅ Chauffeur disponible`);
-
-    // Assigner la réservation au chauffeur
-    const updatedBooking = await db
-      .update(bookingsTable)
-      .set({
-        driverId,
-        status: 'assigned', // Nouveau statut pour les réservations assignées
-        updatedAt: new Date(),
-      })
-      .where(eq(bookingsTable.id, bookingId))
-      .returning();
-
-    const assignedBooking = updatedBooking[0];
-    const assignedDriver = driver[0];
-    
-    console.log(`✅ Réservation #${assignedBooking.id} assignée au chauffeur ${assignedDriver.name}`);
-
-    // Envoyer notification au chauffeur assigné (retry automatique en cas d'échec)
-    await sendWithRetry('email', 'resend-email.sendBookingAssignedToDriver', [
-      {
-        id: assignedBooking.id,
-        customerName: assignedBooking.customerName,
-        customerEmail: assignedBooking.customerEmail,
-        customerPhone: assignedBooking.customerPhone || undefined,
-        pickupAddress: assignedBooking.pickupAddress,
-        dropoffAddress: assignedBooking.dropoffAddress,
-        scheduledDateTime: assignedBooking.scheduledDateTime.toISOString(),
-        passengers: assignedBooking.passengers,
-        price: assignedBooking.price || undefined,
-        notes: assignedBooking.notes || undefined,
-        passengerName: assignedBooking.passengerName,
-        passengerPhone: assignedBooking.passengerPhone
-      },
-      {
-        name: assignedDriver.name,
-        email: assignedDriver.email
-      }
-    ]);
-
-    // Le gabarit 2chauffeur_assigne porte lui-même les boutons Accepter/Refuser :
-    // plus de second message 2confirmation_chauffeur, qui laissait deux jeux de
-    // boutons actifs pour la même course.
-    const driverWhatsAppInfo = {
-      name: assignedDriver.name,
-      phone: assignedDriver.phone,
-      vehicleBrand: assignedDriver.vehicleBrand,
-      vehicleModel: assignedDriver.vehicleModel,
-      vehiclePlateNumber: assignedDriver.vehiclePlateNumber,
-    };
-    await sendWithRetry('whatsapp', 'whatsapp.sendChauffeurAssigne', [assignedBooking, driverWhatsAppInfo]);
 
     return NextResponse.json({
       success: true, 
-      data: assignedBooking,
-      message: `Réservation assignée avec succès au chauffeur ${assignedDriver.name}. Notification envoyée.`
+      data: result.booking,
+      message: `Réservation assignée avec succès au chauffeur ${result.driverName}. Notification envoyée.`
     });
   } catch (error) {
     console.error('Erreur lors de l\'assignation de la réservation:', error);

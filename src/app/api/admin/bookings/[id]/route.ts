@@ -291,21 +291,26 @@ export async function PATCH(
         }
       }
 
-      await sendWithRetry('email', 'resend-email.sendBookingConfirmedToClient', [
-        {
-          id: booking.id,
-          customerName: booking.customerName,
-          customerEmail: booking.customerEmail,
-          customerPhone: booking.customerPhone || undefined,
-          pickupAddress: booking.pickupAddress,
-          dropoffAddress: booking.dropoffAddress,
-          scheduledDateTime: booking.scheduledDateTime.toISOString(),
-          passengers: booking.passengers,
-          price: booking.price || undefined,
-          notes: booking.notes || undefined
-        },
-        driver
-      ]);
+      // Une réservation saisie par l'admin pour un client sans email (client
+      // analphabète joint au téléphone) n'a pas d'adresse : l'envoi échouerait
+      // et occuperait la file de retry pour rien. Le WhatsApp ci-dessous suffit.
+      if (booking.customerEmail) {
+        await sendWithRetry('email', 'resend-email.sendBookingConfirmedToClient', [
+          {
+            id: booking.id,
+            customerName: booking.customerName,
+            customerEmail: booking.customerEmail,
+            customerPhone: booking.customerPhone || undefined,
+            pickupAddress: booking.pickupAddress,
+            dropoffAddress: booking.dropoffAddress,
+            scheduledDateTime: booking.scheduledDateTime.toISOString(),
+            passengers: booking.passengers,
+            price: booking.price || undefined,
+            notes: booking.notes || undefined
+          },
+          driver
+        ]);
+      }
 
       await sendWithRetry('whatsapp', 'whatsapp.sendReservationValidee', [
         booking,
@@ -321,19 +326,21 @@ export async function PATCH(
 
     // Annulation définitive : seul l'admin peut déclencher cette notification au client
     if (body.status === 'cancelled' && oldStatus !== 'cancelled') {
-      await sendWithRetry('email', 'resend-email.sendBookingCancelledToClient', [
-        {
-          id: booking.id,
-          customerName: booking.customerName,
-          customerEmail: booking.customerEmail,
-          customerPhone: booking.customerPhone || undefined,
-          pickupAddress: booking.pickupAddress,
-          dropoffAddress: booking.dropoffAddress,
-          scheduledDateTime: booking.scheduledDateTime.toISOString(),
-          passengers: booking.passengers,
-        },
-        booking.cancellationReason || undefined
-      ]);
+      if (booking.customerEmail) {
+        await sendWithRetry('email', 'resend-email.sendBookingCancelledToClient', [
+          {
+            id: booking.id,
+            customerName: booking.customerName,
+            customerEmail: booking.customerEmail,
+            customerPhone: booking.customerPhone || undefined,
+            pickupAddress: booking.pickupAddress,
+            dropoffAddress: booking.dropoffAddress,
+            scheduledDateTime: booking.scheduledDateTime.toISOString(),
+            passengers: booking.passengers,
+          },
+          booking.cancellationReason || undefined
+        ]);
+      }
     }
 
     // Envoyer notification au chauffeur si un chauffeur est nouvellement assigné.

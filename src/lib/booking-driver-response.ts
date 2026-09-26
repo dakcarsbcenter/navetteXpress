@@ -98,19 +98,23 @@ export async function respondToAssignedBooking(
   const driver = driverInfo[0];
 
   if (action === 'approve') {
-    await sendWithRetry('email', 'resend-mailer.sendBookingConfirmedByDriverEmail', [
-      originalBooking.customerEmail,
-      {
-        bookingId: `BOOK-${responseBooking.id}`,
-        customerName: originalBooking.customerName,
-        driverName: driver?.name || 'Votre chauffeur',
-        driverPhone: driver?.phone || undefined,
-        pickupLocation: originalBooking.pickupAddress,
-        dropoffLocation: originalBooking.dropoffAddress,
-        pickupDate: new Date(originalBooking.scheduledDateTime).toLocaleDateString('fr-FR'),
-        pickupTime: new Date(originalBooking.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-      },
-    ]);
+    // Réservation saisie par l'admin pour un client sans email : pas d'adresse à
+    // qui écrire, le WhatsApp ci-dessous reste le canal du client.
+    if (originalBooking.customerEmail) {
+      await sendWithRetry('email', 'resend-mailer.sendBookingConfirmedByDriverEmail', [
+        originalBooking.customerEmail,
+        {
+          bookingId: `BOOK-${responseBooking.id}`,
+          customerName: originalBooking.customerName,
+          driverName: driver?.name || 'Votre chauffeur',
+          driverPhone: driver?.phone || undefined,
+          pickupLocation: originalBooking.pickupAddress,
+          dropoffLocation: originalBooking.dropoffAddress,
+          pickupDate: new Date(originalBooking.scheduledDateTime).toLocaleDateString('fr-FR'),
+          pickupTime: new Date(originalBooking.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        },
+      ]);
+    }
 
     await sendWithRetry('whatsapp', 'whatsapp.sendReservationValidee', [
       responseBooking,

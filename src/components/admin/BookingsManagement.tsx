@@ -9,12 +9,14 @@ import {
   Calendar,
   Clock,
   User,
-  Trash
+  Trash,
+  Plus
 } from "@phosphor-icons/react"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { BulkDeleteModal } from "@/components/ui/BulkDeleteModal"
 import { useNotification } from "@/hooks/useNotification"
 import { BookingDetailsModal } from "./BookingDetailsModal"
+import { CreateBookingModal } from "./CreateBookingModal"
 import { StatusBadge, TONE_STYLE, toneForStatus } from "@/components/shared/StatusBadge"
 
 interface Booking {
@@ -82,6 +84,7 @@ export function BookingsManagement() {
 
   const [selectedBookingForDetails, setSelectedBookingForDetails] = useState<Booking | null>(null)
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
   const [filters, setFilters] = useState({
     status: 'pending',
@@ -246,6 +249,17 @@ export function BookingsManagement() {
     showSuccess('Réservation mise à jour avec succès', 'Succès')
   }
 
+  // Demande saisie par l'admin pour le compte d'un client : l'assignation peut avoir
+  // échoué (chauffeur indisponible) sans que la demande soit perdue — on le dit.
+  const handleBookingCreated = (message: string, status: string, warning?: string) => {
+    fetchBookings()
+    // Bascule sur le filtre où la demande vient d'atterrir, sinon elle serait
+    // invisible (le filtre par défaut n'affiche que les demandes en attente).
+    setFilters(prev => (prev.status === 'all' || prev.status === status ? prev : { ...prev, status }))
+    showSuccess(message, 'Succès')
+    if (warning) showError(`Chauffeur non assigné : ${warning}`, 'À assigner')
+  }
+
   const toggleSelectAll = () => {
     if (selectedBookingIds.size === filteredBookings.length && filteredBookings.length > 0) {
       setSelectedBookingIds(new Set())
@@ -345,6 +359,16 @@ export function BookingsManagement() {
             Supervision du trafic et des réservations.
           </p>
         </div>
+
+        <button
+          type="button"
+          onClick={() => setIsCreateModalOpen(true)}
+          className="flex items-center gap-2"
+          style={{ height: '40px', padding: '0 16px', backgroundColor: '#1F5245', border: 'none', borderRadius: '4px', color: '#FFFFFF', fontSize: '12.5px', fontWeight: 600, cursor: 'pointer' }}
+        >
+          <Plus size={15} weight="bold" />
+          Nouvelle demande pour un client
+        </button>
       </section>
 
       {/* Stats */}
@@ -610,6 +634,14 @@ export function BookingsManagement() {
           onUpdate={handleBookingUpdate}
         />
       )}
+
+      {/* Création d'une demande par l'admin pour le compte d'un client */}
+      <CreateBookingModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onCreated={handleBookingCreated}
+        drivers={drivers}
+      />
 
       {/* Bulk Delete Modal */}
       <BulkDeleteModal
