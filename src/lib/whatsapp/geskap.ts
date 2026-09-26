@@ -18,11 +18,14 @@ const API_BASE_URL = process.env.GESKAP_API_BASE_URL || 'https://wa-api.geskap.c
  * les templates ne pouvant pas être modifiés une fois soumis à Meta, une
  * nouvelle rédaction impose un nouveau nom. `reservation_modifiee` n'en a pas
  * car sa première version n'a jamais été approuvée.
+ *
+ * `2confirmation_chauffeur` a été retiré : il faisait doublon avec
+ * `2chauffeur_assigne`, qui porte lui-même les boutons Accepter/Refuser, et le
+ * chauffeur recevait deux messages avec deux jeux de boutons pour la même course.
  */
 export const WHATSAPP_TEMPLATES = {
   reservationCreee: '2reservation_creee',
   chauffeurAssigne: '2chauffeur_assigne',
-  confirmationChauffeur: '2confirmation_chauffeur',
   reservationValidee: '2reservation_validee',
   rappelDepart: '2rappel_depart',
   reservationModifiee: 'reservation_modifiee',

@@ -170,13 +170,10 @@ const registry: Record<string, Handler> = {
       args[1] as Parameters<typeof sendChauffeurAssigne>[1]
     );
   },
-  'whatsapp.sendConfirmationChauffeur': async (args) => {
-    const { sendConfirmationChauffeur } = await import('./whatsapp/templates');
-    return sendConfirmationChauffeur(
-      args[0] as Parameters<typeof sendConfirmationChauffeur>[0],
-      args[1] as Parameters<typeof sendConfirmationChauffeur>[1]
-    );
-  },
+  // 'whatsapp.sendConfirmationChauffeur' a été retiré volontairement : le gabarit
+  // 2confirmation_chauffeur faisait doublon avec 2chauffeur_assigne. Sans entrée ici,
+  // un job résiduel encore en file est marqué 'failed' ("Handler inconnu") au lieu
+  // d'être envoyé — c'est justement l'effet recherché.
   'whatsapp.sendReservationValidee': async (args) => {
     const { sendReservationValidee } = await import('./whatsapp/templates');
     return sendReservationValidee(

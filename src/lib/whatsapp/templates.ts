@@ -170,7 +170,7 @@ export async function sendReservationCreeeClient(booking: SelectBooking) {
 /**
  * 2. Proposition de course envoyée au chauffeur lors de l'assignation. Depuis la
  * 2e génération de gabarits, ce message porte lui-même les boutons
- * Accepter/Refuser : il n'est plus suivi de 2confirmation_chauffeur.
+ * Accepter/Refuser : c'est le seul message à boutons envoyé au chauffeur.
  */
 export async function sendChauffeurAssigne(booking: SelectBooking, driver: DriverInfo) {
   if (!driver.phone) return;
@@ -202,30 +202,7 @@ export async function sendChauffeurAssigne(booking: SelectBooking, driver: Drive
   });
 }
 
-/**
- * 3. Demande d'approbation courte avec boutons Accepter/Refuser.
- *
- * Plus appelée : 2chauffeur_assigne porte désormais ses propres boutons, et deux
- * messages à boutons d'affilée laissaient deux jeux de boutons actifs pour la
- * même course. Conservée telle quelle si un rappel séparé redevenait utile.
- */
-export async function sendConfirmationChauffeur(booking: SelectBooking, driver: DriverInfo) {
-  if (!driver.phone) return;
-
-  await sendWhatsAppTemplate({
-    to: driver.phone,
-    template: WHATSAPP_TEMPLATES.confirmationChauffeur,
-    idempotencyKey: `${booking.id}-confirmation_chauffeur`,
-    variables: [
-      firstNameOf(driver.name),
-      reference(booking),
-      `${booking.pickupAddress} → ${booking.dropoffAddress}`,
-      formatDateTime(booking.scheduledDateTime),
-    ],
-  });
-}
-
-/** 4. Confirmation finale envoyée au client une fois le chauffeur assigné. */
+/** 3. Confirmation finale envoyée au client une fois le chauffeur assigné. */
 export async function sendReservationValidee(booking: SelectBooking, driver: DriverInfo) {
   if (!booking.customerPhone) return;
   const { serviceTypeLabel, optionsLabel, driverNotesLabel } = parseBookingNotes(booking.notes);
@@ -254,7 +231,7 @@ export async function sendReservationValidee(booking: SelectBooking, driver: Dri
 }
 
 /**
- * 5. Rappel envoyé au client avant le départ (déclenché par le cron).
+ * 4. Rappel envoyé au client avant le départ (déclenché par le cron).
  *
  * `_leadTimeLabel` n'est plus affiché : le gabarit annonce désormais la date de
  * la course et non le délai restant. Le paramètre est conservé car des jobs
@@ -289,7 +266,7 @@ export async function sendRappelDepart(
 }
 
 /**
- * 6. Avis de modification envoyé après une correction en back-office (trajet, date,
+ * 5. Avis de modification envoyé après une correction en back-office (trajet, date,
  * passagers...). Destinataire : le client, et le chauffeur déjà assigné le cas échéant.
  *
  * `driver` est désormais attendu pour les deux destinataires : le gabarit affiche

@@ -12,12 +12,17 @@ alimente — `src/lib/whatsapp/templates.ts`.
 ## Nommage des templates (2e génération, septembre 2026)
 
 Un template soumis à Meta **ne peut plus être modifié** : toute réécriture impose un nouveau
-nom. D'où le préfixe `2` sur cinq des six gabarits. `reservation_modifiee` n'en a pas, sa
+nom. D'où le préfixe `2` sur quatre des cinq gabarits. `reservation_modifiee` n'en a pas, sa
 première version n'ayant jamais été approuvée.
 
 Les noms ne sont écrits qu'à **un seul endroit** dans le code : la constante
 `WHATSAPP_TEMPLATES` de `src/lib/whatsapp/geskap.ts`, typée via `WhatsAppTemplateName`. Un
 prochain renommage ne touche que cet objet.
+
+Un sixième gabarit, `2confirmation_chauffeur` (rappel court à boutons envoyé au chauffeur
+juste après l'assignation), a été **supprimé** : `2chauffeur_assigne` portant lui-même les
+boutons Accepter/Refuser, le chauffeur recevait deux messages et deux jeux de boutons actifs
+pour la même course. Le gabarit doit aussi être archivé côté console Geskap.
 
 Les **clés d'idempotence** (`idempotencyKey`) conservent volontairement les libellés de la 1re
 génération (`-rappel_depart`, `-reservation_creee_client`…) : les aligner sur les nouveaux noms
@@ -161,37 +166,7 @@ Variables : `1` prénom du chauffeur, `2` référence, `3` échéance de confirm
 
 ---
 
-## 3. `2confirmation_chauffeur` — chauffeur, rappel court à boutons
-
-Fonction : `sendConfirmationChauffeur(booking, driver)` — **plus appelée**.
-
-Le n°2 porte désormais lui-même les boutons ; envoyer ce rappel juste après laissait deux jeux
-de boutons actifs pour la même course. La fonction est conservée si un rappel séparé
-redevenait utile (relance d'un chauffeur silencieux, par exemple).
-
-```
-Bonjour {{1}}, merci de confirmer la course ci-dessous en utilisant les boutons.
-———
-Hello {{1}}, please confirm the ride below using the buttons.
-
-Réf. / Ref. : {{2}}
-Trajet / Route : {{3}}
-Date : {{4}}
-
-Sans réponse de votre part, la course pourra être réattribuée. / Without a reply, the ride may be reassigned.
-```
-
-Boutons (quick reply) :
-
-```
-[ Accepter / Accept ]    [ Refuser / Decline ]
-```
-
-Variables : `1` prénom du chauffeur, `2` référence, `3` `départ → arrivée`, `4` date/heure.
-
----
-
-## 4. `2reservation_validee` — client, une fois le chauffeur confirmé
+## 3. `2reservation_validee` — client, une fois le chauffeur confirmé
 
 Fonction : `sendReservationValidee(booking, driver)`
 
@@ -222,7 +197,7 @@ Variables : `1` prénom du client, `2` référence, `3` service, `4` départ, `5
 
 ---
 
-## 5. `2rappel_depart` — client, avant le départ (cron)
+## 4. `2rappel_depart` — client, avant le départ (cron)
 
 Fonction : `sendRappelDepart(booking, driver)` — déclenchée par
 `/api/cron/whatsapp-reminders`, dédoublonnée via `bookings.whatsapp_reminder_sent_at`.
@@ -254,7 +229,7 @@ sérialisés avec trois arguments pouvant encore dormir dans la file de retry.
 
 ---
 
-## 6. `reservation_modifiee` — client + chauffeur, après une correction
+## 5. `reservation_modifiee` — client + chauffeur, après une correction
 
 Fonction : `sendReservationModifiee(booking, changes, recipient, driver?)` — envoyée au client
 et au chauffeur déjà assigné après une correction en back-office (trajet, date, passagers…).

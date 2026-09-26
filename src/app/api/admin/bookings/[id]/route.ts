@@ -384,8 +384,8 @@ export async function PATCH(
           driver
         ]);
 
-        // 2chauffeur_assigne porte désormais ses propres boutons Accepter/Refuser :
-        // 2confirmation_chauffeur ferait doublon (cf. assign/route.ts).
+        // Unique message WhatsApp au chauffeur : 2chauffeur_assigne porte ses propres
+        // boutons Accepter/Refuser (cf. src/lib/booking-assignment.ts).
         await sendWithRetry('whatsapp', 'whatsapp.sendChauffeurAssigne', [booking, driver]);
       }
     }
