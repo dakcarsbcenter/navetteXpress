@@ -69,6 +69,9 @@ interface Vehicle {
   make: string
   model: string
   plateNumber: string
+  // Chauffeur rattaché au véhicule, renvoyé par /api/vehicles et utilisé par la
+  // modale de détail pour pré-remplir l'un des deux champs à partir de l'autre.
+  driverId?: string | null
 }
 
 const selectStyle: React.CSSProperties = {

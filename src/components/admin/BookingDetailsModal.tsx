@@ -80,6 +80,8 @@ interface Vehicle {
   make: string
   model: string
   plateNumber: string
+  // Chauffeur rattaché au véhicule (vehicles.driver_id) : déjà renvoyé par /api/vehicles.
+  driverId?: string | null
 }
 
 interface BookingDetailsModalProps {
@@ -209,6 +211,14 @@ export function BookingDetailsModal({
 
   const patch = (changes: Partial<Booking>) =>
     setEditedBooking(prev => prev ? { ...prev, ...changes } : null)
+
+  // Chaque chauffeur roule avec son véhicule (vehicles.driver_id) : choisir l'un
+  // pré-remplit l'autre. /api/vehicles ne renvoyant que les véhicules actifs, un
+  // chauffeur dont la voiture est désactivée ne pré-remplit rien plutôt que de
+  // proposer un véhicule hors service.
+  const vehicleForDriver = (driverId: string | null) =>
+    driverId ? vehicles.find(v => v.driverId === driverId) ?? null : null
+  const driverHasNoVehicle = Boolean(editedBooking.driverId) && !vehicleForDriver(editedBooking.driverId)
 
   const locationNames = locations.map((l) => l.name)
   const isCustomPickup = Boolean(editedBooking.pickupAddress) && !locationNames.includes(editedBooking.pickupAddress)
@@ -859,7 +869,11 @@ export function BookingDetailsModal({
                     {isEditing ? (
                       <select
                         value={editedBooking.driverId || ''}
-                        onChange={(e) => setEditedBooking(prev => prev ? { ...prev, driverId: e.target.value || null } : null)}
+                        onChange={(e) => {
+                          const driverId = e.target.value || null
+                          const vehicle = vehicleForDriver(driverId)
+                          patch({ driverId, vehicleId: vehicle ? Number(vehicle.id) : null })
+                        }}
                         style={selectStyle}
                       >
                         <option value="">Non assigné</option>
@@ -933,7 +947,16 @@ export function BookingDetailsModal({
                     {isEditing ? (
                       <select
                         value={editedBooking.vehicleId || ''}
-                        onChange={(e) => setEditedBooking(prev => prev ? { ...prev, vehicleId: e.target.value ? Number(e.target.value) : null } : null)}
+                        onChange={(e) => {
+                          const vehicleId = e.target.value ? Number(e.target.value) : null
+                          const vehicle = vehicles.find(v => Number(v.id) === vehicleId)
+                          // On ne renseigne le chauffeur que s'il figure dans la liste proposée,
+                          // sinon le select afficherait une valeur sans option correspondante.
+                          const linkedDriverId = vehicle?.driverId && drivers.some(d => d.id === vehicle.driverId)
+                            ? vehicle.driverId
+                            : null
+                          patch({ vehicleId, driverId: linkedDriverId })
+                        }}
                         style={selectStyle}
                       >
                         <option value="">Non assigné</option>
@@ -953,6 +976,13 @@ export function BookingDetailsModal({
                       </div>
                     ) : (
                       <p style={{ ...fieldWrap, margin: 0, fontSize: '13px', color: '#9a938a', fontStyle: 'italic' }}>Non assigné</p>
+                    )}
+                    {/* Le véhicule se remplit tout seul à partir du chauffeur : quand rien
+                        n'apparaît, c'est qu'aucune voiture active ne lui est rattachée. */}
+                    {isEditing && driverHasNoVehicle && (
+                      <p style={{ margin: '6px 0 0', fontSize: '11px', color: '#6E6A63' }}>
+                        Aucun véhicule actif associé à ce chauffeur — sélectionnez-le manuellement.
+                      </p>
                     )}
                   </div>
 
