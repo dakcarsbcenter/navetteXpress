@@ -91,6 +91,11 @@ RUN chmod +x start.sh
 COPY --chown=nextjs:nodejs migrations ./migrations
 RUN mkdir -p scripts
 COPY --from=builder --chown=nextjs:nodejs /app/scripts/run-migrations.mjs ./scripts/run-migrations.mjs
+# Rattrapage ponctuel des téléphones au format E.164, à lancer à la main :
+#   docker compose exec app node scripts/normalize-phones.mjs [--apply]
+# Le Postgres du compose n'est joignable que depuis le réseau Docker, d'où la
+# nécessité d'embarquer le script plutôt que de le lancer depuis l'hôte.
+COPY --from=builder --chown=nextjs:nodejs /app/scripts/normalize-phones.mjs ./scripts/normalize-phones.mjs
 
 # Compléter le node_modules élagué du build standalone avec les deps de prod
 # complètes (garantit la présence de "postgres" pour run-migrations.mjs)

@@ -9,6 +9,7 @@ import { sql } from "drizzle-orm"
 import { randomUUID, randomBytes } from "crypto"
 import bcrypt from "bcryptjs"
 import { z } from "zod"
+import { normalizePhoneForStorage } from "@/lib/phone"
 import { sendWithRetry } from "@/lib/notification-queue"
 import { validateEmailForRegistration } from "@/lib/security/email-validation"
 
@@ -82,7 +83,7 @@ export async function POST(request: NextRequest) {
         id: userId,
         name,
         email,
-        phone: phone || null,
+        phone: normalizePhoneForStorage(phone),
         password: hashedPassword,
         role: 'customer',
         emailVerified: null,

@@ -8,6 +8,7 @@ import { authOptions } from "@/lib/auth"
 import { db } from "@/db"
 import { users, rolePermissionsTable } from "@/schema"
 import { eq, and } from "drizzle-orm"
+import { normalizePhoneForStorage } from "@/lib/phone"
 import { sendWithRetry } from "@/lib/notification-queue"
 
 // PUT - Mettre à jour le profil du client
@@ -132,7 +133,9 @@ export async function PUT(request: NextRequest) {
       .set({
         name: name.trim(),
         email: email.trim(),
-        phone: phone?.trim() || null,
+        // Normalisé : ce numéro pré-remplit les réservations saisies par l'admin
+        // (CreateBookingModal) et sert de destinataire WhatsApp.
+        phone: normalizePhoneForStorage(phone),
         image: image?.trim() || null,
         address: address?.trim() || null,
         isCompany: nextIsCompany,
@@ -141,7 +144,7 @@ export async function PUT(request: NextRequest) {
         ninea: ninea?.trim() || null,
         raisonSociale: raisonSociale?.trim() || null,
         companyAddress: companyAddress?.trim() || null,
-        companyPhone: companyPhone?.trim() || null,
+        companyPhone: normalizePhoneForStorage(companyPhone),
         bp: bp?.trim() || null,
         companyStatus: nextCompanyStatus,
         ...(justRequested ? { companyRequestedAt: new Date(), companyReviewedAt: null, companyRejectionReason: null } : {}),

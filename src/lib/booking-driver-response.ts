@@ -22,6 +22,11 @@ export type DriverBookingAction = 'approve' | 'reject';
  * webhook Geskap). Comparaison sur le numéro normalisé plutôt qu'une égalité
  * stricte : les numéros sont historiquement stockés sans indicatif pays en
  * base (voir toGeskapPhone), donc leur format brut n'est pas fiable.
+ *
+ * Depuis le correctif du préfixe "00" dans toGeskapPhone, un chauffeur enregistré
+ * en "00221…" est de nouveau reconnu : il ne l'était pas, et sa réponse au bouton
+ * WhatsApp était alors ignorée — le client de sa course ne recevait donc jamais
+ * 2reservation_validee.
  */
 export async function findDriverIdByPhone(rawPhone: string): Promise<string | null> {
   const normalizedIncoming = toGeskapPhone(rawPhone);

@@ -18,6 +18,7 @@
 import { and, eq, lte } from 'drizzle-orm';
 import { db } from '@/db';
 import { notificationQueueTable } from '@/schema';
+import { isNonRetryableNotificationError } from './notification-errors';
 
 type NotificationChannel = 'email' | 'whatsapp';
 type Handler = (args: unknown[]) => Promise<unknown>;
@@ -178,7 +179,10 @@ const registry: Record<string, Handler> = {
     const { sendReservationValidee } = await import('./whatsapp/templates');
     return sendReservationValidee(
       args[0] as Parameters<typeof sendReservationValidee>[0],
-      args[1] as Parameters<typeof sendReservationValidee>[1]
+      args[1] as Parameters<typeof sendReservationValidee>[1],
+      // Renvoi manuel depuis le back-office : absent des jobs sérialisés avant cette
+      // évolution, d'où l'optionalité (même précaution que _leadTimeLabel).
+      args[2] as Parameters<typeof sendReservationValidee>[2]
     );
   },
   'resend-mailer.sendBookingUpdatedEmail': async (args) => {
@@ -246,6 +250,29 @@ export async function sendWithRetry(
     return { success: true };
   } catch (error) {
     const message = errorMessage(error);
+
+    // Échec définitif dès la première tentative (numéro invalide, destinataire
+    // absent) : on enregistre quand même le job, directement en 'failed', pour qu'il
+    // apparaisse tout de suite dans le panneau admin. Sans cette trace, le problème
+    // restait invisible ~16 h (le temps du backoff) — ou totalement muet du temps
+    // des `return` silencieux de whatsapp/templates.ts.
+    if (isNonRetryableNotificationError(error)) {
+      console.error(`❌ [Queue] Échec définitif, aucun réessai (${handler}):`, message);
+      try {
+        await db.insert(notificationQueueTable).values({
+          channel,
+          handler,
+          payload: JSON.stringify(args),
+          status: 'failed',
+          attempts: 1,
+          lastError: message,
+        });
+      } catch (queueError) {
+        console.error(`❌ [Queue] Impossible d'enregistrer l'échec (${handler}):`, queueError);
+      }
+      return { success: false, error: message, queued: false };
+    }
+
     console.error(`❌ [Queue] Échec envoi immédiat (${handler}), mise en file d'attente:`, message);
 
     try {
@@ -299,12 +326,14 @@ export async function processNotificationQueueOnce(): Promise<{ processed: numbe
       const attempts = job.attempts + 1;
       const message = errorMessage(error);
 
-      if (attempts >= job.maxAttempts) {
+      // Erreur non rejouable : inutile d'attendre l'épuisement du backoff, le payload
+      // figé en file produira exactement le même échec à chaque tentative.
+      if (isNonRetryableNotificationError(error) || attempts >= job.maxAttempts) {
         await db
           .update(notificationQueueTable)
           .set({ status: 'failed', attempts, lastError: message })
           .where(eq(notificationQueueTable.id, job.id));
-        console.error(`❌ [Queue] Abandon après ${attempts} tentatives: ${job.handler} (#${job.id}) — ${message}`);
+        console.error(`❌ [Queue] Abandon après ${attempts} tentative(s): ${job.handler} (#${job.id}) — ${message}`);
         failed++;
       } else {
         const delayMinutes = BACKOFF_MINUTES[Math.min(attempts - 1, BACKOFF_MINUTES.length - 1)];

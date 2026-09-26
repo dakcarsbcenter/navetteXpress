@@ -11,6 +11,7 @@ import { eq, and } from "drizzle-orm"
 import bcrypt from "bcryptjs"
 import { randomUUID } from "crypto"
 import { friendlyDbError } from "@/lib/db-errors"
+import { normalizePhoneForStorage } from "@/lib/phone"
 
 // Function to generate a secure random password
 function generateSecurePassword(): string {
@@ -262,7 +263,9 @@ export async function POST(request: NextRequest) {
       id: userId,
       name,
       email,
-      phone: phone || null,
+      // Destinataire de 2chauffeur_assigne ET clé de rapprochement de
+      // findDriverIdByPhone : un format non normalisé casse les deux.
+      phone: normalizePhoneForStorage(phone),
       licenseNumber: licenseNumber || (normalizedRole === 'driver' ? '' : null),
       isActive,
       password: hashedPassword,

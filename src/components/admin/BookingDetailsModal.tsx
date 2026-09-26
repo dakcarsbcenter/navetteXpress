@@ -18,7 +18,9 @@ import {
   X,
   MapPinLine,
   Airplane,
-  ArrowSquareOut
+  ArrowSquareOut,
+  PaperPlaneTilt,
+  CheckCircle
 } from "@phosphor-icons/react"
 import { StatusBadge } from "@/components/shared/StatusBadge"
 import { isRouteCombinationAllowed } from "@/lib/pricing"
@@ -143,6 +145,11 @@ export function BookingDetailsModal({
   const [notifyOnUpdate, setNotifyOnUpdate] = useState(true)
   const [quote, setQuote] = useState<PricingQuote | null>(null)
   const [isQuoting, setIsQuoting] = useState(false)
+  // Renvoi manuel de la confirmation WhatsApp au client : l'envoi automatique n'a lieu
+  // qu'au moment où le chauffeur accepte, et un numéro mal formaté à cet instant ne se
+  // rattrape pas tout seul (le job en file porte un instantané figé de la réservation).
+  const [isResending, setIsResending] = useState(false)
+  const [resendFeedback, setResendFeedback] = useState<{ ok: boolean; message: string } | null>(null)
 
   useEffect(() => {
     if (booking) {
@@ -151,6 +158,7 @@ export function BookingDetailsModal({
       setSaveError(null)
       setNotifyOnUpdate(true)
       setQuote(null)
+      setResendFeedback(null)
     }
   }, [booking])
 
@@ -275,6 +283,27 @@ export function BookingDetailsModal({
       setSaveError("Erreur réseau : la modification n'a pas pu être enregistrée")
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleResendConfirmation = async () => {
+    setIsResending(true)
+    setResendFeedback(null)
+    try {
+      const response = await fetch(`/api/admin/bookings/${booking.id}/resend-confirmation`, {
+        method: 'POST',
+      })
+      const json = await response.json().catch(() => null)
+      setResendFeedback(
+        response.ok && json?.success
+          ? { ok: true, message: json.message || 'Confirmation renvoyée au client.' }
+          : { ok: false, message: json?.error || 'Le renvoi a échoué.' }
+      )
+    } catch (error) {
+      console.error('Erreur:', error)
+      setResendFeedback({ ok: false, message: "Erreur réseau : le message n'a pas pu être renvoyé" })
+    } finally {
+      setIsResending(false)
     }
   }
 
@@ -852,6 +881,52 @@ export function BookingDetailsModal({
                       <p style={{ ...fieldWrap, margin: 0, fontSize: '13px', color: '#9a938a', fontStyle: 'italic' }}>Non assigné</p>
                     )}
                   </div>
+
+                  {/* La confirmation part automatiquement quand le chauffeur accepte. Si le
+                      client ne l'a jamais reçue (numéro mal saisi, corrigé depuis via
+                      « Modifier »), ce bouton la rejoue avec la fiche à jour — le job
+                      d'origine, lui, porte un instantané figé et ne peut pas être réparé. */}
+                  {!isEditing && booking.status === 'confirmed' && booking.driverId && (
+                    <div>
+                      <label style={fieldLabel}>Confirmation WhatsApp du client</label>
+                      <button
+                        type="button"
+                        onClick={handleResendConfirmation}
+                        disabled={isResending}
+                        className="flex items-center gap-2"
+                        style={{
+                          height: '40px',
+                          padding: '0 16px',
+                          backgroundColor: 'rgba(31,82,69,.08)',
+                          border: '1px solid rgba(31,82,69,.3)',
+                          borderRadius: '4px',
+                          color: '#1F5245',
+                          fontSize: '12.5px',
+                          fontWeight: 600,
+                          cursor: isResending ? 'default' : 'pointer',
+                          opacity: isResending ? 0.6 : 1,
+                        }}
+                      >
+                        <PaperPlaneTilt size={15} weight="fill" />
+                        {isResending ? 'Envoi…' : 'Renvoyer la confirmation'}
+                      </button>
+                      {resendFeedback && (
+                        <p
+                          className="flex items-center gap-2"
+                          style={{
+                            margin: '8px 0 0',
+                            fontSize: '12px',
+                            color: resendFeedback.ok ? '#1F5245' : '#B8493C',
+                          }}
+                        >
+                          {resendFeedback.ok
+                            ? <CheckCircle size={14} weight="fill" />
+                            : <Warning size={14} weight="fill" />}
+                          {resendFeedback.message}
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   <div>
                     <label style={fieldLabel}>Véhicule assigné</label>

@@ -11,6 +11,7 @@ import { alias } from 'drizzle-orm/pg-core';
 import { requireBookingsRead, requireBookingsCreate } from '@/utils/admin-permissions';
 import { assignBookingToDriver } from '@/lib/booking-assignment';
 import { sendWithRetry } from '@/lib/notification-queue';
+import { normalizePhoneForStorage } from '@/lib/phone';
 
 // Créer des alias pour les jointures multiples
 const driverUsers = alias(users, 'driver_users');
@@ -174,6 +175,9 @@ export async function POST(request: NextRequest) {
     }
 
     const customerEmail = body.customerEmail ?? linkedAccountEmail ?? '';
+    // Numéro remis au format international dès la saisie : la ligne `Contact:` des
+    // notes et la colonne customer_phone doivent afficher la même chose.
+    const customerPhone = normalizePhoneForStorage(body.customerPhone) ?? body.customerPhone;
 
     const [admin] = await db.select({ name: users.name }).from(users).where(eq(users.id, adminId)).limit(1);
 
@@ -184,7 +188,7 @@ export async function POST(request: NextRequest) {
     const notes = [
       `Service: ${body.serviceType || 'autres'}`,
       `Véhicule souhaité: ${requestedVehicleType === 'suv' ? 'SUV' : 'Berline'}`,
-      `Contact: ${body.customerPhone}${customerEmail ? ` - ${customerEmail}` : ''}`,
+      `Contact: ${customerPhone}${customerEmail ? ` - ${customerEmail}` : ''}`,
       `Services additionnels: ${body.additionalServices?.length ? body.additionalServices.join(', ') : 'Aucun'}`,
       `Demandes spéciales: ${flatSpecialRequests || 'Aucune'}`,
       // Traçabilité : cette demande n'a pas été saisie par le client lui-même.
@@ -196,7 +200,7 @@ export async function POST(request: NextRequest) {
       .values({
         customerName: body.customerName,
         customerEmail,
-        customerPhone: body.customerPhone,
+        customerPhone,
         userId: body.userId ?? null,
         pickupAddress: body.pickupAddress,
         dropoffAddress: body.dropoffAddress,
@@ -210,7 +214,7 @@ export async function POST(request: NextRequest) {
         requestedVehicleType,
         price: (body.price ?? 0).toString(),
         passengerName: body.passengerName ?? null,
-        passengerPhone: body.passengerPhone ?? null,
+        passengerPhone: normalizePhoneForStorage(body.passengerPhone),
         flightNumber: body.flightNumber ?? null,
         airline: body.airline ?? null,
         notes,

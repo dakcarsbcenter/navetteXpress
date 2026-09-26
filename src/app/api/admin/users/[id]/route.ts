@@ -9,6 +9,7 @@ import { db } from "@/db"
 import { users, rolePermissionsTable } from "@/schema"
 import { eq, and, ne } from "drizzle-orm"
 import { friendlyDbError } from "@/lib/db-errors"
+import { normalizePhoneForStorage } from "@/lib/phone"
 
 // Fonction pour vérifier les permissions dynamiques
 async function hasUsersPermission(userRole: string, action: 'read' | 'create' | 'update' | 'delete'): Promise<boolean> {
@@ -211,7 +212,9 @@ export async function PUT(
         name,
         email,
         role,
-        phone: phone || null,
+        // Destinataire de 2chauffeur_assigne ET clé de rapprochement de
+        // findDriverIdByPhone : un format non normalisé casse les deux.
+        phone: normalizePhoneForStorage(phone),
         licenseNumber: licenseNumber || null,
         isActive,
         isCompany: !!normalizedCompanyType,

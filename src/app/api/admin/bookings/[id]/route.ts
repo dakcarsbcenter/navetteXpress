@@ -9,6 +9,7 @@ import { bookingsTable, users } from '@/schema';
 import { eq } from 'drizzle-orm';
 import { requireBookingsRead, requireBookingsUpdate, requireBookingsDelete } from '@/utils/admin-permissions';
 import { sendWithRetry } from '@/lib/notification-queue';
+import { normalizePhoneForStorage } from '@/lib/phone';
 import { formatDateTimeBilingual } from '@/lib/email-i18n';
 
 // GET - Récupérer une réservation par ID
@@ -204,7 +205,9 @@ export async function PATCH(
     // Champs métier corrigeables par l'admin
     if (body.customerName !== undefined) updateData.customerName = body.customerName;
     if (body.customerEmail !== undefined) updateData.customerEmail = body.customerEmail;
-    if (body.customerPhone !== undefined) updateData.customerPhone = body.customerPhone;
+    // Normalisé à l'écriture : corriger un numéro ici doit suffire à rendre les
+    // renvois WhatsApp possibles, sans dépendre du format tapé par l'admin.
+    if (body.customerPhone !== undefined) updateData.customerPhone = normalizePhoneForStorage(body.customerPhone) ?? body.customerPhone;
     if (body.pickupAddress !== undefined) updateData.pickupAddress = body.pickupAddress;
     if (body.dropoffAddress !== undefined) updateData.dropoffAddress = body.dropoffAddress;
     if (body.scheduledDateTime !== undefined) updateData.scheduledDateTime = new Date(body.scheduledDateTime);
@@ -214,7 +217,7 @@ export async function PATCH(
     if (body.flightNumber !== undefined) updateData.flightNumber = body.flightNumber;
     if (body.airline !== undefined) updateData.airline = body.airline;
     if (body.passengerName !== undefined) updateData.passengerName = body.passengerName || null;
-    if (body.passengerPhone !== undefined) updateData.passengerPhone = body.passengerPhone || null;
+    if (body.passengerPhone !== undefined) updateData.passengerPhone = normalizePhoneForStorage(body.passengerPhone);
 
     // Annulation définitive déclenchée par l'admin : seule cette action notifie le client
     if (body.status === 'cancelled' && oldStatus !== 'cancelled') {

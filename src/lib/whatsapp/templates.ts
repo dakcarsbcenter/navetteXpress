@@ -9,6 +9,7 @@
  */
 
 import { sendWhatsAppTemplate, orDash, phoneForDisplay, WHATSAPP_TEMPLATES } from './geskap';
+import { NonRetryableNotificationError } from '@/lib/notification-errors';
 import { getServiceById, additionalServices } from '@/lib/services';
 import {
   bi,
@@ -140,7 +141,16 @@ function parseBookingNotes(notes: string | null): {
 
 /** 1. Accusé de réception envoyé au client à la création de la réservation. */
 export async function sendReservationCreeeClient(booking: SelectBooking) {
-  if (!booking.customerPhone) return;
+  // Un destinataire absent était jusqu'ici un `return` silencieux : sendWithRetry
+  // recevait undefined, assertSuccess laissait passer, et l'appelant lisait
+  // {success:true} — aucune trace nulle part, ni en base ni dans les logs. On lève
+  // désormais une erreur non rejouable : un job 'failed' apparaît immédiatement dans
+  // le panneau admin, avec le motif exact.
+  if (!booking.customerPhone) {
+    throw new NonRetryableNotificationError(
+      `Réservation #${booking.id} sans téléphone client : accusé de réception WhatsApp impossible`
+    );
+  }
   const { serviceTypeLabel, optionsLabel, driverNotesLabel } = parseBookingNotes(booking.notes);
 
   await sendWhatsAppTemplate({
@@ -173,7 +183,11 @@ export async function sendReservationCreeeClient(booking: SelectBooking) {
  * Accepter/Refuser : c'est le seul message à boutons envoyé au chauffeur.
  */
 export async function sendChauffeurAssigne(booking: SelectBooking, driver: DriverInfo) {
-  if (!driver.phone) return;
+  if (!driver.phone) {
+    throw new NonRetryableNotificationError(
+      `Chauffeur "${driver.name}" sans téléphone en fiche : proposition de course #${booking.id} non envoyée`
+    );
+  }
   const { serviceTypeLabel, optionsLabel, driverNotesLabel } = parseBookingNotes(booking.notes);
 
   await sendWhatsAppTemplate({
@@ -203,14 +217,31 @@ export async function sendChauffeurAssigne(booking: SelectBooking, driver: Drive
 }
 
 /** 3. Confirmation finale envoyée au client une fois le chauffeur assigné. */
-export async function sendReservationValidee(booking: SelectBooking, driver: DriverInfo) {
-  if (!booking.customerPhone) return;
+export async function sendReservationValidee(
+  booking: SelectBooking,
+  driver: DriverInfo,
+  /**
+   * Horodatage d'un renvoi manuel depuis le back-office. Ajouté à la clé
+   * d'idempotence : celle-ci est volontairement constante par réservation pour
+   * l'envoi automatique (pour ne pas doubler un message déjà parti), donc un renvoi
+   * sans ce paramètre serait dédupliqué côté Geskap et l'admin croirait avoir
+   * renvoyé le message. Absent (undefined) pour l'envoi automatique.
+   */
+  resendAt?: number
+) {
+  if (!booking.customerPhone) {
+    throw new NonRetryableNotificationError(
+      `Réservation #${booking.id} sans téléphone client : confirmation WhatsApp impossible`
+    );
+  }
   const { serviceTypeLabel, optionsLabel, driverNotesLabel } = parseBookingNotes(booking.notes);
 
   await sendWhatsAppTemplate({
     to: booking.customerPhone,
     template: WHATSAPP_TEMPLATES.reservationValidee,
-    idempotencyKey: `${booking.id}-reservation_validee`,
+    idempotencyKey: resendAt
+      ? `${booking.id}-reservation_validee-renvoi-${resendAt}`
+      : `${booking.id}-reservation_validee`,
     variables: [
       firstNameOf(booking.customerName),
       reference(booking),
@@ -243,7 +274,11 @@ export async function sendRappelDepart(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _leadTimeLabel?: string
 ) {
-  if (!booking.customerPhone) return;
+  if (!booking.customerPhone) {
+    throw new NonRetryableNotificationError(
+      `Réservation #${booking.id} sans téléphone client : rappel de départ WhatsApp impossible`
+    );
+  }
   const { driverNotesLabel } = parseBookingNotes(booking.notes);
 
   await sendWhatsAppTemplate({
@@ -282,7 +317,11 @@ export async function sendReservationModifiee(
   driver?: DriverInfo
 ) {
   const to = recipient === 'driver' ? driver?.phone : booking.customerPhone;
-  if (!to) return;
+  if (!to) {
+    throw new NonRetryableNotificationError(
+      `Réservation #${booking.id} : ${recipient === 'driver' ? 'chauffeur' : 'client'} sans téléphone, avis de modification WhatsApp impossible`
+    );
+  }
 
   const firstName =
     recipient === 'driver' ? firstNameOf(driver?.name) : firstNameOf(booking.customerName);

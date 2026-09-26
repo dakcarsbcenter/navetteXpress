@@ -8,6 +8,8 @@
  * de risque de blocage pour usage non conforme aux conditions de Meta.
  */
 
+import { NonRetryableNotificationError } from '@/lib/notification-errors';
+
 const API_BASE_URL = process.env.GESKAP_API_BASE_URL || 'https://wa-api.geskap.com';
 
 /**
@@ -53,16 +55,58 @@ export function orDash(value: string | null | undefined): string {
 }
 
 /**
- * Normalise un numéro local en E.164. Les numéros chauffeurs/clients sont
- * historiquement stockés sans indicatif pays (9 chiffres, Sénégal) — voir
- * project-driver-booking-response-flows (même bug rencontré côté OpenWA).
+ * Normalise un numéro saisi en E.164 (`+<indicatif><numéro>`).
+ *
+ * Les numéros chauffeurs/clients sont historiquement stockés sans indicatif pays
+ * (9 chiffres, Sénégal) — voir project-driver-booking-response-flows (même bug
+ * rencontré côté OpenWA). S'y ajoutent, depuis les réservations saisies par l'admin
+ * pour un client joint au téléphone, des numéros étrangers dictés avec le préfixe
+ * de sortie international "00".
+ *
+ * Ne lève jamais : la fonction sert aussi à l'affichage (phoneForDisplay) et à la
+ * comparaison (findDriverIdByPhone). Un numéro non convertible ressort tel quel,
+ * préfixé "+", et c'est isValidE164() qui tranche au moment de l'envoi.
  */
 export function toGeskapPhone(raw: string): string {
-  const digits = raw.replace(/[^\d]/g, '');
-  if (raw.trim().startsWith('+')) return `+${digits}`;
+  const trimmed = raw.trim();
+  // Les séparateurs de saisie (espaces, points, tirets, parenthèses) ne portent
+  // aucune information : seuls les chiffres comptent.
+  const digits = trimmed.replace(/[^\d]/g, '');
+
+  // "00" est le préfixe de sortie international (UIT E.164) : 0033680264157 et
+  // +33680264157 désignent le même numéro. Testé EN PREMIER, avant les règles
+  // sénégalaises comme avant le cas "+", sans quoi 00221… repartirait en
+  // "+00221…". C'est précisément cette branche qui manquait : la confirmation de
+  // la réservation #7 est partie vers "+0033680264157", rejetée par Geskap, puis
+  // rejouée 6 fois à l'identique avant d'être abandonnée.
+  if (digits.startsWith('00')) return `+${digits.slice(2)}`;
+
+  // Déjà saisi en international : la source est fiable, aucune règle pays.
+  if (trimmed.startsWith('+')) return `+${digits}`;
+
+  // Sénégal : numéros locaux à 9 chiffres (ex: 771234567), ou déjà indicatifs mais
+  // sans le "+" (ex: 221771234567).
   if (digits.length === 9) return `+221${digits}`;
   if (digits.startsWith('221')) return `+${digits}`;
+
+  // Repli : le pays n'est pas devinable (ex: "0680264157", national français sans
+  // indicatif — le 0 de tête est un préfixe interurbain, pas un indicatif pays). On
+  // refuse de supposer +221 : mieux vaut un échec explicite qu'un message envoyé au
+  // mauvais destinataire. La valeur produite est invalide au sens E.164 et sera
+  // rejetée par isValidE164() juste avant l'envoi.
   return `+${digits}`;
+}
+
+/**
+ * Contrôle E.164 : "+", un indicatif ne commençant jamais par 0, puis 8 à 15
+ * chiffres au total. Dernier rempart avant l'appel Geskap — l'API rejette bien ces
+ * numéros, mais son erreur ne dit pas pourquoi, et le job repartait alors en réessai
+ * comme s'il s'agissait d'un incident réseau passager.
+ */
+const E164_PATTERN = /^\+[1-9]\d{7,14}$/;
+
+export function isValidE164(phone: string): boolean {
+  return E164_PATTERN.test(phone);
 }
 
 /**
@@ -114,7 +158,26 @@ export async function sendWhatsAppTemplate({
     throw new Error('GESKAP_API_KEY is not defined in environment variables');
   }
 
+  // Destinataire absent : remonté en erreur non rejouable plutôt qu'en envoi vide,
+  // pour qu'un numéro manquant laisse une trace dans le panneau admin.
+  if (!to || !to.trim()) {
+    throw new NonRetryableNotificationError(
+      `Destinataire WhatsApp absent pour le gabarit "${template}"`
+    );
+  }
+
   const phone = toGeskapPhone(to);
+
+  // Un numéro non convertible en E.164 ne deviendra jamais valide en le rejouant :
+  // le payload en file est un instantané figé (voir sendWithRetry). On échoue donc
+  // tout de suite, avec le numéro d'origine dans le message pour que l'admin sache
+  // quelle fiche corriger.
+  if (!isValidE164(phone)) {
+    throw new NonRetryableNotificationError(
+      `Numéro WhatsApp invalide (E.164 attendu) : "${maskPhone(phone)}" obtenu depuis "${maskPhone(to.trim())}" — gabarit "${template}"`
+    );
+  }
+
   // Contrainte Meta : une variable vide fait rejeter tout le message.
   const safeVariables = variables.map((v) => orDash(v));
 

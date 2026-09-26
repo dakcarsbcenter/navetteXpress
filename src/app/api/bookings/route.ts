@@ -9,6 +9,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { eq, desc, and, asc } from 'drizzle-orm';
 import { sendWithRetry } from '@/lib/notification-queue';
+import { normalizePhoneForStorage } from '@/lib/phone';
 import { resolvePrice } from '@/lib/pricing';
 
 // Fonction pour vérifier les permissions dynamiques des bookings
@@ -114,6 +115,9 @@ export async function POST(request: NextRequest) {
     // transportée (cas courant : un proche réserve pour quelqu'un qui ne lit pas).
     const finalPassengerName = typeof passengerName === 'string' ? passengerName.trim() : '';
     const finalPassengerPhone = typeof passengerPhone === 'string' ? passengerPhone.trim() : '';
+    // Numéro remis au format international dès la saisie : la ligne `Contact:` des
+    // notes et la colonne customer_phone doivent afficher la même chose.
+    const normalizedContactPhone = normalizePhoneForStorage(contactPhone) ?? contactPhone;
 
     if (finalPassengerName && finalPassengerName.length < 2) {
       return NextResponse.json({
@@ -185,7 +189,7 @@ export async function POST(request: NextRequest) {
       .values({
         customerName: finalClientName,
         customerEmail: finalClientEmail,
-        customerPhone: contactPhone,
+        customerPhone: normalizedContactPhone,
         userId: finalUserId,
         pickupAddress,
         dropoffAddress: destinationAddress,
@@ -199,10 +203,10 @@ export async function POST(request: NextRequest) {
         requestedVehicleType,
         price: resolvedPrice.toString(),
         passengerName: finalPassengerName || null,
-        passengerPhone: finalPassengerPhone || null,
+        passengerPhone: normalizePhoneForStorage(finalPassengerPhone),
         flightNumber: flightNumber || null,
         airline: airline || null,
-        notes: `Service: ${serviceType}\nVéhicule souhaité: ${requestedVehicleType === 'suv' ? 'SUV' : 'Berline'}\nContact: ${contactPhone}${contactEmail ? ` - ${contactEmail}` : ''}\nServices additionnels: ${additionalServices?.join(', ') || 'Aucun'}\nDemandes spéciales: ${flatSpecialRequests || 'Aucune'}`,
+        notes: `Service: ${serviceType}\nVéhicule souhaité: ${requestedVehicleType === 'suv' ? 'SUV' : 'Berline'}\nContact: ${normalizedContactPhone}${contactEmail ? ` - ${contactEmail}` : ''}\nServices additionnels: ${additionalServices?.join(', ') || 'Aucun'}\nDemandes spéciales: ${flatSpecialRequests || 'Aucune'}`,
         updatedAt: new Date()
       })
       .returning();
