@@ -361,10 +361,13 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
           luggage: formData.luggage,
           duration: formData.duration,
           vehicleType: formData.vehicleType,
-          estimatedPrice: selectedPrice,
+          // Le montant n'est pas transmis : le serveur le recalcule depuis les tarifs
+          // paramétrés (src/app/api/bookings/route.ts). On envoie seulement le secteur
+          // retenu, qui désigne lequel des tarifs du trajet a été affiché au client.
+          pricingSegmentId: formData.pricingSegmentId,
           additionalServices: formData.additionalServices,
-          // Le secteur étant tranché à l'étape 1, `estimatedPrice` porte toujours le montant
-          // exact quand un tarif est paramétré. La fourchette autrefois recopiée dans les
+          // Le secteur étant tranché à l'étape 1, le serveur retrouve le montant exact
+          // quand un tarif est paramétré. La fourchette autrefois recopiée dans les
           // demandes spéciales n'a plus d'objet : elle polluait la ligne lue par le chauffeur.
           specialRequests: formData.specialRequests,
           contactPhone: formData.contactPhone,

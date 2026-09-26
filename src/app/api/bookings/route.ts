@@ -4,11 +4,12 @@ export const revalidate = 0;
 
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { bookingsTable, rolePermissionsTable } from '@/schema';
+import { bookingsTable, rolePermissionsTable, pricingSegmentsTable } from '@/schema';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-import { eq, desc, and } from 'drizzle-orm';
+import { eq, desc, and, asc } from 'drizzle-orm';
 import { sendWithRetry } from '@/lib/notification-queue';
+import { resolvePrice } from '@/lib/pricing';
 
 // Fonction pour vérifier les permissions dynamiques des bookings
 async function hasBookingsPermission(userRole: string, action: 'read' | 'create' | 'update' | 'delete'): Promise<boolean> {
@@ -82,7 +83,10 @@ export async function POST(request: NextRequest) {
       flightNumber,
       airline,
       vehicleType,
-      estimatedPrice,
+      // Secteur tarifaire retenu par le client quand plusieurs tarifs couvrent le même
+      // couple de lieux (un par quartier). Le montant lui-même n'est pas lu depuis le
+      // corps de la requête : il est recalculé ci-dessous.
+      pricingSegmentId,
       // Champs pour utilisateurs connectés
       userId
     } = body;
@@ -134,14 +138,46 @@ export async function POST(request: NextRequest) {
     const flatSpecialRequests =
       typeof specialRequests === 'string' ? specialRequests.replace(/\s*\n+\s*/g, ' · ').trim() : '';
 
-    // Si le formulaire de réservation a résolu un tarif indicatif (segment de
-    // tarif configuré en admin pour ce couple départ/arrivée), on le persiste
-    // directement : le client l'a déjà vu avant d'envoyer sa demande. Sinon
-    // (aucun tarif configuré, "SUR DEVIS") on reste à 0 et l'admin le fixera
-    // manuellement, comme avant.
-    const resolvedPrice = typeof estimatedPrice === 'number' && Number.isFinite(estimatedPrice) && estimatedPrice > 0
-      ? estimatedPrice
-      : 0;
+    // Prix ferme annoncé au client : il est recalculé ici depuis les segments de tarifs
+    // paramétrés en admin (/tarifs), jamais lu dans le corps de la requête. Le montant
+    // engage l'entreprise — accepter celui envoyé par le navigateur laissait fixer
+    // n'importe quelle valeur par un POST direct. Le formulaire transmet seulement le
+    // secteur choisi (`pricingSegmentId`), qui désigne lequel des tarifs du trajet
+    // s'applique, et resolvePrice() est la même fonction que celle utilisée pour
+    // l'afficher côté client et dans le back-office.
+    //
+    // Reste à 0 — l'admin fixera le prix à la main, comme avant — quand aucun tarif ne
+    // couvre le trajet ("SUR DEVIS", adresse libre) et quand le trajet a plusieurs
+    // secteurs tarifés sans que le client en ait désigné un (requête hors formulaire,
+    // ou ancien bundle encore en cache) : on ne devine pas un quartier à sa place.
+    const requestedSegmentId =
+      typeof pricingSegmentId === 'number' && Number.isInteger(pricingSegmentId) ? pricingSegmentId : null;
+
+    const pricingSegments = await db
+      .select()
+      .from(pricingSegmentsTable)
+      .where(eq(pricingSegmentsTable.isActive, true))
+      .orderBy(asc(pricingSegmentsTable.sortOrder), asc(pricingSegmentsTable.id));
+
+    const pricing = resolvePrice(
+      pricingSegments,
+      pickupAddress,
+      destinationAddress,
+      requestedVehicleType,
+      requestedSegmentId,
+    );
+
+    const zoneIsAmbiguous =
+      pricing.alternatives.length > 1 &&
+      !pricing.alternatives.some((alt) => alt.segment.id === requestedSegmentId);
+
+    const resolvedPrice = !zoneIsAmbiguous && pricing.price !== null ? pricing.price : 0;
+
+    if (zoneIsAmbiguous) {
+      console.warn(
+        `⚠️ Secteur tarifaire non précisé pour ${pickupAddress} → ${destinationAddress} : prix laissé à fixer par l'admin`
+      );
+    }
 
     // Créer la réservation
     const newBooking = await db
