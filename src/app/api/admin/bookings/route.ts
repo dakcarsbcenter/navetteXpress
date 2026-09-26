@@ -153,15 +153,27 @@ export async function POST(request: NextRequest) {
     const luggage = body.luggage ?? 1;
 
     // Le compte client rattaché doit exister : sinon la FK remonterait en 500.
+    // On récupère aussi son email : plusieurs écrans côté client retrouvent une
+    // réservation par `customerEmail` (proposition de prix, factures). Laisser la colonne
+    // vide alors qu'un compte est rattaché rendait la course visible dans l'espace client
+    // sans qu'il puisse répondre au prix proposé — d'où ce repli sur l'email du compte.
+    let linkedAccountEmail: string | null = null;
     if (body.userId) {
-      const clientRows = await db.select({ id: users.id }).from(users).where(eq(users.id, body.userId)).limit(1);
+      const clientRows = await db
+        .select({ id: users.id, email: users.email })
+        .from(users)
+        .where(eq(users.id, body.userId))
+        .limit(1);
       if (clientRows.length === 0) {
         return NextResponse.json({
           success: false,
           error: 'Compte client introuvable',
         }, { status: 400 });
       }
+      linkedAccountEmail = clientRows[0].email ?? null;
     }
+
+    const customerEmail = body.customerEmail ?? linkedAccountEmail ?? '';
 
     const [admin] = await db.select({ name: users.name }).from(users).where(eq(users.id, adminId)).limit(1);
 
@@ -172,7 +184,7 @@ export async function POST(request: NextRequest) {
     const notes = [
       `Service: ${body.serviceType || 'autres'}`,
       `Véhicule souhaité: ${requestedVehicleType === 'suv' ? 'SUV' : 'Berline'}`,
-      `Contact: ${body.customerPhone}${body.customerEmail ? ` - ${body.customerEmail}` : ''}`,
+      `Contact: ${body.customerPhone}${customerEmail ? ` - ${customerEmail}` : ''}`,
       `Services additionnels: ${body.additionalServices?.length ? body.additionalServices.join(', ') : 'Aucun'}`,
       `Demandes spéciales: ${flatSpecialRequests || 'Aucune'}`,
       // Traçabilité : cette demande n'a pas été saisie par le client lui-même.
@@ -183,7 +195,7 @@ export async function POST(request: NextRequest) {
       .insert(bookingsTable)
       .values({
         customerName: body.customerName,
-        customerEmail: body.customerEmail ?? '',
+        customerEmail,
         customerPhone: body.customerPhone,
         userId: body.userId ?? null,
         pickupAddress: body.pickupAddress,

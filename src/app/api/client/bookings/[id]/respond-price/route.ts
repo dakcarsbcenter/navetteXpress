@@ -8,7 +8,7 @@ import type { Session } from "next-auth";
 import { authOptions } from '@/lib/auth';
 import { db } from '@/db';
 import { bookingsTable } from '@/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, or } from 'drizzle-orm';
 import { sendWithRetry } from '@/lib/notification-queue';
 
 /**
@@ -22,7 +22,7 @@ export async function POST(
   try {
     const session = (await getServerSession(authOptions)) as Session | null;
     
-    if (!session?.user?.email) {
+    if (!session?.user?.id) {
       return NextResponse.json({ 
         success: false, 
         error: 'Non authentifié' 
@@ -49,13 +49,18 @@ export async function POST(
       }, { status: 400 });
     }
 
-    // Récupérer la réservation
+    // Récupérer la réservation. La propriété se vérifie sur `userId` *ou* sur l'email :
+    // une demande saisie par l'admin au téléphone peut être rattachée à un compte client
+    // sans porter son email (client sans adresse, ou autre adresse dictée au téléphone).
+    // Le seul test sur `customerEmail` renvoyait alors 404 sur une course pourtant
+    // affichée dans l'espace client, qui liste par `userId` (/api/client/bookings).
+    const ownedByClient = session.user.email
+      ? or(eq(bookingsTable.userId, session.user.id), eq(bookingsTable.customerEmail, session.user.email))
+      : eq(bookingsTable.userId, session.user.id);
+
     const booking = await db.select()
       .from(bookingsTable)
-      .where(and(
-        eq(bookingsTable.id, bookingId),
-        eq(bookingsTable.customerEmail, session.user.email)
-      ))
+      .where(and(eq(bookingsTable.id, bookingId), ownedByClient))
       .limit(1);
 
     if (!booking.length) {
