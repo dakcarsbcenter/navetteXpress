@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { CorridorStrip } from "@/components/marketing/CorridorStrip";
 import { Button } from "@/components/ui/Button";
+import { ConventionRequestModal } from "@/components/marketing/ConventionRequestModal";
 
 interface ReleveRow {
   date: string;
@@ -23,6 +25,7 @@ export default function EntreprisesClient() {
   const t = useTranslations("entreprises");
   const releve = t.raw("releve") as ReleveRow[];
   const benefits = t.raw("benefits") as Benefit[];
+  const [isConventionOpen, setIsConventionOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-background">
@@ -44,11 +47,9 @@ export default function EntreprisesClient() {
               {t("hero.subtitle")}
             </p>
             <div className="flex flex-wrap gap-3 pt-1">
-              <Link href="/quote-request">
-                <Button variant="primary" size="lg">
-                  {t("hero.ctaConvention")}
-                </Button>
-              </Link>
+              <Button variant="primary" size="lg" onClick={() => setIsConventionOpen(true)}>
+                {t("hero.ctaConvention")}
+              </Button>
               <Link href="/tarifs">
                 <Button variant="outline" size="lg">
                   {t("hero.ctaRates")}
@@ -108,17 +109,23 @@ export default function EntreprisesClient() {
                 {t("closingCta.subtitle")}
               </p>
             </div>
-            <Link
-              href="/quote-request"
+            <button
+              type="button"
+              onClick={() => setIsConventionOpen(true)}
               className="inline-flex items-center justify-center bg-background text-foreground px-7 py-4 rounded font-semibold text-sm hover:opacity-90 transition-opacity shrink-0"
             >
               {t("closingCta.cta")}
-            </Link>
+            </button>
           </div>
         </section>
       </div>
 
       <Footer />
+
+      <ConventionRequestModal
+        isOpen={isConventionOpen}
+        onClose={() => setIsConventionOpen(false)}
+      />
     </div>
   );
 }

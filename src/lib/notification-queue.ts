@@ -96,6 +96,14 @@ const registry: Record<string, Handler> = {
       args[2] as boolean
     );
   },
+  'resend-mailer.sendNewConventionRequestEmail': async (args) => {
+    const { sendNewConventionRequestEmail } = await import('./resend-mailer');
+    return sendNewConventionRequestEmail(
+      args[0] as string,
+      args[1] as Parameters<typeof sendNewConventionRequestEmail>[1],
+      args[2] as boolean
+    );
+  },
   'resend-mailer.sendNewDriverApplicationEmail': async (args) => {
     const { sendNewDriverApplicationEmail } = await import('./resend-mailer');
     return sendNewDriverApplicationEmail(

@@ -2,7 +2,12 @@
   "meta": {
     "title": "Hoteles y Empresas — Cuenta Corporativa, Facturación Mensual | Navette Xpress",
     "description": "Una cuenta, un interlocutor, una factura al mes. Solución de transporte para hoteles, empresas, ONG y misiones diplomáticas en Dakar y AIBD.",
-    "keywords": ["transporte empresarial Dakar", "cuenta corporativa traslado AIBD", "chófer privado hotel Senegal", "convenio transporte ONG"]
+    "keywords": [
+      "transporte empresarial Dakar",
+      "cuenta corporativa traslado AIBD",
+      "chófer privado hotel Senegal",
+      "convenio transporte ONG"
+    ]
   },
   "hero": {
     "eyebrow": "HOTELES · EMPRESAS · ONG · MISIONES DIPLOMÁTICAS",
@@ -19,20 +24,91 @@
     "total": "TOTAL AGOSTO · 14 SERVICIOS"
   },
   "releve": [
-    { "date": "02.08", "mission": "DKR → AIBD · SR. FALL", "montant": "25.000" },
-    { "date": "05.08", "mission": "AIBD → SALY · MISIÓN UE", "montant": "25.000" },
-    { "date": "11.08", "mission": "DÍA COMPLETO · DELEGACIÓN", "montant": "75.000" },
-    { "date": "19.08", "mission": "DKR → MBOUR · SRA. SY", "montant": "35.000" }
+    {
+      "date": "02.08",
+      "mission": "DKR → AIBD · SR. FALL",
+      "montant": "25.000"
+    },
+    {
+      "date": "05.08",
+      "mission": "AIBD → SALY · MISIÓN UE",
+      "montant": "25.000"
+    },
+    {
+      "date": "11.08",
+      "mission": "DÍA COMPLETO · DELEGACIÓN",
+      "montant": "75.000"
+    },
+    {
+      "date": "19.08",
+      "mission": "DKR → MBOUR · SRA. SY",
+      "montant": "35.000"
+    }
   ],
   "benefits": [
-    { "n": "01", "title": "Convenio en 5 días", "text": "Tarifario adjunto, válido durante doce meses." },
-    { "n": "02", "title": "Reserva sin cuenta", "text": "Sus colaboradores llaman o escriben, nosotros lo asociamos a su cuenta." },
-    { "n": "03", "title": "Chóferes habilitados", "text": "Antecedentes limpios, discreción contractual, angloparlantes bajo petición." },
-    { "n": "04", "title": "Traslados recurrentes", "text": "Rotaciones diarias hotel-aeropuerto con tarifa decreciente." }
+    {
+      "n": "01",
+      "title": "Convenio en 5 días",
+      "text": "Tarifario adjunto, válido durante doce meses."
+    },
+    {
+      "n": "02",
+      "title": "Reserva sin cuenta",
+      "text": "Sus colaboradores llaman o escriben, nosotros lo asociamos a su cuenta."
+    },
+    {
+      "n": "03",
+      "title": "Chóferes habilitados",
+      "text": "Antecedentes limpios, discreción contractual, angloparlantes bajo petición."
+    },
+    {
+      "n": "04",
+      "title": "Traslados recurrentes",
+      "text": "Rotaciones diarias hotel-aeropuerto con tarifa decreciente."
+    }
   ],
   "closingCta": {
     "title": "Hablemos de volumen.",
     "subtitle": "RESPUESTA EN 24 H HÁBILES · CONTACT@NAVETTEXPRESS.COM",
     "cta": "Solicitar un convenio"
+  },
+  "conventionForm": {
+    "title": "Solicitar un convenio",
+    "subtitle": "Unos datos sobre su organización y un asesor le responderá en 24 h hábiles con una tarifa negociada.",
+    "companyName": "Razón social",
+    "companyNamePlaceholder": "Nombre de su empresa",
+    "companyType": "Tipo de organización",
+    "companyTypePlaceholder": "Seleccionar",
+    "contactName": "Nombre del contacto",
+    "contactNamePlaceholder": "Su nombre y apellidos",
+    "contactEmail": "Correo profesional",
+    "contactEmailPlaceholder": "usted@empresa.com",
+    "contactPhone": "Teléfono",
+    "monthlyVolume": "Volumen mensual estimado",
+    "monthlyVolumePlaceholder": "Seleccionar (opcional)",
+    "message": "Detalles",
+    "messagePlaceholder": "Trayectos recurrentes, sedes implicadas, plazos deseados...",
+    "submit": "Enviar mi solicitud",
+    "submitting": "Enviando...",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "error": "Se ha producido un error. Inténtelo de nuevo o escríbanos a contact@navettexpress.com.",
+    "companyTypes": {
+      "hotel": "Hotel",
+      "entreprise": "Empresa",
+      "ong": "ONG",
+      "mission-diplomatique": "Misión diplomática",
+      "autre": "Otro"
+    },
+    "volumes": {
+      "moins-10": "Menos de 10 viajes / mes",
+      "10-30": "De 10 a 30 viajes / mes",
+      "30-100": "De 30 a 100 viajes / mes",
+      "plus-100": "Más de 100 viajes / mes"
+    },
+    "success": {
+      "title": "Solicitud enviada",
+      "desc": "Hemos recibido su solicitud de convenio. Un asesor le contactará en 24 h hábiles y acaba de salir un acuse de recibo a su correo."
+    }
   }
 }

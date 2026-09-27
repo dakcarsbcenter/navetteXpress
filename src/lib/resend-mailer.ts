@@ -463,6 +463,101 @@ export async function sendNewQuoteRequestEmail(
 }
 
 /**
+ * Demande de convention entreprise (/entreprises) — au contact de la société,
+ * ou à NavetteXpress selon `isAdmin`. Distincte de la demande de devis : les
+ * informations utiles sont celles de la société (raison sociale, type
+ * d'établissement, volume mensuel), pas celles d'un trajet.
+ */
+export async function sendNewConventionRequestEmail(
+  to: string,
+  conventionData: {
+    quoteId: string;
+    companyName: string;
+    companyType: string;
+    contactName: string;
+    contactEmail: string;
+    contactPhone: string;
+    monthlyVolume?: string;
+    message?: string;
+  },
+  isAdmin: boolean = false
+) {
+  try {
+    const content = `
+      ${
+        isAdmin
+          ? headingBlock('🏢', 'Nouvelle demande de convention', 'New corporate account request')
+          : headingBlock('✅', 'Demande de convention reçue', 'Convention request received')
+      }
+      ${
+        isAdmin
+          ? paragraphBlock(
+              `${conventionData.companyName} souhaite ouvrir un compte corporate.`,
+              `${conventionData.companyName} would like to open a corporate account.`
+            )
+          : paragraphBlock(
+              `Bonjour ${conventionData.contactName}, nous avons bien reçu votre demande de convention pour ${conventionData.companyName}.`,
+              `Hello ${conventionData.contactName}, we have received your corporate account request for ${conventionData.companyName}.`
+            )
+      }
+      ${referenceBlock(conventionData.quoteId)}
+      ${dataTable(
+        [
+          { fr: 'Société', en: 'Company', value: conventionData.companyName },
+          { fr: "Type d'établissement", en: 'Organisation type', value: conventionData.companyType },
+          { fr: 'Contact', en: 'Contact', value: conventionData.contactName },
+          { fr: 'Email', en: 'Email', value: conventionData.contactEmail },
+          { fr: 'Téléphone', en: 'Phone', value: conventionData.contactPhone },
+          { fr: 'Volume mensuel estimé', en: 'Estimated monthly volume', value: conventionData.monthlyVolume },
+        ],
+        { fr: 'Détails de la demande', en: 'Request details' }
+      )}
+      ${conventionData.message ? quoteBlock(conventionData.message) : ''}
+      ${
+        isAdmin
+          ? ''
+          : noticeBlock(
+              'Un conseiller vous recontacte sous 24 h ouvrées avec une grille tarifaire négociée et le projet de convention.',
+              'An account manager will contact you within 24 business hours with a negotiated rate card and the draft agreement.'
+            )
+      }
+      ${ctaButton(
+        `${APP_URL()}/${isAdmin ? 'admin/dashboard?tab=quotes' : 'entreprises'}`,
+        isAdmin ? '📊 Ouvrir le pipeline' : '🏢 Revoir notre offre entreprises',
+        isAdmin ? 'Open the pipeline' : 'Review our corporate offer'
+      )}
+    `;
+
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: [to],
+      replyTo: isAdmin ? conventionData.contactEmail : undefined,
+      subject: isAdmin
+        ? biSubject(
+            `🏢 Demande de convention — ${conventionData.companyName}`,
+            `Corporate account request — ${conventionData.companyName}`
+          )
+        : biSubject(
+            `✅ Demande de convention reçue ${conventionData.quoteId}`,
+            `Convention request received ${conventionData.quoteId}`
+          ),
+      html: emailShell(content, isAdmin ? 'admin' : 'customer'),
+    });
+
+    if (error) {
+      console.error('❌ Erreur envoi email demande de convention:', error);
+      throw error;
+    }
+
+    console.log('✅ Email demande de convention envoyé:', data?.id);
+    return data;
+  } catch (error) {
+    console.error('❌ Erreur:', error);
+    throw error;
+  }
+}
+
+/**
  * Accusé de réception d'une candidature chauffeur — au candidat, ou à l'admin selon `isAdmin`
  */
 export async function sendNewDriverApplicationEmail(

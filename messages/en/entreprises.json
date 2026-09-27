@@ -2,7 +2,12 @@
   "meta": {
     "title": "Hotels & Companies — Corporate Account, Monthly Invoicing | Navette Xpress",
     "description": "One account, one point of contact, one invoice a month. A transport solution for hotels, companies, NGOs and diplomatic missions in Dakar and AIBD.",
-    "keywords": ["corporate transport Dakar", "corporate shuttle account AIBD", "private driver hotel Senegal", "NGO transport agreement"]
+    "keywords": [
+      "corporate transport Dakar",
+      "corporate shuttle account AIBD",
+      "private driver hotel Senegal",
+      "NGO transport agreement"
+    ]
   },
   "hero": {
     "eyebrow": "HOTELS · COMPANIES · NGOS · DIPLOMATIC MISSIONS",
@@ -19,20 +24,91 @@
     "total": "TOTAL AUGUST · 14 TRIPS"
   },
   "releve": [
-    { "date": "08.02", "mission": "DKR → AIBD · MR FALL", "montant": "25,000" },
-    { "date": "08.05", "mission": "AIBD → SALY · EU MISSION", "montant": "25,000" },
-    { "date": "08.11", "mission": "DAY HIRE · DELEGATION", "montant": "75,000" },
-    { "date": "08.19", "mission": "DKR → MBOUR · MRS SY", "montant": "35,000" }
+    {
+      "date": "08.02",
+      "mission": "DKR → AIBD · MR FALL",
+      "montant": "25,000"
+    },
+    {
+      "date": "08.05",
+      "mission": "AIBD → SALY · EU MISSION",
+      "montant": "25,000"
+    },
+    {
+      "date": "08.11",
+      "mission": "DAY HIRE · DELEGATION",
+      "montant": "75,000"
+    },
+    {
+      "date": "08.19",
+      "mission": "DKR → MBOUR · MRS SY",
+      "montant": "35,000"
+    }
   ],
   "benefits": [
-    { "n": "01", "title": "Agreement within 5 days", "text": "Rate card attached, valid for twelve months." },
-    { "n": "02", "title": "Booking without an account", "text": "Your staff call or write in, we attribute the trip to you." },
-    { "n": "03", "title": "Vetted drivers", "text": "Clean record, contractual discretion, English speakers on request." },
-    { "n": "04", "title": "Recurring shuttles", "text": "Daily hotel-to-airport rotations at a tapered rate." }
+    {
+      "n": "01",
+      "title": "Agreement within 5 days",
+      "text": "Rate card attached, valid for twelve months."
+    },
+    {
+      "n": "02",
+      "title": "Booking without an account",
+      "text": "Your staff call or write in, we attribute the trip to you."
+    },
+    {
+      "n": "03",
+      "title": "Vetted drivers",
+      "text": "Clean record, contractual discretion, English speakers on request."
+    },
+    {
+      "n": "04",
+      "title": "Recurring shuttles",
+      "text": "Daily hotel-to-airport rotations at a tapered rate."
+    }
   ],
   "closingCta": {
     "title": "Let's talk about volume.",
     "subtitle": "REPLY WITHIN 24 BUSINESS HOURS · CONTACT@NAVETTEXPRESS.COM",
     "cta": "Request an agreement"
+  },
+  "conventionForm": {
+    "title": "Request a corporate account",
+    "subtitle": "A few details about your organisation, and an account manager will get back to you within 24 business hours with a negotiated rate card.",
+    "companyName": "Company name",
+    "companyNamePlaceholder": "Your company name",
+    "companyType": "Organisation type",
+    "companyTypePlaceholder": "Select",
+    "contactName": "Contact name",
+    "contactNamePlaceholder": "Your full name",
+    "contactEmail": "Work email",
+    "contactEmailPlaceholder": "you@company.com",
+    "contactPhone": "Phone",
+    "monthlyVolume": "Estimated monthly volume",
+    "monthlyVolumePlaceholder": "Select (optional)",
+    "message": "Details",
+    "messagePlaceholder": "Recurring routes, sites involved, expected timeline...",
+    "submit": "Send my request",
+    "submitting": "Sending...",
+    "cancel": "Cancel",
+    "close": "Close",
+    "error": "Something went wrong. Please try again or email us at contact@navettexpress.com.",
+    "companyTypes": {
+      "hotel": "Hotel",
+      "entreprise": "Company",
+      "ong": "NGO",
+      "mission-diplomatique": "Diplomatic mission",
+      "autre": "Other"
+    },
+    "volumes": {
+      "moins-10": "Fewer than 10 rides / month",
+      "10-30": "10 to 30 rides / month",
+      "30-100": "30 to 100 rides / month",
+      "plus-100": "More than 100 rides / month"
+    },
+    "success": {
+      "title": "Request sent",
+      "desc": "We have received your corporate account request. An account manager will contact you within 24 business hours, and a confirmation email is on its way."
+    }
   }
 }

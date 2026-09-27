@@ -2,7 +2,12 @@
   "meta": {
     "title": "Hôtels & Entreprises — Compte Corporate, Facturation Mensuelle | Navette Xpress",
     "description": "Un compte, un interlocuteur, une facture par mois. Solution de transport pour hôtels, entreprises, ONG et missions diplomatiques à Dakar et AIBD.",
-    "keywords": ["transport entreprise Dakar", "compte corporate navette AIBD", "chauffeur privé hôtel Sénégal", "convention transport ONG"]
+    "keywords": [
+      "transport entreprise Dakar",
+      "compte corporate navette AIBD",
+      "chauffeur privé hôtel Sénégal",
+      "convention transport ONG"
+    ]
   },
   "hero": {
     "eyebrow": "HÔTELS · ENTREPRISES · ONG · MISSIONS DIPLOMATIQUES",
@@ -19,20 +24,91 @@
     "total": "TOTAL AOÛT · 14 COURSES"
   },
   "releve": [
-    { "date": "02.08", "mission": "DKR → AIBD · M. FALL", "montant": "25 000" },
-    { "date": "05.08", "mission": "AIBD → SALY · MISSION UE", "montant": "25 000" },
-    { "date": "11.08", "mission": "JOUR COURSE · DÉLÉGATION", "montant": "75 000" },
-    { "date": "19.08", "mission": "DKR → MBOUR · Mme SY", "montant": "35 000" }
+    {
+      "date": "02.08",
+      "mission": "DKR → AIBD · M. FALL",
+      "montant": "25 000"
+    },
+    {
+      "date": "05.08",
+      "mission": "AIBD → SALY · MISSION UE",
+      "montant": "25 000"
+    },
+    {
+      "date": "11.08",
+      "mission": "JOUR COURSE · DÉLÉGATION",
+      "montant": "75 000"
+    },
+    {
+      "date": "19.08",
+      "mission": "DKR → MBOUR · Mme SY",
+      "montant": "35 000"
+    }
   ],
   "benefits": [
-    { "n": "01", "title": "Convention sous 5 jours", "text": "Grille tarifaire annexée, valable douze mois." },
-    { "n": "02", "title": "Réservation sans compte", "text": "Vos collaborateurs appellent ou écrivent, nous rattachons." },
-    { "n": "03", "title": "Chauffeurs habilités", "text": "Casier vierge, discrétion contractuelle, anglophones sur demande." },
-    { "n": "04", "title": "Navettes récurrentes", "text": "Rotations quotidiennes hôtel–aéroport à tarif dégressif." }
+    {
+      "n": "01",
+      "title": "Convention sous 5 jours",
+      "text": "Grille tarifaire annexée, valable douze mois."
+    },
+    {
+      "n": "02",
+      "title": "Réservation sans compte",
+      "text": "Vos collaborateurs appellent ou écrivent, nous rattachons."
+    },
+    {
+      "n": "03",
+      "title": "Chauffeurs habilités",
+      "text": "Casier vierge, discrétion contractuelle, anglophones sur demande."
+    },
+    {
+      "n": "04",
+      "title": "Navettes récurrentes",
+      "text": "Rotations quotidiennes hôtel–aéroport à tarif dégressif."
+    }
   ],
   "closingCta": {
     "title": "Parlons volumes.",
     "subtitle": "RÉPONSE SOUS 24 H OUVRÉES · CONTACT@NAVETTEXPRESS.COM",
     "cta": "Demander une convention"
+  },
+  "conventionForm": {
+    "title": "Demander une convention",
+    "subtitle": "Quelques informations sur votre organisation, et un conseiller revient vers vous sous 24 h ouvrées avec une grille négociée.",
+    "companyName": "Raison sociale",
+    "companyNamePlaceholder": "Nom de votre société",
+    "companyType": "Type d'établissement",
+    "companyTypePlaceholder": "Sélectionner",
+    "contactName": "Nom du contact",
+    "contactNamePlaceholder": "Votre nom et prénom",
+    "contactEmail": "Email professionnel",
+    "contactEmailPlaceholder": "vous@societe.com",
+    "contactPhone": "Téléphone",
+    "monthlyVolume": "Volume mensuel estimé",
+    "monthlyVolumePlaceholder": "Sélectionner (facultatif)",
+    "message": "Précisions",
+    "messagePlaceholder": "Trajets récurrents, sites concernés, délais souhaités...",
+    "submit": "Envoyer ma demande",
+    "submitting": "Envoi en cours...",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "error": "Une erreur est survenue. Merci de réessayer ou de nous écrire à contact@navettexpress.com.",
+    "companyTypes": {
+      "hotel": "Hôtel",
+      "entreprise": "Entreprise",
+      "ong": "ONG",
+      "mission-diplomatique": "Mission diplomatique",
+      "autre": "Autre"
+    },
+    "volumes": {
+      "moins-10": "Moins de 10 courses / mois",
+      "10-30": "10 à 30 courses / mois",
+      "30-100": "30 à 100 courses / mois",
+      "plus-100": "Plus de 100 courses / mois"
+    },
+    "success": {
+      "title": "Demande envoyée",
+      "desc": "Nous avons bien reçu votre demande de convention. Un conseiller vous recontacte sous 24 h ouvrées, et un accusé de réception vient de partir vers votre boîte email."
+    }
   }
 }
