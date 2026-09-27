@@ -56,6 +56,12 @@ export interface EmailValidationResult {
   reason?: string;
 }
 
+// Format volontairement simple et strict : une partie locale sans espace ni
+// arobase, un domaine avec au moins un point et une extension alphabétique.
+// Suffisant pour écarter les saisies qui ne sont pas des adresses du tout —
+// la validité réelle est établie par l'activation par email.
+const EMAIL_FORMAT = /^[^\s@]+@[^\s@.]+(\.[^\s@.]+)+$/;
+
 function splitEmail(email: string): { local: string; domain: string } | null {
   const at = email.lastIndexOf('@');
   if (at === -1) return null;
@@ -63,6 +69,10 @@ function splitEmail(email: string): { local: string; domain: string } | null {
 }
 
 function checkStaticRules(normalizedEmail: string): EmailValidationResult {
+  if (!EMAIL_FORMAT.test(normalizedEmail)) {
+    return { allowed: false, reason: 'invalid_format' };
+  }
+
   const parts = splitEmail(normalizedEmail);
   if (!parts) return { allowed: false, reason: 'invalid_format' };
 
@@ -81,12 +91,12 @@ function checkStaticRules(normalizedEmail: string): EmailValidationResult {
 }
 
 /**
- * Vérifie une adresse email au moment de l'inscription. Ne lève jamais
- * d'exception : une erreur de lecture de la liste dynamique ne doit pas
- * bloquer l'inscription (fail-open sur cette partie, la liste statique
- * reste appliquée).
+ * Vérifie une adresse email saisie dans un formulaire public (inscription,
+ * demande de devis, demande de convention). Ne lève jamais d'exception : une
+ * erreur de lecture de la liste dynamique ne doit pas bloquer une soumission
+ * légitime (fail-open sur cette partie, la liste statique reste appliquée).
  */
-export async function validateEmailForRegistration(email: string): Promise<EmailValidationResult> {
+export async function validatePublicEmail(email: string): Promise<EmailValidationResult> {
   const normalized = email.toLowerCase().trim();
 
   const staticResult = checkStaticRules(normalized);
@@ -108,3 +118,6 @@ export async function validateEmailForRegistration(email: string): Promise<Email
 
   return { allowed: true };
 }
+
+/** Nom historique, conservé pour l'inscription (src/app/api/auth/register). */
+export const validateEmailForRegistration = validatePublicEmail;

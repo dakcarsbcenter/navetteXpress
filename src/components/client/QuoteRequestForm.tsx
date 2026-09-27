@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { useNotification } from '@/hooks/useNotification'
@@ -23,18 +23,10 @@ import {
   PaperPlaneTilt,
   Tag,
 } from '@phosphor-icons/react'
+import { QUOTE_SERVICES } from '@/lib/quote-services'
 import { getRouteNodeFromName } from '@/lib/route-nodes'
 import { matchPricingSegments } from '@/lib/pricing'
 import { trackQuoteSubmitted } from '@/lib/analytics'
-
-const availableServices = [
-  { id: 'transport', name: 'Transport standard', icon: '🚗', description: 'Service de transport classique' },
-  { id: 'tour', name: 'Tour & Excursion', icon: '🎯', description: 'Visites guidées et excursions' },
-  { id: 'airport', name: 'Transfert aéroport', icon: '✈️', description: 'Navette vers/depuis l\'aéroport' },
-  { id: 'vip', name: 'Transport VIP', icon: '👑', description: 'Service premium avec véhicule de luxe' },
-  { id: 'rental', name: 'Location avec chauffeur', icon: '🤵', description: 'Location longue durée avec chauffeur' },
-  { id: 'event', name: 'Transport événementiel', icon: '🎉', description: 'Transport pour événements spéciaux' }
-]
 
 const OTHER_LOCATION_VALUE = '__other__'
 
@@ -61,7 +53,13 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
   const router = useRouter()
   const { data: session } = useSession()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false)
   const { notifications, showSuccess, showError, removeNotification } = useNotification()
+
+  // Anti-bot : champ piège invisible et horodatage de montage du formulaire.
+  // Un robot remplit tous les champs et poste instantanément.
+  const [companyWebsite, setCompanyWebsite] = useState('')
+  const formStartedAtRef = useRef(Date.now())
 
   const user = session?.user as unknown as { id?: string; name?: string; email?: string; phone?: string } | undefined
 
@@ -70,7 +68,7 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
     customerEmail: '',
     customerPhone: '',
     numberOfPeople: '',
-    services: [] as string[],
+    service: '',
     duration: '',
     startDate: '',
     departure: '',
@@ -142,19 +140,12 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
     return matchPricingSegments(pricingSegments, departureValue, destinationValue)[0] || null
   })()
 
+  const serviceLabel = QUOTE_SERVICES.find(s => s.id === formData.service)?.label || formData.service
+
   const handleFormChange = (field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
-    }))
-  }
-
-  const handleServiceChange = (serviceId: string, checked: boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      services: checked
-        ? [...prev.services, serviceId]
-        : prev.services.filter(s => s !== serviceId)
     }))
   }
 
@@ -164,7 +155,7 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
       customerEmail: '',
       customerPhone: '',
       numberOfPeople: '',
-      services: [],
+      service: '',
       duration: '',
       startDate: '',
       departure: '',
@@ -180,7 +171,8 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
     if (onClose) {
       onClose()
     } else {
-      router.push('/client/dashboard?tab=quotes')
+      // Même raison que pour la sortie après envoi : /client/** est protégé.
+      router.push(user ? '/client/dashboard?tab=quotes' : '/')
     }
   }
 
@@ -188,7 +180,7 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
     e.preventDefault()
 
     if (!formData.customerName || !formData.customerEmail ||
-        !formData.numberOfPeople || formData.services.length === 0 ||
+        !formData.numberOfPeople || !formData.service ||
         !formData.duration || !departureValue || !destinationValue) {
       showError('Veuillez remplir tous les champs obligatoires', 'Formulaire incomplet')
       return
@@ -222,10 +214,10 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
         customerName: formData.customerName,
         customerEmail: formData.customerEmail,
         customerPhone: formData.customerPhone || null,
-        service: formData.services.join(', '),
+        service: formData.service,
         preferredDate: formData.startDate || null,
         message: `Demande de devis pour ${formData.numberOfPeople} personne(s).
-Services: ${formData.services.join(', ')}
+Service: ${serviceLabel}
 Durée: ${formData.duration} jour(s)
 Départ: ${departureValue}
 Destination: ${destinationValue}
@@ -233,12 +225,15 @@ Mode de paiement souhaité: ${formData.paymentMode || 'Non spécifié'}
 
 Description: ${formData.description}`,
         estimatedPrice: matchedPricingSegment ? matchedPricingSegment.berline : null,
-        status: 'pending'
+        // Champs anti-bot : honeypot invisible + horodatage de montage du
+        // formulaire (voir src/lib/security/publicFormGuard.ts)
+        companyWebsite,
+        formStartedAt: formStartedAtRef.current
       }
 
       console.log('Envoi de la demande de devis:', quoteData)
 
-      const response = await fetch('/api/quotes', {
+      const response = await fetchPublicApi('/api/quotes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(quoteData)
@@ -255,14 +250,18 @@ Description: ${formData.description}`,
 
         showSuccess('Votre demande de devis a été envoyée avec succès ! Nous vous répondrons dans les plus brefs délais.', 'Demande envoyée')
         resetForm()
+        formStartedAtRef.current = Date.now()
 
-        setTimeout(() => {
-          if (onClose) {
-            onClose()
-          } else {
-            router.push('/client/dashboard?tab=quotes')
-          }
-        }, 1500)
+        // Le dashboard client est derrière l'authentification : y envoyer un
+        // visiteur anonyme l'amènerait sur l'écran de connexion juste après
+        // avoir envoyé sa demande. On lui affiche un état de succès à la place.
+        if (onClose) {
+          setTimeout(() => onClose(), 1500)
+        } else if (user) {
+          setTimeout(() => router.push('/client/dashboard?tab=quotes'), 1500)
+        } else {
+          setIsSubmitted(true)
+        }
       } else {
         const errorData = await response.text()
         console.error('Erreur API response:', errorData)
@@ -282,6 +281,42 @@ Description: ${formData.description}`,
   const inputReadOnly =
     'bg-[#F7F3EC] cursor-not-allowed text-[#6E6A63]'
 
+  if (isSubmitted) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-16 font-archivo">
+        <div className="bg-white border border-border rounded p-8 sm:p-10 text-center">
+          <span className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[#F7F3EC] text-accent mb-5">
+            <SealCheck size={28} weight="fill" />
+          </span>
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">
+            Demande envoyée
+          </h1>
+          <p className="mt-3 text-[#3d3a35] leading-relaxed max-w-md mx-auto">
+            Nous avons bien reçu votre demande de devis. Un conseiller vous répond sous 24 h ouvrées,
+            et vous recevez dès maintenant un accusé de réception par email.
+          </p>
+          <div className="mt-7 flex flex-col sm:flex-row gap-3 justify-center">
+            <button
+              type="button"
+              onClick={() => { setIsSubmitted(false); formStartedAtRef.current = Date.now() }}
+              className="inline-flex items-center justify-center px-6 py-3 rounded border border-[#12100E] bg-white text-[#12100E] text-sm font-medium hover:bg-[#12100E] hover:text-white transition-colors min-h-[44px]"
+            >
+              Envoyer une autre demande
+            </button>
+            <button
+              type="button"
+              onClick={() => router.push('/')}
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded bg-accent hover:bg-accent-hover text-white text-sm font-semibold transition-colors min-h-[44px]"
+            >
+              Retour à l&apos;accueil
+              <ArrowRight size={16} weight="bold" />
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-6 font-archivo">
       <NotificationCenter notifications={notifications} onRemove={removeNotification} />
@@ -297,6 +332,21 @@ Description: ${formData.description}`,
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+
+        {/* Honeypot : invisible pour un visiteur, rempli par les robots qui
+            complètent tous les champs du DOM (voir publicFormGuard.ts) */}
+        <div aria-hidden="true" className="absolute w-px h-px -left-[9999px] overflow-hidden">
+          <label htmlFor="companyWebsite">Site web de votre société</label>
+          <input
+            id="companyWebsite"
+            name="companyWebsite"
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+            value={companyWebsite}
+            onChange={(e) => setCompanyWebsite(e.target.value)}
+          />
+        </div>
 
         {/* ── Section 1 : Vos informations ── */}
         <section className="bg-white rounded border border-border overflow-hidden">
@@ -404,65 +454,36 @@ Description: ${formData.description}`,
           </div>
         </section>
 
-        {/* ── Section 2 : Services souhaités ── */}
+        {/* ── Section 2 : Service souhaité ── */}
         <section className="bg-white rounded border border-border overflow-hidden">
           <div className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b border-border">
             <span className="flex items-center justify-center w-8 h-8 rounded bg-[#F7F3EC] text-accent">
               <SealCheck size={18} weight="bold" />
             </span>
             <h2 className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase">
-              Services souhaités <span className="text-red-500">*</span>
+              Service souhaité <span className="text-red-500">*</span>
             </h2>
           </div>
 
           <div className="p-4 sm:p-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {availableServices.map((service) => {
-                const isSelected = formData.services.includes(service.id)
-                return (
-                  <label
-                    key={service.id}
-                    className={`relative flex flex-col gap-1 p-4 rounded border cursor-pointer transition-colors ${
-                      isSelected
-                        ? 'border-accent bg-[#F7F3EC]'
-                        : 'border-border bg-white hover:border-accent/50'
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={isSelected}
-                      onChange={(e) => handleServiceChange(service.id, e.target.checked)}
-                      className="sr-only"
-                    />
-                    {/* Custom check badge */}
-                    <span className={`absolute top-3 right-3 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
-                      isSelected
-                        ? 'bg-accent border-accent'
-                        : 'border-[#c9c3b8]'
-                    }`}>
-                      {isSelected && (
-                        <svg viewBox="0 0 10 8" className="w-3 h-3 fill-white">
-                          <path d="M1 4l2.5 2.5L9 1" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      )}
-                    </span>
-
-                    <span className="text-2xl leading-none">{service.icon}</span>
-                    <span className={`text-sm font-semibold mt-1 ${isSelected ? 'text-accent' : 'text-foreground'}`}>
-                      {service.name}
-                    </span>
-                    <span className="text-xs text-[#6E6A63] leading-snug">
-                      {service.description}
-                    </span>
-                  </label>
-                )
-              })}
-            </div>
-            {formData.services.length === 0 && (
-              <p className="mt-3 text-xs text-[#6E6A63]">
-                Sélectionnez au moins un service pour continuer.
-              </p>
-            )}
+            <label htmlFor="quote-service" className="block text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase mb-2">
+              Type de service <span className="text-red-500">*</span>
+            </label>
+            <select
+              id="quote-service"
+              required
+              value={formData.service}
+              onChange={(e) => handleFormChange('service', e.target.value)}
+              className={inputBase}
+            >
+              <option value="">Sélectionner un service</option>
+              {QUOTE_SERVICES.map((service) => (
+                <option key={service.id} value={service.id}>{service.label}</option>
+              ))}
+            </select>
+            <p className="mt-2 text-xs text-[#6E6A63]">
+              Besoin de plusieurs prestations ? Précisez-le dans la description en bas de page.
+            </p>
           </div>
         </section>
 

@@ -51,15 +51,6 @@
       "another": "Envoyer un autre message"
     }
   },
-  "services": [
-    "Transfert Aéroport AIBD Dakar",
-    "Transfert Aéroport Thies",
-    "Transfert Aéroport Mbour",
-    "Chauffeur Privé Dakar",
-    "Transport Privé Sénégal",
-    "Service VIP",
-    "Autre / Devis personnalisé"
-  ],
   "brandPromise": {
     "prestige": "Dakar Prestige",
     "security": "Sécurité Garantie",

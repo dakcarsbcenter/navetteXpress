@@ -16,11 +16,13 @@ import {
     AirplaneTilt,
     Binoculars,
     Crown,
-    Confetti
+    Confetti,
+    Buildings
 } from "@phosphor-icons/react"
 import { useNotification } from "@/hooks/useNotification"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { StatusBadge } from "@/components/shared/StatusBadge"
+import { getQuoteServiceLabel } from "@/lib/quote-services"
 
 interface Quote {
     id: number
@@ -108,7 +110,8 @@ export function QuoteDetailModal({ isOpen, onClose, quote, onUpdate }: QuoteDeta
             airport: <AirplaneTilt weight="fill" />,
             vip: <Crown weight="fill" />,
             rental: <User weight="fill" />,
-            event: <Confetti weight="fill" />
+            event: <Confetti weight="fill" />,
+            convention: <Buildings weight="fill" />
         }
         return icons[service] || <CarProfile weight="fill" />
     }
@@ -185,7 +188,7 @@ export function QuoteDetailModal({ isOpen, onClose, quote, onUpdate }: QuoteDeta
                                 <div style={{ backgroundColor: '#F7F3EC', border: '1px solid #E2DACD', borderRadius: '3px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                                     <div className="flex justify-between">
                                         <span style={{ fontSize: '12px', color: '#6E6A63' }}>Service</span>
-                                        <span style={{ fontSize: '12px', fontWeight: 600, color: '#12100E' }}>{quote.service}</span>
+                                        <span style={{ fontSize: '12px', fontWeight: 600, color: '#12100E' }}>{getQuoteServiceLabel(quote.service)}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span style={{ fontSize: '12px', color: '#6E6A63' }}>Date souhaitée</span>

@@ -6,7 +6,9 @@ import { Footer } from "@/components/footer";
 import { CorridorStrip } from "@/components/marketing/CorridorStrip";
 import { Button } from "@/components/ui/Button";
 import InteractiveMap from "@/components/ui/InteractiveMap";
-import { useState } from "react";
+import { QUOTE_SERVICES } from "@/lib/quote-services";
+import { fetchPublicApi } from "@/lib/apiClient";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PaperPlaneTilt, Phone, EnvelopeSimple, MapPin, CheckCircle, CaretRight, Globe, ShieldCheck, Star } from "@phosphor-icons/react";
 
@@ -25,12 +27,17 @@ export default function ContactClient() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
+  // Anti-bot : champ piège invisible + horodatage de montage du formulaire
+  // (voir src/lib/security/publicFormGuard.ts)
+  const [companyWebsite, setCompanyWebsite] = useState('');
+  const formStartedAtRef = useRef(Date.now());
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('/api/quotes', {
+      const response = await fetchPublicApi('/api/quotes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -38,10 +45,12 @@ export default function ContactClient() {
         body: JSON.stringify({
           customerName: formData.name,
           customerEmail: formData.email,
-          customerPhone: formData.phone,
+          customerPhone: formData.phone || null,
           service: formData.service,
-          preferredDate: formData.date,
-          message: formData.message
+          preferredDate: formData.date || null,
+          message: formData.message,
+          companyWebsite,
+          formStartedAt: formStartedAtRef.current
         }),
       });
 
@@ -49,6 +58,7 @@ export default function ContactClient() {
 
       if (result.success) {
         setSubmitStatus('success');
+        formStartedAtRef.current = Date.now();
         setFormData({
           name: '',
           email: '',
@@ -98,8 +108,6 @@ export default function ContactClient() {
       link: "https://maps.google.com"
     }
   ];
-
-  const services = t.raw("services") as string[];
 
   return (
     <div className="min-h-screen bg-background">
@@ -229,6 +237,19 @@ export default function ContactClient() {
                         </motion.div>
                       ) : (
                         <form onSubmit={handleSubmit} className="space-y-5">
+                          {/* Honeypot : invisible pour un visiteur, rempli par les robots */}
+                          <div aria-hidden="true" className="absolute w-px h-px -left-[9999px] overflow-hidden">
+                            <label htmlFor="contact-company-website">Site web de votre société</label>
+                            <input
+                              id="contact-company-website"
+                              name="companyWebsite"
+                              type="text"
+                              tabIndex={-1}
+                              autoComplete="off"
+                              value={companyWebsite}
+                              onChange={(e) => setCompanyWebsite(e.target.value)}
+                            />
+                          </div>
                           <div className="grid md:grid-cols-2 gap-5">
                             <div className="flex flex-col gap-2">
                               <label className={`${monoLabel} text-[10px] uppercase tracking-[0.14em] text-text-muted`}>{t("form.nameLabel")}</label>
@@ -278,8 +299,8 @@ export default function ContactClient() {
                                 className="w-full bg-background border border-[#d8d2c7] rounded px-4 py-3 text-foreground text-sm outline-none focus:border-accent transition-colors appearance-none cursor-pointer"
                               >
                                 <option value="">{t("form.servicePlaceholder")}</option>
-                                {services.map((s) => (
-                                  <option key={s} value={s}>{s}</option>
+                                {QUOTE_SERVICES.map((s) => (
+                                  <option key={s.id} value={s.id}>{s.label}</option>
                                 ))}
                               </select>
                             </div>

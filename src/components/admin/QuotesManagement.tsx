@@ -16,6 +16,7 @@ import {
   Crown,
   User,
   Confetti,
+  Buildings,
   Download,
   CheckCircle,
 } from "@phosphor-icons/react"
@@ -24,6 +25,7 @@ import { BulkDeleteModal } from "@/components/ui/BulkDeleteModal"
 import { useNotification } from "@/hooks/useNotification"
 import { QuoteDetailModal } from "@/components/admin/QuoteDetailModal"
 import { StatusBadge } from "@/components/shared/StatusBadge"
+import { getQuoteServiceLabel } from "@/lib/quote-services"
 
 interface Quote {
   id: number
@@ -110,7 +112,8 @@ export function QuotesManagement() {
       airport: <AirplaneTilt weight="fill" />,
       vip: <Crown weight="fill" />,
       rental: <User weight="fill" />,
-      event: <Confetti weight="fill" />
+      event: <Confetti weight="fill" />,
+      convention: <Buildings weight="fill" />
     }
     return icons[service] || <CarProfile weight="fill" />
   }
@@ -186,7 +189,7 @@ export function QuotesManagement() {
         const row = [
           quote.customerName,
           quote.customerEmail,
-          quote.service,
+          getQuoteServiceLabel(quote.service),
           quote.status,
           quote.preferredDate ? new Date(quote.preferredDate).toLocaleDateString('fr-FR') : '-'
         ]
@@ -371,7 +374,7 @@ export function QuotesManagement() {
 
                         <div style={{ marginBottom: '12px' }}>
                           <h4 style={{ margin: '0 0 2px', fontSize: '13.5px', fontWeight: 600, color: '#12100E' }}>{quote.customerName}</h4>
-                          <p style={{ margin: 0, fontSize: '11.5px', color: '#6E6A63' }}>{quote.service}</p>
+                          <p style={{ margin: 0, fontSize: '11.5px', color: '#6E6A63' }}>{getQuoteServiceLabel(quote.service)}</p>
                         </div>
 
                         <div className="flex items-center justify-between" style={{ fontSize: '11.5px', paddingTop: '10px', borderTop: '1px solid #F0EAE0' }}>
@@ -478,7 +481,7 @@ export function QuotesManagement() {
                           <div style={{ width: '28px', height: '28px', borderRadius: '3px', backgroundColor: '#F7F3EC', border: '1px solid #E2DACD', display: 'grid', placeItems: 'center' }}>
                             {getServiceIcon(quote.service)}
                           </div>
-                          <span style={{ fontSize: '13px' }}>{quote.service}</span>
+                          <span style={{ fontSize: '13px' }}>{getQuoteServiceLabel(quote.service)}</span>
                         </div>
                       </td>
                       <td style={{ padding: '12px 16px' }}>
