@@ -12,7 +12,8 @@
     "subtitle": "Nos chauffeurs font ce trajet tous les jours. Ils savent à quelle heure le péage se charge, où l'on attend à AIBD, et quelle porte de Saly ouvre la nuit.",
     "bookCta": "Réserver un trajet",
     "ratesCta": "Tarifs par segment",
-    "imageAlt": "Chauffeur Navette Xpress sur le corridor Dakar — AIBD — Petite Côte"
+    "imageAlt": "Chauffeur Navette Xpress sur le corridor Dakar — AIBD — Petite Côte",
+    "quoteCta": "Demander un devis"
   },
   "stats": {
     "trips": "VOYAGES",
@@ -87,7 +88,8 @@
   "finalCta": {
     "title": "Un trajet à préparer ?",
     "availability": "Disponible 24h/24, 7j/7",
-    "cta": "Réserver maintenant"
+    "cta": "Réserver maintenant",
+    "quoteCta": "Demander un devis"
   },
   "faqs": [
     {

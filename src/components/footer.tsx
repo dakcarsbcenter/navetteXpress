@@ -21,6 +21,7 @@ export function Footer() {
         { label: t("company.companies"), href: "/entreprises" },
         { label: t("company.diaspora"), href: "/diaspora" },
         { label: t("company.becomePartner"), href: "/devenir-partenaire" },
+        { label: t("company.requestQuote"), href: "/quote-request" },
     ];
 
     const socialLinks = [

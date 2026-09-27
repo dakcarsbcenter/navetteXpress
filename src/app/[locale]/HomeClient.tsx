@@ -128,6 +128,9 @@ export default async function HomeClient({ faqs }: HomeClientProps) {
               <ButtonLink href="/tarifs" variant="outline" size="lg">
                 {t("hero.ratesCta")}
               </ButtonLink>
+              <ButtonLink href="/quote-request" variant="ghost" size="lg">
+                {t("hero.quoteCta")}
+              </ButtonLink>
             </div>
 
             <div className="flex items-center gap-8 pt-6 flex-wrap">
@@ -384,13 +387,21 @@ export default async function HomeClient({ faqs }: HomeClientProps) {
                 {t("finalCta.availability")}
               </div>
             </div>
-            <Link
-              href="/reservation"
-              className="inline-flex items-center gap-2 bg-background text-foreground px-7 py-3.5 rounded font-semibold text-base hover:bg-background/90 transition-colors shrink-0"
-            >
-              {t("finalCta.cta")}
-              <ArrowRight size={18} weight="bold" />
-            </Link>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+              <Link
+                href="/reservation"
+                className="inline-flex items-center justify-center gap-2 bg-background text-foreground px-7 py-3.5 rounded font-semibold text-base hover:bg-background/90 transition-colors"
+              >
+                {t("finalCta.cta")}
+                <ArrowRight size={18} weight="bold" />
+              </Link>
+              <Link
+                href="/quote-request"
+                className="inline-flex items-center justify-center gap-2 border border-background/60 text-background px-7 py-3.5 rounded font-semibold text-base hover:bg-background/10 transition-colors"
+              >
+                {t("finalCta.quoteCta")}
+              </Link>
+            </div>
           </div>
         </section>
       </main>

@@ -12,7 +12,8 @@
     "subtitle": "Nuestros chóferes hacen este trayecto todos los días. Saben a qué hora se satura el peaje, dónde esperar en AIBD y qué puerta de Saly abre de noche.",
     "bookCta": "Reservar un trayecto",
     "ratesCta": "Tarifas por segmento",
-    "imageAlt": "Chófer de Navette Xpress en el corredor Dakar — AIBD — Petite Côte"
+    "imageAlt": "Chófer de Navette Xpress en el corredor Dakar — AIBD — Petite Côte",
+    "quoteCta": "Solicitar un presupuesto"
   },
   "stats": {
     "trips": "VIAJES",
@@ -87,7 +88,8 @@
   "finalCta": {
     "title": "¿Un trayecto que preparar?",
     "availability": "Disponible 24h/24, 7 días a la semana",
-    "cta": "Reservar ahora"
+    "cta": "Reservar ahora",
+    "quoteCta": "Solicitar presupuesto"
   },
   "faqs": [
     {

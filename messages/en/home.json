@@ -12,7 +12,8 @@
     "subtitle": "Our drivers make this trip every day. They know what time the toll gets busy, where to wait at AIBD, and which gate in Saly opens at night.",
     "bookCta": "Book a trip",
     "ratesCta": "Rates by segment",
-    "imageAlt": "Navette Xpress driver on the Dakar — AIBD — Petite Côte corridor"
+    "imageAlt": "Navette Xpress driver on the Dakar — AIBD — Petite Côte corridor",
+    "quoteCta": "Request a quote"
   },
   "stats": {
     "trips": "TRIPS",
@@ -87,7 +88,8 @@
   "finalCta": {
     "title": "Got a trip coming up?",
     "availability": "Available 24/7",
-    "cta": "Book now"
+    "cta": "Book now",
+    "quoteCta": "Request a quote"
   },
   "faqs": [
     {
