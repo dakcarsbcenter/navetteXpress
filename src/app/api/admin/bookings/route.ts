@@ -12,6 +12,7 @@ import { requireBookingsRead, requireBookingsCreate } from '@/utils/admin-permis
 import { assignBookingToDriver } from '@/lib/booking-assignment';
 import { sendWithRetry } from '@/lib/notification-queue';
 import { normalizePhoneForStorage } from '@/lib/phone';
+import { emptyToUndefined, optionalCustomerEmail } from '@/lib/validation';
 
 // Créer des alias pour les jointures multiples
 const driverUsers = alias(users, 'driver_users');
@@ -79,15 +80,10 @@ export async function GET() {
  *    client sont sautés côté notifications ;
  *  - aucune alerte email n'est envoyée à l'admin : c'est lui qui saisit la demande.
  */
-const emptyToUndefined = (v: unknown) => (typeof v === 'string' && v.trim() === '' ? undefined : v);
-
 const BookingCreateSchema = z.object({
   customerName: z.string().trim().min(2, 'Nom du client trop court').max(120),
   // Optionnel : un client analphabète n'a souvent pas d'adresse email.
-  customerEmail: z.preprocess(
-    emptyToUndefined,
-    z.string().trim().email("Format d'email invalide").max(255).optional()
-  ),
+  customerEmail: optionalCustomerEmail,
   customerPhone: z.string().trim().min(6, 'Téléphone trop court').max(30),
   pickupAddress: z.string().trim().min(2, 'Lieu de départ requis').max(255),
   dropoffAddress: z.string().trim().min(2, 'Destination requise').max(255),
@@ -115,6 +111,8 @@ const BookingCreateSchema = z.object({
   userId: z.preprocess(emptyToUndefined, z.string().trim().max(64).optional()),
   /** Assignation immédiate du chauffeur, dans le même geste que la création. */
   driverId: z.preprocess(emptyToUndefined, z.string().trim().max(64).optional()),
+  /** Véhicule affecté dès la saisie : évite un second passage par la fiche. */
+  vehicleId: z.union([z.number().int(), z.null()]).optional(),
   /** Accusé de réception WhatsApp au client (inutile pour un client qui ne lit pas). */
   notifyClient: z.boolean().optional(),
 });
@@ -210,7 +208,7 @@ export async function POST(request: NextRequest) {
         luggage,
         duration: (body.duration ?? 2).toString(),
         driverId: null,
-        vehicleId: null,
+        vehicleId: body.vehicleId ?? null,
         requestedVehicleType,
         price: (body.price ?? 0).toString(),
         passengerName: body.passengerName ?? null,
@@ -229,13 +227,18 @@ export async function POST(request: NextRequest) {
     // (chauffeur indisponible) ne doit pas perdre la demande : elle reste en
     // attente et l'admin est averti pour assigner quelqu'un d'autre.
     let assignmentWarning: string | undefined;
+    let availabilityWarning: string | undefined;
     let assignedDriverName: string | undefined;
 
     if (body.driverId) {
-      const assignment = await assignBookingToDriver(createdBooking.id, body.driverId);
+      // `force` : la décision de l'admin l'emporte sur le planning déclaré du
+      // chauffeur (le plus souvent vide). Un chauffeur inexistant ou inactif reste
+      // un échec, lui.
+      const assignment = await assignBookingToDriver(createdBooking.id, body.driverId, { force: true });
       if (assignment.success) {
         createdBooking = assignment.booking;
         assignedDriverName = assignment.driverName;
+        availabilityWarning = assignment.availabilityWarning;
       } else {
         assignmentWarning = assignment.error;
         console.warn(`⚠️ Réservation #${createdBooking.id} créée mais non assignée: ${assignment.error}`);
@@ -253,6 +256,7 @@ export async function POST(request: NextRequest) {
       data: createdBooking,
       ...(assignedDriverName ? { assignedDriverName } : {}),
       ...(assignmentWarning ? { assignmentWarning } : {}),
+      ...(availabilityWarning ? { availabilityWarning } : {}),
       message: assignedDriverName
         ? `Réservation #${createdBooking.id} créée et assignée à ${assignedDriverName}.`
         : `Réservation #${createdBooking.id} créée.`,

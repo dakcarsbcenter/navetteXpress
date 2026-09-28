@@ -45,3 +45,57 @@ export function getQuoteServiceLabel(service: string | null | undefined): string
   if (!service) return '—';
   return LABELS[service] ?? service;
 }
+
+/** Champs métier d'une demande de devis, stockés dans la colonne `message`. */
+export interface QuoteMessageDetails {
+  service: string;
+  numberOfPeople: number | string;
+  duration: number | string;
+  departure: string;
+  destination: string;
+  paymentMode?: string;
+  description?: string;
+  /** Ligne de traçabilité ajoutée quand c'est l'admin qui saisit pour le client. */
+  enteredBy?: string;
+}
+
+/**
+ * Compose la colonne `quotes.message`.
+ *
+ * Le format n'est pas décoratif : l'acceptation d'un devis par le client
+ * reconstruit une réservation en relisant ces lignes à la regex
+ * (`Départ:` / `Destination:` / `N personne`, voir
+ * src/app/api/quotes/client/actions/route.ts). Le formulaire public et la
+ * saisie admin doivent donc écrire exactement la même chose — d'où ce
+ * constructeur unique.
+ */
+export function buildQuoteMessage(details: QuoteMessageDetails): string {
+  const lines = [
+    `Demande de devis pour ${details.numberOfPeople} personne(s).`,
+    `Service: ${getQuoteServiceLabel(details.service)}`,
+    `Durée: ${details.duration} jour(s)`,
+    `Départ: ${details.departure}`,
+    `Destination: ${details.destination}`,
+    `Mode de paiement souhaité: ${details.paymentMode || 'Non spécifié'}`,
+    '',
+    `Description: ${details.description || ''}`,
+  ];
+  if (details.enteredBy) {
+    lines.push('', `Saisie: par ${details.enteredBy} pour le compte du client (téléphone)`);
+  }
+  return lines.join('\n');
+}
+
+/**
+ * Relit les champs métier d'un `message` composé par buildQuoteMessage.
+ * Tolérant : les devis antérieurs à l'unification n'ont pas toutes les lignes.
+ */
+export function parseQuoteMessage(message: string | null | undefined) {
+  const text = message || '';
+  const pick = (re: RegExp) => text.match(re)?.[1]?.trim() || null;
+  return {
+    departure: pick(/Départ:\s*(.+?)(?:\n|$)/i),
+    destination: pick(/Destination:\s*(.+?)(?:\n|$)/i),
+    numberOfPeople: pick(/(\d+)\s*personne/i),
+  };
+}

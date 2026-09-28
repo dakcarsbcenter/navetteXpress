@@ -16,12 +16,24 @@ import { sendWithRetry } from '@/lib/notification-queue';
 type Booking = typeof bookingsTable.$inferSelect;
 
 export type AssignBookingResult =
-  | { success: true; booking: Booking; driverName: string }
+  | { success: true; booking: Booking; driverName: string; availabilityWarning?: string }
   | { success: false; error: string; status: number; code?: 'DRIVER_NOT_AVAILABLE' };
+
+export interface AssignBookingOptions {
+  /**
+   * L'assignation est appliquée même si le chauffeur n'est pas déclaré disponible.
+   * Réservé à la saisie par l'admin : la plupart des chauffeurs n'ont jamais rempli
+   * leur planning, si bien que le contrôle refusait toute assignation au moment de
+   * la création et forçait l'admin à repasser par la fiche — laquelle, elle, ne
+   * vérifie rien. L'indisponibilité est alors remontée en avertissement.
+   */
+  force?: boolean;
+}
 
 export async function assignBookingToDriver(
   bookingId: number,
-  driverId: string
+  driverId: string,
+  options: AssignBookingOptions = {}
 ): Promise<AssignBookingResult> {
   // Vérifier que le chauffeur existe et est actif
   const driverRows = await db
@@ -51,14 +63,21 @@ export async function assignBookingToDriver(
   console.log(`🔍 Vérification de la disponibilité du chauffeur ${assignedDriver.name}...`);
   const availabilityCheck = await checkDriverAvailability(driverId, booking.scheduledDateTime);
 
+  let availabilityWarning: string | undefined;
+
   if (!availabilityCheck.available) {
-    console.log(`❌ Chauffeur non disponible: ${availabilityCheck.message}`);
-    return {
-      success: false,
-      error: availabilityCheck.message || "Le chauffeur n'est pas disponible à cette date et heure",
-      code: 'DRIVER_NOT_AVAILABLE',
-      status: 409,
-    };
+    const reason = availabilityCheck.message || "Le chauffeur n'est pas disponible à cette date et heure";
+    if (!options.force) {
+      console.log(`❌ Chauffeur non disponible: ${reason}`);
+      return {
+        success: false,
+        error: reason,
+        code: 'DRIVER_NOT_AVAILABLE',
+        status: 409,
+      };
+    }
+    availabilityWarning = reason;
+    console.warn(`⚠️ Assignation forcée par l'admin malgré l'indisponibilité: ${reason}`);
   }
 
   const updatedBooking = await db
@@ -109,5 +128,5 @@ export async function assignBookingToDriver(
     },
   ]);
 
-  return { success: true, booking: assignedBooking, driverName: assignedDriver.name };
+  return { success: true, booking: assignedBooking, driverName: assignedDriver.name, availabilityWarning };
 }

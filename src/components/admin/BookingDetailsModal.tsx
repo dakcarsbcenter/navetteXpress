@@ -261,7 +261,7 @@ export function BookingDetailsModal({
           // Champs métier corrigeables : indispensables pour les réservations créées
           // par des visiteurs non connectés, qui ne peuvent pas rectifier leur saisie.
           customerName: editedBooking.customerName,
-          customerEmail: editedBooking.customerEmail,
+          customerEmail: editedBooking.customerEmail.trim(),
           customerPhone: editedBooking.customerPhone,
           pickupAddress: editedBooking.pickupAddress,
           dropoffAddress: editedBooking.dropoffAddress,
@@ -435,13 +435,19 @@ export function BookingDetailsModal({
                         />
                       </div>
                       <div>
-                        <label style={fieldLabel}>Email</label>
+                        <label style={fieldLabel}>Email (optionnel)</label>
                         <input
                           type="email"
                           value={editedBooking.customerEmail}
                           onChange={(e) => patch({ customerEmail: e.target.value })}
+                          placeholder="Laisser vide si le client n'en a pas"
                           style={selectStyle}
                         />
+                        {!editedBooking.customerEmail.trim() && (
+                          <p style={{ margin: '6px 0 0', fontSize: '11px', color: '#6E6A63' }}>
+                            Sans email, le client ne recevra que les messages WhatsApp.
+                          </p>
+                        )}
                       </div>
                       <div>
                         <label style={fieldLabel}>Téléphone</label>

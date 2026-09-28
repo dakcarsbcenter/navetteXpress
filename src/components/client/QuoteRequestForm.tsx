@@ -23,7 +23,7 @@ import {
   PaperPlaneTilt,
   Tag,
 } from '@phosphor-icons/react'
-import { QUOTE_SERVICES } from '@/lib/quote-services'
+import { QUOTE_SERVICES, buildQuoteMessage } from '@/lib/quote-services'
 import { getRouteNodeFromName } from '@/lib/route-nodes'
 import { matchPricingSegments } from '@/lib/pricing'
 import { trackQuoteSubmitted } from '@/lib/analytics'
@@ -140,7 +140,6 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
     return matchPricingSegments(pricingSegments, departureValue, destinationValue)[0] || null
   })()
 
-  const serviceLabel = QUOTE_SERVICES.find(s => s.id === formData.service)?.label || formData.service
 
   const handleFormChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -216,14 +215,17 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
         customerPhone: formData.customerPhone || null,
         service: formData.service,
         preferredDate: formData.startDate || null,
-        message: `Demande de devis pour ${formData.numberOfPeople} personne(s).
-Service: ${serviceLabel}
-Durée: ${formData.duration} jour(s)
-Départ: ${departureValue}
-Destination: ${destinationValue}
-Mode de paiement souhaité: ${formData.paymentMode || 'Non spécifié'}
-
-Description: ${formData.description}`,
+        // Format partagé avec la saisie admin (src/lib/quote-services.ts) : il est
+        // relu à la regex quand le client accepte le devis.
+        message: buildQuoteMessage({
+          service: formData.service,
+          numberOfPeople: formData.numberOfPeople,
+          duration: formData.duration,
+          departure: departureValue,
+          destination: destinationValue,
+          paymentMode: formData.paymentMode,
+          description: formData.description,
+        }),
         estimatedPrice: matchedPricingSegment ? matchedPricingSegment.berline : null,
         // Champs anti-bot : honeypot invisible + horodatage de montage du
         // formulaire (voir src/lib/security/publicFormGuard.ts)

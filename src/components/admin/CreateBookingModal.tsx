@@ -22,6 +22,15 @@ interface Driver {
   phone?: string
 }
 
+interface Vehicle {
+  id: string
+  make: string
+  model: string
+  plateNumber: string
+  // Chauffeur rattaché au véhicule (vehicles.driver_id), renvoyé par /api/vehicles.
+  driverId?: string | null
+}
+
 interface CustomerAccount {
   id: string
   name: string
@@ -47,8 +56,14 @@ interface CreateBookingModalProps {
    * Appelé après création réussie. `status` permet à la liste d'afficher le filtre
    * où la nouvelle demande se trouve (« assignées » si le chauffeur a été retenu).
    */
-  onCreated: (message: string, status: string, warning?: string) => void
+  onCreated: (
+    message: string,
+    status: string,
+    warning?: string,
+    availabilityWarning?: string,
+  ) => void
   drivers: Driver[]
+  vehicles: Vehicle[]
 }
 
 const panelStyle: React.CSSProperties = { backgroundColor: '#F7F3EC', border: '1px solid #E2DACD', borderRadius: '4px', padding: '18px' }
@@ -86,6 +101,7 @@ const emptyForm = {
   airline: '',
   price: '',
   driverId: '',
+  vehicleId: null as number | null,
   notifyClient: false,
 }
 
@@ -95,7 +111,7 @@ const emptyForm = {
  * sans smartphone). L'email est optionnel et le chauffeur peut être assigné
  * directement, sans repasser par la file d'assignation du tableau de bord.
  */
-export function CreateBookingModal({ isOpen, onClose, onCreated, drivers }: CreateBookingModalProps) {
+export function CreateBookingModal({ isOpen, onClose, onCreated, drivers, vehicles }: CreateBookingModalProps) {
   const [form, setForm] = useState(emptyForm)
   const [locations, setLocations] = useState<LocationOption[]>([])
   const [customers, setCustomers] = useState<CustomerAccount[]>([])
@@ -194,6 +210,14 @@ export function CreateBookingModal({ isOpen, onClose, onCreated, drivers }: Crea
 
   const attachedCustomer = customers.find((c) => c.id === form.userId)
 
+  // Chaque chauffeur roule avec son véhicule (vehicles.driver_id) : choisir l'un
+  // pré-remplit l'autre, comme dans la fiche de réservation. /api/vehicles ne
+  // renvoyant que les véhicules actifs, un chauffeur dont la voiture est
+  // désactivée ne pré-remplit rien.
+  const vehicleForDriver = (driverId: string) =>
+    driverId ? vehicles.find((v) => v.driverId === driverId) ?? null : null
+  const driverHasNoVehicle = Boolean(form.driverId) && !vehicleForDriver(form.driverId)
+
   if (!isOpen) return null
 
   const validate = (): string | null => {
@@ -245,6 +269,7 @@ export function CreateBookingModal({ isOpen, onClose, onCreated, drivers }: Crea
           airline: form.airline.trim(),
           price: priceValue !== null && Number.isFinite(priceValue) ? priceValue : null,
           driverId: form.driverId || undefined,
+          vehicleId: form.vehicleId,
           notifyClient: form.notifyClient,
         }),
       })
@@ -252,7 +277,12 @@ export function CreateBookingModal({ isOpen, onClose, onCreated, drivers }: Crea
       const json = await response.json().catch(() => null)
 
       if (response.ok && json?.success) {
-        onCreated(json.message || 'Réservation créée', json.data?.status || 'pending', json.assignmentWarning)
+        onCreated(
+          json.message || 'Réservation créée',
+          json.data?.status || 'pending',
+          json.assignmentWarning,
+          json.availabilityWarning,
+        )
         onClose()
         return
       }
@@ -721,7 +751,11 @@ export function CreateBookingModal({ isOpen, onClose, onCreated, drivers }: Crea
                     <label style={fieldLabel}>Assigner dès la création (optionnel)</label>
                     <select
                       value={form.driverId}
-                      onChange={(e) => patch({ driverId: e.target.value })}
+                      onChange={(e) => {
+                        const driverId = e.target.value
+                        const vehicle = vehicleForDriver(driverId)
+                        patch({ driverId, vehicleId: vehicle ? Number(vehicle.id) : null })
+                      }}
                       style={selectStyle}
                     >
                       <option value="">Laisser dans la file d&apos;assignation</option>
@@ -730,9 +764,39 @@ export function CreateBookingModal({ isOpen, onClose, onCreated, drivers }: Crea
                       ))}
                     </select>
                     <p style={{ margin: '6px 0 0', fontSize: '11px', color: '#6E6A63' }}>
-                      La disponibilité du chauffeur est vérifiée à l&apos;enregistrement. S&apos;il n&apos;est pas libre,
-                      la demande est tout de même créée et reste en attente d&apos;assignation.
+                      La demande part directement en « assignée » et le chauffeur est prévenu.
+                      S&apos;il n&apos;a pas déclaré ce créneau, un simple avertissement s&apos;affiche.
                     </p>
+                  </div>
+
+                  <div>
+                    <label style={fieldLabel}>Véhicule assigné (optionnel)</label>
+                    <select
+                      value={form.vehicleId ?? ''}
+                      onChange={(e) => {
+                        const vehicleId = e.target.value ? Number(e.target.value) : null
+                        const vehicle = vehicles.find((v) => Number(v.id) === vehicleId)
+                        patch({
+                          vehicleId,
+                          // Le véhicule désigne son chauffeur : on ne laisse pas les
+                          // deux champs se contredire.
+                          driverId: vehicle?.driverId || form.driverId,
+                        })
+                      }}
+                      style={selectStyle}
+                    >
+                      <option value="">Aucun véhicule</option>
+                      {vehicles.map((vehicle) => (
+                        <option key={vehicle.id} value={vehicle.id}>
+                          {vehicle.make} {vehicle.model} - {vehicle.plateNumber}
+                        </option>
+                      ))}
+                    </select>
+                    {driverHasNoVehicle && (
+                      <p style={{ margin: '6px 0 0', fontSize: '11px', color: '#6E6A63' }}>
+                        Aucun véhicule actif associé à ce chauffeur — sélectionnez-le manuellement.
+                      </p>
+                    )}
                   </div>
 
                   <label className="flex items-start gap-2" style={{ fontSize: '12.5px', color: '#12100E', cursor: 'pointer' }}>

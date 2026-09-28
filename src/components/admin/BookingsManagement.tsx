@@ -83,7 +83,7 @@ export function BookingsManagement() {
   const [filteredBookings, setFilteredBookings] = useState<Booking[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-  const { notifications, showSuccess, showError, removeNotification } = useNotification()
+  const { notifications, showSuccess, showError, showWarning, removeNotification } = useNotification()
 
   const [selectedBookingForDetails, setSelectedBookingForDetails] = useState<Booking | null>(null)
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false)
@@ -254,13 +254,21 @@ export function BookingsManagement() {
 
   // Demande saisie par l'admin pour le compte d'un client : l'assignation peut avoir
   // échoué (chauffeur indisponible) sans que la demande soit perdue — on le dit.
-  const handleBookingCreated = (message: string, status: string, warning?: string) => {
+  const handleBookingCreated = (
+    message: string,
+    status: string,
+    warning?: string,
+    availabilityWarning?: string,
+  ) => {
     fetchBookings()
     // Bascule sur le filtre où la demande vient d'atterrir, sinon elle serait
     // invisible (le filtre par défaut n'affiche que les demandes en attente).
     setFilters(prev => (prev.status === 'all' || prev.status === status ? prev : { ...prev, status }))
     showSuccess(message, 'Succès')
+    // Échec réel (chauffeur inexistant ou inactif) : la demande reste à assigner.
     if (warning) showError(`Chauffeur non assigné : ${warning}`, 'À assigner')
+    // Assignation bien effectuée, mais hors du planning déclaré : simple rappel.
+    if (availabilityWarning) showWarning(availabilityWarning, 'Assigné hors créneau déclaré')
   }
 
   const toggleSelectAll = () => {
@@ -644,6 +652,7 @@ export function BookingsManagement() {
         onClose={() => setIsCreateModalOpen(false)}
         onCreated={handleBookingCreated}
         drivers={drivers}
+        vehicles={vehicles}
       />
 
       {/* Bulk Delete Modal */}

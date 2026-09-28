@@ -11,6 +11,7 @@ import { requireBookingsRead, requireBookingsUpdate, requireBookingsDelete } fro
 import { sendWithRetry } from '@/lib/notification-queue';
 import { normalizePhoneForStorage } from '@/lib/phone';
 import { formatDateTimeBilingual } from '@/lib/email-i18n';
+import { erasableCustomerEmail } from '@/lib/validation';
 
 // GET - Récupérer une réservation par ID
 export async function GET(
@@ -91,7 +92,10 @@ const BookingPatchSchema = z.object({
   // Champs métier ouverts à la correction par l'admin (réservations créées par des
   // visiteurs non connectés, qui ne peuvent pas corriger leur saisie eux-mêmes).
   customerName: z.string().trim().min(2, 'Nom trop court').max(120).optional(),
-  customerEmail: z.string().trim().email('Format d\'email invalide').max(255).optional(),
+  // Optionnel et effaçable : une réservation saisie par l'admin au téléphone peut
+  // ne pas avoir d'email (voir src/lib/validation.ts). Sans cette tolérance, un
+  // simple changement de statut sur une telle course repartait en 400.
+  customerEmail: erasableCustomerEmail,
   customerPhone: z.string().trim().min(6, 'Téléphone trop court').max(30).optional(),
   pickupAddress: z.string().trim().min(2, 'Lieu de départ requis').max(255).optional(),
   dropoffAddress: z.string().trim().min(2, 'Destination requise').max(255).optional(),

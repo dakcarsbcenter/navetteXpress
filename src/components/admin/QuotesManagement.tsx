@@ -19,11 +19,13 @@ import {
   Buildings,
   Download,
   CheckCircle,
+  Plus,
 } from "@phosphor-icons/react"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { BulkDeleteModal } from "@/components/ui/BulkDeleteModal"
 import { useNotification } from "@/hooks/useNotification"
 import { QuoteDetailModal } from "@/components/admin/QuoteDetailModal"
+import { CreateQuoteModal } from "@/components/admin/CreateQuoteModal"
 import { StatusBadge } from "@/components/shared/StatusBadge"
 import { getQuoteServiceLabel } from "@/lib/quote-services"
 
@@ -58,8 +60,9 @@ export function QuotesManagement() {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
   const [selectedQuoteIds, setSelectedQuoteIds] = useState<Set<number>>(new Set())
   const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
-  const { notifications, showSuccess, showError, removeNotification } = useNotification()
+  const { notifications, showSuccess, showError, showWarning, removeNotification } = useNotification()
 
   const [filters, setFilters] = useState({ search: '' })
 
@@ -210,6 +213,14 @@ export function QuotesManagement() {
     }
   }
 
+  // Devis saisi par l'admin : l'envoi au client peut avoir été impossible
+  // (client sans adresse email) sans que le devis soit perdu — on le dit.
+  const handleQuoteCreated = (message: string, warning?: string) => {
+    fetchQuotes()
+    showSuccess(message, 'Succès')
+    if (warning) showWarning(warning, 'Devis non envoyé')
+  }
+
   const filteredQuotes = quotes.filter(q =>
     filters.search === '' ||
     q.customerName.toLowerCase().includes(filters.search.toLowerCase()) ||
@@ -255,6 +266,15 @@ export function QuotesManagement() {
               Supprimer ({selectedQuoteIds.size})
             </button>
           )}
+          <button
+            type="button"
+            onClick={() => setIsCreateModalOpen(true)}
+            className="flex items-center gap-2"
+            style={{ height: '40px', padding: '0 16px', backgroundColor: '#1F5245', border: 'none', borderRadius: '4px', color: '#FFFFFF', fontSize: '13px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}
+          >
+            <Plus size={15} weight="bold" />
+            Nouveau devis
+          </button>
           <button
             type="button"
             onClick={exportToPDF}
@@ -513,6 +533,13 @@ export function QuotesManagement() {
         onClose={() => setIsDetailModalOpen(false)}
         quote={selectedQuote as any}
         onUpdate={fetchQuotes}
+      />
+
+      {/* Saisie d'un devis par l'admin pour le compte d'un client */}
+      <CreateQuoteModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onCreated={handleQuoteCreated}
       />
 
       {/* Bulk Delete Modal */}
