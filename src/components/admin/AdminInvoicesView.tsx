@@ -22,6 +22,12 @@ interface Invoice {
   paidDate?: Date
   paymentMethod?: string
   notes?: string
+  // Champs du document officiel (PDF), servis par /api/invoices
+  quoteReference?: string
+  documentObject?: string
+  customerAddress?: string
+  customerNinea?: string
+  items?: Array<{ description: string; details?: string; quantity: number; price: number; total: number }>
 }
 
 interface InvoiceStats {
@@ -90,14 +96,22 @@ export default function AdminInvoicesView() {
         issueDate: new Date(invoice.issueDate).toLocaleDateString('fr-FR'),
         dueDate: new Date(invoice.dueDate).toLocaleDateString('fr-FR'),
         status: invoice.status,
-        items: invoice.quote?.message ? [
-          {
-            description: invoice.service + (invoice.quote.message ? ` - ${invoice.quote.message}` : ''),
-            quantity: 1,
-            price: invoice.amountHT,
-            total: invoice.amountHT
-          }
-        ] : undefined,
+        // Lignes figées à l'émission ; les factures antérieures n'en ont pas,
+        // on retombe alors sur le libellé de service comme avant.
+        items: invoice.items && invoice.items.length > 0
+          ? invoice.items
+          : (invoice.quote?.message ? [
+              {
+                description: invoice.service + (invoice.quote.message ? ` - ${invoice.quote.message}` : ''),
+                quantity: 1,
+                price: invoice.amountHT,
+                total: invoice.amountHT
+              }
+            ] : undefined),
+        object: invoice.documentObject,
+        quoteReference: invoice.quoteReference,
+        customerAddress: invoice.customerAddress,
+        customerNinea: invoice.customerNinea,
         notes: invoice.notes || invoice.quote?.adminNotes || undefined
       }
 

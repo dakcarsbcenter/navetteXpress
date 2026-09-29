@@ -158,6 +158,7 @@
     "accept": "Accepter",
     "reject": "Refuser",
     "negotiate": "Négocier",
+    "downloadQuote": "Télécharger le devis",
     "negotiatePrompt": "Votre message pour la négociation :",
     "rejectPrompt": "Raison du refus (optionnel) :",
     "confirmAccept": "Accepter ce devis ? Une facture et une réservation seront générées automatiquement.",

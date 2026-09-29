@@ -1,7 +1,15 @@
 # Charte graphique NavetteXpress — brief pour modèles de devis & factures
 
 Document extrait du code réel (septembre 2026). Sources de vérité :
-`src/app/globals.css`, `src/emails/brand.ts`, `src/lib/invoice-pdf.ts`, `src/app/layout.tsx`.
+`src/app/globals.css`, `src/emails/brand.ts`, `src/lib/pdf/` (papeterie partagée des documents),
+`src/app/layout.tsx`.
+
+> **Mise à jour** — les deux documents officiels sont désormais implémentés et partagent une
+> seule papeterie : `src/lib/pdf/brand.ts` (palette, coordonnées, formatage) et
+> `src/lib/pdf/layout.ts` (primitives de blocs). Le devis est composé par
+> `src/lib/pdf/quote-pdf.ts`, la facture par `src/lib/invoice-pdf.ts`. Les deux sont
+> isomorphes : les routes `GET /api/quotes/[id]/pdf` et `GET /api/invoices/[id]/pdf` les
+> rendent en Node et les emails les joignent en pièce jointe.
 
 ---
 
@@ -66,6 +74,8 @@ Version inversée (fond foncé) : carré `#F7F3EC` avec `NX` en `#12100E`, wordm
 
 **Statuts de facture déjà implémentés** (`src/lib/invoice-pdf.ts`) — à conserver :
 
+**TVA : 18 %** (taux sénégalais), pour les devis comme pour les factures — `DEFAULT_TAX_RATE` dans `src/lib/pdf/brand.ts`. Les factures émises avant ce changement conservent le taux stocké en base.
+
 | Statut | Libellé FR | Fond du badge | Texte |
 |---|---|---|---|
 | `paid` | Payée | `#1F5245` | blanc |
@@ -92,6 +102,7 @@ Deux polices seulement, chargées via `next/font/google` :
 - **Labels de champ** (« DATE D'ÉMISSION », « PRESTATION », « CLIENT ») : IBM Plex Mono, 11 px, **majuscules**, `letter-spacing: 0.10em → 0.14em`, couleur muted. C'est la signature visuelle de la marque : tout libellé secondaire est en mono, majuscules, espacé.
 - **Montants** : Archivo 700 pour le total, Archivo 400 pour les lignes. Alignés à droite.
 - Format monétaire : `120 000 FCFA` — espace normale comme séparateur de milliers, devise suffixée en clair. **Ne jamais utiliser l'espace fine insécable** (elle casse les polices standard de jsPDF et produit `25/000 FCFA`).
+- **Pas de flèche `→` dans un PDF.** Les polices standard de jsPDF sont encodées en WinAnsi, qui ne contient pas U+2192 : la flèche sort en `!'` et fausse en plus le calcul de largeur du texte, ce qui fait justifier la ligne sur toute la cellule. Les itinéraires utilisent le chevron `»` (`ROUTE_ARROW` dans `src/lib/pdf/brand.ts`). Une vraie flèche imposerait d'embarquer une police.
 
 > Dans un PDF jsPDF sans police embarquée, la correspondance utilisée est : Archivo → `helvetica`, IBM Plex Mono → `courier`.
 
@@ -130,7 +141,7 @@ Le PDF de facture actuel suit cet ordre — le devis doit en être le miroir :
 - NINEA : `012269115` · RCCM : `SN DKR 2014 A 5816`
 - Moyens de paiement affichés sur le site : **Wave**, **Orange Money**, **virement bancaire**
 
-> ⚠️ `DEFAULT_COMPANY_INFO` dans `src/lib/invoice-pdf.ts` contient encore des données factices (`123 Anywhere St., Any City`, `+123-456-7890`, `Fauget Bank`, `0123 4567 8901`). Elles ne doivent pas apparaître dans les nouveaux modèles — et l'adresse postale + les coordonnées bancaires réelles restent à fournir.
+> ✅ Les données factices (`123 Anywhere St., Any City`, `+123-456-7890`, `Fauget Bank`) ont été supprimées : `COMPANY_INFO` dans `src/lib/pdf/brand.ts` est désormais la seule source, avec les coordonnées réelles. L'adresse postale précise et l'IBAN/RIB restent à fournir (l'encart moyens de paiement n'affiche aujourd'hui que Wave / Orange Money).
 
 ---
 

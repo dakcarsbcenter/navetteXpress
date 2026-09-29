@@ -158,6 +158,7 @@
     "accept": "Aceptar",
     "reject": "Rechazar",
     "negotiate": "Negociar",
+    "downloadQuote": "Descargar presupuesto",
     "negotiatePrompt": "Su mensaje para la negociación:",
     "rejectPrompt": "Motivo del rechazo (opcional):",
     "confirmAccept": "¿Aceptar este presupuesto? Se generarán automáticamente una factura y una reserva.",

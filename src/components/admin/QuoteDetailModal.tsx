@@ -21,7 +21,10 @@ import {
     Path,
     MapPin,
     Users,
-    Suitcase
+    Suitcase,
+    FilePdf,
+    Eye,
+    DownloadSimple
 } from "@phosphor-icons/react"
 import { useNotification } from "@/hooks/useNotification"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
@@ -58,8 +61,24 @@ interface Quote {
     passengerPhone?: string | null
     /** Absent sur les devis anterieurs a la table quote_trips. */
     trips?: QuoteTripView[]
+    /** Champs du document officiel. `reference` est fige des la premiere generation du PDF. */
+    reference?: string | null
+    validUntil?: string | null
+    documentObject?: string | null
+    customerAddress?: string | null
+    customerNinea?: string | null
     createdAt: string
     updatedAt: string
+}
+
+/** Objet par defaut du devis, aligne sur DEFAULT_QUOTE_OBJECT cote serveur. */
+const DEFAULT_QUOTE_OBJECT = 'Transferts chauffeur privé'
+
+/** Valeur par defaut du champ "valable jusqu'au" : aujourd'hui + 30 jours. */
+function defaultValidUntil(): string {
+    const date = new Date()
+    date.setDate(date.getDate() + 30)
+    return date.toISOString().slice(0, 10)
 }
 
 interface QuoteDetailModalProps {
@@ -84,6 +103,12 @@ export function QuoteDetailModal({ isOpen, onClose, quote, onUpdate }: QuoteDeta
     // pas saisi lui-meme un montant global (remise, forfait sejour).
     const [tripPrices, setTripPrices] = useState<Record<number, string>>({})
     const [priceTouched, setPriceTouched] = useState(false)
+    // Champs qui n'existent que sur le document officiel : ils ne sont pas
+    // demandes au client dans le formulaire public.
+    const [documentObject, setDocumentObject] = useState("")
+    const [validUntil, setValidUntil] = useState("")
+    const [customerAddress, setCustomerAddress] = useState("")
+    const [customerNinea, setCustomerNinea] = useState("")
 
     const trips = quote?.trips ?? []
 
@@ -96,6 +121,10 @@ export function QuoteDetailModal({ isOpen, onClose, quote, onUpdate }: QuoteDeta
             setTripPrices(Object.fromEntries(
                 (quote.trips ?? []).map((trip) => [trip.id, trip.estimatedPrice || ""])
             ))
+            setDocumentObject(quote.documentObject || DEFAULT_QUOTE_OBJECT)
+            setValidUntil(quote.validUntil ? quote.validUntil.slice(0, 10) : defaultValidUntil())
+            setCustomerAddress(quote.customerAddress || "")
+            setCustomerNinea(quote.customerNinea || "")
         }
     }, [quote])
 
@@ -112,7 +141,9 @@ export function QuoteDetailModal({ isOpen, onClose, quote, onUpdate }: QuoteDeta
 
     if (!isOpen || !quote) return null
 
-    const handleUpdate = async (newStatus?: Quote['status']) => {
+    /** Enregistre sans fermer : le PDF est généré côté serveur depuis la base,
+     *  il faut donc que les champs saisis y soient avant de le demander. */
+    const persist = async (newStatus?: Quote['status']): Promise<boolean> => {
         setIsSubmitting(true)
         try {
             const response = await fetch(`/api/quotes/${quote.id}`, {
@@ -127,22 +158,31 @@ export function QuoteDetailModal({ isOpen, onClose, quote, onUpdate }: QuoteDeta
                         ? { trips: trips.map((trip) => ({ id: trip.id, estimatedPrice: tripPrices[trip.id] || null })) }
                         : {}),
                     adminNotes,
-                    status: newStatus || status
+                    status: newStatus || status,
+                    documentObject,
+                    validUntil: validUntil || null,
+                    customerAddress,
+                    customerNinea
                 })
             })
 
             if (response.ok) {
                 onUpdate()
-                onClose()
-            } else {
-                showError("Erreur lors de la mise à jour", "Erreur", { showModal: true })
+                return true
             }
+            showError("Erreur lors de la mise à jour", "Erreur", { showModal: true })
+            return false
         } catch (error) {
             console.error(error)
             showError("Erreur technique survenue", "Erreur technique", { showModal: true })
+            return false
         } finally {
             setIsSubmitting(false)
         }
+    }
+
+    const handleUpdate = async (newStatus?: Quote['status']) => {
+        if (await persist(newStatus)) onClose()
     }
 
     const handleSendToClient = () => {
@@ -151,6 +191,17 @@ export function QuoteDetailModal({ isOpen, onClose, quote, onUpdate }: QuoteDeta
             return
         }
         handleUpdate('sent')
+    }
+
+    /** Ouvre le devis officiel, après avoir enregistré les champs du document. */
+    const handleOpenDocument = async (download: boolean) => {
+        if (!effectivePrice) {
+            showWarning("Veuillez définir un prix avant de générer le devis.", "Prix manquant", { showModal: true })
+            return
+        }
+        if (!(await persist())) return
+        const suffix = download ? '?download=1' : ''
+        window.open(`/api/quotes/${quote.id}/pdf${suffix}`, '_blank')
     }
 
     const getServiceIcon = (service: string) => {
@@ -362,6 +413,92 @@ export function QuoteDetailModal({ isOpen, onClose, quote, onUpdate }: QuoteDeta
                                             style={{ width: '100%', minHeight: '120px', padding: '12px 14px', border: '1px solid #E2DACD', borderRadius: '3px', fontSize: '13px', color: '#12100E', resize: 'none' }}
                                         />
                                     </div>
+                                </div>
+                            </section>
+
+                            <section>
+                                <div className="flex items-center justify-between" style={{ marginBottom: '12px' }}>
+                                    <div className="flex items-center gap-2">
+                                        <FilePdf size={16} style={{ color: '#1F5245' }} weight="bold" />
+                                        <h3 style={{ margin: 0, fontSize: '12px', fontWeight: 600, color: '#12100E', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Devis officiel</h3>
+                                    </div>
+                                    {quote.reference && (
+                                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: '#1F5245' }}>{quote.reference}</span>
+                                    )}
+                                </div>
+
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label style={fieldLabel}>Objet</label>
+                                            <input
+                                                type="text"
+                                                value={documentObject}
+                                                onChange={(e) => setDocumentObject(e.target.value)}
+                                                placeholder="Transferts chauffeur privé"
+                                                style={{ width: '100%', height: '40px', padding: '0 12px', border: '1px solid #E2DACD', borderRadius: '3px', fontSize: '13px', color: '#12100E' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={fieldLabel}>Valable jusqu&apos;au</label>
+                                            <input
+                                                type="date"
+                                                value={validUntil}
+                                                onChange={(e) => setValidUntil(e.target.value)}
+                                                style={{ width: '100%', height: '40px', padding: '0 12px', border: '1px solid #E2DACD', borderRadius: '3px', fontFamily: 'var(--font-mono)', fontSize: '13px', color: '#12100E' }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label style={fieldLabel}>Adresse client</label>
+                                            <input
+                                                type="text"
+                                                value={customerAddress}
+                                                onChange={(e) => setCustomerAddress(e.target.value)}
+                                                placeholder="Dakar, Sénégal"
+                                                style={{ width: '100%', height: '40px', padding: '0 12px', border: '1px solid #E2DACD', borderRadius: '3px', fontSize: '13px', color: '#12100E' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={fieldLabel}>NINEA (société)</label>
+                                            <input
+                                                type="text"
+                                                value={customerNinea}
+                                                onChange={(e) => setCustomerNinea(e.target.value)}
+                                                placeholder="Facultatif"
+                                                style={{ width: '100%', height: '40px', padding: '0 12px', border: '1px solid #E2DACD', borderRadius: '3px', fontFamily: 'var(--font-mono)', fontSize: '13px', color: '#12100E' }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-3">
+                                        <button
+                                            type="button"
+                                            onClick={() => handleOpenDocument(false)}
+                                            disabled={isSubmitting}
+                                            className="flex items-center justify-center gap-2"
+                                            style={{ flex: 1, height: '40px', backgroundColor: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '3px', color: '#12100E', fontSize: '12px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer', opacity: isSubmitting ? 0.6 : 1 }}
+                                        >
+                                            <Eye size={16} />
+                                            Aperçu
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleOpenDocument(true)}
+                                            disabled={isSubmitting}
+                                            className="flex items-center justify-center gap-2"
+                                            style={{ flex: 1, height: '40px', backgroundColor: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '3px', color: '#12100E', fontSize: '12px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer', opacity: isSubmitting ? 0.6 : 1 }}
+                                        >
+                                            <DownloadSimple size={16} />
+                                            Télécharger
+                                        </button>
+                                    </div>
+
+                                    <p style={{ margin: 0, fontSize: '11.5px', color: '#6E6A63', lineHeight: 1.5 }}>
+                                        Le numéro de devis et la date d&apos;émission sont attribués à la première génération, puis ne changent plus.
+                                    </p>
                                 </div>
                             </section>
                         </div>

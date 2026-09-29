@@ -4,40 +4,14 @@ export const revalidate = 0;
 
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { quotesTable, quoteTripsTable, invoicesTable, rolePermissionsTable } from '@/schema';
+import { quotesTable, quoteTripsTable, invoicesTable } from '@/schema';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { sendWithRetry } from '@/lib/notification-queue';
 import { buildQuoteConfirmedEmailPayload } from '@/lib/quote-notifications';
 import { getQuoteTrips, sumTripPrices } from '@/lib/quote-trips';
-
-// Fonction pour vérifier les permissions dynamiques des quotes
-async function hasQuotesPermission(userRole: string, action: 'read' | 'create' | 'update' | 'delete'): Promise<boolean> {
-  try {
-    // Les admins ont toujours accès
-    if (userRole === 'admin') {
-      return true;
-    }
-
-    // Vérifier les permissions dynamiques
-    const permissions = await db
-      .select()
-      .from(rolePermissionsTable)
-      .where(and(
-        eq(rolePermissionsTable.roleName, userRole),
-        eq(rolePermissionsTable.resource, 'quotes'),
-        eq(rolePermissionsTable.action, action),
-        eq(rolePermissionsTable.allowed, true)
-      ));
-
-    // Vérifier si l'utilisateur a 'manage' ou l'action spécifique
-    return permissions.some(p => p.action === 'manage' || p.action === action);
-  } catch (error) {
-    console.error('Erreur lors de la vérification des permissions quotes:', error);
-    return false;
-  }
-}
+import { hasQuotesPermission } from '@/lib/quote-permissions';
 
 // GET - Récupérer une demande de devis spécifique
 export async function GET(
@@ -130,7 +104,12 @@ export async function PUT(
       adminNotes,
       estimatedPrice,
       assignedTo,
-      trips
+      trips,
+      // Champs du document officiel, saisis par l'admin au moment de produire le devis
+      documentObject,
+      validUntil,
+      customerAddress,
+      customerNinea
     } = body;
 
     console.log('📝 Modification du devis ID:', (await params).id, body);
@@ -153,6 +132,13 @@ export async function PUT(
     if (adminNotes !== undefined) updateData.adminNotes = adminNotes;
     if (estimatedPrice !== undefined) updateData.estimatedPrice = estimatedPrice;
     if (assignedTo !== undefined) updateData.assignedTo = assignedTo;
+
+    // Champs du document. `reference` et `issuedAt` ne sont volontairement pas
+    // modifiables ici : ils sont figes par la generation du PDF.
+    if (documentObject !== undefined) updateData.documentObject = documentObject || null;
+    if (customerAddress !== undefined) updateData.customerAddress = customerAddress || null;
+    if (customerNinea !== undefined) updateData.customerNinea = customerNinea || null;
+    if (validUntil !== undefined) updateData.validUntil = validUntil ? new Date(validUntil) : null;
 
     const quoteId = parseInt((await params).id);
 

@@ -20,6 +20,8 @@ interface QuoteForEmail {
   message: string | null;
   estimatedPrice: string | null;
   preferredDate: Date | string | null;
+  /** Référence officielle, présente dès que le PDF a été produit une fois. */
+  reference?: string | null;
 }
 
 /**
@@ -52,7 +54,9 @@ export async function buildQuoteConfirmedEmailPayload(quote: QuoteForEmail) {
   const pickupDate = details.date || quote.preferredDate;
 
   return {
-    quoteId: `QUOTE-${quote.id}`,
+    quoteId: quote.reference || `QUOTE-${quote.id}`,
+    // Permet au mailer de générer le PDF et de le joindre à l'envoi.
+    quoteDbId: quote.id,
     customerName: quote.customerName,
     amount,
     pickupLocation: details.departure || getQuoteServiceLabel(quote.service),

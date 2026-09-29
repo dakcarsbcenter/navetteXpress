@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useLocale, useTranslations } from "next-intl";
-import { Plus, FileText, CheckCircle, XCircle, Tag } from "@phosphor-icons/react";
+import { Plus, FileText, CheckCircle, XCircle, Tag, DownloadSimple } from "@phosphor-icons/react";
 import { QuoteRequestForm } from "@/components/client/QuoteRequestForm";
 import { toIntlLocale } from "@/lib/intl-locale";
 
@@ -139,6 +139,19 @@ export function EntrepriseQuotes() {
                     </span>
                   )}
                 </div>
+
+                {(quote.status === "sent" || quote.status === "accepted") && (
+                  <div className="mt-4">
+                    <a
+                      href={`/api/quotes/${quote.id}/pdf?download=1`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 border border-border px-3 py-1.5 rounded text-xs font-semibold text-[#6E6A63] hover:text-[#12100E]"
+                    >
+                      <DownloadSimple size={13} /> {t("downloadQuote")}
+                    </a>
+                  </div>
+                )}
 
                 {quote.status === "sent" && (
                   <div className="flex flex-wrap gap-2 mt-4">

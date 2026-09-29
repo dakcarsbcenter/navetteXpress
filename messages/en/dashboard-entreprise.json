@@ -158,6 +158,7 @@
     "accept": "Accept",
     "reject": "Decline",
     "negotiate": "Negotiate",
+    "downloadQuote": "Download quote",
     "negotiatePrompt": "Your message for the negotiation:",
     "rejectPrompt": "Reason for declining (optional):",
     "confirmAccept": "Accept this quote? An invoice and a booking will be generated automatically.",

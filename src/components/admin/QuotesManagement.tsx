@@ -18,6 +18,7 @@ import {
   Confetti,
   Buildings,
   Download,
+  FilePdf,
   CheckCircle,
   Plus,
 } from "@phosphor-icons/react"
@@ -534,10 +535,25 @@ export function QuotesManagement() {
                       <td style={{ padding: '12px 16px' }}>
                         <StatusBadge domain="quote" value={quote.status} audience="admin" live={quote.status === 'in_progress'} />
                       </td>
-                      <td style={{ padding: '12px 16px' }}>
-                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '13px', fontWeight: 600, color: '#12100E' }}>
-                          {formatCurrency(quote.estimatedPrice)}
-                        </span>
+                      <td style={{ padding: '12px 16px' }} onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center gap-2">
+                          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '13px', fontWeight: 600, color: '#12100E' }}>
+                            {formatCurrency(quote.estimatedPrice)}
+                          </span>
+                          {/* Le devis officiel n'a de sens qu'une fois le montant fixé. */}
+                          {quote.estimatedPrice && (
+                            <a
+                              href={`/api/quotes/${quote.id}/pdf`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title="Ouvrir le devis officiel (PDF)"
+                              aria-label={`Devis officiel du devis ${quote.id}`}
+                              style={{ display: 'grid', placeItems: 'center', width: '26px', height: '26px', border: '1px solid #E2DACD', borderRadius: '3px', color: '#1F5245' }}
+                            >
+                              <FilePdf size={14} weight="bold" />
+                            </a>
+                          )}
+                        </div>
                       </td>
                       <td style={{ padding: '12px 16px' }}>
                         <div className="flex items-center gap-1.5" style={{ color: '#6E6A63', fontSize: '12px' }}>

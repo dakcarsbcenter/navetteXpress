@@ -88,13 +88,13 @@ export default function InvoiceEmail({
             </Section>
 
             <Section style={{ padding: '20px 40px 0' }}>
-              <Section style={{ backgroundColor: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.25)', borderRadius: '12px', padding: '20px' }}>
+              <Section style={{ backgroundColor: 'rgba(31,82,69,0.06)', border: '1px solid rgba(31,82,69,0.25)', borderRadius: '12px', padding: '20px' }}>
                 <Text style={{ fontFamily: fonts.body, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', color: brand.gold, margin: '0 0 12px' }}>
                   Details des montants
                 </Text>
                 <Text style={priceLine}><span style={priceLabel}>Montant HT</span><span style={priceValue}>{amountHT}</span></Text>
                 <Text style={priceLine}><span style={priceLabel}>TVA</span><span style={priceValue}>{vatAmount}</span></Text>
-                <Section style={{ height: '1px', backgroundColor: 'rgba(201,168,76,0.25)', margin: '10px 0' }} />
+                <Section style={{ height: '1px', backgroundColor: 'rgba(31,82,69,0.25)', margin: '10px 0' }} />
                 <Text style={totalLine}><span style={totalLabel}>Montant TTC</span><span style={totalValue}>{amountTTC}</span></Text>
               </Section>
             </Section>
@@ -105,7 +105,7 @@ export default function InvoiceEmail({
 
             <Section style={{ padding: '0 40px 24px' }}>
               <Section style={{ backgroundColor: 'rgba(239,68,68,0.08)', border: '1px dashed rgba(239,68,68,0.35)', borderRadius: '10px', padding: '14px 16px' }}>
-                <Text style={{ ...shellStyles.text, fontSize: '13px', lineHeight: '21px', color: '#f3b3b3' }}>
+                <Text style={{ ...shellStyles.text, fontSize: '13px', lineHeight: '21px', color: '#B8493C' }}>
                   ⚠️ Cette facture est a regler avant le <strong>{dueDate}</strong>.
                 </Text>
               </Section>

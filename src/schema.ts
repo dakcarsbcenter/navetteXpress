@@ -298,6 +298,14 @@ export const quotesTable = pgTable('quotes', {
   assignedTo: text('assigned_to').references(() => users.id, { onDelete: 'set null' }),
   passengerName: text('passenger_name'), // Devis pour un tiers : nom du passager reellement transporte. NULL = le client voyage lui-meme.
   passengerPhone: text('passenger_phone'), // Optionnel : permet au chauffeur de joindre directement le passager sur place.
+  // Champs du document officiel (PDF). Ils restent NULL tant que l'admin n'a
+  // pas produit le devis : une demande brute n'est pas encore une piece.
+  reference: text('reference').unique(), // DEV-YYYY-00042, fige a la premiere generation
+  issuedAt: timestamp('issued_at'), // Date d'emission fige avec la reference
+  validUntil: timestamp('valid_until'), // Par defaut emission + 30 jours
+  documentObject: text('document_object'), // Objet du devis, ex: "Transferts chauffeur prive"
+  customerAddress: text('customer_address'), // Adresse postale du client, ex: "Dakar, Senegal"
+  customerNinea: text('customer_ninea'), // NINEA du client, societes uniquement
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
 });
@@ -333,16 +341,27 @@ export const quoteTripsTable = pgTable('quote_trips', {
 export const invoiceStatusEnum = pgEnum('invoice_status', ['draft', 'pending', 'paid', 'cancelled', 'overdue']);
 
 // Factures
+// Ligne de prestation telle qu'elle apparait sur le PDF. Partagee par le devis
+// (recalculee a la volee depuis quote_trips) et la facture (figee en jsonb).
+export type InvoiceLineItem = {
+  description: string;
+  /** Deuxieme ligne en petit sous le libelle, ex: "Berline confort - 47 km". */
+  details?: string;
+  quantity: number;
+  price: number;
+  total: number;
+};
+
 export const invoicesTable = pgTable('invoices', {
   id: serial('id').primaryKey(),
-  invoiceNumber: text('invoice_number').notNull().unique(), // Format: INV-YYYY-XXXXX
+  invoiceNumber: text('invoice_number').notNull().unique(), // Format: FAC-YYYY-00042 (INV-YYYY-XXXXX pour l'historique)
   quoteId: integer('quote_id').notNull().references(() => quotesTable.id, { onDelete: 'restrict' }),
   customerName: text('customer_name').notNull(),
   customerEmail: text('customer_email').notNull(),
   customerPhone: text('customer_phone'),
   service: text('service').notNull(),
   amount: decimal('amount', { precision: 10, scale: 2 }).notNull(),
-  taxRate: decimal('tax_rate', { precision: 5, scale: 2 }).notNull().default('20.00'), // TVA en %
+  taxRate: decimal('tax_rate', { precision: 5, scale: 2 }).notNull().default('18.00'), // TVA en % (18 % au Senegal)
   taxAmount: decimal('tax_amount', { precision: 10, scale: 2 }).notNull(),
   totalAmount: decimal('total_amount', { precision: 10, scale: 2 }).notNull(),
   status: invoiceStatusEnum('status').notNull().default('pending'),
@@ -351,6 +370,14 @@ export const invoicesTable = pgTable('invoices', {
   paidDate: timestamp('paid_date'),
   paymentMethod: text('payment_method'), // 'card', 'bank_transfer', 'cash', etc.
   notes: text('notes'),
+  // Champs du document officiel (PDF).
+  quoteReference: text('quote_reference'), // Reference du devis d'origine, case "REF. DEVIS" du modele
+  documentObject: text('document_object'),
+  customerAddress: text('customer_address'),
+  customerNinea: text('customer_ninea'),
+  // Lignes figees a l'emission : une facture ne doit pas suivre les
+  // modifications ulterieures du devis dont elle decoule.
+  items: jsonb('items').$type<InvoiceLineItem[]>(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
 }, (table) => ({

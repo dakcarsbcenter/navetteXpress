@@ -7,23 +7,11 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { db } from '@/db';
 import { invoicesTable } from '@/schema';
-import { eq, desc, and, like, sql } from 'drizzle-orm';
-
-// Génère le prochain numéro de facture pour l'année en cours en se basant sur
-// le plus grand numéro existant en base (jamais sur un décompte côté client,
-// qui dérive dès qu'une facture est supprimée).
-async function generateInvoiceNumber(): Promise<string> {
-  const year = new Date().getFullYear();
-  const prefix = `INV-${year}-`;
-
-  const [row] = await db
-    .select({ maxSeq: sql<number>`coalesce(max(cast(substring(${invoicesTable.invoiceNumber} from ${prefix.length + 1}::int) as integer)), 0)` })
-    .from(invoicesTable)
-    .where(like(invoicesTable.invoiceNumber, `${prefix}%`));
-
-  const nextSeq = (row?.maxSeq || 0) + 1;
-  return `${prefix}${nextSeq.toString().padStart(5, '0')}`;
-}
+import { eq, desc, and } from 'drizzle-orm';
+// Numérotation partagée avec les devis : elle se base sur le plus grand numéro
+// existant en base (jamais sur un décompte, qui dérive dès qu'une facture est
+// supprimée) et couvre l'ancien préfixe INV- comme le nouveau FAC-.
+import { generateInvoiceNumber } from '@/lib/document-numbering';
 
 // GET - Récupérer toutes les factures (avec filtres selon le rôle)
 export async function GET(request: NextRequest) {
@@ -98,8 +86,15 @@ export async function GET(request: NextRequest) {
       amountHT: invoice.amount ? parseFloat(invoice.amount) : 0,
       vatAmount: invoice.taxAmount ? parseFloat(invoice.taxAmount) : 0,
       amountTTC: invoice.totalAmount ? parseFloat(invoice.totalAmount) : 0,
-      taxRate: invoice.taxRate ? parseFloat(invoice.taxRate) : 20,
+      taxRate: invoice.taxRate ? parseFloat(invoice.taxRate) : 18,
       status: invoice.status,
+      // Champs du document officiel : sans eux, le PDF téléchargé depuis les
+      // vues admin/client serait plus pauvre que celui envoyé par email.
+      quoteReference: invoice.quoteReference || undefined,
+      documentObject: invoice.documentObject || undefined,
+      customerAddress: invoice.customerAddress || undefined,
+      customerNinea: invoice.customerNinea || undefined,
+      items: invoice.items || undefined,
       issueDate: invoice.issueDate,
       dueDate: invoice.dueDate,
       paidDate: invoice.paidDate || undefined,

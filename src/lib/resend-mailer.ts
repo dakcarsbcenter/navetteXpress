@@ -100,9 +100,64 @@ export async function sendInvoiceEmail(
     issueDate: string;
     dueDate: string;
     invoiceUrl: string;
+    /**
+     * Id de la facture en base. Comme pour le devis, le PDF n'est jamais passé
+     * dans la file de notifications : on transmet l'id et le document est
+     * régénéré ici, à partir des lignes figées à l'émission.
+     */
+    invoiceDbId?: number;
   }
 ) {
   try {
+    let attachments: Array<{ filename: string; content: string }> | undefined;
+
+    if (invoiceData.invoiceDbId) {
+      try {
+        const [{ db }, { invoicesTable }, { eq }, { renderInvoicePDFBuffer }, { formatDocumentDate }] =
+          await Promise.all([
+            import('@/db'),
+            import('@/schema'),
+            import('drizzle-orm'),
+            import('./invoice-pdf'),
+            import('./pdf/brand'),
+          ]);
+
+        const [invoice] = await db
+          .select()
+          .from(invoicesTable)
+          .where(eq(invoicesTable.id, invoiceData.invoiceDbId))
+          .limit(1);
+
+        if (invoice) {
+          const pdf = await renderInvoicePDFBuffer({
+            invoiceNumber: invoice.invoiceNumber,
+            customerName: invoice.customerName,
+            customerEmail: invoice.customerEmail,
+            customerPhone: invoice.customerPhone ?? undefined,
+            customerAddress: invoice.customerAddress,
+            customerNinea: invoice.customerNinea,
+            service: invoice.service,
+            amountHT: parseFloat(invoice.amount),
+            vatAmount: parseFloat(invoice.taxAmount),
+            amountTTC: parseFloat(invoice.totalAmount),
+            taxRate: parseFloat(invoice.taxRate),
+            issueDate: formatDocumentDate(invoice.issueDate),
+            dueDate: formatDocumentDate(invoice.dueDate),
+            status: invoice.status,
+            object: invoice.documentObject,
+            quoteReference: invoice.quoteReference,
+            items: invoice.items ?? undefined,
+            notes: invoice.notes ?? undefined,
+          });
+          attachments = [{ filename: `${invoice.invoiceNumber}.pdf`, content: pdf.toString('base64') }];
+        }
+      } catch (pdfError) {
+        // Comme pour le devis : mieux vaut un email sans pièce jointe qu'un
+        // client qui n'est pas prévenu de sa facture.
+        console.error('⚠️ PDF de la facture non généré, envoi sans pièce jointe:', pdfError);
+      }
+    }
+
     const content = `
       ${headingBlock('🧾', 'Nouvelle facture', 'New invoice')}
       ${paragraphBlock(
@@ -132,6 +187,7 @@ export async function sendInvoiceEmail(
         `New invoice ${invoiceData.invoiceNumber}`
       ),
       html: emailShell(content, 'customer'),
+      ...(attachments ? { attachments } : {}),
     });
 
     if (error) {
@@ -161,16 +217,48 @@ export async function sendQuoteConfirmedEmail(
     pickupDate: string;
     acceptUrl: string;
     rejectUrl: string;
+    /**
+     * Id du devis en base. Le PDF n'est jamais passé dans la file de
+     * notifications (les arguments y sont sérialisés pour le rejeu) : on
+     * transmet l'id et le document est régénéré ici, à l'envoi. Un rejeu
+     * produit le même fichier puisque la référence et la date d'émission sont
+     * figées à la première génération.
+     */
+    quoteDbId?: number;
   }
 ) {
   try {
+    // La référence officielle (DEV-2026-00042) n'existe qu'une fois le document
+    // produit : tant qu'il ne l'est pas, on garde le libellé QUOTE-<id>.
+    let reference = quoteData.quoteId;
+    let attachments: Array<{ filename: string; content: string }> | undefined;
+
+    if (quoteData.quoteDbId) {
+      try {
+        const [{ buildQuoteDocumentData }, { renderQuotePDFBuffer }] = await Promise.all([
+          import('./quote-document'),
+          import('./pdf/quote-pdf'),
+        ]);
+        const documentData = await buildQuoteDocumentData(quoteData.quoteDbId);
+        if (documentData) {
+          const pdf = await renderQuotePDFBuffer(documentData);
+          reference = documentData.reference;
+          attachments = [{ filename: `${documentData.reference}.pdf`, content: pdf.toString('base64') }];
+        }
+      } catch (pdfError) {
+        // Le client ne doit pas rester sans nouvelle parce que le PDF a échoué :
+        // l'email part sans pièce jointe plutôt que de tomber en erreur.
+        console.error('⚠️ PDF du devis non généré, envoi sans pièce jointe:', pdfError);
+      }
+    }
+
     const content = `
       ${headingBlock('💰', 'Votre devis est prêt', 'Your quote is ready')}
       ${paragraphBlock(
         `Bonjour ${quoteData.customerName}, nous avons le plaisir de vous proposer le devis suivant.`,
         `Hello ${quoteData.customerName}, we are pleased to send you the following quote.`
       )}
-      ${referenceBlock(quoteData.quoteId)}
+      ${referenceBlock(reference)}
       ${dataTable(
         [
           { fr: 'Montant', en: 'Amount', value: quoteData.amount },
@@ -190,10 +278,11 @@ export async function sendQuoteConfirmedEmail(
       from: FROM_EMAIL,
       to: [to],
       subject: biSubject(
-        `💰 Votre devis ${quoteData.quoteId} est prêt`,
-        `Your quote ${quoteData.quoteId} is ready`
+        `💰 Votre devis ${reference} est prêt`,
+        `Your quote ${reference} is ready`
       ),
       html: emailShell(content, 'customer'),
+      ...(attachments ? { attachments } : {}),
     });
 
     if (error) {

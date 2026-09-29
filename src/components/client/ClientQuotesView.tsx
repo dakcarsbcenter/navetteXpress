@@ -6,7 +6,7 @@ import { useLocale, useTranslations } from 'next-intl'
 import { toIntlLocale } from '@/lib/intl-locale'
 import { useNotification } from '@/hooks/useNotification'
 import { NotificationCenter } from '@/components/ui/NotificationCenter'
-import { FileText, Calendar, Clock, CheckCircle, XCircle, ChatCircle, Eye, Plus, CaretRight, Tag, ClipboardText, X, MagnifyingGlass } from "@phosphor-icons/react"
+import { FileText, Calendar, Clock, CheckCircle, XCircle, ChatCircle, Eye, Plus, CaretRight, Tag, ClipboardText, X, MagnifyingGlass, DownloadSimple } from "@phosphor-icons/react"
 import { QuoteRequestForm } from '@/components/client/QuoteRequestForm'
 
 interface Quote {
@@ -262,6 +262,18 @@ export function ClientQuotesView() {
                       >
                         <Eye size={16} /> {t('viewDetails')}
                       </button>
+
+                      {(quote.status === 'sent' || quote.status === 'accepted') && (
+                        <a
+                          href={`/api/quotes/${quote.id}/pdf?download=1`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 flex items-center justify-center gap-2 min-h-[40px]"
+                          style={{ backgroundColor: '#F7F3EC', color: '#12100E', border: '1px solid #E2DACD', borderRadius: '4px', fontSize: '12px', fontWeight: 600, textDecoration: 'none' }}
+                        >
+                          <DownloadSimple size={16} /> {t('downloadQuote')}
+                        </a>
+                      )}
 
                       {quote.status === 'sent' && (
                         <button

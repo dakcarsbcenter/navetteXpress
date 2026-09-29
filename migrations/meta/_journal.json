@@ -218,6 +218,13 @@
       "when": 1790699506951,
       "tag": "0030_broken_manta",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1790705823444,
+      "tag": "0031_fat_sway",
+      "breakpoints": true
     }
   ]
 }

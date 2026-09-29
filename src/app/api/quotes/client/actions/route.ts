@@ -13,6 +13,7 @@ import { generateInvoiceNumber, calculateInvoiceAmounts, calculateDueDate } from
 import { sendWithRetry } from '@/lib/notification-queue'
 import { getQuoteTrips } from '@/lib/quote-trips'
 import { parseQuoteMessage } from '@/lib/quote-services'
+import { buildQuoteDocumentData } from '@/lib/quote-document'
 
 export async function POST(request: NextRequest) {
   try {
@@ -151,10 +152,14 @@ export async function POST(request: NextRequest) {
         const invoiceNumber = await generateInvoiceNumber()
         console.log(`   ✓ Numéro de facture généré: ${invoiceNumber}`)
 
-        // Calculer les montants (HT, TVA, TTC)
+        // Calculer les montants (HT, TVA, TTC) — TVA sénégalaise à 18 %
         const estimatedPrice = parseFloat(currentQuote.estimatedPrice)
-        const amounts = calculateInvoiceAmounts(estimatedPrice, 20) // TVA 20% par défaut
-        console.log(`   ✓ Montants calculés: HT=${amounts.amount}€, TVA=${amounts.taxAmount}€, TTC=${amounts.totalAmount}€`)
+        const amounts = calculateInvoiceAmounts(estimatedPrice)
+        console.log(`   ✓ Montants calculés: HT=${amounts.amount}, TVA=${amounts.taxAmount}, TTC=${amounts.totalAmount} FCFA`)
+
+        // Lignes de prestation figées à l'émission : la facture ne doit pas
+        // suivre les modifications ultérieures du devis dont elle découle.
+        const quoteDocument = await buildQuoteDocumentData(currentQuote.id)
 
         // Calculer la date d'échéance (30 jours)
         const issueDate = new Date()
@@ -176,7 +181,13 @@ export async function POST(request: NextRequest) {
           status: 'pending',
           issueDate,
           dueDate,
-          notes: sanitizedMessage ? `Note du client: ${sanitizedMessage}` : null
+          notes: sanitizedMessage ? `Note du client: ${sanitizedMessage}` : null,
+          // Champs du document officiel, repris du devis accepté
+          quoteReference: quoteDocument?.reference ?? null,
+          documentObject: quoteDocument?.object ?? null,
+          customerAddress: currentQuote.customerAddress,
+          customerNinea: currentQuote.customerNinea,
+          items: quoteDocument?.items ?? null
         }).returning()
 
         console.log(`✅ Facture ${invoiceNumber} créée avec succès (ID: ${newInvoice.id})`)
@@ -200,7 +211,8 @@ export async function POST(request: NextRequest) {
             amountTTC: `${parseFloat(newInvoice.totalAmount).toLocaleString('fr-FR')} FCFA`,
             issueDate: new Date(newInvoice.issueDate).toLocaleDateString('fr-FR'),
             dueDate: new Date(newInvoice.dueDate).toLocaleDateString('fr-FR'),
-            invoiceUrl: `${process.env.NEXT_PUBLIC_APP_URL}/client/factures/${newInvoice.id}`
+            invoiceUrl: `${process.env.NEXT_PUBLIC_APP_URL}/client/factures/${newInvoice.id}`,
+            invoiceDbId: newInvoice.id
           }
         ])
 

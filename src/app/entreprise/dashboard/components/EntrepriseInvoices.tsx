@@ -25,6 +25,12 @@ interface Invoice {
   dueDate: string;
   notes: string | null;
   quote?: { message: string; clientNotes: string };
+  // Champs du document officiel (PDF), servis par /api/invoices
+  quoteReference?: string;
+  documentObject?: string;
+  customerAddress?: string;
+  customerNinea?: string;
+  items?: Array<{ description: string; details?: string; quantity: number; price: number; total: number }>;
 }
 
 const STATUS_STYLE: Record<InvoiceStatus, string> = {
@@ -81,6 +87,12 @@ export function EntrepriseInvoices() {
     dueDate: new Date(invoice.dueDate).toLocaleDateString(intlLocale),
     status: invoice.status,
     notes: invoice.notes || invoice.quote?.clientNotes || undefined,
+    // Champs du document officiel ; absents sur les factures antérieures.
+    items: invoice.items,
+    object: invoice.documentObject,
+    quoteReference: invoice.quoteReference,
+    customerAddress: invoice.customerAddress,
+    customerNinea: invoice.customerNinea,
   });
 
   const handleDownload = async (invoice: Invoice) => {
