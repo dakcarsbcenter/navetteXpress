@@ -28,6 +28,7 @@ import { QuoteDetailModal } from "@/components/admin/QuoteDetailModal"
 import { CreateQuoteModal } from "@/components/admin/CreateQuoteModal"
 import { StatusBadge } from "@/components/shared/StatusBadge"
 import { getQuoteServiceLabel } from "@/lib/quote-services"
+import type { QuoteTripView as QuoteTrip } from "./QuoteDetailModal"
 
 interface Quote {
   id: number
@@ -41,8 +42,20 @@ interface Quote {
   adminNotes: string | null
   estimatedPrice: string | null
   assignedTo: string | null
+  passengerName?: string | null
+  passengerPhone?: string | null
+  /** Lignes de trajet ; absentes sur les devis anterieurs a la table quote_trips. */
+  trips?: QuoteTrip[]
   createdAt: string
   updatedAt: string
+}
+
+/** Resume l'itineraire d'un devis multi-trajets : "AIBD -> Plateau -> Somone". */
+function routeSummary(quote: Quote): string | null {
+  const trips = quote.trips
+  if (!trips || trips.length === 0) return null
+  const stops = [trips[0].departure, ...trips.map((trip) => trip.destination)]
+  return stops.join(' \u2192 ')
 }
 
 const KANBAN_COLUMNS = [
@@ -394,7 +407,16 @@ export function QuotesManagement() {
 
                         <div style={{ marginBottom: '12px' }}>
                           <h4 style={{ margin: '0 0 2px', fontSize: '13.5px', fontWeight: 600, color: '#12100E' }}>{quote.customerName}</h4>
-                          <p style={{ margin: 0, fontSize: '11.5px', color: '#6E6A63' }}>{getQuoteServiceLabel(quote.service)}</p>
+                          <p style={{ margin: 0, fontSize: '11.5px', color: '#6E6A63' }}>
+                            {quote.trips && quote.trips.length > 1
+                              ? `${quote.trips.length} trajets`
+                              : getQuoteServiceLabel(quote.service)}
+                          </p>
+                          {routeSummary(quote) && (
+                            <p style={{ margin: '4px 0 0', fontSize: '11px', color: '#6E6A63', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              {routeSummary(quote)}
+                            </p>
+                          )}
                         </div>
 
                         <div className="flex items-center justify-between" style={{ fontSize: '11.5px', paddingTop: '10px', borderTop: '1px solid #F0EAE0' }}>
@@ -501,7 +523,12 @@ export function QuotesManagement() {
                           <div style={{ width: '28px', height: '28px', borderRadius: '3px', backgroundColor: '#F7F3EC', border: '1px solid #E2DACD', display: 'grid', placeItems: 'center' }}>
                             {getServiceIcon(quote.service)}
                           </div>
-                          <span style={{ fontSize: '13px' }}>{getQuoteServiceLabel(quote.service)}</span>
+                          <div>
+                            <div style={{ fontSize: '13px' }}>{getQuoteServiceLabel(quote.service)}</div>
+                            {quote.trips && quote.trips.length > 1 && (
+                              <div style={{ fontSize: '11px', color: '#6E6A63' }}>{quote.trips.length} trajets</div>
+                            )}
+                          </div>
                         </div>
                       </td>
                       <td style={{ padding: '12px 16px' }}>

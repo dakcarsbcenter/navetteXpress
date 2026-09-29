@@ -7,6 +7,7 @@
  */
 
 import { Resend } from 'resend';
+import { getQuoteServiceLabel } from './quote-services';
 import {
   biSubject,
   esc,
@@ -395,6 +396,8 @@ export async function sendNewQuoteRequestEmail(
     service: string;
     preferredDate?: string;
     message: string;
+    /** Nombre de trajets du devis (demande multi-trajets). */
+    tripCount?: number;
   },
   isAdmin: boolean = false
 ) {
@@ -419,7 +422,11 @@ export async function sendNewQuoteRequestEmail(
       ${referenceBlock(quoteData.quoteId)}
       ${dataTable(
         [
-          { fr: 'Service', en: 'Service', value: quoteData.service },
+          { fr: 'Service', en: 'Service', value: getQuoteServiceLabel(quoteData.service) },
+          {
+            fr: 'Trajets', en: 'Trips',
+            value: quoteData.tripCount && quoteData.tripCount > 1 ? String(quoteData.tripCount) : undefined,
+          },
           { fr: 'Date souhaitée', en: 'Preferred date', value: quoteData.preferredDate },
         ],
         { fr: 'Détails de la demande', en: 'Request details' }

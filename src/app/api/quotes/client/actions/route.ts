@@ -7,10 +7,12 @@ import { getServerSession } from 'next-auth/next'
 import type { Session } from "next-auth";
 import { authOptions } from '@/lib/auth'
 import { db } from '@/db'
-import { quotes, invoicesTable, bookingsTable } from '@/schema'
+import { quotes, quoteTripsTable, invoicesTable, bookingsTable } from '@/schema'
 import { eq, and } from 'drizzle-orm'
 import { generateInvoiceNumber, calculateInvoiceAmounts, calculateDueDate } from '@/lib/invoice-utils'
 import { sendWithRetry } from '@/lib/notification-queue'
+import { getQuoteTrips } from '@/lib/quote-trips'
+import { parseQuoteMessage } from '@/lib/quote-services'
 
 export async function POST(request: NextRequest) {
   try {
@@ -118,7 +120,12 @@ export async function POST(request: NextRequest) {
 
     // Si le devis est accepté, générer automatiquement une facture et une réservation
     let invoiceData = null
-    let bookingData = null
+    type BookingSummary = {
+      id: number; status: string; scheduledDateTime: Date;
+      pickupAddress: string; dropoffAddress: string;
+    }
+    let bookingData: BookingSummary | null = null
+    const bookingsData: BookingSummary[] = []
     
     if (action === 'accept') {
       console.log('📄 Génération automatique de la facture et réservation...')
@@ -204,99 +211,99 @@ export async function POST(request: NextRequest) {
         // On ne bloque pas l'acceptation du devis même si la facture échoue
       }
 
-      // Créer automatiquement une réservation confirmée
+      // Créer automatiquement une réservation confirmée par trajet du devis.
       // Cette section s'exécute INDÉPENDAMMENT du succès de la facture
-      console.log('\n📅 Création automatique de la réservation confirmée...')
-      
+      console.log('\n📅 Création automatique des réservations confirmées...')
+
       try {
-        // Extraire les informations de la demande de devis pour créer la réservation
-        // Le message du devis contient normalement les détails (pickup, dropoff, date, etc.)
         const quoteMessage = currentQuote.message || ''
-        
-        // Extraire le point de départ et la destination depuis le message
-        let pickupAddress = 'À définir'
-        let dropoffAddress = 'À définir'
-        let passengers = 1
-        let luggage = 1
-        
-        // Regex pour extraire les informations du message
-        const departMatch = quoteMessage.match(/Départ:\s*(.+?)(?:\n|$)/i)
-        const destinationMatch = quoteMessage.match(/Destination:\s*(.+?)(?:\n|$)/i)
-        const passengersMatch = quoteMessage.match(/(\d+)\s*personne/i)
-        const cabinBaggageMatch = quoteMessage.match(/Bagages cabine:\s*(\d+)/i)
-        const checkedBaggageMatch = quoteMessage.match(/Bagages soute:\s*(\d+)/i)
-        
-        if (departMatch && departMatch[1]) {
-          pickupAddress = departMatch[1].trim()
-          console.log(`   ✓ Point de départ extrait: ${pickupAddress}`)
-        }
-        
-        if (destinationMatch && destinationMatch[1]) {
-          dropoffAddress = destinationMatch[1].trim()
-          console.log(`   ✓ Destination extraite: ${dropoffAddress}`)
-        }
-        
-        if (passengersMatch && passengersMatch[1]) {
-          passengers = parseInt(passengersMatch[1])
-          console.log(`   ✓ Nombre de passagers: ${passengers}`)
-        }
-        
-        // Calculer le total des bagages
-        const cabinBaggage = cabinBaggageMatch ? parseInt(cabinBaggageMatch[1]) : 0
-        const checkedBaggage = checkedBaggageMatch ? parseInt(checkedBaggageMatch[1]) : 0
-        luggage = cabinBaggage + checkedBaggage
-        console.log(`   ✓ Nombre de bagages: ${luggage} (cabine: ${cabinBaggage}, soute: ${checkedBaggage})`)
-        
-        // Utiliser la date préférée si disponible, sinon une date par défaut
-        const scheduledDateTime = currentQuote.preferredDate 
+        const trips = await getQuoteTrips(currentQuote.id)
+
+        // Date de repli quand le client n'a pas fixé d'heure de prise en charge.
+        const fallbackDateTime = currentQuote.preferredDate
           ? new Date(currentQuote.preferredDate)
-          : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 jours à partir de maintenant si pas de date
+          : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
 
-        // Préparer les données de la réservation
-        const bookingValues = {
-          customerName: currentQuote.customerName,
-          customerEmail: currentQuote.customerEmail,
-          customerPhone: currentQuote.customerPhone || '',
-          pickupAddress,
-          dropoffAddress,
-          scheduledDateTime,
-          status: 'confirmed' as const, // Statut confirmé directement
-          price: currentQuote.estimatedPrice,
-          notes: `Réservation créée automatiquement suite à l'acceptation du devis #${currentQuote.id}\n\nService: ${currentQuote.service}\n\nDétails du devis:\n${quoteMessage}\n\n${sanitizedMessage ? `Message du client: ${sanitizedMessage}` : ''}`,
-          passengers,
-          luggage,
-          updatedAt: new Date()
+        // Devis multi-trajets : une réservation par ligne, chacune assignable à
+        // un chauffeur. Devis antérieurs à la table quote_trips : on relit le
+        // message comme avant, ce qui donne une seule course.
+        const legs = trips.length > 0
+          ? trips.map((trip) => ({
+              tripId: trip.id as number | null,
+              position: trip.position,
+              pickupAddress: trip.departure,
+              dropoffAddress: trip.destination,
+              scheduledDateTime: trip.scheduledDateTime ? new Date(trip.scheduledDateTime) : fallbackDateTime,
+              passengers: trip.passengers,
+              luggage: trip.luggage,
+              price: trip.estimatedPrice,
+              note: trip.note,
+            }))
+          : (() => {
+              const parsed = parseQuoteMessage(quoteMessage)
+              return [{
+                tripId: null,
+                position: 1,
+                pickupAddress: parsed.departure || 'À définir',
+                dropoffAddress: parsed.destination || 'À définir',
+                scheduledDateTime: fallbackDateTime,
+                passengers: parsed.numberOfPeople ? parseInt(parsed.numberOfPeople, 10) : 1,
+                luggage: 1,
+                price: currentQuote.estimatedPrice,
+                note: null as string | null,
+              }]
+            })()
+
+        console.log(`   ✓ ${legs.length} trajet(s) à convertir en réservation`)
+
+        for (const leg of legs) {
+          const legLabel = legs.length > 1 ? ` (trajet ${leg.position}/${legs.length})` : ''
+          const notes = [
+            `Réservation créée automatiquement suite à l'acceptation du devis #${currentQuote.id}${legLabel}`,
+            `Service: ${currentQuote.service}`,
+            leg.note ? `Note du trajet: ${leg.note}` : null,
+            sanitizedMessage ? `Message du client: ${sanitizedMessage}` : null,
+          ].filter(Boolean).join('\n\n')
+
+          const [newBooking] = await db.insert(bookingsTable).values({
+            customerName: currentQuote.customerName,
+            customerEmail: currentQuote.customerEmail,
+            customerPhone: currentQuote.customerPhone || '',
+            pickupAddress: leg.pickupAddress,
+            dropoffAddress: leg.dropoffAddress,
+            scheduledDateTime: leg.scheduledDateTime,
+            status: 'confirmed' as const,
+            // Prix de la ligne quand l'admin a chiffré trajet par trajet ; sinon
+            // le montant global, pour ne pas laisser la course sans tarif.
+            price: leg.price || currentQuote.estimatedPrice,
+            notes,
+            passengers: leg.passengers > 0 ? leg.passengers : 1,
+            luggage: leg.luggage,
+            // Devis passé pour un tiers : le chauffeur doit chercher le passager.
+            passengerName: currentQuote.passengerName,
+            passengerPhone: currentQuote.passengerPhone,
+            updatedAt: new Date()
+          }).returning()
+
+          if (leg.tripId) {
+            await db.update(quoteTripsTable)
+              .set({ bookingId: newBooking.id, updatedAt: new Date() })
+              .where(eq(quoteTripsTable.id, leg.tripId))
+          }
+
+          console.log(`   ✅ Réservation ${newBooking.id} — ${newBooking.pickupAddress} → ${newBooking.dropoffAddress} (${newBooking.scheduledDateTime})`)
+
+          bookingsData.push({
+            id: newBooking.id,
+            status: newBooking.status,
+            scheduledDateTime: newBooking.scheduledDateTime,
+            pickupAddress: newBooking.pickupAddress,
+            dropoffAddress: newBooking.dropoffAddress
+          })
         }
-        
-        console.log('   📝 Données de réservation à insérer:', {
-          customerName: bookingValues.customerName,
-          customerEmail: bookingValues.customerEmail,
-          pickupAddress: bookingValues.pickupAddress,
-          dropoffAddress: bookingValues.dropoffAddress,
-          scheduledDateTime: bookingValues.scheduledDateTime,
-          status: bookingValues.status,
-          passengers: bookingValues.passengers,
-          luggage: bookingValues.luggage,
-          price: bookingValues.price
-        })
 
-        // Créer la réservation avec le statut "confirmed"
-        const [newBooking] = await db.insert(bookingsTable).values(bookingValues).returning()
-
-        console.log(`\n✅ Réservation créée avec succès!`)
-        console.log(`   ID: ${newBooking.id}`)
-        console.log(`   Statut: ${newBooking.status}`)
-        console.log(`   Date: ${newBooking.scheduledDateTime}`)
-        console.log(`   De: ${newBooking.pickupAddress}`)
-        console.log(`   À: ${newBooking.dropoffAddress}`)
-        
-        bookingData = {
-          id: newBooking.id,
-          status: newBooking.status,
-          scheduledDateTime: newBooking.scheduledDateTime,
-          pickupAddress: newBooking.pickupAddress,
-          dropoffAddress: newBooking.dropoffAddress
-        }
+        // Contrat de réponse historique : `booking` reste la première course.
+        bookingData = bookingsData[0] ?? null
 
       } catch (bookingError) {
         console.error('\n❌ ERREUR lors de la création de la réservation!')
@@ -333,7 +340,8 @@ export async function POST(request: NextRequest) {
       newStatus,
       timestamp: new Date().toISOString(),
       invoice: invoiceData, // Inclure les données de la facture si générée
-      booking: bookingData // Inclure les données de la réservation si créée
+      booking: bookingData, // Première réservation créée (contrat historique)
+      bookings: bookingsData // Une réservation par trajet du devis
     })
 
   } catch (error) {

@@ -5,13 +5,13 @@ export const revalidate = 0;
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { db } from '@/db';
-import { quotesTable, users } from '@/schema';
+import { quotesTable, quoteTripsTable, users } from '@/schema';
 import { eq } from 'drizzle-orm';
 import { requireQuotesCreate } from '@/utils/admin-permissions';
 import { sendWithRetry } from '@/lib/notification-queue';
 import { normalizePhoneForStorage } from '@/lib/phone';
 import { emptyToUndefined, optionalCustomerEmail } from '@/lib/validation';
-import { buildQuoteMessage, CONVENTION_SERVICE_ID, QUOTE_SERVICE_IDS } from '@/lib/quote-services';
+import { buildQuoteMessage, buildMultiTripQuoteMessage, CONVENTION_SERVICE_ID, QUOTE_SERVICE_IDS, MAX_QUOTE_TRIPS } from '@/lib/quote-services';
 import { buildQuoteConfirmedEmailPayload } from '@/lib/quote-notifications';
 
 /**
@@ -42,8 +42,26 @@ const AdminQuoteCreateSchema = z.object({
 
   numberOfPeople: z.number().int().min(1, 'Au moins 1 personne').max(200).optional(),
   duration: z.number().min(0.5, 'Durée invalide').max(365).optional(),
-  departure: z.string().trim().min(2, 'Lieu de départ requis').max(255),
-  destination: z.string().trim().min(2, 'Destination requise').max(255),
+  // Devis mono-trajet (saisie historique) : requis tant que `trips` est absent,
+  // la vérification croisée se fait dans le superRefine ci-dessous.
+  departure: z.string().trim().max(255).optional(),
+  destination: z.string().trim().max(255).optional(),
+  /** Devis multi-trajets : une ligne par course, comme le formulaire public. */
+  trips: z.array(z.object({
+    service: z.enum([...QUOTE_SERVICE_IDS, CONVENTION_SERVICE_ID] as [string, ...string[]]),
+    departure: z.string().trim().min(2).max(255),
+    destination: z.string().trim().min(2).max(255),
+    scheduledDateTime: z.preprocess(
+      emptyToUndefined,
+      z.string().refine((v) => !isNaN(new Date(v).getTime()), 'Date de prise en charge invalide').optional()
+    ),
+    passengers: z.number().int().min(1).max(200),
+    luggage: z.number().int().min(0).max(100),
+    note: z.preprocess(emptyToUndefined, z.string().trim().max(500).optional()),
+  })).min(1).max(MAX_QUOTE_TRIPS).optional(),
+  /** Devis pour un tiers : personne réellement transportée. */
+  passengerName: z.preprocess(emptyToUndefined, z.string().trim().min(2).max(120).optional()),
+  passengerPhone: z.preprocess(emptyToUndefined, z.string().trim().max(30).optional()),
   paymentMode: z.preprocess(emptyToUndefined, z.string().trim().max(40).optional()),
   description: z.preprocess(emptyToUndefined, z.string().trim().max(2000).optional()),
 
@@ -54,6 +72,14 @@ const AdminQuoteCreateSchema = z.object({
   userId: z.preprocess(emptyToUndefined, z.string().trim().max(64).optional()),
   /** « Enregistrer » (pending) ou « Enregistrer et envoyer au client » (sent). */
   status: z.enum(['pending', 'sent']).optional(),
+}).superRefine((data, ctx) => {
+  if (data.trips && data.trips.length > 0) return;
+  if (!data.departure || data.departure.length < 2) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['departure'], message: 'Lieu de départ requis' });
+  }
+  if (!data.destination || data.destination.length < 2) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['destination'], message: 'Destination requise' });
+  }
 });
 
 export async function POST(request: NextRequest) {
@@ -104,18 +130,38 @@ export async function POST(request: NextRequest) {
     const canSend = wantsSend && Boolean(customerEmail);
     const status = canSend ? 'sent' : 'pending';
 
-    const message = buildQuoteMessage({
-      service: body.service,
-      numberOfPeople: body.numberOfPeople ?? 1,
-      duration: body.duration ?? 1,
-      departure: body.departure,
-      destination: body.destination,
-      paymentMode: body.paymentMode,
-      description: body.description,
-      enteredBy: admin?.name || 'un administrateur',
-    });
+    const enteredBy = admin?.name || 'un administrateur';
 
-    const [newQuote] = await db
+    const message = body.trips && body.trips.length > 0
+      ? buildMultiTripQuoteMessage({
+          trips: body.trips.map((trip) => ({
+            service: trip.service,
+            departure: trip.departure,
+            destination: trip.destination,
+            scheduledDateTime: trip.scheduledDateTime ?? null,
+            passengers: trip.passengers,
+            luggage: trip.luggage,
+            note: trip.note ?? null,
+          })),
+          paymentMode: body.paymentMode,
+          description: body.description,
+          passengerName: body.passengerName ?? null,
+          passengerPhone: body.passengerPhone ?? null,
+          enteredBy,
+        })
+      : buildQuoteMessage({
+          service: body.service,
+          numberOfPeople: body.numberOfPeople ?? 1,
+          duration: body.duration ?? 1,
+          departure: body.departure ?? '',
+          destination: body.destination ?? '',
+          paymentMode: body.paymentMode,
+          description: body.description,
+          enteredBy,
+        });
+
+    const [newQuote] = await db.transaction(async (tx) => {
+      const inserted = await tx
       .insert(quotesTable)
       .values({
         customerName: body.customerName,
@@ -129,17 +175,37 @@ export async function POST(request: NextRequest) {
         estimatedPrice: body.estimatedPrice === null || body.estimatedPrice === undefined
           ? null
           : String(body.estimatedPrice),
+        passengerName: body.passengerName ?? null,
+        passengerPhone: normalizePhoneForStorage(body.passengerPhone) ?? null,
         assignedTo: adminId,
         updatedAt: new Date(),
       })
       .returning();
+
+      if (body.trips && body.trips.length > 0) {
+        await tx.insert(quoteTripsTable).values(body.trips.map((trip, index) => ({
+          quoteId: inserted[0].id,
+          position: index + 1,
+          service: trip.service,
+          departure: trip.departure,
+          destination: trip.destination,
+          scheduledDateTime: trip.scheduledDateTime ? new Date(trip.scheduledDateTime) : null,
+          passengers: trip.passengers,
+          luggage: trip.luggage,
+          note: trip.note ?? null,
+          updatedAt: new Date(),
+        })));
+      }
+
+      return inserted;
+    });
 
     console.log(`✅ Devis #${newQuote.id} créé par l'admin pour ${newQuote.customerName} (statut: ${status})`);
 
     if (canSend) {
       await sendWithRetry('email', 'resend-mailer.sendQuoteConfirmedEmail', [
         customerEmail,
-        buildQuoteConfirmedEmailPayload(newQuote),
+        await buildQuoteConfirmedEmailPayload(newQuote),
       ]);
     }
 

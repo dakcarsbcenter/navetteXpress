@@ -11,8 +11,12 @@ import {
   PaperPlaneTilt,
   X,
   MagnifyingGlass as Search,
+  Plus,
+  Trash,
+  Path,
+  Users,
 } from "@phosphor-icons/react"
-import { QUOTE_SERVICES } from '@/lib/quote-services'
+import { QUOTE_SERVICES, MAX_QUOTE_TRIPS, type QuoteTripInput } from '@/lib/quote-services'
 import { isRouteCombinationAllowed } from '@/lib/pricing'
 
 interface CustomerAccount {
@@ -70,7 +74,27 @@ const emptyForm = {
   description: '',
   estimatedPrice: '',
   adminNotes: '',
+  passengerName: '',
+  passengerPhone: '',
 }
+
+/**
+ * Etape supplementaire d'un sejour (le trajet principal reste au-dessus, avec
+ * sa recherche de tarif parametre). Le client peut demander plusieurs courses
+ * dans une meme demande : on les saisit ici au lieu de creer N devis.
+ */
+interface ExtraLeg {
+  key: string
+  service: string
+  departure: string
+  destination: string
+  scheduledDateTime: string
+  passengers: number
+  luggage: number
+  note: string
+}
+
+let legKeySeed = 0
 
 /**
  * Saisie d'un devis par l'admin pour le compte d'un client joint par téléphone.
@@ -88,6 +112,27 @@ export function CreateQuoteModal({ isOpen, onClose, onCreated }: CreateQuoteModa
   const [isQuoting, setIsQuoting] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [extraLegs, setExtraLegs] = useState<ExtraLeg[]>([])
+
+  const addExtraLeg = () => setExtraLegs((prev) => {
+    if (prev.length + 1 >= MAX_QUOTE_TRIPS) return prev
+    const last = prev[prev.length - 1]
+    return [...prev, {
+      key: `leg-${++legKeySeed}`,
+      service: form.service,
+      departure: last ? last.destination : form.destination,
+      destination: '',
+      scheduledDateTime: '',
+      passengers: form.numberOfPeople,
+      luggage: 0,
+      note: '',
+    }]
+  })
+
+  const patchLeg = (key: string, changes: Partial<ExtraLeg>) =>
+    setExtraLegs((prev) => prev.map((leg) => (leg.key === key ? { ...leg, ...changes } : leg)))
+
+  const removeLeg = (key: string) => setExtraLegs((prev) => prev.filter((leg) => leg.key !== key))
 
   const patch = (changes: Partial<typeof emptyForm>) => setForm((prev) => ({ ...prev, ...changes }))
 
@@ -95,6 +140,7 @@ export function CreateQuoteModal({ isOpen, onClose, onCreated }: CreateQuoteModa
   useEffect(() => {
     if (!isOpen) return
     setForm(emptyForm)
+    setExtraLegs([])
     setCustomerSearch('')
     setQuote(null)
     setError(null)
@@ -186,6 +232,11 @@ export function CreateQuoteModal({ isOpen, onClose, onCreated }: CreateQuoteModa
     if (form.customerPhone.trim().length < 6) return 'Renseignez le téléphone du client.'
     if (!form.departure.trim()) return 'Renseignez le lieu de départ.'
     if (!form.destination.trim()) return 'Renseignez la destination.'
+    for (const [index, leg] of extraLegs.entries()) {
+      if (!leg.departure.trim() || !leg.destination.trim()) {
+        return `Completez le depart et la destination du trajet ${index + 2}.`
+      }
+    }
     return null
   }
 
@@ -216,6 +267,30 @@ export function CreateQuoteModal({ isOpen, onClose, onCreated }: CreateQuoteModa
           duration: form.duration,
           departure: form.departure.trim(),
           destination: form.destination.trim(),
+          // Le trajet principal est toujours la ligne 1 : l'admin saisit donc
+          // exactement la meme structure que le formulaire public.
+          trips: [
+            {
+              service: form.service,
+              departure: form.departure.trim(),
+              destination: form.destination.trim(),
+              scheduledDateTime: form.preferredDate ? new Date(form.preferredDate).toISOString() : undefined,
+              passengers: form.numberOfPeople,
+              luggage: 0,
+              note: undefined,
+            },
+            ...extraLegs.map((leg) => ({
+              service: leg.service,
+              departure: leg.departure.trim(),
+              destination: leg.destination.trim(),
+              scheduledDateTime: leg.scheduledDateTime ? new Date(leg.scheduledDateTime).toISOString() : undefined,
+              passengers: leg.passengers,
+              luggage: leg.luggage,
+              note: leg.note.trim() || undefined,
+            })),
+          ] satisfies Array<Omit<QuoteTripInput, 'scheduledDateTime' | 'note'> & { scheduledDateTime?: string; note?: string }>,
+          passengerName: form.passengerName.trim() || undefined,
+          passengerPhone: form.passengerPhone.trim() || undefined,
           paymentMode: form.paymentMode,
           description: form.description.trim(),
           estimatedPrice: priceValue !== null && Number.isFinite(priceValue) ? priceValue : null,
@@ -547,6 +622,147 @@ export function CreateQuoteModal({ isOpen, onClose, onCreated }: CreateQuoteModa
                       Ce couple départ/destination ne fait pas partie des trajets tarifés : le prix devra être saisi à la main.
                     </p>
                   )}
+                </div>
+              </div>
+
+              <div style={panelStyle}>
+                <SectionTitle icon={Path} label="Trajets supplémentaires" />
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {extraLegs.length === 0 && (
+                    <p style={{ margin: 0, fontSize: '11.5px', color: '#6E6A63' }}>
+                      Le devis ne contient que le trajet ci-dessus. Ajoutez une étape si le client enchaîne plusieurs courses.
+                    </p>
+                  )}
+
+                  {extraLegs.map((leg, index) => (
+                    <div key={leg.key} style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '3px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      <div className="flex items-center justify-between">
+                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#6E6A63' }}>
+                          Trajet {index + 2}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => removeLeg(leg.key)}
+                          aria-label={`Supprimer le trajet ${index + 2}`}
+                          style={{ display: 'grid', placeItems: 'center', width: '28px', height: '28px', border: '1px solid #E2DACD', borderRadius: '3px', color: '#B8493C', backgroundColor: '#FFFFFF' }}
+                        >
+                          <Trash size={14} />
+                        </button>
+                      </div>
+
+                      <select
+                        value={leg.service}
+                        onChange={(e) => patchLeg(leg.key, { service: e.target.value })}
+                        aria-label={`Service du trajet ${index + 2}`}
+                        style={selectStyle}
+                      >
+                        {QUOTE_SERVICES.map((service) => (
+                          <option key={service.id} value={service.id}>{service.label}</option>
+                        ))}
+                      </select>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <input
+                          type="text"
+                          value={leg.departure}
+                          onChange={(e) => patchLeg(leg.key, { departure: e.target.value })}
+                          placeholder="Départ"
+                          aria-label={`Départ du trajet ${index + 2}`}
+                          list="quote-locations"
+                          style={selectStyle}
+                        />
+                        <input
+                          type="text"
+                          value={leg.destination}
+                          onChange={(e) => patchLeg(leg.key, { destination: e.target.value })}
+                          placeholder="Destination"
+                          aria-label={`Destination du trajet ${index + 2}`}
+                          list="quote-locations"
+                          style={selectStyle}
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <input
+                          type="datetime-local"
+                          value={leg.scheduledDateTime}
+                          onChange={(e) => patchLeg(leg.key, { scheduledDateTime: e.target.value })}
+                          aria-label={`Prise en charge du trajet ${index + 2}`}
+                          style={{ ...selectStyle, gridColumn: 'span 2' }}
+                        />
+                        <input
+                          type="number"
+                          min={1}
+                          value={leg.passengers}
+                          onChange={(e) => patchLeg(leg.key, { passengers: Math.max(1, parseInt(e.target.value) || 1) })}
+                          aria-label={`Passagers du trajet ${index + 2}`}
+                          style={selectStyle}
+                        />
+                        <input
+                          type="number"
+                          min={0}
+                          value={leg.luggage}
+                          onChange={(e) => patchLeg(leg.key, { luggage: Math.max(0, parseInt(e.target.value) || 0) })}
+                          aria-label={`Bagages du trajet ${index + 2}`}
+                          style={selectStyle}
+                        />
+                      </div>
+
+                      <input
+                        type="text"
+                        value={leg.note}
+                        onChange={(e) => patchLeg(leg.key, { note: e.target.value })}
+                        placeholder="Note (n° de vol, arrêt intermédiaire…)"
+                        aria-label={`Note du trajet ${index + 2}`}
+                        style={selectStyle}
+                      />
+                    </div>
+                  ))}
+
+                  <button
+                    type="button"
+                    onClick={addExtraLeg}
+                    disabled={extraLegs.length + 1 >= MAX_QUOTE_TRIPS}
+                    className="flex items-center justify-center gap-2"
+                    style={{ height: '42px', border: '1px dashed #C9BFAE', borderRadius: '3px', backgroundColor: '#FFFFFF', fontSize: '12.5px', color: '#1F5245', opacity: extraLegs.length + 1 >= MAX_QUOTE_TRIPS ? 0.5 : 1 }}
+                  >
+                    <Plus size={14} weight="bold" />
+                    Ajouter un trajet
+                  </button>
+                </div>
+
+                <datalist id="quote-locations">
+                  {locations.map((loc) => (
+                    <option key={loc.id} value={loc.name} />
+                  ))}
+                </datalist>
+              </div>
+
+              <div style={panelStyle}>
+                <SectionTitle icon={Users} label="Passager" />
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label style={fieldLabel}>Nom du passager (si différent du client)</label>
+                    <input
+                      type="text"
+                      value={form.passengerName}
+                      onChange={(e) => patch({ passengerName: e.target.value })}
+                      placeholder="Laisser vide si le client voyage lui-même"
+                      style={selectStyle}
+                    />
+                  </div>
+                  <div>
+                    <label style={fieldLabel}>Téléphone du passager</label>
+                    <input
+                      type="tel"
+                      value={form.passengerPhone}
+                      onChange={(e) => patch({ passengerPhone: e.target.value })}
+                      placeholder="Joignable sur place"
+                      style={selectStyle}
+                    />
+                  </div>
                 </div>
               </div>
 

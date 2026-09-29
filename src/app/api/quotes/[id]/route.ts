@@ -4,12 +4,13 @@ export const revalidate = 0;
 
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { quotesTable, invoicesTable, rolePermissionsTable } from '@/schema';
+import { quotesTable, quoteTripsTable, invoicesTable, rolePermissionsTable } from '@/schema';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { eq, and } from 'drizzle-orm';
 import { sendWithRetry } from '@/lib/notification-queue';
 import { buildQuoteConfirmedEmailPayload } from '@/lib/quote-notifications';
+import { getQuoteTrips, sumTripPrices } from '@/lib/quote-trips';
 
 // Fonction pour vérifier les permissions dynamiques des quotes
 async function hasQuotesPermission(userRole: string, action: 'read' | 'create' | 'update' | 'delete'): Promise<boolean> {
@@ -76,9 +77,11 @@ export async function GET(
       }, { status: 404 });
     }
 
+    const trips = await getQuoteTrips(quote[0].id);
+
     return NextResponse.json({ 
       success: true, 
-      data: quote[0] 
+      data: { ...quote[0], trips }
     });
 
   } catch (error) {
@@ -126,7 +129,8 @@ export async function PUT(
       status,
       adminNotes,
       estimatedPrice,
-      assignedTo
+      assignedTo,
+      trips
     } = body;
 
     console.log('📝 Modification du devis ID:', (await params).id, body);
@@ -150,10 +154,37 @@ export async function PUT(
     if (estimatedPrice !== undefined) updateData.estimatedPrice = estimatedPrice;
     if (assignedTo !== undefined) updateData.assignedTo = assignedTo;
 
+    const quoteId = parseInt((await params).id);
+
+    // Prix ligne par ligne : c'est ce que le client demande explicitement
+    // ("what's the price for each ride"). Le total du devis suit la somme des
+    // lignes, sauf si l'admin force un montant global dans le même appel.
+    if (Array.isArray(trips)) {
+      const existingTrips = await getQuoteTrips(quoteId);
+      const known = new Set(existingTrips.map((t) => t.id));
+
+      for (const trip of trips) {
+        const tripId = parseInt(String(trip?.id), 10);
+        if (!known.has(tripId)) continue;
+        const raw = trip.estimatedPrice;
+        const price = raw === null || raw === undefined || raw === '' ? null : String(raw);
+        await db
+          .update(quoteTripsTable)
+          .set({ estimatedPrice: price, updatedAt: new Date() })
+          .where(eq(quoteTripsTable.id, tripId));
+      }
+
+      if (estimatedPrice === undefined) {
+        const refreshed = await getQuoteTrips(quoteId);
+        const total = sumTripPrices(refreshed);
+        if (total !== null) updateData.estimatedPrice = total;
+      }
+    }
+
     const updatedQuote = await db
       .update(quotesTable)
       .set(updateData)
-      .where(eq(quotesTable.id, parseInt((await params).id)))
+      .where(eq(quotesTable.id, quoteId))
       .returning();
 
     if (updatedQuote.length === 0) {
@@ -168,10 +199,10 @@ export async function PUT(
     // Envoyer email au client si le statut passe à 'sent' avec un prix.
     // Sans adresse (devis saisi au téléphone), il n'y a rien à envoyer : le devis
     // est communiqué de vive voix.
-    if (status === 'sent' && estimatedPrice !== undefined && updatedQuote[0].customerEmail) {
+    if (status === 'sent' && updatedQuote[0].estimatedPrice && updatedQuote[0].customerEmail) {
       await sendWithRetry('email', 'resend-mailer.sendQuoteConfirmedEmail', [
         updatedQuote[0].customerEmail,
-        buildQuoteConfirmedEmailPayload(updatedQuote[0]),
+        await buildQuoteConfirmedEmailPayload(updatedQuote[0]),
       ]);
     }
 

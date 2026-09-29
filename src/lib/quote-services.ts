@@ -99,3 +99,74 @@ export function parseQuoteMessage(message: string | null | undefined) {
     numberOfPeople: pick(/(\d+)\s*personne/i),
   };
 }
+
+/** Une ligne du tableau de trajets d'une demande de devis multi-trajets. */
+export interface QuoteTripInput {
+  service: string;
+  departure: string;
+  destination: string;
+  /** ISO ou `datetime-local` ; null quand le client ne connait pas encore l'heure. */
+  scheduledDateTime?: string | null;
+  passengers: number;
+  luggage: number;
+  note?: string | null;
+}
+
+/** Nombre maximum de trajets acceptes dans une meme demande (formulaire public et saisie admin). */
+export const MAX_QUOTE_TRIPS = 10;
+
+function formatTripDateTime(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  return date.toLocaleString('fr-FR', {
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  });
+}
+
+/**
+ * Compose la colonne `quotes.message` pour une demande multi-trajets.
+ *
+ * La source de verite est desormais la table `quote_trips` : ce texte reste la
+ * trace lisible affichee dans la fiche admin et dans les e-mails. Le trajet 1
+ * expose volontairement `Depart:` / `Destination:` / `N personne(s)` pour rester
+ * compatible avec parseQuoteMessage et avec les devis anterieurs.
+ */
+export function buildMultiTripQuoteMessage(details: {
+  trips: QuoteTripInput[];
+  paymentMode?: string;
+  description?: string;
+  passengerName?: string | null;
+  passengerPhone?: string | null;
+  enteredBy?: string;
+}): string {
+  const { trips } = details;
+  const lines: string[] = [
+    `Demande de devis — ${trips.length} trajet(s).`,
+  ];
+
+  if (details.passengerName) {
+    const phone = details.passengerPhone ? ` (${details.passengerPhone})` : '';
+    lines.push(`Passager: ${details.passengerName}${phone}`);
+  }
+
+  trips.forEach((trip, index) => {
+    lines.push('', `Trajet ${index + 1} — ${getQuoteServiceLabel(trip.service)}`);
+    lines.push(`Départ: ${trip.departure}`);
+    lines.push(`Destination: ${trip.destination}`);
+    const when = formatTripDateTime(trip.scheduledDateTime);
+    lines.push(`Prise en charge: ${when || 'À définir'}`);
+    lines.push(`${trip.passengers} personne(s), ${trip.luggage} bagage(s)`);
+    if (trip.note) lines.push(`Note: ${trip.note}`);
+  });
+
+  lines.push('', `Mode de paiement souhaité: ${details.paymentMode || 'Non spécifié'}`);
+  lines.push('', `Description: ${details.description || ''}`);
+
+  if (details.enteredBy) {
+    lines.push('', `Saisie: par ${details.enteredBy} pour le compte du client (téléphone)`);
+  }
+
+  return lines.join('\n');
+}

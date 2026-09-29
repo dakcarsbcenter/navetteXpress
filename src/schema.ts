@@ -296,9 +296,38 @@ export const quotesTable = pgTable('quotes', {
   clientNotes: text('client_notes'),
   estimatedPrice: decimal('estimated_price', { precision: 10, scale: 2 }),
   assignedTo: text('assigned_to').references(() => users.id, { onDelete: 'set null' }),
+  passengerName: text('passenger_name'), // Devis pour un tiers : nom du passager reellement transporte. NULL = le client voyage lui-meme.
+  passengerPhone: text('passenger_phone'), // Optionnel : permet au chauffeur de joindre directement le passager sur place.
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
 });
+
+// Lignes d'un devis multi-trajets.
+//
+// Avant cette table, un devis ne decrivait qu'un seul trajet et les clients qui
+// planifiaient un sejour complet listaient leurs etapes en texte libre dans la
+// description : l'admin ne pouvait pas chiffrer trajet par trajet, et
+// l'acceptation ne generait qu'une seule reservation au lieu de N.
+export const quoteTripsTable = pgTable('quote_trips', {
+  id: serial('id').primaryKey(),
+  quoteId: integer('quote_id').notNull().references(() => quotesTable.id, { onDelete: 'cascade' }),
+  position: integer('position').notNull(), // ordre d'affichage, 1..n
+  service: text('service').notNull(), // id de QUOTE_SERVICES
+  departure: text('departure').notNull(),
+  destination: text('destination').notNull(),
+  scheduledDateTime: timestamp('scheduled_date_time'), // nullable : le client ne connait pas toujours l'heure
+  passengers: integer('passengers').notNull().default(1),
+  luggage: integer('luggage').notNull().default(0),
+  note: text('note'),
+  estimatedPrice: decimal('estimated_price', { precision: 10, scale: 2 }), // chiffre par l'admin, ligne par ligne
+  bookingId: integer('booking_id').references((): AnyPgColumn => bookingsTable.id, { onDelete: 'set null' }), // reservation generee a l'acceptation
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
+}, (table) => ({
+  quotePositionIdx: uniqueIndex('quote_trips_quote_position_idx').on(table.quoteId, table.position),
+  passengersCheck: check('quote_trips_passengers_check', sql`${table.passengers} > 0`),
+  luggageCheck: check('quote_trips_luggage_check', sql`${table.luggage} >= 0`),
+}));
 
 // Enum pour le statut des factures
 export const invoiceStatusEnum = pgEnum('invoice_status', ['draft', 'pending', 'paid', 'cancelled', 'overdue']);
@@ -371,6 +400,8 @@ export type InsertPermission = typeof permissionsTable.$inferInsert;
 export type SelectPermission = typeof permissionsTable.$inferSelect;
 export type InsertQuote = typeof quotesTable.$inferInsert;
 export type SelectQuote = typeof quotesTable.$inferSelect;
+export type InsertQuoteTrip = typeof quoteTripsTable.$inferInsert;
+export type SelectQuoteTrip = typeof quoteTripsTable.$inferSelect;
 export type InsertInvoice = typeof invoicesTable.$inferInsert;
 export type SelectInvoice = typeof invoicesTable.$inferSelect;
 
@@ -582,6 +613,7 @@ export type SelectBlockedEmail = typeof blockedEmailsTable.$inferSelect;
 
 // Alias pour les exports
 export const quotes = quotesTable;
+export const quoteTrips = quoteTripsTable;
 
 // Types pour les nouveaux schémas
 export type InsertDriverAvailability = typeof driverAvailabilityTable.$inferInsert;
