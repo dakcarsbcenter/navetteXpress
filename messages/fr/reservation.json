@@ -58,8 +58,16 @@
       "rate": "TARIF",
       "onQuote": "SUR DEVIS",
       "ratePendingZone": "À préciser",
-      "estimateNote": "Prix ferme pour un véhicule {vehicle}, péage et carburant inclus."
-    }
+      "estimateNote": "Prix ferme pour un véhicule {vehicle}, péage et carburant inclus.",
+      "total": "TOTAL",
+      "tripsCount": "{priced} trajet(s) tarifé(s) sur {total}"
+    },
+    "tripLabel": "Trajet {number}",
+    "addTrip": "Ajouter un trajet",
+    "addReturnTrip": "Ajouter le retour",
+    "removeTrip": "Supprimer ce trajet",
+    "maxTripsReached": "Maximum {max} trajets par demande.",
+    "tripsHint": "Besoin d'un aller-retour ou de plusieurs courses ? Ajoutez un trajet par étape : vos coordonnées ne sont saisies qu'une fois."
   },
   "step2": {
     "title": "Que faut-il prévoir ?",
@@ -74,7 +82,8 @@
     "flightSectionHint": "Renseignez votre vol pour suivre son statut en direct depuis votre espace client.",
     "optionsLabel": "Options sans supplément",
     "notesLabel": "Précisions pour le chauffeur — facultatif",
-    "notesPlaceholder": "Point de rendez-vous exact, code portail, nom de l'hôtel, arrêt en route..."
+    "notesPlaceholder": "Point de rendez-vous exact, code portail, nom de l'hôtel, arrêt en route...",
+    "tripSectionLabel": "Trajet {number}"
   },
   "step3": {
     "title": "Comment vous joindre ?",
@@ -102,7 +111,9 @@
       "vehicle": "VÉHICULE",
       "rate": "TARIF",
       "rateValue": "SUR DEVIS",
-      "passenger": "PASSAGER"
+      "passenger": "PASSAGER",
+      "total": "TOTAL",
+      "tripLabel": "Trajet {number}"
     }
   },
   "nav": {
@@ -115,7 +126,9 @@
   "success": {
     "title": "Réservation enregistrée !",
     "message": "C'est noté. Nous vous confirmons sous 30 minutes par téléphone. Notre équipe vous contactera pour valider les détails et le tarif.",
-    "confirm": "Parfait !"
+    "confirm": "Parfait !",
+    "titleMulti": "{count} réservations enregistrées !",
+    "messageMulti": "C'est noté. Vos {count} trajets sont enregistrés et nous vous confirmons sous 30 minutes par téléphone. Notre équipe vous contactera pour valider les détails et le tarif."
   },
   "errors": {
     "forbiddenTitle": "Action non autorisée",

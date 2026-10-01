@@ -58,8 +58,16 @@
       "rate": "RATE",
       "onQuote": "ON REQUEST",
       "ratePendingZone": "To be set",
-      "estimateNote": "Firm price for a {vehicle}, tolls and fuel included."
-    }
+      "estimateNote": "Firm price for a {vehicle}, tolls and fuel included.",
+      "total": "TOTAL",
+      "tripsCount": "{priced} of {total} trips priced"
+    },
+    "tripLabel": "Trip {number}",
+    "addTrip": "Add a trip",
+    "addReturnTrip": "Add the return trip",
+    "removeTrip": "Remove this trip",
+    "maxTripsReached": "Up to {max} trips per request.",
+    "tripsHint": "Need a round trip or several rides? Add one trip per leg: your details are only entered once."
   },
   "step2": {
     "title": "What should we plan for?",
@@ -74,7 +82,8 @@
     "flightSectionHint": "Add your flight to track its status live from your client dashboard.",
     "optionsLabel": "Options at no extra cost",
     "notesLabel": "Notes for the driver — optional",
-    "notesPlaceholder": "Exact meeting point, gate code, hotel name, stop along the way..."
+    "notesPlaceholder": "Exact meeting point, gate code, hotel name, stop along the way...",
+    "tripSectionLabel": "Trip {number}"
   },
   "step3": {
     "title": "How can we reach you?",
@@ -102,7 +111,9 @@
       "vehicle": "VEHICLE",
       "rate": "RATE",
       "rateValue": "ON REQUEST",
-      "passenger": "PASSENGER"
+      "passenger": "PASSENGER",
+      "total": "TOTAL",
+      "tripLabel": "Trip {number}"
     }
   },
   "nav": {
@@ -115,7 +126,9 @@
   "success": {
     "title": "Booking received!",
     "message": "Got it. We'll confirm by phone within 30 minutes. Our team will contact you to finalize the details and the fare.",
-    "confirm": "Great!"
+    "confirm": "Great!",
+    "titleMulti": "{count} bookings registered!",
+    "messageMulti": "Noted. Your {count} trips are registered and we will confirm within 30 minutes by phone. Our team will contact you to validate the details and the rate."
   },
   "errors": {
     "forbiddenTitle": "Action not allowed",

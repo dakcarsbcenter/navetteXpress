@@ -16,6 +16,7 @@ import { VehiclesManagement } from "@/components/client/VehiclesManagement"
 import { ClientUsersManagement } from "@/components/client/ClientUsersManagement"
 import { ClientMessagesPanel } from "@/components/client/ClientMessagesPanel"
 import { StatusBadge } from "@/components/shared/StatusBadge"
+import { buildBookingGroupPositions } from "@/lib/booking-groups"
 import {
   CalendarBlank, Star, PencilSimple, CheckCircle, X, Plus, MapPin, Clock,
   Eye, Phone, Wallet, Calendar, ClipboardText, DownloadSimple, Envelope, Buildings,
@@ -46,6 +47,9 @@ interface Booking {
   flightScheduledTime?: string | null
   flightEstimatedTime?: string | null
   flightLastCheckedAt?: string | null
+  // Demande a plusieurs trajets : toutes les courses issues de la meme soumission
+  // partagent cet identifiant (null pour une demande a un seul trajet).
+  bookingGroupId?: string | null
   driver?: { id: string; name: string; phone: string | null } | null
 }
 
@@ -885,6 +889,9 @@ function ClientDashboardContent() {
         const filteredClientBookings = bookingsFilter === 'all'
           ? bookings
           : bookings.filter(b => b.status === bookingsFilter)
+        // Calcule sur la liste complete, pas sur la liste filtree : afficher "1/3"
+        // alors qu'un filtre de statut masque les deux autres serait trompeur.
+        const bookingGroupPositions = buildBookingGroupPositions(bookings)
 
         return (
           <div className="flex flex-col gap-6">
@@ -934,6 +941,17 @@ function ClientDashboardContent() {
                             <div className="min-w-0 flex-1">
                               <h4 className="font-bold text-sm" style={{ color: '#12100E' }}>
                                 {t('bookings.bookingNumber')} <span style={{ fontFamily: 'var(--font-mono)' }}>#{booking.id}</span>
+                                {bookingGroupPositions.get(booking.id) && (
+                                  <span
+                                    className="ml-2 inline-block align-middle"
+                                    style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#B4643A', border: '1px solid #B4643A', borderRadius: '3px', padding: '1px 6px' }}
+                                  >
+                                    {t('bookings.groupPosition', {
+                                      position: bookingGroupPositions.get(booking.id)!.position,
+                                      total: bookingGroupPositions.get(booking.id)!.total,
+                                    })}
+                                  </span>
+                                )}
                               </h4>
                               <p className="text-xs font-medium uppercase tracking-wider mt-0.5" style={{ color: '#6E6A63' }}>
                                 {t('bookings.createdOn')} {new Date(booking.createdAt).toLocaleDateString(intlLocale)}

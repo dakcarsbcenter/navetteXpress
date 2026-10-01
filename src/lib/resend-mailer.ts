@@ -376,15 +376,49 @@ export async function sendNewBookingRequestEmail(
     /** Réservation passée pour un tiers : personne réellement transportée. */
     passengerName?: string | null;
     passengerPhone?: string | null;
+    /**
+     * Demande multi-trajets : toutes les courses créées par la même soumission,
+     * première comprise. Absent ou à un seul élément pour une demande simple, qui
+     * garde alors exactement la mise en page d'avant.
+     */
+    trips?: Array<{
+      position: number;
+      reference: string;
+      pickupLocation: string;
+      dropoffLocation: string;
+      pickupDate: string;
+      pickupTime: string;
+    }>;
   }
 ) {
   try {
+    const tripCount = bookingData.trips?.length ?? 1;
+    const isMultiTrip = tripCount > 1;
+
+    // Une demande à plusieurs trajets donne une course par trajet : l'admin les traite
+    // séparément, mais doit voir tout de suite qu'elles forment un même séjour.
+    const tripsBlock = isMultiTrip
+      ? dataTable(
+          bookingData.trips!.map((trip) => ({
+            fr: `Trajet ${trip.position}`,
+            en: `Trip ${trip.position}`,
+            value: `${trip.reference} · ${trip.pickupLocation} → ${trip.dropoffLocation} · ${trip.pickupDate} ${trip.pickupTime}`,
+          })),
+          { fr: `Les ${tripCount} trajets de la demande`, en: `The ${tripCount} trips in this request` }
+        )
+      : '';
+
     const content = `
       ${headingBlock('📋', 'Nouvelle demande de réservation', 'New booking request')}
-      ${paragraphBlock(
-        "Une nouvelle demande de réservation vient d'être créée et nécessite votre attention.",
-        'A new booking request has just been created and needs your attention.'
-      )}
+      ${isMultiTrip
+        ? paragraphBlock(
+            `Une nouvelle demande de réservation à ${tripCount} trajets vient d'être créée. Chaque trajet est une course distincte à traiter.`,
+            `A new booking request with ${tripCount} trips has just been created. Each trip is a separate ride to handle.`
+          )
+        : paragraphBlock(
+            "Une nouvelle demande de réservation vient d'être créée et nécessite votre attention.",
+            'A new booking request has just been created and needs your attention.'
+          )}
       ${referenceBlock(bookingData.bookingId)}
       ${dataTable(
         [
@@ -398,15 +432,20 @@ export async function sendNewBookingRequestEmail(
           { fr: 'Passagers', en: 'Passengers', value: bookingData.passengers || 1 },
           { fr: 'Bagages', en: 'Luggage', value: bookingData.luggage },
         ],
-        { fr: 'Détails de la réservation', en: 'Booking details' }
+        isMultiTrip
+          ? { fr: 'Premier trajet', en: 'First trip' }
+          : { fr: 'Détails de la réservation', en: 'Booking details' }
       )}
+      ${tripsBlock}
       ${ctaButton(`${APP_URL()}/admin/reservations`, 'Voir la demande', 'View request')}
     `;
 
     const { data, error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: [to],
-      subject: biSubject('📋 Nouvelle demande de réservation', 'New booking request'),
+      subject: isMultiTrip
+        ? biSubject(`📋 Nouvelle demande de réservation (${tripCount} trajets)`, `New booking request (${tripCount} trips)`)
+        : biSubject('📋 Nouvelle demande de réservation', 'New booking request'),
       html: emailShell(content, 'admin'),
     });
 

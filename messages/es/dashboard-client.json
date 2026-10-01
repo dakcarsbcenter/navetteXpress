@@ -190,7 +190,8 @@
     "noBookingFound": "No se encontró ninguna reserva",
     "noBookingYet": "Todavía no ha realizado ninguna reserva.",
     "noBookingWithStatus": "Ninguna reserva con el estado \"{status}\".",
-    "bookTrip": "Reservar un viaje"
+    "bookTrip": "Reservar un viaje",
+    "groupPosition": "Trayecto {position}/{total}"
   },
   "createReviews": {
     "title": "Viajes a valorar",

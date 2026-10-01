@@ -1,4 +1,4 @@
-import { integer, pgTable, serial, text, timestamp, decimal, boolean, check, pgEnum, jsonb, uniqueIndex, type AnyPgColumn } from 'drizzle-orm/pg-core';
+import { integer, pgTable, serial, text, timestamp, decimal, boolean, check, pgEnum, jsonb, index, uniqueIndex, type AnyPgColumn } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
 // Enums (unifiés)
@@ -199,11 +199,17 @@ export const bookingsTable = pgTable('bookings', {
   cancelledAt: timestamp('cancelled_at'),
   tripPlanId: integer('trip_plan_id').references((): AnyPgColumn => tripPlansTable.id, { onDelete: 'set null' }), // occurrence générée par une planification (voir tripPlansTable)
   whatsappReminderSentAt: timestamp('whatsapp_reminder_sent_at'), // marque l'envoi du rappel WhatsApp (2rappel_depart), pour ne pas le renvoyer à chaque tick du cron
+  // Demande multi-trajets : une même soumission du formulaire de réservation crée
+  // une course par trajet (aller-retour, séjour enchaînant plusieurs transferts).
+  // Elles restent traitées individuellement par l'admin mais partagent cet
+  // identifiant. NULL = demande à un seul trajet, on ne crée pas de faux groupe.
+  bookingGroupId: text('booking_group_id'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
 }, (table) => ({
   passengersCheck: check('passengers_check', sql`${table.passengers} > 0`),
   luggageCheck: check('luggage_check', sql`${table.luggage} >= 0`),
+  bookingGroupIdx: index('bookings_booking_group_idx').on(table.bookingGroupId),
 }));
 
 // Conversations du chat intégré : soit liées à une réservation (client ↔ chauffeur assigné),

@@ -58,8 +58,16 @@
       "rate": "TARIFA",
       "onQuote": "SEGÚN PRESUPUESTO",
       "ratePendingZone": "Por precisar",
-      "estimateNote": "Precio fijo para un vehículo {vehicle}, peaje y combustible incluidos."
-    }
+      "estimateNote": "Precio fijo para un vehículo {vehicle}, peaje y combustible incluidos.",
+      "total": "TOTAL",
+      "tripsCount": "{priced} de {total} trayectos con tarifa"
+    },
+    "tripLabel": "Trayecto {number}",
+    "addTrip": "Añadir un trayecto",
+    "addReturnTrip": "Añadir la vuelta",
+    "removeTrip": "Eliminar este trayecto",
+    "maxTripsReached": "Máximo {max} trayectos por solicitud.",
+    "tripsHint": "¿Necesita ida y vuelta o varios traslados? Añada un trayecto por etapa: sus datos solo se introducen una vez."
   },
   "step2": {
     "title": "¿Qué debemos prever?",
@@ -74,7 +82,8 @@
     "flightSectionHint": "Indica tu vuelo para seguir su estado en vivo desde tu panel de cliente.",
     "optionsLabel": "Opciones sin costo adicional",
     "notesLabel": "Indicaciones para el chofer — opcional",
-    "notesPlaceholder": "Punto de encuentro exacto, código de la puerta, nombre del hotel, parada en el camino..."
+    "notesPlaceholder": "Punto de encuentro exacto, código de la puerta, nombre del hotel, parada en el camino...",
+    "tripSectionLabel": "Trayecto {number}"
   },
   "step3": {
     "title": "¿Cómo podemos contactarte?",
@@ -102,7 +111,9 @@
       "vehicle": "VEHÍCULO",
       "rate": "TARIFA",
       "rateValue": "SEGÚN PRESUPUESTO",
-      "passenger": "PASAJERO"
+      "passenger": "PASAJERO",
+      "total": "TOTAL",
+      "tripLabel": "Trayecto {number}"
     }
   },
   "nav": {
@@ -115,7 +126,9 @@
   "success": {
     "title": "¡Reserva registrada!",
     "message": "Anotado. Te confirmaremos por teléfono en 30 minutos. Nuestro equipo te contactará para validar los detalles y la tarifa.",
-    "confirm": "¡Perfecto!"
+    "confirm": "¡Perfecto!",
+    "titleMulti": "¡{count} reservas registradas!",
+    "messageMulti": "Tomado nota. Sus {count} trayectos están registrados y se lo confirmaremos en 30 minutos por teléfono. Nuestro equipo le contactará para validar los detalles y la tarifa."
   },
   "errors": {
     "forbiddenTitle": "Acción no autorizada",

@@ -3,6 +3,8 @@ export const runtime = 'nodejs';
 export const revalidate = 0;
 
 import { NextRequest, NextResponse } from 'next/server';
+import { randomUUID } from 'crypto';
+import { z } from 'zod';
 import { db } from '@/db';
 import { bookingsTable, rolePermissionsTable, pricingSegmentsTable } from '@/schema';
 import { getServerSession } from 'next-auth/next';
@@ -11,6 +13,8 @@ import { eq, desc, and, asc } from 'drizzle-orm';
 import { sendWithRetry } from '@/lib/notification-queue';
 import { normalizePhoneForStorage } from '@/lib/phone';
 import { resolvePrice } from '@/lib/pricing';
+import { BookingTripSchema, MAX_BOOKING_TRIPS, type BookingTripParsed } from '@/lib/booking-trips';
+import { guardPublicFormSubmission } from '@/lib/security/publicFormGuard';
 
 // Fonction pour vérifier les permissions dynamiques des bookings
 async function hasBookingsPermission(userRole: string, action: 'read' | 'create' | 'update' | 'delete'): Promise<boolean> {
@@ -65,14 +69,31 @@ export async function POST(request: NextRequest) {
     }
     
     const body = await request.json();
+
+    // Une demande peut porter plusieurs trajets (aller-retour, séjour enchaînant
+    // plusieurs transferts) : le formulaire envoie alors `trips`. Les appels plus
+    // anciens — et tout POST direct existant — continuent d'envoyer les champs du
+    // trajet à plat : on les replie ici en un tableau d'un seul élément pour que la
+    // suite n'ait qu'un seul chemin à traiter.
+    const rawTrips: unknown[] = Array.isArray(body.trips) && body.trips.length > 0
+      ? body.trips
+      : [{
+          serviceType: body.serviceType,
+          customServiceType: body.customServiceType,
+          pickupAddress: body.pickupAddress,
+          destinationAddress: body.destinationAddress,
+          date: body.date,
+          time: body.time,
+          passengers: body.passengers,
+          luggage: body.luggage,
+          duration: body.duration,
+          vehicleType: body.vehicleType,
+          pricingSegmentId: body.pricingSegmentId,
+          flightNumber: body.flightNumber,
+          airline: body.airline,
+        }];
+
     const {
-      serviceType,
-      date,
-      time,
-      pickupAddress,
-      destinationAddress,
-      passengers,
-      duration,
       additionalServices,
       specialRequests,
       contactPhone,
@@ -81,33 +102,79 @@ export async function POST(request: NextRequest) {
       clientEmail: fallbackClientEmail,
       passengerName,
       passengerPhone,
-      flightNumber,
-      airline,
-      vehicleType,
-      // Secteur tarifaire retenu par le client quand plusieurs tarifs couvrent le même
-      // couple de lieux (un par quartier). Le montant lui-même n'est pas lu depuis le
-      // corps de la requête : il est recalculé ci-dessous.
-      pricingSegmentId,
       // Champs pour utilisateurs connectés
       userId
     } = body;
 
-    const requestedVehicleType = vehicleType === 'suv' ? 'suv' : 'berline';
-
-    // Validation des champs obligatoires
-    if (!pickupAddress || !destinationAddress || !date || !time || !contactPhone) {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'Tous les champs obligatoires doivent être renseignés' 
+    if (rawTrips.length > MAX_BOOKING_TRIPS) {
+      return NextResponse.json({
+        success: false,
+        error: `Une demande ne peut pas dépasser ${MAX_BOOKING_TRIPS} trajets`
       }, { status: 400 });
     }
 
+    // Champs obligatoires du trajet. Le message reste celui d'avant pour une demande
+    // à un seul trajet ; au-delà, il désigne le trajet fautif.
+    const isBlank = (value: unknown) => typeof value !== 'string' || value.trim() === '';
+    for (let i = 0; i < rawTrips.length; i++) {
+      const trip = rawTrips[i] as Record<string, unknown>;
+      if (isBlank(trip?.pickupAddress) || isBlank(trip?.destinationAddress) || isBlank(trip?.date) || isBlank(trip?.time)) {
+        const suffix = rawTrips.length > 1 ? ` (trajet ${i + 1})` : '';
+        return NextResponse.json({
+          success: false,
+          error: `Tous les champs obligatoires doivent être renseignés${suffix}`
+        }, { status: 400 });
+      }
+    }
+
+    if (isBlank(contactPhone)) {
+      return NextResponse.json({
+        success: false,
+        error: 'Tous les champs obligatoires doivent être renseignés'
+      }, { status: 400 });
+    }
+
+    // Bornes et coercitions (passagers, bagages, véhicule...) : un POST direct ne doit
+    // pas pouvoir écrire n'importe quoi là où le formulaire n'offre que des listes fermées.
+    const parsedTrips = z.array(BookingTripSchema).min(1).max(MAX_BOOKING_TRIPS).safeParse(rawTrips);
+    if (!parsedTrips.success) {
+      const issue = parsedTrips.error.issues[0];
+      const position = typeof issue?.path?.[0] === 'number' ? Number(issue.path[0]) + 1 : null;
+      const suffix = position && rawTrips.length > 1 ? ` (trajet ${position})` : '';
+      return NextResponse.json({
+        success: false,
+        error: `Données de trajet invalides${suffix}`
+      }, { status: 400 });
+    }
+    const trips: BookingTripParsed[] = parsedTrips.data;
+
     // Pour les utilisateurs non connectés, vérifier les champs client
     if (!userId && (!clientName || !fallbackClientEmail)) {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'Nom et email requis pour les utilisateurs non connectés' 
+      return NextResponse.json({
+        success: false,
+        error: 'Nom et email requis pour les utilisateurs non connectés'
       }, { status: 400 });
+    }
+
+    // Honeypot, délai de remplissage, origine, token applicatif, rate limit par IP et
+    // par email, adresses jetables — comme /api/quotes et /api/convention. Avant toute
+    // écriture : une requête acceptée crée jusqu'à dix courses et déclenche deux
+    // notifications.
+    //
+    // Uniquement pour les demandes anonymes : un client connecté a déjà passé la
+    // création de compte et l'activation par email, et le faire buter sur une adresse
+    // ayant rebondi une fois l'empêcherait de réserver.
+    if (!session?.user?.id) {
+      const guard = await guardPublicFormSubmission(request, {
+        scope: 'booking',
+        email: fallbackClientEmail,
+        body,
+        decoyResponse: () => NextResponse.json({
+          success: true,
+          message: 'Réservation créée avec succès et notification admin envoyée'
+        }, { status: 201 }),
+      });
+      if (!guard.ok) return guard.response;
     }
 
     // Réservation pour un tiers : le client qui réserve reste le contact et le
@@ -131,9 +198,6 @@ export async function POST(request: NextRequest) {
     const finalClientName = clientName || session?.user?.name || '';
     const finalClientEmail = fallbackClientEmail || session?.user?.email || '';
 
-    // Créer la date/heure combinée
-    const scheduledDateTime = new Date(`${date}T${time}`);
-
     // `notes` est un format à une ligne par champ, relu par parseBookingNotes()
     // (src/lib/whatsapp/templates.ts) avec /Demandes spéciales:\s*(.+)/ : `.` ne
     // matchant pas \n, un retour à la ligne tapé dans le textarea tronquerait la
@@ -154,67 +218,107 @@ export async function POST(request: NextRequest) {
     // couvre le trajet ("SUR DEVIS", adresse libre) et quand le trajet a plusieurs
     // secteurs tarifés sans que le client en ait désigné un (requête hors formulaire,
     // ou ancien bundle encore en cache) : on ne devine pas un quartier à sa place.
-    const requestedSegmentId =
-      typeof pricingSegmentId === 'number' && Number.isInteger(pricingSegmentId) ? pricingSegmentId : null;
-
+    //
+    // Les segments sont chargés une seule fois pour toute la demande, puis résolus
+    // trajet par trajet : chacun a son propre couple de lieux, son véhicule et son secteur.
     const pricingSegments = await db
       .select()
       .from(pricingSegmentsTable)
       .where(eq(pricingSegmentsTable.isActive, true))
       .orderBy(asc(pricingSegmentsTable.sortOrder), asc(pricingSegmentsTable.id));
 
-    const pricing = resolvePrice(
-      pricingSegments,
-      pickupAddress,
-      destinationAddress,
-      requestedVehicleType,
-      requestedSegmentId,
+    const priceForTrip = (trip: BookingTripParsed): number => {
+      const requestedSegmentId =
+        typeof trip.pricingSegmentId === 'number' && Number.isInteger(trip.pricingSegmentId)
+          ? trip.pricingSegmentId
+          : null;
+
+      const pricing = resolvePrice(
+        pricingSegments,
+        trip.pickupAddress,
+        trip.destinationAddress,
+        trip.vehicleType,
+        requestedSegmentId,
+      );
+
+      const zoneIsAmbiguous =
+        pricing.alternatives.length > 1 &&
+        !pricing.alternatives.some((alt) => alt.segment.id === requestedSegmentId);
+
+      if (zoneIsAmbiguous) {
+        console.warn(
+          `⚠️ Secteur tarifaire non précisé pour ${trip.pickupAddress} → ${trip.destinationAddress} : prix laissé à fixer par l'admin`
+        );
+        return 0;
+      }
+
+      return pricing.price !== null ? pricing.price : 0;
+    };
+
+    // Une demande à plusieurs trajets donne une course par trajet : l'assignation
+    // chauffeur, le prix et le suivi se font de toute façon course par course. Le
+    // groupe garde la trace qu'elles viennent d'une même soumission. NULL pour une
+    // demande à un seul trajet : pas de faux groupe.
+    const bookingGroupId = trips.length > 1 ? randomUUID() : null;
+
+    // Tout ou rien : une demande ne doit jamais se retrouver à moitié créée, le client
+    // repartirait avec la moitié de son séjour réservée sans le savoir.
+    const createdBookings = await db.transaction(async (tx) => {
+      const rows = [];
+      for (let i = 0; i < trips.length; i++) {
+        const trip = trips[i];
+        const scheduledDateTime = new Date(`${trip.date}T${trip.time}`);
+        // `Service:` garde le slug brut : parseBookingNotes() le passe a getServiceById()
+        // pour retrouver le libelle traduit. La precision libre du client part donc sur
+        // sa propre ligne, ajoutee en fin de notes.
+        const customServiceLine = trip.customServiceType
+          ? `
+Precision service: ${trip.customServiceType}`
+          : '';
+        // Ligne supplémentaire, jamais intercalée : les regex de parseBookingNotes()
+        // lisent chaque champ sur sa propre ligne, ajouter à la fin ne casse rien.
+        const tripLine = trips.length > 1 ? `\nTrajet: ${i + 1}/${trips.length} de la demande` : '';
+
+        const inserted = await tx
+          .insert(bookingsTable)
+          .values({
+            customerName: finalClientName,
+            customerEmail: finalClientEmail,
+            customerPhone: normalizedContactPhone,
+            userId: finalUserId,
+            pickupAddress: trip.pickupAddress,
+            dropoffAddress: trip.destinationAddress,
+            scheduledDateTime,
+            status: 'pending',
+            passengers: trip.passengers,
+            luggage: trip.luggage,
+            duration: trip.duration !== undefined ? trip.duration.toString() : '2',
+            driverId: null, // Sera assigné plus tard par l'admin
+            vehicleId: null, // Sera assigné plus tard par l'admin
+            requestedVehicleType: trip.vehicleType,
+            price: priceForTrip(trip).toString(),
+            passengerName: finalPassengerName || null,
+            passengerPhone: normalizePhoneForStorage(finalPassengerPhone),
+            flightNumber: trip.flightNumber || null,
+            airline: trip.airline || null,
+            bookingGroupId,
+            notes: `Service: ${trip.serviceType}\nVéhicule souhaité: ${trip.vehicleType === 'suv' ? 'SUV' : 'Berline'}\nContact: ${normalizedContactPhone}${contactEmail ? ` - ${contactEmail}` : ''}\nServices additionnels: ${additionalServices?.join(', ') || 'Aucun'}\nDemandes spéciales: ${flatSpecialRequests || 'Aucune'}${customServiceLine}${tripLine}`,
+            updatedAt: new Date()
+          })
+          .returning();
+
+        rows.push(inserted[0]);
+      }
+      return rows;
+    });
+
+    const createdBooking = createdBookings[0];
+    console.log(
+      `✅ ${createdBookings.length} réservation(s) créée(s) pour ${finalClientName} : ${createdBookings.map((b) => `#${b.id}`).join(', ')}`
     );
 
-    const zoneIsAmbiguous =
-      pricing.alternatives.length > 1 &&
-      !pricing.alternatives.some((alt) => alt.segment.id === requestedSegmentId);
-
-    const resolvedPrice = !zoneIsAmbiguous && pricing.price !== null ? pricing.price : 0;
-
-    if (zoneIsAmbiguous) {
-      console.warn(
-        `⚠️ Secteur tarifaire non précisé pour ${pickupAddress} → ${destinationAddress} : prix laissé à fixer par l'admin`
-      );
-    }
-
-    // Créer la réservation
-    const newBooking = await db
-      .insert(bookingsTable)
-      .values({
-        customerName: finalClientName,
-        customerEmail: finalClientEmail,
-        customerPhone: normalizedContactPhone,
-        userId: finalUserId,
-        pickupAddress,
-        dropoffAddress: destinationAddress,
-        scheduledDateTime,
-        status: 'pending',
-        passengers: passengers || 1,
-        luggage: body.luggage || 1,
-        duration: duration ? duration.toString() : '2',
-        driverId: null, // Sera assigné plus tard par l'admin
-        vehicleId: null, // Sera assigné plus tard par l'admin
-        requestedVehicleType,
-        price: resolvedPrice.toString(),
-        passengerName: finalPassengerName || null,
-        passengerPhone: normalizePhoneForStorage(finalPassengerPhone),
-        flightNumber: flightNumber || null,
-        airline: airline || null,
-        notes: `Service: ${serviceType}\nVéhicule souhaité: ${requestedVehicleType === 'suv' ? 'SUV' : 'Berline'}\nContact: ${normalizedContactPhone}${contactEmail ? ` - ${contactEmail}` : ''}\nServices additionnels: ${additionalServices?.join(', ') || 'Aucun'}\nDemandes spéciales: ${flatSpecialRequests || 'Aucune'}`,
-        updatedAt: new Date()
-      })
-      .returning();
-
-    const createdBooking = newBooking[0];
-    console.log(`✅ Réservation #${createdBooking.id} créée pour ${finalClientName}`);
-
-    // Envoyer notification uniquement à l'admin (pas au client)
+    // Une seule notification par demande, pas une par trajet : le client a rempli un
+    // formulaire, il reçoit un accusé, et l'admin reçoit une alerte listant les courses.
     // sendWithRetry ne lève jamais : en cas d'échec immédiat, le job est mis
     // en file et rejoué plus tard par le worker (src/lib/notification-queue.ts)
     const adminEmail = process.env.ADMIN_EMAIL || 'onboarding@resend.dev';
@@ -228,10 +332,22 @@ export async function POST(request: NextRequest) {
         dropoffLocation: createdBooking.dropoffAddress,
         pickupDate: new Date(createdBooking.scheduledDateTime).toLocaleDateString('fr-FR'),
         pickupTime: new Date(createdBooking.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-        passengers: passengers || 1,
+        passengers: createdBooking.passengers,
         luggage: createdBooking.luggage || 1,
         passengerName: createdBooking.passengerName,
-        passengerPhone: createdBooking.passengerPhone
+        passengerPhone: createdBooking.passengerPhone,
+        // Les trajets de la demande sont listés sous la fiche du premier : l'admin voit
+        // d'un coup d'œil que la demande en compte plusieurs et peut les traiter ensemble.
+        trips: createdBookings.length > 1
+          ? createdBookings.map((booking, index) => ({
+              position: index + 1,
+              reference: `BOOK-${booking.id}`,
+              pickupLocation: booking.pickupAddress,
+              dropoffLocation: booking.dropoffAddress,
+              pickupDate: new Date(booking.scheduledDateTime).toLocaleDateString('fr-FR'),
+              pickupTime: new Date(booking.scheduledDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+            }))
+          : undefined,
       }
     ]);
 
@@ -239,12 +355,30 @@ export async function POST(request: NextRequest) {
     // dispatch WhatsApp vers l'admin : le numéro qui émet les notifications est
     // celui configuré dans Geskap, et un numéro ne peut pas s'envoyer un message
     // à lui-même. L'admin est prévenu par email (sendNewBookingRequestEmail ci-dessus).
-    await sendWithRetry('whatsapp', 'whatsapp.sendReservationCreeeClient', [createdBooking]);
+    //
+    // Un seul message pour toute la demande : le gabarit Meta a un nombre de variables
+    // figé, on ne peut pas y détailler N trajets, et N messages pour une seule
+    // soumission seraient vécus comme du spam. Le contexte de groupe se glisse dans
+    // les variables existantes (référence et libellé du service).
+    await sendWithRetry('whatsapp', 'whatsapp.sendReservationCreeeClient', [
+      createdBooking,
+      createdBookings.length > 1
+        ? {
+            total: createdBookings.length,
+            bookingIds: createdBookings.map((booking) => booking.id),
+          }
+        : undefined,
+    ]);
 
     return NextResponse.json({
-      success: true, 
+      success: true,
+      // `data` reste la première réservation : les appelants existants lisent ce champ.
       data: createdBooking,
-      message: 'Réservation créée avec succès et notification admin envoyée'
+      bookings: createdBookings,
+      bookingGroupId,
+      message: createdBookings.length > 1
+        ? `${createdBookings.length} réservations créées avec succès et notification admin envoyée`
+        : 'Réservation créée avec succès et notification admin envoyée'
     }, { status: 201 });
 
   } catch (error) {

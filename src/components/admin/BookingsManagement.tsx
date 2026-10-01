@@ -18,6 +18,7 @@ import { useNotification } from "@/hooks/useNotification"
 import { BookingDetailsModal } from "./BookingDetailsModal"
 import { CreateBookingModal } from "./CreateBookingModal"
 import { StatusBadge, TONE_STYLE, toneForStatus } from "@/components/shared/StatusBadge"
+import { buildBookingGroupPositions } from "@/lib/booking-groups"
 
 interface Booking {
   id: number
@@ -37,6 +38,9 @@ interface Booking {
   requestedVehicleType?: 'berline' | 'suv' | null
   passengerName?: string | null
   passengerPhone?: string | null
+  // Demande a plusieurs trajets : les courses issues de la meme soumission du
+  // formulaire de reservation partagent cet identifiant (null sinon).
+  bookingGroupId?: string | null
   createdAt: string
   flightNumber?: string | null
   airline?: string | null
@@ -81,6 +85,10 @@ const selectStyle: React.CSSProperties = {
 export function BookingsManagement() {
   const [bookings, setBookings] = useState<Booking[]>([])
   const [filteredBookings, setFilteredBookings] = useState<Booking[]>([])
+  // Une demande a plusieurs trajets donne une course par trajet : chacune se traite
+  // separement, mais l'admin doit voir qu'elles forment un meme sejour. Calcule sur
+  // la liste complete, pour que le total ne depende pas du filtre affiche.
+  const bookingGroupPositions = buildBookingGroupPositions(bookings)
   const [isLoading, setIsLoading] = useState(true)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const { notifications, showSuccess, showError, showWarning, removeNotification } = useNotification()
@@ -499,7 +507,14 @@ export function BookingsManagement() {
                       </div>
                       <div>
                         <h3 style={{ margin: 0, fontSize: '13.5px', fontWeight: 600, color: '#12100E' }}>{booking.customerName}</h3>
-                        <p style={{ margin: '2px 0 0', fontFamily: 'var(--font-mono)', fontSize: '9.5px', letterSpacing: '0.06em', color: '#6E6A63' }}>IDX-{booking.id.toString().padStart(4, '0')}</p>
+                        <p style={{ margin: '2px 0 0', fontFamily: 'var(--font-mono)', fontSize: '9.5px', letterSpacing: '0.06em', color: '#6E6A63' }}>
+                          IDX-{booking.id.toString().padStart(4, '0')}
+                          {bookingGroupPositions.get(booking.id) && (
+                            <span style={{ marginLeft: '6px', color: '#B4643A' }}>
+                              · Trajet {bookingGroupPositions.get(booking.id)!.position}/{bookingGroupPositions.get(booking.id)!.total}
+                            </span>
+                          )}
+                        </p>
                       </div>
                     </div>
                     <StatusBadge domain="booking" value={booking.status} audience="admin" live={booking.status === 'in_progress'} />
@@ -596,7 +611,14 @@ export function BookingsManagement() {
                         </div>
                         <div>
                           <span style={{ fontSize: '13px', fontWeight: 600, color: '#12100E', display: 'block' }}>{booking.customerName}</span>
-                          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: '#9a938a' }}>IDX-{booking.id}</span>
+                          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: '#9a938a' }}>
+                            IDX-{booking.id}
+                            {bookingGroupPositions.get(booking.id) && (
+                              <span style={{ marginLeft: '6px', color: '#B4643A' }}>
+                                · Trajet {bookingGroupPositions.get(booking.id)!.position}/{bookingGroupPositions.get(booking.id)!.total}
+                              </span>
+                            )}
+                          </span>
                         </div>
                       </div>
                     </td>

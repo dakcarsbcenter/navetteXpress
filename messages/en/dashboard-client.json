@@ -190,7 +190,8 @@
     "noBookingFound": "No booking found",
     "noBookingYet": "You haven't made a booking yet.",
     "noBookingWithStatus": "No booking with status \"{status}\".",
-    "bookTrip": "Book a trip"
+    "bookTrip": "Book a trip",
+    "groupPosition": "Trip {position}/{total}"
   },
   "createReviews": {
     "title": "Trips to rate",

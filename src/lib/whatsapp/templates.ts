@@ -139,8 +139,24 @@ function parseBookingNotes(notes: string | null): {
   return { serviceTypeLabel, optionsLabel, driverNotesLabel };
 }
 
+/**
+ * Contexte d'une demande à plusieurs trajets (aller-retour, séjour enchaînant
+ * plusieurs transferts). Le gabarit Meta a un nombre de variables figé : on ne
+ * peut pas y détailler N trajets sans repasser par une validation Meta. On envoie
+ * donc un seul accusé, pour la première course, et ce contexte se glisse dans les
+ * variables existantes — le client voit que sa demande en compte plusieurs et
+ * retrouve toutes ses références.
+ */
+export interface BookingGroupContext {
+  total: number;
+  bookingIds: number[];
+}
+
 /** 1. Accusé de réception envoyé au client à la création de la réservation. */
-export async function sendReservationCreeeClient(booking: SelectBooking) {
+export async function sendReservationCreeeClient(
+  booking: SelectBooking,
+  groupContext?: BookingGroupContext
+) {
   // Un destinataire absent était jusqu'ici un `return` silencieux : sendWithRetry
   // recevait undefined, assertSuccess laissait passer, et l'appelant lisait
   // {success:true} — aucune trace nulle part, ni en base ni dans les logs. On lève
@@ -153,6 +169,16 @@ export async function sendReservationCreeeClient(booking: SelectBooking) {
   }
   const { serviceTypeLabel, optionsLabel, driverNotesLabel } = parseBookingNotes(booking.notes);
 
+  const isGrouped = Boolean(groupContext && groupContext.total > 1);
+  // Les trois lieux/dates du message décrivent le premier trajet : on le dit, sinon
+  // le client croirait que sa demande a été réduite à une seule course.
+  const serviceLabelWithGroup = isGrouped
+    ? `${serviceTypeLabel} — ${bi('trajet', 'trip')} 1/${groupContext!.total}`
+    : serviceTypeLabel;
+  const referenceLabel = isGrouped
+    ? groupContext!.bookingIds.map((id) => `NX-${id}`).join(', ')
+    : reference(booking);
+
   await sendWhatsAppTemplate({
     to: booking.customerPhone,
     template: WHATSAPP_TEMPLATES.reservationCreee,
@@ -161,7 +187,7 @@ export async function sendReservationCreeeClient(booking: SelectBooking) {
     idempotencyKey: `${booking.id}-reservation_creee_client`,
     variables: [
       firstNameOf(booking.customerName),
-      serviceTypeLabel,
+      serviceLabelWithGroup,
       booking.pickupAddress,
       booking.dropoffAddress,
       formatDateTime(booking.scheduledDateTime),
@@ -172,7 +198,7 @@ export async function sendReservationCreeeClient(booking: SelectBooking) {
       flightStatusLabel(booking.flightStatus),
       optionsLabel,
       driverNotesLabel,
-      reference(booking),
+      referenceLabel,
     ],
   });
 }
