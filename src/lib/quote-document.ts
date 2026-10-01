@@ -108,6 +108,18 @@ export function computeTotals(subtotal: number, taxRate = DEFAULT_TAX_RATE) {
 }
 
 /**
+ * Taux de TVA d'un devis. La colonne est NOT NULL avec defaut, mais un devis
+ * relu depuis une base pas encore migree renverrait null : on retombe alors sur
+ * le regime normal plutot que de facturer 0 % par accident.
+ */
+export function quoteTaxRate(quote: Pick<SelectQuote, 'taxRate'>): number {
+  const parsed = quote.taxRate === null || quote.taxRate === undefined
+    ? NaN
+    : parseFloat(String(quote.taxRate));
+  return Number.isFinite(parsed) ? parsed : DEFAULT_TAX_RATE;
+}
+
+/**
  * Charge un devis et compose les donnees du PDF. Attribue la reference, la date
  * d'emission et la date de validite a la premiere generation, puis les reutilise.
  */
@@ -155,6 +167,6 @@ export async function buildQuoteDocumentData(quoteId: number): Promise<QuoteDocu
       ninea: quote.customerNinea,
     },
     items: reconcileItems(items, subtotal),
-    ...computeTotals(subtotal),
+    ...computeTotals(subtotal, quoteTaxRate(quote)),
   };
 }

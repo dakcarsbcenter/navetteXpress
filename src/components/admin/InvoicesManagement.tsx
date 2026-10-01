@@ -13,7 +13,7 @@ import {
   Trash,
   X
 } from "@phosphor-icons/react"
-import { downloadInvoicePDF } from '@/lib/invoice-pdf'
+import { DEFAULT_TAX_RATE, TAX_RATE_CHOICES } from '@/lib/pdf/brand'
 import { BulkDeleteModal } from '@/components/ui/BulkDeleteModal'
 import { NotificationCenter } from '@/components/ui/NotificationCenter'
 import { useNotification } from '@/hooks/useNotification'
@@ -76,7 +76,7 @@ export default function InvoicesManagement() {
     customerPhone: '',
     service: '',
     amount: '',
-    taxRate: '20',
+    taxRate: String(DEFAULT_TAX_RATE),
     taxAmount: '0',
     totalAmount: '0',
     dueDate: '',
@@ -152,52 +152,13 @@ export default function InvoicesManagement() {
     return `${amount.toLocaleString('fr-FR')} FCFA`
   }
 
-  const handleDownloadPDF = async (invoiceId: number) => {
-    try {
-      const response = await fetch(`/api/invoices/${invoiceId}`)
-      if (!response.ok) throw new Error('Erreur lors de la récupération de la facture')
-
-      const data = await response.json()
-      if (!data.success || !data.invoice) throw new Error('Facture introuvable')
-
-      const invoice = data.invoice
-
-      const invoiceData = {
-        invoiceNumber: invoice.invoiceNumber,
-        customerName: invoice.customerName,
-        customerEmail: invoice.customerEmail,
-        customerPhone: invoice.customerPhone || '',
-        service: invoice.service,
-        amountHT: invoice.amountHT,
-        vatAmount: invoice.vatAmount,
-        amountTTC: invoice.amountTTC,
-        taxRate: invoice.taxRate,
-        issueDate: new Date(invoice.issueDate).toLocaleDateString('fr-FR'),
-        dueDate: new Date(invoice.dueDate).toLocaleDateString('fr-FR'),
-        status: invoice.status,
-        // Lignes figées à l'émission ; les factures antérieures n'en ont pas,
-        // on retombe alors sur le libellé de service comme avant.
-        items: invoice.items && invoice.items.length > 0
-          ? invoice.items
-          : (invoice.quote?.message ? [
-              {
-                description: invoice.service + (invoice.quote.message ? ` - ${invoice.quote.message}` : ''),
-                quantity: 1,
-                price: invoice.amountHT,
-                total: invoice.amountHT
-              }
-            ] : undefined),
-        object: invoice.documentObject,
-        quoteReference: invoice.quoteReference,
-        customerAddress: invoice.customerAddress,
-        customerNinea: invoice.customerNinea,
-        notes: invoice.notes || invoice.quote?.adminNotes || undefined
-      }
-
-      await downloadInvoicePDF(invoiceData)
-    } catch (error) {
-      console.error('Erreur lors du téléchargement du PDF:', error)
-    }
+  /**
+   * Le PDF est rendu côté serveur à partir des lignes figées dans la facture
+   * (`invoices.items`) : identique à celui joint à l'email, contrairement à
+   * l'ancien rendu navigateur qui recomposait le libellé depuis le devis.
+   */
+  const handleDownloadPDF = (invoiceId: number) => {
+    window.open(`/api/invoices/${invoiceId}/pdf?download=1`, '_blank')
   }
 
   const toggleSelectAll = () => {
@@ -276,7 +237,7 @@ export default function InvoicesManagement() {
       customerPhone: '',
       service: '',
       amount: '',
-      taxRate: '20',
+      taxRate: String(DEFAULT_TAX_RATE),
       taxAmount: '0',
       totalAmount: '0',
       dueDate: dueDate.toISOString().split('T')[0],
@@ -289,13 +250,18 @@ export default function InvoicesManagement() {
     const quote = quotes.find(q => q.id.toString() === quoteId)
     if (quote) {
       const amount = quote.estimatedPrice || '0'
-      const taxRate = 20
+      // Le devis porte son propre taux (0 % pour une prestation exonérée) :
+      // la facture doit sortir au même régime que ce qui a été annoncé.
+      const taxRate = quote.taxRate !== undefined && quote.taxRate !== null
+        ? parseFloat(String(quote.taxRate))
+        : DEFAULT_TAX_RATE
       const taxAmount = (parseFloat(amount) * taxRate) / 100
       const totalAmount = parseFloat(amount) + taxAmount
 
       setFormData(prev => ({
         ...prev,
         quoteId,
+        taxRate: String(taxRate),
         customerName: quote.customerName,
         customerEmail: quote.customerEmail,
         customerPhone: quote.customerPhone || '',
@@ -309,16 +275,25 @@ export default function InvoicesManagement() {
   }
 
   const handleAmountChange = (amount: string) => {
+    recomputeAmounts(amount, formData.taxRate)
+  }
+
+  const handleTaxRateChange = (taxRate: string) => {
+    recomputeAmounts(formData.amount, taxRate)
+  }
+
+  /** TVA et TTC découlent toujours du HT et du taux : jamais saisis à la main. */
+  const recomputeAmounts = (amount: string, taxRate: string) => {
     const amt = parseFloat(amount) || 0
-    const rate = parseFloat(formData.taxRate) || 0
+    const rate = parseFloat(taxRate) || 0
     const tax = (amt * rate) / 100
-    const total = amt + tax
 
     setFormData(prev => ({
       ...prev,
       amount,
+      taxRate,
       taxAmount: tax.toFixed(2),
-      totalAmount: total.toFixed(2)
+      totalAmount: (amt + tax).toFixed(2)
     }))
   }
 
@@ -661,7 +636,7 @@ export default function InvoicesManagement() {
                   Chiffrage &amp; taxes
                 </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
                   <div>
                     <label style={fieldLabel}>Montant HT (FCFA)</label>
                     <input
@@ -674,12 +649,27 @@ export default function InvoicesManagement() {
                   </div>
 
                   <div>
-                    <label style={fieldLabel}>TVA (20%)</label>
+                    <label style={fieldLabel}>Régime de TVA</label>
+                    <select
+                      value={formData.taxRate}
+                      onChange={(e) => handleTaxRateChange(e.target.value)}
+                      style={{ ...fieldInput, backgroundColor: '#FFFFFF' }}
+                    >
+                      {TAX_RATE_CHOICES.map((rate) => (
+                        <option key={rate} value={String(rate)}>
+                          {rate === 0 ? '0 % — exonéré' : `${rate} %`}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={fieldLabel}>TVA ({formData.taxRate} %)</label>
                     <input type="text" value={formData.taxAmount} readOnly style={{ ...fieldInput, backgroundColor: '#FFFFFF', fontFamily: 'var(--font-mono)', color: '#6E6A63' }} />
                   </div>
 
                   <div>
-                    <label style={fieldLabel}>Total TTC</label>
+                    <label style={fieldLabel}>{parseFloat(formData.taxRate) === 0 ? 'Total à payer' : 'Total TTC'}</label>
                     <input type="text" value={formData.totalAmount} readOnly style={{ ...fieldInput, backgroundColor: 'rgba(31,82,69,.08)', border: '1px solid rgba(31,82,69,.3)', fontFamily: 'var(--font-mono)', fontWeight: 600, color: '#1F5245' }} />
                   </div>
                 </div>

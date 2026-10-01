@@ -324,6 +324,8 @@ export function drawPaymentAndTotals(doc: PdfDoc, y: number, totals: DocumentTot
   };
 
   row('Sous-total HT', formatAmount(totals.subtotal));
+  // La ligne reste affichee a 0 % : le client doit voir que la TVA a bien ete
+  // traitee, et non qu'on l'a oubliee. Le pied legal porte la mention.
   row(`TVA (${totals.taxRate} %)`, formatAmount(totals.taxAmount));
 
   const bannerHeight = 12;
@@ -332,7 +334,8 @@ export function drawPaymentAndTotals(doc: PdfDoc, y: number, totals: DocumentTot
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(12);
   doc.setTextColor(...COLORS.white);
-  doc.text('Total TTC', totalsX + 4, cursor + 4);
+  // Sans TVA, le total n'est pas un TTC : on ne peut pas l'appeler ainsi.
+  doc.text(totals.taxRate === 0 ? 'Total à payer' : 'Total TTC', totalsX + 4, cursor + 4);
   doc.text(formatAmount(totals.total), PAGE.right - 4, cursor + 4, { align: 'right' });
 
   const totalsBottom = cursor - 4 + bannerHeight;

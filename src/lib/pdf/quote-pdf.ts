@@ -6,7 +6,13 @@
  * joindre a l'email, l'admin l'appelle dans le navigateur pour l'apercu.
  */
 
-import { COLORS, DEFAULT_TAX_RATE, COMPANY_INFO, formatDocumentDate } from './brand';
+import {
+  COLORS,
+  COMPANY_INFO,
+  DEFAULT_TAX_RATE,
+  TAX_EXEMPT_MENTION,
+  formatDocumentDate,
+} from './brand';
 import {
   createDocument,
   drawCorridor,
@@ -113,7 +119,7 @@ export async function generateQuotePDF(data: QuoteDocumentData): Promise<PdfDoc>
     'Cachet et signature Navette Xpress',
   ]);
 
-  drawLegalFooter(doc, LEGAL_MENTIONS);
+  drawLegalFooter(doc, data.taxRate === 0 ? `${TAX_EXEMPT_MENTION} ${LEGAL_MENTIONS}` : LEGAL_MENTIONS);
 
   return doc;
 }

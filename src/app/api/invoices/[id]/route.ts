@@ -7,7 +7,9 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { db } from '@/db';
 import { invoicesTable, quotesTable } from '@/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
+import { DEFAULT_TAX_RATE } from '@/lib/pdf/brand';
+import { calculateInvoiceAmounts } from '@/lib/invoice-utils';
 
 // GET - Récupérer une facture par ID
 export async function GET(
@@ -98,7 +100,7 @@ export async function GET(
       amountHT: invoiceData.amount ? parseFloat(invoiceData.amount) : 0,
       vatAmount: invoiceData.taxAmount ? parseFloat(invoiceData.taxAmount) : 0,
       amountTTC: invoiceData.totalAmount ? parseFloat(invoiceData.totalAmount) : 0,
-      taxRate: invoiceData.taxRate ? parseFloat(invoiceData.taxRate) : 20,
+      taxRate: invoiceData.taxRate ? parseFloat(invoiceData.taxRate) : DEFAULT_TAX_RATE,
       quote: invoiceData.quoteId ? {
         id: invoiceData.quoteId,
         service: invoiceData.quoteService,
@@ -157,8 +159,52 @@ export async function PATCH(
     const body = await request.json();
     console.log(`📝 Mise à jour de la facture #${invoiceId}`, body);
 
+    const [current] = await db.select()
+      .from(invoicesTable)
+      .where(eq(invoicesTable.id, invoiceId))
+      .limit(1);
+
+    if (!current) {
+      return NextResponse.json(
+        { success: false, error: 'Facture non trouvée' },
+        { status: 404 }
+      );
+    }
+
+    // Whitelist : le corps de la requête ne doit pas pouvoir réécrire n'importe
+    // quelle colonne (numéro de facture, devis d'origine, lignes figées...).
+    const updateData: Partial<typeof invoicesTable.$inferInsert> = { updatedAt: new Date() };
+
+    if (body.status !== undefined) updateData.status = body.status;
+    if (body.dueDate !== undefined) updateData.dueDate = new Date(body.dueDate);
+    if (body.paidDate !== undefined) updateData.paidDate = body.paidDate ? new Date(body.paidDate) : null;
+    if (body.paymentMethod !== undefined) updateData.paymentMethod = body.paymentMethod || null;
+    if (body.notes !== undefined) updateData.notes = body.notes || null;
+    if (body.documentObject !== undefined) updateData.documentObject = body.documentObject || null;
+    if (body.customerAddress !== undefined) updateData.customerAddress = body.customerAddress || null;
+    if (body.customerNinea !== undefined) updateData.customerNinea = body.customerNinea || null;
+
+    // Montants : HT et taux sont les seules entrées ; TVA et TTC sont toujours
+    // recalculés ici, jamais repris du client.
+    if (body.amount !== undefined || body.taxRate !== undefined) {
+      const amount = body.amount !== undefined ? parseFloat(String(body.amount)) : parseFloat(current.amount);
+      const rate = body.taxRate !== undefined ? parseFloat(String(body.taxRate)) : parseFloat(current.taxRate);
+
+      if (!Number.isFinite(amount) || amount <= 0) {
+        return NextResponse.json({ success: false, error: 'Montant HT invalide' }, { status: 400 });
+      }
+      if (!Number.isFinite(rate) || rate < 0 || rate > 100) {
+        return NextResponse.json({ success: false, error: 'Taux de TVA invalide' }, { status: 400 });
+      }
+
+      const amounts = calculateInvoiceAmounts(amount, rate);
+      updateData.amount = amounts.amount;
+      updateData.taxRate = amounts.taxRate;
+      updateData.taxAmount = amounts.taxAmount;
+      updateData.totalAmount = amounts.totalAmount;
+    }
+
     // Si le statut passe à "paid", enregistrer la date de paiement
-    const updateData: any = { ...body, updatedAt: new Date() };
     if (body.status === 'paid' && !body.paidDate) {
       updateData.paidDate = new Date();
     }

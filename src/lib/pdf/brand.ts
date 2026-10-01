@@ -52,8 +52,17 @@ export const PAYMENT_METHODS = {
   lines: [`Wave / Orange Money : ${COMPANY_INFO.phone}`],
 };
 
-/** Taux de TVA senegalais, applique aux devis comme aux factures. */
+/** Taux de TVA senegalais, applique par defaut aux devis comme aux factures. */
 export const DEFAULT_TAX_RATE = 18;
+
+/** Taux proposes a l'admin : 18 % (regime normal) ou 0 % (exonere / hors champ). */
+export const TAX_RATE_CHOICES = [DEFAULT_TAX_RATE, 0] as const;
+
+/**
+ * Mention ajoutee au pied legal des documents emis sans TVA. Le total ne peut
+ * plus etre presente comme un TTC : voir drawPaymentAndTotals.
+ */
+export const TAX_EXEMPT_MENTION = 'TVA non applicable.';
 
 /**
  * Separateur d'itineraire "depart > destination".

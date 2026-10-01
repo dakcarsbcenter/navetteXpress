@@ -301,6 +301,9 @@ export const quotesTable = pgTable('quotes', {
   adminNotes: text('admin_notes'),
   clientNotes: text('client_notes'),
   estimatedPrice: decimal('estimated_price', { precision: 10, scale: 2 }),
+  // Taux de TVA du devis, repris tel quel par la facture qui en decoule.
+  // 18 % au Senegal ; 0 % quand la prestation est exoneree ou hors champ.
+  taxRate: decimal('tax_rate', { precision: 5, scale: 2 }).notNull().default('18.00'),
   assignedTo: text('assigned_to').references(() => users.id, { onDelete: 'set null' }),
   passengerName: text('passenger_name'), // Devis pour un tiers : nom du passager reellement transporte. NULL = le client voyage lui-meme.
   passengerPhone: text('passenger_phone'), // Optionnel : permet au chauffeur de joindre directement le passager sur place.

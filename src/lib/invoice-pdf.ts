@@ -10,7 +10,7 @@
  * est inchangee : les quatre vues qui l'utilisent n'ont pas eu a bouger.
  */
 
-import { COLORS, COMPANY_INFO, DEFAULT_TAX_RATE } from './pdf/brand';
+import { COLORS, COMPANY_INFO, DEFAULT_TAX_RATE, TAX_EXEMPT_MENTION } from './pdf/brand';
 import {
   createDocument,
   drawCorridor,
@@ -129,9 +129,10 @@ export async function generateInvoicePDF(invoiceData: InvoiceData): Promise<PdfD
 
   drawSignatures(doc, y + 14, ['Cachet et signature Navette Xpress', 'Reçu / payé le :']);
 
-  const mentions = invoiceData.notes
-    ? `${invoiceData.notes}\n${LEGAL_MENTIONS}`
-    : LEGAL_MENTIONS;
+  // Sans TVA, le document doit le dire explicitement.
+  const taxRate = invoiceData.taxRate ?? DEFAULT_TAX_RATE;
+  const legal = taxRate === 0 ? `${TAX_EXEMPT_MENTION} ${LEGAL_MENTIONS}` : LEGAL_MENTIONS;
+  const mentions = invoiceData.notes ? `${invoiceData.notes}\n${legal}` : legal;
   drawLegalFooter(doc, mentions);
 
   return doc;
