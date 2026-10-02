@@ -512,7 +512,29 @@ export const driverAvailabilityTable = pgTable('driver_availability', {
   updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
 }, (table) => ({
   dayOfWeekCheck: check('day_of_week_check', sql`${table.dayOfWeek} >= 0 AND ${table.dayOfWeek} <= 6`),
+  driverIdIdx: index('idx_driver_availability_driver_id').on(table.driverId),
+  dayOfWeekIdx: index('idx_driver_availability_day_of_week').on(table.dayOfWeek),
+  specificDateIdx: index('idx_driver_availability_specific_date').on(table.specificDate),
 }));
+
+// Archive des lignes de driver_availability devenues orphelines avant la pose de la cle
+// etrangere (migration 0034). Sans FK, supprimer un chauffeur laissait son planning derriere
+// lui. Table de trace uniquement : aucune contrainte, aucune lecture applicative. Elle est
+// declaree ici pour qu'un db:push ne la supprime pas, et peut etre videe une fois l'archive
+// jugee inutile en production.
+export const driverAvailabilityOrphansBackupTable = pgTable('driver_availability_orphans_backup', {
+  id: integer('id'),
+  driverId: text('driver_id'),
+  dayOfWeek: integer('day_of_week'),
+  startTime: text('start_time'),
+  endTime: text('end_time'),
+  isAvailable: boolean('is_available'),
+  specificDate: timestamp('specific_date'),
+  notes: text('notes'),
+  createdAt: timestamp('created_at'),
+  updatedAt: timestamp('updated_at'),
+  archivedAt: timestamp('archived_at').notNull().defaultNow(),
+});
 
 // ── Table principale Publicités ──
 export const advertisements = pgTable('advertisements', {
