@@ -2,31 +2,13 @@
 
 import { useLocale, useTranslations } from "next-intl"
 import { toIntlLocale } from "@/lib/intl-locale"
-
-export interface DayDraft {
-  dayOfWeek: number // 0 = dimanche ... 6 = samedi
-  isOpen: boolean
-  start: string // "HH:MM"
-  end: string
-  ids: number[]
-}
+import { weekdayName, type WeekDayDraft } from "@/lib/driver-availability-shared"
 
 interface WeeklyScheduleCardProps {
-  days: DayDraft[]
+  days: WeekDayDraft[]
   exceptionsCount: number
   onToggle: (dayOfWeek: number) => void
   onChangeTime: (dayOfWeek: number, field: "start" | "end", value: string) => void
-}
-
-// Un lundi de référence quelconque : sert uniquement à obtenir le nom complet
-// du jour dans la locale courante via Intl, sans dupliquer 7 libellés par langue.
-const REFERENCE_MONDAY = new Date(2024, 0, 1)
-
-function weekdayName(dayOfWeek: number, intlLocale: string) {
-  const offset = dayOfWeek === 0 ? 6 : dayOfWeek - 1
-  const date = new Date(REFERENCE_MONDAY)
-  date.setDate(date.getDate() + offset)
-  return date.toLocaleDateString(intlLocale, { weekday: "long" })
 }
 
 export function WeeklyScheduleCard({ days, exceptionsCount, onToggle, onChangeTime }: WeeklyScheduleCardProps) {

@@ -2,33 +2,19 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
-import { WeeklyScheduleCard, type DayDraft } from "@/app/driver/disponibilites/components/WeeklyScheduleCard"
+import { WeeklyScheduleCard } from "@/app/driver/disponibilites/components/WeeklyScheduleCard"
 import { ExceptionsPanel } from "@/app/driver/disponibilites/components/ExceptionsPanel"
 import { DispatchInfoPanel } from "@/app/driver/disponibilites/components/DispatchInfoPanel"
+import { buildWeekDrafts, normalizeTime, type WeekDayDraft } from "@/lib/driver-availability-shared"
 import type { DriverAvailabilityApiResponse, DriverAvailabilityRow, DriverBookingsApiResponse } from "@/types/dashboard"
 
-// Lundi -> dimanche a l'affichage, mais day_of_week en base suit Date.getDay()
-// (0 = dimanche ... 6 = samedi) : voir docs/redesign/README.md, section Chauffeur.
-const DAY_ORDER = [1, 2, 3, 4, 5, 6, 0]
 const ACTIVE_STATUSES = ["assigned", "confirmed", "in_progress"]
-
-function buildDrafts(rows: DriverAvailabilityRow[]): DayDraft[] {
-  return DAY_ORDER.map((dayOfWeek) => {
-    const recurring = rows.filter((row) => !row.specificDate && row.isAvailable && row.dayOfWeek === dayOfWeek)
-    if (recurring.length === 0) {
-      return { dayOfWeek, isOpen: false, start: "06:00", end: "22:00", ids: [] }
-    }
-    const start = recurring.reduce((min, row) => (row.startTime < min ? row.startTime : min), recurring[0].startTime)
-    const end = recurring.reduce((max, row) => (row.endTime > max ? row.endTime : max), recurring[0].endTime)
-    return { dayOfWeek, isOpen: true, start: start.slice(0, 5), end: end.slice(0, 5), ids: recurring.map((row) => row.id) }
-  })
-}
 
 export default function DriverDisponibilitesPage() {
   const t = useTranslations("driver.availability")
 
   const [rows, setRows] = useState<DriverAvailabilityRow[]>([])
-  const [drafts, setDrafts] = useState<DayDraft[]>(() => buildDrafts([]))
+  const [drafts, setDrafts] = useState<WeekDayDraft[]>(() => buildWeekDrafts([]))
   const [assignedCount, setAssignedCount] = useState(0)
   const [saving, setSaving] = useState(false)
 
@@ -39,7 +25,7 @@ export default function DriverDisponibilitesPage() {
       const data: DriverAvailabilityApiResponse = await response.json()
       if (data.success && Array.isArray(data.data)) {
         setRows(data.data)
-        setDrafts(buildDrafts(data.data))
+        setDrafts(buildWeekDrafts(data.data))
       }
     } catch (error) {
       console.error("Erreur lors du chargement des disponibilités:", error)
@@ -85,7 +71,12 @@ export default function DriverDisponibilitesPage() {
             return
           }
 
-          const payload = { dayOfWeek: day.dayOfWeek, startTime: `${day.start}:00`, endTime: `${day.end}:00`, isAvailable: true }
+          const payload = {
+            dayOfWeek: day.dayOfWeek,
+            startTime: normalizeTime(day.start),
+            endTime: normalizeTime(day.end),
+            isAvailable: true,
+          }
           if (day.ids.length === 0) {
             await fetch("/api/driver/availability", {
               method: "POST",

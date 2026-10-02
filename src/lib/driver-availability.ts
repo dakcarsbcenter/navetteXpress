@@ -1,6 +1,7 @@
 import { db } from '@/db';
-import { driverAvailabilityTable } from '@/schema';
-import { eq, and, or, isNull } from 'drizzle-orm';
+import { driverAvailabilityTable, type SelectDriverAvailability } from '@/schema';
+import { eq } from 'drizzle-orm';
+import { isWithinRange, toInputTime } from '@/lib/driver-availability-shared';
 
 /**
  * Vérifie si un chauffeur est disponible à une date et heure données
@@ -11,7 +12,9 @@ export async function checkDriverAvailability(
 ): Promise<{ available: boolean; message?: string }> {
   try {
     const dayOfWeek = scheduledDateTime.getDay(); // 0 = Dimanche, 1 = Lundi, etc.
-    const time = scheduledDateTime.toTimeString().slice(0, 5); // Format "HH:mm"
+    // Format "HH:mm". Les bornes en base peuvent etre "HH:mm" ou "HH:mm:ss" :
+    // la comparaison passe par isWithinRange (en minutes), jamais par les chaines.
+    const time = scheduledDateTime.toTimeString().slice(0, 5);
     const dateOnly = new Date(scheduledDateTime);
     dateOnly.setHours(0, 0, 0, 0);
 
@@ -34,13 +37,13 @@ export async function checkDriverAvailability(
       const specDate = new Date(a.specificDate);
       specDate.setHours(0, 0, 0, 0);
       return specDate.getTime() === dateOnly.getTime() &&
-             time >= a.startTime && time <= a.endTime;
+             isWithinRange(time, a.startTime, a.endTime);
     });
 
     if (specificDateUnavailability) {
       return {
         available: false,
-        message: `Le chauffeur est indisponible le ${scheduledDateTime.toLocaleDateString('fr-FR')} de ${specificDateUnavailability.startTime} à ${specificDateUnavailability.endTime}${specificDateUnavailability.notes ? ` (${specificDateUnavailability.notes})` : ''}`
+        message: `Le chauffeur est indisponible le ${scheduledDateTime.toLocaleDateString('fr-FR')} de ${toInputTime(specificDateUnavailability.startTime)} à ${toInputTime(specificDateUnavailability.endTime)}${specificDateUnavailability.notes ? ` (${specificDateUnavailability.notes})` : ''}`
       };
     }
 
@@ -50,7 +53,7 @@ export async function checkDriverAvailability(
       const specDate = new Date(a.specificDate);
       specDate.setHours(0, 0, 0, 0);
       return specDate.getTime() === dateOnly.getTime() &&
-             time >= a.startTime && time <= a.endTime;
+             isWithinRange(time, a.startTime, a.endTime);
     });
 
     if (specificDateAvailability) {
@@ -71,12 +74,12 @@ export async function checkDriverAvailability(
     }
 
     // Vérifier si l'heure demandée est dans une des plages de disponibilité
-    const isInAvailableSlot = recurringAvailabilities.some(a => 
-      time >= a.startTime && time <= a.endTime
+    const isInAvailableSlot = recurringAvailabilities.some(a =>
+      isWithinRange(time, a.startTime, a.endTime)
     );
 
     if (!isInAvailableSlot) {
-      const slots = recurringAvailabilities.map(a => `${a.startTime}-${a.endTime}`).join(', ');
+      const slots = recurringAvailabilities.map(a => `${toInputTime(a.startTime)}-${toInputTime(a.endTime)}`).join(', ');
       return {
         available: false,
         message: `Le chauffeur n'est pas disponible à ${time}. Créneaux disponibles : ${slots}`
@@ -106,8 +109,8 @@ export async function getDriverAvailabilitySummary(driverId: string) {
     const dayNames = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
     
     // Grouper par jour de la semaine
-    const recurring: Record<number, any[]> = {};
-    const specific: any[] = [];
+    const recurring: Record<number, SelectDriverAvailability[]> = {};
+    const specific: SelectDriverAvailability[] = [];
 
     availabilities.forEach(a => {
       if (a.specificDate) {

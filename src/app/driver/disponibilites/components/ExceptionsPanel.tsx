@@ -4,6 +4,16 @@ import { useState } from "react"
 import { useLocale, useTranslations } from "next-intl"
 import { Trash } from "@phosphor-icons/react"
 import { toIntlLocale } from "@/lib/intl-locale"
+import {
+  DEFAULT_END,
+  DEFAULT_START,
+  FULL_DAY_END,
+  FULL_DAY_START,
+  isFullDayException,
+  normalizeTime,
+  sortExceptions,
+  toInputTime,
+} from "@/lib/driver-availability-shared"
 import type { DriverAvailabilityRow } from "@/types/dashboard"
 
 interface ExceptionsPanelProps {
@@ -23,16 +33,16 @@ export function ExceptionsPanel({ exceptions, onChanged }: ExceptionsPanelProps)
   const [date, setDate] = useState("")
   const [type, setType] = useState<"available" | "unavailable">("unavailable")
   const [fullDay, setFullDay] = useState(true)
-  const [start, setStart] = useState("06:00")
-  const [end, setEnd] = useState("22:00")
+  const [start, setStart] = useState(DEFAULT_START)
+  const [end, setEnd] = useState(DEFAULT_END)
   const [notes, setNotes] = useState("")
 
   const resetForm = () => {
     setDate("")
     setType("unavailable")
     setFullDay(true)
-    setStart("06:00")
-    setEnd("22:00")
+    setStart(DEFAULT_START)
+    setEnd(DEFAULT_END)
     setNotes("")
     setAdding(false)
   }
@@ -48,8 +58,8 @@ export function ExceptionsPanel({ exceptions, onChanged }: ExceptionsPanelProps)
         body: JSON.stringify({
           dayOfWeek,
           specificDate: date,
-          startTime: fullDay ? "00:00:00" : `${start}:00`,
-          endTime: fullDay ? "23:59:00" : `${end}:00`,
+          startTime: normalizeTime(fullDay ? FULL_DAY_START : start),
+          endTime: normalizeTime(fullDay ? FULL_DAY_END : end),
           isAvailable: type === "available",
           notes: notes || null,
         }),
@@ -75,9 +85,7 @@ export function ExceptionsPanel({ exceptions, onChanged }: ExceptionsPanelProps)
     }
   }
 
-  const sorted = [...exceptions].sort(
-    (a, b) => new Date(a.specificDate ?? 0).getTime() - new Date(b.specificDate ?? 0).getTime()
-  )
+  const sorted = sortExceptions(exceptions)
 
   return (
     <div style={{ background: "#FFFFFF", border: "1px solid #E2DACD", borderRadius: "4px", padding: "22px 24px", display: "flex", flexDirection: "column", gap: "16px" }}>
@@ -92,8 +100,8 @@ export function ExceptionsPanel({ exceptions, onChanged }: ExceptionsPanelProps)
 
       {sorted.map((exception) => {
         const specificDate = new Date(exception.specificDate ?? 0)
-        const isFullDay = exception.startTime.slice(0, 5) === "00:00" && exception.endTime.slice(0, 5) === "23:59"
-        const range = { start: exception.startTime.slice(0, 5), end: exception.endTime.slice(0, 5) }
+        const isFullDay = isFullDayException(exception)
+        const range = { start: toInputTime(exception.startTime), end: toInputTime(exception.endTime) }
         const label = !exception.isAvailable && isFullDay
           ? t("unavailableAllDay")
           : exception.isAvailable

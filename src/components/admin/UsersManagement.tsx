@@ -11,6 +11,7 @@ import {
   Trash as Trash2,
   Key,
   Clock,
+  CalendarBlank,
   X,
   Buildings,
   Check,
@@ -20,6 +21,7 @@ import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { DeleteUserModal } from "@/components/ui/DeleteUserModal"
 import Image from "next/image"
 import { BulkDeleteModal } from "@/components/ui/BulkDeleteModal"
+import { DriverAvailabilityModal } from "@/components/admin/DriverAvailabilityModal"
 import { useNotification } from "@/hooks/useNotification"
 
 interface User {
@@ -41,6 +43,12 @@ interface User {
   vehiclePlateNumber?: string | null
   createdAt: string
   lastLogin?: string
+}
+
+/** Resume du planning d'un chauffeur, renvoye par /api/admin/drivers/availability-summary. */
+interface AvailabilitySummary {
+  openDays: number
+  exceptions: number
 }
 
 /** Roles assignables depuis cet ecran. */
@@ -94,6 +102,8 @@ export function UsersManagement({ openCreate, initialRoleFilter }: UsersManageme
   const [isApproveModalOpen, setIsApproveModalOpen] = useState(false)
   const [approvingUser, setApprovingUser] = useState<User | null>(null)
   const [approveLicenseNumber, setApproveLicenseNumber] = useState('')
+  const [planningUser, setPlanningUser] = useState<User | null>(null)
+  const [availabilitySummary, setAvailabilitySummary] = useState<Record<string, AvailabilitySummary>>({})
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false)
   const [rejectingUser, setRejectingUser] = useState<User | null>(null)
   const [rejectReason, setRejectReason] = useState('')
@@ -150,9 +160,25 @@ export function UsersManagement({ openCreate, initialRoleFilter }: UsersManageme
     // stable, l'effet de montage ne se rejoue donc pas.
   }, [showError])
 
+  // Resume des plannings : permet d'afficher « Planning : aucun » dans la liste,
+  // le signal qui manquait pour reperer un chauffeur non assignable.
+  const fetchAvailabilitySummary = useCallback(async () => {
+    try {
+      const response = await fetch('/api/admin/drivers/availability-summary', { cache: 'no-store' })
+      if (!response.ok) return
+      const result = await response.json()
+      if (result.success) {
+        setAvailabilitySummary(result.data || {})
+      }
+    } catch (error) {
+      console.error('Erreur chargement des plannings chauffeurs:', error)
+    }
+  }, [])
+
   useEffect(() => {
     fetchUsers()
-  }, [fetchUsers])
+    fetchAvailabilitySummary()
+  }, [fetchUsers, fetchAvailabilitySummary])
 
   const applyFilters = () => {
     let filtered = [...users]
@@ -691,6 +717,24 @@ export function UsersManagement({ openCreate, initialRoleFilter }: UsersManageme
                             {user.isActive ? 'Actif' : 'En pause'}
                           </span>
                         )}
+                        {user.role === 'driver' && user.driverStatus !== 'pending' && user.driverStatus !== 'rejected' && (() => {
+                          const summary = availabilitySummary[user.id]
+                          const openDays = summary?.openDays ?? 0
+                          const exceptions = summary?.exceptions ?? 0
+                          if (openDays === 0) {
+                            return (
+                              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: '#B8493C', marginTop: '6px' }}>
+                                Planning : aucun
+                              </div>
+                            )
+                          }
+                          return (
+                            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: '#6E6A63', marginTop: '6px' }}>
+                              {`Planning : ${openDays} j/sem`}
+                              {exceptions > 0 && ` · ${exceptions} exception${exceptions > 1 ? 's' : ''}`}
+                            </div>
+                          )
+                        })()}
                       </td>
                       <td style={{ padding: '12px 16px' }}>
                         <div className="flex items-center gap-2" style={{ color: '#6E6A63' }}>
@@ -719,6 +763,16 @@ export function UsersManagement({ openCreate, initialRoleFilter }: UsersManageme
                                 <X size={14} />
                               </button>
                             </>
+                          )}
+                          {user.role === 'driver' && (
+                            <button
+                              type="button"
+                              onClick={() => setPlanningUser(user)}
+                              title="Planning"
+                              style={{ display: 'grid', placeItems: 'center', width: '30px', height: '30px', border: '1px solid #E2DACD', borderRadius: '3px', color: '#1F5245', cursor: 'pointer' }}
+                            >
+                              <CalendarBlank size={14} />
+                            </button>
                           )}
                           <button
                             type="button"
@@ -1085,6 +1139,17 @@ export function UsersManagement({ openCreate, initialRoleFilter }: UsersManageme
         userEmail={deletingUser?.email}
         userRole={deletingUser?.role}
       />
+
+      {/* Driver Planning Modal */}
+      {planningUser && (
+        <DriverAvailabilityModal
+          driver={{ id: planningUser.id, name: planningUser.name }}
+          onClose={() => setPlanningUser(null)}
+          onSaved={fetchAvailabilitySummary}
+          showSuccess={showSuccess}
+          showError={showError}
+        />
+      )}
 
       {/* Bulk Delete Modal */}
       <BulkDeleteModal
