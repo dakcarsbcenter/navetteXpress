@@ -49,7 +49,9 @@ export async function GET(request: NextRequest) {
       }, { status: 401 });
     }
 
-    const userRole = (session.user as any).role || 'customer';
+    // `role` et `email` sont declares sur Session["user"] (src/types/next-auth.d.ts) :
+    // le cast qui etait ici masquait simplement cette augmentation de type.
+    const userRole = session.user.role || 'customer';
 
     // Vérifier les permissions
     const hasPermission = await hasQuotesPermission(userRole, 'read');
@@ -86,7 +88,7 @@ export async function GET(request: NextRequest) {
         .orderBy(desc(quotesTable.createdAt));
     } else {
       // Permission read only: voir uniquement ses propres devis
-      const userEmail = (session.user as any).email;
+      const userEmail = session.user.email;
       if (!userEmail) {
         return NextResponse.json({ 
           success: false, 

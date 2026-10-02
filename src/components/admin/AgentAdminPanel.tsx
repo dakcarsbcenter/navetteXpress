@@ -12,8 +12,6 @@ interface ProposalItem {
   loading: boolean
 }
 
-const DAY_LABELS = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"]
-
 function formatDateTime(iso: string) {
   return new Date(iso).toLocaleString("fr-FR", {
     weekday: "long",

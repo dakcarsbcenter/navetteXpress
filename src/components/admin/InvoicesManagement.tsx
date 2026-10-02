@@ -11,6 +11,7 @@ import {
   Download,
   FileText,
   Trash,
+  CheckCircle,
   X
 } from "@phosphor-icons/react"
 import { DEFAULT_TAX_RATE, TAX_RATE_CHOICES } from '@/lib/pdf/brand'
@@ -20,6 +21,24 @@ import { useNotification } from '@/hooks/useNotification'
 import { StatusBadge } from '@/components/shared/StatusBadge'
 
 type InvoiceStatus = 'draft' | 'pending' | 'paid' | 'cancelled' | 'overdue'
+
+/** Devis rattache a une facture, tel que renvoye par /api/invoices. */
+interface InvoiceQuote {
+  message?: string | null
+  adminNotes?: string | null
+}
+
+/** Devis selectionnable dans le formulaire de creation de facture (/api/quotes). */
+interface QuoteOption {
+  id: number
+  customerName: string
+  customerEmail: string
+  customerPhone?: string | null
+  service: string
+  estimatedPrice?: string | number | null
+  taxRate?: string | number | null
+  adminNotes?: string | null
+}
 
 interface Invoice {
   id: number
@@ -40,7 +59,7 @@ interface Invoice {
   paidDate?: Date
   paymentMethod?: string
   notes?: string
-  quote?: any
+  quote?: InvoiceQuote | null
   // Champs du document officiel (PDF), servis par /api/invoices
   quoteReference?: string
   documentObject?: string
@@ -66,7 +85,12 @@ export default function InvoicesManagement() {
   const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [quotes, setQuotes] = useState<any[]>([])
+  // Encaissement : repris de l'ancien AdminInvoicesView (jamais monté dans le
+  // dashboard), seul écran qui portait « marquer payée ».
+  const [invoiceToSettle, setInvoiceToSettle] = useState<Invoice | null>(null)
+  const [paymentMethod, setPaymentMethod] = useState('')
+  const [isSettling, setIsSettling] = useState(false)
+  const [quotes, setQuotes] = useState<QuoteOption[]>([])
 
   const [formData, setFormData] = useState({
     invoiceNumber: '',
@@ -217,7 +241,7 @@ export default function InvoicesManagement() {
       } else {
         showError(data.error || 'Erreur lors de la création', 'Erreur')
       }
-    } catch (error) {
+    } catch {
       showError('Erreur technique', 'Erreur')
     } finally {
       setIsSubmitting(false)
@@ -249,7 +273,7 @@ export default function InvoicesManagement() {
   const handleQuoteSelect = (quoteId: string) => {
     const quote = quotes.find(q => q.id.toString() === quoteId)
     if (quote) {
-      const amount = quote.estimatedPrice || '0'
+      const amount = String(quote.estimatedPrice ?? '0')
       // Le devis porte son propre taux (0 % pour une prestation exonérée) :
       // la facture doit sortir au même régime que ce qui a été annoncé.
       const taxRate = quote.taxRate !== undefined && quote.taxRate !== null
@@ -297,6 +321,36 @@ export default function InvoicesManagement() {
     }))
   }
 
+  const PAYMENT_METHODS = ['Espèces', 'Virement', 'Mobile Money', 'Chèque', 'Carte bancaire', 'Autre']
+
+  const handleMarkAsPaid = async () => {
+    if (!invoiceToSettle || !paymentMethod) return
+
+    setIsSettling(true)
+    try {
+      const response = await fetch(`/api/invoices/${invoiceToSettle.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'paid', paymentMethod })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        showSuccess(`Facture ${invoiceToSettle.invoiceNumber} marquée comme payée`, 'Paiement enregistré')
+        setInvoiceToSettle(null)
+        setPaymentMethod('')
+        fetchInvoices()
+      } else {
+        showError(data.error || 'Erreur lors de l\'enregistrement du paiement', 'Erreur')
+      }
+    } catch {
+      showError('Erreur technique', 'Erreur')
+    } finally {
+      setIsSettling(false)
+    }
+  }
+
   const handleBulkDelete = async () => {
     try {
       const response = await fetch('/api/invoices/bulk-delete', {
@@ -314,7 +368,7 @@ export default function InvoicesManagement() {
       } else {
         showError(data.error || 'Erreur lors de la suppression', 'Erreur')
       }
-    } catch (error) {
+    } catch {
       showError('Erreur technique', 'Erreur')
     }
   }
@@ -331,7 +385,7 @@ export default function InvoicesManagement() {
       doc.text("Liste des Factures - Navette Xpress", 14, 15)
 
       const tableColumn = ["Facture", "Client", "Statut", "Date", "Montant"]
-      const tableRows: any[] = []
+      const tableRows: string[][] = []
 
       filteredInvoices.forEach(inv => {
         const row = [
@@ -353,7 +407,7 @@ export default function InvoicesManagement() {
 
       doc.save("factures_export.pdf")
       showSuccess("Factures exportées en PDF", "Export réussi")
-    } catch (error) {
+    } catch {
       showError("Erreur lors de l'export PDF", "Erreur technique")
     }
   }
@@ -418,16 +472,31 @@ export default function InvoicesManagement() {
         </div>
       </section>
 
-      {/* Search */}
-      <div style={{ position: 'relative', maxWidth: '360px' }}>
-        <Search size={16} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#6E6A63' }} />
-        <input
-          type="text"
-          placeholder="Rechercher facture, client..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ ...fieldInput, paddingLeft: '40px' }}
-        />
+      {/* Recherche + filtre par statut */}
+      <div className="flex flex-wrap items-center gap-3">
+        <div style={{ position: 'relative', flex: '1 1 260px', maxWidth: '360px' }}>
+          <Search size={16} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#6E6A63' }} />
+          <input
+            type="text"
+            placeholder="Rechercher facture, client..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ ...fieldInput, paddingLeft: '40px' }}
+          />
+        </div>
+        <select
+          aria-label="Filtrer par statut"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value as 'all' | InvoiceStatus)}
+          style={{ ...fieldInput, width: 'auto', minWidth: '170px', backgroundColor: '#FFFFFF', cursor: 'pointer' }}
+        >
+          <option value="all">Tous les statuts</option>
+          <option value="draft">Brouillon</option>
+          <option value="pending">En attente</option>
+          <option value="paid">Payée</option>
+          <option value="overdue">En retard</option>
+          <option value="cancelled">Annulée</option>
+        </select>
       </div>
 
       {/* Stats Cards */}
@@ -516,14 +585,26 @@ export default function InvoicesManagement() {
                       <StatusBadge domain="invoice" value={invoice.status} audience="admin" live={invoice.status === 'pending'} />
                     </td>
                     <td style={{ padding: '12px 16px' }}>
-                      <button
-                        type="button"
-                        onClick={() => handleDownloadPDF(invoice.id)}
-                        title="Télécharger PDF"
-                        style={{ display: 'grid', placeItems: 'center', width: '32px', height: '32px', border: '1px solid #E2DACD', borderRadius: '3px', color: '#6E6A63', cursor: 'pointer' }}
-                      >
-                        <Download size={15} />
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleDownloadPDF(invoice.id)}
+                          title="Télécharger PDF"
+                          style={{ display: 'grid', placeItems: 'center', width: '32px', height: '32px', border: '1px solid #E2DACD', borderRadius: '3px', color: '#6E6A63', cursor: 'pointer' }}
+                        >
+                          <Download size={15} />
+                        </button>
+                        {(invoice.status === 'pending' || invoice.status === 'overdue') && (
+                          <button
+                            type="button"
+                            onClick={() => { setInvoiceToSettle(invoice); setPaymentMethod('') }}
+                            title="Marquer comme payée"
+                            style={{ display: 'grid', placeItems: 'center', width: '32px', height: '32px', border: '1px solid rgba(31,82,69,.3)', borderRadius: '3px', backgroundColor: 'rgba(31,82,69,.08)', color: '#1F5245', cursor: 'pointer' }}
+                          >
+                            <CheckCircle size={16} />
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -534,7 +615,7 @@ export default function InvoicesManagement() {
 
         {/* Pagination */}
         <div className="flex items-center justify-between" style={{ padding: '14px 20px', borderTop: '1px solid #E2DACD', fontSize: '11.5px', color: '#6E6A63' }}>
-          <div>Affichage de 1-3 sur {filteredInvoices.length} factures</div>
+          <div>{filteredInvoices.length === 0 ? 'Aucune facture' : `Affichage de 1-${filteredInvoices.length} sur ${filteredInvoices.length} factures`}</div>
           <div className="flex items-center gap-1">
             <button style={{ padding: '4px 10px', border: '1px solid #E2DACD', borderRadius: '3px', color: '#6E6A63' }}>Préc.</button>
             <button style={{ padding: '4px 10px', backgroundColor: '#1F5245', color: '#FFFFFF', borderRadius: '3px' }}>1</button>
@@ -710,6 +791,75 @@ export default function InvoicesManagement() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Encaissement */}
+      {invoiceToSettle && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0" style={{ backgroundColor: 'rgba(18,16,14,.55)' }} onClick={() => setInvoiceToSettle(null)} />
+          <div className="relative" style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '4px', maxWidth: '440px', width: '100%', padding: '28px' }}>
+            <div className="flex items-center justify-between" style={{ marginBottom: '20px' }}>
+              <div>
+                <h2 style={{ margin: 0, fontSize: '19px', fontWeight: 600, color: '#12100E', letterSpacing: '-0.01em' }}>Enregistrer le paiement</h2>
+                <p style={{ margin: '4px 0 0', fontFamily: 'var(--font-mono)', fontSize: '9.5px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#6E6A63' }}>{invoiceToSettle.invoiceNumber}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setInvoiceToSettle(null)}
+                style={{ display: 'grid', placeItems: 'center', width: '36px', height: '36px', border: '1px solid #E2DACD', borderRadius: '3px', color: '#6E6A63' }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div style={{ padding: '14px 16px', backgroundColor: 'rgba(31,82,69,.06)', border: '1px solid rgba(31,82,69,.2)', borderRadius: '3px', marginBottom: '20px' }}>
+              <div style={{ fontSize: '12px', color: '#6E6A63' }}>{invoiceToSettle.customerName}</div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '21px', fontWeight: 600, color: '#1F5245', marginTop: '4px' }}>
+                {formatCurrency(invoiceToSettle.amountTTC)}
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '24px' }}>
+              <label style={fieldLabel}>Moyen de paiement *</label>
+              <select
+                value={paymentMethod}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+                style={{ ...fieldInput, backgroundColor: '#FFFFFF', cursor: 'pointer' }}
+              >
+                <option value="">Sélectionner...</option>
+                {PAYMENT_METHODS.map((method) => (
+                  <option key={method} value={method}>{method}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex gap-3" style={{ paddingTop: '16px', borderTop: '1px solid #E2DACD' }}>
+              <button
+                type="button"
+                onClick={() => setInvoiceToSettle(null)}
+                style={{ flex: 1, height: '46px', backgroundColor: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '4px', color: '#6E6A63', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
+              >
+                Annuler
+              </button>
+              <button
+                type="button"
+                onClick={handleMarkAsPaid}
+                disabled={!paymentMethod || isSettling}
+                className="flex items-center justify-center gap-2"
+                style={{ flex: 2, height: '46px', backgroundColor: '#1F5245', border: 'none', borderRadius: '4px', color: '#FFFFFF', fontSize: '13px', fontWeight: 600, cursor: !paymentMethod || isSettling ? 'not-allowed' : 'pointer', opacity: !paymentMethod || isSettling ? 0.5 : 1 }}
+              >
+                {isSettling ? (
+                  <div className="h-5 w-5 animate-spin rounded-full border-2" style={{ borderColor: 'rgba(255,255,255,.35)', borderTopColor: '#FFFFFF' }} />
+                ) : (
+                  <>
+                    <CheckCircle size={17} weight="bold" />
+                    Confirmer le paiement
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       )}

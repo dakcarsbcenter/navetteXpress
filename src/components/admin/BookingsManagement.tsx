@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useCallback } from "react"
 import {
   MagnifyingGlass as Search,
   SquaresFour as Grid,
@@ -61,6 +61,15 @@ interface Booking {
   }
 }
 
+/**
+ * /api/admin/bookings renvoie la ligne jointe { booking, driver, vehicle }.
+ * Les reponses plus anciennes renvoyaient la reservation a plat : les deux
+ * formes sont encore acceptees ici.
+ */
+type BookingApiRow =
+  | (Booking & { booking?: undefined })
+  | { booking: Booking; driver?: Booking['driver']; vehicle?: Booking['vehicle'] }
+
 interface Driver {
   id: string
   name: string
@@ -111,17 +120,11 @@ export function BookingsManagement() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([])
 
   useEffect(() => {
-    fetchBookings()
-    fetchDrivers()
-    fetchVehicles()
-  }, [])
-
-  useEffect(() => {
     applyFilters()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookings, filters])
 
-  const fetchBookings = async () => {
+  const fetchBookings = useCallback(async () => {
     try {
       const response = await fetch('/api/admin/bookings', {
         method: 'GET',
@@ -135,7 +138,7 @@ export function BookingsManagement() {
 
       if (result.success) {
         const normalized: Booking[] = Array.isArray(result.data)
-          ? result.data.map((row: any) => {
+          ? result.data.map((row: BookingApiRow) => {
             const b = row.booking ?? row
             return {
               id: b.id,
@@ -178,9 +181,11 @@ export function BookingsManagement() {
     } finally {
       setIsLoading(false)
     }
-  }
+    // showError est memoise par useNotification : la reference du fetcher est
+    // stable, l'effet de montage ne se rejoue donc pas.
+  }, [showError])
 
-  const fetchDrivers = async () => {
+  const fetchDrivers = useCallback(async () => {
     try {
       const response = await fetch('/api/admin/users?role=driver', { cache: 'no-store' })
       if (response.ok) {
@@ -190,9 +195,9 @@ export function BookingsManagement() {
     } catch (error) {
       console.error('Erreur chauffeurs:', error)
     }
-  }
+  }, [])
 
-  const fetchVehicles = async () => {
+  const fetchVehicles = useCallback(async () => {
     try {
       const response = await fetch('/api/vehicles', { cache: 'no-store' })
       if (response.ok) {
@@ -202,7 +207,13 @@ export function BookingsManagement() {
     } catch (error) {
       console.error('Erreur véhicules:', error)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    fetchBookings()
+    fetchDrivers()
+    fetchVehicles()
+  }, [fetchBookings, fetchDrivers, fetchVehicles])
 
   const applyFilters = () => {
     let filtered = [...bookings]
@@ -317,7 +328,7 @@ export function BookingsManagement() {
       } else {
         showError(data.error || 'Erreur lors de la suppression', 'Erreur')
       }
-    } catch (error) {
+    } catch {
       showError('Erreur technique', 'Erreur')
     }
   }

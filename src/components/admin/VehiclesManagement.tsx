@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import {
   MagnifyingGlass as Search,
   Plus,
@@ -88,11 +88,6 @@ export function VehiclesManagement() {
   })
 
   useEffect(() => {
-    fetchVehicles()
-    fetchDrivers()
-  }, [])
-
-  useEffect(() => {
     applyFilters()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vehicles, filters])
@@ -117,7 +112,7 @@ export function VehiclesManagement() {
     })
   }
 
-  const fetchVehicles = async () => {
+  const fetchVehicles = useCallback(async () => {
     try {
       const response = await fetch('/api/admin/vehicles', { cache: 'no-store' })
       if (response.ok) {
@@ -132,9 +127,11 @@ export function VehiclesManagement() {
     } finally {
       setIsLoading(false)
     }
-  }
+    // showError est memoise par useNotification : la reference du fetcher est
+    // stable, l'effet de montage ne se rejoue donc pas.
+  }, [showError])
 
-  const fetchDrivers = async () => {
+  const fetchDrivers = useCallback(async () => {
     try {
       const response = await fetch('/api/admin/users?role=driver', { cache: 'no-store' })
       if (response.ok) {
@@ -146,7 +143,12 @@ export function VehiclesManagement() {
     } catch (error) {
       console.error('Erreur chargement chauffeurs:', error)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    fetchVehicles()
+    fetchDrivers()
+  }, [fetchVehicles, fetchDrivers])
 
   const applyFilters = () => {
     let filtered = [...vehicles]
@@ -270,7 +272,7 @@ export function VehiclesManagement() {
         const error = await response.json()
         showError(`Erreur: ${error.error}`, 'Échec')
       }
-    } catch (error) {
+    } catch {
       showError('Une erreur est survenue', 'Erreur technique')
     }
   }
@@ -292,7 +294,7 @@ export function VehiclesManagement() {
       } else {
         showError('Erreur lors de la suppression', 'Erreur')
       }
-    } catch (error) {
+    } catch {
       showError('Erreur technique', 'Erreur')
     } finally {
       setIsDeleting(false)
@@ -316,7 +318,7 @@ export function VehiclesManagement() {
       } else {
         showError(data.error || 'Erreur lors de la suppression', 'Erreur')
       }
-    } catch (error) {
+    } catch {
       showError('Erreur technique', 'Erreur')
     }
   }
@@ -349,6 +351,15 @@ export function VehiclesManagement() {
           </p>
         </div>
         <div className="flex gap-2 flex-wrap">
+          {filteredVehicles.length > 0 && (
+            <button
+              type="button"
+              onClick={toggleSelectAll}
+              style={{ height: '40px', padding: '0 16px', backgroundColor: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '4px', color: '#6E6A63', fontSize: '13px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}
+            >
+              {selectedVehicleIds.size === filteredVehicles.length ? 'Tout désélectionner' : 'Tout sélectionner'}
+            </button>
+          )}
           {selectedVehicleIds.size > 0 && (
             <button
               type="button"

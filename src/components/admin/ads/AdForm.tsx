@@ -10,15 +10,42 @@ import {
     TextT,
     Cards,
     Calendar,
-    MapPin,
     Link as LinkIcon,
     Info,
     ChartBar
 } from '@phosphor-icons/react';
 import { ImageUploader } from '@/components/ImageUploader';
 
+/**
+ * Publicite telle que le formulaire la relit. Plus large que le type `Ad` de
+ * la liste, qui ne porte que les colonnes affichees dans le tableau.
+ */
+export interface AdFormInitialData {
+    id?: string;
+    title?: string | null;
+    advertiser?: string | null;
+    type?: string | null;
+    placement?: string | null;
+    status?: string | null;
+    destinationUrl?: string | null;
+    imageUrl?: string | null;
+    videoUrl?: string | null;
+    altText?: string | null;
+    headline?: string | null;
+    description?: string | null;
+    ctaLabel?: string | null;
+    width?: number | null;
+    height?: number | null;
+    startDate?: string | null;
+    endDate?: string | null;
+    priceXof?: string | number | null;
+    invoiceRef?: string | null;
+    notes?: string | null;
+}
+
 interface AdFormProps {
-    initialData?: any;
+    // `null` est la valeur passee par la liste en mode creation.
+    initialData?: AdFormInitialData | null;
     isEditing?: boolean;
     onSuccess?: () => void;
     onCancel?: () => void;
@@ -85,7 +112,7 @@ export default function AdForm({ initialData, isEditing = false, onSuccess, onCa
         setLoading(true);
 
         try {
-            const url = isEditing ? `/api/ads/${initialData.id}` : '/api/ads';
+            const url = isEditing ? `/api/ads/${initialData?.id}` : '/api/ads';
             const method = isEditing ? 'PUT' : 'POST';
 
             const res = await fetch(url, {

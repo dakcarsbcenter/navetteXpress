@@ -839,7 +839,7 @@ export function BookingDetailsModal({
                     {isEditing ? (
                       <select
                         value={editedBooking.status}
-                        onChange={(e) => setEditedBooking(prev => prev ? { ...prev, status: e.target.value as any } : null)}
+                        onChange={(e) => setEditedBooking(prev => prev ? { ...prev, status: e.target.value as Booking['status'] } : null)}
                         style={selectStyle}
                       >
                         <option value="pending">En attente</option>

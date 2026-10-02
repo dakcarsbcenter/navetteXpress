@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import {
     Plus, PencilSimple, Trash, ToggleLeft, ToggleRight,
     FloppyDisk, X, ArrowUp, ArrowDown, MagnifyingGlass,
-    Spinner, Tag
+    Spinner
 } from '@phosphor-icons/react';
 import { ROUTE_NODE_KEYS, ROUTE_NODE_LABELS, type RouteNodeKey } from '@/lib/route-nodes';
 

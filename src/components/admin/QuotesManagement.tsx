@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useCallback } from "react"
 import {
   MagnifyingGlass as Search,
   FileText,
@@ -29,27 +29,7 @@ import { QuoteDetailModal } from "@/components/admin/QuoteDetailModal"
 import { CreateQuoteModal } from "@/components/admin/CreateQuoteModal"
 import { StatusBadge } from "@/components/shared/StatusBadge"
 import { getQuoteServiceLabel } from "@/lib/quote-services"
-import type { QuoteTripView as QuoteTrip } from "./QuoteDetailModal"
-
-interface Quote {
-  id: number
-  customerName: string
-  customerEmail: string
-  customerPhone: string | null
-  service: string
-  preferredDate: string | null
-  message: string
-  status: 'pending' | 'in_progress' | 'sent' | 'accepted' | 'rejected' | 'expired'
-  adminNotes: string | null
-  estimatedPrice: string | null
-  assignedTo: string | null
-  passengerName?: string | null
-  passengerPhone?: string | null
-  /** Lignes de trajet ; absentes sur les devis anterieurs a la table quote_trips. */
-  trips?: QuoteTrip[]
-  createdAt: string
-  updatedAt: string
-}
+import type { QuoteDetailView as Quote } from "./QuoteDetailModal"
 
 /** Resume l'itineraire d'un devis multi-trajets : "AIBD -> Plateau -> Somone". */
 function routeSummary(quote: Quote): string | null {
@@ -77,14 +57,40 @@ export function QuotesManagement() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
   const { notifications, showSuccess, showError, showWarning, removeNotification } = useNotification()
+  // Devis dont l'email est en cours de renvoi (bouton « Relancer »).
+  const [resendingQuoteId, setResendingQuoteId] = useState<number | null>(null)
 
   const [filters, setFilters] = useState({ search: '' })
 
-  useEffect(() => {
-    fetchQuotes()
-  }, [])
+  /**
+   * « Relancer » renvoyait jusqu'ici sur la fiche du devis sans rien envoyer.
+   * POST /api/quotes/[id]/send renvoie le même email que l'envoi initial
+   * (gabarit + PDF joint), avec mise en file d'attente si Resend est injoignable.
+   */
+  const handleResendQuote = async (quoteId: number) => {
+    setResendingQuoteId(quoteId)
+    try {
+      const response = await fetch(`/api/quotes/${quoteId}/send`, { method: 'POST' })
+      const data = await response.json()
 
-  const fetchQuotes = async () => {
+      if (response.ok && data.success) {
+        if (data.queued) {
+          showWarning(data.message, 'Envoi différé')
+        } else {
+          showSuccess(data.message, 'Devis renvoyé')
+        }
+        fetchQuotes()
+      } else {
+        showError(data.error || 'Erreur lors du renvoi du devis', 'Erreur')
+      }
+    } catch {
+      showError('Erreur technique', 'Erreur')
+    } finally {
+      setResendingQuoteId(null)
+    }
+  }
+
+  const fetchQuotes = useCallback(async () => {
     try {
       const response = await fetch('/api/quotes', {
         method: 'GET',
@@ -107,7 +113,13 @@ export function QuotesManagement() {
     } finally {
       setIsLoading(false)
     }
-  }
+    // showError est stable (useCallback dans useNotification) : la reference
+    // de fetchQuotes ne change pas, le useEffect ne boucle donc pas.
+  }, [showError])
+
+  useEffect(() => {
+    fetchQuotes()
+  }, [fetchQuotes])
 
   const getStatsData = () => {
     const total = quotes.length
@@ -183,7 +195,7 @@ export function QuotesManagement() {
       } else {
         showError(data.error || 'Erreur lors de la suppression', 'Erreur')
       }
-    } catch (error) {
+    } catch {
       showError('Erreur technique', 'Erreur')
     }
   }
@@ -200,7 +212,7 @@ export function QuotesManagement() {
       doc.text("Liste des Devis - Navette Xpress", 14, 15)
 
       const tableColumn = ["Client", "Email", "Service", "Statut", "Date Prévue"]
-      const tableRows: any[] = []
+      const tableRows: string[][] = []
 
       quotes.forEach(quote => {
         const row = [
@@ -222,7 +234,7 @@ export function QuotesManagement() {
 
       doc.save("devis_export.pdf")
       showSuccess("Devis exportés en PDF", "Export réussi")
-    } catch (error) {
+    } catch {
       showError("Erreur lors de l'export PDF", "Erreur technique")
     }
   }
@@ -445,10 +457,12 @@ export function QuotesManagement() {
                           <div style={{ marginTop: '12px' }} onClick={(e) => e.stopPropagation()}>
                             <button
                               type="button"
-                              onClick={() => { setSelectedQuote(quote); setIsDetailModalOpen(true) }}
-                              style={{ width: '100%', fontFamily: 'var(--font-mono)', fontSize: '10px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '8px 12px', backgroundColor: 'rgba(31,82,69,.08)', color: '#1F5245', border: '1px solid rgba(31,82,69,.3)', borderRadius: '3px' }}
+                              onClick={() => handleResendQuote(quote.id)}
+                              disabled={resendingQuoteId === quote.id}
+                              title={quote.customerEmail ? `Renvoyer le devis à ${quote.customerEmail}` : "Ce client n'a pas d'adresse email"}
+                              style={{ width: '100%', fontFamily: 'var(--font-mono)', fontSize: '10px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '8px 12px', backgroundColor: 'rgba(31,82,69,.08)', color: '#1F5245', border: '1px solid rgba(31,82,69,.3)', borderRadius: '3px', cursor: resendingQuoteId === quote.id ? 'wait' : 'pointer', opacity: resendingQuoteId === quote.id ? 0.6 : 1 }}
                             >
-                              Relancer
+                              {resendingQuoteId === quote.id ? 'Envoi...' : 'Relancer'}
                             </button>
                           </div>
                         )}
@@ -574,7 +588,7 @@ export function QuotesManagement() {
       <QuoteDetailModal
         isOpen={isDetailModalOpen}
         onClose={() => setIsDetailModalOpen(false)}
-        quote={selectedQuote as any}
+        quote={selectedQuote}
         onUpdate={fetchQuotes}
       />
 

@@ -58,7 +58,12 @@ export interface QuoteTripView {
     bookingId?: number | null
 }
 
-interface Quote {
+/**
+ * Devis tel qu'affiche par l'admin. Exporte parce que QuotesManagement
+ * en tenait une copie quasi identique, qu'il devait caster en `any` pour
+ * la passer ici : une divergence entre les deux passait donc inapercue.
+ */
+export interface QuoteDetailView {
     id: number
     customerName: string
     customerEmail: string
@@ -147,7 +152,7 @@ function toDraft(trip: QuoteTripView): TripDraft {
 interface QuoteDetailModalProps {
     isOpen: boolean
     onClose: () => void
-    quote: Quote | null
+    quote: QuoteDetailView | null
     onUpdate: () => void
 }
 

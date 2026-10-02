@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Plus, MapPin, Trash, PencilSimple } from "@phosphor-icons/react"
 import { useNotification } from "@/hooks/useNotification"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
@@ -22,11 +22,7 @@ export function LocationsManagement() {
 
   const [formData, setFormData] = useState({ name: "", isActive: true })
 
-  useEffect(() => {
-    fetchLocations()
-  }, [])
-
-  const fetchLocations = async () => {
+  const fetchLocations = useCallback(async () => {
     try {
       const response = await fetch("/api/locations?all=true")
       if (response.ok) {
@@ -39,7 +35,13 @@ export function LocationsManagement() {
     } finally {
       setIsLoading(false)
     }
-  }
+    // showError est memoise par useNotification : la reference du fetcher est
+    // stable, l'effet de montage ne se rejoue donc pas.
+  }, [showError])
+
+  useEffect(() => {
+    fetchLocations()
+  }, [fetchLocations])
 
   const openCreateModal = () => {
     setEditingLocation(null)

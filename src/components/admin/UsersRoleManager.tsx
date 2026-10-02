@@ -6,21 +6,16 @@ import {
   Plus,
   Shield,
   ShieldCheck,
-  ShieldWarning as ShieldAlert,
   Users,
   User,
-  Info,
-  Calendar,
-  DotsThree as MoreHorizontal,
-  XCircle,
   Crown,
   Briefcase,
   Car,
-  Envelope as Mail,
-  Fingerprint,
-  Trash as Trash2,
-  PencilSimple as Edit2
+  Fingerprint
 } from "@phosphor-icons/react";
+
+/** Roles assignables depuis cet ecran, dans l'ordre du <select>. */
+type UserRole = 'customer' | 'driver' | 'manager' | 'admin';
 
 export function UsersRoleManager() {
   const [userRoles, setUserRoles] = useState<Array<{
@@ -37,7 +32,7 @@ export function UsersRoleManager() {
   // Formulaire état
   const [formData, setFormData] = useState({
     clerkUserId: '',
-    role: 'driver' as 'driver' | 'admin' | 'manager' | 'customer',
+    role: 'driver' as UserRole,
   });
 
   useEffect(() => {
@@ -212,10 +207,10 @@ export function UsersRoleManager() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] uppercase font-bold text-slate-500 tracking-widest ml-1">Niveau d'Autorité</label>
+              <label className="text-[10px] uppercase font-bold text-slate-500 tracking-widest ml-1">Niveau d&apos;Autorité</label>
               <select
                 value={formData.role}
-                onChange={(e) => setFormData({ ...formData, role: e.target.value as any })}
+                onChange={(e) => setFormData({ ...formData, role: e.target.value as UserRole })}
                 className="w-full px-4 py-2 text-sm rounded-xl border border-white/10 outline-none focus:border-gold/50 transition-all bg-white/5 text-white cursor-pointer"
               >
                 <option value="customer">👤 Client</option>
@@ -237,7 +232,7 @@ export function UsersRoleManager() {
                 type="submit"
                 className="btn-gold px-8 py-2.5 rounded-xl text-xs font-bold shadow-lg shadow-gold/20"
               >
-                Confirmer l'Assignation
+                Confirmer l&apos;Assignation
               </button>
             </div>
           </form>
@@ -300,7 +295,7 @@ export function UsersRoleManager() {
 
           {filteredUserRoles.length === 0 && (
             <div className="text-center py-20">
-              <p className="text-slate-500 text-sm font-medium italic">Aucun enregistrement d'autorité trouvé</p>
+              <p className="text-slate-500 text-sm font-medium italic">Aucun enregistrement d&apos;autorité trouvé</p>
             </div>
           )}
         </div>

@@ -309,7 +309,7 @@ const AdminGlobalStats = () => {
                   <div className="relative" style={{ width: '150px', height: '150px', marginBottom: '20px' }}>
                     <svg className="w-full h-full" viewBox="0 0 100 100">
                       <circle cx="50" cy="50" r="40" fill="none" stroke="#F0EAE0" strokeWidth="12" />
-                      {donutSegments.map((seg, i) => (
+                      {donutSegments.map((seg) => (
                         <circle
                           key={seg.status}
                           cx="50" cy="50" r="40" fill="none"

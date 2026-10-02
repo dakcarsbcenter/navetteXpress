@@ -2,10 +2,22 @@ export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 export const revalidate = 0;
 
+/**
+ * Envoi (ou renvoi) par email d'un devis déjà enregistré.
+ *
+ * L'ancienne version renvoyait un 503 permanent : l'envoi d'email avait été
+ * commenté lors du changement de prestataire et jamais réimplémenté. On
+ * réutilise maintenant exactement le chemin de PUT /api/quotes/[id] et de la
+ * création admin — buildQuoteConfirmedEmailPayload + sendWithRetry — pour que
+ * les trois points d'envoi produisent le même email, avec le PDF joint et la
+ * mise en file d'attente en cas d'échec.
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-// TODO: Réimplémenter la fonction sendQuoteEmail avec un nouveau service d'email
+import { buildQuoteConfirmedEmailPayload } from '@/lib/quote-notifications';
+import { sendWithRetry } from '@/lib/notification-queue';
 import { db } from '@/db';
 import { quotesTable } from '@/schema';
 import { eq } from 'drizzle-orm';
@@ -17,7 +29,6 @@ export async function POST(
   try {
     const session = await getServerSession(authOptions) as { user?: { id?: string; role?: string } } | null;
 
-    // Vérifier l'authentification et le rôle admin
     if (!session?.user) {
       return NextResponse.json(
         { success: false, error: 'Non authentifié' },
@@ -40,9 +51,6 @@ export async function POST(
       );
     }
 
-    // 1. Récupérer les détails du devis depuis la base de données
-    console.log(`🔍 Recherche du devis ${quoteId}...`);
-    
     const quote = await db
       .select()
       .from(quotesTable)
@@ -58,7 +66,6 @@ export async function POST(
 
     const quoteData = quote[0];
 
-    // Vérifier si le devis a un prix estimé
     if (!quoteData.estimatedPrice) {
       return NextResponse.json(
         { success: false, error: 'Le devis doit avoir un prix estimé avant d\'être envoyé' },
@@ -66,53 +73,45 @@ export async function POST(
       );
     }
 
-    // 2. TODO: Réimplémenter l'envoi d'email
-    console.log(`⚠️ Service d'email non configuré - Devis ${quoteId} pour ${quoteData.customerEmail}`);
-    
-    return NextResponse.json(
-      { success: false, error: 'Service d\'envoi d\'email temporairement indisponible. Veuillez réimplémenter la fonction d\'envoi.' },
-      { status: 503 }
-    );
-
-    /*
-    // Code à réimplémenter avec un nouveau service d'email:
-    const emailResult = await sendQuoteEmail(
-      quoteData.customerEmail,
-      quoteData.customerName,
-      {
-        id: quoteData.id,
-        service: quoteData.service,
-        estimatedPrice: quoteData.estimatedPrice,
-        adminNotes: quoteData.adminNotes || undefined,
-        preferredDate: quoteData.preferredDate?.toISOString()
-      }
-    );
-
-    if (!emailResult.success) {
-      console.error('❌ Erreur envoi email:', emailResult.error);
+    // Devis saisi au téléphone : il n'y a rien à envoyer, le refuser plutôt que
+    // de faire croire à un envoi (cohérent avec le `sendWarning` de la création
+    // admin, qui n'envoie pas non plus sans adresse).
+    if (!quoteData.customerEmail) {
       return NextResponse.json(
-        { success: false, error: `Erreur lors de l'envoi de l'email: ${emailResult.error}` },
-        { status: 500 }
+        { success: false, error: "Le client n'a pas d'adresse email : le devis doit lui être communiqué autrement." },
+        { status: 400 }
       );
     }
 
-    // 3. Mettre à jour le statut du devis à 'sent'
+    const result = await sendWithRetry('email', 'resend-mailer.sendQuoteConfirmedEmail', [
+      quoteData.customerEmail,
+      await buildQuoteConfirmedEmailPayload(quoteData),
+    ]);
+
+    // Échec définitif et non rejouable (adresse invalide, destinataire refusé) :
+    // le statut ne doit pas passer à 'sent', sinon l'admin croit le client servi.
+    if (!result.success && !result.queued) {
+      return NextResponse.json(
+        { success: false, error: `Envoi impossible : ${result.error || 'erreur inconnue'}` },
+        { status: 502 }
+      );
+    }
+
     await db
       .update(quotesTable)
-      .set({ 
-        status: 'sent',
-        updatedAt: new Date()
-      })
+      .set({ status: 'sent', updatedAt: new Date() })
       .where(eq(quotesTable.id, quoteId));
 
-    console.log(`✅ Devis ${quoteId} envoyé avec succès`);
+    console.log(`✅ Devis ${quoteId} envoyé à ${quoteData.customerEmail}${result.queued ? ' (mis en file d\'attente)' : ''}`);
 
     return NextResponse.json({
       success: true,
-      message: `Le devis a été envoyé par email avec succès à ${quoteData.customerEmail}`,
-      recipient: quoteData.customerEmail
+      queued: result.queued ?? false,
+      recipient: quoteData.customerEmail,
+      message: result.queued
+        ? `L'envoi à ${quoteData.customerEmail} est mis en file d'attente et sera réessayé automatiquement.`
+        : `Le devis a été envoyé par email à ${quoteData.customerEmail}.`,
     });
-    */
 
   } catch (error) {
     console.error('Erreur lors de l\'envoi du devis:', error);

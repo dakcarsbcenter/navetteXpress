@@ -1,11 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';
 import {
     Megaphone,
     Plus,
-    ChartBar,
     Eye,
     CursorClick,
     Calendar,
@@ -14,8 +12,7 @@ import {
     CheckCircle,
     Clock,
     PauseCircle,
-    XCircle,
-    ArrowRight
+    XCircle
 } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';

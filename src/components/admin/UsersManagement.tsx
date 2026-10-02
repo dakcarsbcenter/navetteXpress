@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import {
   MagnifyingGlass as Search,
   Plus,
@@ -43,7 +43,14 @@ interface User {
   lastLogin?: string
 }
 
+/** Roles assignables depuis cet ecran. */
+type UserRole = 'admin' | 'manager' | 'driver' | 'customer'
+
 interface UsersManagementProps {
+  /**
+    * Passee par le dashboard mais pas encore exploitee ici : les droits sont
+    * verifies cote serveur a chaque appel d'API.
+    */
   userPermissions?: {
     [resource: string]: string[]
   }
@@ -71,7 +78,7 @@ const fieldInput: React.CSSProperties = {
   width: '100%', height: '42px', padding: '0 14px', border: '1px solid #E2DACD', borderRadius: '3px', fontSize: '13.5px', color: '#12100E',
 }
 
-export function UsersManagement({ userPermissions, openCreate, initialRoleFilter }: UsersManagementProps = {}) {
+export function UsersManagement({ openCreate, initialRoleFilter }: UsersManagementProps = {}) {
   const [users, setUsers] = useState<User[]>([])
   const [filteredUsers, setFilteredUsers] = useState<User[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -101,7 +108,7 @@ export function UsersManagement({ userPermissions, openCreate, initialRoleFilter
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    role: 'customer' as 'admin' | 'manager' | 'driver' | 'customer',
+    role: 'customer' as UserRole,
     phone: '',
     licenseNumber: '',
     isActive: true,
@@ -110,10 +117,6 @@ export function UsersManagement({ userPermissions, openCreate, initialRoleFilter
     companyType: '' as '' | 'hotel' | 'entreprise' | 'ong',
     companyName: ''
   })
-
-  useEffect(() => {
-    fetchUsers()
-  }, [])
 
   useEffect(() => {
     if (openCreate && openCreate > 0) {
@@ -128,7 +131,7 @@ export function UsersManagement({ userPermissions, openCreate, initialRoleFilter
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [users, filters])
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       const response = await fetch('/api/admin/users', { cache: 'no-store' })
       if (response.ok) {
@@ -143,7 +146,13 @@ export function UsersManagement({ userPermissions, openCreate, initialRoleFilter
     } finally {
       setIsLoading(false)
     }
-  }
+    // showError est memoise par useNotification : la reference du fetcher est
+    // stable, l'effet de montage ne se rejoue donc pas.
+  }, [showError])
+
+  useEffect(() => {
+    fetchUsers()
+  }, [fetchUsers])
 
   const applyFilters = () => {
     let filtered = [...users]
@@ -261,7 +270,7 @@ export function UsersManagement({ userPermissions, openCreate, initialRoleFilter
       } else {
         showError(data.error || 'Erreur lors de la suppression multiple', 'Erreur')
       }
-    } catch (error) {
+    } catch {
       showError('Erreur technique lors de la suppression multiple', 'Erreur')
     }
   }
@@ -317,7 +326,7 @@ export function UsersManagement({ userPermissions, openCreate, initialRoleFilter
         const data = await response.json()
         showError(data.error || 'Erreur lors de la réinitialisation', 'Erreur')
       }
-    } catch (error) {
+    } catch {
       showError('Erreur technique', 'Erreur')
     }
   }
@@ -348,7 +357,7 @@ export function UsersManagement({ userPermissions, openCreate, initialRoleFilter
       } else {
         showError(data.error || 'Erreur lors de la validation', 'Erreur')
       }
-    } catch (error) {
+    } catch {
       showError('Erreur technique', 'Erreur')
     }
   }
@@ -379,7 +388,7 @@ export function UsersManagement({ userPermissions, openCreate, initialRoleFilter
       } else {
         showError(data.error || 'Erreur lors du rejet', 'Erreur')
       }
-    } catch (error) {
+    } catch {
       showError('Erreur technique', 'Erreur')
     }
   }
@@ -442,7 +451,7 @@ export function UsersManagement({ userPermissions, openCreate, initialRoleFilter
         const error = await response.json()
         showError(`Erreur: ${error.error}`, 'Échec')
       }
-    } catch (error) {
+    } catch {
       showError('Une erreur est survenue', 'Erreur technique')
     }
   }
@@ -789,7 +798,7 @@ export function UsersManagement({ userPermissions, openCreate, initialRoleFilter
                   <label style={fieldLabel}>Niveau d&apos;accès</label>
                   <select
                     value={formData.role}
-                    onChange={(e) => setFormData({ ...formData, role: e.target.value as any })}
+                    onChange={(e) => setFormData({ ...formData, role: e.target.value as UserRole })}
                     style={fieldInput}
                   >
                     <option value="customer">Client</option>

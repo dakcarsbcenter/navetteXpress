@@ -1,7 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
-import { useSession } from "next-auth/react"
+import React, { useState, useEffect, useCallback } from "react"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { useNotification } from "@/hooks/useNotification"
 
@@ -47,6 +46,13 @@ interface RolePermissions {
   [resource: string]: string[]
 }
 
+/** Role tel que /api/admin/roles le renvoie, avant mise en forme. */
+interface ApiRole {
+  name: string
+  displayName?: string | null
+  userCount?: number | null
+}
+
 interface Role {
   name: string
   label: string
@@ -54,8 +60,16 @@ interface Role {
   userCount: number
 }
 
+const ROLE_ICONS: Record<string, string> = {
+  admin: '👑',
+  manager: '🎯',
+  customer: '👤',
+  driver: '🚗',
+}
+
+const getRoleIcon = (roleName: string) => ROLE_ICONS[roleName] || '👤'
+
 export function ComposedPermissionsMatrix() {
-  const { data: session } = useSession()
   const [roles, setRoles] = useState<Role[]>([])
   const [permissions, setPermissions] = useState<Record<string, RolePermissions>>({})
   const [isLoading, setIsLoading] = useState(true)
@@ -63,11 +77,7 @@ export function ComposedPermissionsMatrix() {
   const [isInitializing, setIsInitializing] = useState(false)
   const { notifications, showSuccess, showError, removeNotification } = useNotification()
 
-  useEffect(() => {
-    fetchData()
-  }, [])
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setIsLoading(true)
     try {
       console.log('🔍 Chargement des rôles et permissions...')
@@ -96,7 +106,7 @@ export function ComposedPermissionsMatrix() {
       console.log('📋 Liste des rôles:', rolesList)
       
       // Transformer en format simple pour l'affichage
-      const rolesFormatted = rolesList.map((role: any) => ({
+      const rolesFormatted = rolesList.map((role: ApiRole) => ({
         name: role.name,
         label: role.displayName || role.name,
         icon: getRoleIcon(role.name),
@@ -138,18 +148,14 @@ export function ComposedPermissionsMatrix() {
     } finally {
       setIsLoading(false)
     }
-  }
-  
-  const getRoleIcon = (roleName: string) => {
-    const icons: Record<string, string> = {
-      'admin': '👑',
-      'manager': '🎯',
-      'customer': '👤',
-      'driver': '🚗'
-    }
-    return icons[roleName] || '👤'
-  }
+    // showError est memoise par useNotification : la reference de fetchData ne
+    // change pas, le useEffect ne se rejoue donc pas.
+  }, [showError])
 
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
+  
   const hasComposedPermission = (roleName: string, resource: string, composedPerm: string): boolean => {
     const rolePerms = permissions[roleName]?.[resource] || []
     
@@ -259,7 +265,7 @@ export function ComposedPermissionsMatrix() {
           <div className="flex-1">
             <h1 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2">Matrice des Permissions</h1>
             <p className="text-sm sm:text-base text-blue-100">
-              Contrôlez l'accès et les droits de vos utilisateurs
+              Contrôlez l&apos;accès et les droits de vos utilisateurs
             </p>
           </div>
           <button
@@ -340,7 +346,7 @@ export function ComposedPermissionsMatrix() {
       <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
         <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700">
           <h2 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white">
-            Vue d'ensemble des permissions par rôle
+            Vue d&apos;ensemble des permissions par rôle
           </h2>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-1">
             Cliquez sur les cases pour activer/désactiver les permissions
@@ -472,8 +478,8 @@ export function ComposedPermissionsMatrix() {
         </div>
         <div className="mt-4 pt-4 border-t border-blue-200 dark:border-blue-800">
           <p className="text-sm text-blue-800 dark:text-blue-200">
-            <strong>Note:</strong> La permission "Gérer" inclut toutes les actions (créer, lire, modifier, supprimer) 
-            et donne accès aux données de tous les utilisateurs. Les autres permissions limitent l'accès aux propres données de l'utilisateur.
+            <strong>Note:</strong> La permission &laquo; Gérer &raquo; inclut toutes les actions (créer, lire, modifier, supprimer)
+            et donne accès aux données de tous les utilisateurs. Les autres permissions limitent l&apos;accès aux propres données de l&apos;utilisateur.
           </p>
         </div>
       </div>

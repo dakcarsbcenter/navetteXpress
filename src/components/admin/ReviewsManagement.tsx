@@ -194,7 +194,7 @@ export default function ReviewsManagement() {
       } else {
         showError(data.error || 'Erreur lors de la suppression', 'Erreur')
       }
-    } catch (error) {
+    } catch {
       showError('Erreur technique', 'Erreur')
     }
   }
