@@ -253,6 +253,13 @@
       "when": 1790964265330,
       "tag": "0035_young_retro_girl",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1790968533635,
+      "tag": "0036_legal_pyro",
+      "breakpoints": true
     }
   ]
 }

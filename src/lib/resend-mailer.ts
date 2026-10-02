@@ -106,6 +106,12 @@ export async function sendInvoiceEmail(
      * régénéré ici, à partir des lignes figées à l'émission.
      */
     invoiceDbId?: number;
+    /**
+     * Facture corrigee par l'admin apres emission : le sujet et l'accroche
+     * disent que cette version remplace la precedente, sinon le client recoit
+     * un Â« Nouvelle facture Â» pour un document qu'il a deja.
+     */
+    isCorrection?: boolean;
   }
 ) {
   try {
@@ -158,11 +164,23 @@ export async function sendInvoiceEmail(
       }
     }
 
+    // Une correction ne doit pas arriver chez le client comme une nouvelle
+    // facture : il a deja le document, c'est la version qui change.
+    const isCorrection = invoiceData.isCorrection === true;
+
     const content = `
-      ${headingBlock('🧾', 'Nouvelle facture', 'New invoice')}
+      ${headingBlock(
+        '🧾',
+        isCorrection ? 'Facture corrigée' : 'Nouvelle facture',
+        isCorrection ? 'Corrected invoice' : 'New invoice'
+      )}
       ${paragraphBlock(
-        `Bonjour ${invoiceData.customerName}, nous vous remercions pour votre confiance. Voici le détail de votre facture.`,
-        `Hello ${invoiceData.customerName}, thank you for your trust. Here are your invoice details.`
+        isCorrection
+          ? `Bonjour ${invoiceData.customerName}, votre facture a été corrigée. Cette version remplace la précédente.`
+          : `Bonjour ${invoiceData.customerName}, nous vous remercions pour votre confiance. Voici le détail de votre facture.`,
+        isCorrection
+          ? `Hello ${invoiceData.customerName}, your invoice has been corrected. This version replaces the previous one.`
+          : `Hello ${invoiceData.customerName}, thank you for your trust. Here are your invoice details.`
       )}
       ${referenceBlock(invoiceData.invoiceNumber)}
       ${dataTable(
@@ -183,8 +201,12 @@ export async function sendInvoiceEmail(
       from: FROM_EMAIL,
       to: [to],
       subject: biSubject(
-        `🧾 Nouvelle facture ${invoiceData.invoiceNumber}`,
-        `New invoice ${invoiceData.invoiceNumber}`
+        isCorrection
+          ? `🧾 Facture corrigée ${invoiceData.invoiceNumber}`
+          : `🧾 Nouvelle facture ${invoiceData.invoiceNumber}`,
+        isCorrection
+          ? `Corrected invoice ${invoiceData.invoiceNumber}`
+          : `New invoice ${invoiceData.invoiceNumber}`
       ),
       html: emailShell(content, 'customer'),
       ...(attachments ? { attachments } : {}),

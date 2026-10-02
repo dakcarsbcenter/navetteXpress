@@ -30,6 +30,7 @@ export async function GET(request: NextRequest) {
     }
 
     const userRole = session.user.role || 'customer';
+    const isStaff = userRole === 'admin' || userRole === 'manager';
     const searchParams = request.nextUrl.searchParams;
     const status = searchParams.get('status');
 
@@ -100,6 +101,10 @@ export async function GET(request: NextRequest) {
       paidDate: invoice.paidDate || undefined,
       paymentMethod: invoice.paymentMethod || undefined,
       notes: invoice.notes || undefined,
+      // Journal interne des corrections : jamais servi a un client. Il n'est pas
+      // imprime sur le PDF non plus, mais ClientInvoicesView compose son PDF a
+      // partir de cette reponse, d'ou le filtrage ici et pas seulement a l'affichage.
+      ...(isStaff ? { internalNotes: invoice.internalNotes || undefined } : {}),
       createdAt: invoice.createdAt,
       updatedAt: invoice.updatedAt,
     }));

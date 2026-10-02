@@ -6,10 +6,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { db } from '@/db';
-import { invoicesTable, quotesTable } from '@/schema';
+import { invoicesTable, quotesTable, type SelectInvoice } from '@/schema';
 import { eq } from 'drizzle-orm';
 import { DEFAULT_TAX_RATE } from '@/lib/pdf/brand';
 import { calculateInvoiceAmounts } from '@/lib/invoice-utils';
+import { InvoicePatchSchema, normalizeInvoiceItems, round2 } from '@/lib/invoice-validation';
+import { appendInvoiceAuditEntry, buildInvoiceChanges, type EmailOutcome } from '@/lib/invoice-audit';
+import { sendWithRetry } from '@/lib/notification-queue';
 
 // GET - Récupérer une facture par ID
 export async function GET(
@@ -56,6 +59,14 @@ export async function GET(
       paidDate: invoicesTable.paidDate,
       paymentMethod: invoicesTable.paymentMethod,
       notes: invoicesTable.notes,
+      internalNotes: invoicesTable.internalNotes,
+      // Champs du document officiel : la modale d'edition s'alimente de ce GET,
+      // et les omettre ici les ferait effacer au premier enregistrement.
+      quoteReference: invoicesTable.quoteReference,
+      documentObject: invoicesTable.documentObject,
+      customerAddress: invoicesTable.customerAddress,
+      customerNinea: invoicesTable.customerNinea,
+      items: invoicesTable.items,
       createdAt: invoicesTable.createdAt,
       updatedAt: invoicesTable.updatedAt,
       // Quote details
@@ -80,9 +91,10 @@ export async function GET(
 
     const invoiceData = invoice[0];
     const userRole = session.user.role || 'customer';
+    const isStaff = userRole === 'admin' || userRole === 'manager';
 
     // Vérifier les permissions
-    if (userRole !== 'admin' && userRole !== 'manager') {
+    if (!isStaff) {
       // Les clients ne peuvent voir que leurs propres factures
       if (invoiceData.customerEmail !== session.user.email) {
         return NextResponse.json(
@@ -97,6 +109,8 @@ export async function GET(
     // Mapper les données pour le frontend
     const response = {
       ...invoiceData,
+      // Le journal interne des corrections ne sort jamais vers un client.
+      internalNotes: isStaff ? invoiceData.internalNotes : undefined,
       amountHT: invoiceData.amount ? parseFloat(invoiceData.amount) : 0,
       vatAmount: invoiceData.taxAmount ? parseFloat(invoiceData.taxAmount) : 0,
       amountTTC: invoiceData.totalAmount ? parseFloat(invoiceData.totalAmount) : 0,
@@ -126,13 +140,24 @@ export async function GET(
   }
 }
 
-// PATCH - Mettre à jour le statut d'une facture (admin uniquement)
+/**
+ * PATCH - Corriger une facture (admin et manager).
+ *
+ * Une facture emise est une piece comptable : ses lignes sont figees a
+ * l'emission (cf. invoices.items dans src/schema.ts) et ne suivent pas le devis
+ * dont elle decoule. Corriger une erreur passe donc par ici, sur la facture
+ * elle-meme, et non par une modification du devis.
+ *
+ * Le corps est valide par InvoicePatchSchema, qui est `.strict()` : le numero de
+ * facture et le devis d'origine sont figes structurellement, et un champ inconnu
+ * remonte en 400 au lieu de passer inapercu comme avec l'ancienne whitelist.
+ */
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions) as { user?: { id?: string; role?: string } } | null;
+    const session = await getServerSession(authOptions) as { user?: { id?: string; email?: string; role?: string } } | null;
 
     if (!session?.user) {
       return NextResponse.json(
@@ -156,8 +181,18 @@ export async function PATCH(
       );
     }
 
-    const body = await request.json();
-    console.log(`📝 Mise à jour de la facture #${invoiceId}`, body);
+    const validation = InvoicePatchSchema.safeParse(await request.json());
+    if (!validation.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Données invalides',
+          details: validation.error.flatten().fieldErrors,
+        },
+        { status: 400 }
+      );
+    }
+    const body = validation.data;
 
     const [current] = await db.select()
       .from(invoicesTable)
@@ -171,42 +206,151 @@ export async function PATCH(
       );
     }
 
-    // Whitelist : le corps de la requête ne doit pas pouvoir réécrire n'importe
-    // quelle colonne (numéro de facture, devis d'origine, lignes figées...).
+    // Verrou optimiste. Le PATCH reecrit desormais le document entier : sans
+    // cela, un admin qui enregistre un instantane vieux de quelques minutes
+    // annulerait en silence la correction d'un collegue. Accessoirement, cela
+    // neutralise le second envoi d'email d'un double-clic.
+    if (
+      body.expectedUpdatedAt &&
+      new Date(body.expectedUpdatedAt).getTime() !== current.updatedAt.getTime()
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Cette facture a été modifiée entre-temps. Rechargez-la avant d'enregistrer.",
+        },
+        { status: 409 }
+      );
+    }
+
     const updateData: Partial<typeof invoicesTable.$inferInsert> = { updatedAt: new Date() };
 
-    if (body.status !== undefined) updateData.status = body.status;
-    if (body.dueDate !== undefined) updateData.dueDate = new Date(body.dueDate);
-    if (body.paidDate !== undefined) updateData.paidDate = body.paidDate ? new Date(body.paidDate) : null;
-    if (body.paymentMethod !== undefined) updateData.paymentMethod = body.paymentMethod || null;
-    if (body.notes !== undefined) updateData.notes = body.notes || null;
-    if (body.documentObject !== undefined) updateData.documentObject = body.documentObject || null;
+    // Identité client
+    if (body.customerName !== undefined) updateData.customerName = body.customerName;
+    if (body.customerEmail !== undefined) updateData.customerEmail = body.customerEmail;
+    if (body.customerPhone !== undefined) updateData.customerPhone = body.customerPhone || null;
     if (body.customerAddress !== undefined) updateData.customerAddress = body.customerAddress || null;
     if (body.customerNinea !== undefined) updateData.customerNinea = body.customerNinea || null;
 
-    // Montants : HT et taux sont les seules entrées ; TVA et TTC sont toujours
-    // recalculés ici, jamais repris du client.
-    if (body.amount !== undefined || body.taxRate !== undefined) {
-      const amount = body.amount !== undefined ? parseFloat(String(body.amount)) : parseFloat(current.amount);
-      const rate = body.taxRate !== undefined ? parseFloat(String(body.taxRate)) : parseFloat(current.taxRate);
+    // Document officiel
+    if (body.service !== undefined) updateData.service = body.service;
+    if (body.documentObject !== undefined) updateData.documentObject = body.documentObject || null;
+    if (body.quoteReference !== undefined) updateData.quoteReference = body.quoteReference || null;
+    if (body.issueDate !== undefined) updateData.issueDate = new Date(body.issueDate);
+    if (body.dueDate !== undefined) updateData.dueDate = new Date(body.dueDate);
 
-      if (!Number.isFinite(amount) || amount <= 0) {
-        return NextResponse.json({ success: false, error: 'Montant HT invalide' }, { status: 400 });
+    // Cycle de vie
+    if (body.status !== undefined) updateData.status = body.status;
+    if (body.paidDate !== undefined) updateData.paidDate = body.paidDate ? new Date(body.paidDate) : null;
+    if (body.paymentMethod !== undefined) updateData.paymentMethod = body.paymentMethod || null;
+    if (body.notes !== undefined) updateData.notes = body.notes || null;
+
+    // Montants. Des que des lignes sont fournies, elles font autorite sur le
+    // sous-total HT et `body.amount` est ignore : le PDF imprime deux fois la
+    // meme information (colonne TOTAL du tableau, puis sous-total HT du bloc
+    // totaux), la divergence doit etre impossible par construction.
+    // On ne repartit PAS un montant global sur les lignes comme le fait
+    // reconcileItems pour le devis : ici les lignes sont la verite editable, et
+    // les reecrire effacerait le prix que l'admin vient de taper. Une remise se
+    // dit en ligne explicite a prix negatif.
+    let subtotal: number | null = null;
+
+    if (body.items !== undefined) {
+      const normalized = normalizeInvoiceItems(body.items);
+      updateData.items = normalized.items;
+      subtotal = normalized.subtotal;
+    } else if (body.amount !== undefined) {
+      // Factures historiques, emises avant les lignes figees (items null).
+      subtotal = round2(parseFloat(String(body.amount)));
+    }
+
+    if (subtotal !== null || body.taxRate !== undefined) {
+      const effectiveSubtotal = subtotal ?? round2(parseFloat(current.amount));
+      const rate = body.taxRate !== undefined ? body.taxRate : parseFloat(current.taxRate);
+
+      if (!Number.isFinite(effectiveSubtotal) || effectiveSubtotal <= 0) {
+        return NextResponse.json(
+          { success: false, error: 'Le montant HT doit être strictement positif' },
+          { status: 400 }
+        );
       }
       if (!Number.isFinite(rate) || rate < 0 || rate > 100) {
         return NextResponse.json({ success: false, error: 'Taux de TVA invalide' }, { status: 400 });
       }
 
-      const amounts = calculateInvoiceAmounts(amount, rate);
+      const amounts = calculateInvoiceAmounts(effectiveSubtotal, rate);
       updateData.amount = amounts.amount;
       updateData.taxRate = amounts.taxRate;
       updateData.taxAmount = amounts.taxAmount;
       updateData.totalAmount = amounts.totalAmount;
+
+      // Ceinture et bretelles : si cet invariant casse un jour, c'est le PDF du
+      // client qui devient incoherent, pas seulement une valeur en base.
+      if (updateData.items) {
+        const linesTotal = round2(updateData.items.reduce((sum, item) => sum + item.total, 0));
+        if (Math.abs(linesTotal - parseFloat(updateData.amount)) >= 0.01) {
+          console.error(
+            `❌ Incohérence lignes/sous-total sur la facture #${invoiceId}:`,
+            linesTotal,
+            updateData.amount
+          );
+          return NextResponse.json(
+            { success: false, error: 'Incohérence entre les lignes et le sous-total' },
+            { status: 500 }
+          );
+        }
+      }
     }
 
-    // Si le statut passe à "paid", enregistrer la date de paiement
-    if (body.status === 'paid' && !body.paidDate) {
+    // Une échéance antérieure à l'émission sort un PDF absurde : on refuse ici,
+    // en comparant les valeurs effectives et non seulement celles envoyées.
+    const effectiveIssueDate = updateData.issueDate ?? current.issueDate;
+    const effectiveDueDate = updateData.dueDate ?? current.dueDate;
+    if (new Date(effectiveDueDate).getTime() < new Date(effectiveIssueDate).getTime()) {
+      return NextResponse.json(
+        { success: false, error: "L'échéance ne peut pas précéder la date d'émission" },
+        { status: 400 }
+      );
+    }
+
+    // Si le statut passe à "paid", enregistrer la date de paiement. On ne
+    // l'efface pas en sortant de "paid" : la modale expose le champ, et un
+    // retour en "pending" pour corriger ne veut pas dire que l'encaissement
+    // n'a jamais eu lieu.
+    if (body.status === 'paid' && body.paidDate === undefined && !current.paidDate) {
       updateData.paidDate = new Date();
+    }
+
+    // Différentiel calculé AVANT l'écriture, sur la ligne réellement en base :
+    // il sert à la fois la trace, la garde de notification et le message de
+    // retour. Un diff calculé côté client serait falsifiable.
+    const changes = buildInvoiceChanges(current, updateData as Partial<SelectInvoice>);
+
+    const willNotify =
+      body.notifyCustomer === true &&
+      changes.length > 0 &&
+      Boolean(updateData.customerEmail ?? current.customerEmail) &&
+      (updateData.status ?? current.status) !== 'cancelled';
+
+    let emailOutcome: EmailOutcome = 'none';
+    if (body.notifyCustomer === true && changes.length > 0) {
+      if (!(updateData.customerEmail ?? current.customerEmail)) {
+        emailOutcome = 'skipped-no-email';
+      } else if ((updateData.status ?? current.status) === 'cancelled') {
+        emailOutcome = 'skipped-cancelled';
+      } else {
+        // Provisoire : corrigé juste après l'envoi, qui n'a lieu qu'une fois la
+        // facture écrite (le PDF est régénéré depuis la base).
+        emailOutcome = 'sent';
+      }
+    }
+
+    if (changes.length > 0) {
+      updateData.internalNotes = appendInvoiceAuditEntry(current.internalNotes, {
+        actor: session.user.email || session.user.id || 'admin',
+        changes,
+        emailOutcome,
+      });
     }
 
     const [updatedInvoice] = await db.update(invoicesTable)
@@ -221,12 +365,61 @@ export async function PATCH(
       );
     }
 
-    console.log(`✅ Facture #${invoiceId} mise à jour`);
+    console.log(`✅ Facture #${invoiceId} mise à jour (${changes.length} champ(s))`);
+
+    // Renvoi au client, strictement APRÈS l'écriture : sendInvoiceEmail
+    // régénère le PDF depuis la base à partir de invoiceDbId, donc appelé avant
+    // l'UPDATE il enverrait l'ancienne facture.
+    //
+    // Défaut volontairement inverse de `notifyOnUpdate` des réservations (qui
+    // notifie sauf refus explicite) : ici rien ne part sans coche, parce qu'on
+    // corrige le plus souvent une coquille. Ne pas "aligner" les deux.
+    const notification = { attempted: willNotify, sent: false, queued: false };
+
+    if (willNotify) {
+      const outcome = await sendWithRetry('email', 'resend-mailer.sendInvoiceEmail', [
+        updatedInvoice.customerEmail,
+        {
+          invoiceNumber: updatedInvoice.invoiceNumber,
+          customerName: updatedInvoice.customerName,
+          service: updatedInvoice.service,
+          amountHT: `${parseFloat(updatedInvoice.amount).toLocaleString('fr-FR')} FCFA`,
+          vatAmount: `${parseFloat(updatedInvoice.taxAmount).toLocaleString('fr-FR')} FCFA`,
+          amountTTC: `${parseFloat(updatedInvoice.totalAmount).toLocaleString('fr-FR')} FCFA`,
+          issueDate: new Date(updatedInvoice.issueDate).toLocaleDateString('fr-FR'),
+          dueDate: new Date(updatedInvoice.dueDate).toLocaleDateString('fr-FR'),
+          invoiceUrl: `${process.env.NEXT_PUBLIC_APP_URL}/client/factures/${updatedInvoice.id}`,
+          invoiceDbId: updatedInvoice.id,
+          isCorrection: true,
+        },
+      ]);
+
+      notification.sent = outcome.success;
+      notification.queued = Boolean(outcome.queued);
+
+      // sendWithRetry ne lève jamais : la facture est déjà enregistrée, seul le
+      // libellé de la trace change. On la rectifie plutôt que de laisser
+      // "email client renvoyé" sur un envoi qui a échoué.
+      if (!outcome.success) {
+        const corrected = appendInvoiceAuditEntry(current.internalNotes, {
+          actor: session.user.email || session.user.id || 'admin',
+          changes,
+          emailOutcome: outcome.queued ? 'queued' : 'none',
+        });
+        await db.update(invoicesTable)
+          .set({ internalNotes: corrected })
+          .where(eq(invoicesTable.id, invoiceId));
+      }
+    }
 
     return NextResponse.json({
       success: true,
       invoice: updatedInvoice,
-      message: 'Facture mise à jour avec succès'
+      changes: changes.length,
+      notification,
+      message: changes.length > 0
+        ? `Facture mise à jour (${changes.length} modification${changes.length > 1 ? 's' : ''})`
+        : 'Aucune modification à enregistrer'
     });
 
   } catch (error) {

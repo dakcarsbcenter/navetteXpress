@@ -12,6 +12,7 @@ import {
   FileText,
   Trash,
   CheckCircle,
+  PencilSimple,
   X
 } from "@phosphor-icons/react"
 import { DEFAULT_TAX_RATE, TAX_RATE_CHOICES } from '@/lib/pdf/brand'
@@ -19,14 +20,15 @@ import { BulkDeleteModal } from '@/components/ui/BulkDeleteModal'
 import { NotificationCenter } from '@/components/ui/NotificationCenter'
 import { useNotification } from '@/hooks/useNotification'
 import { StatusBadge } from '@/components/shared/StatusBadge'
-
-type InvoiceStatus = 'draft' | 'pending' | 'paid' | 'cancelled' | 'overdue'
-
-/** Devis rattache a une facture, tel que renvoye par /api/invoices. */
-interface InvoiceQuote {
-  message?: string | null
-  adminNotes?: string | null
-}
+// Les types et les styles de champ vivent avec la modale de correction : c'est
+// elle qui porte le formulaire complet de la facture.
+import InvoiceEditModal, {
+  fieldInput,
+  fieldLabel,
+  PAYMENT_METHODS,
+  type Invoice,
+  type InvoiceStatus,
+} from '@/components/admin/InvoiceEditModal'
 
 /** Devis selectionnable dans le formulaire de creation de facture (/api/quotes). */
 interface QuoteOption {
@@ -38,41 +40,6 @@ interface QuoteOption {
   estimatedPrice?: string | number | null
   taxRate?: string | number | null
   adminNotes?: string | null
-}
-
-interface Invoice {
-  id: number
-  invoiceNumber: string
-  quoteId: number
-  customerId: string
-  customerName: string
-  customerEmail?: string
-  customerPhone?: string
-  service?: string
-  amountHT: number
-  vatAmount: number
-  amountTTC: number
-  taxRate?: number
-  status: InvoiceStatus
-  issueDate: Date
-  dueDate: Date
-  paidDate?: Date
-  paymentMethod?: string
-  notes?: string
-  quote?: InvoiceQuote | null
-  // Champs du document officiel (PDF), servis par /api/invoices
-  quoteReference?: string
-  documentObject?: string
-  customerAddress?: string
-  customerNinea?: string
-  items?: Array<{ description: string; details?: string; quantity: number; price: number; total: number }>
-}
-
-const fieldLabel: React.CSSProperties = {
-  display: 'block', fontFamily: 'var(--font-mono)', fontSize: '9.5px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#1F5245', marginBottom: '8px',
-}
-const fieldInput: React.CSSProperties = {
-  width: '100%', height: '42px', padding: '0 14px', border: '1px solid #E2DACD', borderRadius: '3px', fontSize: '13.5px', color: '#12100E',
 }
 
 export default function InvoicesManagement() {
@@ -88,6 +55,7 @@ export default function InvoicesManagement() {
   // Encaissement : repris de l'ancien AdminInvoicesView (jamais monté dans le
   // dashboard), seul écran qui portait « marquer payée ».
   const [invoiceToSettle, setInvoiceToSettle] = useState<Invoice | null>(null)
+  const [invoiceToEdit, setInvoiceToEdit] = useState<Invoice | null>(null)
   const [paymentMethod, setPaymentMethod] = useState('')
   const [isSettling, setIsSettling] = useState(false)
   const [quotes, setQuotes] = useState<QuoteOption[]>([])
@@ -320,8 +288,6 @@ export default function InvoicesManagement() {
       totalAmount: (amt + tax).toFixed(2)
     }))
   }
-
-  const PAYMENT_METHODS = ['Espèces', 'Virement', 'Mobile Money', 'Chèque', 'Carte bancaire', 'Autre']
 
   const handleMarkAsPaid = async () => {
     if (!invoiceToSettle || !paymentMethod) return
@@ -594,6 +560,16 @@ export default function InvoicesManagement() {
                         >
                           <Download size={15} />
                         </button>
+                        {/* Proposé sur tous les statuts : une erreur se découvre
+                            souvent après encaissement, la modale avertit alors. */}
+                        <button
+                          type="button"
+                          onClick={() => setInvoiceToEdit(invoice)}
+                          title="Corriger la facture"
+                          style={{ display: 'grid', placeItems: 'center', width: '32px', height: '32px', border: '1px solid #E2DACD', borderRadius: '3px', color: '#6E6A63', cursor: 'pointer' }}
+                        >
+                          <PencilSimple size={15} />
+                        </button>
                         {(invoice.status === 'pending' || invoice.status === 'overdue') && (
                           <button
                             type="button"
@@ -863,6 +839,14 @@ export default function InvoicesManagement() {
           </div>
         </div>
       )}
+
+      {/* Correction d'une facture émise */}
+      <InvoiceEditModal
+        invoice={invoiceToEdit}
+        isOpen={Boolean(invoiceToEdit)}
+        onClose={() => setInvoiceToEdit(null)}
+        onSaved={() => { setInvoiceToEdit(null); fetchInvoices() }}
+      />
 
       {/* Bulk Delete Modal */}
       <BulkDeleteModal

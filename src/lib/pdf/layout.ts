@@ -222,8 +222,16 @@ export function drawMetaRow(
  * verticales. Le sous-titre de chaque ligne est dessine a la main dans le
  * padding bas de la cellule, ce qui permet deux graisses dans une meme cellule.
  */
+/**
+ * Tableau des prestations. autoTable pagine de lui-meme : au-dela de ~7 lignes
+ * a libelle long, le tableau et tout ce qui suit (totaux, signatures, pied
+ * legal) basculent en page 2. Le fond creme n'etant peint qu'a la creation du
+ * document, cette page suivante sortait blanche : on la repeint ici, avant que
+ * la suite du tableau ne s'y dessine.
+ */
 export function drawItemsTable(doc: PdfDoc, y: number, items: DocumentItem[]): number {
   const autoTable = (doc as any).__autoTable;
+  const firstPage = doc.getNumberOfPages();
   const detailsByRow = new Map<number, string>();
   items.forEach((item, index) => {
     if (item.details) detailsByRow.set(index, item.details);
@@ -279,6 +287,13 @@ export function drawItemsTable(doc: PdfDoc, y: number, items: DocumentItem[]): n
       doc.setFontSize(8);
       doc.setTextColor(...COLORS.muted);
       doc.text(details, data.cell.x + 3, data.cell.y + data.cell.height - 4);
+    },
+    willDrawPage: () => {
+      // Jamais sur la premiere page : l'en-tete y est deja dessine, un aplat
+      // plein par-dessus l'effacerait.
+      if (doc.getNumberOfPages() <= firstPage) return;
+      doc.setFillColor(...COLORS.cream);
+      doc.rect(0, 0, PAGE.width, PAGE.height, 'F');
     },
     didDrawPage: (data: any) => {
       endY = data.cursor?.y ?? endY;

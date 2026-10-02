@@ -379,6 +379,11 @@ export const invoicesTable = pgTable('invoices', {
   paidDate: timestamp('paid_date'),
   paymentMethod: text('payment_method'), // 'card', 'bank_transfer', 'cash', etc.
   notes: text('notes'),
+  // Journal interne des corrections apportees a une facture deja emise.
+  // Volontairement separe de `notes`, qui est imprime dans le pied legal du PDF
+  // client (src/lib/invoice-pdf.ts) et renvoye au client par /api/invoices :
+  // l'historique des corrections ne doit jamais partir chez le client.
+  internalNotes: text('internal_notes'),
   // Champs du document officiel (PDF).
   quoteReference: text('quote_reference'), // Reference du devis d'origine, case "REF. DEVIS" du modele
   documentObject: text('document_object'),
