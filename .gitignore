@@ -39,6 +39,8 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# Modele sans secrets, versionne volontairement (voir .env.example).
+!.env.example
 
 # vercel
 .vercel

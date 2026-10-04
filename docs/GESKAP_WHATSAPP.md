@@ -12,7 +12,7 @@ alimente — `src/lib/whatsapp/templates.ts`.
 ## Nommage des templates (2e génération, septembre 2026)
 
 Un template soumis à Meta **ne peut plus être modifié** : toute réécriture impose un nouveau
-nom. D'où le préfixe `2` sur quatre des cinq gabarits. `reservation_modifiee` n'en a pas, sa
+nom. D'où le préfixe `2` sur cinq des six gabarits. `reservation_modifiee` n'en a pas, sa
 première version n'ayant jamais été approuvée.
 
 Les noms ne sont écrits qu'à **un seul endroit** dans le code : la constante
@@ -279,6 +279,56 @@ sans changer l'état de la réservation (cf. « Traitement des boutons » plus h
 
 ---
 
+## 6. `senddemandeavis` — client, après une course terminée (cron)
+
+> ⚠️ **Ce gabarit doit être approuvé par Meta avant tout envoi.** Le code est en
+> place et référencé par `WHATSAPP_TEMPLATES.demandeAvis`, mais rien ne partira
+> tant que le corps ci-dessous n'est pas saisi dans la console Geskap sous le nom
+> exact `senddemandeavis` et approuvé (24-48 h). D'ici là les envois échouent et
+> atterrissent dans la file de retry, visible dans le panneau admin.
+
+> Ce gabarit **ne porte pas le préfixe `2`** : il est né après la 2e génération,
+> et le nom retenu côté console est `senddemandeavis`. Le nom du code et celui de
+> la console doivent rester identiques au caractère près.
+
+Fonction : `sendDemandeAvis(booking, reviewUrl)` — déclenchée par
+`/api/cron/review-requests`, `REVIEW_REQUEST_DELAY_HOURS` heures après le passage
+au statut `completed` (défaut 2), dédoublonnée via
+`bookings.review_request_sent_at`.
+
+```
+Merci d'avoir voyagé avec Navette Xpress 🚗 Votre avis nous aide à nous améliorer et à aider d'autres voyageurs à nous faire confiance.
+———
+Thank you for travelling with Navette Xpress 🚗 Your review helps us improve and helps other travellers trust us.
+
+Bonjour {{1}}, votre course {{2}} est terminée.
+Hello {{1}}, your ride {{2}} is complete.
+
+Trajet / Trip : {{3}} → {{4}}
+
+Laissez-nous un avis en 30 secondes / Leave a review in 30 seconds :
+{{5}}
+```
+
+Variables : `1` prénom du client, `2` référence, `3` départ, `4` arrivée,
+`5` lien d'avis Google (`GOOGLE_REVIEW_URL`).
+
+Le lien part en **variable de corps** et non en bouton URL : un bouton URL
+dynamique n'accepte qu'un suffixe ajouté à une base fixe côté Meta, alors que le
+lien `g.page/r/.../review` est fourni entier par le tableau de bord Google
+Business Profile.
+
+`GOOGLE_REVIEW_URL` vide ⇒ la route cron ne sélectionne **aucune** course et ne
+marque rien comme envoyé : dès que le lien est renseigné, les courses terminées
+entre-temps partent au tick suivant.
+
+Pas de mécanisme d'opt-out WhatsApp dans le système à ce jour (la liste noire
+`blocked_emails` ne couvre que l'email). Un client qui demande à ne plus être
+contacté doit, pour l'instant, être traité manuellement — par exemple en posant
+`review_request_sent_at` sur ses courses.
+
+---
+
 ## Source de la ligne « Véhicule / Vehicle »
 
 La fiche chauffeur (`users.vehicle_brand`, `vehicle_model`, `vehicle_plate_number`), pas le
@@ -297,3 +347,6 @@ déjà chargées à chaque site d'appel, ce qui évite une jointure supplémenta
 | `GESKAP_WEBHOOK_SECRET` | signature HMAC-SHA256 du header `x-camairetech-signature` |
 | `WHATSAPP_REMINDER_LEAD_MINUTES` | délai du rappel avant départ (défaut 60) |
 | `WHATSAPP_DRIVER_CONFIRM_MINUTES` | échéance affichée au chauffeur dans `2chauffeur_assigne` (défaut 30) |
+| `GOOGLE_REVIEW_URL` | lien d'avis Google injecté dans `senddemandeavis`. **À générer par le client** depuis Google Business Profile → « Demander des avis » → copier le lien. Vide = aucune demande d'avis envoyée |
+| `REVIEW_REQUEST_DELAY_HOURS` | délai entre la fin de course et la demande d'avis (défaut 2) |
+| `CRON_SECRET` | secret du header `x-cron-secret` des deux routes `/api/cron/*` (déjà en service en production) |

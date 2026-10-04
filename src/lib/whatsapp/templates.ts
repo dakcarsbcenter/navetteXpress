@@ -376,3 +376,48 @@ export async function sendReservationModifiee(
     ],
   });
 }
+
+/**
+ * 6. Demande d'avis Google envoyée au client après une course terminée.
+ *
+ * Déclenchée par `/api/cron/review-requests`, X heures après le passage au
+ * statut `completed` (`REVIEW_REQUEST_DELAY_HOURS`, défaut 2), et dédoublonnée
+ * par `bookings.review_request_sent_at`.
+ *
+ * Le lien d'avis n'est pas construit ici : il vient de `GOOGLE_REVIEW_URL`,
+ * généré depuis le tableau de bord Google Business Profile. Il est passé en
+ * paramètre (et non lu depuis l'environnement dans cette fonction) pour que le
+ * payload d'un job parti en file de retry reste autoportant, comme le reste des
+ * gabarits.
+ */
+export async function sendDemandeAvis(
+  booking: SelectBooking,
+  reviewUrl: string
+) {
+  if (!booking.customerPhone) {
+    throw new NonRetryableNotificationError(
+      `Réservation #${booking.id} sans téléphone client : demande d'avis WhatsApp impossible`
+    );
+  }
+  // Un lien vide ferait rejeter le message par Meta (variable vide) et
+  // surtout partirait un message sans lien cliquable : échec explicite plutôt
+  // qu'un message inutile envoyé au client.
+  if (!reviewUrl?.trim()) {
+    throw new NonRetryableNotificationError(
+      `GOOGLE_REVIEW_URL non renseignée : demande d'avis #${booking.id} non envoyée`
+    );
+  }
+
+  await sendWhatsAppTemplate({
+    to: booking.customerPhone,
+    template: WHATSAPP_TEMPLATES.demandeAvis,
+    idempotencyKey: `${booking.id}-demande_avis`,
+    variables: [
+      firstNameOf(booking.customerName),
+      reference(booking),
+      booking.pickupAddress,
+      booking.dropoffAddress,
+      reviewUrl.trim(),
+    ],
+  });
+}

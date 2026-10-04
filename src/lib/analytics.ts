@@ -60,14 +60,12 @@ export const trackQuoteRequest = (service: string) => {
   });
 };
 
-export const trackPageView = (pageName: string) => {
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('config', 'G-X1NDJE79VS', {
-      page_title: pageName,
-      page_location: window.location.href,
-    });
-  }
-};
+// trackPageView() a ete supprime : il refaisait un gtag('config') a chaque
+// montage, ce que GA4 compte comme une vue de page SUPPLEMENTAIRE, en plus de
+// celle deja envoyee par le config initial et par la mesure amelioree. Monte
+// uniquement sur l'accueil, il doublait donc les vues de cette seule page, ce
+// qui faussait aussi la comparaison entre pages. Les vues sont desormais
+// entierement laissees a GA4 (voir src/app/google-analytics.tsx).
 
 export const trackFormSubmission = (formName: string) => {
   trackEvent({

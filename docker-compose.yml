@@ -39,6 +39,7 @@ services:
         NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: ${NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME:-}
         NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET: ${NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET:-}
         NEXT_PUBLIC_APP_API_TOKEN: ${NEXT_PUBLIC_APP_API_TOKEN:-}
+        NEXT_PUBLIC_GA_ID: ${NEXT_PUBLIC_GA_ID:-}
     container_name: navettexpress_app
     restart: unless-stopped
     expose:

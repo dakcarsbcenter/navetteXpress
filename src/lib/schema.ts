@@ -30,6 +30,10 @@ export const schemaLocalBusiness = {
         { '@type': 'Place', name: 'Aéroport International Blaise Diagne', alternateName: 'AIBD' },
         { '@type': 'City', name: 'Saly' },
         { '@type': 'City', name: 'Mbour' },
+        // Corridor affiche sur la page d'accueil (bandeau Dakar - AIBD - Mbour -
+        // Petite Cote) : la zone doit figurer ici aussi, sinon le schema decrit
+        // une couverture plus etroite que celle annoncee au visiteur.
+        { '@type': 'Place', name: 'Petite Côte', alternateName: 'Somone, Ngaparou, Nianing' },
     ],
     openingHoursSpecification: {
         '@type': 'OpeningHoursSpecification',
@@ -47,9 +51,22 @@ export const schemaLocalBusiness = {
     // collectee ; une note codee en dur expose a une action manuelle
     // "structured data spam". A rebrancher sur la table reviews le jour ou
     // /temoignages affichera les avis.
+    // Doivent correspondre EXACTEMENT aux liens publies dans le pied de page
+    // (src/components/footer.tsx) : les handles declares ici etaient
+    // "navettexpress" alors que les comptes reels sont "navettexpresssenegal".
+    // Un sameAs qui pointe vers un profil inexistant ne rattache rien a
+    // l'entite dans le Knowledge Graph, et prive le profil Google Business du
+    // signal de reconciliation.
     sameAs: [
-        'https://www.facebook.com/navettexpress',
-        'https://www.instagram.com/navettexpress',
+        'https://facebook.com/navettexpresssenegal',
+        'https://instagram.com/navettexpresssenegal',
+        'https://linkedin.com/company/navettexpresssenegal',
+        // Profil Google Business. L'URL fournie par la console est le lien
+        // "Demander un avis" (suffixe /review) : ce suffixe ouvre directement le
+        // formulaire de notation et n'a rien a faire dans un sameAs, qui doit
+        // designer la FICHE. On garde donc la racine ici, et le lien complet
+        // avec /review vit dans GOOGLE_REVIEW_URL (envoi WhatsApp post-course).
+        'https://g.page/r/CWZ1tVchWCgbEAI',
     ],
 };
 

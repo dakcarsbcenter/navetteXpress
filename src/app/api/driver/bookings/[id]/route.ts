@@ -94,6 +94,13 @@ export async function PATCH(
       updateData.driverId = null
     }
 
+    // Date de fin de course : sert de point de depart au delai de la demande
+    // d'avis Google (/api/cron/review-requests). Posee ici, et non deduite de
+    // updatedAt, qui bouge a chaque correction en back-office.
+    if (status === 'completed') {
+      updateData.completedAt = new Date()
+    }
+
     // Si c'est une annulation ou un refus, enregistrer le motif et les détails
     if (status === 'cancelled') {
       updateData.cancellationReason = cancellationReason || 'Aucune raison spécifiée'

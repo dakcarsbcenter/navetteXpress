@@ -7,7 +7,6 @@ import Image from "next/image";
 import AdSlot from "@/components/public/AdSlot";
 import { BookingWidget } from "./BookingWidget";
 import { FleetShowcase } from "./FleetShowcase";
-import { PageViewTracker } from "./PageViewTracker";
 import { ArrowRight, CheckCircle, Question, SteeringWheel } from "./home-icons";
 
 interface FaqItem {
@@ -24,7 +23,6 @@ const stripePattern = {
 };
 
 // Server Component : seules les 3 zones reellement interactives de la home
-// (BookingWidget, FleetShowcase, PageViewTracker) sont hydratees cote
 // client. Le reste (textes, sections statiques, CTA de navigation) est
 // rendu et livre en HTML pur, ce qui reduit le JS envoye au navigateur.
 export default async function HomeClient({ faqs }: HomeClientProps) {
@@ -41,8 +39,12 @@ export default async function HomeClient({ faqs }: HomeClientProps) {
   // sur le site, l'annoncer relevait de l'allegation invérifiable. A remettre
   // le jour ou des avis reels sont publies, au meme titre que l'aggregateRating
   // retire de schemaLocalBusiness.
+  // Ce tableau est rendu à deux endroits de la page (bandeau sous le hero et
+  // section B2B) : un seul chiffre à corriger pour les deux.
+  // "15k+" était une projection, pas un compteur : ramené au volume réellement
+  // réalisé, au même titre que la note 4.9/5 retirée ci-dessus.
   const stats = [
-    { value: "15k+", label: t("stats.trips") },
+    { value: "100+", label: t("stats.trips") },
     { value: "24/7", label: t("stats.support") },
   ];
 
@@ -61,7 +63,6 @@ export default async function HomeClient({ faqs }: HomeClientProps) {
 
   return (
     <div className="min-h-screen bg-background font-sans selection:bg-gold/30 selection:text-gold">
-      <PageViewTracker page="home" />
       <Navigation variant="transparent" />
 
       <main id="main-content" tabIndex={-1} className="pt-28 md:pt-36 focus:outline-none">

@@ -219,6 +219,14 @@ export const bookingsTable = pgTable('bookings', {
   cancelledAt: timestamp('cancelled_at'),
   tripPlanId: integer('trip_plan_id').references((): AnyPgColumn => tripPlansTable.id, { onDelete: 'set null' }), // occurrence générée par une planification (voir tripPlansTable)
   whatsappReminderSentAt: timestamp('whatsapp_reminder_sent_at'), // marque l'envoi du rappel WhatsApp (2rappel_depart), pour ne pas le renvoyer à chaque tick du cron
+  // Passage au statut 'completed'. `updated_at` ne peut pas servir de date de fin
+  // de course : il bouge à la moindre correction en back-office, ce qui décalerait
+  // ou ferait rater la fenêtre d'envoi de la demande d'avis.
+  completedAt: timestamp('completed_at'),
+  // Demande d'avis Google envoyée (template senddemandeavis). Même rôle que
+  // whatsapp_reminder_sent_at : garantit un seul envoi par réservation, même si
+  // la course repasse par 'completed' ou si le cron tourne plusieurs fois.
+  reviewRequestSentAt: timestamp('review_request_sent_at'),
   // Demande multi-trajets : une même soumission du formulaire de réservation crée
   // une course par trajet (aller-retour, séjour enchaînant plusieurs transferts).
   // Elles restent traitées individuellement par l'admin mais partagent cet

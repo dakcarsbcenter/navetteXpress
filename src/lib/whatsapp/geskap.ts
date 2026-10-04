@@ -31,6 +31,11 @@ export const WHATSAPP_TEMPLATES = {
   reservationValidee: '2reservation_validee',
   rappelDepart: '2rappel_depart',
   reservationModifiee: 'reservation_modifiee',
+  // Pas de prefixe '2' : ce gabarit est ne apres la 2e generation, le nom
+  // retenu cote console Geskap est 'senddemandeavis'. Ce qui compte est que
+  // la valeur ci-dessous soit identique, au caractere pres, au nom saisi dans
+  // la console — Meta rejette tout envoi vers un nom inconnu.
+  demandeAvis: 'senddemandeavis',
 } as const;
 
 export type WhatsAppTemplateName = (typeof WHATSAPP_TEMPLATES)[keyof typeof WHATSAPP_TEMPLATES];

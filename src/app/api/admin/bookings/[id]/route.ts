@@ -223,6 +223,16 @@ export async function PATCH(
     if (body.passengerName !== undefined) updateData.passengerName = body.passengerName || null;
     if (body.passengerPhone !== undefined) updateData.passengerPhone = normalizePhoneForStorage(body.passengerPhone);
 
+    // Date de fin de course : point de départ du délai de la demande d'avis
+    // Google (/api/cron/review-requests). Même logique que côté chauffeur —
+    // updatedAt ne peut pas servir, il bouge à chaque correction back-office.
+    // `oldBooking.status` plutôt que `body.oldStatus` : ce dernier vient du
+    // client et peut être absent, ce qui redaterait la fin d'une course déjà
+    // terminée (et rouvrirait la fenêtre d'envoi de la demande d'avis).
+    if (body.status === 'completed' && oldBooking.status !== 'completed') {
+      updateData.completedAt = new Date();
+    }
+
     // Annulation définitive déclenchée par l'admin : seule cette action notifie le client
     if (body.status === 'cancelled' && oldStatus !== 'cancelled') {
       updateData.cancelledBy = adminUserId;
