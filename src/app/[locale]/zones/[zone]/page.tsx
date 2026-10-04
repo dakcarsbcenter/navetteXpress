@@ -4,8 +4,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import ZoneClient from './ZoneClient';
 import { routing } from '@/i18n/routing';
 import { buildAlternates } from '@/lib/seo/localized-metadata';
-
-const zoneSlugs = ['almadies', 'plateau', 'ngor', 'yoff', 'sacre-coeur'];
+import { zoneSlugs } from '@/lib/seo/zone-slugs';
 
 interface ZoneData {
     id: string;

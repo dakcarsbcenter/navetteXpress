@@ -135,8 +135,10 @@ export function Footer() {
                             { name: "Dakar Plateau", slug: "plateau" },
                             { name: "Almadies", slug: "almadies" },
                             { name: "Ngor", slug: "ngor" },
-                            { name: "Mermoz", slug: "mermoz" },
-                            { name: "Sacré-Cœur", slug: "sacre-coeur" },
+                            // "Mermoz" pointait vers /zones/mermoz, qui n'a jamais existe : la page
+                            // /zones/sacre-coeur couvre "Sacré-Cœur & Mermoz". Un seul lien, plus de
+                            // 404 dans le pied de page (present sur toutes les pages du site).
+                            { name: "Sacré-Cœur & Mermoz", slug: "sacre-coeur" },
                             { name: "Yoff", slug: "yoff" },
                         ].map((zone, i, arr) => (
                             <span key={i} className="text-[#8a8378] text-xs">

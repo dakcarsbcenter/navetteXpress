@@ -2,6 +2,7 @@ import { MetadataRoute } from 'next';
 import { allMoneyPages } from '@/lib/seo-money-pages';
 import { routing } from '@/i18n/routing';
 import { buildAlternates } from '@/lib/seo/localized-metadata';
+import { zoneSlugs } from '@/lib/seo/zone-slugs';
 
 const baseUrl = 'https://navettexpress.com';
 
@@ -34,20 +35,6 @@ const staticRoutes: StaticRoute[] = [
   { path: '/quote-request', changeFrequency: 'monthly', priority: 0.4 },
 ];
 
-// Zones SEO (à automatiser si DB)
-const zones = [
-  'almadies',
-  'plateau',
-  'ngor',
-  'yoff',
-  'sacre-coeur',
-  'saly',
-  'saint-louis',
-  'mbour',
-  'lac-rose',
-  'somone',
-];
-
 export default function sitemap(): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = [];
 
@@ -62,7 +49,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       });
     }
 
-    for (const zone of zones) {
+    // Liste importee de la source unique partagee avec la page /zones/[zone] :
+    // le tableau local qui vivait ici avait derive et soumettait a Google cinq
+    // zones sans page (saly, saint-louis, mbour, lac-rose, somone), donc cinq
+    // 404 indexables. Ces destinations sont couvertes par les money pages
+    // /routes/aibd-*, deja listees plus bas via allMoneyPages.
+    for (const zone of zoneSlugs) {
       const zonePath = `/zones/${zone}`;
       entries.push({
         url: localizedUrl(zonePath, locale),
