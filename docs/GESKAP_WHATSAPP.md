@@ -281,15 +281,31 @@ sans changer l'état de la réservation (cf. « Traitement des boutons » plus h
 
 ## 6. `senddemandeavis` — client, après une course terminée (cron)
 
-> ⚠️ **Ce gabarit doit être approuvé par Meta avant tout envoi.** Le code est en
-> place et référencé par `WHATSAPP_TEMPLATES.demandeAvis`, mais rien ne partira
-> tant que le corps ci-dessous n'est pas saisi dans la console Geskap sous le nom
-> exact `senddemandeavis` et approuvé (24-48 h). D'ici là les envois échouent et
-> atterrissent dans la file de retry, visible dans le panneau admin.
+> **État au 2026-10-04 : créé dans la console Geskap, `status = PENDING`** —
+> seul des six gabarits à ne pas être `APPROVED`, et `rejected_reason` est vide
+> (examen Meta en cours, 24-48 h). Vérifié côté API : nom exact, `language = fr`,
+> `variables_count = 5`, ce qui correspond à l'ordre codé dans `sendDemandeAvis`.
+> Tant qu'il n'est pas `APPROVED`, les envois échouent et atterrissent dans la
+> file de retry, visible dans le panneau admin.
+>
+> Pour contrôler le statut sans ouvrir la console :
+>
+> ```bash
+> curl -s -H "Authorization: Bearer $GESKAP_API_KEY" >   https://wa-api.geskap.com/v1/templates
+> ```
+>
+> L'API renvoie le nom, la langue, le statut et le **nombre** de variables, mais
+> pas le corps : l'ordre exact des `{{n}}` reste à vérifier à l'œil dans la
+> console, contre le bloc ci-dessous.
 
 > Ce gabarit **ne porte pas le préfixe `2`** : il est né après la 2e génération,
 > et le nom retenu côté console est `senddemandeavis`. Le nom du code et celui de
 > la console doivent rester identiques au caractère près.
+>
+> Il est déclaré en catégorie **UTILITY**. À surveiller : Meta requalifie parfois
+> une sollicitation d'avis en MARKETING, ce qui change les règles de consentement
+> et peut motiver un refus. Si `rejected_reason` se remplit, c'est la première
+> piste à regarder.
 
 Fonction : `sendDemandeAvis(booking, reviewUrl)` — déclenchée par
 `/api/cron/review-requests`, `REVIEW_REQUEST_DELAY_HOURS` heures après le passage
