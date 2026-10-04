@@ -19,7 +19,6 @@ const namespaces = [
   "diaspora",
   "devenir-partenaire",
   "reservation",
-  "temoignages",
   "quote-request",
   "auth",
 ] as const;

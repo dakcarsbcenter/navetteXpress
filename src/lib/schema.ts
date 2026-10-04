@@ -49,8 +49,10 @@ export const schemaLocalBusiness = {
     // Pas d'aggregateRating ici tant qu'aucun avis n'est affiche sur le site.
     // Google exige que la note declaree soit visible sur la page et reellement
     // collectee ; une note codee en dur expose a une action manuelle
-    // "structured data spam". A rebrancher sur la table reviews le jour ou
-    // /temoignages affichera les avis.
+    // "structured data spam". A rebrancher le jour ou de vrais avis sont
+    // collectes (profil Google Business) ET affiches sur une page du site.
+    // La page /temoignages qui devait les porter a ete supprimee : son
+    // contenu (4.9/5, 1000+ avis, temoignages nominatifs) etait fabrique.
     // Doivent correspondre EXACTEMENT aux liens publies dans le pied de page
     // (src/components/footer.tsx) : les handles declares ici etaient
     // "navettexpress" alors que les comptes reels sont "navettexpresssenegal".

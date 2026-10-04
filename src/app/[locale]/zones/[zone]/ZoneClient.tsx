@@ -9,7 +9,6 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { schemaBreadcrumb } from "@/lib/schema";
 import { Link } from "@/i18n/navigation";
 import { MapPin, ShieldCheck, Clock } from "@phosphor-icons/react";
-import Image from "next/image";
 
 interface ZoneData {
     id: string;
@@ -98,26 +97,15 @@ export default function ZoneClient({ zone, breadcrumbs }: { zone: ZoneData; brea
                                         </Link>
                                     </div>
 
-                                    <div className="p-8 rounded-lg bg-white border border-[#e2dacd]">
-                                        <div className="flex items-center gap-4 mb-4">
-                                            <div className="flex -space-x-3">
-                                                {[1, 2, 3].map(i => (
-                                                    <div key={i} className="relative w-8 h-8 rounded-full border-2 border-white bg-background overflow-hidden">
-                                                        <Image
-                                                            src={`https://i.pravatar.cc/100?img=${i + 10}`}
-                                                            alt={t("sidebar.reviewAlt")}
-                                                            fill
-                                                            className="object-cover"
-                                                        />
-                                                    </div>
-                                                ))}
-                                            </div>
-                                            <div className="text-xs text-text-muted">
-                                                <span className="text-foreground font-bold">4.9/5</span> {t("sidebar.ratingSuffix", { name: zone.name })}
-                                            </div>
-                                        </div>
-                                        <p className="text-xs text-text-muted italic">{t("sidebar.testimonial")}</p>
-                                    </div>
+                                    {/* Le bloc de preuve sociale (note 4.9/5, "+100 trajets",
+                                        trois avatars i.pravatar.cc et une citation client) a ete
+                                        retire : la note, les photos et le temoignage etaient
+                                        fabriques — la meme citation parlait du Plateau sur les cinq
+                                        zones. Meme raison que sur l'accueil (HomeClient.tsx) et dans
+                                        schemaLocalBusiness : aucun avis reel n'est collecte.
+                                        A reintroduire ICI uniquement avec de vrais avis issus du
+                                        profil Google Business — jamais avec des donnees de
+                                        remplissage "en attendant". */}
                                 </div>
                             </div>
                         </motion.div>

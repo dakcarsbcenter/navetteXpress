@@ -145,11 +145,6 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'lh3.googleusercontent.com',
       },
-      // 🧑 PRAVATAR - Avatars factices pour les blocs "avis clients" de démonstration
-      {
-        protocol: 'https',
-        hostname: 'i.pravatar.cc',
-      },
       // 📦 LEGACY - Google Cloud Storage (si nécessaire)
       {
         protocol: 'https',

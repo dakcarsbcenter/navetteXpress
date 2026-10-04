@@ -27,7 +27,9 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
     { href: "/diaspora", label: t("links.diaspora") },
     { href: "/flotte", label: t("links.fleet") },
     { href: "/contact", label: t("links.contact") },
-    // "Avis" removed on purpose — /temoignages hidden
+    // "Avis" removed on purpose — /temoignages a ete supprimee, son contenu
+    // (note et temoignages) etait fabrique. A relier le jour ou une page
+    // d'avis reels existe.
   ];
 
   useEffect(() => {

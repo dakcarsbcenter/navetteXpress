@@ -14,10 +14,7 @@
     "reserveAt": "Book in {name}",
     "confirmation": "Confirmation within 30 minutes",
     "fixedPrice": "Guaranteed fixed price",
-    "reserveNow": "Book Now",
-    "ratingSuffix": "from 100+ trips in {name}",
-    "testimonial": "\"Impeccable service for my business meetings in Plateau. Very professional driver.\"",
-    "reviewAlt": "Navette Xpress customer review"
+    "reserveNow": "Book Now"
   },
   "zonesData": {
     "almadies": {

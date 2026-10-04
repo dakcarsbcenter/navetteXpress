@@ -176,8 +176,6 @@ export const config = {
     '/(fr|en|es)/flotte/:path*',
     '/contact/:path*',
     '/(fr|en|es)/contact/:path*',
-    '/temoignages/:path*',
-    '/(fr|en|es)/temoignages/:path*',
     '/faq/:path*',
     '/(fr|en|es)/faq/:path*',
     '/tarifs/:path*',
