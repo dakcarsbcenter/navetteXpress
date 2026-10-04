@@ -45,8 +45,9 @@ git pull origin "$BRANCH"
 echo "==> Application des migrations de base de données..."
 echo "    (avant le build, pour échouer vite si une migration casse — voir"
 echo "     migrations/meta/_journal.json pour la liste des migrations trackées."
-echo "     Un fichier .sql non enregistré dans le journal n'est PAS appliqué ici,"
-echo "     voir docs/GUIDE_DEPLOIEMENT_PRODUCTION.md chapitre 9.)"
+echo "     Un .sql non enregistré dans le journal n'est PAS appliqué ici, à la"
+echo "     seule exception des migrations/seed-*.sql, que run-migrations.mjs"
+echo "     rejoue après les migrations — ils doivent donc être idempotents.)"
 # Réutilise le node_modules déjà installé dans l'image "app" actuellement en
 # service (postgres + drizzle-orm y sont présents, voir Dockerfile) en montant
 # par-dessus le dossier migrations/ et le script fraîchement récupérés par le

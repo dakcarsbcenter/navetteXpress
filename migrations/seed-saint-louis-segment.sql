@@ -1,8 +1,13 @@
 -- Corridor Dakar <-> Saint-Louis (campagne de recrutement 2026, groupe B).
 --
--- Seed manuel, hors sequence drizzle : il cree des DONNEES, pas du schema, et ne
--- doit pas etre rejoue par drizzle-kit migrate. A executer une fois par base
--- (idempotent : les deux INSERT sont gardes).
+-- Seed hors sequence drizzle : il cree des DONNEES, pas du schema, donc il n'est
+-- pas enregistre dans migrations/meta/_journal.json. Il est applique
+-- automatiquement par scripts/run-migrations.mjs, qui ramasse tous les
+-- migrations/seed-*.sql apres les migrations -- donc au demarrage du conteneur
+-- (start.sh) comme pendant scripts/deploy.sh. Rien a lancer a la main.
+--
+-- Rejoue a chaque demarrage : les deux INSERT sont gardes (idempotence exigee
+-- par le contrat des seeds, voir scripts/run-migrations.mjs).
 --
 -- ATTENTION : les trois valeurs distance / duree / tarif sont des PLACEHOLDERS
 -- non valides par le client. Le segment est donc cree avec is_active = false :
