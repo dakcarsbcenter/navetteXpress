@@ -45,6 +45,24 @@ echo "[5/6] Service status"
 docker compose -f "$COMPOSE_FILE" ps
 
 echo "[6/6] Health check"
-curl -fsS http://127.0.0.1:3000/api/health | sed 's/.*/[health] &/'
+# Le port 3000 n'est PAS publie sur l'hote (docker-compose.yml utilise `expose`,
+# pas `ports`) : seul Caddy l'atteint via le reseau Docker. Un curl depuis l'hote
+# echouait donc systematiquement alors que le deploiement etait bon. On
+# interroge l'app depuis l'interieur du conteneur, en laissant au HEALTHCHECK
+# du Dockerfile (start-period 30s) le temps de passer au vert.
+for attempt in $(seq 1 15); do
+  if health_body=$(docker compose -f "$COMPOSE_FILE" exec -T "$APP_SERVICE" \
+      wget -qO- http://127.0.0.1:3000/api/health 2>/dev/null); then
+    echo "[health] $health_body"
+    break
+  fi
+  if [ "$attempt" -eq 15 ]; then
+    echo "[ERROR] Health check failed after 15 attempts"
+    docker compose -f "$COMPOSE_FILE" logs --tail=50 "$APP_SERVICE"
+    exit 1
+  fi
+  echo "[health] not ready yet (attempt $attempt/15), retrying in 4s"
+  sleep 4
+done
 
 echo "Deployment finished successfully"
