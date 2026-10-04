@@ -57,3 +57,7 @@ next-env.d.ts
 
 # worktrees Claude Code (locaux, jamais versionnes)
 .claude/worktrees/
+
+# Produits sur le VPS par les taches planifiees (sauvegardes, journaux de cron)
+backups/
+logs/

@@ -318,6 +318,25 @@ dynamique n'accepte qu'un suffixe ajouté à une base fixe côté Meta, alors qu
 lien `g.page/r/.../review` est fourni entier par le tableau de bord Google
 Business Profile.
 
+### Tâche planifiée
+
+Posée une seule fois sur le VPS par `scripts/setup-review-requests-cron.sh`
+(idempotent, rejouable) : une ligne horaire qui appelle
+`scripts/run-review-requests-cron.sh`.
+
+Le `CRON_SECRET` n'est **ni dans la crontab** (`crontab -l` se lit, et part dans
+les sauvegardes) **ni en argument de curl** (il apparaîtrait dans `ps`) : le
+lanceur le lit dans `.env.docker` à l'exécution et passe l'en-tête par
+l'entrée standard (`curl -H @-`).
+
+Le script n'installe **que** cette tâche. La ligne du rappel avant départ
+(`/api/cron/whatsapp-reminders`) a été posée à la main et reste en service :
+une seconde entrée ferait tourner le même cron deux fois.
+
+Un passage par heure suffit : la condition est « terminée depuis au moins X
+heures », pas une fenêtre à rater — une course manquée à un passage part au
+suivant.
+
 `GOOGLE_REVIEW_URL` vide ⇒ la route cron ne sélectionne **aucune** course et ne
 marque rien comme envoyé : dès que le lien est renseigné, les courses terminées
 entre-temps partent au tick suivant.
