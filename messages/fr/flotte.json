@@ -50,5 +50,10 @@
     "titleLine2": "N'attend que Vous",
     "bookNow": "Réserver Maintenant",
     "fleetAdvisor": "Conseiller Flotte"
+  },
+  "partnerTeaser": {
+    "title": "Vous avez un véhicule ?",
+    "subtitle": "12 places ouvertes sur nos corridors. Commission fixe 15 %, paiement dès la fin de la course.",
+    "cta": "Devenir chauffeur partenaire"
   }
 }

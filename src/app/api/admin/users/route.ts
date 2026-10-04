@@ -117,6 +117,17 @@ export async function GET(request: NextRequest) {
       vehicleBrand: users.vehicleBrand,
       vehicleModel: users.vehicleModel,
       vehiclePlateNumber: users.vehiclePlateNumber,
+      // Champs de candidature (campagne de recrutement) : lus pour l'affichage et
+      // le comptage de quota par corridor dans la vue Chauffeurs.
+      vehicleYear: users.vehicleYear,
+      vehicleOutsideCriteria: users.vehicleOutsideCriteria,
+      corridorA: users.corridorA,
+      corridorB: users.corridorB,
+      corridorC: users.corridorC,
+      declaredAvailability: users.declaredAvailability,
+      utmSource: users.utmSource,
+      utmMedium: users.utmMedium,
+      utmCampaign: users.utmCampaign,
       createdAt: users.createdAt
     }).from(users)
 

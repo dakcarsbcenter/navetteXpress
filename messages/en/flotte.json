@@ -50,5 +50,10 @@
     "titleLine2": "Awaits You",
     "bookNow": "Book Now",
     "fleetAdvisor": "Fleet Advisor"
+  },
+  "partnerTeaser": {
+    "title": "Do you own a vehicle?",
+    "subtitle": "12 seats open across our corridors. Fixed 15% commission, paid as soon as the ride ends.",
+    "cta": "Become a partner driver"
   }
 }

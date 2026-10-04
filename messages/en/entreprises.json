@@ -110,5 +110,10 @@
       "title": "Request sent",
       "desc": "We have received your corporate account request. An account manager will contact you within 24 business hours, and a confirmation email is on its way."
     }
+  },
+  "partnerTeaser": {
+    "title": "Do you run a fleet and drivers?",
+    "subtitle": "We are recruiting 12 partner drivers on the Dakar, AIBD and Saint-Louis corridors.",
+    "cta": "Become a partner driver"
   }
 }

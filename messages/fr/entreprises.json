@@ -110,5 +110,10 @@
       "title": "Demande envoyée",
       "desc": "Nous avons bien reçu votre demande de convention. Un conseiller vous recontacte sous 24 h ouvrées, et un accusé de réception vient de partir vers votre boîte email."
     }
+  },
+  "partnerTeaser": {
+    "title": "Vous avez une flotte et des chauffeurs ?",
+    "subtitle": "Nous recrutons 12 chauffeurs partenaires sur les corridors Dakar, AIBD et Saint-Louis.",
+    "cta": "Devenir chauffeur partenaire"
   }
 }

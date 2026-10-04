@@ -13,6 +13,7 @@ export const ROUTE_NODE_KEYS = [
     'NIANING',
     'POINTE_SARRENE',
     'SOMONE',
+    'SAINT_LOUIS',
 ] as const;
 
 export type RouteNodeKey = typeof ROUTE_NODE_KEYS[number];
@@ -27,6 +28,7 @@ export const ROUTE_NODE_LABELS: Record<RouteNodeKey, string> = {
     NIANING: 'Nianing',
     POINTE_SARRENE: 'Pointe Sarrène',
     SOMONE: 'Somone',
+    SAINT_LOUIS: 'Saint-Louis',
 };
 
 export function isRouteNodeKey(value: unknown): value is RouteNodeKey {
@@ -46,6 +48,7 @@ export const ROUTE_NODE_ALIASES: Record<RouteNodeKey, readonly string[]> = {
     NIANING: ['NIANING'],
     POINTE_SARRENE: ['POINTE SARRENE', 'POINTE SARENE', 'POINTE SARENNE'],
     SOMONE: ['SOMONE'],
+    SAINT_LOUIS: ['SAINT LOUIS', 'ST LOUIS', 'SAINTLOUIS'],
 };
 
 export const normalizeLocationName = (value: string): string =>

@@ -30,8 +30,10 @@ export const OTHER_LOCATION_VALUE = 'AUTRE';
 
 /**
  * Couples de noeuds pour lesquels un trajet est commercialisé. Sert à filtrer les
- * combinaisons proposées dans les formulaires — un couple absent d'ici n'a pas de
- * tarif publié sur /tarifs.
+ * combinaisons proposées dans les formulaires — un couple absent d'ici n'est pas
+ * proposé au client. Un couple présent n'a pas forcément de tarif publié : si aucun
+ * segment actif ne le couvre, le trajet est réservable "sur devis" et l'admin fixe
+ * le prix à la main (cf. DAKAR<->SAINT_LOUIS).
  */
 export const ROUTES_ALLOWED_PAIRS = new Set<string>([
   'DAKAR|AIBD',
@@ -57,6 +59,10 @@ export const ROUTES_ALLOWED_PAIRS = new Set<string>([
   'SALY|AIBD',
   'AIBD|SOMONE',
   'SOMONE|AIBD',
+  // Corridor Nord (campagne de recrutement 2026) : commercialisé mais sans tarif
+  // publié tant que le segment Dakar->Saint-Louis reste inactif en base.
+  'DAKAR|SAINT_LOUIS',
+  'SAINT_LOUIS|DAKAR',
 ]);
 
 export function isRouteCombinationAllowed(pickup: string, destination: string): boolean {

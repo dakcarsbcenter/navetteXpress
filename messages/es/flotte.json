@@ -50,5 +50,10 @@
     "titleLine2": "Le Espera",
     "bookNow": "Reservar Ahora",
     "fleetAdvisor": "Asesor de Flota"
+  },
+  "partnerTeaser": {
+    "title": "¿Tiene un vehículo?",
+    "subtitle": "12 plazas abiertas en nuestros corredores. Comisión fija del 15 %, pago al finalizar el trayecto.",
+    "cta": "Hazte chófer asociado"
   }
 }

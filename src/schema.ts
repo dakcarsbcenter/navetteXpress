@@ -88,6 +88,26 @@ export const users = pgTable('users', {
   vehicleBrand: text('vehicle_brand'),
   vehicleModel: text('vehicle_model'),
   vehiclePlateNumber: text('vehicle_plate_number'),
+  vehicleYear: integer('vehicle_year'),
+  // Vehicule de plus de 8 ans : la candidature reste acceptee (la page promet de
+  // recontacter si la situation change) mais est signalee a l'admin. Calcule
+  // cote serveur a la soumission, jamais depuis le navigateur.
+  vehicleOutsideCriteria: boolean('vehicle_outside_criteria').notNull().default(false),
+  // Corridors vises par le candidat (campagne de recrutement) : un booleen par
+  // groupe, jamais une chaine concatenee, pour que le comptage de quota
+  // (A: 4 places / B: 3 / C: 5) reste un COUNT SQL.
+  corridorA: boolean('corridor_a').notNull().default(false),
+  corridorB: boolean('corridor_b').notNull().default(false),
+  corridorC: boolean('corridor_c').notNull().default(false),
+  // Jours declares a la candidature ('MON'..'SUN'), affines a l'entretien.
+  // Distinct de driverAvailabilityTable, qui porte le planning horaire reel des
+  // chauffeurs approuves : y ecrire une declaration de candidat creerait un faux
+  // planning avant approbation.
+  declaredAvailability: text('declared_availability').array(),
+  // Provenance de la candidature (parametres utm_* de l'URL), null si absents.
+  utmSource: text('utm_source'),
+  utmMedium: text('utm_medium'),
+  utmCampaign: text('utm_campaign'),
   isActive: boolean('is_active').notNull().default(true),
   resetToken: text('reset_token'),
   resetTokenExpiry: timestamp('reset_token_expiry'),

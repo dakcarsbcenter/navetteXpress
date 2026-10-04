@@ -118,6 +118,22 @@ export default function EntreprisesClient() {
             </button>
           </div>
         </section>
+
+        {/* Encart recrutement partenaires (maillage interne vers /devenir-partenaire) */}
+        <section className="border-t border-border">
+          <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="flex flex-col gap-1">
+              <p className="text-base font-semibold text-foreground">{t("partnerTeaser.title")}</p>
+              <p className="font-mono text-[12px] text-text-muted leading-relaxed">{t("partnerTeaser.subtitle")}</p>
+            </div>
+            <Link
+              href="/devenir-partenaire"
+              className="inline-flex items-center justify-center border border-accent text-accent px-6 py-3 rounded font-semibold text-sm hover:bg-accent-subtle transition-colors shrink-0"
+            >
+              {t("partnerTeaser.cta")}
+            </Link>
+          </div>
+        </section>
       </div>
 
       <Footer />

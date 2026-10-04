@@ -56,6 +56,7 @@ const ROUTES_LOCATION_FALLBACK: LocationOption[] = [
   { id: 'nianing', name: 'NIANING' },
   { id: 'pointe-sarrene', name: 'POINTE SARRENE' },
   { id: 'somone', name: 'SOMONE' },
+  { id: 'saint-louis', name: 'SAINT LOUIS' },
 ];
 
 const toAllowedRouteLocations = (locations: LocationOption[]): LocationOption[] => {

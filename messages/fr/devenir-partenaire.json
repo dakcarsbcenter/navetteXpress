@@ -1,7 +1,9 @@
 {
   "meta": {
     "title": "Devenir Chauffeur Partenaire à Dakar — 12 Places | Navette Xpress",
-    "description": "Recrutement chauffeur partenaire à Dakar et sur le corridor AIBD — Petite Côte. Commission fixe 15 %, paiement dès la fin de la course, aucun frais d'inscription. Réponse sous 48 h."
+    "description": "Recrutement chauffeur partenaire à Dakar et sur le corridor AIBD — Petite Côte. Commission fixe 15 %, paiement dès la fin de la course, aucun frais d'inscription. Réponse sous 48 h.",
+    "ogTitle": "Vous connaissez la route. Nous avons les passagers.",
+    "ogDescription": "Commission fixe 15 %, paiement immédiat, 0 frais. Candidature en 1 minute."
   },
   "hero": {
     "eyebrow": "Chauffeurs & propriétaires de véhicules",
@@ -75,6 +77,10 @@
         "value": "TRANSPORT DE PERS."
       },
       {
+        "label": "CASIER",
+        "value": "JUDICIAIRE EXIGÉ"
+      },
+      {
         "label": "ZONE",
         "value": "CORRIDOR DKR–MBR"
       }
@@ -121,7 +127,9 @@
     "title": "Dossier de candidature",
     "sections": {
       "identity": "Vos coordonnées",
-      "vehicle": "Votre véhicule"
+      "vehicle": "Votre véhicule",
+      "corridors": "Corridor(s) souhaité(s)",
+      "availability": "Vos disponibilités"
     },
     "fields": {
       "fullName": {
@@ -145,6 +153,10 @@
       "plate": {
         "label": "Immatriculation",
         "placeholder": "Ex : AA-123-BB"
+      },
+      "vehicleYear": {
+        "label": "Année du véhicule",
+        "placeholder": "Ex : 2019"
       }
     },
     "selectPlaceholder": "Choisir...",
@@ -153,7 +165,25 @@
     "submitting": "Envoi en cours...",
     "footnote": "Réponse sous 48 h · Aucun frais de dossier",
     "errorGeneric": "Une erreur est survenue. Réessayez ou contactez-nous directement.",
-    "errorEmailExists": "Un compte existe déjà avec cet email."
+    "errorEmailExists": "Un compte existe déjà avec cet email.",
+    "corridors": {
+      "a": "Dakar ↔ AIBD / Saly / Mbour / Somone / Ngaparou / Nianing / Pointe Sarène",
+      "b": "Dakar ↔ Saint-Louis",
+      "c": "AIBD ↔ Mbour / Saly / Somone / Ngaparou / Nianing / Pointe Sarène"
+    },
+    "corridorsHint": "Plusieurs choix possibles. 12 places ouvertes au total.",
+    "availabilityHint": "Optionnel — nous en reparlons à l'entretien.",
+    "days": {
+      "MON": "Lun",
+      "TUE": "Mar",
+      "WED": "Mer",
+      "THU": "Jeu",
+      "FRI": "Ven",
+      "SAT": "Sam",
+      "SUN": "Dim"
+    },
+    "vehicleAgeWarning": "Votre véhicule a plus de 8 ans : il sort de nos critères actuels. Envoyez quand même votre candidature — nous vous recontactons si votre situation change.",
+    "errorCorridorRequired": "Choisissez au moins un corridor."
   },
   "success": {
     "title": "Candidature reçue",
@@ -182,7 +212,7 @@
       },
       {
         "question": "Quels documents faut-il fournir ?",
-        "answer": "Permis B en cours de validité depuis au moins 3 ans, carte grise du véhicule, assurance couvrant le transport de personnes et pièce d'identité. Rien à téléverser au moment de la candidature : les papiers sont vérifiés ensemble le jour du rendez-vous, à Dakar ou à Mbour."
+        "answer": "Permis B en cours de validité depuis au moins 3 ans, carte grise du véhicule, assurance couvrant le transport de personnes, pièce d'identité et casier judiciaire. Rien à téléverser au moment de la candidature : les papiers sont vérifiés ensemble le jour du rendez-vous, à Dakar ou à Mbour."
       },
       {
         "question": "Mon véhicule a plus de 8 ans, puis-je quand même postuler ?",

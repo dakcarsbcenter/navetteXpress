@@ -1,7 +1,9 @@
 {
   "meta": {
     "title": "Ser Chófer Asociado en Dakar — 12 Plazas | Navette Xpress",
-    "description": "Selección de chóferes asociados en Dakar y en el corredor AIBD — Petite Côte. Comisión fija del 15 %, pago al finalizar la carrera, sin gastos de inscripción. Respuesta en 48 h."
+    "description": "Selección de chóferes asociados en Dakar y en el corredor AIBD — Petite Côte. Comisión fija del 15 %, pago al finalizar la carrera, sin gastos de inscripción. Respuesta en 48 h.",
+    "ogTitle": "Usted conoce la ruta. Nosotros tenemos los pasajeros.",
+    "ogDescription": "Comisión fija del 15 %, pago inmediato, 0 gastos. Candidatura en 1 minuto."
   },
   "hero": {
     "eyebrow": "Conductores y propietarios de vehículos",
@@ -75,6 +77,10 @@
         "value": "TRANSPORTE DE PERSONAS"
       },
       {
+        "label": "ANTECEDENTES",
+        "value": "PENALES EXIGIDOS"
+      },
+      {
         "label": "ZONA",
         "value": "CORREDOR DKR–MBR"
       }
@@ -121,7 +127,9 @@
     "title": "Expediente de candidatura",
     "sections": {
       "identity": "Tus datos de contacto",
-      "vehicle": "Tu vehículo"
+      "vehicle": "Tu vehículo",
+      "corridors": "Corredor(es) deseado(s)",
+      "availability": "Su disponibilidad"
     },
     "fields": {
       "fullName": {
@@ -145,6 +153,10 @@
       "plate": {
         "label": "Matrícula",
         "placeholder": "Ej.: AA-123-BB"
+      },
+      "vehicleYear": {
+        "label": "Año del vehículo",
+        "placeholder": "Ej.: 2019"
       }
     },
     "selectPlaceholder": "Elegir...",
@@ -153,7 +165,25 @@
     "submitting": "Enviando...",
     "footnote": "Respuesta en 48 h · Sin gastos de expediente",
     "errorGeneric": "Ha ocurrido un error. Inténtalo de nuevo o contáctanos directamente.",
-    "errorEmailExists": "Ya existe una cuenta con este correo electrónico."
+    "errorEmailExists": "Ya existe una cuenta con este correo electrónico.",
+    "corridors": {
+      "a": "Dakar ↔ AIBD / Saly / Mbour / Somone / Ngaparou / Nianing / Pointe Sarène",
+      "b": "Dakar ↔ Saint-Louis",
+      "c": "AIBD ↔ Mbour / Saly / Somone / Ngaparou / Nianing / Pointe Sarène"
+    },
+    "corridorsHint": "Puede elegir varios. 12 plazas abiertas en total.",
+    "availabilityHint": "Opcional — lo concretamos en la entrevista.",
+    "days": {
+      "MON": "Lun",
+      "TUE": "Mar",
+      "WED": "Mié",
+      "THU": "Jue",
+      "FRI": "Vie",
+      "SAT": "Sáb",
+      "SUN": "Dom"
+    },
+    "vehicleAgeWarning": "Su vehículo tiene más de 8 años, por lo que queda fuera de nuestros criterios actuales. Envíe su candidatura de todos modos: le contactaremos si su situación cambia.",
+    "errorCorridorRequired": "Elija al menos un corredor."
   },
   "success": {
     "title": "Candidatura recibida",
@@ -182,7 +212,7 @@
       },
       {
         "question": "¿Qué documentos hay que aportar?",
-        "answer": "Permiso B en vigor desde hace al menos 3 años, permiso de circulación del vehículo, seguro que cubra el transporte de personas y documento de identidad. No hay que subir nada al presentar la candidatura: los documentos se verifican juntos el día de la reunión, en Dakar o en Mbour."
+        "answer": "Permiso B en vigor desde hace al menos 3 años, permiso de circulación del vehículo, seguro que cubra el transporte de personas, documento de identidad y certificado de antecedentes penales. No hay que subir nada al presentar la candidatura: los documentos se verifican juntos el día de la reunión, en Dakar o en Mbour."
       },
       {
         "question": "Mi vehículo tiene más de 8 años, ¿puedo presentarme igualmente?",

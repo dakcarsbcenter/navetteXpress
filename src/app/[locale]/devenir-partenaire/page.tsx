@@ -19,10 +19,33 @@ export async function generateMetadata({
     const { locale } = await params;
     const t = await getTranslations({ locale, namespace: 'devenir-partenaire.meta' });
 
+    const alternates = buildAlternates('/devenir-partenaire', locale);
+
     return {
         title: t('title'),
         description: t('description'),
-        alternates: buildAlternates('/devenir-partenaire', locale),
+        alternates,
+        // La page heritait sinon de l'Open Graph global (layout racine), oriente
+        // reservation client : le lien de campagne se presentait comme une offre de
+        // trajet et non comme un recrutement. L'image vient du fichier
+        // opengraph-image.tsx voisin, injecte automatiquement par Next : ne pas
+        // redeclarer `images` ici, cela l'ecraserait.
+        openGraph: {
+            title: t('ogTitle'),
+            description: t('ogDescription'),
+            url: alternates.canonical,
+            type: 'website',
+        },
+        // Le layout racine declare un bloc `twitter` explicite (titre client +
+        // og-default.jpg) que Next ne derive pas de l'openGraph ci-dessus : sans
+        // cette surcharge, un partage sur X afficherait encore la carte de
+        // reservation. `images` est volontairement omis pour laisser
+        // opengraph-image.tsx alimenter twitter:image.
+        twitter: {
+            card: 'summary_large_image',
+            title: t('ogTitle'),
+            description: t('ogDescription'),
+        },
     };
 }
 

@@ -717,6 +717,18 @@ export async function sendNewConventionRequestEmail(
 /**
  * Accusé de réception d'une candidature chauffeur — au candidat, ou à l'admin selon `isAdmin`
  */
+// Libelles des jours declares a la candidature ('MON'..'SUN'), voir
+// DECLARED_AVAILABILITY_DAYS dans src/lib/driver-application.ts.
+const DRIVER_DAY_LABELS: Record<string, { fr: string; en: string }> = {
+  MON: { fr: 'Lun', en: 'Mon' },
+  TUE: { fr: 'Mar', en: 'Tue' },
+  WED: { fr: 'Mer', en: 'Wed' },
+  THU: { fr: 'Jeu', en: 'Thu' },
+  FRI: { fr: 'Ven', en: 'Fri' },
+  SAT: { fr: 'Sam', en: 'Sat' },
+  SUN: { fr: 'Dim', en: 'Sun' },
+};
+
 export async function sendNewDriverApplicationEmail(
   to: string,
   data: {
@@ -725,10 +737,49 @@ export async function sendNewDriverApplicationEmail(
     vehicleBrand: string;
     vehicleModel: string;
     vehiclePlateNumber: string;
+    // Champs ajoutes par la campagne de recrutement. Optionnels : une candidature
+    // rejouee depuis la file de retry peut avoir ete serialisee avant leur ajout.
+    vehicleYear?: number | null;
+    vehicleOutsideCriteria?: boolean;
+    corridors?: string[] | null;
+    declaredAvailability?: string[] | null;
+    utmSource?: string | null;
+    utmMedium?: string | null;
+    utmCampaign?: string | null;
   },
   isAdmin: boolean = false
 ) {
   try {
+    const extraRows: { fr: string; en: string; value: string }[] = [];
+    if (data.vehicleYear) {
+      extraRows.push({ fr: 'Année du véhicule', en: 'Vehicle year', value: String(data.vehicleYear) });
+    }
+    if (data.corridors && data.corridors.length > 0) {
+      extraRows.push({
+        fr: 'Corridor(s) souhaité(s)',
+        en: 'Requested corridor(s)',
+        value: data.corridors.join(', '),
+      });
+    }
+    if (data.declaredAvailability && data.declaredAvailability.length > 0) {
+      extraRows.push({
+        fr: 'Disponibilités déclarées',
+        en: 'Declared availability',
+        value: data.declaredAvailability
+          .map((day) => DRIVER_DAY_LABELS[day]?.fr ?? day)
+          .join(' · '),
+      });
+    }
+    // La provenance ne concerne que le suivi de campagne : jamais dans l'accuse
+    // de reception envoye au candidat.
+    if (isAdmin && (data.utmSource || data.utmMedium || data.utmCampaign)) {
+      extraRows.push({
+        fr: 'Provenance',
+        en: 'Source',
+        value: [data.utmSource, data.utmMedium, data.utmCampaign].filter(Boolean).join(' / '),
+      });
+    }
+
     const content = `
       ${
         isAdmin
@@ -752,9 +803,18 @@ export async function sendNewDriverApplicationEmail(
           { fr: 'Téléphone / WhatsApp', en: 'Phone / WhatsApp', value: data.phone },
           { fr: 'Véhicule', en: 'Vehicle', value: `${data.vehicleBrand} ${data.vehicleModel}` },
           { fr: 'Immatriculation', en: 'Plate number', value: data.vehiclePlateNumber },
+          ...extraRows,
         ],
         { fr: 'Candidature', en: 'Application' }
       )}
+      ${
+        isAdmin && data.vehicleOutsideCriteria
+          ? noticeBlock(
+              'Véhicule de plus de 8 ans : candidature hors critère véhicule, à traiter comme une réserve de candidats.',
+              'Vehicle older than 8 years: outside the vehicle criterion, to be handled as a waiting list.'
+            )
+          : ''
+      }
       ${
         isAdmin
           ? ''
@@ -764,7 +824,7 @@ export async function sendNewDriverApplicationEmail(
             )
       }
       ${ctaButton(
-        `${APP_URL()}/${isAdmin ? 'admin/utilisateurs' : ''}`,
+        `${APP_URL()}/${isAdmin ? 'admin/dashboard?tab=drivers' : ''}`,
         isAdmin ? '📊 Voir les candidatures' : '🌐 Retour au site',
         isAdmin ? 'View applications' : 'Back to the website'
       )}

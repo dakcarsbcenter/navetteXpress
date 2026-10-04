@@ -15,7 +15,8 @@ import {
   X,
   Buildings,
   Check,
-  HourglassMedium
+  HourglassMedium,
+  WarningCircle
 } from "@phosphor-icons/react"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { DeleteUserModal } from "@/components/ui/DeleteUserModal"
@@ -23,6 +24,13 @@ import Image from "next/image"
 import { BulkDeleteModal } from "@/components/ui/BulkDeleteModal"
 import { DriverAvailabilityModal } from "@/components/admin/DriverAvailabilityModal"
 import { useNotification } from "@/hooks/useNotification"
+import {
+  CORRIDOR_DB_FIELDS,
+  CORRIDOR_KEYS,
+  CORRIDOR_QUOTAS,
+  CORRIDOR_SHORT_LABELS,
+  type CorridorKey,
+} from '@/lib/driver-application'
 
 interface User {
   id: string
@@ -41,8 +49,23 @@ interface User {
   vehicleBrand?: string | null
   vehicleModel?: string | null
   vehiclePlateNumber?: string | null
+  vehicleYear?: number | null
+  /** Vehicule de plus de 8 ans : candidature conservee mais signalee. */
+  vehicleOutsideCriteria?: boolean
+  corridorA?: boolean
+  corridorB?: boolean
+  corridorC?: boolean
+  declaredAvailability?: string[] | null
+  utmSource?: string | null
+  utmMedium?: string | null
+  utmCampaign?: string | null
   createdAt: string
   lastLogin?: string
+}
+
+/** Libelles courts des jours declares a la candidature ('MON'..'SUN'). */
+const DRIVER_DAY_LABELS: Record<string, string> = {
+  MON: 'Lun', TUE: 'Mar', WED: 'Mer', THU: 'Jeu', FRI: 'Ven', SAT: 'Sam', SUN: 'Dim',
 }
 
 /** Resume du planning d'un chauffeur, renvoye par /api/admin/drivers/availability-summary. */
@@ -216,7 +239,15 @@ export function UsersManagement({ openCreate, initialRoleFilter }: UsersManageme
     const drivers = users.filter(u => u.role === 'driver').length
     const pendingApplications = users.filter(u => u.role === 'driver' && u.driverStatus === 'pending').length
 
-    return { total, thisMonth, drivers, pendingApplications }
+    // Places pourvues par groupe de corridors : on ne compte que les chauffeurs
+    // approuves (une candidature en attente n'occupe pas encore sa place).
+    const approvedDrivers = users.filter(u => u.role === 'driver' && u.driverStatus === 'approved')
+    const corridorFilled = CORRIDOR_KEYS.reduce((acc, key) => {
+      acc[key] = approvedDrivers.filter(u => u[CORRIDOR_DB_FIELDS[key]] === true).length
+      return acc
+    }, {} as Record<CorridorKey, number>)
+
+    return { total, thisMonth, drivers, pendingApplications, corridorFilled }
   }
 
   const getInitials = (name: string) => {
@@ -564,6 +595,42 @@ export function UsersManagement({ openCreate, initialRoleFilter }: UsersManageme
         })}
       </section>
 
+      {/* Quotas de la campagne de recrutement — vue Chauffeurs uniquement */}
+      {initialRoleFilter === 'driver' && (
+        <section
+          className="flex items-center gap-3 flex-wrap"
+          style={{ padding: '12px 20px', borderBottom: '1px solid #E2DACD' }}
+        >
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '9.5px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#6E6A63' }}>
+            Places pourvues
+          </span>
+          {CORRIDOR_KEYS.map((key) => {
+            const filled = stats.corridorFilled[key]
+            const quota = CORRIDOR_QUOTAS[key]
+            const complete = filled >= quota
+            return (
+              <span
+                key={key}
+                title={CORRIDOR_SHORT_LABELS[key]}
+                className="inline-flex items-center gap-1.5"
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '10.5px',
+                  fontWeight: 600,
+                  letterSpacing: '0.08em',
+                  padding: '4px 9px',
+                  borderRadius: '3px',
+                  border: `1px solid ${complete ? '#1F5245' : '#E2DACD'}`,
+                  color: complete ? '#1F5245' : '#12100E',
+                }}
+              >
+                {key.toUpperCase()} {filled}/{quota}
+              </span>
+            )
+          })}
+        </section>
+      )}
+
       {/* Main Table Card */}
       <section style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '4px', overflow: 'hidden' }}>
         <div className="flex items-center gap-2 flex-wrap" style={{ padding: '16px 20px', borderBottom: '1px solid #E2DACD' }}>
@@ -686,6 +753,40 @@ export function UsersManagement({ openCreate, initialRoleFilter }: UsersManageme
                           <div style={{ fontSize: '11px', color: '#6E6A63', marginTop: '4px' }}>
                             {[user.vehicleBrand, user.vehicleModel].filter(Boolean).join(' ')}
                             {user.vehiclePlateNumber && ` · ${user.vehiclePlateNumber}`}
+                          </div>
+                        )}
+                        {user.role === 'driver' && user.vehicleYear && (
+                          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10.5px', color: '#6E6A63', marginTop: '4px' }}>
+                            Mise en circulation {user.vehicleYear}
+                          </div>
+                        )}
+                        {user.role === 'driver' && user.vehicleOutsideCriteria && (
+                          <div className="inline-flex items-center gap-1.5" style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#B4643A', marginTop: '5px' }}>
+                            <WarningCircle size={11} />
+                            Hors critère véhicule
+                          </div>
+                        )}
+                        {user.role === 'driver' && CORRIDOR_KEYS.some((key) => user[CORRIDOR_DB_FIELDS[key]]) && (
+                          <div className="flex items-center gap-1.5" style={{ marginTop: '5px' }}>
+                            {CORRIDOR_KEYS.filter((key) => user[CORRIDOR_DB_FIELDS[key]]).map((key) => (
+                              <span
+                                key={key}
+                                title={CORRIDOR_SHORT_LABELS[key]}
+                                style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', fontWeight: 600, letterSpacing: '0.08em', padding: '2px 6px', borderRadius: '3px', border: '1px solid #1F5245', color: '#1F5245' }}
+                              >
+                                {key.toUpperCase()}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        {user.role === 'driver' && user.declaredAvailability && user.declaredAvailability.length > 0 && (
+                          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: '#6E6A63', marginTop: '4px' }}>
+                            Déclaré : {user.declaredAvailability.map((day) => DRIVER_DAY_LABELS[day] ?? day).join(' · ')}
+                          </div>
+                        )}
+                        {user.role === 'driver' && (user.utmSource || user.utmMedium || user.utmCampaign) && (
+                          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: '#6E6A63', marginTop: '4px' }}>
+                            Provenance : {[user.utmSource, user.utmMedium, user.utmCampaign].filter(Boolean).join(' / ')}
                           </div>
                         )}
                         {user.driverStatus === 'rejected' && user.driverRejectionReason && (

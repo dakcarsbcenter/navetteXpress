@@ -1,7 +1,9 @@
 {
   "meta": {
     "title": "Become a Partner Driver in Dakar — 12 Places | Navette Xpress",
-    "description": "Partner driver recruitment in Dakar and on the AIBD — Petite Côte corridor. Flat 15% commission, payment as soon as the ride ends, no sign-up fee. Reply within 48h."
+    "description": "Partner driver recruitment in Dakar and on the AIBD — Petite Côte corridor. Flat 15% commission, payment as soon as the ride ends, no sign-up fee. Reply within 48h.",
+    "ogTitle": "You know the road. We have the passengers.",
+    "ogDescription": "Fixed 15% commission, immediate payment, zero fees. Apply in 1 minute."
   },
   "hero": {
     "eyebrow": "Drivers & vehicle owners",
@@ -75,6 +77,10 @@
         "value": "PASSENGER TRANSPORT"
       },
       {
+        "label": "RECORD",
+        "value": "CRIMINAL RECORD REQUIRED"
+      },
+      {
         "label": "ZONE",
         "value": "DKR–MBR CORRIDOR"
       }
@@ -121,7 +127,9 @@
     "title": "Application file",
     "sections": {
       "identity": "Your contact details",
-      "vehicle": "Your vehicle"
+      "vehicle": "Your vehicle",
+      "corridors": "Preferred corridor(s)",
+      "availability": "Your availability"
     },
     "fields": {
       "fullName": {
@@ -145,6 +153,10 @@
       "plate": {
         "label": "License plate",
         "placeholder": "E.g. AA-123-BB"
+      },
+      "vehicleYear": {
+        "label": "Vehicle year",
+        "placeholder": "e.g. 2019"
       }
     },
     "selectPlaceholder": "Choose...",
@@ -153,7 +165,25 @@
     "submitting": "Sending...",
     "footnote": "Response within 48 h · No application fee",
     "errorGeneric": "Something went wrong. Please try again or contact us directly.",
-    "errorEmailExists": "An account already exists with this email."
+    "errorEmailExists": "An account already exists with this email.",
+    "corridors": {
+      "a": "Dakar ↔ AIBD / Saly / Mbour / Somone / Ngaparou / Nianing / Pointe Sarène",
+      "b": "Dakar ↔ Saint-Louis",
+      "c": "AIBD ↔ Mbour / Saly / Somone / Ngaparou / Nianing / Pointe Sarène"
+    },
+    "corridorsHint": "You may pick several. 12 seats open in total.",
+    "availabilityHint": "Optional — we will go over it at the interview.",
+    "days": {
+      "MON": "Mon",
+      "TUE": "Tue",
+      "WED": "Wed",
+      "THU": "Thu",
+      "FRI": "Fri",
+      "SAT": "Sat",
+      "SUN": "Sun"
+    },
+    "vehicleAgeWarning": "Your vehicle is more than 8 years old, which is outside our current criteria. Apply anyway — we will get back to you if your situation changes.",
+    "errorCorridorRequired": "Please select at least one corridor."
   },
   "success": {
     "title": "Application received",
@@ -182,7 +212,7 @@
       },
       {
         "question": "Which documents are required?",
-        "answer": "A category B licence valid and held for at least 3 years, the vehicle registration document, insurance covering passenger transport, and an ID. Nothing to upload when you apply: documents are checked together on the day of the meeting, in Dakar or Mbour."
+        "answer": "A category B licence valid and held for at least 3 years, the vehicle registration document, insurance covering passenger transport, an ID and a criminal record extract. Nothing to upload when you apply: documents are checked together on the day of the meeting, in Dakar or Mbour."
       },
       {
         "question": "My vehicle is more than 8 years old — can I still apply?",

@@ -110,5 +110,10 @@
       "title": "Solicitud enviada",
       "desc": "Hemos recibido su solicitud de convenio. Un asesor le contactará en 24 h hábiles y acaba de salir un acuse de recibo a su correo."
     }
+  },
+  "partnerTeaser": {
+    "title": "¿Tiene una flota y chóferes?",
+    "subtitle": "Buscamos 12 chóferes asociados en los corredores de Dakar, AIBD y Saint-Louis.",
+    "cta": "Hazte chófer asociado"
   }
 }

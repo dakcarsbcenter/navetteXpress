@@ -11,13 +11,22 @@ import {
   CheckCircle,
   ArrowLeft,
   CaretRight,
-  WarningCircle
+  WarningCircle,
+  MapTrifold,
+  CalendarBlank
 } from "@phosphor-icons/react";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/Button";
 import { Combobox } from "@/components/ui/Combobox";
 import { captureDriverReferral, getDriverReferral, trackDriverApplication } from "@/lib/analytics";
+import {
+  CORRIDOR_KEYS,
+  DECLARED_AVAILABILITY_DAYS,
+  isVehicleOutsideCriteria,
+  type CorridorKey,
+  type DeclaredAvailabilityDay,
+} from "@/lib/driver-application";
 
 // Données des marques et modèles, triées par ordre alphabétique
 const vehicleData = {
@@ -213,7 +222,24 @@ export default function DevenirPartenaireClient() {
       marque: "",
       modele: "",
       immatriculation: "",
+      annee: "",
     },
+  });
+
+  // Un booleen par groupe de corridors : un candidat peut en viser plusieurs, et
+  // l'admin doit pouvoir compter les places restantes groupe par groupe.
+  const [corridors, setCorridors] = useState<Record<CorridorKey, boolean>>({
+    a: false,
+    b: false,
+    c: false,
+  });
+  const [availability, setAvailability] = useState<DeclaredAvailabilityDay[]>([]);
+  // Provenance de la campagne. Lue a l'arrivee et envoyee avec la candidature ;
+  // absente, elle n'empeche jamais la soumission.
+  const [utm, setUtm] = useState<{ source: string | null; medium: string | null; campaign: string | null }>({
+    source: null,
+    medium: null,
+    campaign: null,
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -223,7 +249,30 @@ export default function DevenirPartenaireClient() {
   // Memorise ?ref= des l'arrivee : le candidat peut naviguer avant de postuler.
   useEffect(() => {
     captureDriverReferral();
+    const params = new URLSearchParams(window.location.search);
+    setUtm({
+      source: params.get("utm_source"),
+      medium: params.get("utm_medium"),
+      campaign: params.get("utm_campaign"),
+    });
   }, []);
+
+  const toggleCorridor = (key: CorridorKey) =>
+    setCorridors((prev) => ({ ...prev, [key]: !prev[key] }));
+
+  const toggleAvailability = (day: DeclaredAvailabilityDay) =>
+    setAvailability((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
+    );
+
+  const hasCorridor = CORRIDOR_KEYS.some((key) => corridors[key]);
+  const vehicleYearValue = Number(formData.vehicule.annee);
+  // Avertissement informatif : un vehicule de plus de 8 ans ne bloque pas l'envoi,
+  // la page promet de recontacter ces candidats si leur situation change.
+  const showVehicleAgeWarning =
+    Number.isInteger(vehicleYearValue) &&
+    formData.vehicule.annee.length === 4 &&
+    isVehicleOutsideCriteria(vehicleYearValue);
 
   const beneficesList = t.raw("benefits.items") as { label: string; text: string }[];
   const conditionsSpec = t.raw("conditions.items") as { label: string; value: string; note?: string }[];
@@ -257,6 +306,14 @@ export default function DevenirPartenaireClient() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // `required` ne couvre pas un groupe de cases a cocher : on verifie ici, comme
+    // le fait aussi la route d'API (qui reste la validation de reference).
+    if (!hasCorridor) {
+      setErrorMessage(t("form.errorCorridorRequired"));
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMessage("");
 
@@ -271,6 +328,14 @@ export default function DevenirPartenaireClient() {
           vehicleBrand: formData.vehicule.marque,
           vehicleModel: formData.vehicule.modele,
           vehiclePlateNumber: formData.vehicule.immatriculation,
+          vehicleYear: Number(formData.vehicule.annee),
+          corridorA: corridors.a,
+          corridorB: corridors.b,
+          corridorC: corridors.c,
+          declaredAvailability: availability,
+          utmSource: utm.source,
+          utmMedium: utm.medium,
+          utmCampaign: utm.campaign,
         }),
       });
 
@@ -296,7 +361,9 @@ export default function DevenirPartenaireClient() {
   // Progression purement visuelle (n'affecte ni la validation, ni les données envoyées)
   const requiredStrings = [
     formData.fullName, formData.email, formData.telephone,
+    hasCorridor ? "ok" : "",
     formData.vehicule.marque, formData.vehicule.modele, formData.vehicule.immatriculation,
+    formData.vehicule.annee,
   ];
   const totalRequired = requiredStrings.length;
   const filledCount = requiredStrings.filter((v) => v.trim().length > 0).length;
@@ -561,7 +628,28 @@ export default function DevenirPartenaireClient() {
                 </div>
               </div>
 
-              {/* SECTION 2: VÉHICULE */}
+              {/* SECTION 2: CORRIDOR(S) SOUHAITÉ(S) */}
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-2.5 pb-2 border-b border-[#e2dacd]">
+                  <MapTrifold size={16} className="text-accent" />
+                  <h4 className={`${monoLabel} text-foreground text-xs uppercase tracking-[0.14em]`}>{t("form.sections.corridors")}</h4>
+                </div>
+                <p className="text-[13px] text-[#3d3a35] leading-relaxed -mt-1">
+                  {t("form.corridorsHint")}
+                </p>
+                <div className="flex flex-col gap-2.5">
+                  {CORRIDOR_KEYS.map((key) => (
+                    <CheckboxRow
+                      key={key}
+                      label={t(`form.corridors.${key}`)}
+                      checked={corridors[key]}
+                      onChange={() => toggleCorridor(key)}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* SECTION 3: VÉHICULE */}
               <div className="flex flex-col gap-5">
                 <div className="flex items-center gap-2.5 pb-2 border-b border-[#e2dacd]">
                   <Car size={16} className="text-accent" />
@@ -591,14 +679,65 @@ export default function DevenirPartenaireClient() {
                   />
                 </div>
 
-                <FormInput
-                  label={t("form.fields.plate.label")}
-                  name="vehicule.immatriculation"
-                  placeholder={t("form.fields.plate.placeholder")}
-                  value={formData.vehicule.immatriculation}
-                  onChange={handleInputChange}
-                  required
-                />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <FormInput
+                    label={t("form.fields.plate.label")}
+                    name="vehicule.immatriculation"
+                    placeholder={t("form.fields.plate.placeholder")}
+                    value={formData.vehicule.immatriculation}
+                    onChange={handleInputChange}
+                    required
+                  />
+                  <FormInput
+                    label={t("form.fields.vehicleYear.label")}
+                    name="vehicule.annee"
+                    type="number"
+                    placeholder={t("form.fields.vehicleYear.placeholder")}
+                    value={formData.vehicule.annee}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+
+                {showVehicleAgeWarning && (
+                  <div className="flex items-start gap-2.5 border border-[#e2dacd] bg-[#F7F3EC] rounded p-3.5">
+                    <WarningCircle size={16} className="text-gold-deep shrink-0 mt-0.5" />
+                    <p className="text-[13px] text-[#3d3a35] leading-relaxed">
+                      {t("form.vehicleAgeWarning")}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* SECTION 4: DISPONIBILITÉS DÉCLARÉES */}
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-2.5 pb-2 border-b border-[#e2dacd]">
+                  <CalendarBlank size={16} className="text-accent" />
+                  <h4 className={`${monoLabel} text-foreground text-xs uppercase tracking-[0.14em]`}>{t("form.sections.availability")}</h4>
+                </div>
+                <p className="text-[13px] text-[#3d3a35] leading-relaxed -mt-1">
+                  {t("form.availabilityHint")}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {DECLARED_AVAILABILITY_DAYS.map((day) => {
+                    const selected = availability.includes(day);
+                    return (
+                      <button
+                        key={day}
+                        type="button"
+                        onClick={() => toggleAvailability(day)}
+                        aria-pressed={selected}
+                        className={`${monoLabel} text-[11px] uppercase tracking-[0.1em] px-3.5 py-2 rounded border transition-colors ${
+                          selected
+                            ? "bg-accent text-white border-accent"
+                            : "bg-background text-[#3d3a35] border-[#e2dacd] hover:border-accent"
+                        }`}
+                      >
+                        {t(`form.days.${day}`)}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               {errorMessage && (
@@ -637,6 +776,30 @@ export default function DevenirPartenaireClient() {
 }
 
 // ── COMPOSANTS INTERNES ──
+
+// Case a cocher d'un groupe de corridors. Meme palette que les champs du
+// formulaire (bordure #e2dacd, accent Lagune) : aucune valeur hors charte.
+function CheckboxRow({ label, checked, onChange }: {
+  label: string;
+  checked: boolean;
+  onChange: () => void;
+}) {
+  return (
+    <label
+      className={`flex items-start gap-3 border rounded p-3.5 cursor-pointer transition-colors ${
+        checked ? "border-accent bg-accent-subtle" : "border-[#e2dacd] hover:border-accent"
+      }`}
+    >
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={onChange}
+        className="mt-0.5 size-4 shrink-0 accent-accent cursor-pointer"
+      />
+      <span className="text-[13px] text-foreground leading-snug">{label}</span>
+    </label>
+  );
+}
 
 interface FormFieldChangeHandler {
   (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void;
