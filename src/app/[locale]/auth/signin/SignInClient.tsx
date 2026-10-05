@@ -257,7 +257,7 @@ function SignInForm() {
 
           {/* Citation centrale */}
           <div className="my-auto">
-            <p className="text-4xl leading-tight mb-8"
+            <p className="text-4xl leading-tight"
               style={{
                 fontFamily: 'var(--font-display)',
                 color: '#E8E4DF',
@@ -270,33 +270,11 @@ function SignInForm() {
               {t('signin.panel.quoteAfter')}
             </p>
 
-            {/* Témoignage statique */}
-            <div className="rounded-2xl p-6"
-              style={{
-                backgroundColor: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.07)',
-              }}>
-              <div className="flex gap-0.5 mb-3">
-                {[1, 2, 3, 4, 5].map(i => (
-                  <svg key={i} width="12" height="12" viewBox="0 0 20 20" fill="none">
-                    <path d="M10 1l2.39 4.84L18 6.76l-4 3.9.94 5.5L10 13.77 5.06 16.16 6 10.66 2 6.76l5.61-.92L10 1z"
-                      fill="var(--color-gold)" />
-                  </svg>
-                ))}
-              </div>
-              <p className="text-sm leading-relaxed mb-3"
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontStyle: 'italic',
-                  color: '#A09CB0',
-                  fontWeight: 300,
-                }}>
-                &quot;{t('signin.panel.testimonialQuote')}&quot;
-              </p>
-              <p className="text-xs font-medium" style={{ color: '#6B6880' }}>
-                {t('signin.panel.testimonialAuthor')}
-              </p>
-            </div>
+            {/* Le temoignage nominatif ("— Aminata D., Dakar", 5 etoiles) a ete
+                retire : il etait fabrique, comme la note 4.9/5 de l'accueil et
+                l'aggregateRating de schemaLocalBusiness. Un avis attribue a une
+                personne nommee est le plus expose des trois. A ne remettre
+                qu'avec un vrai avis, cite avec l'accord du client. */}
           </div>
 
           {/* Stats en bas */}

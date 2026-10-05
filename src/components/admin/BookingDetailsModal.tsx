@@ -20,10 +20,12 @@ import {
   Airplane,
   ArrowSquareOut,
   PaperPlaneTilt,
-  CheckCircle
+  CheckCircle,
+  Copy
 } from "@phosphor-icons/react"
 import { StatusBadge } from "@/components/shared/StatusBadge"
 import { isRouteCombinationAllowed } from "@/lib/pricing"
+import { LocationSelect, isCustomLocation } from "./LocationSelect"
 
 interface Booking {
   id: number
@@ -91,6 +93,8 @@ interface BookingDetailsModalProps {
   onUpdate: () => void
   drivers: Driver[]
   vehicles: Vehicle[]
+  /** Rouvre le formulaire de création pré-rempli avec cette course. */
+  onDuplicate?: () => void
 }
 
 const panelStyle: React.CSSProperties = { backgroundColor: '#F7F3EC', border: '1px solid #E2DACD', borderRadius: '4px', padding: '18px' }
@@ -135,7 +139,8 @@ export function BookingDetailsModal({
   onClose,
   onUpdate,
   drivers,
-  vehicles
+  vehicles,
+  onDuplicate
 }: BookingDetailsModalProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [editedBooking, setEditedBooking] = useState<Booking | null>(null)
@@ -220,9 +225,8 @@ export function BookingDetailsModal({
     driverId ? vehicles.find(v => v.driverId === driverId) ?? null : null
   const driverHasNoVehicle = Boolean(editedBooking.driverId) && !vehicleForDriver(editedBooking.driverId)
 
-  const locationNames = locations.map((l) => l.name)
-  const isCustomPickup = Boolean(editedBooking.pickupAddress) && !locationNames.includes(editedBooking.pickupAddress)
-  const isCustomDropoff = Boolean(editedBooking.dropoffAddress) && !locationNames.includes(editedBooking.dropoffAddress)
+  const isCustomPickup = isCustomLocation(editedBooking.pickupAddress, locations)
+  const isCustomDropoff = isCustomLocation(editedBooking.dropoffAddress, locations)
   const routeIsUnusual = Boolean(
     editedBooking.pickupAddress &&
     editedBooking.dropoffAddress &&
@@ -364,15 +368,29 @@ export function BookingDetailsModal({
                 </button>
               </>
             ) : (
-              <button
-                type="button"
-                onClick={() => setIsEditing(true)}
-                className="flex items-center gap-2"
-                style={{ height: '40px', padding: '0 16px', backgroundColor: 'rgba(31,82,69,.08)', border: '1px solid rgba(31,82,69,.3)', borderRadius: '4px', color: '#1F5245', fontSize: '12.5px', fontWeight: 600, cursor: 'pointer' }}
-              >
-                <PencilSimple size={15} weight="fill" />
-                Modifier
-              </button>
+              <>
+                {onDuplicate && (
+                  <button
+                    type="button"
+                    onClick={onDuplicate}
+                    title="Repartir de cette course pour créer une nouvelle demande"
+                    className="flex items-center gap-2"
+                    style={{ height: '40px', padding: '0 16px', backgroundColor: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '4px', color: '#3d3a35', fontSize: '12.5px', fontWeight: 600, cursor: 'pointer' }}
+                  >
+                    <Copy size={15} weight="fill" />
+                    Dupliquer
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(true)}
+                  className="flex items-center gap-2"
+                  style={{ height: '40px', padding: '0 16px', backgroundColor: 'rgba(31,82,69,.08)', border: '1px solid rgba(31,82,69,.3)', borderRadius: '4px', color: '#1F5245', fontSize: '12.5px', fontWeight: 600, cursor: 'pointer' }}
+                >
+                  <PencilSimple size={15} weight="fill" />
+                  Modifier
+                </button>
+              </>
             )}
 
             <button
@@ -561,48 +579,24 @@ export function BookingDetailsModal({
                     <>
                       <div>
                         <label style={fieldLabel}>Départ</label>
-                        <select
-                          value={isCustomPickup ? '__custom__' : editedBooking.pickupAddress}
-                          onChange={(e) => patch({ pickupAddress: e.target.value === '__custom__' ? '' : e.target.value })}
+                        <LocationSelect
+                          value={editedBooking.pickupAddress}
+                          onChange={(value) => patch({ pickupAddress: value })}
+                          locations={locations}
+                          placeholder="Adresse de départ"
                           style={selectStyle}
-                        >
-                          {locations.map((loc) => (
-                            <option key={loc.id} value={loc.name}>{loc.name}</option>
-                          ))}
-                          <option value="__custom__">Autre lieu (saisie libre)…</option>
-                        </select>
-                        {isCustomPickup && (
-                          <input
-                            type="text"
-                            value={editedBooking.pickupAddress}
-                            onChange={(e) => patch({ pickupAddress: e.target.value })}
-                            placeholder="Adresse de départ"
-                            style={{ ...selectStyle, marginTop: '8px' }}
-                          />
-                        )}
+                        />
                       </div>
 
                       <div>
                         <label style={fieldLabel}>Destination</label>
-                        <select
-                          value={isCustomDropoff ? '__custom__' : editedBooking.dropoffAddress}
-                          onChange={(e) => patch({ dropoffAddress: e.target.value === '__custom__' ? '' : e.target.value })}
+                        <LocationSelect
+                          value={editedBooking.dropoffAddress}
+                          onChange={(value) => patch({ dropoffAddress: value })}
+                          locations={locations}
+                          placeholder="Adresse de destination"
                           style={selectStyle}
-                        >
-                          {locations.map((loc) => (
-                            <option key={loc.id} value={loc.name}>{loc.name}</option>
-                          ))}
-                          <option value="__custom__">Autre lieu (saisie libre)…</option>
-                        </select>
-                        {isCustomDropoff && (
-                          <input
-                            type="text"
-                            value={editedBooking.dropoffAddress}
-                            onChange={(e) => patch({ dropoffAddress: e.target.value })}
-                            placeholder="Adresse de destination"
-                            style={{ ...selectStyle, marginTop: '8px' }}
-                          />
-                        )}
+                        />
                       </div>
 
                       {routeIsUnusual && (

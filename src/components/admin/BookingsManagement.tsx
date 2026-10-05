@@ -10,7 +10,8 @@ import {
   Clock,
   User,
   Trash,
-  Plus
+  Plus,
+  Copy
 } from "@phosphor-icons/react"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { BulkDeleteModal } from "@/components/ui/BulkDeleteModal"
@@ -38,6 +39,8 @@ interface Booking {
   requestedVehicleType?: 'berline' | 'suv' | null
   passengerName?: string | null
   passengerPhone?: string | null
+  /** Compte client rattache, recopie lors d'une duplication. */
+  userId?: string | null
   // Demande a plusieurs trajets : les courses issues de la meme soumission du
   // formulaire de reservation partagent cet identifiant (null sinon).
   bookingGroupId?: string | null
@@ -105,6 +108,8 @@ export function BookingsManagement() {
   const [selectedBookingForDetails, setSelectedBookingForDetails] = useState<Booking | null>(null)
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  // Course recopiee dans le formulaire de creation. null = saisie vierge.
+  const [bookingToDuplicate, setBookingToDuplicate] = useState<Booking | null>(null)
 
   const [filters, setFilters] = useState({
     status: 'pending',
@@ -160,6 +165,10 @@ export function BookingsManagement() {
               requestedVehicleType: b.requestedVehicleType || 'berline',
               passengerName: b.passengerName,
               passengerPhone: b.passengerPhone,
+              userId: b.userId,
+              // Sans ce champ, buildBookingGroupPositions ne voit aucun groupe et
+              // le badge « Trajet x/y » ne s'affiche jamais.
+              bookingGroupId: b.bookingGroupId,
               createdAt: b.createdAt,
               flightNumber: b.flightNumber,
               airline: b.airline,
@@ -290,6 +299,19 @@ export function BookingsManagement() {
     if (availabilityWarning) showWarning(availabilityWarning, 'Assigné hors créneau déclaré')
   }
 
+  // Duplication : on rouvre le formulaire de creation pre-rempli. Rien n'est ecrit
+  // en base tant que l'admin n'a pas valide, et la course d'origine n'est pas touchee.
+  const duplicateBooking = (e: React.MouseEvent, booking: Booking) => {
+    e.stopPropagation()
+    setBookingToDuplicate(booking)
+    setIsCreateModalOpen(true)
+  }
+
+  const closeCreateModal = () => {
+    setIsCreateModalOpen(false)
+    setBookingToDuplicate(null)
+  }
+
   const toggleSelectAll = () => {
     if (selectedBookingIds.size === filteredBookings.length && filteredBookings.length > 0) {
       setSelectedBookingIds(new Set())
@@ -392,7 +414,7 @@ export function BookingsManagement() {
 
         <button
           type="button"
-          onClick={() => setIsCreateModalOpen(true)}
+          onClick={() => { setBookingToDuplicate(null); setIsCreateModalOpen(true) }}
           className="flex items-center gap-2"
           style={{ height: '40px', padding: '0 16px', backgroundColor: '#1F5245', border: 'none', borderRadius: '4px', color: '#FFFFFF', fontSize: '12.5px', fontWeight: 600, cursor: 'pointer' }}
         >
@@ -497,7 +519,15 @@ export function BookingsManagement() {
                 >
                   <div className="absolute top-0 left-0" style={{ width: '3px', height: '100%', backgroundColor: accent }} />
 
-                  <div className="absolute top-4 right-4" onClick={(e) => e.stopPropagation()}>
+                  <div className="absolute top-4 right-4 flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      type="button"
+                      onClick={(e) => duplicateBooking(e, booking)}
+                      title="Dupliquer cette réservation"
+                      style={{ display: 'grid', placeItems: 'center', width: '24px', height: '24px', border: '1px solid #E2DACD', borderRadius: '3px', backgroundColor: '#FFFFFF', color: '#6E6A63', cursor: 'pointer' }}
+                    >
+                      <Copy size={13} weight="fill" />
+                    </button>
                     <input
                       type="checkbox"
                       checked={selectedBookingIds.has(booking.id)}
@@ -599,8 +629,8 @@ export function BookingsManagement() {
                       style={{ width: '15px', height: '15px', accentColor: '#1F5245' }}
                     />
                   </th>
-                  {['Identité', 'Planning', 'Trajectoire', 'Statut', 'Facturation'].map((h, i) => (
-                    <th key={h} style={{ padding: '12px 16px', textAlign: i === 4 ? 'right' : 'left', fontFamily: 'var(--font-mono)', fontSize: '9.5px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#6E6A63' }}>{h}</th>
+                  {['Identité', 'Planning', 'Trajectoire', 'Statut', 'Facturation', 'Actions'].map((h, i) => (
+                    <th key={h} style={{ padding: '12px 16px', textAlign: i >= 4 ? 'right' : 'left', fontFamily: 'var(--font-mono)', fontSize: '9.5px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#6E6A63' }}>{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -659,6 +689,18 @@ export function BookingsManagement() {
                         {booking.price ? `${parseFloat(booking.price).toLocaleString()} F` : '—'}
                       </span>
                     </td>
+                    <td style={{ padding: '12px 16px', textAlign: 'right' }} onClick={(e) => e.stopPropagation()}>
+                      <button
+                        type="button"
+                        onClick={(e) => duplicateBooking(e, booking)}
+                        title="Dupliquer cette réservation"
+                        className="inline-flex items-center gap-1.5"
+                        style={{ height: '28px', padding: '0 10px', border: '1px solid #E2DACD', borderRadius: '3px', backgroundColor: '#FFFFFF', fontSize: '11.5px', color: '#3d3a35', cursor: 'pointer' }}
+                      >
+                        <Copy size={12} weight="fill" />
+                        Dupliquer
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -676,16 +718,22 @@ export function BookingsManagement() {
           drivers={drivers}
           vehicles={vehicles}
           onUpdate={handleBookingUpdate}
+          onDuplicate={() => {
+            closeBookingDetails()
+            setBookingToDuplicate(selectedBookingForDetails)
+            setIsCreateModalOpen(true)
+          }}
         />
       )}
 
       {/* Création d'une demande par l'admin pour le compte d'un client */}
       <CreateBookingModal
         isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
+        onClose={closeCreateModal}
         onCreated={handleBookingCreated}
         drivers={drivers}
         vehicles={vehicles}
+        initialBooking={bookingToDuplicate}
       />
 
       {/* Bulk Delete Modal */}

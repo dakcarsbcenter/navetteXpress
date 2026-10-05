@@ -18,6 +18,7 @@ import {
 } from "@phosphor-icons/react"
 import { QUOTE_SERVICES, MAX_QUOTE_TRIPS, type QuoteTripInput } from '@/lib/quote-services'
 import { isRouteCombinationAllowed } from '@/lib/pricing'
+import { LocationSelect, isCustomLocation } from './LocationSelect'
 
 interface CustomerAccount {
   id: string
@@ -191,9 +192,8 @@ export function CreateQuoteModal({ isOpen, onClose, onCreated }: CreateQuoteModa
     return () => { cancelled = true }
   }, [isOpen, form.departure, form.destination])
 
-  const locationNames = useMemo(() => locations.map((l) => l.name), [locations])
-  const isCustomDeparture = Boolean(form.departure) && !locationNames.includes(form.departure)
-  const isCustomDestination = Boolean(form.destination) && !locationNames.includes(form.destination)
+  const isCustomDeparture = isCustomLocation(form.departure, locations)
+  const isCustomDestination = isCustomLocation(form.destination, locations)
   const routeIsUnusual = Boolean(
     form.departure && form.destination && !isCustomDeparture && !isCustomDestination &&
     !isRouteCombinationAllowed(form.departure, form.destination)
@@ -571,50 +571,24 @@ export function CreateQuoteModal({ isOpen, onClose, onCreated }: CreateQuoteModa
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   <div>
                     <label style={fieldLabel}>Départ *</label>
-                    <select
-                      value={isCustomDeparture ? '__custom__' : form.departure}
-                      onChange={(e) => patch({ departure: e.target.value === '__custom__' ? '' : e.target.value })}
+                    <LocationSelect
+                      value={form.departure}
+                      onChange={(value) => patch({ departure: value })}
+                      locations={locations}
+                      placeholder="Lieu de départ"
                       style={selectStyle}
-                    >
-                      <option value="">Choisir un lieu…</option>
-                      {locations.map((loc) => (
-                        <option key={loc.id} value={loc.name}>{loc.name}</option>
-                      ))}
-                      <option value="__custom__">Autre lieu (saisie libre)…</option>
-                    </select>
-                    {isCustomDeparture && (
-                      <input
-                        type="text"
-                        value={form.departure}
-                        onChange={(e) => patch({ departure: e.target.value })}
-                        placeholder="Lieu de départ"
-                        style={{ ...selectStyle, marginTop: '8px' }}
-                      />
-                    )}
+                    />
                   </div>
 
                   <div>
                     <label style={fieldLabel}>Destination *</label>
-                    <select
-                      value={isCustomDestination ? '__custom__' : form.destination}
-                      onChange={(e) => patch({ destination: e.target.value === '__custom__' ? '' : e.target.value })}
+                    <LocationSelect
+                      value={form.destination}
+                      onChange={(value) => patch({ destination: value })}
+                      locations={locations}
+                      placeholder="Destination"
                       style={selectStyle}
-                    >
-                      <option value="">Choisir un lieu…</option>
-                      {locations.map((loc) => (
-                        <option key={loc.id} value={loc.name}>{loc.name}</option>
-                      ))}
-                      <option value="__custom__">Autre lieu (saisie libre)…</option>
-                    </select>
-                    {isCustomDestination && (
-                      <input
-                        type="text"
-                        value={form.destination}
-                        onChange={(e) => patch({ destination: e.target.value })}
-                        placeholder="Destination"
-                        style={{ ...selectStyle, marginTop: '8px' }}
-                      />
-                    )}
+                    />
                   </div>
 
                   {routeIsUnusual && (
