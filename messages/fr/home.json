@@ -36,11 +36,12 @@
   "segments": {
     "heading": "Les segments, un par un",
     "viewAll": "Voir la grille complète",
-    "dakarAibd": "DAKAR → AIBD",
-    "aibdSaly": "AIBD → SALY",
-    "dakarSaly": "DAKAR → SALY",
-    "dayHire": "MISE À DISPOSITION",
-    "day": "JOUR"
+    "fallback": [
+      { "route": "Dakar Plateau → AIBD", "distance": "47 km", "duree": "55 min", "berline": 25000, "suv": 42000 },
+      { "route": "Almadies / Ngor → AIBD", "distance": "55 km", "duree": "1 h 05", "berline": 28000, "suv": 45000 },
+      { "route": "AIBD → Mbour centre", "distance": "32 km", "duree": "35 min", "berline": 22000, "suv": 39000 },
+      { "route": "AIBD → Saly Portudal", "distance": "45 km", "duree": "40 min", "berline": 25000, "suv": 42000 }
+    ]
   },
   "b2b": {
     "eyebrow": "Hôtels, entreprises, ONG",
@@ -94,7 +95,7 @@
   "faqs": [
     {
       "question": "Combien coûte un transfert Dakar-AIBD ?",
-      "answer": "Le prix d'un transfert entre Dakar et l'aéroport AIBD varie selon le véhicule choisi : à partir de 25 000 FCFA pour une berline confort et 30 000 FCFA pour un SUV. Le prix est fixe, sans supplément."
+      "answer": "Le prix d'un transfert entre Dakar et l'aéroport AIBD varie selon le véhicule choisi : à partir de {berlineDakarAibd} FCFA pour une berline confort et {suvDakarAibd} FCFA pour un SUV. Le prix est fixe, sans supplément."
     },
     {
       "question": "Comment réserver un chauffeur privé à Dakar ?",

@@ -3,9 +3,7 @@ export const runtime = 'nodejs';
 export const revalidate = 0;
 
 import { NextResponse } from 'next/server';
-import { db } from '@/db';
-import { pricingSegmentsTable } from '@/schema';
-import { eq, asc } from 'drizzle-orm';
+import { getActivePricingSegments } from '@/lib/pricing-segments';
 import { isAuthorizedPublicApiCall } from '@/lib/security/appToken';
 
 // GET — liste les segments de tarifs actifs (public, page /tarifs)
@@ -15,11 +13,7 @@ export async function GET(request: Request) {
     }
 
     try {
-        const segments = await db
-            .select()
-            .from(pricingSegmentsTable)
-            .where(eq(pricingSegmentsTable.isActive, true))
-            .orderBy(asc(pricingSegmentsTable.sortOrder), asc(pricingSegmentsTable.id));
+        const segments = await getActivePricingSegments();
         return NextResponse.json({ success: true, data: segments });
     } catch (error) {
         console.error('Erreur GET pricing-segments:', error);

@@ -7,6 +7,7 @@ import Image from "next/image";
 import AdSlot from "@/components/public/AdSlot";
 import { BookingWidget } from "./BookingWidget";
 import { FleetShowcase } from "./FleetShowcase";
+import { SegmentsShowcase, type HomeSegment } from "./SegmentsShowcase";
 import { ArrowRight, CheckCircle, Question, SteeringWheel } from "./home-icons";
 
 interface FaqItem {
@@ -16,16 +17,13 @@ interface FaqItem {
 
 interface HomeClientProps {
   faqs: FaqItem[];
+  segments: HomeSegment[];
 }
-
-const stripePattern = {
-  backgroundImage: "repeating-linear-gradient(45deg, #E8DCC8 0 10px, #E0D2B9 10px 20px)",
-};
 
 // Server Component : seules les 3 zones reellement interactives de la home
 // client. Le reste (textes, sections statiques, CTA de navigation) est
 // rendu et livre en HTML pur, ce qui reduit le JS envoye au navigateur.
-export default async function HomeClient({ faqs }: HomeClientProps) {
+export default async function HomeClient({ faqs, segments }: HomeClientProps) {
   const t = await getTranslations("home");
 
   const waypoints = [
@@ -54,12 +52,6 @@ export default async function HomeClient({ faqs }: HomeClientProps) {
     { n: "03", title: t("differentiators.d3.title"), desc: t("differentiators.d3.desc") },
   ];
 
-  const segments = [
-    { route: t("segments.dakarAibd"), price: "25 000", meta: `47 KM · ~55 MIN` },
-    { route: t("segments.aibdSaly"), price: "25 000", meta: `45 KM · ~40 MIN` },
-    { route: t("segments.dakarSaly"), price: "45 000", meta: `92 KM · ~1 H 30` },
-    { route: t("segments.dayHire"), price: "75 000", meta: `${t("segments.day")} · 10 H · 150 KM` },
-  ];
 
   return (
     <div className="min-h-screen bg-background font-sans selection:bg-gold/30 selection:text-gold">
@@ -199,27 +191,7 @@ export default async function HomeClient({ faqs }: HomeClientProps) {
                 {t("segments.viewAll")}
               </ButtonLink>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {segments.map((seg) => (
-                <div key={seg.route} className="bg-white border border-[#e2dacd] rounded-lg overflow-hidden">
-                  <div className="h-24" style={stripePattern} />
-                  <div className="p-4 flex flex-col gap-2">
-                    <div className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.1em] text-text-muted">
-                      {seg.route}
-                    </div>
-                    <div className="text-xl font-semibold text-foreground tracking-tight">
-                      {seg.price}{' '}
-                      <span className="font-[family-name:var(--font-ibm-plex-mono)] text-xs font-normal text-text-muted">
-                        FCFA
-                      </span>
-                    </div>
-                    <div className="font-[family-name:var(--font-ibm-plex-mono)] text-xs text-text-muted">
-                      {seg.meta}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <SegmentsShowcase segments={segments} />
           </div>
         </section>
 

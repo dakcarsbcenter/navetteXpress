@@ -3,11 +3,21 @@ export const runtime = 'nodejs';
 export const revalidate = 0;
 
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 import { db } from '@/db';
 import { pricingSegmentsTable } from '@/schema';
 import { requireAdminRole } from '@/utils/admin-permissions';
+import { PRICING_SEGMENTS_TAG } from '@/lib/pricing-segments';
 import { isRouteNodeKey } from '@/lib/route-nodes';
 import { asc } from 'drizzle-orm';
+
+// Les tarifs publics sont rendus cote serveur sur la page d'accueil (cartes de
+// segments, FAQ et JSON-LD) a partir d'une lecture mise en cache : sans cette
+// invalidation, une modification en admin n'y apparaitrait qu'au bout de 5 min.
+function revalidatePublicPricing() {
+    // 'max' : la purge vaut quelle que soit la duree de vie du cache (Next 16).
+    revalidateTag(PRICING_SEGMENTS_TAG, 'max');
+}
 
 const VALID_DOTS = ['accent', 'ink', 'gold'];
 
@@ -69,6 +79,7 @@ export async function POST(req: NextRequest) {
             })
             .returning();
 
+        revalidatePublicPricing();
         return NextResponse.json({ success: true, data: created }, { status: 201 });
     } catch (error: any) {
         const isAuth = error?.message?.includes('Unauthorized') || error?.message?.includes('Forbidden');
