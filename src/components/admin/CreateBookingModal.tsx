@@ -157,6 +157,7 @@ const emptyForm = {
   driverId: '',
   vehicleId: null as number | null,
   notifyClient: false,
+  notifyDriver: true,
 }
 
 /**
@@ -361,6 +362,7 @@ export function CreateBookingModal({ isOpen, onClose, onCreated, drivers, vehicl
           driverId: form.driverId || undefined,
           vehicleId: form.vehicleId,
           notifyClient: form.notifyClient,
+          notifyDriver: form.notifyDriver,
           trips: trips.map((trip) => {
             const priceValue = trip.price.trim() === '' ? null : Number(trip.price)
             return {
@@ -711,9 +713,30 @@ export function CreateBookingModal({ isOpen, onClose, onCreated, drivers, vehicl
                       style={{ width: '15px', height: '15px', accentColor: '#1F5245', marginTop: '2px' }}
                     />
                     <span>
-                      Envoyer l&apos;accusé de réception WhatsApp au client
+                      Notifier le client (accusé de réception WhatsApp)
                       <span style={{ display: 'block', fontSize: '11px', color: '#6E6A63' }}>
-                        À décocher pour un client qui ne lit pas : c&apos;est l&apos;admin qui le rappelle.
+                        À laisser décoché pour un client qui ne lit pas : c&apos;est l&apos;admin qui le rappelle.
+                      </span>
+                    </span>
+                  </label>
+
+                  <label
+                    className="flex items-start gap-2"
+                    style={{ fontSize: '12.5px', color: '#12100E', cursor: form.driverId ? 'pointer' : 'not-allowed', opacity: form.driverId ? 1 : 0.5 }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={form.notifyDriver && Boolean(form.driverId)}
+                      disabled={!form.driverId}
+                      onChange={(e) => patch({ notifyDriver: e.target.checked })}
+                      style={{ width: '15px', height: '15px', accentColor: '#1F5245', marginTop: '2px' }}
+                    />
+                    <span>
+                      Notifier le chauffeur (message d&apos;assignation)
+                      <span style={{ display: 'block', fontSize: '11px', color: '#6E6A63' }}>
+                        {form.driverId
+                          ? 'Décochez pour l’assigner sans lui envoyer de message.'
+                          : 'Disponible une fois un chauffeur choisi.'}
                       </span>
                     </span>
                   </label>

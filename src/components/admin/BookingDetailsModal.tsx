@@ -147,9 +147,10 @@ export function BookingDetailsModal({
   const [isLoading, setIsLoading] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
   const [locations, setLocations] = useState<LocationOption[]>([])
-  // Notifier le client et le chauffeur des modifications. Décochable pour corriger
-  // une simple coquille sans déclencher d'envoi.
-  const [notifyOnUpdate, setNotifyOnUpdate] = useState(true)
+  // Qui est notifié des modifications : le client, le chauffeur, les deux ou personne
+  // (corriger une simple coquille sans déclencher d'envoi).
+  const [notifyClient, setNotifyClient] = useState(true)
+  const [notifyDriver, setNotifyDriver] = useState(true)
   const [quote, setQuote] = useState<PricingQuote | null>(null)
   const [isQuoting, setIsQuoting] = useState(false)
   // Renvoi manuel de la confirmation WhatsApp au client : l'envoi automatique n'a lieu
@@ -163,7 +164,8 @@ export function BookingDetailsModal({
       setEditedBooking({ ...booking })
       setIsEditing(false)
       setSaveError(null)
-      setNotifyOnUpdate(true)
+      setNotifyClient(true)
+      setNotifyDriver(true)
       setQuote(null)
       setResendFeedback(null)
     }
@@ -277,7 +279,8 @@ export function BookingDetailsModal({
           airline: editedBooking.airline || null,
           passengerName: passengerName ? passengerName.trim() : null,
           passengerPhone: editedBooking.passengerPhone || null,
-          notifyOnUpdate,
+          notifyClient,
+          notifyDriver,
         }),
       })
 
@@ -407,17 +410,33 @@ export function BookingDetailsModal({
         <div className="dash-scroll" style={{ padding: '24px', overflowY: 'auto', maxHeight: 'calc(90vh - 100px)' }}>
           {isEditing && (
             <div className="flex items-center justify-between gap-4 flex-wrap" style={{ marginBottom: '20px', padding: '12px 14px', backgroundColor: '#F7F3EC', border: '1px solid #E2DACD', borderRadius: '4px' }}>
-              <label className="flex items-center gap-2" style={{ fontSize: '12.5px', color: '#12100E', cursor: 'pointer' }}>
-                <input
-                  type="checkbox"
-                  checked={notifyOnUpdate}
-                  onChange={(e) => setNotifyOnUpdate(e.target.checked)}
-                  style={{ width: '15px', height: '15px', accentColor: '#1F5245' }}
-                />
-                Notifier le client et le chauffeur des modifications
-              </label>
+              <div className="flex items-center gap-5 flex-wrap">
+                <label className="flex items-center gap-2" style={{ fontSize: '12.5px', color: '#12100E', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={notifyClient}
+                    onChange={(e) => setNotifyClient(e.target.checked)}
+                    style={{ width: '15px', height: '15px', accentColor: '#1F5245' }}
+                  />
+                  Notifier le client
+                </label>
+                <label
+                  className="flex items-center gap-2"
+                  style={{ fontSize: '12.5px', color: '#12100E', cursor: editedBooking.driverId ? 'pointer' : 'not-allowed', opacity: editedBooking.driverId ? 1 : 0.5 }}
+                  title={editedBooking.driverId ? undefined : 'Aucun chauffeur assigné'}
+                >
+                  <input
+                    type="checkbox"
+                    checked={notifyDriver && Boolean(editedBooking.driverId)}
+                    disabled={!editedBooking.driverId}
+                    onChange={(e) => setNotifyDriver(e.target.checked)}
+                    style={{ width: '15px', height: '15px', accentColor: '#1F5245' }}
+                  />
+                  Notifier le chauffeur
+                </label>
+              </div>
               <span style={{ fontSize: '11px', color: '#6E6A63' }}>
-                Décochez pour corriger une coquille sans envoyer de message.
+                Décochez les deux pour corriger une coquille sans envoyer de message.
               </span>
             </div>
           )}

@@ -28,6 +28,8 @@ export interface AssignBookingOptions {
    * vérifie rien. L'indisponibilité est alors remontée en avertissement.
    */
   force?: boolean;
+  /** Envoie (ou non) le message d'assignation au chauffeur. Vrai par défaut. */
+  notifyDriver?: boolean;
 }
 
 export async function assignBookingToDriver(
@@ -92,6 +94,10 @@ export async function assignBookingToDriver(
 
   const assignedBooking = updatedBooking[0];
   console.log(`✅ Réservation #${assignedBooking.id} assignée au chauffeur ${assignedDriver.name}`);
+
+  if (options.notifyDriver === false) {
+    return { success: true, booking: assignedBooking, driverName: assignedDriver.name, availabilityWarning };
+  }
 
   // Notification au chauffeur assigné (retry automatique en cas d'échec)
   await sendWithRetry('email', 'resend-email.sendBookingAssignedToDriver', [

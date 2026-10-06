@@ -113,7 +113,10 @@ const BookingPatchSchema = z.object({
   passengerName: z.union([z.string().trim().max(120), z.null()]).optional(),
   passengerPhone: z.union([z.string().trim().max(30), z.null()]).optional(),
 
-  /** Envoi (ou non) des notifications de modification au client et au chauffeur. */
+  /** Notifications au client / au chauffeur, choisies indépendamment (vrai par défaut). */
+  notifyClient: z.boolean().optional(),
+  notifyDriver: z.boolean().optional(),
+  /** Ancien interrupteur unique, conservé pour les pages encore en cache. */
   notifyOnUpdate: z.boolean().optional(),
 });
 
@@ -177,6 +180,8 @@ export async function PATCH(
       }, { status: 400 });
     }
     const body = validation.data;
+    const notifyClient = body.notifyClient ?? body.notifyOnUpdate ?? true;
+    const notifyDriver = body.notifyDriver ?? body.notifyOnUpdate ?? true;
 
     // Récupérer la réservation actuelle pour comparer
     const currentBooking = await db
@@ -287,7 +292,7 @@ export async function PATCH(
     const booking = updatedBooking[0];
 
     // Envoyer notification au client si la réservation est confirmée (retry automatique en cas d'échec)
-    if (body.status === 'confirmed' && oldStatus !== 'confirmed') {
+    if (notifyClient && body.status === 'confirmed' && oldStatus !== 'confirmed') {
       // Récupérer les infos du chauffeur si assigné
       let driver = undefined;
       if (booking.driverId) {
@@ -342,7 +347,7 @@ export async function PATCH(
     }
 
     // Annulation définitive : seul l'admin peut déclencher cette notification au client
-    if (body.status === 'cancelled' && oldStatus !== 'cancelled') {
+    if (notifyClient && body.status === 'cancelled' && oldStatus !== 'cancelled') {
       if (booking.customerEmail) {
         await sendWithRetry('email', 'resend-email.sendBookingCancelledToClient', [
           {
@@ -366,7 +371,7 @@ export async function PATCH(
     // aurait fait renvoyer les notifications à chaque sauvegarde du formulaire
     // admin, même sans changement de chauffeur. On compare au bon avant/après.
     const driverJustAssigned = Boolean(body.driverId && body.driverId !== oldBooking.driverId);
-    if (driverJustAssigned) {
+    if (driverJustAssigned && notifyDriver) {
       const driverData = await db
         .select()
         .from(users)
@@ -411,7 +416,7 @@ export async function PATCH(
     // seulement si l'admin n'a pas décoché la case (correction d'une coquille en silence).
     // On ne renvoie rien au chauffeur qui vient d'être assigné : il reçoit déjà le détail
     // complet de la course juste au-dessus.
-    if (changes.length > 0 && body.notifyOnUpdate !== false) {
+    if (changes.length > 0 && (notifyClient || notifyDriver)) {
       const bookingSummary = {
         id: booking.id,
         reference: `NX-${booking.id}`,
@@ -440,21 +445,23 @@ export async function PATCH(
           }
         : undefined;
 
-      if (booking.customerEmail) {
-        await sendWithRetry('email', 'resend-mailer.sendBookingUpdatedEmail', [
-          booking.customerEmail,
-          { ...bookingSummary, changes, recipient: 'client' },
+      if (notifyClient) {
+        if (booking.customerEmail) {
+          await sendWithRetry('email', 'resend-mailer.sendBookingUpdatedEmail', [
+            booking.customerEmail,
+            { ...bookingSummary, changes, recipient: 'client' },
+          ]);
+        }
+
+        await sendWithRetry('whatsapp', 'whatsapp.sendReservationModifiee', [
+          booking,
+          changes,
+          'client',
+          driverWhatsAppInfo,
         ]);
       }
 
-      await sendWithRetry('whatsapp', 'whatsapp.sendReservationModifiee', [
-        booking,
-        changes,
-        'client',
-        driverWhatsAppInfo,
-      ]);
-
-      if (assignedDriver && !driverJustAssigned) {
+      if (notifyDriver && assignedDriver && !driverJustAssigned) {
         if (assignedDriver.email) {
           await sendWithRetry('email', 'resend-mailer.sendBookingUpdatedEmail', [
             assignedDriver.email,

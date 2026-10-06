@@ -146,6 +146,8 @@ const BookingCreateSchema = z.object({
   vehicleId: z.union([z.number().int(), z.null()]).optional(),
   /** Accusé de réception WhatsApp au client (inutile pour un client qui ne lit pas). */
   notifyClient: z.boolean().optional(),
+  /** Message d'assignation au chauffeur (envoyé par défaut). */
+  notifyDriver: z.boolean().optional(),
 });
 
 type BookingCreateBody = z.infer<typeof BookingCreateSchema>;
@@ -318,7 +320,10 @@ export async function POST(request: NextRequest) {
 
       for (let i = 0; i < createdBookings.length; i++) {
         const booking = createdBookings[i];
-        const assignment = await assignBookingToDriver(booking.id, body.driverId, { force: true });
+        const assignment = await assignBookingToDriver(booking.id, body.driverId, {
+          force: true,
+          notifyDriver: body.notifyDriver ?? true,
+        });
         if (assignment.success) {
           createdBookings[i] = assignment.booking;
           assignedDriverName = assignment.driverName;
