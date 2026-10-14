@@ -15,11 +15,20 @@ import {
   Trash,
   MagnifyingGlass as Search,
 } from "@phosphor-icons/react"
-import { serviceTypes, additionalServices } from '@/lib/services'
+import { serviceTypes, additionalServices, getServiceById } from '@/lib/services'
 import { isRouteCombinationAllowed } from '@/lib/pricing'
 import { MAX_BOOKING_TRIPS } from '@/lib/booking-trips'
 import { parseBookingNotesFields } from '@/lib/booking-notes'
 import { LocationSelect, isCustomLocation, type LocationOption } from './LocationSelect'
+
+interface ServiceOption {
+  slug: string
+  name: string
+}
+
+// Repli si /api/services est indisponible ou vide : la saisie téléphonique ne doit
+// jamais être bloquée par le chargement du référentiel.
+const FALLBACK_SERVICES: ServiceOption[] = serviceTypes.map((s) => ({ slug: s.id, name: s.translations.fr.name }))
 
 interface Driver {
   id: string
@@ -138,7 +147,9 @@ const emptyTrip = (): AdminTripRow => ({
   requestedVehicleType: 'berline',
   passengers: 1,
   luggage: 1,
-  serviceType: serviceTypes[0]?.id ?? 'autres',
+  // Vide = « premier service de la liste » : la liste vient de la vue Services et
+  // n'est chargée qu'après l'ouverture, on la résout à l'affichage et à l'envoi.
+  serviceType: '',
   flightNumber: '',
   airline: '',
   price: '',
@@ -170,6 +181,8 @@ export function CreateBookingModal({ isOpen, onClose, onCreated, drivers, vehicl
   const [form, setForm] = useState(emptyForm)
   const [trips, setTrips] = useState<AdminTripRow[]>(() => [emptyTrip()])
   const [locations, setLocations] = useState<LocationOption[]>([])
+  const [services, setServices] = useState<ServiceOption[]>(FALLBACK_SERVICES)
+  const defaultService = services[0]?.slug ?? 'autres'
   const [customers, setCustomers] = useState<CustomerAccount[]>([])
   const [customerSearch, setCustomerSearch] = useState('')
   const [isSaving, setIsSaving] = useState(false)
@@ -210,7 +223,7 @@ export function CreateBookingModal({ isOpen, onClose, onCreated, drivers, vehicl
         requestedVehicleType: initialBooking.requestedVehicleType === 'suv' ? 'suv' : 'berline',
         passengers: initialBooking.passengers || 1,
         luggage: typeof initialBooking.luggage === 'number' ? initialBooking.luggage : 1,
-        serviceType: parsed.serviceType || serviceTypes[0]?.id || 'autres',
+        serviceType: parsed.serviceType || '',
         flightNumber: initialBooking.flightNumber || '',
         airline: initialBooking.airline || '',
         price: Number.isFinite(rawPrice) && rawPrice > 0 ? String(rawPrice) : '',
@@ -235,6 +248,15 @@ export function CreateBookingModal({ isOpen, onClose, onCreated, drivers, vehicl
         }
       })
       .catch(() => { /* les lieux restent saisissables en texte libre */ })
+
+    // Services actifs de la vue admin Référentiel > Services, dans son ordre.
+    fetch('/api/services', { cache: 'no-store' })
+      .then((res) => res.json())
+      .then((json) => {
+        if (cancelled || !json?.success || !Array.isArray(json.data) || json.data.length === 0) return
+        setServices(json.data.map((s: { slug: string; name: string }) => ({ slug: s.slug, name: s.name })))
+      })
+      .catch(() => { /* liste statique de repli */ })
 
     fetch('/api/admin/users?role=customer', { cache: 'no-store' })
       .then((res) => res.json())
@@ -366,7 +388,7 @@ export function CreateBookingModal({ isOpen, onClose, onCreated, drivers, vehicl
           trips: trips.map((trip) => {
             const priceValue = trip.price.trim() === '' ? null : Number(trip.price)
             return {
-              serviceType: trip.serviceType,
+              serviceType: trip.serviceType || defaultService,
               pickupAddress: trip.pickupAddress.trim(),
               destinationAddress: trip.dropoffAddress.trim(),
               // Envoyé en ISO pour éviter toute ambiguïté de fuseau côté serveur.
@@ -754,6 +776,8 @@ export function CreateBookingModal({ isOpen, onClose, onCreated, drivers, vehicl
                   index={index}
                   total={trips.length}
                   locations={locations}
+                  services={services}
+                  defaultService={defaultService}
                   onPatch={(changes) => patchTrip(trip.key, changes)}
                   onRemove={trips.length > 1 ? () => removeTrip(trip.key) : undefined}
                 />
@@ -798,6 +822,8 @@ interface TripPanelProps {
   index: number
   total: number
   locations: LocationOption[]
+  services: ServiceOption[]
+  defaultService: string
   onPatch: (changes: Partial<AdminTripRow>) => void
   onRemove?: () => void
 }
@@ -806,8 +832,14 @@ interface TripPanelProps {
  * Un trajet de la demande, avec son tarif. Le devis est interrogé par trajet :
  * deux courses d'un même séjour n'ont ni le même itinéraire ni le même prix.
  */
-function TripPanel({ trip, index, total, locations, onPatch, onRemove }: TripPanelProps) {
+function TripPanel({ trip, index, total, locations, services, defaultService, onPatch, onRemove }: TripPanelProps) {
   const [quote, setQuote] = useState<PricingQuote | null>(null)
+  const selectedService = trip.serviceType || defaultService
+  // Course dupliquée dont le service a été désactivé depuis : on garde sa valeur
+  // visible plutôt que d'afficher un select vide.
+  const serviceOptions = services.some((s) => s.slug === selectedService)
+    ? services
+    : [...services, { slug: selectedService, name: getServiceById(selectedService)?.translations.fr.name ?? selectedService }]
   const [isQuoting, setIsQuoting] = useState(false)
 
   const isCustomPickup = isCustomLocation(trip.pickupAddress, locations)
@@ -859,12 +891,12 @@ function TripPanel({ trip, index, total, locations, onPatch, onRemove }: TripPan
         <div>
           <label style={fieldLabel}>Type de service</label>
           <select
-            value={trip.serviceType}
+            value={selectedService}
             onChange={(e) => onPatch({ serviceType: e.target.value })}
             style={selectStyle}
           >
-            {serviceTypes.map((service) => (
-              <option key={service.id} value={service.id}>{service.translations.fr.name}</option>
+            {serviceOptions.map((service) => (
+              <option key={service.slug} value={service.slug}>{service.name}</option>
             ))}
           </select>
         </div>

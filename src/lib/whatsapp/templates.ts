@@ -16,7 +16,9 @@ import {
   flightStatusBilingual,
   formatDateTimeBilingual,
 } from '@/lib/email-i18n';
-import type { SelectBooking } from '@/schema';
+import { db } from '@/db';
+import { servicesTable, type SelectBooking } from '@/schema';
+import { eq } from 'drizzle-orm';
 
 interface DriverInfo {
   name: string;
@@ -101,25 +103,48 @@ function confirmDeadlineLabel(): string {
 }
 
 /**
+ * Libellé d'un service à partir du slug stocké dans `notes`. La source de vérité est
+ * la vue admin Services (servicesTable) : un service qui n'existe que là n'est pas
+ * dans la liste statique. Un échec de lecture ne doit pas bloquer l'envoi : on
+ * retombe sur la liste statique, puis sur le slug brut.
+ */
+async function serviceLabel(slug: string): Promise<string> {
+  try {
+    const [row] = await db
+      .select({ name: servicesTable.name })
+      .from(servicesTable)
+      .where(eq(servicesTable.slug, slug))
+      .limit(1);
+    if (row?.name) {
+      const fixed = getServiceById(slug);
+      // Le nom saisi en admin est en une seule langue : on ne garde le bilingue du
+      // catalogue statique que s'il décrit le même service sans avoir été renommé.
+      return fixed && fixed.translations.fr.name === row.name
+        ? bi(fixed.translations.fr.name, fixed.translations.en.name)
+        : row.name;
+    }
+  } catch (error) {
+    console.error('[whatsapp] lecture du service impossible, repli sur la liste statique:', error);
+  }
+  const service = getServiceById(slug);
+  return service ? bi(service.translations.fr.name, service.translations.en.name) : slug;
+}
+
+/**
  * serviceType/options/précisions ne sont pas des colonnes de bookingsTable :
  * ils sont stockés en texte libre dans `notes` au format fixe posé par
  * POST /api/bookings (voir src/app/api/bookings/route.ts). On les extrait
  * plutôt que d'ajouter une migration pour ce seul besoin d'affichage.
  */
-function parseBookingNotes(notes: string | null): {
+async function parseBookingNotes(notes: string | null): Promise<{
   serviceTypeLabel: string;
   optionsLabel: string;
   driverNotesLabel: string;
-} {
+}> {
   if (!notes) return { serviceTypeLabel: '—', optionsLabel: '—', driverNotesLabel: '—' };
 
   const serviceId = notes.match(/Service:\s*(.+)/)?.[1]?.trim();
-  const service = serviceId ? getServiceById(serviceId) : undefined;
-  const serviceTypeLabel = serviceId
-    ? service
-      ? bi(service.translations.fr.name, service.translations.en.name)
-      : serviceId
-    : '—';
+  const serviceTypeLabel = serviceId ? await serviceLabel(serviceId) : '—';
 
   const optionsRaw = notes.match(/Services additionnels:\s*(.+)/)?.[1]?.trim();
   const optionsLabel =
@@ -167,7 +192,7 @@ export async function sendReservationCreeeClient(
       `Réservation #${booking.id} sans téléphone client : accusé de réception WhatsApp impossible`
     );
   }
-  const { serviceTypeLabel, optionsLabel, driverNotesLabel } = parseBookingNotes(booking.notes);
+  const { serviceTypeLabel, optionsLabel, driverNotesLabel } = await parseBookingNotes(booking.notes);
 
   const isGrouped = Boolean(groupContext && groupContext.total > 1);
   // Les trois lieux/dates du message décrivent le premier trajet : on le dit, sinon
@@ -214,7 +239,7 @@ export async function sendChauffeurAssigne(booking: SelectBooking, driver: Drive
       `Chauffeur "${driver.name}" sans téléphone en fiche : proposition de course #${booking.id} non envoyée`
     );
   }
-  const { serviceTypeLabel, optionsLabel, driverNotesLabel } = parseBookingNotes(booking.notes);
+  const { serviceTypeLabel, optionsLabel, driverNotesLabel } = await parseBookingNotes(booking.notes);
 
   await sendWhatsAppTemplate({
     to: driver.phone,
@@ -260,7 +285,7 @@ export async function sendReservationValidee(
       `Réservation #${booking.id} sans téléphone client : confirmation WhatsApp impossible`
     );
   }
-  const { serviceTypeLabel, optionsLabel, driverNotesLabel } = parseBookingNotes(booking.notes);
+  const { serviceTypeLabel, optionsLabel, driverNotesLabel } = await parseBookingNotes(booking.notes);
 
   await sendWhatsAppTemplate({
     to: booking.customerPhone,
@@ -305,7 +330,7 @@ export async function sendRappelDepart(
       `Réservation #${booking.id} sans téléphone client : rappel de départ WhatsApp impossible`
     );
   }
-  const { driverNotesLabel } = parseBookingNotes(booking.notes);
+  const { driverNotesLabel } = await parseBookingNotes(booking.notes);
 
   await sendWhatsAppTemplate({
     to: booking.customerPhone,
