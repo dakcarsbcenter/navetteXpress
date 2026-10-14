@@ -42,6 +42,9 @@ export async function GET(request: NextRequest) {
       case 'year':
         startDate = new Date(now.getFullYear(), 0, 1)
         break
+      case 'all':
+        startDate = new Date(0)
+        break
       default:
         startDate = new Date(now.getFullYear(), now.getMonth(), 1)
     }

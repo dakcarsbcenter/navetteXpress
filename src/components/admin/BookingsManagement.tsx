@@ -1,9 +1,10 @@
 "use client"
 
-import React, { useState, useEffect, useCallback } from "react"
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react"
 import {
   MagnifyingGlass as Search,
   SquaresFour as Grid,
+  CalendarBlank,
   List,
   MapPin,
   Calendar,
@@ -20,6 +21,16 @@ import { BookingDetailsModal } from "./BookingDetailsModal"
 import { CreateBookingModal } from "./CreateBookingModal"
 import { StatusBadge, TONE_STYLE, toneForStatus } from "@/components/shared/StatusBadge"
 import { buildBookingGroupPositions } from "@/lib/booking-groups"
+import { filterAndSortBookings } from "@/lib/booking-planning"
+import { BookingsPlanning } from "./planning/BookingsPlanning"
+
+type ViewMode = 'grid' | 'list' | 'planning'
+
+const VIEW_OPTIONS: { value: ViewMode; label: string; icon: typeof Grid }[] = [
+  { value: 'grid', label: 'Cartes', icon: Grid },
+  { value: 'list', label: 'Liste', icon: List },
+  { value: 'planning', label: 'Planning', icon: CalendarBlank },
+]
 
 interface Booking {
   id: number
@@ -33,6 +44,8 @@ interface Booking {
   driverId: string | null
   vehicleId: number | null
   price?: string | null
+  /** Durée prévue en heures (decimal renvoyé en chaîne), utilisée par le planning. */
+  duration?: string | number | null
   notes?: string
   passengers?: number
   luggage?: number
@@ -96,13 +109,14 @@ const selectStyle: React.CSSProperties = {
 
 export function BookingsManagement() {
   const [bookings, setBookings] = useState<Booking[]>([])
-  const [filteredBookings, setFilteredBookings] = useState<Booking[]>([])
   // Une demande a plusieurs trajets donne une course par trajet : chacune se traite
   // separement, mais l'admin doit voir qu'elles forment un meme sejour. Calcule sur
   // la liste complete, pour que le total ne depende pas du filtre affiche.
   const bookingGroupPositions = buildBookingGroupPositions(bookings)
   const [isLoading, setIsLoading] = useState(true)
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [viewMode, setViewMode] = useState<ViewMode>('grid')
+  // Statut choisi avant de passer en Planning (qui affiche « Tous »), restitue au retour.
+  const statusBeforePlanning = useRef<string | null>(null)
   const { notifications, showSuccess, showError, showWarning, removeNotification } = useNotification()
 
   const [selectedBookingForDetails, setSelectedBookingForDetails] = useState<Booking | null>(null)
@@ -124,10 +138,25 @@ export function BookingsManagement() {
   const [drivers, setDrivers] = useState<Driver[]>([])
   const [vehicles, setVehicles] = useState<Vehicle[]>([])
 
-  useEffect(() => {
-    applyFilters()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bookings, filters])
+  // Source unique du filtrage pour les trois vues (cartes, liste, planning).
+  const filteredBookings = useMemo(() => filterAndSortBookings(bookings, filters), [bookings, filters])
+
+  const changeViewMode = (next: ViewMode) => {
+    if (next === viewMode) return
+    if (next === 'planning') {
+      // Le filtre par défaut (« En attente ») viderait le planning : on affiche tout.
+      if (filters.status !== 'all') {
+        statusBeforePlanning.current = filters.status
+        setFilters(prev => ({ ...prev, status: 'all' }))
+      }
+    } else if (viewMode === 'planning' && statusBeforePlanning.current) {
+      const previous = statusBeforePlanning.current
+      statusBeforePlanning.current = null
+      // On ne restitue que si l'admin n'a pas choisi lui-même un autre statut entre-temps.
+      setFilters(prev => (prev.status === 'all' ? { ...prev, status: previous } : prev))
+    }
+    setViewMode(next)
+  }
 
   const fetchBookings = useCallback(async () => {
     try {
@@ -157,6 +186,7 @@ export function BookingsManagement() {
               driverId: b.driverId,
               vehicleId: b.vehicleId,
               price: b.price,
+              duration: b.duration,
               notes: b.notes,
               passengers: b.passengers || 1,
               // Tout champ omis ici revient undefined dans la modale et serait réécrit
@@ -223,47 +253,6 @@ export function BookingsManagement() {
     fetchDrivers()
     fetchVehicles()
   }, [fetchBookings, fetchDrivers, fetchVehicles])
-
-  const applyFilters = () => {
-    let filtered = [...bookings]
-
-    if (filters.status !== 'all') {
-      filtered = filtered.filter(b => b.status === filters.status)
-    }
-
-    if (filters.driver !== 'all') {
-      filtered = filtered.filter(b => b.driverId === filters.driver)
-    }
-
-    if (filters.search) {
-      const searchTerm = filters.search.toLowerCase()
-      filtered = filtered.filter(b =>
-        b.id.toString().includes(searchTerm) ||
-        b.customerName.toLowerCase().includes(searchTerm) ||
-        b.pickupAddress.toLowerCase().includes(searchTerm) ||
-        b.dropoffAddress.toLowerCase().includes(searchTerm)
-      )
-    }
-
-    filtered.sort((a, b) => {
-      if (filters.status === 'all') {
-        const priority = { 'pending': 0, 'assigned': 1, 'approved': 2, 'confirmed': 3, 'in_progress': 4, 'completed': 5, 'cancelled': 6, 'rejected': 7 };
-        const aStatusIdx = priority[a.status as keyof typeof priority] ?? 99;
-        const bStatusIdx = priority[b.status as keyof typeof priority] ?? 99;
-
-        if (aStatusIdx !== bStatusIdx) return aStatusIdx - bStatusIdx;
-      }
-
-      const dateA = new Date(a.scheduledDateTime).getTime();
-      const dateB = new Date(b.scheduledDateTime).getTime();
-
-      if (filters.sortBy === 'date-desc') return dateB - dateA;
-      if (filters.sortBy === 'date-asc') return dateA - dateB;
-      return 0;
-    });
-
-    setFilteredBookings(filtered)
-  }
 
   const openBookingDetails = (booking: Booking) => {
     setSelectedBookingForDetails(booking)
@@ -459,10 +448,12 @@ export function BookingsManagement() {
           <option value="all">Tous les états</option>
           <option value="pending">En attente</option>
           <option value="assigned">Assignées</option>
+          <option value="approved">Prix approuvé</option>
           <option value="confirmed">Confirmées</option>
           <option value="in_progress">En cours</option>
           <option value="completed">Terminées</option>
           <option value="cancelled">Annulées</option>
+          <option value="rejected">Prix refusé</option>
         </select>
 
         <select value={filters.driver} onChange={(e) => setFilters({ ...filters, driver: e.target.value })} style={selectStyle}>
@@ -472,13 +463,15 @@ export function BookingsManagement() {
           ))}
         </select>
 
-        <select value={filters.sortBy} onChange={(e) => setFilters({ ...filters, sortBy: e.target.value })} style={selectStyle}>
-          <option value="date-desc">Plus récentes</option>
-          <option value="date-asc">Plus anciennes</option>
-        </select>
+        {viewMode !== 'planning' && (
+          <select value={filters.sortBy} onChange={(e) => setFilters({ ...filters, sortBy: e.target.value })} style={selectStyle}>
+            <option value="date-desc">Plus récentes</option>
+            <option value="date-asc">Plus anciennes</option>
+          </select>
+        )}
 
         <div className="flex items-center gap-2" style={{ marginLeft: 'auto' }}>
-          {selectedBookingIds.size > 0 && (
+          {viewMode !== 'planning' && selectedBookingIds.size > 0 && (
             <button
               type="button"
               onClick={() => setIsBulkDeleteModalOpen(true)}
@@ -489,18 +482,40 @@ export function BookingsManagement() {
               Supprimer ({selectedBookingIds.size})
             </button>
           )}
-          <button
-            type="button"
-            onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
-            style={{ display: 'grid', placeItems: 'center', width: '38px', height: '38px', border: '1px solid #E2DACD', borderRadius: '3px', color: '#6E6A63' }}
-          >
-            {viewMode === 'grid' ? <List size={16} /> : <Grid size={16} />}
-          </button>
+          <div role="tablist" aria-label="Mode d'affichage" style={{ display: 'flex', border: '1px solid #E2DACD', borderRadius: '3px', overflow: 'hidden', backgroundColor: '#FFFFFF' }}>
+            {VIEW_OPTIONS.map(({ value, label, icon: Icon }) => {
+              const active = viewMode === value
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => changeViewMode(value)}
+                  className="flex items-center gap-1.5"
+                  style={{ height: '36px', padding: '0 12px', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: 600, backgroundColor: active ? '#1F5245' : '#FFFFFF', color: active ? '#FFFFFF' : '#3d3a35' }}
+                >
+                  <Icon size={14} weight={active ? 'fill' : 'regular'} />
+                  {label}
+                </button>
+              )
+            })}
+          </div>
         </div>
       </section>
 
       {/* Main Content View */}
-      {viewMode === 'grid' ? (
+      {viewMode === 'planning' ? (
+        <BookingsPlanning
+          bookings={filteredBookings}
+          drivers={drivers}
+          driverFilter={filters.driver}
+          onOpenBooking={(pb) => {
+            const full = bookings.find(b => b.id === pb.id)
+            if (full) openBookingDetails(full)
+          }}
+        />
+      ) : viewMode === 'grid' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {filteredBookings.length === 0 ? (
             <div className="col-span-full" style={{ padding: '60px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '1px dashed #E2DACD', borderRadius: '4px' }}>

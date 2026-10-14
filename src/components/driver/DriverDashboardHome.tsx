@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { Session } from 'next-auth'
+import { useLocale } from 'next-intl'
 import { CancelBookingModal } from './CancelBookingModal'
 import { StatusBadge } from '@/components/shared/StatusBadge'
 import {
@@ -113,6 +114,7 @@ const getSafeWhatsAppUrl = (phone: string | null | undefined): string => {
 
 export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoading }: DriverDashboardHomeProps) {
   const { data: session } = useSession()
+  const locale = useLocale()
   const [isLoading, setIsLoading] = useState(false)
   const [currentDateTime, setCurrentDateTime] = useState(formatGreeting())
 
@@ -133,7 +135,7 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
     weeklyRides: 0,
     hoursWorked: 0,
     earnings: 0,
-    rating: 4.9,
+    rating: 0,
     ridesGrowth: 0,
     hoursGrowth: 0,
     earningsGrowth: 0,
@@ -143,8 +145,23 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
   useEffect(() => {
     if (session?.user && 'role' in session.user && session.user.role === 'driver') {
       fetchDriverBookings()
+      fetchDriverRating()
     }
   }, [session])
+
+  // Moyenne réelle des avis reçus (table reviews), toutes périodes
+  const fetchDriverRating = async () => {
+    try {
+      const response = await fetch('/api/driver/stats?period=all')
+      if (!response.ok) return
+      const data = await response.json()
+      if (data.success && data.data) {
+        setStats(prev => ({ ...prev, rating: data.data.totalRatings > 0 ? data.data.averageRating : 0 }))
+      }
+    } catch (error) {
+      console.error('Erreur lors de la récupération de la note:', error)
+    }
+  }
 
   const fetchDriverBookings = async () => {
     try {
@@ -742,7 +759,9 @@ export function DriverDashboardHome({ onNavigate, hasPermission, permissionsLoad
               },
               {
                 label: 'Note',
-                value: '4.9/5',
+                value: stats.rating > 0
+                  ? `${stats.rating.toFixed(1)}/5`
+                  : (locale === 'en' ? 'No reviews yet' : "Pas encore d'avis"),
                 icon: <Star size={20} weight="fill" />,
                 color: '#EF4444',
                 bg: 'rgba(239,68,68,0.08)',
