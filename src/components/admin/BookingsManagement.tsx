@@ -114,9 +114,10 @@ export function BookingsManagement() {
   // la liste complete, pour que le total ne depende pas du filtre affiche.
   const bookingGroupPositions = buildBookingGroupPositions(bookings)
   const [isLoading, setIsLoading] = useState(true)
-  const [viewMode, setViewMode] = useState<ViewMode>('grid')
-  // Statut choisi avant de passer en Planning (qui affiche « Tous »), restitue au retour.
-  const statusBeforePlanning = useRef<string | null>(null)
+  // Le planning est la vue d'ouverture : il affiche tous les statuts, et le filtre
+  // « En attente » (défaut des cartes) est restitué quand on passe sur Cartes/Liste.
+  const [viewMode, setViewMode] = useState<ViewMode>('planning')
+  const statusBeforePlanning = useRef<string | null>('pending')
   const { notifications, showSuccess, showError, showWarning, removeNotification } = useNotification()
 
   const [selectedBookingForDetails, setSelectedBookingForDetails] = useState<Booking | null>(null)
@@ -126,7 +127,7 @@ export function BookingsManagement() {
   const [bookingToDuplicate, setBookingToDuplicate] = useState<Booking | null>(null)
 
   const [filters, setFilters] = useState({
-    status: 'pending',
+    status: 'all',
     driver: 'all',
     search: '',
     sortBy: 'date-desc'
