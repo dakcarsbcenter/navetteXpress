@@ -824,7 +824,7 @@ export async function sendNewDriverApplicationEmail(
             )
       }
       ${ctaButton(
-        `${APP_URL()}/${isAdmin ? 'admin/dashboard?tab=drivers' : ''}`,
+        `${APP_URL()}/${isAdmin ? 'admin/dashboard?tab=users&role=driver' : ''}`,
         isAdmin ? '📊 Voir les candidatures' : '🌐 Retour au site',
         isAdmin ? 'View applications' : 'Back to the website'
       )}

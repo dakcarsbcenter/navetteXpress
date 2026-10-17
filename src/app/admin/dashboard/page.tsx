@@ -19,15 +19,17 @@ import ReviewsManagement from "@/components/admin/ReviewsManagement"
 import CompanyRequestsManagement from "@/components/admin/CompanyRequestsManagement"
 import SupportManagement from "@/components/admin/SupportManagement"
 
-type TabId = "overview" | "bookings" | "quotes" | "drivers" | "support" | "vehicles" | "services" | "locations" | "pricing" | "users" | "company-requests" | "permissions" | "invoices" | "reviews"
+type TabId = "overview" | "bookings" | "quotes" | "support" | "vehicles" | "services" | "locations" | "pricing" | "users" | "company-requests" | "permissions" | "invoices" | "reviews"
 
-const TAB_IDS: TabId[] = ["overview", "bookings", "quotes", "drivers", "support", "vehicles", "services", "locations", "pricing", "users", "company-requests", "permissions", "invoices", "reviews"]
+const TAB_IDS: TabId[] = ["overview", "bookings", "quotes", "support", "vehicles", "services", "locations", "pricing", "users", "company-requests", "permissions", "invoices", "reviews"]
+
+type RoleFilter = "admin" | "manager" | "driver" | "customer"
+const ROLE_FILTERS: RoleFilter[] = ["admin", "manager", "driver", "customer"]
 
 const TAB_ACCESS: Record<TabId, { resource?: string; adminOnly?: boolean; requireManage?: boolean }> = {
   overview: {},
   bookings: { resource: "bookings" },
   quotes: { resource: "quotes" },
-  drivers: { resource: "users" },
   support: {},
   vehicles: { resource: "vehicles" },
   services: { adminOnly: true },
@@ -48,8 +50,13 @@ function AdminDashboardContent() {
   const { permissions, loading: permissionsLoading, canRead, canManage } = usePermissions()
   const [checkingAuth, setCheckingAuth] = useState(true)
 
-  const tabParam = searchParams?.get("tab")
+  // Ancien onglet « Chauffeurs » : les liens/favoris existants atterrissent sur Utilisateurs filtré chauffeur.
+  const isLegacyDriversTab = searchParams?.get("tab") === "drivers"
+  const tabParam = isLegacyDriversTab ? "users" : searchParams?.get("tab")
   const activeTab: TabId = tabParam && TAB_IDS.includes(tabParam as TabId) ? (tabParam as TabId) : "overview"
+
+  const roleParam = isLegacyDriversTab ? "driver" : searchParams?.get("role")
+  const initialRoleFilter = ROLE_FILTERS.find((r) => r === roleParam)
 
   const userRole = (session?.user as { role?: string } | undefined)?.role
 
@@ -106,8 +113,6 @@ function AdminDashboardContent() {
       return <BookingsManagement />
     case "quotes":
       return <QuotesManagement />
-    case "drivers":
-      return <UsersManagement userPermissions={permissions} initialRoleFilter="driver" />
     case "support":
       return <SupportManagement />
     case "vehicles":
@@ -119,7 +124,7 @@ function AdminDashboardContent() {
     case "pricing":
       return <PricingSegmentsManagement />
     case "users":
-      return <UsersManagement userPermissions={permissions} />
+      return <UsersManagement userPermissions={permissions} initialRoleFilter={initialRoleFilter} />
     case "company-requests":
       return <CompanyRequestsManagement />
     case "permissions":

@@ -595,8 +595,8 @@ export function UsersManagement({ openCreate, initialRoleFilter }: UsersManageme
         })}
       </section>
 
-      {/* Quotas de la campagne de recrutement — vue Chauffeurs uniquement */}
-      {initialRoleFilter === 'driver' && (
+      {/* Quotas de la campagne de recrutement — visibles quand le filtre Chauffeur est actif */}
+      {filters.role === 'driver' && (
         <section
           className="flex items-center gap-3 flex-wrap"
           style={{ padding: '12px 20px', borderBottom: '1px solid #E2DACD' }}

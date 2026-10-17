@@ -21,7 +21,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     })),
   }))
 
-  const tab = searchParams?.get("tab") ?? "overview"
+  const rawTab = searchParams?.get("tab") ?? "overview"
+  // L'ancien onglet « drivers » est devenu Utilisateurs filtré chauffeur.
+  const tab = rawTab === "drivers" ? "users" : rawTab
 
   return (
     <DashboardShell

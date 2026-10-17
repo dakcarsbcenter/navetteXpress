@@ -11,7 +11,6 @@ import {
   Star,
   CalendarPlus,
   Users,
-  SteeringWheel,
   Car,
   ListChecks,
   MapPin,
@@ -112,8 +111,8 @@ export const entrepriseNavigation: DashboardNavGroupConfig[] = [
 ]
 
 // Dérivé de docs/redesign/Dashboard Admin.dc.html, sans l'entrée Statistiques (fusionnée dans la vue d'ensemble)
-// (lignes 392-410) : Exploitation (vue d'ensemble, réservations, devis, chauffeurs),
-// Référentiel (véhicules, services, lieux), Administration (utilisateurs,
+// (lignes 392-410) : Exploitation (vue d'ensemble, réservations, devis, support),
+// Référentiel (véhicules, services, lieux), Administration (utilisateurs, chauffeurs inclus,
 // permissions, factures, avis). Chaque route est un onglet de
 // src/app/admin/dashboard/page.tsx piloté par ?tab=.
 export const adminNavigation: DashboardNavGroupConfig[] = [
@@ -123,7 +122,6 @@ export const adminNavigation: DashboardNavGroupConfig[] = [
       { href: "/admin/dashboard?tab=overview", labelKey: "sidebar.nav.overview", icon: SquaresFour },
       { href: "/admin/dashboard?tab=bookings", labelKey: "sidebar.nav.bookings", icon: CalendarBlank },
       { href: "/admin/dashboard?tab=quotes", labelKey: "sidebar.nav.quotes", icon: FileText },
-      { href: "/admin/dashboard?tab=drivers", labelKey: "sidebar.nav.drivers", icon: SteeringWheel },
       { href: "/admin/dashboard?tab=support", labelKey: "sidebar.nav.support", icon: Headset },
     ],
   },
