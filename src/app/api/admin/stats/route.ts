@@ -9,6 +9,7 @@ import { authOptions } from '@/lib/auth'
 import { db } from '@/db'
 import { bookingsTable, users, reviewsTable } from '@/schema'
 import { eq, and, ne, gte, count, sum, avg, sql, desc } from 'drizzle-orm'
+import { computeCommission, getPeriodRange, type CommissionPeriod } from '@/lib/commission'
 
 export async function GET(request: NextRequest) {
   try {
@@ -38,21 +39,19 @@ export async function GET(request: NextRequest) {
 
     // Calculer les dates selon la période
     const now = new Date()
-    let startDate: Date
+    const normalizedPeriod: CommissionPeriod = period === 'week' || period === 'year' ? period : 'month'
+    // Semaine calendaire (lundi → maintenant), mois et année depuis leur début : même définition que la commission
+    const startDate = getPeriodRange(normalizedPeriod, now).start
 
-    switch (period) {
-      case 'week':
-        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7)
-        break
-      case 'month':
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1)
-        break
-      case 'year':
-        startDate = new Date(now.getFullYear(), 0, 1)
-        break
-      default:
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1)
-    }
+    // Revenus : courses terminées, rattachées à la période par leur date de clôture
+    // (repli sur updatedAt pour les courses antérieures à la colonne completed_at).
+    const completionTs = sql`COALESCE(${bookingsTable.completedAt}, ${bookingsTable.updatedAt})`
+    const priceNum = sql`CAST(${bookingsTable.price} AS NUMERIC)`
+    const startIso = sql`${startDate.toISOString()}::timestamp`
+    const completedInPeriod = and(
+      eq(bookingsTable.status, 'completed'),
+      sql`${completionTs} >= ${startIso}`,
+    )
 
     console.log(`📅 [ADMIN] Période analysée: ${startDate.toISOString()} à ${now.toISOString()}`)
 
@@ -60,7 +59,6 @@ export async function GET(request: NextRequest) {
     const globalStats = await db
       .select({
         totalRides: count(bookingsTable.id),
-        totalEarnings: sum(sql`CAST(${bookingsTable.price} AS NUMERIC)`),
         totalDrivers: count(sql`DISTINCT ${bookingsTable.driverId}`)
       })
       .from(bookingsTable)
@@ -71,6 +69,14 @@ export async function GET(request: NextRequest) {
           sql`${bookingsTable.driverId} IS NOT NULL`
         )
       )
+
+    // 1a. Revenus de la période (courses terminées, date de clôture)
+    const [earningsRow] = await db
+      .select({ totalEarnings: sum(priceNum), rides: count(bookingsTable.id) })
+      .from(bookingsTable)
+      .where(completedInPeriod)
+    const totalEarnings = Number(earningsRow?.totalEarnings || 0)
+    const earningsRides = Number(earningsRow?.rides || 0)
 
     // 1b. Total des chauffeurs enregistrés
     const totalDriversCount = await db
@@ -104,7 +110,6 @@ export async function GET(request: NextRequest) {
         totalRides: count(bookingsTable.id),
         completedRides: sum(sql`CASE WHEN ${bookingsTable.status} = 'completed' THEN 1 ELSE 0 END`),
         cancelledRides: sum(sql`CASE WHEN ${bookingsTable.status} = 'cancelled' THEN 1 ELSE 0 END`),
-        totalEarnings: sum(sql`CASE WHEN ${bookingsTable.status} = 'completed' THEN CAST(${bookingsTable.price} AS NUMERIC) ELSE 0 END`),
       })
       .from(bookingsTable)
       .innerJoin(users, eq(bookingsTable.driverId, users.id))
@@ -117,6 +122,17 @@ export async function GET(request: NextRequest) {
       )
       .groupBy(bookingsTable.driverId, users.name, users.email)
       .orderBy(desc(sql`count(${bookingsTable.id})`))
+
+    // 3b. Revenus par chauffeur (courses terminées, date de clôture : même base que le KPI global)
+    const driverEarnings = await db
+      .select({
+        driverId: bookingsTable.driverId,
+        earnings: sum(priceNum),
+      })
+      .from(bookingsTable)
+      .where(completedInPeriod)
+      .groupBy(bookingsTable.driverId)
+    const driverEarningsMap = new Map(driverEarnings.map(d => [d.driverId, Number(d.earnings || 0)]))
 
     // 4. Ratings moyens par chauffeur
     const driverRatings = await db
@@ -135,7 +151,7 @@ export async function GET(request: NextRequest) {
       .select({
         month: sql`TO_CHAR(${bookingsTable.createdAt}, 'YYYY-MM')`.as('month'),
         totalRides: count(bookingsTable.id),
-        totalEarnings: sum(sql`CAST(${bookingsTable.price} AS NUMERIC)`),
+        totalEarnings: sum(sql`CASE WHEN ${bookingsTable.status} = 'completed' THEN CAST(${bookingsTable.price} AS NUMERIC) ELSE 0 END`),
         uniqueDrivers: count(sql`DISTINCT ${bookingsTable.driverId}`)
       })
       .from(bookingsTable)
@@ -149,39 +165,47 @@ export async function GET(request: NextRequest) {
       .groupBy(sql`TO_CHAR(${bookingsTable.createdAt}, 'YYYY-MM')`)
       .orderBy(sql`TO_CHAR(${bookingsTable.createdAt}, 'YYYY-MM')`)
 
-    // 6. Série de revenus pour le graphique (bucketée selon la période)
-    type SeriesPoint = { label: string; date: string; revenue: number; rides: number }
-    let revenueSeries: SeriesPoint[] = []
+    // 6. Série de revenus pour le graphique (courses terminées, bucketée par date de clôture)
+    type SeriesPoint = { label: string; date: string; revenue: number; commission: number; rides: number }
+    const revenueSeries: SeriesPoint[] = []
 
     if (period === 'year') {
       const monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc']
-      const monthlyMap = new Map(monthlyPerformance.map(m => [m.month as string, m]))
-      for (let m = 0; m <= now.getMonth(); m++) {
-        const key = `${now.getFullYear()}-${String(m + 1).padStart(2, '0')}`
-        const row = monthlyMap.get(key)
-        revenueSeries.push({
-          label: monthNames[m],
-          date: key,
-          revenue: Number(row?.totalEarnings || 0),
-          rides: Number(row?.totalRides || 0)
-        })
-      }
-    } else {
-      const dailyRaw = await db
+      const monthKey = sql<string>`TO_CHAR(${completionTs}, 'YYYY-MM')`
+      const monthlyRaw = await db
         .select({
-          day: sql<string>`TO_CHAR(${bookingsTable.createdAt}, 'YYYY-MM-DD')`.as('day'),
-          revenue: sum(sql`CASE WHEN ${bookingsTable.status} = 'completed' THEN CAST(${bookingsTable.price} AS NUMERIC) ELSE 0 END`),
+          month: monthKey.as('month'),
+          revenue: sum(priceNum),
           rides: count(bookingsTable.id)
         })
         .from(bookingsTable)
-        .where(
-          and(
-            ne(bookingsTable.status, 'pending'),
-            gte(bookingsTable.createdAt, startDate),
-            sql`${bookingsTable.driverId} IS NOT NULL`
-          )
-        )
-        .groupBy(sql`TO_CHAR(${bookingsTable.createdAt}, 'YYYY-MM-DD')`)
+        .where(completedInPeriod)
+        .groupBy(monthKey)
+
+      const monthlyMap = new Map(monthlyRaw.map(m => [m.month as string, m]))
+      for (let m = 0; m <= now.getMonth(); m++) {
+        const key = `${now.getFullYear()}-${String(m + 1).padStart(2, '0')}`
+        const row = monthlyMap.get(key)
+        const revenue = Number(row?.revenue || 0)
+        revenueSeries.push({
+          label: monthNames[m],
+          date: key,
+          revenue,
+          commission: computeCommission(revenue),
+          rides: Number(row?.rides || 0)
+        })
+      }
+    } else {
+      const dayKey = sql<string>`TO_CHAR(${completionTs}, 'YYYY-MM-DD')`
+      const dailyRaw = await db
+        .select({
+          day: dayKey.as('day'),
+          revenue: sum(priceNum),
+          rides: count(bookingsTable.id)
+        })
+        .from(bookingsTable)
+        .where(completedInPeriod)
+        .groupBy(dayKey)
 
       const dailyMap = new Map(dailyRaw.map(d => [d.day as string, d]))
       const dayNamesShort = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
@@ -194,10 +218,12 @@ export async function GET(request: NextRequest) {
         const key = cursor.toISOString().slice(0, 10)
         const row = dailyMap.get(key)
         const label = period === 'week' ? dayNamesShort[cursor.getDay()] : String(cursor.getDate())
+        const revenue = Number(row?.revenue || 0)
         revenueSeries.push({
           label,
           date: key,
-          revenue: Number(row?.revenue || 0),
+          revenue,
+          commission: computeCommission(revenue),
           rides: Number(row?.rides || 0)
         })
         cursor.setDate(cursor.getDate() + 1)
@@ -247,16 +273,18 @@ export async function GET(request: NextRequest) {
     // Enrichir les stats des chauffeurs avec leurs ratings
     const enrichedDriverStats = driverStats.map(driver => {
       const ratingData = driverRatings.find(r => r.driverId === driver.driverId)
+      const totalDriverEarnings = driverEarningsMap.get(driver.driverId) ?? 0
       return {
         ...driver,
         name: driver.driverName, // Normaliser le nom pour le frontend
         email: driver.driverEmail, // Normaliser l'email pour le frontend
+        totalEarnings: totalDriverEarnings,
         averageRating: Number(ratingData?.averageRating || 0),
         totalRatings: Number(ratingData?.totalRatings || 0),
         completionRate: driver.totalRides > 0 ?
           Math.round((Number(driver.completedRides) / driver.totalRides) * 100) : 0,
-        earningsPerRide: driver.totalRides > 0 ?
-          Math.round(Number(driver.totalEarnings) / Number(driver.completedRides || 1)) : 0
+        earningsPerRide: Number(driver.completedRides) > 0 ?
+          Math.round(totalDriverEarnings / Number(driver.completedRides)) : 0
       }
     })
 
@@ -271,13 +299,13 @@ export async function GET(request: NextRequest) {
       // Métriques globales
       globalMetrics: {
         totalRides: globalStats[0]?.totalRides || 0,
-        totalEarnings: Number(globalStats[0]?.totalEarnings || 0),
+        totalEarnings,
+        totalCommission: computeCommission(totalEarnings),
         activeDrivers: globalStats[0]?.totalDrivers || 0,
         totalDrivers: totalDriversCount[0]?.count || 0,
         completedRides: globalStatusStats.find(s => s.status === 'completed')?.count || 0,
         cancelledRides: globalStatusStats.find(s => s.status === 'cancelled')?.count || 0,
-        averageEarningsPerRide: globalStats[0]?.totalRides > 0 ?
-          Math.round(Number(globalStats[0]?.totalEarnings || 0) / globalStats[0].totalRides) : 0,
+        averageEarningsPerRide: earningsRides > 0 ? Math.round(totalEarnings / earningsRides) : 0,
         completionRate: globalStats[0]?.totalRides > 0 ?
           Math.round(((globalStatusStats.find(s => s.status === 'completed')?.count || 0) / globalStats[0].totalRides) * 100) : 0
       },

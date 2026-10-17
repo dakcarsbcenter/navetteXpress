@@ -16,13 +16,12 @@ import { PricingSegmentsManagement } from "@/components/admin/PricingSegmentsMan
 import PermissionsManagement from "@/components/admin/PermissionsManagement"
 import InvoicesManagement from "@/components/admin/InvoicesManagement"
 import ReviewsManagement from "@/components/admin/ReviewsManagement"
-import AdminGlobalStats from "@/components/admin/AdminGlobalStats"
 import CompanyRequestsManagement from "@/components/admin/CompanyRequestsManagement"
 import SupportManagement from "@/components/admin/SupportManagement"
 
-type TabId = "overview" | "bookings" | "quotes" | "drivers" | "support" | "vehicles" | "services" | "locations" | "pricing" | "users" | "company-requests" | "permissions" | "invoices" | "reviews" | "stats"
+type TabId = "overview" | "bookings" | "quotes" | "drivers" | "support" | "vehicles" | "services" | "locations" | "pricing" | "users" | "company-requests" | "permissions" | "invoices" | "reviews"
 
-const TAB_IDS: TabId[] = ["overview", "bookings", "quotes", "drivers", "support", "vehicles", "services", "locations", "pricing", "users", "company-requests", "permissions", "invoices", "reviews", "stats"]
+const TAB_IDS: TabId[] = ["overview", "bookings", "quotes", "drivers", "support", "vehicles", "services", "locations", "pricing", "users", "company-requests", "permissions", "invoices", "reviews"]
 
 const TAB_ACCESS: Record<TabId, { resource?: string; adminOnly?: boolean; requireManage?: boolean }> = {
   overview: {},
@@ -39,7 +38,6 @@ const TAB_ACCESS: Record<TabId, { resource?: string; adminOnly?: boolean; requir
   permissions: { resource: "users", requireManage: true, adminOnly: true },
   invoices: {},
   reviews: { resource: "reviews" },
-  stats: { adminOnly: true },
 }
 
 function AdminDashboardContent() {
@@ -130,8 +128,6 @@ function AdminDashboardContent() {
       return <InvoicesManagement />
     case "reviews":
       return <ReviewsManagement />
-    case "stats":
-      return <AdminGlobalStats />
     default:
       return <AdminOverview />
   }

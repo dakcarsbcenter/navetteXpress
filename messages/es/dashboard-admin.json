@@ -21,8 +21,7 @@
       "companyRequests": "Solicitudes de cuenta pro",
       "permissions": "Permisos",
       "invoices": "Facturas",
-      "reviews": "Reseñas",
-      "stats": "Estadísticas"
+      "reviews": "Reseñas"
     }
   },
   "topbar": {
@@ -40,8 +39,7 @@
       "company-requests": "Solicitudes de cuenta pro",
       "permissions": "Permisos",
       "invoices": "Facturas",
-      "reviews": "Reseñas",
-      "stats": "Estadísticas"
+      "reviews": "Reseñas"
     },
     "systemStatus": "Sistema operativo"
   },
@@ -67,7 +65,8 @@
         "inProgress": "Viajes activos",
         "driversUnavailable": "{count, plural, =0 {Todos disponibles} one {# indisponibilidad declarada} other {# indisponibilidades declaradas}}",
         "vehiclesInactive": "{count, plural, =0 {Todos en servicio} one {# en mantenimiento} other {# en mantenimiento}}",
-        "revenue": "Viajes cerrados hoy"
+        "revenue": "Viajes cerrados hoy",
+        "revenueCommission": "Com. ({rate} %): {amount} F"
       }
     },
     "queue": {
@@ -147,6 +146,59 @@
       "retrying": "{count, plural, one {# en reintento} other {# en reintento}}",
       "attempts": "{count, plural, one {# intento} other {# intentos}}",
       "dismiss": "Descartar"
+    },
+    "commission": {
+      "title": "Comisiones cobradas por Navettexpress ({rate} %)",
+      "subtitle": "Importe real ganado directamente por la plataforma en cada trayecto finalizado",
+      "period": "Período:",
+      "periods": {
+        "week": "Esta semana",
+        "month": "Este mes",
+        "year": "Este año"
+      },
+      "cards": {
+        "week": "Comisión semanal",
+        "month": "Comisión mensual ({month})",
+        "year": "Comisión anual ({year})"
+      },
+      "gross": "Ingresos brutos: {amount} F CFA · {count, plural, =0 {ningún trayecto} one {# trayecto} other {# trayectos}}",
+      "deltaHint": "Variación frente al mismo tiempo transcurrido del período anterior",
+      "error": "No se pudieron cargar las comisiones."
+    },
+    "analytics": {
+      "eyebrow": "Análisis",
+      "title": {
+        "week": "Rendimiento de la semana",
+        "month": "Rendimiento del mes",
+        "year": "Rendimiento del año"
+      },
+      "driverFilter": "Conductor:",
+      "allDrivers": "Todos los conductores",
+      "kpis": {
+        "rides": "Total de trayectos",
+        "drivers": "Conductores",
+        "gross": "Ingresos brutos",
+        "commission": "Comisión {rate} %",
+        "completion": "Finalización"
+      },
+      "chart": {
+        "title": "Evolución de ingresos (bruto vs comisión {rate} %)",
+        "gross": "Ingresos brutos",
+        "commission": "Comisión"
+      },
+      "donut": {
+        "title": "Distribución de trayectos"
+      },
+      "table": {
+        "title": "Rendimiento de conductores",
+        "driver": "Conductor",
+        "rides": "Trayectos",
+        "completion": "Finalización",
+        "gross": "Ingresos brutos",
+        "commission": "Comisión"
+      },
+      "empty": "Sin datos para este período",
+      "error": "Error: {message}"
     }
   }
 }

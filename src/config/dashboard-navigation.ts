@@ -16,7 +16,6 @@ import {
   ListChecks,
   MapPin,
   LockKey,
-  ChartLine,
   Buildings,
   ChatCircle,
   Headset,
@@ -112,10 +111,10 @@ export const entrepriseNavigation: DashboardNavGroupConfig[] = [
   },
 ]
 
-// Miroir exact des 12 entrées / 3 groupes de docs/redesign/Dashboard Admin.dc.html
+// Dérivé de docs/redesign/Dashboard Admin.dc.html, sans l'entrée Statistiques (fusionnée dans la vue d'ensemble)
 // (lignes 392-410) : Exploitation (vue d'ensemble, réservations, devis, chauffeurs),
 // Référentiel (véhicules, services, lieux), Administration (utilisateurs,
-// permissions, factures, avis, statistiques). Chaque route est un onglet de
+// permissions, factures, avis). Chaque route est un onglet de
 // src/app/admin/dashboard/page.tsx piloté par ?tab=.
 export const adminNavigation: DashboardNavGroupConfig[] = [
   {
@@ -145,7 +144,6 @@ export const adminNavigation: DashboardNavGroupConfig[] = [
       { href: "/admin/dashboard?tab=permissions", labelKey: "sidebar.nav.permissions", icon: LockKey },
       { href: "/admin/dashboard?tab=invoices", labelKey: "sidebar.nav.invoices", icon: Receipt },
       { href: "/admin/dashboard?tab=reviews", labelKey: "sidebar.nav.reviews", icon: Star },
-      { href: "/admin/dashboard?tab=stats", labelKey: "sidebar.nav.stats", icon: ChartLine },
     ],
   },
 ]

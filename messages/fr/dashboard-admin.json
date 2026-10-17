@@ -21,8 +21,7 @@
       "companyRequests": "Demandes compte pro",
       "permissions": "Permissions",
       "invoices": "Factures",
-      "reviews": "Avis",
-      "stats": "Statistiques"
+      "reviews": "Avis"
     }
   },
   "topbar": {
@@ -40,8 +39,7 @@
       "company-requests": "Demandes compte pro",
       "permissions": "Permissions",
       "invoices": "Factures",
-      "reviews": "Avis",
-      "stats": "Statistiques"
+      "reviews": "Avis"
     },
     "systemStatus": "Système opérationnel"
   },
@@ -67,7 +65,8 @@
         "inProgress": "Courses actives",
         "driversUnavailable": "{count, plural, =0 {Tous disponibles} one {# indisponibilité déclarée} other {# indisponibilités déclarées}}",
         "vehiclesInactive": "{count, plural, =0 {Toutes en service} one {# en entretien} other {# en entretien}}",
-        "revenue": "Courses clôturées aujourd'hui"
+        "revenue": "Courses clôturées aujourd'hui",
+        "revenueCommission": "Comm. ({rate} %) : {amount} F"
       }
     },
     "queue": {
@@ -147,6 +146,59 @@
       "retrying": "{count, plural, one {# en réessai} other {# en réessai}}",
       "attempts": "{count, plural, one {# tentative} other {# tentatives}}",
       "dismiss": "Écarter"
+    },
+    "commission": {
+      "title": "Commissions prélevées Navettexpress ({rate} %)",
+      "subtitle": "Montant réel gagné directement par la plateforme sur chaque course terminée",
+      "period": "Période :",
+      "periods": {
+        "week": "Cette semaine",
+        "month": "Ce mois",
+        "year": "Cette année"
+      },
+      "cards": {
+        "week": "Commission semaine",
+        "month": "Commission mois ({month})",
+        "year": "Commission année ({year})"
+      },
+      "gross": "CA brut : {amount} F CFA · {count, plural, =0 {aucune course} one {# course} other {# courses}}",
+      "deltaHint": "Variation vs même durée de la période précédente",
+      "error": "Impossible de charger les commissions."
+    },
+    "analytics": {
+      "eyebrow": "Analyse",
+      "title": {
+        "week": "Performance de la semaine",
+        "month": "Performance du mois",
+        "year": "Performance de l'année"
+      },
+      "driverFilter": "Chauffeur :",
+      "allDrivers": "Tous les chauffeurs",
+      "kpis": {
+        "rides": "Total courses",
+        "drivers": "Chauffeurs",
+        "gross": "CA brut",
+        "commission": "Commission {rate} %",
+        "completion": "Complétion"
+      },
+      "chart": {
+        "title": "Évolution des revenus (brut vs commission {rate} %)",
+        "gross": "CA brut",
+        "commission": "Commission"
+      },
+      "donut": {
+        "title": "Répartition des courses"
+      },
+      "table": {
+        "title": "Performance chauffeurs",
+        "driver": "Chauffeur",
+        "rides": "Courses",
+        "completion": "Complétion",
+        "gross": "CA brut",
+        "commission": "Commission"
+      },
+      "empty": "Aucune donnée pour cette période",
+      "error": "Erreur : {message}"
     }
   }
 }

@@ -21,8 +21,7 @@
       "companyRequests": "Business account requests",
       "permissions": "Permissions",
       "invoices": "Invoices",
-      "reviews": "Reviews",
-      "stats": "Statistics"
+      "reviews": "Reviews"
     }
   },
   "topbar": {
@@ -40,8 +39,7 @@
       "company-requests": "Business account requests",
       "permissions": "Permissions",
       "invoices": "Invoices",
-      "reviews": "Reviews",
-      "stats": "Statistics"
+      "reviews": "Reviews"
     },
     "systemStatus": "System operational"
   },
@@ -67,7 +65,8 @@
         "inProgress": "Active trips",
         "driversUnavailable": "{count, plural, =0 {All available} one {# unavailability declared} other {# unavailabilities declared}}",
         "vehiclesInactive": "{count, plural, =0 {All in service} one {# under maintenance} other {# under maintenance}}",
-        "revenue": "Trips closed today"
+        "revenue": "Trips closed today",
+        "revenueCommission": "Comm. ({rate}%): {amount} F"
       }
     },
     "queue": {
@@ -147,6 +146,59 @@
       "retrying": "{count, plural, one {# retrying} other {# retrying}}",
       "attempts": "{count, plural, one {# attempt} other {# attempts}}",
       "dismiss": "Dismiss"
+    },
+    "commission": {
+      "title": "Navettexpress commissions ({rate}%)",
+      "subtitle": "Real amount earned directly by the platform on every completed ride",
+      "period": "Period:",
+      "periods": {
+        "week": "This week",
+        "month": "This month",
+        "year": "This year"
+      },
+      "cards": {
+        "week": "Weekly commission",
+        "month": "Monthly commission ({month})",
+        "year": "Yearly commission ({year})"
+      },
+      "gross": "Gross revenue: {amount} F CFA · {count, plural, =0 {no rides} one {# ride} other {# rides}}",
+      "deltaHint": "Change vs the same elapsed time in the previous period",
+      "error": "Unable to load commissions."
+    },
+    "analytics": {
+      "eyebrow": "Analysis",
+      "title": {
+        "week": "This week's performance",
+        "month": "This month's performance",
+        "year": "This year's performance"
+      },
+      "driverFilter": "Driver:",
+      "allDrivers": "All drivers",
+      "kpis": {
+        "rides": "Total rides",
+        "drivers": "Drivers",
+        "gross": "Gross revenue",
+        "commission": "Commission {rate}%",
+        "completion": "Completion"
+      },
+      "chart": {
+        "title": "Revenue trend (gross vs {rate}% commission)",
+        "gross": "Gross revenue",
+        "commission": "Commission"
+      },
+      "donut": {
+        "title": "Ride breakdown"
+      },
+      "table": {
+        "title": "Driver performance",
+        "driver": "Driver",
+        "rides": "Rides",
+        "completion": "Completion",
+        "gross": "Gross revenue",
+        "commission": "Commission"
+      },
+      "empty": "No data for this period",
+      "error": "Error: {message}"
     }
   }
 }

@@ -6,7 +6,11 @@ import { AssignmentQueueCard, type DriverInfo, type QueueItem } from "./Assignme
 import { RecentBookingsTable, type RecentBooking } from "./RecentBookingsTable"
 import { AwaitingDecisionPanel, CorridorLoadPanel, NewAccountsPanel, type AwaitingDecision, type CorridorSegment, type NewAccount } from "./OverviewSidePanels"
 import { NotificationHealthPanel } from "./NotificationHealthPanel"
+import { CommissionPanel } from "./CommissionPanel"
+import { OverviewAnalytics } from "./OverviewAnalytics"
 import { toIntlLocale } from "@/lib/intl-locale"
+import { COMMISSION_RATE, computeCommission, type CommissionPeriod } from "@/lib/commission"
+import { useSession } from "next-auth/react"
 
 interface OverviewData {
   inProgressBookings: number
@@ -34,6 +38,10 @@ function Kpi({ value, label, note, color }: { value: string; label: string; note
 export function AdminOverview() {
   const t = useTranslations("admin.overview")
   const intlLocale = toIntlLocale(useLocale())
+  const { data: session } = useSession()
+  // Commission et analyse financière : réservées aux admins (les managers n'ont pas accès aux API)
+  const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin"
+  const [period, setPeriod] = useState<CommissionPeriod>("week")
 
   const [overview, setOverview] = useState<OverviewData | null>(null)
   const [queue, setQueue] = useState<QueueItem[]>([])
@@ -175,6 +183,8 @@ export function AdminOverview() {
         </div>
       </section>
 
+      {isAdmin && <CommissionPanel period={period} onPeriodChange={setPeriod} />}
+
       <section style={{ display: "flex", flexWrap: "wrap", borderTop: "1px solid #E2DACD", borderBottom: "1px solid #E2DACD" }}>
         <Kpi
           value={String(queue.length)}
@@ -196,7 +206,9 @@ export function AdminOverview() {
         <Kpi
           value={`${Math.round(overview.todayRevenue).toLocaleString(intlLocale)} F`}
           label={t("kpis.todayRevenue")}
-          note={t("kpis.notes.revenue")}
+          note={isAdmin
+            ? t("kpis.notes.revenueCommission", { rate: Math.round(COMMISSION_RATE * 100), amount: computeCommission(overview.todayRevenue).toLocaleString(intlLocale) })
+            : t("kpis.notes.revenue")}
         />
       </section>
 
@@ -225,6 +237,8 @@ export function AdminOverview() {
           <NotificationHealthPanel />
         </div>
       </section>
+
+      {isAdmin && <OverviewAnalytics period={period} />}
     </div>
   )
 }
