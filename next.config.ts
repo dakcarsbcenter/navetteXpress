@@ -3,6 +3,21 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
+const cspReportOnly = [
+  "default-src 'self'",
+  // 'unsafe-inline' : scripts JSON-LD et gtag inline ; 'unsafe-eval' : HMR en dev.
+  `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === 'production' ? '' : " 'unsafe-eval'"} https://www.googletagmanager.com`,
+  // framer-motion et les composants écrivent des styles inline.
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https://res.cloudinary.com https://lh3.googleusercontent.com https://storage.googleapis.com https://media.autoexpress.co.uk https://*.unsplash.com https://*.tile.openstreetmap.org https://www.google-analytics.com https://www.googletagmanager.com",
+  "font-src 'self' data:",
+  "connect-src 'self' https://api.cloudinary.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'none'",
+].join('; ');
+
 const nextConfig: NextConfig = {
 
   // Autoriser l'acces aux ressources de dev (HMR) depuis les hosts locaux/docker
@@ -123,6 +138,20 @@ const nextConfig: NextConfig = {
           {
             key: 'Referrer-Policy',
             value: 'origin-when-cross-origin',
+          },
+          // Le site n'utilise ni micro, ni géolocalisation, ni paiement
+          // navigateur : on les coupe. La caméra reste permise à l'origine
+          // (champs de fichier avec capture photo, ex. candidature chauffeur).
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(self), microphone=(), geolocation=(), payment=(), usb=()',
+          },
+          // Report-Only : les violations apparaissent dans la console sans rien
+          // bloquer. À passer en 'Content-Security-Policy' une fois la liste
+          // validée sur quelques jours de trafic réel (GA, Leaflet, Cloudinary).
+          {
+            key: 'Content-Security-Policy-Report-Only',
+            value: cspReportOnly,
           },
         ],
       },

@@ -6,8 +6,15 @@ import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { vehiclesTable } from '@/schema';
 import { isNull, not } from 'drizzle-orm';
+import { requireResourcePermission } from '@/utils/admin-permissions';
 
 export async function GET() {
+  try {
+    await requireResourcePermission('vehicles', 'read');
+  } catch {
+    return NextResponse.json({ success: false, error: 'Accès refusé' }, { status: 403 });
+  }
+
   try {
     const allVehicles = await db
       .select({ photo: vehiclesTable.photo, make: vehiclesTable.make, model: vehiclesTable.model })
