@@ -4,7 +4,8 @@ import React, { useMemo } from "react"
 import { eachDayOfInterval, endOfMonth, endOfWeek, format, isSameDay, isSameMonth, startOfMonth, startOfWeek } from "date-fns"
 import { fr } from "date-fns/locale"
 import { TONE_STYLE, toneForStatus } from "@/components/shared/StatusBadge"
-import { bookingStart, dayKey, groupByDay, type PlanningBooking } from "@/lib/booking-planning"
+import { Flag } from "@phosphor-icons/react"
+import { FLAG_STYLE, bookingFlag, bookingStart, dayKey, groupByDay, type PlanningBooking } from "@/lib/booking-planning"
 import { monoLabel } from "./PlanningEvent"
 
 const MAX_LABELS = 2
@@ -61,13 +62,18 @@ export function PlanningMonthView({ bookings, anchor, onPickDay }: Props) {
                   )}
                 </div>
                 {shown.map((b) => {
-                  const tone = TONE_STYLE[toneForStatus("booking", b.status)]
+                  const flag = bookingFlag(b)
+                  const tone = flag ? FLAG_STYLE[flag] : TONE_STYLE[toneForStatus("booking", b.status)]
                   return (
                     <span
                       key={b.id}
                       className="truncate"
+                      title={flag ? FLAG_STYLE[flag].label : undefined}
                       style={{ display: "block", fontSize: "10px", padding: "2px 5px", borderRadius: "2px", backgroundColor: tone.bg, borderLeft: `2px solid ${tone.color}`, color: "#12100E" }}
                     >
+                      {flag && (
+                        <Flag size={10} weight="fill" aria-label={FLAG_STYLE[flag].label} style={{ display: "inline", verticalAlign: "-1px", marginRight: 3, color: tone.color }} />
+                      )}
                       <span style={{ fontFamily: "var(--font-mono)", color: tone.color }}>{format(bookingStart(b), "HH:mm")}</span> {b.customerName}
                     </span>
                   )

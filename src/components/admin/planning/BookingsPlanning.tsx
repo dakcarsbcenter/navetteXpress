@@ -1,10 +1,12 @@
 "use client"
 
 import React, { useMemo, useState } from "react"
-import { CaretLeft, CaretRight } from "@phosphor-icons/react"
+import { CaretLeft, CaretRight, Flag } from "@phosphor-icons/react"
 import { TONE_STYLE } from "@/components/shared/StatusBadge"
 import {
+  FLAG_STYLE,
   formatPeriodLabel,
+  type BookingFlag,
   getRange,
   inRange,
   shiftAnchor,
@@ -119,6 +121,13 @@ export function BookingsPlanning({ bookings, drivers, driverFilter, onOpenBookin
           <span key={l.label} className="inline-flex items-center gap-1.5" style={monoLabel}>
             <span aria-hidden style={{ width: "8px", height: "8px", borderRadius: "2px", backgroundColor: TONE_STYLE[l.tone].color }} />
             {l.label}
+          </span>
+        ))}
+        <span aria-hidden style={{ width: "1px", alignSelf: "stretch", backgroundColor: "#E2DACD" }} />
+        {(Object.keys(FLAG_STYLE) as BookingFlag[]).map((key) => (
+          <span key={key} className="inline-flex items-center gap-1.5" style={monoLabel}>
+            <Flag size={11} weight="fill" aria-hidden style={{ color: FLAG_STYLE[key].color }} />
+            {FLAG_STYLE[key].label}
           </span>
         ))}
       </div>

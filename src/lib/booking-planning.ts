@@ -171,6 +171,31 @@ export function bookingStart(b: PlanningBooking): Date {
   return new Date(b.scheduledDateTime)
 }
 
+// ───────────────────────── Drapeaux d'échéance ─────────────────────────
+
+export type BookingFlag = "done" | "week" | "month"
+
+export const FLAG_STYLE: Record<BookingFlag, { color: string; bg: string; label: string }> = {
+  done: { color: "#B8493C", bg: "rgba(184,73,60,.12)", label: "Terminée" },
+  week: { color: "#C99A1E", bg: "rgba(201,154,30,.16)", label: "Cette semaine" },
+  month: { color: "#1B9E4B", bg: "rgba(27,158,75,.12)", label: "Ce mois-ci" },
+}
+
+/**
+ * Drapeau de suivi d'une course : terminée (rouge), prévue d'ici dimanche (jaune),
+ * prévue d'ici fin de mois (vert). Priorité dans cet ordre ; null sinon
+ * (annulée/refusée, passée non clôturée, au-delà du mois).
+ */
+export function bookingFlag(b: PlanningBooking, now: Date = new Date()): BookingFlag | null {
+  if (b.status === "completed") return "done"
+  if (NON_REVENUE_STATUSES.has(b.status)) return null
+  const t = bookingStart(b).getTime()
+  if (t < startOfDay(now).getTime()) return null
+  if (t <= endOfWeek(now, WEEK_OPTIONS).getTime()) return "week"
+  if (t <= endOfMonth(now).getTime()) return "month"
+  return null
+}
+
 export function bookingDurationHours(b: PlanningBooking): number {
   const n = typeof b.duration === "string" ? parseFloat(b.duration) : b.duration
   return typeof n === "number" && Number.isFinite(n) && n > 0 ? n : DEFAULT_DURATION_HOURS

@@ -3,7 +3,8 @@
 import React from "react"
 import { format } from "date-fns"
 import { TONE_STYLE, toneForStatus } from "@/components/shared/StatusBadge"
-import { bookingStart, formatBookingRef, type PlanningBooking } from "@/lib/booking-planning"
+import { Flag } from "@phosphor-icons/react"
+import { FLAG_STYLE, bookingFlag, bookingStart, formatBookingRef, type PlanningBooking } from "@/lib/booking-planning"
 
 interface PlanningEventProps {
   booking: PlanningBooking
@@ -22,9 +23,10 @@ export const monoLabel: React.CSSProperties = {
 }
 
 export function PlanningEvent({ booking, onOpen, variant = "chip", style }: PlanningEventProps) {
-  const tone = TONE_STYLE[toneForStatus("booking", booking.status)]
+  const flag = bookingFlag(booking)
+  const tone = flag ? FLAG_STYLE[flag] : TONE_STYLE[toneForStatus("booking", booking.status)]
   const time = format(bookingStart(booking), "HH:mm")
-  const title = `${formatBookingRef(booking.id)} · ${time} · ${booking.customerName}\n${booking.pickupAddress} → ${booking.dropoffAddress}`
+  const title = `${flag ? `[${FLAG_STYLE[flag].label}] ` : ""}${formatBookingRef(booking.id)} · ${time} · ${booking.customerName}\n${booking.pickupAddress} → ${booking.dropoffAddress}`
 
   return (
     <button
@@ -52,6 +54,14 @@ export function PlanningEvent({ booking, onOpen, variant = "chip", style }: Plan
         className="truncate"
         style={{ fontSize: "11px", fontWeight: 600, color: "#12100E", lineHeight: 1.2 }}
       >
+        {flag && (
+          <Flag
+            size={11}
+            weight="fill"
+            aria-label={FLAG_STYLE[flag].label}
+            style={{ display: "inline", verticalAlign: "-1px", marginRight: 4, color: tone.color }}
+          />
+        )}
         <span style={{ fontFamily: "var(--font-mono)", color: tone.color }}>{time}</span>
         {" • "}
         {booking.customerName}
