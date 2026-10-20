@@ -6,6 +6,7 @@
 // echelonnee des cartes est animee cote client (Stagger).
 
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
+import { Link } from "@/i18n/navigation";
 
 export interface HomeSegment {
   id?: number;
@@ -14,6 +15,8 @@ export interface HomeSegment {
   duree: string;
   berline: number;
   suv: number;
+  // Page money du trajet, quand il en existe une.
+  href?: string;
 }
 
 interface SegmentsShowcaseProps {
@@ -27,27 +30,42 @@ const stripePattern = {
 export function SegmentsShowcase({ segments }: SegmentsShowcaseProps) {
   return (
     <Stagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {segments.map((seg) => (
-        <StaggerItem key={seg.id ?? seg.route}>
-        <div className="h-full bg-white border border-line rounded-lg overflow-hidden transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-md">
-          <div className="h-24" style={stripePattern} />
-          <div className="p-4 flex flex-col gap-2">
-            <div className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.1em] text-text-muted">
-              {seg.route.toUpperCase()}
-            </div>
-            <div className="text-xl font-semibold text-foreground tracking-tight">
-              {seg.berline.toLocaleString("fr-FR")}{' '}
-              <span className="font-[family-name:var(--font-ibm-plex-mono)] text-xs font-normal text-text-muted">
-                FCFA
-              </span>
-            </div>
-            <div className="font-[family-name:var(--font-ibm-plex-mono)] text-xs text-text-muted">
-              {`${seg.distance} · ${seg.duree}`.toUpperCase()}
+      {segments.map((seg) => {
+        const card = (
+          <div className="h-full bg-white border border-line rounded-lg overflow-hidden transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-md">
+            <div className="h-24" style={stripePattern} />
+            <div className="p-4 flex flex-col gap-2">
+              <div className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.1em] text-text-muted">
+                {seg.route.toUpperCase()}
+              </div>
+              <div className="text-xl font-semibold text-foreground tracking-tight">
+                {seg.berline.toLocaleString("fr-FR")}{' '}
+                <span className="font-[family-name:var(--font-ibm-plex-mono)] text-xs font-normal text-text-muted">
+                  FCFA
+                </span>
+              </div>
+              <div className="font-[family-name:var(--font-ibm-plex-mono)] text-xs text-text-muted">
+                {`${seg.distance} · ${seg.duree}`.toUpperCase()}
+              </div>
             </div>
           </div>
-        </div>
-        </StaggerItem>
-      ))}
+        );
+
+        return (
+          <StaggerItem key={seg.id ?? seg.route}>
+            {seg.href ? (
+              <Link
+                href={seg.href}
+                className="block h-full rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              >
+                {card}
+              </Link>
+            ) : (
+              card
+            )}
+          </StaggerItem>
+        );
+      })}
     </Stagger>
   );
 }

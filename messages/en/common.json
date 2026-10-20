@@ -4,7 +4,9 @@
     "becomePartner": "Become a Partner",
     "links": {
       "home": "Home",
-      "rates": "Rates by Segment",
+      "services": "Services",
+      "routes": "Routes",
+      "rates": "Rates",
       "companies": "Hotels & Companies",
       "diaspora": "Diaspora",
       "fleet": "Fleet",
@@ -25,7 +27,9 @@
       "airportTransfer": "AIBD Airport Transfer",
       "urbanShuttle": "Dakar Urban Shuttle",
       "dayHire": "Day Hire",
-      "events": "Events & VIP"
+      "events": "Events",
+      "allRoutes": "All routes",
+      "rates": "Rates"
     },
     "companyHeading": "Company",
     "company": {
@@ -33,7 +37,10 @@
       "diaspora": "Diaspora",
       "becomePartner": "Become a Partner",
       "requestQuote": "Request a quote",
-      "terms": "Terms"
+      "terms": "Terms",
+      "fleet": "Fleet",
+      "faq": "FAQ",
+      "contact": "Contact"
     },
     "languageHeading": "Language",
     "supportHeading": "24/7 Support",

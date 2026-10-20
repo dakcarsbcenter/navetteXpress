@@ -7,6 +7,7 @@ import { CorridorStrip } from "@/components/marketing/CorridorStrip";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { schemaBreadcrumb } from "@/lib/schema";
 import { Link } from "@/i18n/navigation";
+import type { InternalLink } from "@/lib/seo/internal-links";
 import { MapPin, ShieldCheck, Clock } from "@phosphor-icons/react";
 
 interface ZoneData {
@@ -21,7 +22,15 @@ interface Breadcrumb {
     item: string;
 }
 
-export default function ZoneClient({ zone, breadcrumbs }: { zone: ZoneData; breadcrumbs: Breadcrumb[] }) {
+export default function ZoneClient({
+    zone,
+    breadcrumbs,
+    links,
+}: {
+    zone: ZoneData;
+    breadcrumbs: Breadcrumb[];
+    links: InternalLink[];
+}) {
     const t = useTranslations("zones");
 
     return (
@@ -103,6 +112,23 @@ export default function ZoneClient({ zone, breadcrumbs }: { zone: ZoneData; brea
                                         remplissage "en attendant". */}
                                 </div>
                             </div>
+
+                            {/* Maillage interne : suites logiques d'une page zone */}
+                            <section className="mt-14 pt-8 border-t border-[#e2dacd]">
+                                <h2 className="text-xl font-bold text-foreground mb-4">{t("links.heading")}</h2>
+                                <ul className="flex flex-wrap gap-3 text-sm">
+                                    {links.map((link) => (
+                                        <li key={link.href}>
+                                            <Link
+                                                href={link.href}
+                                                className="inline-block px-3 py-2 rounded-lg border border-[#e2dacd] hover:border-accent hover:text-accent transition-colors"
+                                            >
+                                                {link.label}
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </section>
                         </div>
                     </div>
                 </main>

@@ -6,6 +6,7 @@ import { getActivePricingSegmentsSafe } from '@/lib/pricing-segments';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { schemaBreadcrumb } from '@/lib/schema';
 import { buildAlternates } from '@/lib/seo/localized-metadata';
+import { moneyRoutePathForNodes } from '@/lib/seo/internal-links';
 
 export async function generateMetadata({
     params,
@@ -44,6 +45,7 @@ export default async function Page({
                   suv: row.suv,
                   dot: row.dot as Segment['dot'],
                   zones: (row.zones ?? []) as Segment['zones'],
+                  href: moneyRoutePathForNodes(row.departNode, row.arriveeNode) ?? undefined,
               }))
             : undefined;
 

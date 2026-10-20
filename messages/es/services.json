@@ -25,7 +25,8 @@
   "grid": {
     "loading": "Cargando servicios de prestigio...",
     "empty": "No hay servicios disponibles por el momento.",
-    "bookCta": "Reservar ahora"
+    "bookCta": "Reservar ahora",
+    "detailsCta": "Ver el detalle"
   },
   "why": {
     "titlePrefix": "Por Qué Elegir",

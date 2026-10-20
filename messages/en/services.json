@@ -25,7 +25,8 @@
   "grid": {
     "loading": "Loading our services...",
     "empty": "No services available at the moment.",
-    "bookCta": "Book Now"
+    "bookCta": "Book Now",
+    "detailsCta": "View details"
   },
   "why": {
     "titlePrefix": "Why Choose",

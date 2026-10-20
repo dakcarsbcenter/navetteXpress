@@ -11,16 +11,23 @@ export function Footer() {
     const t = useTranslations("Footer");
     const currentYear = new Date().getFullYear();
 
+    // Chaque lien mene a sa propre page : les quatre pointaient tous vers
+    // /services, ce qui ne disait rien a Google sur la destination.
     const services = [
-        { label: t("services.airportTransfer"), href: "/services" },
-        { label: t("services.urbanShuttle"), href: "/services" },
-        { label: t("services.dayHire"), href: "/services" },
-        { label: t("services.events"), href: "/services" },
+        { label: t("services.airportTransfer"), href: "/services/transfert-aeroport-aibd" },
+        { label: t("services.urbanShuttle"), href: "/services/chauffeur-prive-dakar" },
+        { label: t("services.dayHire"), href: "/services/mise-a-disposition-chauffeur" },
+        { label: t("services.events"), href: "/services/navette-evenementielle" },
+        { label: t("services.allRoutes"), href: "/routes" },
+        { label: t("services.rates"), href: "/tarifs" },
     ];
 
     const societe = [
         { label: t("company.companies"), href: "/entreprises" },
         { label: t("company.diaspora"), href: "/diaspora" },
+        { label: t("company.fleet"), href: "/flotte" },
+        { label: t("company.faq"), href: "/faq" },
+        { label: t("company.contact"), href: "/contact" },
         { label: t("company.becomePartner"), href: "/devenir-partenaire" },
         { label: t("company.requestQuote"), href: "/quote-request" },
     ];
@@ -75,9 +82,9 @@ export function Footer() {
 
                     {/* Trajets Column */}
                     <div>
-                        <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#8a8378] mb-4">
+                        <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#8a8378] mb-4">
                             {t("routesHeading")}
-                        </h3>
+                        </p>
                         <ul className="lg:space-y-2">
                             {services.map((service, i) => (
                                 <li key={i}>
@@ -91,9 +98,9 @@ export function Footer() {
 
                     {/* Société Column */}
                     <div>
-                        <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#8a8378] mb-4">
+                        <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#8a8378] mb-4">
                             {t("companyHeading")}
-                        </h3>
+                        </p>
                         <ul className="lg:space-y-2">
                             {societe.map((item, i) => (
                                 <li key={i}>
@@ -112,15 +119,15 @@ export function Footer() {
 
                     {/* Langue Column */}
                     <div>
-                        <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#8a8378] mb-4">
+                        <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#8a8378] mb-4">
                             {t("languageHeading")}
-                        </h3>
-                        <LanguageSwitcher variant="inline" className="flex-col items-start gap-3 [&_button]:text-[#9a938a] [&_button.text-accent]:text-gold" />
+                        </p>
+                        <LanguageSwitcher variant="inline" className="flex-col items-start gap-3 [&_a]:text-[#9a938a] [&_a.text-accent]:text-gold" />
 
                         <div className="mt-8">
-                            <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#8a8378] mb-3">
+                            <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#8a8378] mb-3">
                                 {t("supportHeading")}
-                            </h3>
+                            </p>
                             <a href="https://wa.me/221784651302" className="flex items-center gap-2 py-2 text-gold-light text-sm font-semibold hover:underline">
                                 <Phone size={14} weight="fill" />
                                 +221 78 465 13 02

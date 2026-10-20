@@ -25,7 +25,8 @@
   "grid": {
     "loading": "Chargement des services...",
     "empty": "Aucun service disponible pour le moment.",
-    "bookCta": "Réserver maintenant"
+    "bookCta": "Réserver maintenant",
+    "detailsCta": "Voir le détail"
   },
   "why": {
     "titlePrefix": "Pourquoi Choisir",

@@ -33,6 +33,11 @@
       "desc": "A fixed team on the corridor, trained in protocol and discretion — not a platform of strangers picked at random for every ride."
     }
   },
+  "popular": {
+    "heading": "Routes and services in detail",
+    "intro": "A dedicated page for each route and service: travel time, how pickup works and frequently asked questions.",
+    "viewAll": "All routes"
+  },
   "segments": {
     "heading": "The segments, one by one",
     "viewAll": "See the full price grid",

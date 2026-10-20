@@ -19,6 +19,8 @@ export interface Segment {
   suv: number;
   dot: DotColor;
   zones: ZoneKey[];
+  // Page money du trajet, quand il en existe une.
+  href?: string;
 }
 
 const dotClasses: Record<DotColor, string> = {
@@ -111,7 +113,13 @@ export default function TarifsClient({ initialSegments }: { initialSegments?: Se
                 >
                   <div className="flex items-center gap-3">
                     <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${dotClasses[seg.dot]}`} />
-                    <span className="text-[15px] font-medium text-foreground">{seg.route}</span>
+                    {seg.href ? (
+                      <Link href={seg.href} className="text-[15px] font-medium text-foreground underline-offset-4 decoration-border hover:text-accent hover:underline">
+                        {seg.route}
+                      </Link>
+                    ) : (
+                      <span className="text-[15px] font-medium text-foreground">{seg.route}</span>
+                    )}
                   </div>
                   <div className="text-right font-mono text-[13px] text-text-muted">
                     {seg.distance.toUpperCase()}
@@ -137,7 +145,15 @@ export default function TarifsClient({ initialSegments }: { initialSegments?: Se
                 <div className="flex items-center gap-2.5 min-w-0">
                   <span className={`w-2 h-2 rounded-full shrink-0 ${dotClasses[seg.dot]}`} />
                   <div className="min-w-0">
-                    <div className="text-sm font-medium text-foreground truncate">{seg.route}</div>
+                    <div className="text-sm font-medium text-foreground truncate">
+                      {seg.href ? (
+                        <Link href={seg.href} className="hover:text-accent hover:underline underline-offset-4">
+                          {seg.route}
+                        </Link>
+                      ) : (
+                        seg.route
+                      )}
+                    </div>
                     <div className="font-mono text-[11px] text-text-muted mt-0.5">
                       {seg.distance.toUpperCase()} · {seg.duree.toUpperCase()}
                     </div>

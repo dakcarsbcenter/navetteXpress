@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { ButtonLink } from "@/components/ui/ButtonLink";
@@ -11,6 +11,7 @@ import { BookingWidget } from "./BookingWidget";
 import { FleetShowcase } from "./FleetShowcase";
 import { SegmentsShowcase, type HomeSegment } from "./SegmentsShowcase";
 import type { PublicVehicle } from "@/lib/public-catalog";
+import { popularMoneyLinks } from "@/lib/seo/internal-links";
 import { ArrowRight, CheckCircle, Question, SteeringWheel } from "./home-icons";
 
 interface FaqItem {
@@ -29,6 +30,7 @@ interface HomeClientProps {
 // rendu et livre en HTML pur, ce qui reduit le JS envoye au navigateur.
 export default async function HomeClient({ faqs, segments, vehicles }: HomeClientProps) {
   const t = await getTranslations("home");
+  const popularLinks = popularMoneyLinks(await getLocale());
 
   const waypoints = [
     { label: "Dakar", dot: "bg-accent" },
@@ -195,6 +197,34 @@ export default async function HomeClient({ faqs, segments, vehicles }: HomeClien
               </ButtonLink>
             </div>
             <SegmentsShowcase segments={segments} />
+          </div>
+        </section>
+
+        {/* Maillage interne vers les pages trajet et service */}
+        <section className="border-t border-line py-12 md:py-16">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="flex flex-wrap items-baseline justify-between gap-4 mb-3">
+              <h2 className="text-2xl md:text-4xl font-semibold text-foreground tracking-tight">
+                {t("popular.heading")}
+              </h2>
+              <ButtonLink href="/routes" variant="ghost">
+                {t("popular.viewAll")}
+              </ButtonLink>
+            </div>
+            <p className="text-body max-w-2xl leading-relaxed mb-8">{t("popular.intro")}</p>
+            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {popularLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="flex h-full items-center justify-between gap-3 bg-white border border-line rounded-lg px-4 py-3.5 text-sm font-medium text-foreground transition-colors hover:border-accent hover:text-accent"
+                  >
+                    <span>{link.label}</span>
+                    <ArrowRight size={16} weight="regular" className="shrink-0" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 

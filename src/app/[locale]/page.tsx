@@ -8,6 +8,7 @@ import { schemaService, schemaFAQ } from '@/lib/schema';
 import { buildAlternates } from '@/lib/seo/localized-metadata';
 import { getActivePricingSegmentsSafe, cheapestBetweenNodes } from '@/lib/pricing-segments';
 import { getActiveVehiclesSafe } from '@/lib/public-catalog';
+import { moneyRoutePathForNodes } from '@/lib/seo/internal-links';
 
 // Les tarifs affiches (cartes de segments, FAQ et JSON-LD FAQPage) viennent de la
 // table pricing_segments geree en admin. Cette page est rendue a la demande : la
@@ -62,7 +63,11 @@ export default async function Page({
 
     const homeSegments: HomeSegment[] =
         pricingSegments.length > 0
-            ? pricingSegments.slice(0, CARDS_ON_HOME)
+            ? pricingSegments.slice(0, CARDS_ON_HOME).map((segment) => ({
+                  ...segment,
+                  // Carte cliquable vers la page du trajet quand elle existe.
+                  href: moneyRoutePathForNodes(segment.departNode, segment.arriveeNode) ?? undefined,
+              }))
             : fallbackSegments.slice(0, CARDS_ON_HOME);
 
     // Prix d'appel Dakar <-> AIBD cite dans la FAQ. Le premier segment de repli est

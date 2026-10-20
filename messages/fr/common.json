@@ -4,7 +4,9 @@
     "becomePartner": "Devenir Partenaire",
     "links": {
       "home": "Accueil",
-      "rates": "Tarifs par segment",
+      "services": "Services",
+      "routes": "Trajets",
+      "rates": "Tarifs",
       "companies": "Hôtels & entreprises",
       "diaspora": "Diaspora",
       "fleet": "Flotte",
@@ -25,7 +27,9 @@
       "airportTransfer": "Transfert Aéroport AIBD",
       "urbanShuttle": "Navette Urbaine Dakar",
       "dayHire": "Mise à Disposition",
-      "events": "Événements & VIP"
+      "events": "Événements",
+      "allRoutes": "Tous les trajets",
+      "rates": "Tarifs"
     },
     "companyHeading": "Société",
     "company": {
@@ -33,7 +37,10 @@
       "diaspora": "Diaspora",
       "becomePartner": "Devenir partenaire",
       "requestQuote": "Demander un devis",
-      "terms": "Conditions"
+      "terms": "Conditions",
+      "fleet": "Flotte",
+      "faq": "FAQ",
+      "contact": "Contact"
     },
     "languageHeading": "Langue",
     "supportHeading": "Support 24/7",

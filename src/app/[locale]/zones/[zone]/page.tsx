@@ -5,6 +5,7 @@ import ZoneClient from './ZoneClient';
 import { routing } from '@/i18n/routing';
 import { buildAlternates } from '@/lib/seo/localized-metadata';
 import { zoneSlugs } from '@/lib/seo/zone-slugs';
+import { zoneMoneyLinks } from '@/lib/seo/internal-links';
 
 interface ZoneData {
     id: string;
@@ -57,5 +58,5 @@ export default async function Page({ params }: Params) {
         { name: zone.name, item: buildAlternates(`/zones/${zone.id}`, locale).canonical },
     ];
 
-    return <ZoneClient zone={zone} breadcrumbs={breadcrumbs} />;
+    return <ZoneClient zone={zone} breadcrumbs={breadcrumbs} links={zoneMoneyLinks(locale)} />;
 }

@@ -33,6 +33,11 @@
       "desc": "Un equipo fijo en el corredor, formado en protocolo y discreción — no una plataforma de desconocidos elegidos al azar en cada viaje."
     }
   },
+  "popular": {
+    "heading": "Trayectos y servicios en detalle",
+    "intro": "Una página dedicada para cada trayecto y servicio: duración, cómo es la recogida y preguntas frecuentes.",
+    "viewAll": "Todos los trayectos"
+  },
   "segments": {
     "heading": "Los segmentos, uno por uno",
     "viewAll": "Ver la tabla completa",

@@ -33,6 +33,11 @@
       "desc": "Une équipe fixe sur le corridor, formée au protocole et à la discrétion — pas une plateforme d'inconnus tirés au sort à chaque course."
     }
   },
+  "popular": {
+    "heading": "Trajets et services en détail",
+    "intro": "Une page dédiée pour chaque trajet et chaque service : durée, déroulé de la prise en charge et questions fréquentes.",
+    "viewAll": "Tous les trajets"
+  },
   "segments": {
     "heading": "Les segments, un par un",
     "viewAll": "Voir la grille complète",

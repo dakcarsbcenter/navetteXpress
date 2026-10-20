@@ -15,6 +15,7 @@ import { Link } from "@/i18n/navigation";
 import { m } from "framer-motion";
 import { DISTANCE, VIEWPORT, DURATION } from "@/components/motion/variants";
 import type { PublicService } from "@/lib/public-catalog";
+import { moneyServicePathForSlug } from "@/lib/seo/internal-links";
 import { ShieldCheck, Clock, MapPin, Star, CaretRight } from "@phosphor-icons/react";
 
 type ServiceCard = Pick<PublicService, "slug" | "icon" | "name" | "description" | "features"> & {
@@ -96,7 +97,9 @@ export default function ServicesClient({ services: dbServices }: { services: Pub
                   <p className="text-text-muted">{t("grid.empty")}</p>
                 </div>
               ) : (
-                (dbServices.length > 0 ? dbServices : localizedServiceTypes).map((service: ServiceCard, index: number) => (
+                (dbServices.length > 0 ? dbServices : localizedServiceTypes).map((service: ServiceCard, index: number) => {
+                  const detailPath = moneyServicePathForSlug(service.slug);
+                  return (
                   <m.div
                     key={service.slug || service.id}
                     initial={{ opacity: 0, y: DISTANCE }}
@@ -110,7 +113,13 @@ export default function ServicesClient({ services: dbServices }: { services: Pub
                     </div>
 
                     <h3 className="text-xl font-semibold text-foreground mb-3">
-                      {service.name}
+                      {detailPath ? (
+                        <Link href={detailPath} className="hover:text-accent transition-colors">
+                          {service.name}
+                        </Link>
+                      ) : (
+                        service.name
+                      )}
                     </h3>
 
                     <p className="text-text-muted text-sm mb-6 leading-relaxed">
@@ -126,6 +135,12 @@ export default function ServicesClient({ services: dbServices }: { services: Pub
                       ))}
                     </ul>
 
+                    {detailPath && (
+                      <Link href={detailPath} className="text-sm font-medium text-text-muted hover:text-accent underline underline-offset-4 mb-4 w-fit">
+                        {t("grid.detailsCta")}
+                      </Link>
+                    )}
+
                     <Link
                       href={`/reservation?service=${service.slug || service.id}`}
                       className="inline-flex items-center gap-2 text-accent font-semibold text-sm group"
@@ -136,7 +151,8 @@ export default function ServicesClient({ services: dbServices }: { services: Pub
                       <CaretRight size={16} weight="bold" className="group-hover:translate-x-1 transition-transform" />
                     </Link>
                   </m.div>
-                ))
+                  );
+                })
               )}
             </div>
           </div>

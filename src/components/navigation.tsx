@@ -20,8 +20,12 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
+  // `mobileOnly` : l'accueil reste dans le menu mobile, mais pas dans la barre
+  // desktop, ou le logo y mene deja et ou la place manque pour les pages money.
   const navLinks = [
-    { href: "/", label: t("links.home") },
+    { href: "/", label: t("links.home"), mobileOnly: true },
+    { href: "/services", label: t("links.services") },
+    { href: "/routes", label: t("links.routes") },
     { href: "/tarifs", label: t("links.rates") },
     { href: "/entreprises", label: t("links.companies") },
     { href: "/diaspora", label: t("links.diaspora") },
@@ -101,7 +105,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
 
             {/* Desktop Nav */}
             <nav className="hidden xl:flex items-center gap-6 2xl:gap-8">
-              {navLinks.map((link) => (
+              {navLinks.filter((link) => !link.mobileOnly).map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -120,9 +124,9 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
 
               {!session ? (
                 <div className="flex items-center gap-3">
-                  <NextLink href="/auth/signin" className="text-foreground text-sm font-medium whitespace-nowrap hover:text-accent transition-colors">
+                  <Link href="/auth/signin" className="text-foreground text-sm font-medium whitespace-nowrap hover:text-accent transition-colors">
                     {t("signIn")}
-                  </NextLink>
+                  </Link>
                   <Link
                     href="/reservation"
                     className="bg-accent text-white px-6 py-2.5 rounded text-sm font-semibold whitespace-nowrap hover:bg-accent-hover active:scale-[0.98] transition-[background-color,transform] duration-150 ease-out"
@@ -151,7 +155,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
                     </div>
                     <div className="p-2 space-y-1">
                       <NextLink
-                        href={(session.user as any).role === 'admin' ? '/admin/dashboard' : '/client/dashboard'}
+                        href={(session.user as { role?: string }).role === 'admin' ? '/admin/dashboard' : '/client/dashboard'}
                         className="flex items-center gap-3 px-3 py-2 text-sm text-foreground/70 hover:text-accent hover:bg-surface-2/50 rounded-lg transition-colors"
                       >
                         <SquaresFour size={16} weight="regular" className="text-accent" />
@@ -218,17 +222,17 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
                 {t("bookNowLong")}
               </Link>
               {!session ? (
-                <NextLink
+                <Link
                   href="/auth/signin"
                   className="block w-full border border-border text-foreground text-center py-4 rounded-xl font-medium hover:bg-surface-2/50 transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {t("signIn")}
-                </NextLink>
+                </Link>
               ) : (
                 <>
                   <NextLink
-                    href={(session.user as any).role === 'admin' ? '/admin/dashboard' : '/client/dashboard'}
+                    href={(session.user as { role?: string }).role === 'admin' ? '/admin/dashboard' : '/client/dashboard'}
                     className="flex items-center justify-center gap-2 w-full border border-border text-foreground text-center py-4 rounded-xl font-medium hover:bg-surface-2/50 transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
