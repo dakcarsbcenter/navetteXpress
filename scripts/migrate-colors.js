@@ -45,7 +45,7 @@ async function migrateColors() {
   
   // Trouver tous les fichiers .tsx et .ts
   const files = await glob('src/**/*.{tsx,ts}', { 
-    ignore: ['src/styles/colors.ts', 'src/app/palette/page.tsx'] 
+    ignore: ['src/styles/colors.ts'] 
   });
   
   let totalReplacements = 0;

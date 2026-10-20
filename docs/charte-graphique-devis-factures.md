@@ -153,7 +153,7 @@ Les documents et emails sont **bilingues FR puis EN** : bloc français d'abord, 
 
 ## 7. Pièges à éviter
 
-1. **`src/styles/design-system.css`** — fichier mort, non importé nulle part. Il décrit une ancienne identité bleu `#1e40af` / bordeaux `#9B1B30` avec la police Plus Jakarta Sans. **À ignorer intégralement.**
+1. **`src/styles/design-system.css`** (supprimé) — ancien fichier mort, non importé nulle part. Il décrit une ancienne identité bleu `#1e40af` / bordeaux `#9B1B30` avec la police Plus Jakarta Sans. **À ignorer intégralement.**
 2. **`src/emails/brand.ts`** — les clés `gold` / `goldLight` valent en réalité la Lagune (`#1F5245` / `#19433B`). Le nom est trompeur, la valeur est bonne.
 3. **`src/emails/InvoiceEmail.tsx`** — contient encore des restes de l'ancienne palette dorée codés en dur (`rgba(201,168,76,...)` sur l'encart des montants) et une couleur de texte pensée pour un fond sombre (`#f3b3b3`) posée sur un fond clair : contraste insuffisant. À corriger dans le nouveau modèle, pas à recopier.
 4. Pas de mode sombre pour les devis/factures : ces documents sont **toujours** en clair sur crème `#F7F3EC`.

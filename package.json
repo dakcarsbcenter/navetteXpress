@@ -32,7 +32,7 @@
     "seo:refresh:monthly": "npx tsx scripts/seo-monthly-refresh.ts"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.80.0",
+    "@anthropic-ai/sdk": "^0.135.0",
     "@auth/drizzle-adapter": "^1.11.3",
     "@capacitor/app": "^7.0.1",
     "@capacitor/core": "^7.4.3",

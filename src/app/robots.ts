@@ -19,8 +19,6 @@ const COMMON_DISALLOW = [
   '/api/',
   '/auth/',
   '/_next/',
-  '/palette',
-  '/iconographie',
 ];
 
 export default function robots(): MetadataRoute.Robots {
