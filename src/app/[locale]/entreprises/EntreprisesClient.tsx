@@ -8,6 +8,8 @@ import { Footer } from "@/components/footer";
 import { CorridorStrip } from "@/components/marketing/CorridorStrip";
 import { Button } from "@/components/ui/Button";
 import { ConventionRequestModal } from "@/components/marketing/ConventionRequestModal";
+import { Reveal } from "@/components/motion/Reveal";
+import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 
 interface ReleveRow {
   date: string;
@@ -36,7 +38,7 @@ export default function EntreprisesClient() {
 
         {/* Hero */}
         <section className="max-w-7xl mx-auto px-6 py-12 md:py-16 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12">
-          <div className="flex flex-col gap-5">
+          <div className="animate-fade-in-up flex flex-col gap-5">
             <p className="font-mono text-[11px] tracking-[0.16em] text-accent">
               {t("hero.eyebrow")}
             </p>
@@ -58,7 +60,7 @@ export default function EntreprisesClient() {
             </div>
           </div>
 
-          <div className="bg-white border border-[#d8d2c7] rounded-md p-6 flex flex-col gap-3.5 self-start">
+          <div className="animate-fade-in-up bg-white border border-[#d8d2c7] rounded-md p-6 flex flex-col gap-3.5 self-start">
             <p className="font-mono text-[10px] tracking-[0.16em] text-text-muted">
               {t("statement.eyebrow")}
             </p>
@@ -88,18 +90,18 @@ export default function EntreprisesClient() {
         </section>
 
         {/* Benefits row */}
-        <section className="border-t border-border grid grid-cols-1 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-border">
+        <Stagger className="border-t border-border grid grid-cols-1 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-border">
           {benefits.map((b) => (
-            <div key={b.n} className="px-6 md:px-10 py-8 flex flex-col gap-2">
+            <StaggerItem key={b.n} className="px-6 md:px-10 py-8 flex flex-col gap-2">
               <p className="font-mono text-[11px] tracking-[0.14em] text-gold-deep">{b.n}</p>
               <h3 className="font-semibold text-lg text-foreground">{b.title}</h3>
               <p className="text-sm leading-relaxed text-[#3d3a35]">{b.text}</p>
-            </div>
+            </StaggerItem>
           ))}
-        </section>
+        </Stagger>
 
         {/* Closing CTA band */}
-        <section className="bg-foreground">
+        <Reveal as="section" className="bg-foreground">
           <div className="max-w-7xl mx-auto px-6 py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex flex-col gap-2">
               <p className="font-bold text-2xl md:text-[26px] leading-tight text-background tracking-tight">
@@ -117,10 +119,10 @@ export default function EntreprisesClient() {
               {t("closingCta.cta")}
             </button>
           </div>
-        </section>
+        </Reveal>
 
         {/* Encart recrutement partenaires (maillage interne vers /devenir-partenaire) */}
-        <section className="border-t border-border">
+        <Reveal as="section" className="border-t border-border">
           <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div className="flex flex-col gap-1">
               <p className="text-base font-semibold text-foreground">{t("partnerTeaser.title")}</p>
@@ -133,7 +135,7 @@ export default function EntreprisesClient() {
               {t("partnerTeaser.cta")}
             </Link>
           </div>
-        </section>
+        </Reveal>
       </div>
 
       <Footer />

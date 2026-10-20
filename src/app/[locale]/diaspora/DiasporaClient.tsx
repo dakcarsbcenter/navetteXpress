@@ -7,6 +7,8 @@ import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { CorridorStrip } from "@/components/marketing/CorridorStrip";
 import { Button } from "@/components/ui/Button";
+import { Reveal } from "@/components/motion/Reveal";
+import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 
 interface Changement {
   eyebrow: string;
@@ -33,7 +35,7 @@ export default function DiasporaClient() {
 
         {/* Hero */}
         <section className="max-w-7xl mx-auto px-6 py-12 md:py-16 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12">
-          <div className="flex flex-col justify-center gap-5">
+          <div className="animate-fade-in-up flex flex-col justify-center gap-5">
             <p className="font-mono text-[11px] tracking-[0.16em] text-accent">
               {t("hero.eyebrow")}
             </p>
@@ -52,7 +54,7 @@ export default function DiasporaClient() {
             </div>
           </div>
 
-          <div className="relative min-h-[220px] md:min-h-[400px] rounded-md flex items-end p-5 overflow-hidden">
+          <div className="animate-fade-in-up relative min-h-[220px] md:min-h-[400px] rounded-md flex items-end p-5 overflow-hidden">
             <Image
               src="/images/retrouvailles-aeroport-diaspora.jpg"
               alt={t("hero.imageCaption")}
@@ -68,25 +70,25 @@ export default function DiasporaClient() {
         </section>
 
         {/* Ce qui change */}
-        <section className="border-t border-border px-6 md:px-10 py-11 md:py-12 flex flex-col gap-6 md:gap-7">
+        <Reveal as="section" className="border-t border-border px-6 md:px-10 py-11 md:py-12 flex flex-col gap-6 md:gap-7">
           <h2 className="font-bold text-3xl md:text-[34px] leading-[1.15] tracking-tight text-foreground">
             {t("changesHeading")}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-6">
+          <Stagger className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-6">
             {changements.map((c) => (
-              <div key={c.eyebrow} className="flex flex-col gap-2.5 pt-4 border-t-2 border-foreground">
+              <StaggerItem key={c.eyebrow} className="flex flex-col gap-2.5 pt-4 border-t-2 border-foreground">
                 <p className="font-mono text-[11px] tracking-[0.14em] text-text-muted">
                   {c.eyebrow}
                 </p>
                 <h3 className="font-semibold text-lg text-foreground">{c.title}</h3>
                 <p className="text-sm leading-relaxed text-[#3d3a35]">{c.text}</p>
-              </div>
+              </StaggerItem>
             ))}
-          </div>
-        </section>
+          </Stagger>
+        </Reveal>
 
         {/* Séjours longs */}
-        <section className="border-t border-border px-6 md:px-10 py-11 md:py-12 grid grid-cols-1 md:grid-cols-2 gap-9 md:gap-11">
+        <Reveal as="section" className="border-t border-border px-6 md:px-10 py-11 md:py-12 grid grid-cols-1 md:grid-cols-2 gap-9 md:gap-11">
           <div className="flex flex-col gap-4">
             <h2 className="font-bold text-2xl md:text-[30px] leading-[1.15] tracking-tight text-foreground">
               {t("longStays.title")}
@@ -117,10 +119,10 @@ export default function DiasporaClient() {
               </div>
             ))}
           </div>
-        </section>
+        </Reveal>
 
         {/* Closing CTA band */}
-        <section className="bg-accent">
+        <Reveal as="section" className="bg-accent">
           <div className="max-w-7xl mx-auto px-6 py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex flex-col gap-2">
               <p className="font-bold text-2xl md:text-[28px] leading-tight text-white tracking-tight">
@@ -137,7 +139,7 @@ export default function DiasporaClient() {
               {t("closingCta.cta")}
             </Link>
           </div>
-        </section>
+        </Reveal>
       </div>
 
       <Footer />
