@@ -526,7 +526,7 @@
     "description": "Description",
     "descriptionPlaceholder": "Description pour la page publique...",
     "featuresTitle": "Équipements et services (optionnel)",
-    "featuresPlaceholder": "Ex: Wi-Fi, Climatisation...",
+    "featuresPlaceholder": "Ex: Climatisation, Eau fraîche...",
     "addFeature": "Ajouter",
     "activeCheckbox": "Véhicule actif (visible sur la page Flotte)",
     "cancel": "Annuler",

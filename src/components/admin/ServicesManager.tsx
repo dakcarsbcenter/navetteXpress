@@ -469,7 +469,7 @@ export function ServicesManager() {
                                             value={newFeature}
                                             onChange={e => setNewFeature(e.target.value)}
                                             onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addFeature())}
-                                            placeholder="Ex: WiFi gratuit..."
+                                            placeholder="Ex: Eau fraîche offerte..."
                                             style={{ ...inputStyle, flex: 1, height: '38px' }}
                                         />
                                         <button

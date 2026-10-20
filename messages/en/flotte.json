@@ -1,9 +1,9 @@
 {
   "meta": {
-    "title": "Luxury Vehicle Fleet Dakar | Sedans, SUVs & Minibuses | Navette Xpress",
-    "description": "Discover our exceptional fleet in Senegal. From luxury sedans to spacious minibuses, every vehicle is air-conditioned, insured, and equipped for your absolute comfort.",
+    "title": "Chauffeur Vehicle Fleet Dakar | Sedans, SUVs & Minibuses | Navette Xpress",
+    "description": "Discover our exceptional fleet in Senegal. From large sedans to spacious minibuses, every vehicle is air-conditioned, insured, and equipped for your absolute comfort.",
     "keywords": [
-      "luxury car Dakar",
+      "chauffeur car Dakar",
       "minibus Senegal",
       "SUV with driver Dakar",
       "VTC fleet Senegal",
@@ -26,11 +26,11 @@
     },
     "comfort": {
       "title": "Absolute Comfort",
-      "desc": "Tri-zone air conditioning, leather upholstery, and adaptive suspension."
+      "desc": "Tri-zone air conditioning and adaptive suspension."
     },
     "connectivity": {
-      "title": "Connectivity & Amenities",
-      "desc": "High-speed WiFi, refreshments, and onboard chargers."
+      "title": "Onboard Amenities",
+      "desc": "Refreshments and onboard chargers."
     }
   },
   "loading": "Loading the collection...",
@@ -39,15 +39,15 @@
   "bookVehicle": "Book this vehicle",
   "categories": {
     "sedan": "Executive Sedan",
-    "luxury": "Grand Luxury Sedan",
+    "luxury": "Grand Sedan",
     "suv": "Premium SUV",
     "van": "Business Van",
     "bus": "Prestige Minibus",
     "default": "Exceptional Vehicle"
   },
   "cta": {
-    "titleLine1": "The Luxury Experience",
-    "titleLine2": "Awaits You",
+    "titleLine1": "Your next ride",
+    "titleLine2": "starts here",
     "bookNow": "Book Now",
     "fleetAdvisor": "Fleet Advisor"
   },

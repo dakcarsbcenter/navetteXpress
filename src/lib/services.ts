@@ -268,14 +268,6 @@ export interface AdditionalService {
 
 export const additionalServices: AdditionalService[] = [
   {
-    id: "wifi",
-    translations: {
-      fr: { name: "Wi-Fi Premium" },
-      en: { name: "Premium Wi-Fi" },
-      es: { name: "Wi-Fi Premium" },
-    },
-  },
-  {
     id: "refreshments",
     translations: {
       fr: { name: "Boissons & Collations" },

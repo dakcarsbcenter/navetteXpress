@@ -526,7 +526,7 @@
     "description": "Description",
     "descriptionPlaceholder": "Description for the public page...",
     "featuresTitle": "Features and services (optional)",
-    "featuresPlaceholder": "e.g. Wi-Fi, Air conditioning...",
+    "featuresPlaceholder": "e.g. Air conditioning, Fresh water...",
     "addFeature": "Add",
     "activeCheckbox": "Active vehicle (visible on the Fleet page)",
     "cancel": "Cancel",
