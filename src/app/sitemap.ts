@@ -33,6 +33,9 @@ const staticRoutes: StaticRoute[] = [
   { path: '/diaspora', changeFrequency: 'monthly', priority: 0.6 },
   { path: '/tarifs', changeFrequency: 'weekly', priority: 0.7 },
   { path: '/quote-request', changeFrequency: 'monthly', priority: 0.4 },
+  { path: '/cgv', changeFrequency: 'yearly', priority: 0.3 },
+  { path: '/mentions-legales', changeFrequency: 'yearly', priority: 0.3 },
+  { path: '/confidentialite', changeFrequency: 'yearly', priority: 0.3 },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

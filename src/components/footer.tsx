@@ -1,6 +1,5 @@
 "use client";
 
-import NextLink from "next/link";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { LanguageSwitcher } from "@/components/language-switcher";
@@ -102,9 +101,9 @@ export function Footer() {
                                 </li>
                             ))}
                             <li>
-                                <NextLink href="/cgv" className="link-underline inline-block py-3 lg:py-1 text-[#9a938a] hover:text-gold text-sm transition-colors">
+                                <Link href="/cgv" className="link-underline inline-block py-3 lg:py-1 text-[#9a938a] hover:text-gold text-sm transition-colors">
                                     {t("company.terms")}
-                                </NextLink>
+                                </Link>
                             </li>
                         </ul>
                     </div>
@@ -169,9 +168,9 @@ export function Footer() {
                         © {currentYear} Navette Xpress Sénégal. {t("rightsReserved")}
                     </p>
                     <div className="flex flex-wrap gap-x-6">
-                        <NextLink href="/cgv" className="inline-block py-2 hover:text-gold transition-colors">{t("legal.terms")}</NextLink>
-                        <NextLink href="/mentions-legales" className="inline-block py-2 hover:text-gold transition-colors">{t("legal.mentions")}</NextLink>
-                        <NextLink href="/confidentialite" className="inline-block py-2 hover:text-gold transition-colors">{t("legal.privacy")}</NextLink>
+                        <Link href="/cgv" className="inline-block py-2 hover:text-gold transition-colors">{t("legal.terms")}</Link>
+                        <Link href="/mentions-legales" className="inline-block py-2 hover:text-gold transition-colors">{t("legal.mentions")}</Link>
+                        <Link href="/confidentialite" className="inline-block py-2 hover:text-gold transition-colors">{t("legal.privacy")}</Link>
                     </div>
                 </div>
             </div>

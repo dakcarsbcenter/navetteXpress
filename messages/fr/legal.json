@@ -1,0 +1,184 @@
+{
+  "updated": "Dernière mise à jour : octobre 2026",
+  "cgv": {
+    "meta": {
+      "title": "Conditions générales de vente | Navette Xpress",
+      "description": "Conditions applicables aux réservations, devis et courses Navette Xpress : prix, paiement, annulation, responsabilités."
+    },
+    "title": "Conditions générales de vente",
+    "intro": "Les présentes conditions encadrent les réservations et les courses réalisées par Navette Xpress au Sénégal. En réservant, vous les acceptez.",
+    "sections": [
+      {
+        "heading": "1. Qui sommes-nous",
+        "paragraphs": [
+          "Navette Xpress est un service de transport de personnes avec chauffeur, basé à Dakar (Sénégal), enregistré sous le NINEA 012269115 et le RCCM SN DKR 2014 A 5816.",
+          "Contact : contact@navettexpress.com, +221 78 465 13 02."
+        ]
+      },
+      {
+        "heading": "2. Réservation et devis",
+        "paragraphs": [
+          "Une réservation est confirmée lorsque vous recevez notre message de confirmation (email ou WhatsApp). Les informations saisies (lieux, date, heure, numéro de vol, nombre de passagers, bagages) engagent le client : merci de les vérifier.",
+          "Un devis est valable 30 jours. Il devient un engagement des deux parties à son acceptation."
+        ]
+      },
+      {
+        "heading": "3. Prix",
+        "paragraphs": [
+          "Les prix sont exprimés en francs CFA. Le prix est fixé et annoncé avant la course ; le péage et le carburant sont compris. Une majoration peut s'appliquer pour un véhicule plus grand ou pour une course de nuit : elle vous est annoncée à la réservation.",
+          "Les tarifs publics par segment figurent sur la page Tarifs. En cas de différence, le prix indiqué sur votre confirmation ou votre devis prévaut."
+        ]
+      },
+      {
+        "heading": "4. Paiement",
+        "paragraphs": [
+          "Le paiement s'effectue par Wave, Orange Money, virement ou espèces, selon les modalités indiquées sur votre devis ou votre facture.",
+          "Une facture est payable à réception ou à l'échéance qu'elle indique. Toute contestation doit nous être signalée dans un délai de 7 jours."
+        ]
+      },
+      {
+        "heading": "5. Attente à l'aéroport",
+        "paragraphs": [
+          "Pour une prise en charge à l'aéroport, l'attente est gratuite en cas de retard de vol, à condition que le numéro de vol ait été communiqué à la réservation."
+        ]
+      },
+      {
+        "heading": "6. Modification et annulation",
+        "paragraphs": [
+          "Vous pouvez modifier ou annuler une réservation en nous contactant. Les conditions d'annulation applicables (délai, éventuels frais) sont celles indiquées sur votre devis ou votre confirmation de réservation.",
+          "Si nous devons annuler ou modifier une course, nous vous prévenons dès que possible et vous proposons une solution équivalente ou le remboursement des sommes déjà versées."
+        ]
+      },
+      {
+        "heading": "7. Obligations du client",
+        "paragraphs": [
+          "Le client se présente au lieu et à l'heure convenus, respecte le nombre de passagers et de bagages réservé, et se comporte de manière respectueuse envers le chauffeur et le véhicule. Le chauffeur peut refuser ou interrompre une course en cas de danger ou de comportement inadapté."
+        ]
+      },
+      {
+        "heading": "8. Responsabilité",
+        "paragraphs": [
+          "Nous mettons en œuvre les moyens nécessaires pour assurer une course sûre et ponctuelle. Nous ne pouvons être tenus responsables des retards liés à des circonstances extérieures (circulation, conditions météo, événements de force majeure), ni des objets oubliés ou non déclarés dans le véhicule."
+        ]
+      },
+      {
+        "heading": "9. Données personnelles",
+        "paragraphs": [
+          "Le traitement de vos données est décrit dans notre politique de confidentialité."
+        ]
+      },
+      {
+        "heading": "10. Droit applicable et litiges",
+        "paragraphs": [
+          "Les présentes conditions sont soumises au droit sénégalais. En cas de différend, nous recherchons d'abord une solution amiable ; à défaut, les tribunaux de Dakar sont compétents."
+        ]
+      }
+    ]
+  },
+  "mentions": {
+    "meta": {
+      "title": "Mentions légales | Navette Xpress",
+      "description": "Informations légales sur l'éditeur du site navettexpress.com."
+    },
+    "title": "Mentions légales",
+    "intro": "Informations sur l'éditeur du site navettexpress.com.",
+    "sections": [
+      {
+        "heading": "Éditeur du site",
+        "paragraphs": [
+          "Navette Xpress — Dakar, Sénégal.",
+          "NINEA : 012269115. RCCM : SN DKR 2014 A 5816.",
+          "Téléphone : +221 78 465 13 02. Email : contact@navettexpress.com."
+        ]
+      },
+      {
+        "heading": "Propriété intellectuelle",
+        "paragraphs": [
+          "Les textes, images, logos et éléments graphiques du site sont la propriété de Navette Xpress ou utilisés avec l'autorisation de leurs titulaires. Toute reproduction sans autorisation écrite est interdite."
+        ]
+      },
+      {
+        "heading": "Responsabilité sur le contenu",
+        "paragraphs": [
+          "Nous veillons à l'exactitude des informations publiées (tarifs, horaires, zones desservies), mais elles peuvent évoluer. Le prix applicable est celui indiqué sur votre confirmation ou votre devis.",
+          "Le site peut contenir des liens vers des sites tiers, dont nous ne contrôlons pas le contenu."
+        ]
+      },
+      {
+        "heading": "Données personnelles et cookies",
+        "paragraphs": [
+          "Voir notre politique de confidentialité."
+        ]
+      },
+      {
+        "heading": "Signaler un contenu",
+        "paragraphs": [
+          "Pour signaler une erreur ou un contenu litigieux, écrivez-nous à contact@navettexpress.com."
+        ]
+      }
+    ]
+  },
+  "privacy": {
+    "meta": {
+      "title": "Politique de confidentialité | Navette Xpress",
+      "description": "Quelles données Navette Xpress collecte, pourquoi, avec qui elles sont partagées et comment exercer vos droits."
+    },
+    "title": "Politique de confidentialité",
+    "intro": "Cette page explique quelles données nous collectons, pourquoi, et comment vous gardez la main dessus.",
+    "sections": [
+      {
+        "heading": "1. Responsable du traitement",
+        "paragraphs": [
+          "Navette Xpress, Dakar (Sénégal). Contact : contact@navettexpress.com."
+        ]
+      },
+      {
+        "heading": "2. Données collectées",
+        "paragraphs": [
+          "Réservation, devis et contact : nom, email, numéro de téléphone, lieux et horaires de la course, numéro de vol, nombre de passagers, message libre.",
+          "Compte : email, mot de passe (conservé sous forme chiffrée), rôle, vérification de l'adresse email.",
+          "Candidature chauffeur : identité, coordonnées, véhicule et expérience renseignés dans le formulaire.",
+          "Mesure d'audience : pages consultées et événements anonymisés, uniquement si vous acceptez les cookies d'analyse."
+        ]
+      },
+      {
+        "heading": "3. Finalités",
+        "paragraphs": [
+          "Réaliser et facturer vos courses, vous envoyer les confirmations et rappels (email et WhatsApp), répondre à vos demandes, traiter les candidatures de chauffeurs, sécuriser le service contre les abus, et améliorer le site grâce à la mesure d'audience."
+        ]
+      },
+      {
+        "heading": "4. Cookies et mesure d'audience",
+        "paragraphs": [
+          "Nous utilisons Google Analytics 4 pour comprendre l'usage du site. Il ne dépose de cookies d'analyse qu'après votre accord. Vous pouvez refuser ou changer d'avis à tout moment via « Gérer mes cookies » en bas de page.",
+          "Des cookies techniques nécessaires au fonctionnement (session de connexion, langue) sont utilisés sans consentement."
+        ]
+      },
+      {
+        "heading": "5. Destinataires",
+        "paragraphs": [
+          "Vos données sont accessibles à notre équipe et au chauffeur affecté à votre course (nom, téléphone, trajet). Nous faisons appel à des prestataires techniques : hébergement et protection du site (Cloudflare), envoi d'emails et de messages WhatsApp, stockage d'images (Cloudinary) et mesure d'audience (Google). Nous ne vendons pas vos données."
+        ]
+      },
+      {
+        "heading": "6. Durée de conservation",
+        "paragraphs": [
+          "Nous conservons vos données le temps nécessaire aux finalités ci-dessus et au respect de nos obligations légales (notamment comptables). Vous pouvez demander leur suppression à tout moment, sous réserve de ces obligations."
+        ]
+      },
+      {
+        "heading": "7. Vos droits",
+        "paragraphs": [
+          "Conformément à la loi sénégalaise n° 2008-12 du 25 janvier 2008 sur la protection des données à caractère personnel, vous disposez d'un droit d'accès, de rectification, d'opposition et de suppression. Écrivez-nous à contact@navettexpress.com ; nous répondons dans les meilleurs délais.",
+          "Vous pouvez aussi saisir la Commission de Protection des Données Personnelles (CDP) du Sénégal."
+        ]
+      },
+      {
+        "heading": "8. Modifications",
+        "paragraphs": [
+          "Nous pouvons mettre à jour cette politique. La date de dernière mise à jour figure en haut de la page."
+        ]
+      }
+    ]
+  }
+}

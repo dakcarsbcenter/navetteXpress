@@ -1,0 +1,184 @@
+{
+  "updated": "Última actualización: octubre de 2026",
+  "cgv": {
+    "meta": {
+      "title": "Condiciones generales de venta | Navette Xpress",
+      "description": "Condiciones aplicables a las reservas, presupuestos y trayectos de Navette Xpress: precios, pago, cancelación, responsabilidad."
+    },
+    "title": "Condiciones generales de venta",
+    "intro": "Estas condiciones regulan las reservas y los trayectos realizados por Navette Xpress en Senegal. Al reservar, las acepta.",
+    "sections": [
+      {
+        "heading": "1. Quiénes somos",
+        "paragraphs": [
+          "Navette Xpress es un servicio de transporte de personas con conductor, con sede en Dakar (Senegal), registrado con el NINEA 012269115 y el RCCM SN DKR 2014 A 5816.",
+          "Contacto: contact@navettexpress.com, +221 78 465 13 02."
+        ]
+      },
+      {
+        "heading": "2. Reserva y presupuesto",
+        "paragraphs": [
+          "Una reserva queda confirmada cuando recibe nuestro mensaje de confirmación (correo o WhatsApp). Los datos introducidos (lugares, fecha, hora, número de vuelo, pasajeros, equipaje) son responsabilidad del cliente: le rogamos que los verifique.",
+          "Un presupuesto es válido durante 30 días. Obliga a ambas partes desde su aceptación."
+        ]
+      },
+      {
+        "heading": "3. Precios",
+        "paragraphs": [
+          "Los precios se expresan en francos CFA. El precio es fijo y se comunica antes del trayecto; peajes y combustible incluidos. Puede aplicarse un recargo por un vehículo más grande o un trayecto nocturno: se le indica al reservar.",
+          "Las tarifas públicas por tramo figuran en la página de Tarifas. En caso de diferencia, prevalece el precio de su confirmación o presupuesto."
+        ]
+      },
+      {
+        "heading": "4. Pago",
+        "paragraphs": [
+          "El pago se realiza por Wave, Orange Money, transferencia o efectivo, según lo indicado en su presupuesto o factura.",
+          "Una factura es pagadera a su recepción o en el vencimiento que indique. Cualquier reclamación debe comunicarse en un plazo de 7 días."
+        ]
+      },
+      {
+        "heading": "5. Espera en el aeropuerto",
+        "paragraphs": [
+          "En las recogidas en el aeropuerto, la espera es gratuita si el vuelo se retrasa, siempre que el número de vuelo se haya comunicado al reservar."
+        ]
+      },
+      {
+        "heading": "6. Modificación y cancelación",
+        "paragraphs": [
+          "Puede modificar o cancelar una reserva poniéndose en contacto con nosotros. Las condiciones de cancelación aplicables (plazo, posibles gastos) son las indicadas en su presupuesto o confirmación de reserva.",
+          "Si debemos cancelar o modificar un trayecto, se lo comunicamos lo antes posible y le proponemos una solución equivalente o el reembolso de las cantidades ya abonadas."
+        ]
+      },
+      {
+        "heading": "7. Obligaciones del cliente",
+        "paragraphs": [
+          "El cliente se presenta en el lugar y la hora acordados, respeta el número de pasajeros y de equipajes reservado y se comporta con respeto hacia el conductor y el vehículo. El conductor puede rechazar o interrumpir un trayecto en caso de peligro o comportamiento inadecuado."
+        ]
+      },
+      {
+        "heading": "8. Responsabilidad",
+        "paragraphs": [
+          "Ponemos los medios necesarios para un trayecto seguro y puntual. No respondemos de los retrasos debidos a circunstancias externas (tráfico, clima, fuerza mayor) ni de los objetos olvidados o no declarados en el vehículo."
+        ]
+      },
+      {
+        "heading": "9. Datos personales",
+        "paragraphs": [
+          "El tratamiento de sus datos se describe en nuestra política de privacidad."
+        ]
+      },
+      {
+        "heading": "10. Ley aplicable y litigios",
+        "paragraphs": [
+          "Estas condiciones se rigen por el derecho senegalés. En caso de controversia, buscamos primero una solución amistosa; en su defecto, son competentes los tribunales de Dakar."
+        ]
+      }
+    ]
+  },
+  "mentions": {
+    "meta": {
+      "title": "Aviso legal | Navette Xpress",
+      "description": "Información legal sobre el editor del sitio navettexpress.com."
+    },
+    "title": "Aviso legal",
+    "intro": "Información sobre el editor del sitio navettexpress.com.",
+    "sections": [
+      {
+        "heading": "Editor del sitio",
+        "paragraphs": [
+          "Navette Xpress — Dakar, Senegal.",
+          "NINEA: 012269115. RCCM: SN DKR 2014 A 5816.",
+          "Teléfono: +221 78 465 13 02. Correo: contact@navettexpress.com."
+        ]
+      },
+      {
+        "heading": "Propiedad intelectual",
+        "paragraphs": [
+          "Los textos, imágenes, logotipos y elementos gráficos del sitio pertenecen a Navette Xpress o se usan con autorización de sus titulares. Queda prohibida cualquier reproducción sin autorización escrita."
+        ]
+      },
+      {
+        "heading": "Responsabilidad sobre el contenido",
+        "paragraphs": [
+          "Procuramos que la información publicada (tarifas, horarios, zonas) sea exacta, pero puede cambiar. El precio aplicable es el de su confirmación o presupuesto.",
+          "El sitio puede contener enlaces a sitios de terceros, cuyo contenido no controlamos."
+        ]
+      },
+      {
+        "heading": "Datos personales y cookies",
+        "paragraphs": [
+          "Consulte nuestra política de privacidad."
+        ]
+      },
+      {
+        "heading": "Informar de un contenido",
+        "paragraphs": [
+          "Para informar de un error o un contenido controvertido, escríbanos a contact@navettexpress.com."
+        ]
+      }
+    ]
+  },
+  "privacy": {
+    "meta": {
+      "title": "Política de privacidad | Navette Xpress",
+      "description": "Qué datos recoge Navette Xpress, para qué, con quién se comparten y cómo ejercer sus derechos."
+    },
+    "title": "Política de privacidad",
+    "intro": "Esta página explica qué datos recogemos, por qué y cómo mantiene usted el control.",
+    "sections": [
+      {
+        "heading": "1. Responsable del tratamiento",
+        "paragraphs": [
+          "Navette Xpress, Dakar (Senegal). Contacto: contact@navettexpress.com."
+        ]
+      },
+      {
+        "heading": "2. Datos recogidos",
+        "paragraphs": [
+          "Reserva, presupuesto y contacto: nombre, correo, teléfono, lugares y horarios del trayecto, número de vuelo, pasajeros, mensaje libre.",
+          "Cuenta: correo, contraseña (almacenada cifrada), rol, verificación del correo.",
+          "Candidatura de conductor: identidad, datos de contacto, vehículo y experiencia indicados en el formulario.",
+          "Medición de audiencia: páginas vistas y eventos anonimizados, solo si acepta las cookies de análisis."
+        ]
+      },
+      {
+        "heading": "3. Finalidades",
+        "paragraphs": [
+          "Realizar y facturar sus trayectos, enviarle confirmaciones y recordatorios (correo y WhatsApp), responder a sus solicitudes, tramitar candidaturas de conductores, proteger el servicio frente a abusos y mejorar el sitio mediante la medición de audiencia."
+        ]
+      },
+      {
+        "heading": "4. Cookies y medición de audiencia",
+        "paragraphs": [
+          "Usamos Google Analytics 4 para entender el uso del sitio. Solo instala cookies de análisis tras su consentimiento. Puede rechazarlas o cambiar de opinión en cualquier momento con «Gestionar mis cookies» al pie de la página.",
+          "Las cookies técnicas necesarias para el funcionamiento (sesión, idioma) se usan sin consentimiento."
+        ]
+      },
+      {
+        "heading": "5. Destinatarios",
+        "paragraphs": [
+          "Sus datos son accesibles para nuestro equipo y para el conductor asignado a su trayecto (nombre, teléfono, ruta). Recurrimos a proveedores técnicos: alojamiento y protección del sitio (Cloudflare), envío de correos y mensajes de WhatsApp, almacenamiento de imágenes (Cloudinary) y medición de audiencia (Google). No vendemos sus datos."
+        ]
+      },
+      {
+        "heading": "6. Conservación",
+        "paragraphs": [
+          "Conservamos sus datos el tiempo necesario para las finalidades anteriores y para cumplir nuestras obligaciones legales (en particular contables). Puede solicitar su supresión en cualquier momento, con esas salvedades."
+        ]
+      },
+      {
+        "heading": "7. Sus derechos",
+        "paragraphs": [
+          "Conforme a la ley senegalesa n.º 2008-12, de 25 de enero de 2008, sobre protección de datos personales, tiene derecho de acceso, rectificación, oposición y supresión. Escríbanos a contact@navettexpress.com; respondemos lo antes posible.",
+          "También puede dirigirse a la Comisión de Protección de Datos Personales (CDP) de Senegal."
+        ]
+      },
+      {
+        "heading": "8. Cambios",
+        "paragraphs": [
+          "Podemos actualizar esta política. La fecha de la última actualización figura al inicio de la página."
+        ]
+      }
+    ]
+  }
+}

@@ -198,5 +198,11 @@ export const config = {
     '/(fr|en|es)/quote-request/:path*',
     '/auth/:path*',
     '/(fr|en|es)/auth/:path*',
+    '/cgv',
+    '/(fr|en|es)/cgv',
+    '/mentions-legales',
+    '/(fr|en|es)/mentions-legales',
+    '/confidentialite',
+    '/(fr|en|es)/confidentialite',
   ],
 }

@@ -21,6 +21,7 @@ const namespaces = [
   "reservation",
   "quote-request",
   "auth",
+  "legal",
 ] as const;
 
 export default getRequestConfig(async ({ requestLocale }) => {
