@@ -14,7 +14,8 @@ const cspReportOnly = [
   "connect-src 'self' https://api.cloudinary.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com",
   "object-src 'none'",
   "base-uri 'self'",
-  "form-action 'self'",
+  // accounts.google.com : le formulaire de connexion Google redirige vers Google apres le POST.
+  "form-action 'self' https://accounts.google.com",
   "frame-ancestors 'none'",
 ].join('; ');
 
