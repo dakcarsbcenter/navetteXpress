@@ -17,6 +17,9 @@ export async function generateMetadata({
     title: t('title'),
     description: t('description'),
     alternates: buildAlternates('/quote-request', locale),
+    // Formulaire sans valeur de recherche, et encore entierement en francais
+    // quelle que soit la langue de l'URL.
+    robots: { index: false, follow: true },
   };
 }
 

@@ -18,8 +18,11 @@ export async function generateMetadata({
         title: t('title'),
         description: t('description'),
         alternates: buildAlternates('/reservation', locale),
+        // Formulaire de reservation : aucune valeur de recherche propre (les money
+        // pages portent les requetes). noindex pour que Google concentre le
+        // crawl sur elles ; follow pour que les liens sortants restent suivis.
         robots: {
-            index: true,
+            index: false,
             follow: true,
         },
     };

@@ -11,45 +11,39 @@ function localizedUrl(path: string, locale: string) {
   return locale === routing.defaultLocale ? `${baseUrl}${cleanPath}` : `${baseUrl}/${locale}${cleanPath}`;
 }
 
-interface StaticRoute {
-  path: string;
-  changeFrequency: NonNullable<MetadataRoute.Sitemap[number]['changeFrequency']>;
-  priority: number;
-}
-
-const staticRoutes: StaticRoute[] = [
-  { path: '/', changeFrequency: 'daily', priority: 1 },
-  { path: '/services', changeFrequency: 'weekly', priority: 0.9 },
-  { path: '/routes', changeFrequency: 'weekly', priority: 0.9 },
-  { path: '/flotte', changeFrequency: 'monthly', priority: 0.8 },
-  { path: '/contact', changeFrequency: 'monthly', priority: 0.6 },
-  { path: '/reservation', changeFrequency: 'daily', priority: 0.5 },
-  { path: '/faq', changeFrequency: 'weekly', priority: 0.7 },
-  // Page de recrutement chauffeurs : c'est une annonce JobPosting active, donc
-  // un crawl frequent et une priorite haute — l'acquisition de partenaires est
-  // au meme niveau que l'acquisition de clients.
-  { path: '/devenir-partenaire', changeFrequency: 'weekly', priority: 0.9 },
-  { path: '/entreprises', changeFrequency: 'monthly', priority: 0.6 },
-  { path: '/diaspora', changeFrequency: 'monthly', priority: 0.6 },
-  { path: '/tarifs', changeFrequency: 'weekly', priority: 0.7 },
-  { path: '/quote-request', changeFrequency: 'monthly', priority: 0.4 },
-  { path: '/cgv', changeFrequency: 'yearly', priority: 0.3 },
-  { path: '/mentions-legales', changeFrequency: 'yearly', priority: 0.3 },
-  { path: '/confidentialite', changeFrequency: 'yearly', priority: 0.3 },
+// Pas de lastModified, changeFrequency ni priority : Google ignore les deux
+// derniers, et un lastmod = new Date() (la date de chaque requete) lui apprend
+// a ignorer aussi lastmod sur tout le site. /reservation et /quote-request sont
+// des formulaires sans valeur de recherche (noindex), donc absents d'ici.
+const staticRoutes: string[] = [
+  '/',
+  '/services',
+  '/routes',
+  '/flotte',
+  '/contact',
+  '/faq',
+  // Page de recrutement chauffeurs : annonce JobPosting active.
+  '/devenir-partenaire',
+  '/entreprises',
+  '/diaspora',
+  '/tarifs',
+  '/cgv',
+  '/mentions-legales',
+  '/confidentialite',
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = [];
 
+  const add = (path: string, locale: string) =>
+    entries.push({
+      url: localizedUrl(path, locale),
+      alternates: { languages: buildAlternates(path, locale).languages },
+    });
+
   for (const locale of routing.locales) {
-    for (const route of staticRoutes) {
-      entries.push({
-        url: localizedUrl(route.path, locale),
-        lastModified: new Date(),
-        changeFrequency: route.changeFrequency,
-        priority: route.priority,
-        alternates: { languages: buildAlternates(route.path, locale).languages },
-      });
+    for (const path of staticRoutes) {
+      add(path, locale);
     }
 
     // Liste importee de la source unique partagee avec la page /zones/[zone] :
@@ -58,24 +52,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // 404 indexables. Ces destinations sont couvertes par les money pages
     // /routes/aibd-*, deja listees plus bas via allMoneyPages.
     for (const zone of zoneSlugs) {
-      const zonePath = `/zones/${zone}`;
-      entries.push({
-        url: localizedUrl(zonePath, locale),
-        lastModified: new Date(),
-        changeFrequency: 'weekly',
-        priority: 0.8,
-        alternates: { languages: buildAlternates(zonePath, locale).languages },
-      });
+      add(`/zones/${zone}`, locale);
     }
 
     for (const page of allMoneyPages) {
-      entries.push({
-        url: localizedUrl(page.canonicalPath, locale),
-        lastModified: new Date(),
-        changeFrequency: 'weekly',
-        priority: 0.85,
-        alternates: { languages: buildAlternates(page.canonicalPath, locale).languages },
-      });
+      add(page.canonicalPath, locale);
     }
   }
 

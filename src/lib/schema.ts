@@ -77,14 +77,9 @@ export const schemaWebSite = {
     '@type': 'WebSite',
     name: 'Navette Xpress',
     url: 'https://navettexpress.com',
-    potentialAction: {
-        '@type': 'SearchAction',
-        target: {
-            '@type': 'EntryPoint',
-            urlTemplate: 'https://navettexpress.com/reservation?q={search_term_string}',
-        },
-        'query-input': 'required name=search_term_string',
-    },
+    // Pas de SearchAction : le site n'a pas de moteur de recherche interne
+    // (/reservation?q= n'est lu nulle part) et Google a retire la sitelinks
+    // searchbox.
 };
 
 export const schemaService = (data?: { name?: string; description?: string; url?: string }) => ({

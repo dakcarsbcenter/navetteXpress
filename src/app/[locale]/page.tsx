@@ -29,7 +29,6 @@ export async function generateMetadata({
             title: t('ogTitle'),
             description: t('ogDescription'),
             url: buildAlternates('/', locale).canonical,
-            images: [{ url: '/og/og-home.jpg', width: 1200, height: 630 }],
         },
     };
 }

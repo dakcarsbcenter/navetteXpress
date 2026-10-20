@@ -12,13 +12,18 @@ const AGGRESSIVE_SCRAPER_BOTS = [
   'PetalBot',
 ];
 
+// '/_next/' n'est volontairement PAS bloque : Googlebot doit charger le JS, le
+// CSS et /_next/image pour rendre les pages et indexer les images.
+// '/auth/' non plus : ces pages portent un noindex, que Google ne peut lire que
+// s'il a le droit de les crawler (le blocage robots.txt l'en empeche).
 const COMMON_DISALLOW = [
   '/admin/',
   '/driver/',
   '/client/',
+  '/entreprise/',
+  '/dashboard/',
+  '/my-quotes/',
   '/api/',
-  '/auth/',
-  '/_next/',
 ];
 
 export default function robots(): MetadataRoute.Robots {

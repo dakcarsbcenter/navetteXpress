@@ -2,15 +2,14 @@ import { routing } from "@/i18n/routing";
 
 const BASE_URL = "https://navettexpress.com";
 
-const LOCALE_TAGS: Record<string, string> = {
-  fr: "fr-FR",
-  en: "en-US",
-  es: "es-ES",
-};
-
 /**
  * Builds the `alternates` metadata block (canonical + hreflang) for a
  * given unprefixed pathname (e.g. "" for home, "/flotte" for the fleet page).
+ *
+ * Les codes hreflang sont des codes de langue seuls (fr, en, es) : le site cible
+ * le Senegal et le public anglophone/hispanophone sans distinction de pays, et
+ * ce sont les memes codes que l'en-tete HTTP `Link` emis par next-intl. Un
+ * `x-default` pointe vers la version francaise (langue par defaut, sans prefixe).
  */
 export function buildAlternates(pathname: string, locale: string) {
   const cleanPath = pathname === "/" ? "" : pathname;
@@ -19,8 +18,9 @@ export function buildAlternates(pathname: string, locale: string) {
 
   const languages: Record<string, string> = {};
   for (const l of routing.locales) {
-    languages[LOCALE_TAGS[l] ?? l] = localizedUrl(l);
+    languages[l] = localizedUrl(l);
   }
+  languages["x-default"] = localizedUrl(routing.defaultLocale);
 
   return {
     canonical: localizedUrl(locale),

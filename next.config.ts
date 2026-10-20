@@ -51,12 +51,12 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/transfert-aeroport',
-        destination: '/transfert-aeroport-dakar',
+        destination: '/services/transfert-aeroport-aibd',
         permanent: true,
       },
       {
         source: '/navette-aeroport',
-        destination: '/transfert-aeroport-dakar',
+        destination: '/services/transfert-aeroport-aibd',
         permanent: true,
       },
       {
@@ -125,6 +125,17 @@ const nextConfig: NextConfig = {
   // Headers pour la sécurité et les performances
   async headers() {
     return [
+      // Espaces connectes : proteges par authentification, mais sans noindex un
+      // lien partage ou une redirection pourrait les faire remonter dans Google.
+      // En-tete HTTP plutot que metadata : ces layouts sont des composants client.
+      {
+        source: '/(admin|driver|client|entreprise)/:path*',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
+      },
+      {
+        source: '/(dashboard|my-quotes)',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
+      },
       {
         source: '/(.*)',
         headers: [

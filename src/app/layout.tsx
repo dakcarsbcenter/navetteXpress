@@ -5,8 +5,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import { GoogleAnalytics } from "./google-analytics";
-import { JsonLd } from '@/components/seo/JsonLd';
-import { schemaLocalBusiness, schemaWebSite } from '@/lib/schema';
 import { CapacitorAppUrlListener } from '@/components/mobile/CapacitorAppUrlListener';
 import { getLocale, getTranslations } from 'next-intl/server';
 
@@ -42,7 +40,7 @@ export const metadata: Metadata = {
     template: '%s',
   },
   description:
-    'Service de chauffeur privé N°1 à Dakar. Transfert aéroport AIBD 24h/24, navette privée, mise à disposition. Réservation en ligne, prix fixe, chauffeurs certifiés. +221 78 465 13 02',
+    'Service de chauffeur privé à Dakar. Transfert aéroport AIBD 24h/24, navette privée, mise à disposition. Réservation en ligne, prix fixe. +221 78 465 13 02',
 
   // ── Mots-clés ──
   keywords: [
@@ -68,23 +66,15 @@ export const metadata: Metadata = {
   publisher: 'Navette Xpress',
 
   // ── Open Graph ──
+  // Ni `url` ni `images` ici : l'URL doit suivre le canonical de chaque page
+  // (une valeur fixe donnait l'accueil comme og:url partout), et l'image vient du
+  // fichier conventionnel src/app/[locale]/opengraph-image.tsx.
   openGraph: {
     type: 'website',
-    locale: 'fr_SN',
-    alternateLocale: ['fr_FR', 'en_US'],
-    url: 'https://navettexpress.com',
     siteName: 'Navette Xpress',
     title: 'Navette Xpress — Chauffeur Privé à Dakar',
     description:
       'Transfert aéroport AIBD, navette privée & chauffeur dédié à Dakar. Disponible 24h/24, prix fixe, confirmation immédiate.',
-    images: [
-      {
-        url: '/og/og-default.jpg',   // 1200×630px
-        width: 1200,
-        height: 630,
-        alt: 'Navette Xpress — Service de chauffeur privé à Dakar',
-      },
-    ],
   },
 
   // ── Twitter / X Card ──
@@ -92,7 +82,6 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Navette Xpress — Chauffeur Privé Dakar',
     description: 'Transfert AIBD, navette privée & chauffeur dédié à Dakar. 24h/24, prix fixe.',
-    images: ['/og/og-default.jpg'],
     creator: '@navettexpress',
   },
 
@@ -114,16 +103,9 @@ export const metadata: Metadata = {
     google: '5nOkgRfUJmawd60vAqApGz-swJ-Z44cyF8-_D844i4w',
   },
 
-  // ── Canonique ──
-  alternates: {
-    canonical: 'https://navettexpress.com',
-    languages: {
-      'fr-SN': 'https://navettexpress.com',
-      'fr-FR': 'https://navettexpress.com',
-      'en-US': 'https://navettexpress.com/en',
-      'es-ES': 'https://navettexpress.com/es',
-    },
-  },
+  // Pas de `alternates` ici : canonical et hreflang sont propres a chaque page
+  // (buildAlternates). Un canonical fixe sur la racine pointait vers l'accueil
+  // pour toute page sans metadonnees (404, espaces connectes).
 
   // ── Icônes ──
   icons: {
@@ -157,8 +139,6 @@ export default async function RootLayout({
         >
           {t('skipToContent')}
         </a>
-        <JsonLd data={schemaLocalBusiness} />
-        <JsonLd data={schemaWebSite} />
         <CapacitorAppUrlListener />
         <AuthSessionProvider>
           <ThemeProvider

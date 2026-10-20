@@ -49,7 +49,6 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
       title: translation.title,
       description: translation.description,
       url: alternates.canonical,
-      images: [{ url: '/og/og-services.jpg', width: 1200, height: 630 }],
     },
   };
 }

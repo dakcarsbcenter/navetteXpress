@@ -39,7 +39,6 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
             title: t('meta.ogTitleTemplate', { name: zone.name }),
             description: zone.description,
             url: alternates.canonical,
-            images: [{ url: '/og/og-zones.jpg' }],
         },
     };
 }
