@@ -56,7 +56,7 @@ export default function DiasporaClient() {
 
           <div className="animate-fade-in-up relative min-h-[220px] md:min-h-[400px] rounded-md flex items-end p-5 overflow-hidden">
             <Image
-              src="/images/retrouvailles-aeroport-diaspora.jpg"
+              src="/images/retrouvailles-arrivee-aeroport.jpg"
               alt={t("hero.imageCaption")}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
