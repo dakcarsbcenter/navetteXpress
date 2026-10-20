@@ -17,8 +17,34 @@ const HONEYPOT_PATH = "/api/internal-catalog"
 
 const SUSPICIOUS_UA_PATTERNS = ["headlesschrome", "puppeteer", "playwright"]
 
-const API_RATE_LIMIT = { limit: 30, windowMs: 60_000 }
-const PAGE_RATE_LIMIT = { limit: 100, windowMs: 60_000 }
+// Seuils volontairement larges : de nombreux clients mobiles partagent la même
+// IP publique (CGNAT des opérateurs), un seuil bas bloquerait tout un quartier.
+// La protection serrée est portée par SENSITIVE_RATE_LIMIT (voir plus bas).
+const API_RATE_LIMIT = { limit: 120, windowMs: 60_000 }
+const PAGE_RATE_LIMIT = { limit: 300, windowMs: 60_000 }
+
+// Endpoints sensibles (tentatives de connexion, création de compte, e-mails
+// transactionnels) : compteur séparé et strict, en POST uniquement.
+const SENSITIVE_RATE_LIMIT = { limit: 10, windowMs: 60_000 }
+const SENSITIVE_POST_PATHS = [
+  "/api/auth/callback/credentials",
+  "/api/auth/register",
+  "/api/auth/reset-password",
+  "/api/auth/resend-verification",
+]
+
+// Hors compteur général : appelés très souvent par le client (session NextAuth,
+// flux temps réel), ou venant d'IP de prestataires partagées (webhooks, cron).
+// Ils portent leur propre contrôle (session, signature, secret).
+const RATE_LIMIT_EXEMPT_PREFIXES = ["/api/auth/", "/api/health", "/api/webhooks/", "/api/cron/"]
+const RATE_LIMIT_EXEMPT_PATTERNS = [/^\/api\/conversations\/[^/]+\/stream/]
+
+function isRateLimitExempt(pathname: string) {
+  return (
+    RATE_LIMIT_EXEMPT_PREFIXES.some((prefix) => pathname.startsWith(prefix)) ||
+    RATE_LIMIT_EXEMPT_PATTERNS.some((pattern) => pattern.test(pathname))
+  )
+}
 
 function forbidden(message: string) {
   return NextResponse.json({ error: message }, { status: 403 })
@@ -54,9 +80,24 @@ async function runSecurityChecks(req: NextRequest): Promise<NextResponse | null>
     logSecurityEvent("suspicious_user_agent", { ip, path: pathname, userAgent })
   }
 
+  // Sans IP identifiable, un seul compteur serait partagé par tous les clients :
+  // on journalise et on laisse passer plutôt que de bloquer des inconnus en bloc.
+  if (ip === "unknown") {
+    logSecurityEvent("unknown_client_ip", { path: pathname, userAgent })
+    return null
+  }
+
+  const isSensitive =
+    req.method === "POST" && SENSITIVE_POST_PATHS.some((path) => pathname.startsWith(path))
+  if (!isSensitive && isRateLimitExempt(pathname)) return null
+
   const isApiRoute = pathname.startsWith("/api/")
-  const { limit, windowMs } = isApiRoute ? API_RATE_LIMIT : PAGE_RATE_LIMIT
-  const rateLimitKey = `${isApiRoute ? "api" : "page"}:${ip}`
+  const { limit, windowMs } = isSensitive
+    ? SENSITIVE_RATE_LIMIT
+    : isApiRoute
+      ? API_RATE_LIMIT
+      : PAGE_RATE_LIMIT
+  const rateLimitKey = `${isSensitive ? "sensitive" : isApiRoute ? "api" : "page"}:${ip}`
   const result = consumeRateLimit(rateLimitKey, limit, windowMs)
 
   if (!result.allowed) {
@@ -77,6 +118,14 @@ async function runSecurityChecks(req: NextRequest): Promise<NextResponse | null>
 
   return null
 }
+
+// Correspondance par segment : `/entreprise` ne doit pas capturer la page
+// publique `/entreprises`.
+function isUnder(pathname: string, prefix: string) {
+  return pathname === prefix || pathname.startsWith(prefix + '/')
+}
+
+const AUTH_PREFIXES = ['/dashboard', '/admin', '/driver', '/client', '/entreprise', '/my-quotes']
 
 const authProtected = withAuth(
   function proxy(req) {
@@ -108,15 +157,18 @@ const authProtected = withAuth(
     if (pathname.startsWith('/client') && token?.role !== 'customer') {
       return NextResponse.redirect(new URL('/dashboard', req.url))
     }
+
+    // Espace entreprise : compte client uniquement. Le statut `isCompany`
+    // n'est pas dans le JWT, la page le vérifie elle-même.
+    if (isUnder(pathname, '/entreprise') && token?.role !== 'customer') {
+      return NextResponse.redirect(new URL('/dashboard', req.url))
+    }
   },
   {
     callbacks: {
       authorized: ({ token, req }) => {
-        // Protect dashboard, admin, driver and client routes
-        if (req.nextUrl.pathname.startsWith('/dashboard') ||
-          req.nextUrl.pathname.startsWith('/admin') ||
-          req.nextUrl.pathname.startsWith('/driver') ||
-          req.nextUrl.pathname.startsWith('/client')) {
+        // Toute route listée dans AUTH_PREFIXES exige une session.
+        if (AUTH_PREFIXES.some((prefix) => isUnder(req.nextUrl.pathname, prefix))) {
           return !!token
         }
         return true
@@ -126,8 +178,6 @@ const authProtected = withAuth(
 )
 
 const intlMiddleware = createMiddleware(routing)
-
-const AUTH_PREFIXES = ['/dashboard', '/admin', '/driver', '/client']
 
 export default async function proxy(req: NextRequest, event: NextFetchEvent) {
   const { pathname } = req.nextUrl
@@ -142,7 +192,7 @@ export default async function proxy(req: NextRequest, event: NextFetchEvent) {
     return NextResponse.next()
   }
 
-  if (AUTH_PREFIXES.some((prefix) => pathname.startsWith(prefix))) {
+  if (AUTH_PREFIXES.some((prefix) => isUnder(pathname, prefix))) {
     return (authProtected as unknown as (req: NextRequest, event: NextFetchEvent) => ReturnType<typeof NextResponse.next>)(req, event)
   }
 
@@ -170,6 +220,8 @@ export const config = {
     '/admin/:path*',
     '/driver/:path*',
     '/client/:path*',
+    '/entreprise/:path*',
+    '/my-quotes/:path*',
     '/',
     '/(fr|en|es)',
     '/flotte/:path*',

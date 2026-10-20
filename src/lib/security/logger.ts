@@ -10,7 +10,8 @@ type SecurityEvent =
     | 'ip_blacklisted_blocked'
     | 'suspicious_user_agent'
     | 'public_api_rejected'
-    | 'search_engine_bot_exempted';
+    | 'search_engine_bot_exempted'
+    | 'unknown_client_ip';
 
 export function logSecurityEvent(event: SecurityEvent, details: Record<string, unknown>) {
     console.warn(
