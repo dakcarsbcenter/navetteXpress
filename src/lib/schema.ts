@@ -7,7 +7,7 @@ export const schemaLocalBusiness = {
     '@id': 'https://navettexpress.com/#business',
     name: 'Navette Xpress',
     description:
-        'Service de chauffeur privé premium à Dakar, Sénégal. Spécialisé dans les transferts aéroport AIBD, navettes privées et mise à disposition.',
+        'Service de chauffeur privé à Dakar, Sénégal. Spécialisé dans les transferts aéroport AIBD, navettes privées et mise à disposition.',
     url: 'https://navettexpress.com',
     telephone: '+221784651302',
     email: 'contact@navettexpress.com',

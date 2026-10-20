@@ -22,11 +22,11 @@ export const serviceTypes: ServiceType[] = [
       fr: {
         name: "Transfert Aéroport",
         description:
-          "Service de transfert vers et depuis l'aéroport AIBD de Dakar. Chauffeurs professionnels, véhicules de luxe, prix compétitifs.",
+          "Service de transfert vers et depuis l'aéroport AIBD de Dakar. Chauffeurs professionnels, véhicules confortables, prix compétitifs.",
         features: [
           "Suivi des vols en temps réel",
           "Accueil personnalisé avec panneau",
-          "Véhicules de luxe climatisés",
+          "Véhicules climatisés",
           "Service 24h/24, 7j/7",
           "Prix compétitifs au Sénégal",
         ],
@@ -34,11 +34,11 @@ export const serviceTypes: ServiceType[] = [
       en: {
         name: "Airport Transfer",
         description:
-          "Transfer service to and from Dakar's AIBD airport. Professional drivers, luxury vehicles, competitive prices.",
+          "Transfer service to and from Dakar's AIBD airport. Professional drivers, comfortable vehicles, competitive prices.",
         features: [
           "Real-time flight tracking",
           "Personalized welcome with name board",
-          "Air-conditioned luxury vehicles",
+          "Air-conditioned vehicles",
           "Service available 24/7",
           "Competitive rates in Senegal",
         ],
@@ -46,11 +46,11 @@ export const serviceTypes: ServiceType[] = [
       es: {
         name: "Traslado al Aeropuerto",
         description:
-          "Servicio de traslado hacia y desde el aeropuerto AIBD de Dakar. Choferes profesionales, vehículos de lujo, precios competitivos.",
+          "Servicio de traslado hacia y desde el aeropuerto AIBD de Dakar. Choferes profesionales, vehículos cómodos, precios competitivos.",
         features: [
           "Seguimiento de vuelos en tiempo real",
           "Recepción personalizada con cartel",
-          "Vehículos de lujo con aire acondicionado",
+          "Vehículos con aire acondicionado",
           "Servicio disponible 24/7",
           "Precios competitivos en Senegal",
         ],
@@ -66,7 +66,7 @@ export const serviceTypes: ServiceType[] = [
         description:
           "Service de chauffeur privé pour tous vos déplacements dans Dakar et ses environs. Confort et sécurité garantis.",
         features: [
-          "Véhicules de luxe modernes",
+          "Véhicules modernes",
           "Chauffeurs professionnels certifiés",
           "Service 24h/24, 7j/7",
           "Réservation instantanée",
@@ -78,7 +78,7 @@ export const serviceTypes: ServiceType[] = [
         description:
           "Private chauffeur service for all your journeys in Dakar and the surrounding area. Comfort and safety guaranteed.",
         features: [
-          "Modern luxury vehicles",
+          "Modern vehicles",
           "Certified professional drivers",
           "Service available 24/7",
           "Instant booking",
@@ -90,7 +90,7 @@ export const serviceTypes: ServiceType[] = [
         description:
           "Servicio de chofer privado para todos sus desplazamientos en Dakar y alrededores. Comodidad y seguridad garantizadas.",
         features: [
-          "Vehículos de lujo modernos",
+          "Vehículos modernos",
           "Choferes profesionales certificados",
           "Servicio disponible 24/7",
           "Reserva instantánea",
@@ -148,7 +148,7 @@ export const serviceTypes: ServiceType[] = [
       fr: {
         name: "Services VIP",
         description:
-          "Service ultra-premium avec véhicules d'exception et prestations sur-mesure pour une clientèle exigeante.",
+          "Service sur mesure avec prestations personnalisées pour une clientèle exigeante.",
         features: [
           "Véhicules de collection",
           "Butler personnel disponible",
@@ -160,7 +160,7 @@ export const serviceTypes: ServiceType[] = [
       en: {
         name: "VIP Services",
         description:
-          "Ultra-premium service with exceptional vehicles and bespoke arrangements for a demanding clientele.",
+          "Tailor-made service with personalised arrangements for a demanding clientele.",
         features: [
           "Collector vehicles",
           "Personal butler available",
@@ -172,7 +172,7 @@ export const serviceTypes: ServiceType[] = [
       es: {
         name: "Servicios VIP",
         description:
-          "Servicio ultra premium con vehículos excepcionales y prestaciones a medida para una clientela exigente.",
+          "Servicio a medida con prestaciones personalizadas para una clientela exigente.",
         features: [
           "Vehículos de colección",
           "Mayordomo personal disponible",

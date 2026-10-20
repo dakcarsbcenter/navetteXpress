@@ -3,7 +3,7 @@
     "title": "Chófer Privado Dakar y Traslado Aeropuerto AIBD | Navette Xpress",
     "description": "Navette Xpress, el servicio de chófer privado N°1 en Dakar. Traslado al aeropuerto AIBD 24h/24, traslado urbano, disposición por día. Reserva en línea instantánea. Precio fijo garantizado.",
     "ogTitle": "Chófer Privado Dakar y Traslado AIBD — Navette Xpress",
-    "ogDescription": "Servicio premium de chófer privado en Dakar. Traslado al aeropuerto AIBD, traslado urbano 24h/24."
+    "ogDescription": "Servicio de chófer privado en Dakar. Traslado al aeropuerto AIBD, traslado urbano 24h/24."
   },
   "corridor": "Corredor Dakar — AIBD — Petite Côte",
   "hero": {
@@ -69,7 +69,7 @@
   },
   "fleet": {
     "title": "Nuestra Flota",
-    "subtitle": "Vehículos de excepción para pasajeros exigentes. Mantenimiento riguroso y confort absoluto.",
+    "subtitle": "Vehículos climatizados y rigurosamente mantenidos para trayectos cómodos.",
     "viewAll": "Ver todos los vehículos",
     "loading": "Cargando la flota…",
     "empty": "Nuestra flota estará disponible aquí muy pronto.",
@@ -79,7 +79,6 @@
     "onRequest": "Bajo presupuesto",
     "bookVehicleAria": "Reservar este vehículo",
     "categories": {
-      "luxurySupreme": "Lujo Supremo",
       "prestigeSuv": "SUV de Prestigio",
       "businessVan": "Furgoneta Business",
       "vip": "VIP"

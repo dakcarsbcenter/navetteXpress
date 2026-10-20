@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
     return {
         name: 'Navette Xpress Dakar',
         short_name: 'Navette Xpress',
-        description: 'Service premium de chauffeur prive a Dakar',
+        description: 'Service de chauffeur prive a Dakar',
         start_url: '/',
         display: 'standalone',
         background_color: '#0A0A0A',

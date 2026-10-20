@@ -42,7 +42,7 @@ export default function WelcomeEmail({
                 Navette <span style={{ color: brand.gold }}>Xpress</span>
               </Text>
               <Text style={{ fontFamily: fonts.body, fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: brand.textMuted, margin: '6px 0 0' }}>
-                Premium · Mobilite
+                Mobilite
               </Text>
             </Section>
 
@@ -54,7 +54,7 @@ export default function WelcomeEmail({
             <Section style={{ padding: '24px 40px 0' }}>
               <Text style={{ ...shellStyles.text, color: brand.textPrimary, fontSize: '16px', lineHeight: '28px' }}>Bonjour {userName},</Text>
               <Text style={{ ...shellStyles.text, marginTop: '16px' }}>
-                Votre compte est maintenant actif. Vous pouvez reserver vos trajets premium, suivre vos demandes et gerer vos informations depuis votre espace client.
+                Votre compte est maintenant actif. Vous pouvez reserver vos trajets, suivre vos demandes et gerer vos informations depuis votre espace client.
               </Text>
             </Section>
 

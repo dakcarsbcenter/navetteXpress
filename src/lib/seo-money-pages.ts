@@ -62,7 +62,7 @@ export const moneyServicePages: MoneyPageDefinition[] = [
         intentKeyword: 'transfert aeroport aibd dakar',
         travelTime: '45-70 min selon trafic',
         priceFrom: 'À partir de 25 000 FCFA',
-        valuePoints: ['Prix fixe garanti', 'Service de nuit 24/7', 'Chauffeurs professionnels', 'Véhicules climatisés premium'],
+        valuePoints: ['Prix fixe garanti', 'Service de nuit 24/7', 'Chauffeurs professionnels', 'Véhicules climatisés'],
         aibdProcess: commonAibdProcess.fr,
         faqs: [
           {
@@ -87,7 +87,7 @@ export const moneyServicePages: MoneyPageDefinition[] = [
         intentKeyword: 'aibd airport transfer dakar',
         travelTime: '45-70 min depending on traffic',
         priceFrom: 'From 25,000 FCFA',
-        valuePoints: ['Guaranteed fixed price', '24/7 night service', 'Professional drivers', 'Premium air-conditioned vehicles'],
+        valuePoints: ['Guaranteed fixed price', '24/7 night service', 'Professional drivers', 'Air-conditioned vehicles'],
         aibdProcess: commonAibdProcess.en,
         faqs: [
           {
@@ -112,7 +112,7 @@ export const moneyServicePages: MoneyPageDefinition[] = [
         intentKeyword: 'traslado aeropuerto aibd dakar',
         travelTime: '45-70 min según el tráfico',
         priceFrom: 'Desde 25.000 FCFA',
-        valuePoints: ['Precio fijo garantizado', 'Servicio nocturno 24/7', 'Choferes profesionales', 'Vehículos premium climatizados'],
+        valuePoints: ['Precio fijo garantizado', 'Servicio nocturno 24/7', 'Choferes profesionales', 'Vehículos climatizados'],
         aibdProcess: commonAibdProcess.es,
         faqs: [
           {
@@ -141,12 +141,12 @@ export const moneyServicePages: MoneyPageDefinition[] = [
       fr: {
         title: 'Chauffeur Privé Dakar Mise à Disposition 24/7 | Navette Xpress',
         description:
-          'Service chauffeur privé à Dakar pour rendez-vous business, city tours et transferts premium. Réservation rapide, prix fixe, disponibilité 24/7.',
+          'Service chauffeur privé à Dakar pour rendez-vous business, city tours et transferts confortables. Réservation rapide, prix fixe, disponibilité 24/7.',
         h1: 'Chauffeur Privé Dakar pour Tous Vos Déplacements',
         intentKeyword: 'chauffeur prive dakar',
         travelTime: 'Sur mesure selon itinéraire',
         priceFrom: 'À partir de 20 000 FCFA',
-        valuePoints: ['Mise à disposition flexible', 'Facturation claire', 'Confort premium', 'Support client réactif'],
+        valuePoints: ['Mise à disposition flexible', 'Facturation claire', 'Trajet confortable', 'Support client réactif'],
         aibdProcess: commonAibdProcess.fr,
         faqs: [
           {
@@ -166,12 +166,12 @@ export const moneyServicePages: MoneyPageDefinition[] = [
       en: {
         title: 'Private Driver Dakar Chauffeur Service 24/7 | Navette Xpress',
         description:
-          'Private driver service in Dakar for business meetings, city tours and premium transfers. Quick booking, fixed price, available 24/7.',
+          'Private driver service in Dakar for business meetings, city tours and comfortable transfers. Quick booking, fixed price, available 24/7.',
         h1: 'Private Driver in Dakar for All Your Journeys',
         intentKeyword: 'private driver dakar',
         travelTime: 'Tailored to your itinerary',
         priceFrom: 'From 20,000 FCFA',
-        valuePoints: ['Flexible chauffeur hire', 'Clear invoicing', 'Premium comfort', 'Responsive customer support'],
+        valuePoints: ['Flexible chauffeur hire', 'Clear invoicing', 'Comfortable ride', 'Responsive customer support'],
         aibdProcess: commonAibdProcess.en,
         faqs: [
           {
@@ -191,12 +191,12 @@ export const moneyServicePages: MoneyPageDefinition[] = [
       es: {
         title: 'Chofer Privado Dakar Servicio a su Disposición 24/7 | Navette Xpress',
         description:
-          'Servicio de chofer privado en Dakar para citas de negocios, recorridos por la ciudad y traslados premium. Reserva rápida, precio fijo, disponibilidad 24/7.',
+          'Servicio de chofer privado en Dakar para citas de negocios, recorridos por la ciudad y traslados cómodos. Reserva rápida, precio fijo, disponibilidad 24/7.',
         h1: 'Chofer Privado en Dakar para Todos sus Desplazamientos',
         intentKeyword: 'chofer privado dakar',
         travelTime: 'A medida según el itinerario',
         priceFrom: 'Desde 20.000 FCFA',
-        valuePoints: ['Disponibilidad flexible', 'Facturación clara', 'Confort premium', 'Atención al cliente reactiva'],
+        valuePoints: ['Disponibilidad flexible', 'Facturación clara', 'Viaje cómodo', 'Atención al cliente reactiva'],
         aibdProcess: commonAibdProcess.es,
         faqs: [
           {
@@ -309,8 +309,8 @@ export const moneyServicePages: MoneyPageDefinition[] = [
       fr: {
         title: 'Navette Événementielle Mariage Séminaire Dakar | Navette Xpress',
         description:
-          'Transport premium pour mariages, conférences, séminaires et délégations à Dakar. Coordination logistique, ponctualité et flotte adaptée.',
-        h1: 'Navette Événementielle Dakar: Logistique Fiable et Premium',
+          'Transport pour mariages, conférences, séminaires et délégations à Dakar. Coordination logistique, ponctualité et flotte adaptée.',
+        h1: 'Navette Événementielle Dakar: Logistique Fiable et Ponctuelle',
         intentKeyword: 'navette evenementielle dakar',
         travelTime: 'Selon programme événementiel',
         priceFrom: 'Devis rapide sous 30 min',
@@ -334,8 +334,8 @@ export const moneyServicePages: MoneyPageDefinition[] = [
       en: {
         title: 'Event Shuttle Wedding Seminar Dakar | Navette Xpress',
         description:
-          'Premium transport for weddings, conferences, seminars and delegations in Dakar. Logistics coordination, punctuality and a fleet to match your needs.',
-        h1: 'Event Shuttle Dakar: Reliable, Premium Logistics',
+          'Transport for weddings, conferences, seminars and delegations in Dakar. Logistics coordination, punctuality and a fleet to match your needs.',
+        h1: 'Event Shuttle Dakar: Reliable, Punctual Logistics',
         intentKeyword: 'event shuttle dakar',
         travelTime: 'Based on the event schedule',
         priceFrom: 'Fast quote within 30 minutes',
@@ -359,8 +359,8 @@ export const moneyServicePages: MoneyPageDefinition[] = [
       es: {
         title: 'Traslado para Eventos Bodas Seminarios Dakar | Navette Xpress',
         description:
-          'Transporte premium para bodas, conferencias, seminarios y delegaciones en Dakar. Coordinación logística, puntualidad y flota adaptada.',
-        h1: 'Traslado para Eventos en Dakar: Logística Fiable y Premium',
+          'Transporte para bodas, conferencias, seminarios y delegaciones en Dakar. Coordinación logística, puntualidad y flota adaptada.',
+        h1: 'Traslado para Eventos en Dakar: Logística Fiable y Puntual',
         intentKeyword: 'traslado para eventos dakar',
         travelTime: 'Según el programa del evento',
         priceFrom: 'Presupuesto rápido en 30 minutos',
@@ -475,7 +475,7 @@ export const moneyServicePages: MoneyPageDefinition[] = [
     canonicalPath: '/services/chauffeur-affaires-dakar',
     translations: {
       fr: {
-        title: 'Chauffeur Affaires Dakar Service Entreprise Premium | Navette Xpress',
+        title: 'Chauffeur Affaires Dakar Service Entreprise | Navette Xpress',
         description:
           'Transport d’affaires à Dakar pour dirigeants, équipes et délégations. Ponctualité, discrétion, facturation entreprise et service VIP.',
         h1: 'Chauffeur Affaires Dakar pour Entreprises et Délégations',
@@ -500,7 +500,7 @@ export const moneyServicePages: MoneyPageDefinition[] = [
         ],
       },
       en: {
-        title: 'Business Chauffeur Dakar Premium Corporate Service | Navette Xpress',
+        title: 'Business Chauffeur Dakar Corporate Service | Navette Xpress',
         description:
           'Business transport in Dakar for executives, teams and delegations. Punctuality, discretion, corporate invoicing and VIP service.',
         h1: 'Business Chauffeur in Dakar for Companies and Delegations',
@@ -525,7 +525,7 @@ export const moneyServicePages: MoneyPageDefinition[] = [
         ],
       },
       es: {
-        title: 'Chofer de Negocios Dakar Servicio Corporativo Premium | Navette Xpress',
+        title: 'Chofer de Negocios Dakar Servicio Corporativo | Navette Xpress',
         description:
           'Transporte de negocios en Dakar para directivos, equipos y delegaciones. Puntualidad, discreción, facturación corporativa y servicio VIP.',
         h1: 'Chofer de Negocios en Dakar para Empresas y Delegaciones',
@@ -559,14 +559,14 @@ export const moneyServicePages: MoneyPageDefinition[] = [
     canonicalPath: '/services/transfert-famille-vip-dakar',
     translations: {
       fr: {
-        title: 'Transfert Famille VIP Dakar et AIBD Confort Premium | Navette Xpress',
+        title: 'Transfert Famille VIP Dakar et AIBD Confort Familial | Navette Xpress',
         description:
           'Service transfert famille et VIP à Dakar: véhicules spacieux, siège enfant sur demande, chauffeur privé discret et prix fixe vers/depuis AIBD.',
         h1: 'Transfert Famille et VIP à Dakar avec Chauffeur Privé',
         intentKeyword: 'transfert famille vip dakar',
         travelTime: '45-90 min selon destination',
         priceFrom: 'À partir de 30 000 FCFA',
-        valuePoints: ['Véhicules spacieux premium', 'Sièges enfant sur demande', 'Accueil VIP AIBD', 'Tarif fixe sans surprise'],
+        valuePoints: ['Véhicules spacieux', 'Sièges enfant sur demande', 'Accueil VIP AIBD', 'Tarif fixe sans surprise'],
         aibdProcess: commonAibdProcess.fr,
         faqs: [
           {
@@ -584,14 +584,14 @@ export const moneyServicePages: MoneyPageDefinition[] = [
         ],
       },
       en: {
-        title: 'Family & VIP Transfer Dakar and AIBD Premium Comfort | Navette Xpress',
+        title: 'Family & VIP Transfer Dakar and AIBD Family Comfort | Navette Xpress',
         description:
           'Family and VIP transfer service in Dakar: spacious vehicles, child seat on request, discreet private driver and fixed price to/from AIBD.',
         h1: 'Family and VIP Transfer in Dakar with a Private Driver',
         intentKeyword: 'family vip transfer dakar',
         travelTime: '45-90 min depending on destination',
         priceFrom: 'From 30,000 FCFA',
-        valuePoints: ['Spacious premium vehicles', 'Child seats on request', 'VIP welcome at AIBD', 'Fixed price, no surprises'],
+        valuePoints: ['Spacious vehicles', 'Child seats on request', 'VIP welcome at AIBD', 'Fixed price, no surprises'],
         aibdProcess: commonAibdProcess.en,
         faqs: [
           {
@@ -609,14 +609,14 @@ export const moneyServicePages: MoneyPageDefinition[] = [
         ],
       },
       es: {
-        title: 'Traslado Familiar VIP Dakar y AIBD Confort Premium | Navette Xpress',
+        title: 'Traslado Familiar VIP Dakar y AIBD Confort Familiar | Navette Xpress',
         description:
           'Servicio de traslado familiar y VIP en Dakar: vehículos espaciosos, silla infantil bajo petición, chofer privado discreto y precio fijo hacia/desde el AIBD.',
         h1: 'Traslado Familiar y VIP en Dakar con Chofer Privado',
         intentKeyword: 'traslado familiar vip dakar',
         travelTime: '45-90 min según el destino',
         priceFrom: 'Desde 30.000 FCFA',
-        valuePoints: ['Vehículos premium espaciosos', 'Sillas infantiles bajo petición', 'Recepción VIP en el AIBD', 'Tarifa fija sin sorpresas'],
+        valuePoints: ['Vehículos espaciosos', 'Sillas infantiles bajo petición', 'Recepción VIP en el AIBD', 'Tarifa fija sin sorpresas'],
         aibdProcess: commonAibdProcess.es,
         faqs: [
           {
@@ -737,7 +737,7 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
         intentKeyword: 'dakar aibd transfert',
         travelTime: '45-70 min',
         priceFrom: 'À partir de 25 000 FCFA',
-        valuePoints: ['Départ ponctuel', 'Tarif fixe confirmé', 'Suivi trafic en direct', 'Confort premium'],
+        valuePoints: ['Départ ponctuel', 'Tarif fixe confirmé', 'Suivi trafic en direct', 'Trajet confortable'],
         aibdProcess: commonAibdProcess.fr,
         faqs: [
           {
@@ -762,7 +762,7 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
         intentKeyword: 'dakar to aibd transfer',
         travelTime: '45-70 min',
         priceFrom: 'From 25,000 FCFA',
-        valuePoints: ['Punctual departure', 'Confirmed fixed rate', 'Live traffic monitoring', 'Premium comfort'],
+        valuePoints: ['Punctual departure', 'Confirmed fixed rate', 'Live traffic monitoring', 'Comfortable ride'],
         aibdProcess: commonAibdProcess.en,
         faqs: [
           {
@@ -787,7 +787,7 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
         intentKeyword: 'traslado dakar aibd',
         travelTime: '45-70 min',
         priceFrom: 'Desde 25.000 FCFA',
-        valuePoints: ['Salida puntual', 'Tarifa fija confirmada', 'Seguimiento del tráfico en directo', 'Confort premium'],
+        valuePoints: ['Salida puntual', 'Tarifa fija confirmada', 'Seguimiento del tráfico en directo', 'Viaje cómodo'],
         aibdProcess: commonAibdProcess.es,
         faqs: [
           {
@@ -900,7 +900,7 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
       fr: {
         title: 'AIBD Somone Chauffeur Privé Prix Fixe | Navette Xpress',
         description:
-          'Trajet AIBD vers Somone en chauffeur privé avec accueil aéroport et service premium. Réservation simple et ponctualité garantie.',
+          'Trajet AIBD vers Somone en chauffeur privé avec accueil aéroport et service attentionné. Réservation simple et ponctualité garantie.',
         h1: 'Transfert AIBD vers Somone en Chauffeur Privé',
         intentKeyword: 'aibd somone chauffeur prive',
         travelTime: '70-100 min',
@@ -925,7 +925,7 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
       en: {
         title: 'AIBD to Somone Private Driver Fixed Price | Navette Xpress',
         description:
-          'AIBD to Somone trip with a private driver, airport meet & greet and premium service. Simple booking and guaranteed punctuality.',
+          'AIBD to Somone trip with a private driver, airport meet & greet and attentive service. Simple booking and guaranteed punctuality.',
         h1: 'AIBD to Somone Transfer with a Private Driver',
         intentKeyword: 'aibd somone private driver',
         travelTime: '70-100 min',
@@ -950,7 +950,7 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
       es: {
         title: 'AIBD Somone Chofer Privado Precio Fijo | Navette Xpress',
         description:
-          'Trayecto del AIBD a Somone con chofer privado, recepción en el aeropuerto y servicio premium. Reserva sencilla y puntualidad garantizada.',
+          'Trayecto del AIBD a Somone con chofer privado, recepción en el aeropuerto y servicio atento. Reserva sencilla y puntualidad garantizada.',
         h1: 'Traslado AIBD a Somone en Chofer Privado',
         intentKeyword: 'aibd somone chofer privado',
         travelTime: '70-100 min',
@@ -982,7 +982,7 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
     canonicalPath: '/routes/aibd-mbour',
     translations: {
       fr: {
-        title: 'AIBD Mbour Transfert Premium 24/7 | Navette Xpress',
+        title: 'AIBD Mbour Transfert 24/7 | Navette Xpress',
         description:
           'Transfert aéroport AIBD vers Mbour avec chauffeur privé. Service 24/7, prix fixe, assistance bagages et réservation en ligne.',
         h1: 'Trajet AIBD vers Mbour: Transport Privé Fiable',
@@ -1007,7 +1007,7 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
         ],
       },
       en: {
-        title: 'AIBD to Mbour Premium Transfer 24/7 | Navette Xpress',
+        title: 'AIBD to Mbour Transfer 24/7 | Navette Xpress',
         description:
           'AIBD airport transfer to Mbour with a private driver. 24/7 service, fixed price, luggage assistance and online booking.',
         h1: 'AIBD to Mbour Route: Reliable Private Transport',
@@ -1032,7 +1032,7 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
         ],
       },
       es: {
-        title: 'AIBD Mbour Traslado Premium 24/7 | Navette Xpress',
+        title: 'AIBD Mbour Traslado 24/7 | Navette Xpress',
         description:
           'Traslado desde el aeropuerto AIBD a Mbour con chofer privado. Servicio 24/7, precio fijo, asistencia con el equipaje y reserva en línea.',
         h1: 'Trayecto AIBD a Mbour: Transporte Privado Fiable',
@@ -1153,7 +1153,7 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
         title: 'AIBD Saint-Louis Transfert Longue Distance Sécurisé | Navette Xpress',
         description:
           'Transfert privé AIBD vers Saint-Louis avec chauffeur expérimenté. Longue distance confortable, tarif transparent et assistance complète.',
-        h1: 'Transfert AIBD vers Saint-Louis: Longue Distance Premium',
+        h1: 'Transfert AIBD vers Saint-Louis: Longue Distance',
         intentKeyword: 'aibd saint louis transfert',
         travelTime: '3h15-4h15',
         priceFrom: 'À partir de 95 000 FCFA',
@@ -1178,7 +1178,7 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
         title: 'AIBD to Saint-Louis Secure Long-Distance Transfer | Navette Xpress',
         description:
           'Private transfer from AIBD to Saint-Louis with an experienced driver. Comfortable long-distance travel, transparent pricing and full assistance.',
-        h1: 'AIBD to Saint-Louis Transfer: Premium Long-Distance Travel',
+        h1: 'AIBD to Saint-Louis Transfer: Long-Distance Travel',
         intentKeyword: 'aibd saint louis transfer',
         travelTime: '3h15-4h15',
         priceFrom: 'From 95,000 FCFA',
@@ -1203,7 +1203,7 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
         title: 'AIBD Saint-Louis Traslado Larga Distancia Seguro | Navette Xpress',
         description:
           'Traslado privado del AIBD a Saint-Louis con chofer experimentado. Larga distancia cómoda, tarifa transparente y asistencia completa.',
-        h1: 'Traslado AIBD a Saint-Louis: Larga Distancia Premium',
+        h1: 'Traslado AIBD a Saint-Louis: Larga Distancia',
         intentKeyword: 'traslado aibd saint louis',
         travelTime: '3h15-4h15',
         priceFrom: 'Desde 95.000 FCFA',

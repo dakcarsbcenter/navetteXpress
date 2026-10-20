@@ -74,7 +74,7 @@ export const metadata: Metadata = {
     alternateLocale: ['fr_FR', 'en_US'],
     url: 'https://navettexpress.com',
     siteName: 'Navette Xpress',
-    title: 'Navette Xpress — Chauffeur Privé Premium à Dakar',
+    title: 'Navette Xpress — Chauffeur Privé à Dakar',
     description:
       'Transfert aéroport AIBD, navette privée & chauffeur dédié à Dakar. Disponible 24h/24, prix fixe, confirmation immédiate.',
     images: [

@@ -56,7 +56,7 @@ export default function InvoiceEmail({
                 Navette <span style={{ color: brand.gold }}>Xpress</span>
               </Text>
               <Text style={{ fontFamily: fonts.body, fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: brand.textMuted, margin: '6px 0 0' }}>
-                Facturation · Service premium
+                Facturation
               </Text>
             </Section>
 

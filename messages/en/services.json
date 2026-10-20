@@ -20,10 +20,10 @@
   "hero": {
     "titlePrefix": "Excellence",
     "titleAccent": "in Motion",
-    "subtitle": "Discover our premium mobility solutions, designed to meet your highest expectations across Senegal."
+    "subtitle": "Discover our mobility solutions, designed to meet your highest expectations across Senegal."
   },
   "grid": {
-    "loading": "Loading our premium services...",
+    "loading": "Loading our services...",
     "empty": "No services available at the moment.",
     "bookCta": "Book Now"
   },

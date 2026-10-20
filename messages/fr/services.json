@@ -20,10 +20,10 @@
   "hero": {
     "titlePrefix": "L'Excellence",
     "titleAccent": "en Mouvement",
-    "subtitle": "Découvrez nos solutions de mobilité premium conçues pour répondre à vos exigences les plus élevées au Sénégal."
+    "subtitle": "Découvrez nos solutions de mobilité conçues pour répondre à vos exigences les plus élevées au Sénégal."
   },
   "grid": {
-    "loading": "Chargement des services prestige...",
+    "loading": "Chargement des services...",
     "empty": "Aucun service disponible pour le moment.",
     "bookCta": "Réserver maintenant"
   },

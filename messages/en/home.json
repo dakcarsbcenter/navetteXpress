@@ -3,7 +3,7 @@
     "title": "Private Chauffeur Dakar & AIBD Airport Transfer | Navette Xpress",
     "description": "Navette Xpress, the #1 private chauffeur service in Dakar. AIBD airport transfer 24/7, urban shuttle, day hire. Instant online booking. Guaranteed fixed price.",
     "ogTitle": "Private Chauffeur Dakar & AIBD Transfer — Navette Xpress",
-    "ogDescription": "Premium private chauffeur service in Dakar. AIBD airport transfer, 24/7 urban shuttle."
+    "ogDescription": "Private chauffeur service in Dakar. AIBD airport transfer, 24/7 urban shuttle."
   },
   "corridor": "Corridor Dakar — AIBD — Petite Côte",
   "hero": {
@@ -69,7 +69,7 @@
   },
   "fleet": {
     "title": "Our Fleet",
-    "subtitle": "Exceptional vehicles for demanding passengers. Rigorous maintenance and absolute comfort.",
+    "subtitle": "Air-conditioned, rigorously maintained vehicles for comfortable journeys.",
     "viewAll": "See all vehicles",
     "loading": "Loading the fleet…",
     "empty": "Our fleet will be available here soon.",
@@ -79,7 +79,6 @@
     "onRequest": "On request",
     "bookVehicleAria": "Book this vehicle",
     "categories": {
-      "luxurySupreme": "Supreme Luxury",
       "prestigeSuv": "Prestige SUV",
       "businessVan": "Business Van",
       "vip": "VIP"

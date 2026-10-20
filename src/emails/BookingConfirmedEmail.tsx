@@ -48,7 +48,7 @@ export default function BookingConfirmedEmail({
 
             <Section style={{ padding: '36px 40px 20px', textAlign: 'center' }}>
               <Text style={title}>Navette <span style={{ color: brand.gold }}>Xpress</span></Text>
-              <Text style={subtitle}>Service Premium</Text>
+              <Text style={subtitle}>Transport privé</Text>
             </Section>
 
             <Section style={{ padding: '34px 40px 14px', textAlign: 'center' }}>

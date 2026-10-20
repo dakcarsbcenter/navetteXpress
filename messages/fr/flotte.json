@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Flotte de Véhicules avec Chauffeur Dakar | Berlines, SUV & Minibus Navette Xpress",
-    "description": "Découvrez notre flotte d'exception au Sénégal. Des grandes berlines aux minibus spacieux, tous nos véhicules sont climatisés, assurés et équipés pour votre confort absolu.",
+    "description": "Découvrez notre flotte au Sénégal. Des grandes berlines aux minibus spacieux, tous nos véhicules sont climatisés, assurés et équipés pour votre confort.",
     "keywords": [
       "voiture avec chauffeur Dakar",
       "minibus Sénégal",
@@ -16,8 +16,8 @@
   },
   "hero": {
     "titleLine1": "Une Flotte",
-    "titleLine2": "D'Exception",
-    "subtitle": "Symbole de prestige et de raffinement, notre collection de véhicules est rigoureusement sélectionnée pour vous offrir un confort inégalé lors de vos déplacements."
+    "titleLine2": "Fiable",
+    "subtitle": "Des véhicules climatisés, entretenus et assurés, sélectionnés pour vous offrir un trajet confortable et ponctuel."
   },
   "benefits": {
     "maintenance": {
@@ -25,8 +25,8 @@
       "desc": "Inspection quotidienne et maintenance rigoureuse pour une sécurité optimale."
     },
     "comfort": {
-      "title": "Confort Absolu",
-      "desc": "Climatisation tri-zone et suspensions adaptatives."
+      "title": "Confort à bord",
+      "desc": "Véhicules climatisés pour des trajets agréables."
     },
     "connectivity": {
       "title": "Services à bord",
@@ -40,10 +40,10 @@
   "categories": {
     "sedan": "Berline Executive",
     "luxury": "Grande Berline",
-    "suv": "SUV Premium",
+    "suv": "SUV",
     "van": "Van Business",
-    "bus": "Minibus Prestige",
-    "default": "Véhicule d'Exception"
+    "bus": "Minibus",
+    "default": "Véhicule"
   },
   "cta": {
     "titleLine1": "Votre prochain trajet",

@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Chauffeur Vehicle Fleet Dakar | Sedans, SUVs & Minibuses | Navette Xpress",
-    "description": "Discover our exceptional fleet in Senegal. From large sedans to spacious minibuses, every vehicle is air-conditioned, insured, and equipped for your absolute comfort.",
+    "description": "Discover our fleet in Senegal. From large sedans to spacious minibuses, every vehicle is air-conditioned, insured, and equipped for your comfort.",
     "keywords": [
       "chauffeur car Dakar",
       "minibus Senegal",
@@ -16,8 +16,8 @@
   },
   "hero": {
     "titleLine1": "A Fleet",
-    "titleLine2": "of Distinction",
-    "subtitle": "A symbol of prestige and refinement, our vehicle collection is rigorously curated to offer you unmatched comfort throughout your journeys."
+    "titleLine2": "You Can Rely On",
+    "subtitle": "Air-conditioned, maintained and insured vehicles, selected to give you a comfortable, punctual ride."
   },
   "benefits": {
     "maintenance": {
@@ -25,8 +25,8 @@
       "desc": "Daily inspection and rigorous maintenance for optimal safety."
     },
     "comfort": {
-      "title": "Absolute Comfort",
-      "desc": "Tri-zone air conditioning and adaptive suspension."
+      "title": "Comfort on board",
+      "desc": "Air-conditioned vehicles for pleasant journeys."
     },
     "connectivity": {
       "title": "Onboard Amenities",
@@ -40,10 +40,10 @@
   "categories": {
     "sedan": "Executive Sedan",
     "luxury": "Grand Sedan",
-    "suv": "Premium SUV",
+    "suv": "SUV",
     "van": "Business Van",
-    "bus": "Prestige Minibus",
-    "default": "Exceptional Vehicle"
+    "bus": "Minibus",
+    "default": "Vehicle"
   },
   "cta": {
     "titleLine1": "Your next ride",

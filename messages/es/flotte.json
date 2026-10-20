@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Flota de Vehículos con Chófer en Dakar | Sedanes, SUV y Minibuses | Navette Xpress",
-    "description": "Descubra nuestra flota de excepción en Senegal. Desde amplios sedanes hasta minibuses espaciosos, todos nuestros vehículos están climatizados, asegurados y equipados para su máximo confort.",
+    "description": "Descubra nuestra flota en Senegal. Desde amplios sedanes hasta minibuses espaciosos, todos nuestros vehículos están climatizados, asegurados y equipados para su confort.",
     "keywords": [
       "coche con chófer Dakar",
       "minibús Senegal",
@@ -16,8 +16,8 @@
   },
   "hero": {
     "titleLine1": "Una Flota",
-    "titleLine2": "de Excepción",
-    "subtitle": "Símbolo de prestigio y refinamiento, nuestra colección de vehículos es seleccionada rigurosamente para ofrecerle un confort inigualable en cada desplazamiento."
+    "titleLine2": "Fiable",
+    "subtitle": "Vehículos climatizados, mantenidos y asegurados, seleccionados para ofrecerle un trayecto cómodo y puntual."
   },
   "benefits": {
     "maintenance": {
@@ -25,8 +25,8 @@
       "desc": "Inspección diaria y mantenimiento riguroso para una seguridad óptima."
     },
     "comfort": {
-      "title": "Confort Absoluto",
-      "desc": "Climatización tri-zona y suspensión adaptativa."
+      "title": "Confort a bordo",
+      "desc": "Vehículos climatizados para trayectos agradables."
     },
     "connectivity": {
       "title": "Servicios a bordo",
@@ -40,10 +40,10 @@
   "categories": {
     "sedan": "Berlina Executive",
     "luxury": "Gran Berlina",
-    "suv": "SUV Premium",
+    "suv": "SUV",
     "van": "Furgoneta Business",
-    "bus": "Minibús Prestige",
-    "default": "Vehículo de Excepción"
+    "bus": "Minibús",
+    "default": "Vehículo"
   },
   "cta": {
     "titleLine1": "Su próximo trayecto",
