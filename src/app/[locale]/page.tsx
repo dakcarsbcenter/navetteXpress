@@ -7,6 +7,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { schemaService, schemaFAQ } from '@/lib/schema';
 import { buildAlternates } from '@/lib/seo/localized-metadata';
 import { getActivePricingSegmentsSafe, cheapestBetweenNodes } from '@/lib/pricing-segments';
+import { getActiveVehiclesSafe } from '@/lib/public-catalog';
 
 // Les tarifs affiches (cartes de segments, FAQ et JSON-LD FAQPage) viennent de la
 // table pricing_segments geree en admin. Cette page est rendue a la demande : la
@@ -53,7 +54,10 @@ export default async function Page({
 
     // Base injoignable : on retombe sur les tarifs de repli des fichiers de
     // traduction plutot que de faire tomber la page d'accueil.
-    const pricingSegments = await getActivePricingSegmentsSafe();
+    const [pricingSegments, vehicles] = await Promise.all([
+        getActivePricingSegmentsSafe(),
+        getActiveVehiclesSafe(),
+    ]);
     const fallbackSegments = t.raw('segments.fallback') as HomeSegment[];
 
     const homeSegments: HomeSegment[] =
@@ -81,7 +85,7 @@ export default async function Page({
         <>
             <JsonLd data={schemaService()} />
             <JsonLd data={schemaFAQ(faqs)} />
-            <HomeClient faqs={faqs} segments={homeSegments} />
+            <HomeClient faqs={faqs} segments={homeSegments} vehicles={vehicles} />
         </>
     );
 }

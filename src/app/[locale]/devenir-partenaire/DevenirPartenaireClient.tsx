@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { DISTANCE } from "@/components/motion/variants";
 import {
   Car,
@@ -389,7 +389,7 @@ export default function DevenirPartenaireClient() {
       {/* ── HERO ── */}
       <section className="pt-40 pb-16 border-b border-[#e2dacd]">
         <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: DISTANCE }}
             animate={{ opacity: 1, y: 0 }}
             className="flex flex-col gap-5"
@@ -417,9 +417,9 @@ export default function DevenirPartenaireClient() {
                 <CaretRight size={18} />
               </a>
             </div>
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: DISTANCE }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -433,7 +433,7 @@ export default function DevenirPartenaireClient() {
               className="object-cover"
               sizes="(min-width: 1024px) 50vw, 100vw"
             />
-          </motion.div>
+          </m.div>
         </div>
       </section>
 
@@ -572,7 +572,7 @@ export default function DevenirPartenaireClient() {
             </div>
           </div>
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: DISTANCE }}
             animate={{ opacity: 1, y: 0 }}
             className="bg-background border border-[#d8d2c7] rounded-lg p-7 flex flex-col gap-7"
@@ -767,7 +767,7 @@ export default function DevenirPartenaireClient() {
                 </p>
               </div>
             </form>
-          </motion.div>
+          </m.div>
         </div>
       </section>
 
@@ -898,7 +898,7 @@ function FormBrandCombobox({ label, name, value, onChange, options, required = f
 
 function SuccessState({ t }: { t: ReturnType<typeof useTranslations> }) {
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       className="flex flex-col items-center justify-center min-h-[70vh] px-6 text-center"
@@ -921,6 +921,6 @@ function SuccessState({ t }: { t: ReturnType<typeof useTranslations> }) {
           {t("success.backHome")}
         </span>
       </Link>
-    </motion.div>
+    </m.div>
   );
 }

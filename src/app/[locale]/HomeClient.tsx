@@ -10,6 +10,7 @@ import AdSlot from "@/components/public/AdSlot";
 import { BookingWidget } from "./BookingWidget";
 import { FleetShowcase } from "./FleetShowcase";
 import { SegmentsShowcase, type HomeSegment } from "./SegmentsShowcase";
+import type { PublicVehicle } from "@/lib/public-catalog";
 import { ArrowRight, CheckCircle, Question, SteeringWheel } from "./home-icons";
 
 interface FaqItem {
@@ -20,12 +21,13 @@ interface FaqItem {
 interface HomeClientProps {
   faqs: FaqItem[];
   segments: HomeSegment[];
+  vehicles: PublicVehicle[];
 }
 
 // Server Component : seules les 3 zones reellement interactives de la home
 // client. Le reste (textes, sections statiques, CTA de navigation) est
 // rendu et livre en HTML pur, ce qui reduit le JS envoye au navigateur.
-export default async function HomeClient({ faqs, segments }: HomeClientProps) {
+export default async function HomeClient({ faqs, segments, vehicles }: HomeClientProps) {
   const t = await getTranslations("home");
 
   const waypoints = [
@@ -324,7 +326,7 @@ export default async function HomeClient({ faqs, segments }: HomeClientProps) {
               </ButtonLink>
             </div>
 
-            <FleetShowcase />
+            <FleetShowcase vehicles={vehicles} />
           </div>
         </Reveal></section>
 
@@ -383,7 +385,10 @@ export default async function HomeClient({ faqs, segments }: HomeClientProps) {
       {/* Honeypot anti-scraping : lien volontairement invisible, non lié dans
           la navigation/sitemap. Un vrai visiteur ou crawler SEO ne le suit
           jamais ; seul un scraper qui explore le HTML brut y tombe et se
-          fait blacklister (voir src/app/api/internal-catalog/route.ts). */}
+          fait blacklister (voir src/app/api/internal-catalog/route.ts).
+          <a> brut et non <Link> : Link prechargerait l'URL et blacklisterait de
+          vrais visiteurs. */}
+      {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
       <a
         href="/api/internal-catalog"
         style={{ display: "none" }}

@@ -7,6 +7,7 @@ import { db } from '@/db';
 import { servicesTable } from '@/schema';
 import { requireAdminRole } from '@/utils/admin-permissions';
 import { eq } from 'drizzle-orm';
+import { revalidatePublicServices } from '@/lib/public-catalog';
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -45,11 +46,13 @@ export async function PATCH(req: NextRequest, { params }: Params) {
             return NextResponse.json({ success: false, error: 'Service introuvable' }, { status: 404 });
         }
 
+        revalidatePublicServices();
         return NextResponse.json({ success: true, data: updated });
-    } catch (error: any) {
-        const isAuth = error?.message?.includes('Unauthorized') || error?.message?.includes('Forbidden');
+    } catch (error) {
+        const message = error instanceof Error ? error.message : '';
+        const isAuth = message.includes('Unauthorized') || message.includes('Forbidden');
         return NextResponse.json(
-            { success: false, error: error?.message || 'Erreur serveur' },
+            { success: false, error: message || 'Erreur serveur' },
             { status: isAuth ? 403 : 500 }
         );
     }
@@ -74,11 +77,13 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
             return NextResponse.json({ success: false, error: 'Service introuvable' }, { status: 404 });
         }
 
+        revalidatePublicServices();
         return NextResponse.json({ success: true, data: deleted });
-    } catch (error: any) {
-        const isAuth = error?.message?.includes('Unauthorized') || error?.message?.includes('Forbidden');
+    } catch (error) {
+        const message = error instanceof Error ? error.message : '';
+        const isAuth = message.includes('Unauthorized') || message.includes('Forbidden');
         return NextResponse.json(
-            { success: false, error: error?.message || 'Erreur serveur' },
+            { success: false, error: message || 'Erreur serveur' },
             { status: isAuth ? 403 : 500 }
         );
     }

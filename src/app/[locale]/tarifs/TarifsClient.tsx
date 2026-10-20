@@ -6,8 +6,6 @@ import { Link } from "@/i18n/navigation";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { CorridorStrip } from "@/components/marketing/CorridorStrip";
-import { m } from "framer-motion";
-import { DURATION, EASE, fadeUp } from "@/components/motion/variants";
 
 type DotColor = "accent" | "ink" | "gold";
 type ZoneKey = "dakar" | "aibd" | "petite-cote";
@@ -31,13 +29,10 @@ const dotClasses: Record<DotColor, string> = {
 
 const formatXof = (n: number) => `${n.toLocaleString("fr-FR")}`;
 
-// Apparition d'une ligne de tarif : décalage plafonné pour qu'une longue liste
-// ne mette pas plus d'une demi-seconde à s'afficher.
-const rowMotion = (index: number) => ({
-  initial: { opacity: 0, y: 8 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: DURATION.base, ease: EASE, delay: Math.min(index, 10) * 0.04 },
-});
+// Apparition d'une ligne de tarif, en CSS pur : les prix sont dans le HTML rendu
+// et visibles sans attendre l'hydratation. Decalage plafonne pour qu'une longue
+// liste ne mette pas plus d'une demi-seconde a s'afficher.
+const rowStyle = (index: number) => ({ animationDelay: `${Math.min(index, 10) * 40}ms` });
 
 // `initialSegments` vient de la base (lue côté serveur par la page) : les prix
 // affichés sont donc les bons dès le premier rendu, sans saut à l'écran. Absent
@@ -67,14 +62,14 @@ export default function TarifsClient({ initialSegments }: { initialSegments?: Se
 
         {/* Hero */}
         <section className="max-w-7xl mx-auto px-6 pt-12 pb-8 md:pt-14 md:pb-10">
-          <m.div className="max-w-2xl space-y-5" variants={fadeUp} initial="hidden" animate="visible">
+          <div className="animate-fade-in-up max-w-2xl space-y-5">
             <h1 className="font-bold text-4xl md:text-5xl leading-[1.06] tracking-tight text-foreground">
               {t("hero.title")}
             </h1>
             <p className="text-base md:text-lg leading-relaxed text-body">
               {t("hero.subtitle")}
             </p>
-          </m.div>
+          </div>
         </section>
 
         {/* Filter pills */}
@@ -109,10 +104,10 @@ export default function TarifsClient({ initialSegments }: { initialSegments?: Se
             </div>
             <div className="divide-y divide-border">
               {filtered.map((seg, i) => (
-                <m.div
+                <div
                   key={seg.id ?? seg.route}
-                  {...rowMotion(i)}
-                  className="grid grid-cols-[2.4fr_1fr_1fr_1fr_1fr] items-center py-[17px] transition-colors hover:bg-white/60"
+                  style={rowStyle(i)}
+                  className="animate-row-in grid grid-cols-[2.4fr_1fr_1fr_1fr_1fr] items-center py-[17px] transition-colors hover:bg-white/60"
                 >
                   <div className="flex items-center gap-3">
                     <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${dotClasses[seg.dot]}`} />
@@ -130,7 +125,7 @@ export default function TarifsClient({ initialSegments }: { initialSegments?: Se
                   <div className="text-right text-[15px] text-text-muted">
                     {formatXof(seg.suv)}
                   </div>
-                </m.div>
+                </div>
               ))}
             </div>
           </div>
@@ -138,7 +133,7 @@ export default function TarifsClient({ initialSegments }: { initialSegments?: Se
           {/* Mobile list */}
           <div className="md:hidden divide-y divide-border border-t-2 border-foreground">
             {filtered.map((seg, i) => (
-              <m.div key={seg.id ?? seg.route} {...rowMotion(i)} className="flex items-center justify-between py-[15px] gap-3">
+              <div key={seg.id ?? seg.route} style={rowStyle(i)} className="animate-row-in flex items-center justify-between py-[15px] gap-3">
                 <div className="flex items-center gap-2.5 min-w-0">
                   <span className={`w-2 h-2 rounded-full shrink-0 ${dotClasses[seg.dot]}`} />
                   <div className="min-w-0">
@@ -151,7 +146,7 @@ export default function TarifsClient({ initialSegments }: { initialSegments?: Se
                 <div className="text-[17px] font-semibold text-foreground shrink-0">
                   {formatXof(seg.berline)}
                 </div>
-              </m.div>
+              </div>
             ))}
           </div>
         </section>

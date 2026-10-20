@@ -9,8 +9,8 @@ import InteractiveMap from "@/components/ui/InteractiveMap";
 import { QUOTE_SERVICES } from "@/lib/quote-services";
 import { fetchPublicApi } from "@/lib/apiClient";
 import { useState, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { DISTANCE, VIEWPORT, fadeUp } from "@/components/motion/variants";
+import { m, AnimatePresence } from "framer-motion";
+import { DISTANCE, VIEWPORT } from "@/components/motion/variants";
 import { PaperPlaneTilt, Phone, EnvelopeSimple, MapPin, CheckCircle, CaretRight, Globe, ShieldCheck, Star } from "@phosphor-icons/react";
 
 const monoLabel = "font-[family-name:var(--font-ibm-plex-mono)]";
@@ -119,16 +119,14 @@ export default function ContactClient() {
 
         {/* Hero */}
         <section className="max-w-4xl mx-auto px-6 pt-12 pb-10 md:pt-14 md:pb-14 text-center">
-          <motion.div
-            variants={fadeUp} initial="hidden" animate="visible"
-          >
+          <div className="animate-fade-in-up">
             <h1 className="font-bold text-4xl md:text-5xl leading-[1.06] tracking-tight text-foreground">
               {t("hero.titleLine1")} <span className="text-accent">{t("hero.titleLine2")}</span>
             </h1>
             <p className="mt-5 text-base md:text-lg leading-relaxed text-[#3d3a35] max-w-2xl mx-auto">
               {t("hero.subtitle")}
             </p>
-          </motion.div>
+          </div>
         </section>
 
         <section className="border-t border-[#e2dacd] py-12 md:py-16">
@@ -139,7 +137,7 @@ export default function ContactClient() {
               <div className="lg:col-span-5 space-y-6">
                 <div className="grid gap-4">
                   {contactMethods.map((method, idx) => (
-                    <motion.a
+                    <m.a
                       key={idx}
                       href={method.link}
                       initial={{ opacity: 0, x: -16 }}
@@ -158,12 +156,12 @@ export default function ContactClient() {
                           <p className="text-xs text-text-muted">{method.sub}</p>
                         </div>
                       </div>
-                    </motion.a>
+                    </m.a>
                   ))}
                 </div>
 
                 {/* Emergency Card */}
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, y: DISTANCE }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={VIEWPORT}
@@ -179,7 +177,7 @@ export default function ContactClient() {
                   <a href="tel:+221784651302" className="inline-flex items-center gap-2 font-semibold text-sm hover:gap-3 transition-all">
                     {t("emergency.cta")} <CaretRight size={16} weight="bold" />
                   </a>
-                </motion.div>
+                </m.div>
 
                 {/* Map Component */}
                 <div className="bg-white border border-[#e2dacd] rounded-lg p-3 overflow-hidden aspect-video">
@@ -196,7 +194,7 @@ export default function ContactClient() {
 
               {/* Inquiry Form */}
               <div className="lg:col-span-7">
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, y: DISTANCE }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={VIEWPORT}
@@ -216,7 +214,7 @@ export default function ContactClient() {
 
                     <AnimatePresence mode="wait">
                       {submitStatus === 'success' ? (
-                        <motion.div
+                        <m.div
                           initial={{ opacity: 0, scale: 0.95 }}
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.95 }}
@@ -233,7 +231,7 @@ export default function ContactClient() {
                           >
                             {t("form.success.another")}
                           </button>
-                        </motion.div>
+                        </m.div>
                       ) : (
                         <form onSubmit={handleSubmit} className="space-y-5">
                           {/* Honeypot : invisible pour un visiteur, rempli par les robots */}
@@ -332,19 +330,19 @@ export default function ContactClient() {
                           </Button>
 
                           {submitStatus === 'error' && (
-                            <motion.p
+                            <m.p
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
                               className="text-center text-error text-xs font-medium"
                             >
                               {t("form.error")}
-                            </motion.p>
+                            </m.p>
                           )}
                         </form>
                       )}
                     </AnimatePresence>
                   </div>
-                </motion.div>
+                </m.div>
               </div>
             </div>
           </div>

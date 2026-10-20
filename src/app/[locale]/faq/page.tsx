@@ -5,7 +5,6 @@ import FaqClient from './FaqClient';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { schemaFAQ, schemaBreadcrumb } from '@/lib/schema';
 import { buildAlternates } from '@/lib/seo/localized-metadata';
-import { Link } from '@/i18n/navigation';
 
 export async function generateMetadata({
     params,
@@ -45,14 +44,6 @@ export default async function Page({
         <>
             <JsonLd data={schemaFAQ(schemaFaqs)} />
             <JsonLd data={schemaBreadcrumb(breadcrumbs)} />
-            <section className="max-w-6xl mx-auto px-6 pt-28 pb-8 space-y-4">
-                <h2 className="text-3xl font-display">{t('beforeBooking.heading')}</h2>
-                <div className="flex flex-wrap gap-3 text-sm">
-                    <Link href="/routes" className="px-3 py-2 rounded-lg border border-border hover:border-gold hover:text-gold transition-colors">{t('beforeBooking.routesHub')}</Link>
-                    <Link href="/services" className="px-3 py-2 rounded-lg border border-border hover:border-gold hover:text-gold transition-colors">{t('beforeBooking.servicesHub')}</Link>
-                    <Link href="/reservation" className="px-3 py-2 rounded-lg border border-border hover:border-gold hover:text-gold transition-colors">{t('beforeBooking.reservation')}</Link>
-                </div>
-            </section>
             <FaqClient categories={categories} />
         </>
     );

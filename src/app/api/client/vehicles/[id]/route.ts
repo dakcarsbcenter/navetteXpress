@@ -9,6 +9,7 @@ import { authOptions } from '@/lib/auth'
 import { db } from '@/db'
 import { vehiclesTable, rolePermissionsTable } from '@/schema'
 import { eq, and } from 'drizzle-orm'
+import { revalidatePublicVehicles } from '@/lib/public-catalog'
 
 // Vérifier si l'utilisateur a la permission de modifier/supprimer les véhicules
 async function hasVehiclePermission(userRole: string, action: 'update' | 'delete'): Promise<boolean> {
@@ -50,7 +51,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
     }
 
-    const userRole = (session.user as any).role
+    const userRole = (session.user as { role?: string }).role
 
     console.log('🔧 [PATCH Vehicle] User:', session.user.email, 'Role:', userRole)
 
@@ -99,6 +100,7 @@ export async function PATCH(
     }
 
     console.log('✅ [PATCH Vehicle] Véhicule mis à jour:', vehicleId)
+    revalidatePublicVehicles()
 
     return NextResponse.json({ 
       success: true, 
@@ -126,7 +128,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
     }
 
-    const userRole = (session.user as any).role
+    const userRole = (session.user as { role?: string }).role
 
     console.log('🔧 [PUT Vehicle] User:', session.user.email, 'Role:', userRole)
 
@@ -206,6 +208,7 @@ export async function PUT(
     }
 
     console.log('✅ [PUT Vehicle] Véhicule mis à jour:', vehicleId)
+    revalidatePublicVehicles()
 
     return NextResponse.json({ 
       success: true, 
@@ -233,7 +236,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
     }
 
-    const userRole = (session.user as any).role
+    const userRole = (session.user as { role?: string }).role
 
     console.log('🗑️ [DELETE Vehicle] User:', session.user.email, 'Role:', userRole)
 
@@ -275,6 +278,7 @@ export async function DELETE(
     }
 
     console.log('✅ [DELETE Vehicle] Véhicule supprimé:', vehicleId)
+    revalidatePublicVehicles()
 
     return NextResponse.json({ 
       success: true,

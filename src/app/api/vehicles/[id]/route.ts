@@ -7,6 +7,7 @@ import { db } from '@/db';
 import { vehiclesTable } from '@/schema';
 import { eq } from 'drizzle-orm';
 import { requireVehiclesUpdate, requireVehiclesDelete } from '@/utils/admin-permissions';
+import { revalidatePublicVehicles } from '@/lib/public-catalog';
 
 /**
  * API pour gérer un véhicule spécifique
@@ -127,6 +128,8 @@ export async function PUT(
       .where(eq(vehiclesTable.id, vehicleId))
       .returning();
 
+    revalidatePublicVehicles();
+
     return NextResponse.json({
       success: true,
       message: 'Véhicule mis à jour avec succès',
@@ -184,6 +187,8 @@ export async function DELETE(
     await db
       .delete(vehiclesTable)
       .where(eq(vehiclesTable.id, vehicleId));
+
+    revalidatePublicVehicles();
 
     return NextResponse.json({
       success: true,

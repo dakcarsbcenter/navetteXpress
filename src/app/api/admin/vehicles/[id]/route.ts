@@ -7,6 +7,7 @@ import { db } from "@/db"
 import { vehiclesTable } from "@/schema"
 import { eq } from "drizzle-orm"
 import { requireVehiclesUpdate, requireVehiclesDelete } from "@/utils/admin-permissions"
+import { revalidatePublicVehicles } from "@/lib/public-catalog"
 
 export async function PUT(
   request: NextRequest,
@@ -79,6 +80,7 @@ export async function PUT(
       )
     }
 
+    revalidatePublicVehicles()
     return NextResponse.json({ success: true, data: updatedVehicle[0] })
   } catch (error) {
     console.error("Erreur lors de la mise à jour du véhicule:", error)
@@ -122,6 +124,7 @@ export async function DELETE(
       )
     }
 
+    revalidatePublicVehicles()
     return NextResponse.json({ success: true, data: deletedVehicle[0] })
   } catch (error) {
     console.error("Erreur lors de la suppression du véhicule:", error)

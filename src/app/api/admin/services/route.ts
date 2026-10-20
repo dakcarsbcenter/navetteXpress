@@ -7,6 +7,7 @@ import { db } from '@/db';
 import { servicesTable } from '@/schema';
 import { requireAdminRole } from '@/utils/admin-permissions';
 import { eq, asc } from 'drizzle-orm';
+import { revalidatePublicServices } from '@/lib/public-catalog';
 
 // GET — liste tous les services (admin)
 export async function GET() {
@@ -17,10 +18,11 @@ export async function GET() {
             .from(servicesTable)
             .orderBy(asc(servicesTable.sortOrder), asc(servicesTable.id));
         return NextResponse.json({ success: true, data: services });
-    } catch (error: any) {
-        const isAuth = error?.message?.includes('Unauthorized') || error?.message?.includes('Forbidden');
+    } catch (error) {
+        const message = error instanceof Error ? error.message : '';
+        const isAuth = message.includes('Unauthorized') || message.includes('Forbidden');
         return NextResponse.json(
-            { success: false, error: error?.message || 'Erreur serveur' },
+            { success: false, error: message || 'Erreur serveur' },
             { status: isAuth ? 403 : 500 }
         );
     }
@@ -66,11 +68,13 @@ export async function POST(req: NextRequest) {
             })
             .returning();
 
+        revalidatePublicServices();
         return NextResponse.json({ success: true, data: created }, { status: 201 });
-    } catch (error: any) {
-        const isAuth = error?.message?.includes('Unauthorized') || error?.message?.includes('Forbidden');
+    } catch (error) {
+        const message = error instanceof Error ? error.message : '';
+        const isAuth = message.includes('Unauthorized') || message.includes('Forbidden');
         return NextResponse.json(
-            { success: false, error: error?.message || 'Erreur serveur' },
+            { success: false, error: message || 'Erreur serveur' },
             { status: isAuth ? 403 : 500 }
         );
     }

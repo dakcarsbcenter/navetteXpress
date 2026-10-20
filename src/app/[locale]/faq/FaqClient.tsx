@@ -5,9 +5,8 @@ import { Footer } from "@/components/footer";
 import { CorridorStrip } from "@/components/marketing/CorridorStrip";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { m } from "framer-motion";
-import { fadeUp } from "@/components/motion/variants";
 import { Reveal } from "@/components/motion/Reveal";
+import { Link } from "@/i18n/navigation";
 import { CaretDown, Phone, EnvelopeSimple } from "@phosphor-icons/react";
 
 interface FaqCategory {
@@ -40,14 +39,14 @@ export default function FaqClient({ categories }: FaqClientProps) {
 
         {/* Hero */}
         <section className="max-w-4xl mx-auto px-6 pt-12 pb-10 md:pt-14 md:pb-14 text-center">
-          <m.div variants={fadeUp} initial="hidden" animate="visible">
+          <div className="animate-fade-in-up">
             <h1 className="font-bold text-4xl md:text-5xl leading-[1.06] tracking-tight text-foreground">
               <span className="text-accent">{t("hero.titleHighlight")}</span> {t("hero.titleRest")}
             </h1>
             <p className="mt-5 text-base md:text-lg leading-relaxed text-body max-w-2xl mx-auto">
               {t("hero.subtitle")}
             </p>
-          </m.div>
+          </div>
         </section>
 
         {/* FAQ Content */}
@@ -107,6 +106,30 @@ export default function FaqClient({ categories }: FaqClientProps) {
                 </div>
               </Reveal>
             ))}
+          </div>
+        </section>
+
+        {/* Liens utiles avant de reserver (maillage interne). Ce bloc etait rendu
+            depuis page.tsx, donc avant la <Navigation> : son <h2> precedait le
+            <h1>. Il vit desormais dans le flux, apres les questions. */}
+        <section className="border-t border-line py-12 md:py-14">
+          <div className="max-w-4xl mx-auto px-6 space-y-4">
+            <h2 className="text-2xl font-bold text-foreground">{t("beforeBooking.heading")}</h2>
+            <div className="flex flex-wrap gap-3 text-sm">
+              {[
+                { href: "/routes", label: t("beforeBooking.routesHub") },
+                { href: "/services", label: t("beforeBooking.servicesHub") },
+                { href: "/reservation", label: t("beforeBooking.reservation") },
+              ].map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="px-3 py-2 rounded-lg border border-line hover:border-accent hover:text-accent transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
           </div>
         </section>
 

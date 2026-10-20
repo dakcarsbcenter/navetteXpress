@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/db"
 import { vehiclesTable } from "@/schema"
 import { requireResourcePermission } from "@/utils/admin-permissions"
+import { revalidatePublicVehicles } from "@/lib/public-catalog"
 
 export async function GET() {
   try {
@@ -68,6 +69,7 @@ export async function POST(request: NextRequest) {
       })
       .returning()
 
+    revalidatePublicVehicles()
     return NextResponse.json({ success: true, data: newVehicle[0] })
   } catch (error) {
     console.error("Erreur lors de la création du véhicule:", error)

@@ -1,7 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { fadeUp } from "@/components/motion/variants";
 import { useTranslations } from "next-intl";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
@@ -45,9 +43,7 @@ export default function ZoneClient({ zone, breadcrumbs }: { zone: ZoneData; brea
                             <span className="text-foreground">{zone.name}</span>
                         </nav>
 
-                        <motion.div
-                            variants={fadeUp} initial="hidden" animate="visible"
-                        >
+                        <div className="animate-fade-in-up">
                             <h1 className="text-4xl md:text-5xl lg:text-6xl text-foreground font-bold leading-[1.08] tracking-tight mb-6">
                                 {t("hero.titlePrefix")} <br />
                                 <span className="text-accent">{zone.name}</span>
@@ -107,7 +103,7 @@ export default function ZoneClient({ zone, breadcrumbs }: { zone: ZoneData; brea
                                         remplissage "en attendant". */}
                                 </div>
                             </div>
-                        </motion.div>
+                        </div>
                     </div>
                 </main>
             </div>

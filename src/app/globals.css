@@ -302,6 +302,24 @@
   animation: fadeInUp 0.6s ease-out backwards;
 }
 
+/* Lignes de tableau : meme principe, montee plus courte. Le delai se pose en
+   inline (animation-delay) pour echelonner les lignes. */
+@keyframes rowIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-row-in {
+  animation: rowIn 0.4s ease-out backwards;
+}
+
 /* Bandeau corridor (Dakar - AIBD - Mbour - Petite Cote) : le filet se trace
    d'un point a l'autre, les points apparaissent a son passage. Delais poses
    en inline (--route-i) pour rester du CSS pur, rendu cote serveur. */

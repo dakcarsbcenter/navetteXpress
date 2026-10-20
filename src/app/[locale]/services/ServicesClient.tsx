@@ -1,5 +1,4 @@
 "use client";
-import { useState, useEffect } from "react";
 import { useTranslations, useLocale } from "next-intl";
 
 import { Navigation } from "@/components/navigation";
@@ -13,34 +12,18 @@ import {
 } from "@/components/icons/custom-icons";
 import { serviceTypes, type ServiceLocale } from "@/lib/services";
 import { Link } from "@/i18n/navigation";
-import { motion } from "framer-motion";
-import { DISTANCE, VIEWPORT, DURATION, fadeUp } from "@/components/motion/variants";
+import { m } from "framer-motion";
+import { DISTANCE, VIEWPORT, DURATION } from "@/components/motion/variants";
+import type { PublicService } from "@/lib/public-catalog";
 import { ShieldCheck, Clock, MapPin, Star, CaretRight } from "@phosphor-icons/react";
-import { Skeleton } from "@/components/ui/Skeleton";
 
-export default function ServicesClient() {
+type ServiceCard = Pick<PublicService, "slug" | "icon" | "name" | "description" | "features"> & {
+  id: string | number;
+};
+
+export default function ServicesClient({ services: dbServices }: { services: PublicService[] }) {
   const t = useTranslations("services");
   const locale = useLocale() as ServiceLocale;
-  const [dbServices, setDbServices] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  // Fetch services from DB
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const response = await fetch('/api/services');
-        const data = await response.json();
-        if (data.success) {
-          setDbServices(data.data || []);
-        }
-      } catch (error) {
-        console.error("Erreur lors de la récupération des services:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchServices();
-  }, []);
 
   // Locale-aware fallback list (used when the DB has no services yet)
   const localizedServiceTypes = serviceTypes.map((service) => {
@@ -51,12 +34,12 @@ export default function ServicesClient() {
       icon: service.icon,
       name: translation.name,
       description: translation.description,
-      features: translation.features,
+      features: translation.features ?? [],
     };
   });
 
   // Function to get icon component for each service
-  const getServiceIcon = (service: any) => {
+  const getServiceIcon = (service: ServiceCard) => {
     // If it's a known slug, use a custom icon, otherwise default or use icon string
     const iconStr = service.icon || '✈️';
     const slug = service.slug;
@@ -94,42 +77,27 @@ export default function ServicesClient() {
 
         {/* Hero */}
         <section className="max-w-4xl mx-auto px-6 pt-12 pb-10 md:pt-14 md:pb-14 text-center">
-          <motion.div
-            variants={fadeUp} initial="hidden" animate="visible"
-          >
+          <div className="animate-fade-in-up">
             <h1 className="font-bold text-4xl md:text-5xl leading-[1.06] tracking-tight text-foreground">
               {t("hero.titlePrefix")} <span className="text-accent">{t("hero.titleAccent")}</span>
             </h1>
             <p className="mt-5 text-base md:text-lg text-[#3d3a35] max-w-2xl mx-auto leading-relaxed">
               {t("hero.subtitle")}
             </p>
-          </motion.div>
+          </div>
         </section>
 
         {/* Services Grid */}
         <section className="border-t border-[#e2dacd] py-16 md:py-20">
           <div className="max-w-7xl mx-auto px-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {loading ? (
-                <div className="col-span-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" role="status">
-                  <span className="sr-only">{t("grid.loading")}</span>
-                  {[0, 1, 2].map((i) => (
-                    <div key={i} className="bg-white border border-[#e2dacd] rounded-lg p-7 flex flex-col gap-4">
-                      <Skeleton className="h-16 w-16" />
-                      <Skeleton className="h-6 w-2/3" />
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-5/6" />
-                      <Skeleton className="h-10 w-32 mt-4" />
-                    </div>
-                  ))}
-                </div>
-              ) : dbServices.length === 0 && localizedServiceTypes.length === 0 ? (
+              {dbServices.length === 0 && localizedServiceTypes.length === 0 ? (
                 <div className="col-span-full text-center py-20">
                   <p className="text-text-muted">{t("grid.empty")}</p>
                 </div>
               ) : (
-                (dbServices.length > 0 ? dbServices : localizedServiceTypes).map((service: any, index: number) => (
-                  <motion.div
+                (dbServices.length > 0 ? dbServices : localizedServiceTypes).map((service: ServiceCard, index: number) => (
+                  <m.div
                     key={service.slug || service.id}
                     initial={{ opacity: 0, y: DISTANCE }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -167,7 +135,7 @@ export default function ServicesClient() {
                       </span>
                       <CaretRight size={16} weight="bold" className="group-hover:translate-x-1 transition-transform" />
                     </Link>
-                  </motion.div>
+                  </m.div>
                 ))
               )}
             </div>
@@ -190,7 +158,7 @@ export default function ServicesClient() {
                   <div className="w-14 h-14 bg-background border border-[#e2dacd] rounded-lg flex items-center justify-center mx-auto mb-5">
                     {item.icon}
                   </div>
-                  <h4 className="font-semibold text-lg mb-2 text-foreground">{item.title}</h4>
+                  <h3 className="font-semibold text-lg mb-2 text-foreground">{item.title}</h3>
                   <p className="text-sm text-text-muted leading-relaxed">{item.desc}</p>
                 </div>
               ))}

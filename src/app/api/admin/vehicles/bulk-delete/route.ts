@@ -8,6 +8,7 @@ import { authOptions } from "@/lib/auth"
 import { db } from "@/db"
 import { vehiclesTable, rolePermissionsTable } from "@/schema"
 import { eq, inArray, and } from "drizzle-orm"
+import { revalidatePublicVehicles } from "@/lib/public-catalog"
 
 async function hasVehiclesPermission(userRole: string, action: 'read' | 'create' | 'update' | 'delete'): Promise<boolean> {
     try {
@@ -56,6 +57,8 @@ export async function DELETE(request: NextRequest) {
             .delete(vehiclesTable)
             .where(inArray(vehiclesTable.id, ids))
             .returning({ id: vehiclesTable.id })
+
+        revalidatePublicVehicles()
 
         return NextResponse.json({
             success: true,

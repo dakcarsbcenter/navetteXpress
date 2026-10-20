@@ -5,6 +5,7 @@ import FleetClient from './FleetClient';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { schemaBreadcrumb } from '@/lib/schema';
 import { buildAlternates } from '@/lib/seo/localized-metadata';
+import { getActiveVehiclesSafe } from '@/lib/public-catalog';
 
 export async function generateMetadata({
     params,
@@ -30,6 +31,7 @@ export default async function Page({
     const { locale } = await params;
     setRequestLocale(locale);
     const t = await getTranslations({ locale, namespace: 'flotte' });
+    const vehicles = await getActiveVehiclesSafe();
 
     const breadcrumbs = [
         { name: t('breadcrumbs.home'), item: 'https://navettexpress.com' },
@@ -39,7 +41,7 @@ export default async function Page({
     return (
         <>
             <JsonLd data={schemaBreadcrumb(breadcrumbs)} />
-            <FleetClient />
+            <FleetClient vehicles={vehicles} />
         </>
     );
 }

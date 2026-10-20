@@ -6,6 +6,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { schemaService, schemaBreadcrumb } from '@/lib/schema';
 import { serviceTypes, type ServiceLocale } from '@/lib/services';
 import { buildAlternates } from '@/lib/seo/localized-metadata';
+import { getActiveServicesSafe } from '@/lib/public-catalog';
 
 export async function generateMetadata({
     params,
@@ -32,6 +33,7 @@ export default async function Page({
     setRequestLocale(locale);
     const t = await getTranslations({ locale, namespace: 'services' });
     const loc = locale as ServiceLocale;
+    const services = await getActiveServicesSafe();
 
     const breadcrumbs = [
         { name: t('breadcrumbs.home'), item: 'https://navettexpress.com' },
@@ -52,7 +54,7 @@ export default async function Page({
         <>
             <JsonLd data={schemaService(schemaServices[0])} /> {/* Main service focus */}
             <JsonLd data={schemaBreadcrumb(breadcrumbs)} />
-            <ServicesClient />
+            <ServicesClient services={services} />
         </>
     );
 }

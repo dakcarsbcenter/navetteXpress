@@ -9,7 +9,7 @@ import { Footer } from "@/components/footer";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { Button } from "@/components/ui/Button";
 import { BookNowIcon } from "@/components/icons/custom-icons";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { DURATION, EASE } from "@/components/motion/variants";
 import { Users, Bag, Phone, EnvelopeSimple, ArrowRight, ArrowLeft, ChatCircle, User, Airplane, Plus, ArrowsLeftRight, X } from "@phosphor-icons/react";
 import { serviceTypes, additionalServices, getServiceById } from "@/lib/services";
@@ -921,7 +921,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
 
         <div className="max-w-4xl mx-auto">
           <AnimatePresence mode="wait">
-            <motion.div
+            <m.div
               key={currentStep}
               initial={{ opacity: 0, x: 16 }}
               animate={{ opacity: 1, x: 0 }}
@@ -1392,7 +1392,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                   )}
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           </AnimatePresence>
 
           {/* Modal de confirmation de succès */}
