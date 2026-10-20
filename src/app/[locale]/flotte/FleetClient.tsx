@@ -7,7 +7,7 @@ import { Footer } from "@/components/footer";
 import { CorridorStrip } from "@/components/marketing/CorridorStrip";
 import { Link } from "@/i18n/navigation";
 import { fetchPublicApi } from "@/lib/apiClient";
-import Image from "next/image";
+import { VehiclePhoto } from "@/components/fleet/VehiclePhoto";
 import { Users, Bag, ShieldCheck, Pulse, Star, CaretRight } from "@phosphor-icons/react";
 import { motion } from "framer-motion";
 import { DISTANCE, VIEWPORT, DURATION, fadeUp } from "@/components/motion/variants";
@@ -143,10 +143,9 @@ export default function FleetClient() {
                   >
                     {/* Image */}
                     <div className="relative aspect-[16/10] overflow-hidden">
-                      <Image
+                      <VehiclePhoto
                         src={vehicle.image}
                         alt={vehicle.name}
-                        fill
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />

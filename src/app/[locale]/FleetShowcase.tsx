@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
+import { VehiclePhoto } from "@/components/fleet/VehiclePhoto";
 import { Link } from "@/i18n/navigation";
 import { fetchPublicApi } from "@/lib/apiClient";
 import { ArrowRight, UserCircle, Van } from "@phosphor-icons/react";
@@ -87,12 +87,11 @@ export function FleetShowcase() {
           className="min-w-[85vw] md:min-w-[360px] flex-shrink-0 snap-center rounded-lg bg-white border border-[#e2dacd] flex flex-col overflow-hidden"
         >
           <div className="h-56 relative overflow-hidden">
-            <Image
+            <VehiclePhoto
               src={vehicle.photo || vehicle.image || 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=800'}
               alt={`${vehicle.make} ${vehicle.model}`}
-              width={600}
-              height={400}
-              className="w-full h-full object-cover"
+              sizes="(max-width: 768px) 85vw, 360px"
+              className="object-cover"
             />
             <div className="absolute top-3 right-3 px-3 py-1 rounded bg-background border border-[#e2dacd] text-gold-deep text-[10px] font-semibold uppercase tracking-[0.1em]">
               {vehicle.category || vehicle.vehicleType || t("fleet.categories.vip")}

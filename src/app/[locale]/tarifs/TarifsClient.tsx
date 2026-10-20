@@ -1,19 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { CorridorStrip } from "@/components/marketing/CorridorStrip";
 import { m } from "framer-motion";
-import { fetchPublicApi } from "@/lib/apiClient";
 import { DURATION, EASE, fadeUp } from "@/components/motion/variants";
 
 type DotColor = "accent" | "ink" | "gold";
 type ZoneKey = "dakar" | "aibd" | "petite-cote";
 
-interface Segment {
+export interface Segment {
   id?: number;
   route: string;
   distance: string;
@@ -40,30 +39,14 @@ const rowMotion = (index: number) => ({
   transition: { duration: DURATION.base, ease: EASE, delay: Math.min(index, 10) * 0.04 },
 });
 
-export default function TarifsClient() {
+// `initialSegments` vient de la base (lue côté serveur par la page) : les prix
+// affichés sont donc les bons dès le premier rendu, sans saut à l'écran. Absent
+// (base injoignable ou vide), on retombe sur les tarifs du JSON i18n.
+export default function TarifsClient({ initialSegments }: { initialSegments?: Segment[] }) {
   const t = useTranslations("tarifs");
   const [activeFilter, setActiveFilter] = useState<"tous" | ZoneKey>("tous");
 
-  const fallbackSegments = t.raw("segments") as Segment[];
-  const [segments, setSegments] = useState<Segment[]>(fallbackSegments);
-
-  useEffect(() => {
-    let cancelled = false;
-    fetchPublicApi("/api/pricing-segments")
-      .then((res) => res.json())
-      .then((json) => {
-        if (cancelled) return;
-        if (json.success && Array.isArray(json.data) && json.data.length > 0) {
-          setSegments(json.data);
-        }
-      })
-      .catch(() => {
-        // Silencieux : le tableau reste sur les tarifs par défaut (JSON i18n)
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const segments = initialSegments ?? (t.raw("segments") as Segment[]);
 
   const filters: { key: "tous" | ZoneKey; label: string }[] = [
     { key: "tous", label: t("filters.all") },
