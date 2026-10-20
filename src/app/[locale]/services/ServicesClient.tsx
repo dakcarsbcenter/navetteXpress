@@ -14,7 +14,9 @@ import {
 import { serviceTypes, type ServiceLocale } from "@/lib/services";
 import { Link } from "@/i18n/navigation";
 import { motion } from "framer-motion";
-import { ShieldCheck, Clock, MapPin, Star, CaretRight, Spinner } from "@phosphor-icons/react";
+import { DISTANCE, VIEWPORT, DURATION, fadeUp } from "@/components/motion/variants";
+import { ShieldCheck, Clock, MapPin, Star, CaretRight } from "@phosphor-icons/react";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export default function ServicesClient() {
   const t = useTranslations("services");
@@ -93,9 +95,7 @@ export default function ServicesClient() {
         {/* Hero */}
         <section className="max-w-4xl mx-auto px-6 pt-12 pb-10 md:pt-14 md:pb-14 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            variants={fadeUp} initial="hidden" animate="visible"
           >
             <h1 className="font-bold text-4xl md:text-5xl leading-[1.06] tracking-tight text-foreground">
               {t("hero.titlePrefix")} <span className="text-accent">{t("hero.titleAccent")}</span>
@@ -111,9 +111,17 @@ export default function ServicesClient() {
           <div className="max-w-7xl mx-auto px-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {loading ? (
-                <div className="col-span-full flex flex-col items-center justify-center py-20">
-                  <Spinner size={40} className="animate-spin text-accent mb-4" />
-                  <p className="text-text-muted tracking-widest uppercase text-xs">{t("grid.loading")}</p>
+                <div className="col-span-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" role="status">
+                  <span className="sr-only">{t("grid.loading")}</span>
+                  {[0, 1, 2].map((i) => (
+                    <div key={i} className="bg-white border border-[#e2dacd] rounded-lg p-7 flex flex-col gap-4">
+                      <Skeleton className="h-16 w-16" />
+                      <Skeleton className="h-6 w-2/3" />
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-5/6" />
+                      <Skeleton className="h-10 w-32 mt-4" />
+                    </div>
+                  ))}
                 </div>
               ) : dbServices.length === 0 && localizedServiceTypes.length === 0 ? (
                 <div className="col-span-full text-center py-20">
@@ -123,10 +131,10 @@ export default function ServicesClient() {
                 (dbServices.length > 0 ? dbServices : localizedServiceTypes).map((service: any, index: number) => (
                   <motion.div
                     key={service.slug || service.id}
-                    initial={{ opacity: 0, y: 24 }}
+                    initial={{ opacity: 0, y: DISTANCE }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: Math.min(index, 6) * 0.05 }}
+                    viewport={VIEWPORT}
+                    transition={{ duration: DURATION.slow, delay: Math.min(index, 6) * 0.05 }}
                     className="h-full bg-white border border-[#e2dacd] rounded-lg p-7 flex flex-col"
                   >
                     <div className="mb-6 p-4 bg-background border border-[#e2dacd] rounded-lg w-fit min-w-16 min-h-16 flex items-center justify-center">

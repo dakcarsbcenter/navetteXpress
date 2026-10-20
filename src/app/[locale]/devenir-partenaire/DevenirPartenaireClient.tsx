@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { DISTANCE } from "@/components/motion/variants";
 import {
   Car,
   User,
@@ -389,7 +390,7 @@ export default function DevenirPartenaireClient() {
       <section className="pt-40 pb-16 border-b border-[#e2dacd]">
         <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: DISTANCE }}
             animate={{ opacity: 1, y: 0 }}
             className="flex flex-col gap-5"
           >
@@ -419,7 +420,7 @@ export default function DevenirPartenaireClient() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: DISTANCE }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             className="relative min-h-[320px] lg:min-h-[440px] rounded-lg overflow-hidden border border-[#e2dacd]"
@@ -572,7 +573,7 @@ export default function DevenirPartenaireClient() {
           </div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: DISTANCE }}
             animate={{ opacity: 1, y: 0 }}
             className="bg-background border border-[#d8d2c7] rounded-lg p-7 flex flex-col gap-7"
           >

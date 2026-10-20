@@ -6,7 +6,9 @@ import { Link } from "@/i18n/navigation";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { CorridorStrip } from "@/components/marketing/CorridorStrip";
+import { m } from "framer-motion";
 import { fetchPublicApi } from "@/lib/apiClient";
+import { DURATION, EASE, fadeUp } from "@/components/motion/variants";
 
 type DotColor = "accent" | "ink" | "gold";
 type ZoneKey = "dakar" | "aibd" | "petite-cote";
@@ -29,6 +31,14 @@ const dotClasses: Record<DotColor, string> = {
 };
 
 const formatXof = (n: number) => `${n.toLocaleString("fr-FR")}`;
+
+// Apparition d'une ligne de tarif : décalage plafonné pour qu'une longue liste
+// ne mette pas plus d'une demi-seconde à s'afficher.
+const rowMotion = (index: number) => ({
+  initial: { opacity: 0, y: 8 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: DURATION.base, ease: EASE, delay: Math.min(index, 10) * 0.04 },
+});
 
 export default function TarifsClient() {
   const t = useTranslations("tarifs");
@@ -74,14 +84,14 @@ export default function TarifsClient() {
 
         {/* Hero */}
         <section className="max-w-7xl mx-auto px-6 pt-12 pb-8 md:pt-14 md:pb-10">
-          <div className="max-w-2xl space-y-5">
+          <m.div className="max-w-2xl space-y-5" variants={fadeUp} initial="hidden" animate="visible">
             <h1 className="font-bold text-4xl md:text-5xl leading-[1.06] tracking-tight text-foreground">
               {t("hero.title")}
             </h1>
-            <p className="text-base md:text-lg leading-relaxed text-[#3d3a35]">
+            <p className="text-base md:text-lg leading-relaxed text-body">
               {t("hero.subtitle")}
             </p>
-          </div>
+          </m.div>
         </section>
 
         {/* Filter pills */}
@@ -92,10 +102,10 @@ export default function TarifsClient() {
               type="button"
               onClick={() => setActiveFilter(f.key)}
               aria-pressed={activeFilter === f.key}
-              className={`font-mono text-xs tracking-[0.12em] uppercase px-4 py-2.5 rounded transition-colors ${
+              className={`font-mono text-xs tracking-[0.12em] uppercase px-4 py-3 min-h-11 rounded active:scale-[0.97] transition-[color,background-color,border-color,transform] duration-200 ${
                 activeFilter === f.key
                   ? "bg-foreground text-background"
-                  : "border border-[#c9c3b8] text-[#3d3a35] hover:border-foreground hover:text-foreground"
+                  : "border border-[#c9c3b8] text-body hover:border-foreground hover:text-foreground"
               }`}
             >
               {f.label}
@@ -115,10 +125,11 @@ export default function TarifsClient() {
               <div className="text-right">{t("table.suv")}</div>
             </div>
             <div className="divide-y divide-border">
-              {filtered.map((seg) => (
-                <div
+              {filtered.map((seg, i) => (
+                <m.div
                   key={seg.id ?? seg.route}
-                  className="grid grid-cols-[2.4fr_1fr_1fr_1fr_1fr] items-center py-[17px]"
+                  {...rowMotion(i)}
+                  className="grid grid-cols-[2.4fr_1fr_1fr_1fr_1fr] items-center py-[17px] transition-colors hover:bg-white/60"
                 >
                   <div className="flex items-center gap-3">
                     <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${dotClasses[seg.dot]}`} />
@@ -136,15 +147,15 @@ export default function TarifsClient() {
                   <div className="text-right text-[15px] text-text-muted">
                     {formatXof(seg.suv)}
                   </div>
-                </div>
+                </m.div>
               ))}
             </div>
           </div>
 
           {/* Mobile list */}
           <div className="md:hidden divide-y divide-border border-t-2 border-foreground">
-            {filtered.map((seg) => (
-              <div key={seg.id ?? seg.route} className="flex items-center justify-between py-[15px] gap-3">
+            {filtered.map((seg, i) => (
+              <m.div key={seg.id ?? seg.route} {...rowMotion(i)} className="flex items-center justify-between py-[15px] gap-3">
                 <div className="flex items-center gap-2.5 min-w-0">
                   <span className={`w-2 h-2 rounded-full shrink-0 ${dotClasses[seg.dot]}`} />
                   <div className="min-w-0">
@@ -157,7 +168,7 @@ export default function TarifsClient() {
                 <div className="text-[17px] font-semibold text-foreground shrink-0">
                   {formatXof(seg.berline)}
                 </div>
-              </div>
+              </m.div>
             ))}
           </div>
         </section>
@@ -170,7 +181,7 @@ export default function TarifsClient() {
             </p>
             <Link
               href="/quote-request"
-              className="inline-flex items-center justify-center bg-background text-foreground px-6 py-3.5 rounded font-semibold text-sm hover:opacity-90 transition-opacity shrink-0"
+              className="inline-flex items-center justify-center bg-background text-foreground px-6 py-3.5 rounded font-semibold text-sm hover:opacity-90 active:scale-[0.98] transition-[opacity,transform] duration-150 shrink-0"
             >
               {t("closingCta.cta")}
             </Link>

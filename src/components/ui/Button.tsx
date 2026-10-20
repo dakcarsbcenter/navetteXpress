@@ -1,6 +1,6 @@
 import React from 'react';
 import { Loader2 } from '@/components/icons';
-import { getButtonClasses, type ButtonVariant, type ButtonSize } from './button-classes';
+import { buttonIconRightClasses, getButtonClasses, type ButtonVariant, type ButtonSize } from './button-classes';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -42,7 +42,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {children}
 
         {!loading && icon && iconPosition === 'right' && (
-          <span className="ml-2">{icon}</span>
+          <span className={buttonIconRightClasses}>{icon}</span>
         )}
       </button>
     );

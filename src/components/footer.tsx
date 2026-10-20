@@ -61,7 +61,7 @@ export function Footer() {
                                 <a
                                     key={i}
                                     href={social.href}
-                                    className="w-9 h-9 rounded border border-[#2e2b27] flex items-center justify-center text-[#9a938a] hover:text-gold hover:border-gold transition-colors"
+                                    className="w-11 h-11 rounded border border-[#2e2b27] flex items-center justify-center text-[#9a938a] hover:text-gold hover:border-gold active:scale-95 transition-[color,border-color,transform] duration-150"
                                     aria-label={social.label}
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -77,10 +77,10 @@ export function Footer() {
                         <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#8a8378] mb-4">
                             {t("routesHeading")}
                         </h3>
-                        <ul className="space-y-3">
+                        <ul className="lg:space-y-2">
                             {services.map((service, i) => (
                                 <li key={i}>
-                                    <Link href={service.href} className="text-[#9a938a] hover:text-gold text-sm transition-colors">
+                                    <Link href={service.href} className="link-underline inline-block py-3 lg:py-1 text-[#9a938a] hover:text-gold text-sm transition-colors">
                                         {service.label}
                                     </Link>
                                 </li>
@@ -93,16 +93,16 @@ export function Footer() {
                         <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#8a8378] mb-4">
                             {t("companyHeading")}
                         </h3>
-                        <ul className="space-y-3">
+                        <ul className="lg:space-y-2">
                             {societe.map((item, i) => (
                                 <li key={i}>
-                                    <Link href={item.href} className="text-[#9a938a] hover:text-gold text-sm transition-colors">
+                                    <Link href={item.href} className="link-underline inline-block py-3 lg:py-1 text-[#9a938a] hover:text-gold text-sm transition-colors">
                                         {item.label}
                                     </Link>
                                 </li>
                             ))}
                             <li>
-                                <NextLink href="/cgv" className="text-[#9a938a] hover:text-gold text-sm transition-colors">
+                                <NextLink href="/cgv" className="link-underline inline-block py-3 lg:py-1 text-[#9a938a] hover:text-gold text-sm transition-colors">
                                     {t("company.terms")}
                                 </NextLink>
                             </li>
@@ -120,7 +120,7 @@ export function Footer() {
                             <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#8a8378] mb-3">
                                 {t("supportHeading")}
                             </h3>
-                            <a href="https://wa.me/221784651302" className="flex items-center gap-2 text-gold-light text-sm font-semibold hover:underline">
+                            <a href="https://wa.me/221784651302" className="flex items-center gap-2 py-2 text-gold-light text-sm font-semibold hover:underline">
                                 <Phone size={14} weight="fill" />
                                 +221 78 465 13 02
                             </a>
@@ -142,7 +142,7 @@ export function Footer() {
                             { name: "Yoff", slug: "yoff" },
                         ].map((zone, i, arr) => (
                             <span key={i} className="text-[#8a8378] text-xs">
-                                <Link href={`/zones/${zone.slug}`} className="hover:text-gold transition-colors">
+                                <Link href={`/zones/${zone.slug}`} className="inline-block py-2 hover:text-gold transition-colors">
                                     {zone.name}
                                 </Link>
                                 {i < arr.length - 1 && <span className="text-[#2e2b27] mx-1.5">·</span>}
@@ -168,10 +168,10 @@ export function Footer() {
                         <MapPin size={12} weight="light" />
                         © {currentYear} Navette Xpress Sénégal. {t("rightsReserved")}
                     </p>
-                    <div className="flex gap-6">
-                        <NextLink href="/cgv" className="hover:text-gold transition-colors">{t("legal.terms")}</NextLink>
-                        <NextLink href="/mentions-legales" className="hover:text-gold transition-colors">{t("legal.mentions")}</NextLink>
-                        <NextLink href="/confidentialite" className="hover:text-gold transition-colors">{t("legal.privacy")}</NextLink>
+                    <div className="flex flex-wrap gap-x-6">
+                        <NextLink href="/cgv" className="inline-block py-2 hover:text-gold transition-colors">{t("legal.terms")}</NextLink>
+                        <NextLink href="/mentions-legales" className="inline-block py-2 hover:text-gold transition-colors">{t("legal.mentions")}</NextLink>
+                        <NextLink href="/confidentialite" className="inline-block py-2 hover:text-gold transition-colors">{t("legal.privacy")}</NextLink>
                     </div>
                 </div>
             </div>

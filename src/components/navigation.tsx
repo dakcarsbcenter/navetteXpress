@@ -36,12 +36,13 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const headerClasses = variant === "transparent"
-    ? `fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled
+    ? `fixed top-0 left-0 right-0 z-50 transition-[background-color,padding,box-shadow,border-color] duration-200 ${isScrolled
       ? "bg-background/90 backdrop-blur-xl border-b border-border py-2 shadow-sm"
       : "bg-transparent py-4"
     }`
@@ -88,43 +89,43 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
           <div className="flex justify-between items-center h-16">
 
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-3 group">
+            <Link href="/" className="relative z-50 flex items-center gap-3 group shrink-0">
               <div className="w-10 h-10 bg-[#12100E] rounded flex items-center justify-center shrink-0">
                 <span className="text-[#F7F3EC] font-bold text-xl">NX</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-foreground font-semibold text-xl leading-none tracking-tight">Navette Xpress</span>
+                <span className="text-foreground font-semibold text-xl leading-none tracking-tight whitespace-nowrap">Navette Xpress</span>
                 <span className="text-text-muted text-[10px] tracking-[0.2em] font-medium leading-none mt-1 uppercase font-[family-name:var(--font-ibm-plex-mono)]">Dakar — AIBD — Petite Côte</span>
               </div>
             </Link>
 
             {/* Desktop Nav */}
-            <nav className="hidden lg:flex items-center gap-8">
+            <nav className="hidden xl:flex items-center gap-6 2xl:gap-8">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-foreground/70 hover:text-accent text-sm font-medium transition-colors relative group"
+                  className="text-foreground/70 hover:text-accent text-sm font-medium whitespace-nowrap transition-colors relative group"
                 >
                   {link.label}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all group-hover:w-full"></span>
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-[width] duration-300 ease-out group-hover:w-full"></span>
                 </Link>
               ))}
             </nav>
 
             {/* Desktop Actions */}
-            <div className="hidden lg:flex items-center gap-6">
+            <div className="hidden xl:flex items-center gap-6">
               <LanguageSwitcher />
               <ThemeToggle />
 
               {!session ? (
                 <div className="flex items-center gap-3">
-                  <NextLink href="/auth/signin" className="text-foreground text-sm font-medium hover:text-accent transition-colors">
+                  <NextLink href="/auth/signin" className="text-foreground text-sm font-medium whitespace-nowrap hover:text-accent transition-colors">
                     {t("signIn")}
                   </NextLink>
                   <Link
                     href="/reservation"
-                    className="bg-accent text-white px-6 py-2.5 rounded text-sm font-semibold hover:bg-accent-hover transition-colors"
+                    className="bg-accent text-white px-6 py-2.5 rounded text-sm font-semibold whitespace-nowrap hover:bg-accent-hover active:scale-[0.98] transition-[background-color,transform] duration-150 ease-out"
                   >
                     {t("bookNow")}
                   </Link>
@@ -141,8 +142,9 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
                     <CaretDown size={14} weight="light" />
                   </button>
 
-                  {/* Dropdown Menu */}
-                  <div className="absolute right-0 mt-2 w-56 bg-background border border-border rounded-xl shadow-2xl opacity-0 invisible group-hover/user:opacity-100 group-hover/user:visible group-focus-within/user:opacity-100 group-focus-within/user:visible transition-all duration-300 backdrop-blur-xl">
+                  {/* Dropdown Menu : pt-2 (et non mt-2) garde la zone survolée continue entre le bouton et le menu. */}
+                  <div className="absolute right-0 top-full pt-2 w-56 opacity-0 invisible -translate-y-1 group-hover/user:opacity-100 group-hover/user:visible group-hover/user:translate-y-0 group-focus-within/user:opacity-100 group-focus-within/user:visible group-focus-within/user:translate-y-0 transition-[opacity,transform,visibility] duration-200 ease-out">
+                  <div className="bg-background border border-border rounded-xl shadow-2xl backdrop-blur-xl">
                     <div className="p-4 border-b border-border">
                       <p className="text-foreground text-sm font-bold truncate">{session.user?.name}</p>
                       <p className="text-text-muted text-xs truncate">{session.user?.email}</p>
@@ -164,13 +166,14 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
                       </button>
                     </div>
                   </div>
+                  </div>
                 </div>
               )}
             </div>
 
             {/* Mobile Menu Trigger */}
             <button
-              className="lg:hidden text-foreground"
+              className="relative z-50 xl:hidden text-foreground p-2 -mr-2"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label={t("menu")}
               aria-expanded={isMobileMenuOpen}
@@ -185,15 +188,18 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
         <div
           id="mobile-menu"
           inert={!isMobileMenuOpen}
-          className={`lg:hidden fixed inset-0 z-40 bg-background/95 backdrop-blur-2xl transition-transform duration-500 ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
+          className={`xl:hidden fixed inset-0 z-40 bg-background/95 backdrop-blur-2xl transition-transform duration-500 ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
         >
           <div className="h-full flex flex-col p-8 pt-28">
-            <nav className="space-y-6">
-              {navLinks.map((link) => (
+            <nav className="space-y-2">
+              {navLinks.map((link, i) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="block text-2xl font-display text-foreground hover:text-accent transition-colors"
+                  // Apparition échelonnée à l'ouverture ; à la fermeture le délai
+                  // retombe à 0 pour que le panneau se vide en même temps qu'il sort.
+                  style={{ transitionDelay: isMobileMenuOpen ? `${150 + i * 60}ms` : "0ms" }}
+                  className={`block py-2.5 text-2xl font-display text-foreground hover:text-accent transition-[opacity,transform,color] duration-500 ease-out ${isMobileMenuOpen ? "opacity-100 translate-x-0" : "opacity-0 translate-x-6"}`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {link.label}

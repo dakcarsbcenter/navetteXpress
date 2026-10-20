@@ -42,6 +42,16 @@ export function ConfirmationModal({
     }
   }, [isOpen])
 
+  // Echap ferme la fenetre (clavier) : sans cela, seul un clic sur le fond ou la croix la ferme.
+  useEffect(() => {
+    if (!isOpen) return
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [isOpen, onClose])
+
   if (!isClient) return null
 
   const getTypeStyles = () => {
@@ -95,7 +105,12 @@ export function ConfirmationModal({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-120 flex items-center justify-center p-4 font-archivo">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="confirmation-modal-title"
+          className="fixed inset-0 z-120 flex items-center justify-center p-4 font-archivo"
+        >
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -116,7 +131,7 @@ export function ConfirmationModal({
             <div className={`relative bg-[#F7F3EC] border ${styles.border} rounded p-8`}>
               <button
                 onClick={onClose}
-                className="absolute top-4 right-4 text-[#6E6A63] hover:text-[#12100E] transition-colors"
+                className="absolute top-2 right-2 p-3 text-[#6E6A63] hover:text-[#12100E] transition-colors"
                 aria-label="Fermer"
               >
                 <X size={20} weight="regular" />
@@ -124,13 +139,17 @@ export function ConfirmationModal({
 
               {/* Header Icon Section */}
               <div className="flex flex-col items-center text-center mb-6">
-                <div
+                {/* L'icone apparait avec un petit rebond : confirmation visuelle du resultat. */}
+                <motion.div
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: 'spring', stiffness: 320, damping: 16, delay: 0.1 }}
                   className={`w-16 h-16 rounded-full border-2 ${styles.border} flex items-center justify-center ${styles.color} mb-5`}
                 >
                   {styles.icon}
-                </div>
+                </motion.div>
 
-                <h3 className="text-2xl font-bold text-[#12100E] tracking-tight mb-3">
+                <h3 id="confirmation-modal-title" className="text-2xl font-bold text-[#12100E] tracking-tight mb-3">
                   {title}
                 </h3>
 

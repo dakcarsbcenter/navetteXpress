@@ -6,7 +6,10 @@ export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
 // Module volontairement sans dependance a des icones/composants : il doit
 // pouvoir etre importe depuis un Server Component (via ButtonLink) sans
 // tirer de code client-only dans le bundle serveur.
-const buttonBaseClasses = "inline-flex items-center justify-center font-semibold rounded font-[family-name:var(--font-archivo)] transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
+const buttonBaseClasses = "inline-flex items-center justify-center font-semibold rounded font-[family-name:var(--font-archivo)] group/btn transition-[color,background-color,border-color,transform] duration-150 ease-out active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
+
+// Classes de l'icone placee a droite : elle glisse de 4 px au survol du bouton (group).
+export const buttonIconRightClasses = "ml-2 inline-flex transition-transform duration-200 ease-out group-hover/btn:translate-x-1";
 
 const buttonVariantClasses: Record<ButtonVariant, string> = {
   primary: "bg-[#1F5245] hover:bg-[#19433B] text-white focus:ring-[#1F5245]/50",

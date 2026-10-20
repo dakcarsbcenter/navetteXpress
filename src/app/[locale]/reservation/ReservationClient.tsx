@@ -10,6 +10,7 @@ import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { Button } from "@/components/ui/Button";
 import { BookNowIcon } from "@/components/icons/custom-icons";
 import { motion, AnimatePresence } from "framer-motion";
+import { DURATION, EASE } from "@/components/motion/variants";
 import { Users, Bag, Phone, EnvelopeSimple, ArrowRight, ArrowLeft, ChatCircle, User, Airplane, Plus, ArrowsLeftRight, X } from "@phosphor-icons/react";
 import { serviceTypes, additionalServices, getServiceById } from "@/lib/services";
 import { useRouter } from "@/i18n/navigation";
@@ -888,6 +889,11 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
         <div className="max-w-2xl mx-auto mb-12 px-2">
           <div className="flex items-center justify-between relative">
             <div className="absolute top-[9px] left-0 right-0 h-[1.5px] bg-[#12100E] z-0" />
+            {/* Le filet se colore en vert jusqu'a l'etape en cours (corridor parcouru). */}
+            <div
+              className="absolute top-[9px] left-0 h-[1.5px] bg-accent z-0 transition-[width] duration-500 ease-out"
+              style={{ width: `${((currentStep - 1) / 2) * 100}%` }}
+            />
             {[1, 2, 3].map((step, i) => {
               const isActive = currentStep === step;
               const isPast = currentStep > step;
@@ -897,7 +903,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                     type="button"
                     onClick={() => isPast && setCurrentStep(step)}
                     disabled={!isPast}
-                    className={`w-[13px] h-[13px] rounded-full border-2 transition-colors ${isActive || isPast
+                    className={`relative w-[13px] h-[13px] rounded-full border-2 transition-[background-color,border-color,transform] duration-300 after:content-[''] after:absolute after:-inset-3 ${isActive ? 'scale-125' : ''} ${isActive || isPast
                       ? (i === 2 ? 'bg-[#B4643A] border-[#B4643A]' : 'bg-accent border-accent')
                       : 'bg-background border-[#c9c3b8]'
                       }`}
@@ -920,7 +926,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
               initial={{ opacity: 0, x: 16 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -16 }}
-              transition={{ duration: 0.25 }}
+              transition={{ duration: DURATION.base, ease: EASE }}
               className="relative z-10"
             >
               {/* Message pour les utilisateurs non connectés */}

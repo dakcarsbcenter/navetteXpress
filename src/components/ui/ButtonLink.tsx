@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from '@/i18n/navigation';
-import { getButtonClasses, type ButtonSize, type ButtonVariant } from '@/components/ui/button-classes';
+import { buttonIconRightClasses, getButtonClasses, type ButtonSize, type ButtonVariant } from '@/components/ui/button-classes';
 
 interface ButtonLinkProps {
   href: string;
@@ -30,7 +30,7 @@ export function ButtonLink({
     <Link href={href} className={getButtonClasses(variant, size, className)}>
       {icon && iconPosition === 'left' && <span className="mr-2">{icon}</span>}
       {children}
-      {icon && iconPosition === 'right' && <span className="ml-2">{icon}</span>}
+      {icon && iconPosition === 'right' && <span className={buttonIconRightClasses}>{icon}</span>}
     </Link>
   );
 }

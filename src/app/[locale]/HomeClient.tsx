@@ -2,6 +2,8 @@ import { getTranslations } from "next-intl/server";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { ButtonLink } from "@/components/ui/ButtonLink";
+import { Reveal } from "@/components/motion/Reveal";
+import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import AdSlot from "@/components/public/AdSlot";
@@ -59,12 +61,12 @@ export default async function HomeClient({ faqs, segments }: HomeClientProps) {
 
       <main id="main-content" tabIndex={-1} className="pt-28 md:pt-36 focus:outline-none">
         {/* Corridor strip */}
-        <div className="border-b border-[#e2dacd]">
+        <div className="border-b border-line">
           <div className="max-w-7xl mx-auto px-6 py-3 flex items-center overflow-x-auto">
             {waypoints.map((wp, i) => (
               <div key={wp.label} className="flex items-center flex-1 last:flex-none">
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className={`w-2 h-2 rounded-full ${wp.dot}`} />
+                  <span className={`route-dot w-2 h-2 rounded-full ${wp.dot}`} style={{ "--route-i": i } as React.CSSProperties} />
                   <span className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-foreground">
                     {wp.label}
                   </span>
@@ -75,7 +77,7 @@ export default async function HomeClient({ faqs, segments }: HomeClientProps) {
                   )}
                 </div>
                 {i < waypoints.length - 1 && (
-                  <span className="flex-1 h-[1.5px] bg-foreground mx-3 min-w-6" />
+                  <span className="route-seg flex-1 h-[1.5px] bg-foreground mx-3 min-w-6" style={{ "--route-i": i } as React.CSSProperties} />
                 )}
               </div>
             ))}
@@ -93,21 +95,21 @@ export default async function HomeClient({ faqs, segments }: HomeClientProps) {
 
             <h1
               className="animate-fade-in-up text-4xl md:text-6xl font-semibold text-foreground leading-[1.05] tracking-tight"
-              style={{ animationDelay: "0.1s", animationFillMode: "backwards" }}
+              style={{ animationDelay: "0.1s" }}
             >
               {t("hero.titleLine1")}<br />{t("hero.titleLine2")}
             </h1>
 
             <p
-              className="animate-fade-in-up text-[#3d3a35] text-lg max-w-lg leading-relaxed"
-              style={{ animationDelay: "0.2s", animationFillMode: "backwards" }}
+              className="animate-fade-in-up text-body text-lg max-w-lg leading-relaxed"
+              style={{ animationDelay: "0.2s" }}
             >
               {t("hero.subtitle")}
             </p>
 
             <div
               className="animate-fade-in-up flex flex-wrap gap-3 pt-2"
-              style={{ animationDelay: "0.3s", animationFillMode: "backwards" }}
+              style={{ animationDelay: "0.3s" }}
             >
               <ButtonLink
                 href="/reservation"
@@ -129,7 +131,7 @@ export default async function HomeClient({ faqs, segments }: HomeClientProps) {
             <div className="flex items-center gap-8 pt-6 flex-wrap">
               {stats.map((s, i) => (
                 <div key={s.label} className="flex items-center gap-8">
-                  {i > 0 && <div className="h-8 w-px bg-[#e2dacd]" />}
+                  {i > 0 && <div className="h-8 w-px bg-line" />}
                   <div>
                     <div className="text-foreground font-semibold text-2xl font-[family-name:var(--font-ibm-plex-mono)]">
                       {s.value}
@@ -143,7 +145,7 @@ export default async function HomeClient({ faqs, segments }: HomeClientProps) {
             </div>
           </div>
 
-          <div className="relative h-[320px] md:h-[400px] rounded-lg overflow-hidden border border-[#e2dacd]">
+          <div className="relative h-[320px] md:h-[400px] rounded-lg overflow-hidden border border-line">
             <Image
               src="/images/Chauffeur-Services-dakar-senegal-navette-xpress.jpg"
               alt={t("hero.imageAlt")}
@@ -158,30 +160,29 @@ export default async function HomeClient({ faqs, segments }: HomeClientProps) {
         <AdSlot placement="home_hero" />
 
         {/* Differentiators */}
-        <section className="border-t border-[#e2dacd]">
-          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3">
+        <section className="border-t border-line">
+          <Stagger className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3">
             {differentiators.map((d, i) => (
-              <div
+              <StaggerItem
                 key={d.n}
-                className={`animate-fade-in-up px-6 md:px-10 py-10 flex flex-col gap-3 border-b md:border-b-0 border-[#e2dacd] ${
+                className={`px-6 md:px-10 py-10 flex flex-col gap-3 border-b md:border-b-0 border-line ${
                   i < differentiators.length - 1 ? 'md:border-r' : ''
                 }`}
-                style={{ animationDelay: `${i * 0.1}s`, animationFillMode: "backwards" }}
               >
                 <span className="font-[family-name:var(--font-ibm-plex-mono)] text-xs tracking-[0.14em] text-gold-deep">
                   {d.n}
                 </span>
                 <h3 className="text-lg font-semibold text-foreground">{d.title}</h3>
-                <p className="text-sm text-[#3d3a35] leading-relaxed">{d.desc}</p>
-              </div>
+                <p className="text-sm text-body leading-relaxed">{d.desc}</p>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </section>
 
         <AdSlot placement="home_services" />
 
         {/* Segments */}
-        <section className="border-t border-[#e2dacd] py-12 md:py-16">
+        <section className="border-t border-line py-12 md:py-16">
           <div className="max-w-7xl mx-auto px-6">
             <div className="flex flex-wrap items-baseline justify-between gap-4 mb-8">
               <h2 className="text-2xl md:text-4xl font-semibold text-foreground tracking-tight">
@@ -196,7 +197,7 @@ export default async function HomeClient({ faqs, segments }: HomeClientProps) {
         </section>
 
         {/* Hôtels, entreprises, ONG */}
-        <section className="bg-foreground py-14 md:py-16">
+        <section className="bg-foreground py-14 md:py-16"><Reveal>
           <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             <div className="flex flex-col gap-4">
               <span className="font-[family-name:var(--font-ibm-plex-mono)] text-xs tracking-[0.16em] uppercase text-gold">
@@ -205,7 +206,7 @@ export default async function HomeClient({ faqs, segments }: HomeClientProps) {
               <h2 className="text-2xl md:text-4xl font-semibold text-background tracking-tight leading-tight">
                 {t("b2b.title")}
               </h2>
-              <p className="text-[#9a938a] max-w-md leading-relaxed">
+              <p className="text-on-dark max-w-md leading-relaxed">
                 {t("b2b.desc")}
               </p>
               <div className="pt-2">
@@ -226,22 +227,22 @@ export default async function HomeClient({ faqs, segments }: HomeClientProps) {
                     <div className="text-background font-semibold text-3xl md:text-4xl tracking-tight">
                       {s.value}
                     </div>
-                    <div className="text-[#9a938a] text-xs uppercase tracking-[0.14em] mt-2">
+                    <div className="text-on-dark text-xs uppercase tracking-[0.14em] mt-2">
                       {s.label}
                     </div>
                   </div>
                 ))}
               </div>
               <div className="h-px bg-[#2e2b27]" />
-              <p className="text-[#9a938a] leading-relaxed">
+              <p className="text-on-dark leading-relaxed">
                 {t("b2b.footnote")}
               </p>
             </div>
           </div>
-        </section>
+        </Reveal></section>
 
         {/* Devenir chauffeur partenaire */}
-        <section className="bg-[#E8DCC8] py-14 md:py-16 border-y border-[#d8d2c7]">
+        <section className="bg-sand py-14 md:py-16 border-y border-[#d8d2c7]"><Reveal>
           <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="flex items-start gap-4 max-w-xl">
               <div className="w-12 h-12 rounded-lg bg-accent/10 border border-accent/25 flex items-center justify-center shrink-0">
@@ -254,7 +255,7 @@ export default async function HomeClient({ faqs, segments }: HomeClientProps) {
                 <h2 className="text-2xl md:text-3xl font-semibold text-foreground tracking-tight leading-tight">
                   {t("driverCta.title")}
                 </h2>
-                <p className="text-[#3d3a35] leading-relaxed">
+                <p className="text-body leading-relaxed">
                   {t("driverCta.desc")}
                 </p>
               </div>
@@ -270,17 +271,17 @@ export default async function HomeClient({ faqs, segments }: HomeClientProps) {
               {t("driverCta.cta")}
             </ButtonLink>
           </div>
-        </section>
+        </Reveal></section>
 
         {/* Booking Widget */}
-        <section className="py-20 md:py-28" id="booking">
+        <section className="py-20 md:py-28" id="booking"><Reveal>
           <div className="max-w-7xl mx-auto px-6">
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-16 items-center">
               <div className="lg:col-span-2 space-y-6">
                 <h2 className="text-3xl md:text-5xl font-semibold text-foreground leading-[1.1] tracking-tight">
                   {t("booking.title")}
                 </h2>
-                <p className="text-[#3d3a35] text-lg">
+                <p className="text-body text-lg">
                   {t("booking.subtitle")}
                 </p>
                 <div className="space-y-4 pt-2">
@@ -304,17 +305,17 @@ export default async function HomeClient({ faqs, segments }: HomeClientProps) {
               </div>
             </div>
           </div>
-        </section>
+        </Reveal></section>
 
         {/* Fleet Showcase */}
-        <section className="py-20 md:py-24 border-y border-[#e2dacd]">
+        <section className="py-20 md:py-24 border-y border-line"><Reveal>
           <div className="max-w-7xl mx-auto px-6">
             <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
               <div>
                 <h2 className="text-3xl md:text-5xl font-semibold text-foreground tracking-tight mb-4">
                   {t("fleet.title")}
                 </h2>
-                <p className="text-[#3d3a35] text-lg max-w-xl">
+                <p className="text-body text-lg max-w-xl">
                   {t("fleet.subtitle")}
                 </p>
               </div>
@@ -325,18 +326,18 @@ export default async function HomeClient({ faqs, segments }: HomeClientProps) {
 
             <FleetShowcase />
           </div>
-        </section>
+        </Reveal></section>
 
         <AdSlot placement="home_fleet" />
 
         {/* FAQ */}
-        <section className="py-20 md:py-24">
+        <section className="py-20 md:py-24"><Reveal>
           <div className="max-w-7xl mx-auto px-6">
             <div className="space-y-8">
               <h2 className="text-3xl font-semibold text-foreground tracking-tight">{t("faqHeading")}</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8">
                 {faqs.map((f, i) => (
-                  <div key={i} className="py-5 border-t border-[#e2dacd] flex flex-col gap-2">
+                  <div key={i} className="py-5 border-t border-line flex flex-col gap-2">
                     <h3 className="text-foreground font-semibold flex items-start gap-2 text-[15px] leading-snug">
                       <Question className="text-accent shrink-0 mt-0.5" size={16} weight="bold" />
                       {f.question}
@@ -347,10 +348,10 @@ export default async function HomeClient({ faqs, segments }: HomeClientProps) {
               </div>
             </div>
           </div>
-        </section>
+        </Reveal></section>
 
         {/* Final CTA */}
-        <section className="bg-accent py-12">
+        <section className="bg-accent py-12"><Reveal>
           <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex flex-col gap-2 text-center md:text-left">
               <div className="text-background text-2xl md:text-3xl font-semibold tracking-tight">
@@ -363,20 +364,20 @@ export default async function HomeClient({ faqs, segments }: HomeClientProps) {
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
               <Link
                 href="/reservation"
-                className="inline-flex items-center justify-center gap-2 bg-background text-foreground px-7 py-3.5 rounded font-semibold text-base hover:bg-background/90 transition-colors"
+                className="group/btn inline-flex items-center justify-center gap-2 bg-background text-foreground px-7 py-3.5 rounded font-semibold text-base hover:bg-background/90 active:scale-[0.98] transition-[background-color,transform] duration-150 ease-out"
               >
                 {t("finalCta.cta")}
                 <ArrowRight size={18} weight="bold" />
               </Link>
               <Link
                 href="/quote-request"
-                className="inline-flex items-center justify-center gap-2 border border-background/60 text-background px-7 py-3.5 rounded font-semibold text-base hover:bg-background/10 transition-colors"
+                className="inline-flex items-center justify-center gap-2 border border-background/60 text-background px-7 py-3.5 rounded font-semibold text-base hover:bg-background/10 active:scale-[0.98] transition-[background-color,transform] duration-150 ease-out"
               >
                 {t("finalCta.quoteCta")}
               </Link>
             </div>
           </div>
-        </section>
+        </Reveal></section>
       </main>
 
       {/* Honeypot anti-scraping : lien volontairement invisible, non lié dans

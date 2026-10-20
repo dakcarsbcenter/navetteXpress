@@ -10,6 +10,7 @@ import { fetchPublicApi } from "@/lib/apiClient";
 import Image from "next/image";
 import { Users, Bag, ShieldCheck, Pulse, Star, CaretRight } from "@phosphor-icons/react";
 import { motion } from "framer-motion";
+import { DISTANCE, VIEWPORT, DURATION, fadeUp } from "@/components/motion/variants";
 
 // Client-side vehicle data fetching for the demonstration
 async function getVehicles() {
@@ -89,9 +90,7 @@ export default function FleetClient() {
         {/* Hero */}
         <section className="max-w-4xl mx-auto px-6 pt-12 pb-10 md:pt-14 md:pb-14 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            variants={fadeUp} initial="hidden" animate="visible"
           >
             <h1 className="font-bold text-4xl md:text-5xl leading-[1.06] tracking-tight text-foreground">
               {t("hero.titleLine1")} <span className="text-accent">{t("hero.titleLine2")}</span>
@@ -108,9 +107,9 @@ export default function FleetClient() {
             {benefits.map((benefit, bIndex) => (
               <motion.div
                 key={bIndex}
-                initial={{ opacity: 0, y: 16 }}
+                initial={{ opacity: 0, y: DISTANCE }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={VIEWPORT}
                 transition={{ delay: bIndex * 0.1 }}
                 className="bg-white border border-[#e2dacd] rounded-lg p-7 text-center"
               >
@@ -136,10 +135,10 @@ export default function FleetClient() {
                 {vehicles.map((vehicle, vIndex) => (
                   <motion.div
                     key={vehicle.id}
-                    initial={{ opacity: 0, y: 24 }}
+                    initial={{ opacity: 0, y: DISTANCE }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: Math.min(vIndex, 6) * 0.05 }}
+                    viewport={VIEWPORT}
+                    transition={{ duration: DURATION.slow, delay: Math.min(vIndex, 6) * 0.05 }}
                     className="group h-full bg-white border border-[#e2dacd] rounded-lg overflow-hidden flex flex-col"
                   >
                     {/* Image */}

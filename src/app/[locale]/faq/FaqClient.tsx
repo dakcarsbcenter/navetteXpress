@@ -5,7 +5,9 @@ import { Footer } from "@/components/footer";
 import { CorridorStrip } from "@/components/marketing/CorridorStrip";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
+import { fadeUp } from "@/components/motion/variants";
+import { Reveal } from "@/components/motion/Reveal";
 import { CaretDown, Phone, EnvelopeSimple } from "@phosphor-icons/react";
 
 interface FaqCategory {
@@ -38,25 +40,21 @@ export default function FaqClient({ categories }: FaqClientProps) {
 
         {/* Hero */}
         <section className="max-w-4xl mx-auto px-6 pt-12 pb-10 md:pt-14 md:pb-14 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
+          <m.div variants={fadeUp} initial="hidden" animate="visible">
             <h1 className="font-bold text-4xl md:text-5xl leading-[1.06] tracking-tight text-foreground">
               <span className="text-accent">{t("hero.titleHighlight")}</span> {t("hero.titleRest")}
             </h1>
-            <p className="mt-5 text-base md:text-lg leading-relaxed text-[#3d3a35] max-w-2xl mx-auto">
+            <p className="mt-5 text-base md:text-lg leading-relaxed text-body max-w-2xl mx-auto">
               {t("hero.subtitle")}
             </p>
-          </motion.div>
+          </m.div>
         </section>
 
         {/* FAQ Content */}
-        <section className="border-t border-[#e2dacd] py-16 md:py-20">
+        <section className="border-t border-line py-16 md:py-20">
           <div className="max-w-4xl mx-auto px-6">
             {categories.map((category, categoryIndex) => (
-              <div key={categoryIndex} className="mb-14 last:mb-0">
+              <Reveal key={categoryIndex} className="mb-14 last:mb-0">
                 <h2 className="text-2xl font-bold mb-6 text-foreground">
                   {category.title}
                 </h2>
@@ -65,16 +63,18 @@ export default function FaqClient({ categories }: FaqClientProps) {
                   {category.questions.map((faq, faqIndex) => {
                     const isOpen = openItems[`${categoryIndex}-${faqIndex}`];
                     return (
-                      <div key={faqIndex} className="bg-white border border-[#e2dacd] rounded-lg overflow-hidden">
+                      <div key={faqIndex} className="bg-white border border-line rounded-lg overflow-hidden">
                         <button
                           onClick={() => toggleItem(categoryIndex, faqIndex)}
-                          className="w-full text-left p-6 focus:outline-none group"
+                          aria-expanded={!!isOpen}
+                          aria-controls={`faq-${categoryIndex}-${faqIndex}`}
+                          className="w-full text-left p-6 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent group"
                         >
                           <div className="flex items-center justify-between gap-6">
                             <h3 className="font-semibold text-foreground group-hover:text-accent transition-colors">
                               {faq.question}
                             </h3>
-                            <div className="shrink-0 w-9 h-9 rounded-full bg-background border border-[#e2dacd] flex items-center justify-center group-hover:border-accent/40 transition-colors">
+                            <div className="shrink-0 w-9 h-9 rounded-full bg-background border border-line flex items-center justify-center group-hover:border-accent/40 transition-colors">
                               <CaretDown
                                 className={`w-4 h-4 text-accent transition-transform duration-300 ${isOpen ? 'rotate-180' : ''
                                   }`}
@@ -84,23 +84,28 @@ export default function FaqClient({ categories }: FaqClientProps) {
                           </div>
                         </button>
 
+                        {/* grid 0fr -> 1fr : la hauteur s'anime jusqu'a la hauteur reelle du texte (max-h figeait une limite). */}
                         <div
-                          className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                          id={`faq-${categoryIndex}-${faqIndex}`}
+                          inert={!isOpen}
+                          className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
                             }`}
                         >
+                          <div className="overflow-hidden">
                           <div className="px-6 pb-6">
-                            <div className="pt-4 border-t border-[#e2dacd]">
+                            <div className="pt-4 border-t border-line">
                               <p className="text-text-muted leading-relaxed">
                                 {faq.answer}
                               </p>
                             </div>
+                          </div>
                           </div>
                         </div>
                       </div>
                     );
                   })}
                 </div>
-              </div>
+              </Reveal>
             ))}
           </div>
         </section>
@@ -118,7 +123,7 @@ export default function FaqClient({ categories }: FaqClientProps) {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <a
                 href="tel:+221784651302"
-                className="inline-flex items-center justify-center gap-2 bg-background text-foreground px-6 py-3.5 rounded font-semibold text-sm hover:opacity-90 transition-opacity"
+                className="inline-flex items-center justify-center gap-2 bg-background text-foreground px-6 py-3.5 rounded font-semibold text-sm hover:opacity-90 active:scale-[0.98] transition-[opacity,transform] duration-150"
               >
                 <Phone weight="fill" /> +221 78 465 13 02
               </a>

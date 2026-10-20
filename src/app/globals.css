@@ -284,7 +284,9 @@
   }
 }
 
-@keyframes pulse {
+/* Renommee : "pulse" ecrasait la keyframe de Tailwind (animate-pulse) et la
+   rendait quasi invisible (opacite 1 -> 0.8). */
+@keyframes pulseSlow {
 
   0%,
   100% {
@@ -297,7 +299,43 @@
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out;
+  animation: fadeInUp 0.6s ease-out backwards;
+}
+
+/* Bandeau corridor (Dakar - AIBD - Mbour - Petite Cote) : le filet se trace
+   d'un point a l'autre, les points apparaissent a son passage. Delais poses
+   en inline (--route-i) pour rester du CSS pur, rendu cote serveur. */
+@keyframes routeDraw {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes routeDot {
+  from {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.route-seg {
+  transform-origin: left center;
+  animation: routeDraw 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(var(--route-i, 0) * 0.45s + 0.25s);
+}
+
+.route-dot {
+  animation: routeDot 0.4s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(var(--route-i, 0) * 0.45s);
 }
 
 .animate-fadeIn {
@@ -313,16 +351,49 @@
 }
 
 .animate-pulse-slow {
-  animation: pulse 2s ease-in-out infinite;
+  animation: pulseSlow 2s ease-in-out infinite;
 }
 
 .animate-slideUp {
   animation: fadeSlideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+/* Lien dont le soulignement se trace de gauche a droite au survol. */
+.link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0 1px;
+  transition: background-size 0.25s ease-out, color 0.15s;
+}
+
+.link-underline:hover {
+  background-size: 100% 1px;
+}
+
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+}
+
+/* Mouvement reduit : l'utilisateur l'a demande dans son systeme. On coupe les
+   animations et transitions CSS (le spinner de chargement reste actif : c'est un
+   indicateur d'etat, pas un decor) et le defilement anime. Les animations
+   framer-motion sont gerees par <MotionConfig reducedMotion="user">. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  *:not(.animate-spin),
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
 }
 
 /* Custom scrollbar */
@@ -381,6 +452,12 @@ html {
   --color-accent-subtle: var(--color-accent-subtle);
   --color-accent-border: var(--color-accent-border);
   --shadow-accent: var(--shadow-accent);
+
+  /* ── Teintes recurrentes du site public (avant : hex repetes dans les composants) ── */
+  --color-line: #e2dacd;      /* filets et bordures douces */
+  --color-body: #3d3a35;      /* texte courant sur fond clair */
+  --color-on-dark: #9a938a;   /* texte secondaire sur fond sombre */
+  --color-sand: #E8DCC8;      /* bandeaux sable */
 
   /* ── Textes ── */
   --color-text-primary: var(--text-primary);

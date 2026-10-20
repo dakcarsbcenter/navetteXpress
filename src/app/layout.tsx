@@ -3,6 +3,7 @@ import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
+import { MotionProvider } from "@/components/motion/MotionProvider";
 import { GoogleAnalytics } from "./google-analytics";
 import { JsonLd } from '@/components/seo/JsonLd';
 import { schemaLocalBusiness, schemaWebSite } from '@/lib/schema';
@@ -167,7 +168,7 @@ export default async function RootLayout({
             enableSystem={false}
             disableTransitionOnChange
           >
-            {children}
+            <MotionProvider>{children}</MotionProvider>
           </ThemeProvider>
         </AuthSessionProvider>
         <GoogleAnalytics />

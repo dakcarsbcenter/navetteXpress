@@ -1,8 +1,11 @@
 // Les quatre cartes de la home affichent les quatre premiers segments actifs de la
 // table pricing_segments, dans l'ordre defini par l'admin
 // (/admin/dashboard?tab=pricing). Les donnees sont lues cote serveur par
-// src/app/[locale]/page.tsx : la section reste du HTML pur, sans JS ni
-// clignotement entre une valeur de repli et le tarif reel.
+// src/app/[locale]/page.tsx : les tarifs sont dans le HTML initial (pas de
+// clignotement entre une valeur de repli et le tarif reel). Seule l'apparition
+// echelonnee des cartes est animee cote client (Stagger).
+
+import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 
 export interface HomeSegment {
   id?: number;
@@ -23,12 +26,10 @@ const stripePattern = {
 
 export function SegmentsShowcase({ segments }: SegmentsShowcaseProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <Stagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {segments.map((seg) => (
-        <div
-          key={seg.id ?? seg.route}
-          className="bg-white border border-[#e2dacd] rounded-lg overflow-hidden"
-        >
+        <StaggerItem key={seg.id ?? seg.route}>
+        <div className="h-full bg-white border border-line rounded-lg overflow-hidden transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-md">
           <div className="h-24" style={stripePattern} />
           <div className="p-4 flex flex-col gap-2">
             <div className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.1em] text-text-muted">
@@ -45,7 +46,8 @@ export function SegmentsShowcase({ segments }: SegmentsShowcaseProps) {
             </div>
           </div>
         </div>
+        </StaggerItem>
       ))}
-    </div>
+    </Stagger>
   );
 }

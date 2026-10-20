@@ -33,13 +33,13 @@ export function CorridorStrip() {
         {waypoints.map((wp, i) => (
           <Fragment key={wp.label}>
             <div className="flex items-center gap-2 shrink-0">
-              <span className={`w-2 h-2 rounded-full ${dotClasses[wp.color]}`} />
+              <span className={`route-dot w-2 h-2 rounded-full ${dotClasses[wp.color]}`} style={{ "--route-i": i } as React.CSSProperties} />
               <span className="font-mono text-[11px] tracking-[0.14em] text-foreground">
                 {wp.label}
               </span>
             </div>
             {i < waypoints.length - 1 && (
-              <span className="flex-1 h-px bg-foreground/70 mx-3.5" aria-hidden="true" />
+              <span className="route-seg flex-1 h-px bg-foreground/70 mx-3.5" style={{ "--route-i": i } as React.CSSProperties} aria-hidden="true" />
             )}
           </Fragment>
         ))}

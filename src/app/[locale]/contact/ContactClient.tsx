@@ -10,6 +10,7 @@ import { QUOTE_SERVICES } from "@/lib/quote-services";
 import { fetchPublicApi } from "@/lib/apiClient";
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { DISTANCE, VIEWPORT, fadeUp } from "@/components/motion/variants";
 import { PaperPlaneTilt, Phone, EnvelopeSimple, MapPin, CheckCircle, CaretRight, Globe, ShieldCheck, Star } from "@phosphor-icons/react";
 
 const monoLabel = "font-[family-name:var(--font-ibm-plex-mono)]";
@@ -119,9 +120,7 @@ export default function ContactClient() {
         {/* Hero */}
         <section className="max-w-4xl mx-auto px-6 pt-12 pb-10 md:pt-14 md:pb-14 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            variants={fadeUp} initial="hidden" animate="visible"
           >
             <h1 className="font-bold text-4xl md:text-5xl leading-[1.06] tracking-tight text-foreground">
               {t("hero.titleLine1")} <span className="text-accent">{t("hero.titleLine2")}</span>
@@ -145,7 +144,7 @@ export default function ContactClient() {
                       href={method.link}
                       initial={{ opacity: 0, x: -16 }}
                       whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
+                      viewport={VIEWPORT}
                       transition={{ delay: idx * 0.08 }}
                       className="group bg-white border border-[#e2dacd] rounded-lg p-6 hover:border-accent/40 transition-colors"
                     >
@@ -165,9 +164,9 @@ export default function ContactClient() {
 
                 {/* Emergency Card */}
                 <motion.div
-                  initial={{ opacity: 0, y: 16 }}
+                  initial={{ opacity: 0, y: DISTANCE }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
+                  viewport={VIEWPORT}
                   className="bg-accent rounded-lg p-7 text-white"
                 >
                   <div className="flex gap-3 items-center mb-3">
@@ -198,9 +197,9 @@ export default function ContactClient() {
               {/* Inquiry Form */}
               <div className="lg:col-span-7">
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: DISTANCE }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
+                  viewport={VIEWPORT}
                   className="bg-white border border-[#e2dacd] rounded-lg p-8 md:p-10 relative overflow-hidden"
                 >
                   <div className="absolute top-0 right-0 p-8 opacity-[0.04] text-foreground pointer-events-none">
