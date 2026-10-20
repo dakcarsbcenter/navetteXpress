@@ -46,7 +46,15 @@
     "legal": {
       "terms": "Terms",
       "mentions": "Legal Notice",
-      "privacy": "Privacy"
+      "privacy": "Privacy",
+      "cookies": "Manage cookies"
     }
+  },
+  "CookieBanner": {
+    "title": "Cookies",
+    "text": "We use analytics cookies to understand how the site is used. They are only enabled with your consent.",
+    "learnMore": "Learn more",
+    "accept": "Accept",
+    "refuse": "Decline"
   }
 }

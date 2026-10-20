@@ -3,6 +3,8 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { GA_MEASUREMENT_ID } from "@/lib/ga";
+import { openConsentSettings } from "@/lib/consent";
 import { Phone, MapPin, InstagramLogo, FacebookLogo, LinkedinLogo } from "@phosphor-icons/react";
 
 export function Footer() {
@@ -171,6 +173,11 @@ export function Footer() {
                         <Link href="/cgv" className="inline-block py-2 hover:text-gold transition-colors">{t("legal.terms")}</Link>
                         <Link href="/mentions-legales" className="inline-block py-2 hover:text-gold transition-colors">{t("legal.mentions")}</Link>
                         <Link href="/confidentialite" className="inline-block py-2 hover:text-gold transition-colors">{t("legal.privacy")}</Link>
+                        {GA_MEASUREMENT_ID && (
+                            <button type="button" onClick={openConsentSettings} className="inline-block py-2 hover:text-gold transition-colors">
+                                {t("legal.cookies")}
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>

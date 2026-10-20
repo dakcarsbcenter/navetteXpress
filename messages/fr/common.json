@@ -46,7 +46,15 @@
     "legal": {
       "terms": "CGV",
       "mentions": "Mentions Légales",
-      "privacy": "Confidentialité"
+      "privacy": "Confidentialité",
+      "cookies": "Gérer mes cookies"
     }
+  },
+  "CookieBanner": {
+    "title": "Cookies",
+    "text": "Nous utilisons des cookies d'analyse pour comprendre comment le site est utilisé. Ils ne sont activés qu'avec votre accord.",
+    "learnMore": "En savoir plus",
+    "accept": "Accepter",
+    "refuse": "Refuser"
   }
 }
