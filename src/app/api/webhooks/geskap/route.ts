@@ -4,6 +4,9 @@ export const revalidate = 0;
 
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { and, eq, like } from 'drizzle-orm';
+import { db } from '@/db';
+import { notificationQueueTable } from '@/schema';
 import { findDriverIdByPhone, findPendingAssignedBooking, respondToAssignedBooking } from '@/lib/booking-driver-response';
 
 /**
@@ -43,6 +46,91 @@ function verifySignature(rawBody: string, signatureHeader: string | null): boole
   }
 }
 
+const DELIVERY_FAILED_HANDLER = 'whatsapp.deliveryFailed';
+
+/** Premier champ texte non vide parmi les clés données (l'OpenAPI ne documente pas la forme d'un statut en échec). */
+function firstString(source: Record<string, unknown> | undefined, keys: string[]): string | null {
+  for (const key of keys) {
+    const value = source?.[key];
+    if (typeof value === 'string' && value.trim()) return value.trim();
+    if (typeof value === 'number') return String(value);
+  }
+  return null;
+}
+
+function extractFailureReason(data: Record<string, unknown>): string {
+  const nested = Array.isArray(data.errors) ? (data.errors[0] as Record<string, unknown> | undefined) : undefined;
+  const errorObject =
+    data.error && typeof data.error === 'object' ? (data.error as Record<string, unknown>) : undefined;
+
+  const detail =
+    firstString(data, ['error_message', 'error_title', 'reason', 'detail', 'message']) ??
+    (typeof data.error === 'string' ? data.error : null) ??
+    firstString(errorObject, ['message', 'title', 'error_data']) ??
+    firstString(nested, ['message', 'title', 'error_data']);
+  const code =
+    firstString(data, ['error_code', 'code']) ??
+    firstString(errorObject, ['code']) ??
+    firstString(nested, ['code']);
+
+  return [code ? `code ${code}` : null, detail].filter(Boolean).join(' — ') || 'raison non communiquée par Geskap';
+}
+
+/**
+ * Geskap accepte l'envoi (HTTP 200) puis Meta peut le refuser après coup : l'échec n'arrive que par
+ * ce webhook, jamais à l'appel de sendWhatsAppTemplate(). On l'inscrit dans la file des notifications en
+ * 'failed' (jamais rejoué : le worker ne traite que 'pending') pour qu'il apparaisse dans le panneau
+ * admin, avec un message qui dit où regarder quand il s'agit de la facturation Meta (131042).
+ */
+async function recordDeliveryFailure(data: Record<string, unknown> | undefined) {
+  if (!data) return;
+  const status = typeof data.status === 'string' ? data.status.toLowerCase() : '';
+  if (status !== 'failed' && status !== 'error' && status !== 'undelivered') return;
+
+  const reason = extractFailureReason(data);
+  const isPaymentIssue = /131042|payment|eligibility/i.test(`${reason} ${JSON.stringify(data)}`);
+  const messageId = firstString(data, ['id', 'message_id', 'wa_message_id']);
+  const template = firstString(data, ['template', 'template_name']);
+  const to = firstString(data, ['to', 'recipient']);
+
+  const parts = [
+    template ? `Gabarit « ${template} »` : null,
+    to ? `vers ${to.length > 4 ? `${to.slice(0, -4).replace(/\d/g, '*')}${to.slice(-4)}` : to}` : null,
+    `refusé après envoi : ${reason}.`,
+    isPaymentIssue
+      ? 'Facturation Meta, pas le solde de jetons Geskap : vérifier le moyen de paiement de la WABA et la catégorie réelle du gabarit (Utility/Marketing) dans WhatsApp Manager.'
+      : null,
+  ].filter(Boolean);
+
+  try {
+    if (messageId) {
+      const existing = await db
+        .select({ id: notificationQueueTable.id })
+        .from(notificationQueueTable)
+        .where(
+          and(
+            eq(notificationQueueTable.handler, DELIVERY_FAILED_HANDLER),
+            like(notificationQueueTable.payload, `%${messageId}%`)
+          )
+        )
+        .limit(1);
+      // Geskap peut renvoyer le même événement : une seule ligne par message.
+      if (existing.length > 0) return;
+    }
+
+    await db.insert(notificationQueueTable).values({
+      channel: 'whatsapp',
+      handler: DELIVERY_FAILED_HANDLER,
+      payload: JSON.stringify(data),
+      status: 'failed',
+      attempts: 1,
+      lastError: parts.join(' '),
+    });
+  } catch (error) {
+    console.error('❌ [Webhook/Geskap] Impossible d’enregistrer l’échec de livraison:', error);
+  }
+}
+
 export async function POST(request: NextRequest) {
   const rawBody = await request.text();
 
@@ -61,6 +149,7 @@ export async function POST(request: NextRequest) {
 
   if (event === 'message.status') {
     console.log(`ℹ️ [Webhook/Geskap] Statut message: ${JSON.stringify(data)}`);
+    await recordDeliveryFailure(data);
     return NextResponse.json({ ok: true });
   }
 

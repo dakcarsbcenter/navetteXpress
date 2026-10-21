@@ -87,7 +87,7 @@ export function NotificationHealthPanel() {
                 </div>
               </div>
               {job.lastError && (
-                <span style={{ fontSize: "12px", color: "#6E6A63", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{job.lastError}</span>
+                <span style={{ fontSize: "12px", color: "#6E6A63", lineHeight: 1.45 }}>{job.lastError}</span>
               )}
             </div>
           ))}
