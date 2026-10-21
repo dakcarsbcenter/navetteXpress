@@ -106,7 +106,19 @@ const nextConfig: NextConfig = {
       },
       {
         source: '/service/transfert-famille-vip',
-        destination: '/services/transfert-famille-vip-dakar',
+        destination: '/services/transfert-famille-dakar',
+        permanent: true,
+      },
+      // La page a perdu « VIP » dans son slug : l'ancienne URL (et ses versions
+      // en/es) pointe vers la nouvelle, sans passer par un 404.
+      {
+        source: '/services/transfert-famille-vip-dakar',
+        destination: '/services/transfert-famille-dakar',
+        permanent: true,
+      },
+      {
+        source: '/:locale(en|es)/services/transfert-famille-vip-dakar',
+        destination: '/:locale/services/transfert-famille-dakar',
         permanent: true,
       },
       {

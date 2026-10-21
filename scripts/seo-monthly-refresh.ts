@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { allMoneyPages, moneyRoutePages, moneyServicePages, slugToLabel } from '../src/lib/seo-money-pages';
 
@@ -123,11 +123,11 @@ function buildClusterMappingRows(): ClusterMappingRow[] {
       priority: 'P2',
     },
     {
-      cluster: 'Famille/VIP',
+      cluster: 'Famille',
       intent: 'Transactionnel use-case',
-      targetKeywords: 'transfert famille aibd; transfert vip dakar',
+      targetKeywords: 'transfert famille aibd; transfert famille dakar',
       targetPath: '/service/transfert-famille-vip',
-      canonicalPath: '/services/transfert-famille-vip-dakar',
+      canonicalPath: '/services/transfert-famille-dakar',
       priority: 'P2',
     },
     {
@@ -238,6 +238,75 @@ function buildClusterCsv(rows: ClusterMappingRow[]): string {
   return lines.join('\n');
 }
 
+// Vocabulaire interdit sur le site public : le site ne propose ni luxe ni VIP, et
+// ne peut pas affirmer ce qu'il ne mesure pas (classement N°1, chauffeurs
+// certifies, delais de reponse garantis). Les dashboards (messages/*/dashboard-*,
+// statuses) sont hors perimetre : ils ne sont pas publics.
+const FORBIDDEN_PATTERNS: { label: string; pattern: RegExp }[] = [
+  { label: 'luxe / luxury / lujo', pattern: /\bluxe\b|\bluxury\b|\blujo\b|\bluxueu\w*|\blujos\w*/i },
+  { label: 'premium', pattern: /\bpremium\b/i },
+  { label: 'prestige', pattern: /\bprestig\w*/i },
+  { label: 'VIP', pattern: /\bvip\b/i },
+  { label: 'classement N°1', pattern: /N°\s?1\b|#1\b|\bnum[eé]ro 1\b/i },
+  { label: 'certifie', pattern: /\bcertifi[eé]s?\b|\bcertified\b|\bcertificad[oa]s\b/i },
+  { label: 'reponse garantie sous 2 h', pattern: /sous 2 ?(h|heures)|within 2 hours|(respuesta|responder\w*).{0,40}2 horas|plazo de 2 horas/i },
+  { label: '15 minutes avant', pattern: /15 min\w* (avant|en avance|early|antes)/i },
+];
+
+// Chaines a ignorer : noms propres qui contiennent un mot interdit.
+const ALLOWED_PHRASES = [/Exclusive/];
+
+interface VocabularyFinding {
+  source: string;
+  label: string;
+  excerpt: string;
+}
+
+function collectStrings(value: unknown, trail: string, out: { key: string; text: string }[]): void {
+  if (typeof value === 'string') {
+    out.push({ key: trail, text: value });
+  } else if (Array.isArray(value)) {
+    value.forEach((item, index) => collectStrings(item, `${trail}[${index}]`, out));
+  } else if (value && typeof value === 'object') {
+    for (const [key, item] of Object.entries(value)) collectStrings(item, trail ? `${trail}.${key}` : key, out);
+  }
+}
+
+function scanText(source: string, text: string, findings: VocabularyFinding[]): void {
+  for (const { label, pattern } of FORBIDDEN_PATTERNS) {
+    const match = pattern.exec(text);
+    if (!match) continue;
+    const start = Math.max(0, match.index - 30);
+    const excerpt = text.slice(start, match.index + match[0].length + 30).replace(/\s+/g, ' ');
+    if (ALLOWED_PHRASES.some((allowed) => allowed.test(excerpt))) continue;
+    findings.push({ source, label, excerpt });
+  }
+}
+
+async function scanForbiddenVocabulary(): Promise<VocabularyFinding[]> {
+  const findings: VocabularyFinding[] = [];
+
+  for (const locale of ['fr', 'en', 'es']) {
+    const dir = path.join(process.cwd(), 'messages', locale);
+    for (const file of (await readdir(dir)).filter((name) => name.endsWith('.json'))) {
+      if (file.startsWith('dashboard-') || file === 'statuses.json') continue;
+      const strings: { key: string; text: string }[] = [];
+      collectStrings(JSON.parse(await readFile(path.join(dir, file), 'utf-8')), '', strings);
+      for (const { key, text } of strings) scanText(`messages/${locale}/${file} ${key}`, text, findings);
+    }
+  }
+
+  for (const page of allMoneyPages) {
+    for (const [locale, translation] of Object.entries(page.translations)) {
+      const strings: { key: string; text: string }[] = [];
+      collectStrings(translation, '', strings);
+      for (const { key, text } of strings) scanText(`seo-money-pages ${page.slug} ${locale} ${key}`, text, findings);
+    }
+  }
+
+  return findings;
+}
+
 async function main(): Promise<void> {
   const month = parseMonthArg();
   const outputDir = path.join(process.cwd(), 'docs', 'seo', 'refresh');
@@ -266,6 +335,16 @@ async function main(): Promise<void> {
   console.log(`Template CSV genere: ${csvPath}`);
   console.log(`Mapping clusters genere: ${clusterMarkdownPath}`);
   console.log(`Mapping clusters CSV genere: ${clusterCsvPath}`);
+
+  const findings = await scanForbiddenVocabulary();
+  if (findings.length === 0) {
+    console.log('Controle vocabulaire : aucun terme interdit.');
+  } else {
+    console.warn(`Controle vocabulaire : ${findings.length} occurrence(s) a corriger.`);
+    for (const finding of findings) console.warn(`  [${finding.label}] ${finding.source} : ...${finding.excerpt}...`);
+    // --strict : fait echouer le script (CI), sinon simple avertissement.
+    if (process.argv.includes('--strict')) process.exitCode = 1;
+  }
 }
 
 main().catch((error) => {

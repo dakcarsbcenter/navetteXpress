@@ -12,7 +12,7 @@
 export const QUOTE_SERVICES = [
   { id: 'airport', label: 'Transfert aéroport' },
   { id: 'transport', label: 'Transport standard' },
-  { id: 'vip', label: 'Transport VIP' },
+  { id: 'vip', label: 'Transport sur mesure' },
   { id: 'tour', label: 'Tour & Excursion' },
   { id: 'rental', label: 'Location avec chauffeur' },
   { id: 'event', label: 'Transport événementiel' },

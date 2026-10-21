@@ -1,32 +1,32 @@
 {
   "meta": {
-    "title": "Rutas AIBD Dakar Saly Somone Mbour Thies Saint-Louis | Navette Xpress",
-    "description": "Centro de rutas prioritarias de Navette Xpress: compare los traslados AIBD y reserve su chofer privado con la mejor relacion fiabilidad-precio.",
+    "title": "Rutas AIBD: Dakar, Saly, Somone, Mbour | Navette Xpress",
+    "description": "Todos los trayectos desde y hacia el AIBD: Dakar, Saly, Somone, Mbour, Thiès y Saint-Louis. Duración, tarifas y reserva en línea.",
     "ogTitle": "Rutas AIBD y Traslados Privados | Navette Xpress",
-    "ogDescription": "Consulte nuestras paginas de rutas de alta intencion y reserve un traslado privado 24/7 en Senegal."
+    "ogDescription": "Encuentre cada trayecto desde y hacia el AIBD y reserve un traslado privado las 24 horas en Senegal."
   },
   "breadcrumbs": {
     "home": "Inicio",
     "routes": "Rutas"
   },
   "slugPage": {
-    "eyebrow": "Ruta prioritaria",
+    "eyebrow": "Ruta",
     "travelTimeLabel": "Tiempo medio",
-    "availability247": "Puntualidad 24/7",
-    "whyHeading": "Pruebas de fiabilidad",
-    "processHeading": "Proceso de recepcion en el AIBD",
-    "faqHeading": "FAQ de la Ruta",
-    "faqViewAll": "Ver la FAQ completa",
-    "usefulLinksHeading": "Enlaces internos",
-    "recommendedRoutes": "Otras rutas estrategicas",
-    "otherServices": "Servicios asociados",
-    "routesHub": "Volver al centro de rutas",
+    "availability247": "Disponible 24/7",
+    "whyHeading": "Por qué elegir esta ruta",
+    "processHeading": "Proceso de recepción en el AIBD",
+    "faqHeading": "Preguntas sobre esta ruta",
+    "faqViewAll": "Ver todas las preguntas frecuentes",
+    "usefulLinksHeading": "Enlaces útiles",
+    "recommendedRoutes": "Otras rutas",
+    "otherServices": "Servicios relacionados",
+    "routesHub": "Todas las rutas",
     "bookNow": "Reservar este trayecto",
     "breadcrumbHome": "Inicio",
     "breadcrumbRoutes": "Rutas"
   },
   "hub": {
-    "eyebrow": "Centro de rutas",
+    "eyebrow": "Rutas",
     "h1": "Todas nuestras rutas desde y hacia el aeropuerto AIBD",
     "intro": "Cada tramo del corredor Dakar — AIBD — Petite Côte tiene su página: tiempo real de trayecto, precio fijo confirmado antes de la salida y proceso de recepción en el aeropuerto. Elija su ruta para ver el detalle y reservar.",
     "routesHeading": "Rutas AIBD",

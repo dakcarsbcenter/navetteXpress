@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Contactez Navette Xpress — Chauffeur Privé Dakar",
-    "description": "Contactez Navette Xpress pour réserver votre chauffeur privé à Dakar. Disponible par téléphone, WhatsApp et email. +221 78 465 13 02 — Réponse immédiate 24h/24."
+    "description": "Contactez Navette Xpress pour réserver un chauffeur privé à Dakar. Par téléphone, WhatsApp ou email, 24h/24. +221 78 465 13 02"
   },
   "hero": {
     "titleLine1": "Nous Sommes",
@@ -10,12 +10,12 @@
   },
   "methods": {
     "phone": {
-      "title": "Conciergerie 24/7",
+      "title": "Téléphone & WhatsApp",
       "sub": "Disponible via WhatsApp & Appel Direct"
     },
     "email": {
       "title": "Email Officiel",
-      "sub": "Réponse sous 2 heures garanties"
+      "sub": "Nous répondons dès que possible"
     },
     "office": {
       "title": "Siège Social",
@@ -24,7 +24,7 @@
   },
   "emergency": {
     "title": "Service d'Urgence",
-    "quote": "Plus qu'un transport, une garantie de sérénité pour vos transferts de dernière minute.",
+    "quote": "Un transfert de dernière minute ? Appelez-nous, nous répondons 24h/24.",
     "cta": "Appel Immédiat"
   },
   "map": {
@@ -33,8 +33,8 @@
   "form": {
     "titleLine1": "Demande de",
     "titleLine2": "Consultation",
-    "subtitle": "Remplissez ce formulaire d'exclusivité. Un conseiller personnel vous recontactera avec une proposition sur mesure.",
-    "nameLabel": "Nom de Prestige",
+    "subtitle": "Remplissez ce formulaire. Un conseiller vous recontactera avec une proposition adaptée.",
+    "nameLabel": "Nom complet",
     "namePlaceholder": "Votre nom complet",
     "emailLabel": "Coordonnées Email",
     "emailPlaceholder": "votre@email.com",
@@ -47,13 +47,13 @@
     "error": "Une erreur est survenue. Veuillez nous contacter par téléphone.",
     "success": {
       "title": "Message Reçu",
-      "desc": "Votre demande a été transmise à notre service conciergerie. Vous recevrez une réponse sous 2 heures.",
+      "desc": "Votre demande a été transmise à notre équipe. Nous vous répondrons dans les meilleurs délais.",
       "another": "Envoyer un autre message"
     }
   },
   "brandPromise": {
-    "prestige": "Dakar Prestige",
-    "security": "Sécurité Garantie",
-    "excellence": "Service Excellence"
+    "prestige": "Basé à Dakar",
+    "security": "Véhicules assurés",
+    "excellence": "Service 24h/24"
   }
 }

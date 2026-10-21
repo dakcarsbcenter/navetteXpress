@@ -14,7 +14,17 @@ import { ArrowRight, UserCircle, Van } from "@phosphor-icons/react";
  */
 export function FleetShowcase({ vehicles }: { vehicles: PublicVehicle[] }) {
   const t = useTranslations("home");
+  const tFleet = useTranslations("flotte");
   const carouselRef = useRef<HTMLDivElement>(null);
+  // Libelle du type de vehicule quand l'admin n'a pas saisi de categorie : sans
+  // cette table, la valeur brute de l'enum ("luxury") s'affichait sur la carte.
+  const categoryLabels: Record<string, string> = {
+    sedan: tFleet("categories.sedan"),
+    luxury: tFleet("categories.luxury"),
+    suv: tFleet("categories.suv"),
+    van: tFleet("categories.van"),
+    bus: tFleet("categories.bus"),
+  };
   const [isCarouselHovered, setIsCarouselHovered] = useState(false);
 
   useEffect(() => {
@@ -67,7 +77,7 @@ export function FleetShowcase({ vehicles }: { vehicles: PublicVehicle[] }) {
               className="object-cover"
             />
             <div className="absolute top-3 right-3 px-3 py-1 rounded bg-background border border-[#e2dacd] text-gold-deep text-[10px] font-semibold uppercase tracking-[0.1em]">
-              {vehicle.category || vehicle.vehicleType || t("fleet.categories.vip")}
+              {vehicle.category || categoryLabels[vehicle.vehicleType] || tFleet("categories.default")}
             </div>
           </div>
           <div className="p-6 flex flex-col gap-4">

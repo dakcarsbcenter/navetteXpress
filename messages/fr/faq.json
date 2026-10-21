@@ -1,12 +1,12 @@
 {
   "meta": {
-    "title": "FAQ Transfert AIBD, Tarifs et Réservation Chauffeur Privé Dakar | Navette Xpress",
-    "description": "Questions fréquentes sur les transferts AIBD, prix fixes, process d'accueil aéroport, réservation en ligne et service chauffeur privé 24/7."
+    "title": "FAQ Transfert AIBD et Chauffeur Dakar | Navette Xpress",
+    "description": "Questions fréquentes sur les transferts AIBD, les prix, l'accueil à l'aéroport, la réservation en ligne et le chauffeur privé à Dakar."
   },
   "beforeBooking": {
     "heading": "Avant de réserver",
-    "routesHub": "Hub routes",
-    "servicesHub": "Hub services",
+    "routesHub": "Tous les trajets",
+    "servicesHub": "Tous les services",
     "reservation": "Réservation"
   },
   "hero": {
@@ -69,7 +69,7 @@
         },
         {
           "question": "Vos chauffeurs sont-ils professionnels ?",
-          "answer": "Absolument ! Tous nos chauffeurs sont certifiés, expérimentés et connaissent parfaitement les routes du Sénégal."
+          "answer": "Absolument ! Nos chauffeurs sont des professionnels expérimentés et connaissent parfaitement les routes du Sénégal."
         },
         {
           "question": "Proposez-vous des services 24h/24 ?",

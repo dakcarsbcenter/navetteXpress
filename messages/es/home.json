@@ -1,15 +1,15 @@
 {
   "meta": {
-    "title": "Chófer Privado Dakar y Traslado Aeropuerto AIBD | Navette Xpress",
-    "description": "Navette Xpress, el servicio de chófer privado N°1 en Dakar. Traslado al aeropuerto AIBD 24h/24, traslado urbano, disposición por día. Reserva en línea instantánea. Precio fijo garantizado.",
+    "title": "Chófer Privado Dakar y Traslado AIBD | Navette Xpress",
+    "description": "Chófer privado en Dakar: traslado al aeropuerto AIBD 24h/24, traslado urbano, disposición por día. Reserva en línea, precio anunciado antes de confirmar.",
     "ogTitle": "Chófer Privado Dakar y Traslado AIBD — Navette Xpress",
     "ogDescription": "Servicio de chófer privado en Dakar. Traslado al aeropuerto AIBD, traslado urbano 24h/24."
   },
   "corridor": "Corredor Dakar — AIBD — Petite Côte",
   "hero": {
-    "titleLine1": "Una sola ruta.",
-    "titleLine2": "Gestionada de principio a fin.",
-    "subtitle": "Nuestros chóferes hacen este trayecto todos los días. Saben a qué hora se satura el peaje, dónde esperar en AIBD y qué puerta de Saly abre de noche.",
+    "titleLine1": "Chófer privado en Dakar,",
+    "titleLine2": "traslado al aeropuerto AIBD",
+    "subtitle": "Una sola ruta, gestionada de principio a fin. Nuestros chóferes hacen este trayecto todos los días. Saben a qué hora se satura el peaje, dónde esperar en AIBD y qué puerta de Saly abre de noche.",
     "bookCta": "Reservar un trayecto",
     "ratesCta": "Tarifas por segmento",
     "imageAlt": "Chófer de Navette Xpress en el corredor Dakar — AIBD — Petite Côte",
@@ -82,12 +82,7 @@
     "luggageIncluded": "Equipaje incluido",
     "from": "Desde",
     "onRequest": "Bajo presupuesto",
-    "bookVehicleAria": "Reservar este vehículo",
-    "categories": {
-      "prestigeSuv": "SUV de Prestigio",
-      "businessVan": "Furgoneta Business",
-      "vip": "VIP"
-    }
+    "bookVehicleAria": "Reservar este vehículo"
   },
   "faqHeading": "Preguntas frecuentes",
   "finalCta": {
@@ -99,11 +94,11 @@
   "faqs": [
     {
       "question": "¿Cuánto cuesta un traslado Dakar-AIBD?",
-      "answer": "El precio de un traslado entre Dakar y el aeropuerto AIBD varía según el vehículo elegido: desde {berlineDakarAibd} FCFA para un sedán confort y {suvDakarAibd} FCFA para un SUV. El precio es fijo, sin suplemento."
+      "answer": "El precio de un traslado entre Dakar y el aeropuerto AIBD varía según el vehículo elegido: desde {berlineDakarAibd} FCFA para un sedán confort y {suvDakarAibd} FCFA para un SUV. El precio es fijo y se anuncia antes de reservar (recargo nocturno de 5.000 FCFA entre medianoche y las cinco de la mañana)."
     },
     {
       "question": "¿Cómo reservar un chófer privado en Dakar?",
-      "answer": "La reserva se hace en línea en nuestro sitio en menos de 2 minutos: indique su trayecto, elija su vehículo, complete sus datos y confirme. Recibirá inmediatamente una confirmación por correo electrónico y SMS."
+      "answer": "La reserva se hace en línea en nuestro sitio en menos de 2 minutos: indique su trayecto, elija su vehículo, complete sus datos y confirme. Recibirá inmediatamente una confirmación por correo electrónico y WhatsApp."
     },
     {
       "question": "¿Navette Xpress está disponible 24h/24?",

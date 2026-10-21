@@ -64,10 +64,10 @@ export const serviceTypes: ServiceType[] = [
       fr: {
         name: "Chauffeur Privé Dakar",
         description:
-          "Service de chauffeur privé pour tous vos déplacements dans Dakar et ses environs. Confort et sécurité garantis.",
+          "Service de chauffeur privé pour tous vos déplacements dans Dakar et ses environs. Confort et sécurité.",
         features: [
           "Véhicules modernes",
-          "Chauffeurs professionnels certifiés",
+          "Chauffeurs professionnels",
           "Service 24h/24, 7j/7",
           "Réservation instantanée",
           "Prix compétitifs",
@@ -76,10 +76,10 @@ export const serviceTypes: ServiceType[] = [
       en: {
         name: "Private Driver Dakar",
         description:
-          "Private chauffeur service for all your journeys in Dakar and the surrounding area. Comfort and safety guaranteed.",
+          "Private chauffeur service for all your journeys in Dakar and the surrounding area. Comfort and safety.",
         features: [
           "Modern vehicles",
-          "Certified professional drivers",
+          "Professional drivers",
           "Service available 24/7",
           "Instant booking",
           "Competitive rates",
@@ -88,10 +88,10 @@ export const serviceTypes: ServiceType[] = [
       es: {
         name: "Chofer Privado Dakar",
         description:
-          "Servicio de chofer privado para todos sus desplazamientos en Dakar y alrededores. Comodidad y seguridad garantizadas.",
+          "Servicio de chofer privado para todos sus desplazamientos en Dakar y alrededores. Comodidad y seguridad.",
         features: [
           "Vehículos modernos",
-          "Choferes profesionales certificados",
+          "Choferes profesionales",
           "Servicio disponible 24/7",
           "Reserva instantánea",
           "Precios competitivos",
@@ -143,42 +143,36 @@ export const serviceTypes: ServiceType[] = [
   },
   {
     id: "services-vip",
-    icon: "👑",
+    icon: "🧭",
     translations: {
       fr: {
-        name: "Services VIP",
+        name: "Service sur mesure",
         description:
-          "Service sur mesure avec prestations personnalisées pour une clientèle exigeante.",
+          "Une demande particulière ? Décrivez votre besoin, nous vous répondons avec une proposition adaptée.",
         features: [
-          "Véhicules de collection",
-          "Butler personnel disponible",
-          "Service conciergerie inclus",
-          "Sécurité renforcée possible",
-          "Prestations 100% personnalisables",
+          "Devis personnalisé",
+          "Trajets multiples ou groupes",
+          "Facturation entreprise possible",
         ],
       },
       en: {
-        name: "VIP Services",
+        name: "Tailor-made Service",
         description:
-          "Tailor-made service with personalised arrangements for a demanding clientele.",
+          "A special request? Describe what you need and we will come back with a suitable proposal.",
         features: [
-          "Collector vehicles",
-          "Personal butler available",
-          "Concierge service included",
-          "Enhanced security available",
-          "100% customizable arrangements",
+          "Personalised quote",
+          "Multiple trips or groups",
+          "Corporate invoicing available",
         ],
       },
       es: {
-        name: "Servicios VIP",
+        name: "Servicio a medida",
         description:
-          "Servicio a medida con prestaciones personalizadas para una clientela exigente.",
+          "¿Una solicitud especial? Describa lo que necesita y le responderemos con una propuesta adaptada.",
         features: [
-          "Vehículos de colección",
-          "Mayordomo personal disponible",
-          "Servicio de conserjería incluido",
-          "Seguridad reforzada disponible",
-          "Prestaciones 100% personalizables",
+          "Presupuesto personalizado",
+          "Varios trayectos o grupos",
+          "Facturación a empresas disponible",
         ],
       },
     },

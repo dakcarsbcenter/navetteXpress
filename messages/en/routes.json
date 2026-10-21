@@ -1,32 +1,32 @@
 {
   "meta": {
-    "title": "AIBD Routes Dakar Saly Somone Mbour Thies Saint-Louis | Navette Xpress",
-    "description": "Navette Xpress priority routes hub: compare AIBD transfers and book your private driver at the best reliability-to-price ratio.",
+    "title": "AIBD Routes: Dakar, Saly, Somone, Mbour | Navette Xpress",
+    "description": "All routes to and from AIBD: Dakar, Saly, Somone, Mbour, Thiès and Saint-Louis. Travel time, rates and online booking.",
     "ogTitle": "AIBD Routes and Private Transfers | Navette Xpress",
-    "ogDescription": "Browse our high-intent route pages and book a private 24/7 transfer in Senegal."
+    "ogDescription": "Find every route to and from AIBD and book a private transfer around the clock in Senegal."
   },
   "breadcrumbs": {
     "home": "Home",
     "routes": "Routes"
   },
   "slugPage": {
-    "eyebrow": "Priority route",
+    "eyebrow": "Route",
     "travelTimeLabel": "Average time",
-    "availability247": "24/7 punctuality",
-    "whyHeading": "Proof of reliability",
+    "availability247": "Available 24/7",
+    "whyHeading": "Why choose this route",
     "processHeading": "AIBD Welcome Process",
-    "faqHeading": "Route FAQ",
+    "faqHeading": "Questions about this route",
     "faqViewAll": "See the full FAQ",
-    "usefulLinksHeading": "Internal links",
-    "recommendedRoutes": "Other strategic routes",
+    "usefulLinksHeading": "Useful links",
+    "recommendedRoutes": "Other routes",
     "otherServices": "Related services",
-    "routesHub": "Back to routes hub",
+    "routesHub": "All routes",
     "bookNow": "Book this trip",
     "breadcrumbHome": "Home",
     "breadcrumbRoutes": "Routes"
   },
   "hub": {
-    "eyebrow": "Routes hub",
+    "eyebrow": "Routes",
     "h1": "Every route to and from AIBD airport",
     "intro": "Each leg of the Dakar — AIBD — Petite Côte corridor has its own page: real travel time, fixed price confirmed before departure and the airport meet-and-greet process. Pick your route to see the details and book.",
     "routesHeading": "AIBD routes",

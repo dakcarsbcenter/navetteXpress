@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Contacte con Navette Xpress — Chófer Privado en Dakar",
-    "description": "Contacte con Navette Xpress para reservar su chófer privado en Dakar. Disponible por teléfono, WhatsApp y correo electrónico. +221 78 465 13 02 — Respuesta inmediata 24h/24."
+    "description": "Contacte con Navette Xpress para reservar un chófer privado en Dakar. Por teléfono, WhatsApp o correo, 24h/24. +221 78 465 13 02"
   },
   "hero": {
     "titleLine1": "Estamos",
@@ -10,12 +10,12 @@
   },
   "methods": {
     "phone": {
-      "title": "Conserjería 24/7",
+      "title": "Teléfono y WhatsApp",
       "sub": "Disponible por WhatsApp y llamada directa"
     },
     "email": {
       "title": "Correo Oficial",
-      "sub": "Respuesta garantizada en 2 horas"
+      "sub": "Respondemos lo antes posible"
     },
     "office": {
       "title": "Sede Central",
@@ -24,7 +24,7 @@
   },
   "emergency": {
     "title": "Servicio de Urgencia",
-    "quote": "Más que un transporte, una garantía de tranquilidad para sus traslados de última hora.",
+    "quote": "¿Un traslado de última hora? Llámenos: atendemos las 24 horas.",
     "cta": "Llamada Inmediata"
   },
   "map": {
@@ -33,7 +33,7 @@
   "form": {
     "titleLine1": "Solicitud de",
     "titleLine2": "Asesoría",
-    "subtitle": "Complete este formulario exclusivo. Un asesor personal se pondrá en contacto con usted con una propuesta a medida.",
+    "subtitle": "Complete este formulario. Un asesor se pondrá en contacto con usted con una propuesta adaptada.",
     "nameLabel": "Nombre Completo",
     "namePlaceholder": "Su nombre completo",
     "emailLabel": "Correo Electrónico",
@@ -47,13 +47,13 @@
     "error": "Se ha producido un error. Por favor, contáctenos por teléfono.",
     "success": {
       "title": "Mensaje Recibido",
-      "desc": "Su solicitud ha sido transmitida a nuestro servicio de conserjería. Recibirá una respuesta en un plazo de 2 horas.",
+      "desc": "Su solicitud ha sido transmitida a nuestro equipo. Le responderemos lo antes posible.",
       "another": "Enviar otro mensaje"
     }
   },
   "brandPromise": {
-    "prestige": "Dakar Prestige",
-    "security": "Seguridad Garantizada",
-    "excellence": "Excelencia en el Servicio"
+    "prestige": "Con sede en Dakar",
+    "security": "Vehículos asegurados",
+    "excellence": "Servicio 24h/24"
   }
 }

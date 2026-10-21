@@ -1,15 +1,15 @@
 {
   "meta": {
-    "title": "Chauffeur Privé Dakar & Transfert Aéroport AIBD | Navette Xpress",
-    "description": "Navette Xpress, le service de chauffeur privé N°1 à Dakar. Transfert aéroport AIBD 24h/24, navette urbaine, mise à disposition. Réservation en ligne instantanée. Prix fixe garanti.",
+    "title": "Chauffeur Privé Dakar & Transfert AIBD | Navette Xpress",
+    "description": "Chauffeur privé à Dakar : transfert aéroport AIBD 24h/24, navette urbaine, mise à disposition. Réservation en ligne, prix annoncé avant de confirmer.",
     "ogTitle": "Chauffeur Privé Dakar & Transfert AIBD — Navette Xpress",
     "ogDescription": "Service de chauffeur privé à Dakar. Transfert aéroport AIBD, navette urbaine 24h/24."
   },
   "corridor": "Corridor Dakar — AIBD — Petite Côte",
   "hero": {
-    "titleLine1": "Une seule route.",
-    "titleLine2": "Tenue de bout en bout.",
-    "subtitle": "Nos chauffeurs font ce trajet tous les jours. Ils savent à quelle heure le péage se charge, où l'on attend à AIBD, et quelle porte de Saly ouvre la nuit.",
+    "titleLine1": "Chauffeur privé à Dakar,",
+    "titleLine2": "transfert aéroport AIBD",
+    "subtitle": "Une seule route, tenue de bout en bout. Nos chauffeurs font ce trajet tous les jours. Ils savent à quelle heure le péage se charge, où l'on attend à AIBD, et quelle porte de Saly ouvre la nuit.",
     "bookCta": "Réserver un trajet",
     "ratesCta": "Tarifs par segment",
     "imageAlt": "Chauffeur Navette Xpress sur le corridor Dakar — AIBD — Petite Côte",
@@ -82,12 +82,7 @@
     "luggageIncluded": "Bagages inclus",
     "from": "Dès",
     "onRequest": "Sur devis",
-    "bookVehicleAria": "Réserver ce véhicule",
-    "categories": {
-      "prestigeSuv": "Prestige SUV",
-      "businessVan": "Business Van",
-      "vip": "VIP"
-    }
+    "bookVehicleAria": "Réserver ce véhicule"
   },
   "faqHeading": "Questions fréquentes",
   "finalCta": {
@@ -99,11 +94,11 @@
   "faqs": [
     {
       "question": "Combien coûte un transfert Dakar-AIBD ?",
-      "answer": "Le prix d'un transfert entre Dakar et l'aéroport AIBD varie selon le véhicule choisi : à partir de {berlineDakarAibd} FCFA pour une berline confort et {suvDakarAibd} FCFA pour un SUV. Le prix est fixe, sans supplément."
+      "answer": "Le prix d'un transfert entre Dakar et l'aéroport AIBD varie selon le véhicule choisi : à partir de {berlineDakarAibd} FCFA pour une berline confort et {suvDakarAibd} FCFA pour un SUV. Le prix est fixe et annoncé avant la réservation (majoration nocturne de 5 000 FCFA entre minuit et 5 h)."
     },
     {
       "question": "Comment réserver un chauffeur privé à Dakar ?",
-      "answer": "La réservation se fait en ligne sur notre site en moins de 2 minutes : saisissez votre trajet, choisissez votre véhicule, renseignez vos coordonnées et confirmez. Vous recevez immédiatement une confirmation par email et SMS."
+      "answer": "La réservation se fait en ligne sur notre site en moins de 2 minutes : saisissez votre trajet, choisissez votre véhicule, renseignez vos coordonnées et confirmez. Vous recevez immédiatement une confirmation par email et WhatsApp."
     },
     {
       "question": "Navette Xpress est-il disponible 24h/24 ?",

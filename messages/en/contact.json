@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Contact Navette Xpress — Private Chauffeur Dakar",
-    "description": "Contact Navette Xpress to book your private chauffeur in Dakar. Available by phone, WhatsApp, and email. +221 78 465 13 02 — Immediate response 24/7."
+    "description": "Contact Navette Xpress to book a private chauffeur in Dakar. By phone, WhatsApp or email, 24/7. +221 78 465 13 02"
   },
   "hero": {
     "titleLine1": "We're Here",
@@ -10,12 +10,12 @@
   },
   "methods": {
     "phone": {
-      "title": "24/7 Concierge",
+      "title": "Phone & WhatsApp",
       "sub": "Available via WhatsApp & Direct Call"
     },
     "email": {
       "title": "Official Email",
-      "sub": "Guaranteed reply within 2 hours"
+      "sub": "We reply as soon as possible"
     },
     "office": {
       "title": "Head Office",
@@ -24,7 +24,7 @@
   },
   "emergency": {
     "title": "Emergency Service",
-    "quote": "More than transport — a guarantee of peace of mind for your last-minute transfers.",
+    "quote": "A last-minute transfer? Call us — we answer around the clock.",
     "cta": "Call Now"
   },
   "map": {
@@ -33,7 +33,7 @@
   "form": {
     "titleLine1": "Request a",
     "titleLine2": "Consultation",
-    "subtitle": "Complete this exclusive form. A personal advisor will get back to you with a tailored proposal.",
+    "subtitle": "Complete this form. An advisor will get back to you with a tailored proposal.",
     "nameLabel": "Full Name",
     "namePlaceholder": "Your full name",
     "emailLabel": "Email Address",
@@ -47,13 +47,13 @@
     "error": "An error occurred. Please contact us by phone.",
     "success": {
       "title": "Message Received",
-      "desc": "Your request has been sent to our concierge service. You will receive a reply within 2 hours.",
+      "desc": "Your request has been sent to our team. We will reply as soon as possible.",
       "another": "Send another message"
     }
   },
   "brandPromise": {
-    "prestige": "Dakar Prestige",
-    "security": "Guaranteed Safety",
-    "excellence": "Service Excellence"
+    "prestige": "Based in Dakar",
+    "security": "Insured vehicles",
+    "excellence": "24/7 Service"
   }
 }

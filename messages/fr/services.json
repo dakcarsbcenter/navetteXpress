@@ -1,26 +1,26 @@
 {
   "meta": {
-    "title": "Services Chauffeur Privé Dakar, Transfert AIBD et Mise à Disposition | Navette Xpress",
-    "description": "Comparez nos services à forte intention : transfert aéroport AIBD, chauffeur privé Dakar, mise à disposition, navette événementielle et transport hôtel.",
+    "title": "Services Chauffeur Privé et Transfert AIBD | Navette Xpress",
+    "description": "Transfert aéroport AIBD, chauffeur privé à Dakar, mise à disposition, navette événementielle et transfert hôtel : choisissez votre service.",
     "keywords": ["transfert aéroport Dakar", "chauffeur privé Sénégal", "VTC Dakar", "navette AIBD", "location voiture avec chauffeur Dakar"]
   },
   "breadcrumbs": {
     "home": "Accueil",
     "services": "Services"
   },
-  "priorityHeading": "Pages services prioritaires",
-  "priorityIntro": "Explorez nos pages à forte intention et poursuivez vers les routes les plus demandées.",
+  "priorityHeading": "Nos services en détail",
+  "priorityIntro": "Une page dédiée pour chaque service, avec durée, déroulé de la prise en charge et questions fréquentes.",
   "priorityPages": {
     "airportTransfer": "Transfert aéroport AIBD",
     "privateDriver": "Chauffeur privé Dakar",
     "chauffeurDisposal": "Mise à disposition",
-    "routesHub": "Hub routes",
+    "routesHub": "Tous les trajets",
     "faq": "FAQ"
   },
   "hero": {
-    "titlePrefix": "L'Excellence",
-    "titleAccent": "en Mouvement",
-    "subtitle": "Découvrez nos solutions de mobilité conçues pour répondre à vos exigences les plus élevées au Sénégal."
+    "titlePrefix": "Chauffeur privé et transferts",
+    "titleAccent": "à Dakar et au Sénégal",
+    "subtitle": "Transfert aéroport AIBD, chauffeur privé, mise à disposition, navette événementielle : choisissez le service qui correspond à votre trajet."
   },
   "grid": {
     "loading": "Chargement des services...",
@@ -38,11 +38,11 @@
     },
     "item2": {
       "title": "Ponctualité",
-      "desc": "Arrivée garantie 15 minutes avant l'heure prévue."
+      "desc": "Suivi de votre vol en temps réel : le chauffeur adapte l'heure de prise en charge."
     },
     "item3": {
-      "title": "Expérience VIP",
-      "desc": "Eau fraîche et presse à bord de chaque véhicule."
+      "title": "Réservation simple",
+      "desc": "Tarif annoncé avant de confirmer, confirmation par email et WhatsApp."
     },
     "item4": {
       "title": "Partout au Sénégal",
@@ -50,13 +50,13 @@
     }
   },
   "finalCta": {
-    "titleLine1": "Prêt pour une Expérience",
-    "titleAccent": "Inoubliable ?",
+    "titleLine1": "Prêt à réserver",
+    "titleAccent": "votre trajet ?",
     "bookCta": "Réserver mon trajet",
     "contactCta": "Nous contacter"
   },
   "slugPage": {
-    "eyebrow": "Service prioritaire",
+    "eyebrow": "Service",
     "travelTimeLabel": "Temps moyen",
     "availability247": "Disponibilité 24/7",
     "whyHeading": "Pourquoi choisir ce service",
@@ -66,7 +66,7 @@
     "usefulLinksHeading": "Liens utiles",
     "recommendedRoutes": "Routes recommandées",
     "otherServices": "Autres services",
-    "routesHub": "Hub des routes",
+    "routesHub": "Tous les trajets",
     "bookNow": "Réserver maintenant",
     "breadcrumbHome": "Accueil",
     "breadcrumbServices": "Services"

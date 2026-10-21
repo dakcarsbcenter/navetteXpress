@@ -1,32 +1,32 @@
 {
   "meta": {
-    "title": "Routes AIBD Dakar Saly Somone Mbour Thies Saint-Louis | Navette Xpress",
-    "description": "Hub des routes prioritaires Navette Xpress: comparez les trajets AIBD et reservez votre chauffeur prive au meilleur rapport fiabilite/prix.",
-    "ogTitle": "Routes AIBD et Transferts Prives | Navette Xpress",
-    "ogDescription": "Consultez nos pages routes a forte intention et reservez un transfert prive 24/7 au Senegal."
+    "title": "Trajets AIBD Dakar, Saly, Somone, Mbour | Navette Xpress",
+    "description": "Tous les trajets au départ et à destination de l'AIBD : Dakar, Saly, Somone, Mbour, Thiès, Saint-Louis. Durée, tarif et réservation en ligne.",
+    "ogTitle": "Trajets AIBD et Transferts Privés | Navette Xpress",
+    "ogDescription": "Retrouvez chaque trajet depuis et vers l'AIBD et réservez un transfert privé 24h/24 au Sénégal."
   },
   "breadcrumbs": {
     "home": "Accueil",
     "routes": "Routes"
   },
   "slugPage": {
-    "eyebrow": "Route prioritaire",
+    "eyebrow": "Trajet",
     "travelTimeLabel": "Temps moyen",
-    "availability247": "Ponctualite 24/7",
-    "whyHeading": "Preuves de fiabilite",
-    "processHeading": "Process accueil AIBD",
-    "faqHeading": "FAQ Route",
-    "faqViewAll": "Voir la FAQ complete",
-    "usefulLinksHeading": "Maillage interne",
-    "recommendedRoutes": "Autres routes strategiques",
-    "otherServices": "Services associes",
-    "routesHub": "Retour au hub routes",
-    "bookNow": "Reserver ce trajet",
+    "availability247": "Disponibilité 24/7",
+    "whyHeading": "Pourquoi choisir ce trajet",
+    "processHeading": "Accueil à l'AIBD",
+    "faqHeading": "Questions sur ce trajet",
+    "faqViewAll": "Voir la FAQ complète",
+    "usefulLinksHeading": "Liens utiles",
+    "recommendedRoutes": "Autres trajets",
+    "otherServices": "Services associés",
+    "routesHub": "Tous les trajets",
+    "bookNow": "Réserver ce trajet",
     "breadcrumbHome": "Accueil",
     "breadcrumbRoutes": "Routes"
   },
   "hub": {
-    "eyebrow": "Hub des routes",
+    "eyebrow": "Trajets",
     "h1": "Toutes nos routes au départ et à destination de l’AIBD",
     "intro": "Chaque trajet du corridor Dakar — AIBD — Petite Côte a sa page : temps de parcours réel, prix fixe annoncé avant le départ et process d’accueil à l’aéroport. Choisissez votre route pour voir le détail et réserver.",
     "routesHeading": "Routes AIBD",

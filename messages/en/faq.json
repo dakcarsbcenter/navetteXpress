@@ -1,12 +1,12 @@
 {
   "meta": {
-    "title": "FAQ — AIBD Airport Transfer, Rates & Private Driver Booking in Dakar | Navette Xpress",
-    "description": "Frequently asked questions about AIBD airport transfers, fixed prices, the airport pickup process, online booking and our 24/7 private driver service."
+    "title": "FAQ AIBD Transfer & Private Driver Dakar | Navette Xpress",
+    "description": "Frequently asked questions about AIBD airport transfers, prices, airport pickup, online booking and private drivers in Dakar."
   },
   "beforeBooking": {
     "heading": "Before you book",
-    "routesHub": "Routes hub",
-    "servicesHub": "Services hub",
+    "routesHub": "All routes",
+    "servicesHub": "All services",
     "reservation": "Booking"
   },
   "hero": {
@@ -69,7 +69,7 @@
         },
         {
           "question": "Are your drivers professional?",
-          "answer": "Absolutely! All our drivers are certified, experienced and know the roads of Senegal inside out."
+          "answer": "Absolutely! Our drivers are experienced professionals who know the roads of Senegal inside out."
         },
         {
           "question": "Do you offer 24/7 service?",

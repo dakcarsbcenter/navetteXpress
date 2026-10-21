@@ -1,29 +1,29 @@
 {
   "meta": {
-    "title": "Chofer Privado Dakar, Traslado al Aeropuerto AIBD y Chofer a Disposición | Navette Xpress",
-    "description": "Compare nuestros servicios de alta intención: traslado al aeropuerto AIBD, chofer privado en Dakar, chofer a disposición, transporte para eventos y traslados de hotel.",
+    "title": "Chofer Privado y Traslado AIBD Dakar | Navette Xpress",
+    "description": "Traslado al aeropuerto AIBD, chofer privado en Dakar, chofer a disposición, traslado para eventos y de hotel: elija su servicio.",
     "keywords": ["traslado aeropuerto Dakar", "chofer privado Senegal", "VTC Dakar", "traslado AIBD", "alquiler de auto con chofer Dakar"]
   },
   "breadcrumbs": {
     "home": "Inicio",
     "services": "Servicios"
   },
-  "priorityHeading": "Páginas de servicios prioritarios",
-  "priorityIntro": "Explore nuestras páginas de alta intención y continúe hacia las rutas más solicitadas.",
+  "priorityHeading": "Nuestros servicios en detalle",
+  "priorityIntro": "Una página dedicada para cada servicio, con duración, cómo es la recogida y preguntas frecuentes.",
   "priorityPages": {
     "airportTransfer": "Traslado al aeropuerto AIBD",
     "privateDriver": "Chofer privado Dakar",
     "chauffeurDisposal": "Chofer a disposición",
-    "routesHub": "Centro de rutas",
+    "routesHub": "Todas las rutas",
     "faq": "Preguntas frecuentes"
   },
   "hero": {
-    "titlePrefix": "La Excelencia",
-    "titleAccent": "en Movimiento",
-    "subtitle": "Descubra nuestras soluciones de movilidad, diseñadas para satisfacer sus exigencias más altas en Senegal."
+    "titlePrefix": "Chofer privado y traslados",
+    "titleAccent": "en Dakar y Senegal",
+    "subtitle": "Traslado al aeropuerto AIBD, chofer privado, chofer a disposición, traslado para eventos: elija el servicio que se ajusta a su trayecto."
   },
   "grid": {
-    "loading": "Cargando servicios de prestigio...",
+    "loading": "Cargando servicios...",
     "empty": "No hay servicios disponibles por el momento.",
     "bookCta": "Reservar ahora",
     "detailsCta": "Ver el detalle"
@@ -38,11 +38,11 @@
     },
     "item2": {
       "title": "Puntualidad",
-      "desc": "Llegada garantizada 15 minutos antes de la hora prevista."
+      "desc": "Seguimiento de su vuelo en tiempo real: el chofer ajusta la hora de recogida."
     },
     "item3": {
-      "title": "Experiencia VIP",
-      "desc": "Agua fresca y prensa a bordo de cada vehículo."
+      "title": "Reserva Sencilla",
+      "desc": "Precio anunciado antes de confirmar, confirmación por correo y WhatsApp."
     },
     "item4": {
       "title": "En todo Senegal",
@@ -50,13 +50,13 @@
     }
   },
   "finalCta": {
-    "titleLine1": "¿Listo para una Experiencia",
-    "titleAccent": "Inolvidable?",
+    "titleLine1": "¿Listo para reservar",
+    "titleAccent": "su trayecto?",
     "bookCta": "Reservar mi trayecto",
     "contactCta": "Contáctenos"
   },
   "slugPage": {
-    "eyebrow": "Servicio prioritario",
+    "eyebrow": "Servicio",
     "travelTimeLabel": "Tiempo promedio",
     "availability247": "Disponible 24/7",
     "whyHeading": "Por qué elegir este servicio",
@@ -66,7 +66,7 @@
     "usefulLinksHeading": "Enlaces útiles",
     "recommendedRoutes": "Rutas recomendadas",
     "otherServices": "Otros servicios",
-    "routesHub": "Centro de rutas",
+    "routesHub": "Todas las rutas",
     "bookNow": "Reservar ahora",
     "breadcrumbHome": "Inicio",
     "breadcrumbServices": "Servicios"
