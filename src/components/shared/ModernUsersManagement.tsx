@@ -6,6 +6,7 @@ import { Download, Upload } from "@phosphor-icons/react"
 import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { useNotification } from "@/hooks/useNotification"
 import UniversalProfilePhotoUpload from "@/components/ui/UniversalProfilePhotoUpload"
+import PhoneField from "@/components/shared/PhoneField"
 
 interface User {
   id: string
@@ -1040,12 +1041,12 @@ export function ModernUsersManagement({ userPermissions }: ModernUsersManagement
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                   Téléphone
                 </label>
-                <input
-                  type="tel"
+                <PhoneField
                   value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  onChange={(v) => setFormData({ ...formData, phone: v })}
                   className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
-                  placeholder="+33 6 12 34 56 78"
+                  selectClassName="px-2 py-2 border border-slate-300 dark:border-slate-600 rounded-lg dark:bg-slate-700 dark:text-white text-sm"
+                  placeholder="6 12 34 56 78"
                 />
               </div>
 

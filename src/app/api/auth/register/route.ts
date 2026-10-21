@@ -9,7 +9,7 @@ import { sql } from "drizzle-orm"
 import { randomUUID, randomBytes } from "crypto"
 import bcrypt from "bcryptjs"
 import { z } from "zod"
-import { normalizePhoneForStorage } from "@/lib/phone"
+import { requireValidPhone, InvalidPhoneError } from "@/lib/phone"
 import { sendWithRetry } from "@/lib/notification-queue"
 import { validateEmailForRegistration } from "@/lib/security/email-validation"
 
@@ -45,6 +45,18 @@ export async function POST(request: NextRequest) {
     // Normalize email to lowercase to prevent case-sensitivity mismatches at login
     const email = rawEmail.toLowerCase().trim()
     console.log("Données validées:", { name, email, phone })
+
+    // Compte neuf, donc aucune donnée historique à ménager : un numéro sans indicatif
+    // pays serait refusé à l'envoi WhatsApp (activation, notifications de réservation).
+    let normalizedPhone: string | null
+    try {
+      normalizedPhone = requireValidPhone(phone, 'phone')
+    } catch (error) {
+      if (error instanceof InvalidPhoneError) {
+        return NextResponse.json({ error: error.message, code: 'invalid_phone' }, { status: 400 })
+      }
+      throw error
+    }
 
     // Rejeter les domaines jetables/spam connus et les adresses déjà signalées
     // par un rebond (voir src/lib/security/email-validation.ts)
@@ -83,7 +95,7 @@ export async function POST(request: NextRequest) {
         id: userId,
         name,
         email,
-        phone: normalizePhoneForStorage(phone),
+        phone: normalizedPhone,
         password: hashedPassword,
         role: 'customer',
         emailVerified: null,

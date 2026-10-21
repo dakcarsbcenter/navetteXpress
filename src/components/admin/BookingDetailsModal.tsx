@@ -26,6 +26,7 @@ import {
 import { StatusBadge } from "@/components/shared/StatusBadge"
 import { isRouteCombinationAllowed } from "@/lib/pricing"
 import { LocationSelect, isCustomLocation } from "./LocationSelect"
+import PhoneField from "@/components/shared/PhoneField"
 
 interface Booking {
   id: number
@@ -488,11 +489,11 @@ export function BookingDetailsModal({
                       </div>
                       <div>
                         <label style={fieldLabel}>Téléphone</label>
-                        <input
-                          type="tel"
+                        <PhoneField
                           value={editedBooking.customerPhone}
-                          onChange={(e) => patch({ customerPhone: e.target.value })}
+                          onChange={(v) => patch({ customerPhone: v })}
                           style={{ ...selectStyle, fontFamily: 'var(--font-mono)' }}
+                          selectStyle={selectStyle}
                         />
                       </div>
 
@@ -526,11 +527,11 @@ export function BookingDetailsModal({
                           </div>
                           <div>
                             <label style={fieldLabel}>Téléphone du passager (optionnel)</label>
-                            <input
-                              type="tel"
+                            <PhoneField
                               value={editedBooking.passengerPhone || ''}
-                              onChange={(e) => patch({ passengerPhone: e.target.value })}
+                              onChange={(v) => patch({ passengerPhone: v })}
                               style={{ ...selectStyle, fontFamily: 'var(--font-mono)' }}
+                              selectStyle={selectStyle}
                             />
                           </div>
                         </>

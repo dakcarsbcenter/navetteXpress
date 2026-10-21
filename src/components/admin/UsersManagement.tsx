@@ -24,6 +24,7 @@ import Image from "next/image"
 import { BulkDeleteModal } from "@/components/ui/BulkDeleteModal"
 import { DriverAvailabilityModal } from "@/components/admin/DriverAvailabilityModal"
 import { useNotification } from "@/hooks/useNotification"
+import PhoneField from "@/components/shared/PhoneField"
 import {
   CORRIDOR_DB_FIELDS,
   CORRIDOR_KEYS,
@@ -965,11 +966,11 @@ export function UsersManagement({ openCreate, initialRoleFilter }: UsersManageme
 
                 <div>
                   <label style={fieldLabel}>Téléphone</label>
-                  <input
-                    type="tel"
+                  <PhoneField
                     value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    onChange={(v) => setFormData({ ...formData, phone: v })}
                     style={{ ...fieldInput, fontFamily: 'var(--font-mono)' }}
+                    selectStyle={fieldInput}
                   />
                 </div>
 

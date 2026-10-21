@@ -9,6 +9,7 @@ import { users } from '@/schema';
 import { eq } from 'drizzle-orm';
 import { sendWithRetry } from '@/lib/notification-queue';
 import { friendlyDbError } from '@/lib/db-errors';
+import { requireValidPhone, InvalidPhoneError } from '@/lib/phone';
 import {
   CORRIDOR_KEYS,
   CORRIDOR_SHORT_LABELS,
@@ -47,6 +48,21 @@ export async function POST(request: NextRequest) {
         { success: false, error: 'Tous les champs sont obligatoires' },
         { status: 400 }
       );
+    }
+
+    // Ce numéro sert ensuite aux boutons WhatsApp Accepter/Refuser du chauffeur
+    // (findDriverIdByPhone) : stocké en E.164 ou refusé, jamais brut.
+    let normalizedPhone: string | null;
+    try {
+      normalizedPhone = requireValidPhone(phone, 'phone');
+    } catch (error) {
+      if (error instanceof InvalidPhoneError) {
+        return NextResponse.json(
+          { success: false, error: error.message, code: 'invalid_phone' },
+          { status: 400 }
+        );
+      }
+      throw error;
     }
 
     // Année du véhicule : requise, et plausible (le formulaire envoie un number).
@@ -110,7 +126,7 @@ export async function POST(request: NextRequest) {
         id: randomUUID(),
         name,
         email,
-        phone,
+        phone: normalizedPhone,
         role: 'driver',
         driverStatus: 'pending',
         driverRequestedAt: now,

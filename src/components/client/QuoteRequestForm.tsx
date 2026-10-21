@@ -24,6 +24,7 @@ import {
 } from '@/lib/quote-services'
 import { resolvePrice, type PricingSegmentLike } from '@/lib/pricing'
 import { trackQuoteSubmitted } from '@/lib/analytics'
+import PhoneField from '@/components/shared/PhoneField'
 
 interface LocationOption {
   id: number
@@ -533,13 +534,13 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
                     </span>
                   )}
                 </label>
-                <input
-                  type="tel"
+                <PhoneField
                   required
                   value={formData.customerPhone}
-                  onChange={(e) => handleFormChange('customerPhone', e.target.value)}
+                  onChange={(v) => handleFormChange('customerPhone', v)}
                   className={inputBase}
-                  placeholder="+221 XX XXX XX XX"
+                  selectClassName={`${inputBase} !w-auto`}
+                  placeholder="XX XXX XX XX"
                 />
               </div>
 
@@ -592,12 +593,12 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
                   </div>
                   <div className="space-y-1.5">
                     <label className={labelBase}>Téléphone du passager</label>
-                    <input
-                      type="tel"
+                    <PhoneField
                       value={passengerPhone}
-                      onChange={(e) => setPassengerPhone(e.target.value)}
+                      onChange={setPassengerPhone}
                       className={inputBase}
-                      placeholder="Pour que le chauffeur le joigne sur place"
+                      selectClassName={`${inputBase} !w-auto`}
+                      placeholder="Joignable sur place"
                     />
                   </div>
                 </div>

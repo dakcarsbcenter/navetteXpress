@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl"
 import { toIntlLocale } from "@/lib/intl-locale"
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal"
 import { StatusBadge } from "@/components/shared/StatusBadge"
+import PhoneField from "@/components/shared/PhoneField"
 import {
     X,
     MapPin,
@@ -489,12 +490,13 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onSuccess }: Boo
                                         </div>
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: '#6E6A63' }}>{t('editContactLabel')}</label>
-                                            <input
-                                                type="tel"
+                                            <PhoneField
                                                 value={formData.customerPhone}
-                                                onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
+                                                onChange={(v) => setFormData({ ...formData, customerPhone: v })}
                                                 className="w-full px-4 py-3 outline-none transition-all"
                                                 style={inputStyle}
+                                                selectClassName="px-2 py-3 outline-none text-sm"
+                                                selectStyle={inputStyle}
                                                 placeholder={t('editContactPlaceholder')}
                                             />
                                         </div>

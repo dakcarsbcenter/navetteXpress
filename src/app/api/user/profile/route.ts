@@ -5,6 +5,7 @@ import { authOptions } from '@/lib/auth';
 import { db } from '@/db';
 import { users } from '@/schema';
 import { eq } from 'drizzle-orm';
+import { normalizePhoneForStorage } from '@/lib/phone';
 
 // PATCH - Mettre à jour le profil utilisateur
 export async function PATCH(request: NextRequest) {
@@ -35,7 +36,7 @@ export async function PATCH(request: NextRequest) {
     };
 
     if (phone !== undefined) {
-      updateData.phone = phone;
+      updateData.phone = normalizePhoneForStorage(phone);
     }
 
     if (name !== undefined) {

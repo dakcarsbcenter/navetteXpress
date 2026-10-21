@@ -9,6 +9,7 @@ import { authOptions } from '@/lib/auth'
 import { db } from '@/db'
 import { users } from '@/schema'
 import { eq } from 'drizzle-orm'
+import { normalizePhoneForStorage } from '@/lib/phone'
 
 // GET - Récupérer le profil du chauffeur
 export async function GET(request: NextRequest) {
@@ -151,7 +152,7 @@ export async function PUT(request: NextRequest) {
 
     for (const field of allowedFields) {
       if (body[field] !== undefined) {
-        updateData[field] = body[field]
+        updateData[field] = field === 'phone' ? normalizePhoneForStorage(body[field]) : body[field]
       }
     }
 

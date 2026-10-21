@@ -9,6 +9,7 @@ import { db } from '@/db';
 import { bookingsTable, users } from '@/schema';
 import { eq, and } from 'drizzle-orm';
 import { sendWithRetry } from '@/lib/notification-queue';
+import { normalizePhoneForStorage } from '@/lib/phone';
 
 // GET - Récupérer une réservation spécifique du client
 export async function GET(
@@ -194,7 +195,7 @@ export async function PUT(
     if (body.scheduledDateTime !== undefined) {
       updateData.scheduledDateTime = new Date(body.scheduledDateTime);
     }
-    if (body.customerPhone !== undefined) updateData.customerPhone = body.customerPhone;
+    if (body.customerPhone !== undefined) updateData.customerPhone = normalizePhoneForStorage(body.customerPhone) ?? body.customerPhone;
     if (body.notes !== undefined) updateData.notes = body.notes;
     if (body.flightNumber !== undefined) {
       const newFlightNumber = body.flightNumber || null;

@@ -25,6 +25,8 @@ import { MAX_BOOKING_TRIPS } from "@/lib/booking-trips";
 import { fetchPublicApi } from "@/lib/apiClient";
 import { trackBookingSubmitted } from "@/lib/analytics";
 import { Combobox } from "@/components/ui/Combobox";
+import PhoneField from "@/components/shared/PhoneField";
+import { isCompleteInternationalPhone } from "@/lib/phone-countries";
 import { AIRLINES, FLIGHTS, airlineFromFlightNumber } from "@/lib/flights";
 
 type LocationOption = { id: string; name: string };
@@ -622,8 +624,18 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
 
   const isStep1Complete = tripPricing.every((trip) => trip.isComplete);
 
+  // PhoneField émet de l'E.164 : un numéro trop court reste "incomplet" tant que le
+  // client ne l'a pas terminé, au lieu d'être accepté puis rejeté à l'envoi WhatsApp.
+  const isContactPhoneInvalid =
+    formData.contactPhone !== "" && !isCompleteInternationalPhone(formData.contactPhone);
+  const isPassengerPhoneInvalid =
+    formData.bookingFor === 'other' &&
+    formData.passengerPhone !== "" &&
+    !isCompleteInternationalPhone(formData.passengerPhone);
+
   const isStep3Complete = Boolean(
-    formData.contactPhone &&
+    isCompleteInternationalPhone(formData.contactPhone) &&
+    !isPassengerPhoneInvalid &&
     (isSignedIn || (formData.clientName && formData.clientEmail)) &&
     (formData.bookingFor === 'self' || formData.passengerName.trim().length >= 2)
   );
@@ -1209,14 +1221,15 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                               </span>
                               <div className="flex items-center gap-2">
                                 <Phone size={16} weight="light" className="text-[#6E6A63] shrink-0" />
-                                <input
-                                  type="tel"
+                                <PhoneField
                                   value={formData.passengerPhone}
-                                  onChange={(e) => handleInputChange('passengerPhone', e.target.value)}
+                                  onChange={(v) => handleInputChange('passengerPhone', v)}
                                   placeholder={t('step3.passengerPhonePlaceholder')}
-                                  className="w-full bg-transparent text-foreground font-medium focus:outline-none"
                                 />
                               </div>
+                              {isPassengerPhoneInvalid && (
+                                <p role="alert" className="text-xs text-red-600 mt-1">{t('step3.phoneInvalid')}</p>
+                              )}
                             </div>
                           </div>
                         )}
@@ -1257,14 +1270,15 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                         <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-accent uppercase block mb-1">{t('step3.phoneLabel')}</span>
                         <div className="flex items-center gap-2">
                           <Phone size={16} weight="light" className="text-accent shrink-0" />
-                          <input
-                            type="tel"
+                          <PhoneField
                             value={formData.contactPhone}
-                            onChange={(e) => handleInputChange('contactPhone', e.target.value)}
+                            onChange={(v) => handleInputChange('contactPhone', v)}
                             placeholder={t('step3.phonePlaceholder')}
-                            className="w-full bg-transparent text-foreground font-medium focus:outline-none"
                           />
                         </div>
+                        {isContactPhoneInvalid && (
+                          <p role="alert" className="text-xs text-red-600 mt-1">{t('step3.phoneInvalid')}</p>
+                        )}
                       </div>
                     </div>
 

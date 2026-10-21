@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal"
+import PhoneField from "@/components/shared/PhoneField"
 
 interface Booking {
   id: number
@@ -182,12 +183,12 @@ export function EditBookingModal({ isOpen, onClose, booking, onSuccess }: EditBo
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                   Téléphone de contact
                 </label>
-                <input
-                  type="tel"
+                <PhoneField
                   value={formData.customerPhone}
-                  onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
+                  onChange={(v) => setFormData({ ...formData, customerPhone: v })}
                   placeholder="77 650 01 02"
                   className="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  selectClassName="p-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm"
                 />
               </div>
 

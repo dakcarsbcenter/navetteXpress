@@ -11,7 +11,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { eq, desc, and, asc } from 'drizzle-orm';
 import { sendWithRetry } from '@/lib/notification-queue';
-import { normalizePhoneForStorage } from '@/lib/phone';
+import { requireValidPhone, InvalidPhoneError } from '@/lib/phone';
 import { resolvePrice } from '@/lib/pricing';
 import { BookingTripSchema, MAX_BOOKING_TRIPS, type BookingTripParsed } from '@/lib/booking-trips';
 import { guardPublicFormSubmission } from '@/lib/security/publicFormGuard';
@@ -184,7 +184,26 @@ export async function POST(request: NextRequest) {
     const finalPassengerPhone = typeof passengerPhone === 'string' ? passengerPhone.trim() : '';
     // Numéro remis au format international dès la saisie : la ligne `Contact:` des
     // notes et la colonne customer_phone doivent afficher la même chose.
-    const normalizedContactPhone = normalizePhoneForStorage(contactPhone) ?? contactPhone;
+    //
+    // Strict : un numéro sans indicatif pays ("0612345678") serait stocké tel quel puis
+    // rejeté à l'envoi WhatsApp (confirmation jamais reçue, avis de modification perdu).
+    // Le formulaire (PhoneField) émet déjà du E.164 ; ce refus ne vise qu'un POST direct
+    // ou un navigateur sans JavaScript.
+    let normalizedContactPhone: string;
+    let normalizedPassengerPhone: string | null;
+    try {
+      normalizedContactPhone = requireValidPhone(contactPhone, 'contactPhone') as string;
+      normalizedPassengerPhone = requireValidPhone(finalPassengerPhone, 'passengerPhone');
+    } catch (error) {
+      if (error instanceof InvalidPhoneError) {
+        return NextResponse.json({
+          success: false,
+          error: error.message,
+          code: 'invalid_phone',
+        }, { status: 400 });
+      }
+      throw error;
+    }
 
     if (finalPassengerName && finalPassengerName.length < 2) {
       return NextResponse.json({
@@ -298,7 +317,7 @@ Precision service: ${trip.customServiceType}`
             requestedVehicleType: trip.vehicleType,
             price: priceForTrip(trip).toString(),
             passengerName: finalPassengerName || null,
-            passengerPhone: normalizePhoneForStorage(finalPassengerPhone),
+            passengerPhone: normalizedPassengerPhone,
             flightNumber: trip.flightNumber || null,
             airline: trip.airline || null,
             bookingGroupId,

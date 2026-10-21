@@ -19,6 +19,7 @@ import {
 import { QUOTE_SERVICES, MAX_QUOTE_TRIPS, type QuoteTripInput } from '@/lib/quote-services'
 import { isRouteCombinationAllowed } from '@/lib/pricing'
 import { LocationSelect, isCustomLocation } from './LocationSelect'
+import PhoneField from '@/components/shared/PhoneField'
 
 interface CustomerAccount {
   id: string
@@ -456,12 +457,12 @@ export function CreateQuoteModal({ isOpen, onClose, onCreated }: CreateQuoteModa
 
                   <div>
                     <label style={fieldLabel}>Téléphone *</label>
-                    <input
-                      type="tel"
+                    <PhoneField
                       value={form.customerPhone}
-                      onChange={(e) => patch({ customerPhone: e.target.value })}
-                      placeholder="+221 77 000 00 00"
+                      onChange={(v) => patch({ customerPhone: v })}
+                      placeholder="77 000 00 00"
                       style={{ ...selectStyle, fontFamily: 'var(--font-mono)' }}
+                      selectStyle={selectStyle}
                     />
                   </div>
 
@@ -729,12 +730,12 @@ export function CreateQuoteModal({ isOpen, onClose, onCreated }: CreateQuoteModa
                   </div>
                   <div>
                     <label style={fieldLabel}>Téléphone du passager</label>
-                    <input
-                      type="tel"
+                    <PhoneField
                       value={form.passengerPhone}
-                      onChange={(e) => patch({ passengerPhone: e.target.value })}
+                      onChange={(v) => patch({ passengerPhone: v })}
                       placeholder="Joignable sur place"
                       style={selectStyle}
+                      selectStyle={selectStyle}
                     />
                   </div>
                 </div>

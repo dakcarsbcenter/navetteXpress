@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { X, CheckCircle, CaretRight } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/Button";
 import { fetchPublicApi } from "@/lib/apiClient";
+import PhoneField from "@/components/shared/PhoneField";
 
 /**
  * Demande de convention entreprise. Les deux CTA de /entreprises menaient
@@ -260,16 +261,15 @@ export function ConventionRequestModal({ isOpen, onClose }: ConventionRequestMod
                       <label htmlFor="contactPhone" className={labelClass}>
                         {t("contactPhone")} *
                       </label>
-                      <input
+                      <PhoneField
                         id="contactPhone"
                         name="contactPhone"
-                        type="tel"
                         required
-                        maxLength={30}
                         value={formData.contactPhone}
-                        onChange={handleChange}
-                        placeholder="+221 ..."
+                        onChange={(v) => setFormData((prev) => ({ ...prev, contactPhone: v }))}
+                        placeholder="77 000 00 00"
                         className={fieldClass}
+                        selectClassName={`${fieldClass} !w-auto`}
                       />
                     </div>
 

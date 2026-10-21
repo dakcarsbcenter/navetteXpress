@@ -20,6 +20,7 @@ import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/Button";
 import { Combobox } from "@/components/ui/Combobox";
+import PhoneField from "@/components/shared/PhoneField";
 import { captureDriverReferral, getDriverReferral, trackDriverApplication } from "@/lib/analytics";
 import {
   CORRIDOR_KEYS,
@@ -617,15 +618,20 @@ export default function DevenirPartenaireClient() {
                     onChange={handleInputChange}
                     required
                   />
-                  <FormInput
-                    label={t("form.fields.phone.label")}
-                    name="telephone"
-                    type="tel"
-                    placeholder={t("form.fields.phone.placeholder")}
-                    value={formData.telephone}
-                    onChange={handleInputChange}
-                    required
-                  />
+                  <div className="flex flex-col gap-2">
+                    <label className={`${monoLabel} text-[10px] uppercase tracking-[0.14em] text-text-muted`}>
+                      {t("form.fields.phone.label")} *
+                    </label>
+                    <PhoneField
+                      name="telephone"
+                      required
+                      placeholder={t("form.fields.phone.placeholder")}
+                      value={formData.telephone}
+                      onChange={(v) => setFormData(prev => ({ ...prev, telephone: v }))}
+                      className="w-full bg-background border border-[#d8d2c7] rounded px-4 py-3 text-foreground text-sm outline-none focus:border-accent transition-colors"
+                      selectClassName="bg-background border border-[#d8d2c7] rounded px-2 py-3 text-foreground text-sm outline-none focus:border-accent"
+                    />
+                  </div>
                 </div>
               </div>
 

@@ -313,7 +313,7 @@
     "email": "Adresse Email",
     "emailPlaceholder": "votre.email@exemple.com",
     "phone": "Téléphone Personnel",
-    "phonePlaceholder": "+221 77 000 00 00",
+    "phonePlaceholder": "77 000 00 00",
     "address": "Adresse Résidentielle",
     "addressPlaceholder": "Dakar, Sénégal...",
     "photoTitle": "Photo de profil",

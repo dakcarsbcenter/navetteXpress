@@ -5,7 +5,8 @@ import { signIn } from "next-auth/react"
 import { useRouter as useNextRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Link, useRouter } from "@/i18n/navigation"
-import { User, Envelope, Phone, Lock, Eye, EyeSlash, WarningCircle, ArrowLeft, CircleNotch, CheckCircle, EnvelopeOpen } from "@phosphor-icons/react"
+import PhoneField from "@/components/shared/PhoneField"
+import { User, Envelope, Lock, Eye, EyeSlash, WarningCircle, ArrowLeft, CircleNotch, CheckCircle, EnvelopeOpen } from "@phosphor-icons/react"
 
 export default function SignUpClient() {
   const t = useTranslations("auth")
@@ -397,26 +398,26 @@ export default function SignUpClient() {
                 style={{ color: 'var(--color-text-secondary)' }}>
                 {t('signup.phoneLabel')}
               </label>
-              <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"
-                  style={{ color: 'var(--color-text-muted)' }}>
-                  <Phone size={16} />
-                </div>
-                <input
-                  name="phone"
-                  type="tel"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  required
-                  className="auth-input w-full pl-11 pr-4 py-3.5 rounded-xl text-sm outline-none transition-all duration-200"
-                  style={{
-                    backgroundColor: 'var(--color-surface-2)',
-                    border: '1px solid rgba(18,16,14,0.14)',
-                    color: 'var(--color-text-primary)',
-                  }}
-                  placeholder={t('signup.phonePlaceholder')}
-                />
-              </div>
+              {(() => {
+                const phoneStyle = {
+                  backgroundColor: 'var(--color-surface-2)',
+                  border: '1px solid rgba(18,16,14,0.14)',
+                  color: 'var(--color-text-primary)',
+                }
+                return (
+                  <PhoneField
+                    name="phone"
+                    required
+                    value={formData.phone}
+                    onChange={(v) => setFormData(prev => ({ ...prev, phone: v }))}
+                    className="auth-input w-full px-4 py-3.5 rounded-xl text-sm outline-none transition-all duration-200"
+                    style={phoneStyle}
+                    selectClassName="auth-input px-2 py-3.5 rounded-xl text-sm outline-none"
+                    selectStyle={phoneStyle}
+                    placeholder={t('signup.phonePlaceholder')}
+                  />
+                )
+              })()}
             </div>
 
             <div className="space-y-2">

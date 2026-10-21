@@ -11,12 +11,12 @@ import {
   MapPin,
   Buildings,
   IdentificationCard,
-  DeviceMobile,
   FloppyDisk,
   Warning,
   Clock
 } from "@phosphor-icons/react"
 import UniversalProfilePhotoUpload from "@/components/ui/UniversalProfilePhotoUpload"
+import PhoneField from "@/components/shared/PhoneField"
 
 interface EditProfileModalProps {
   isOpen: boolean
@@ -209,17 +209,15 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, initialData }: Ed
 
               <div className="space-y-2">
                 <label className="text-[10px] font-bold uppercase tracking-widest ml-1" style={{ color: '#6E6A63' }}>{t('phone')}</label>
-                <div className="relative">
-                  <DeviceMobile size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#6E6A63' }} />
-                  <input
-                    type="tel"
-                    value={formData.phone}
-                    onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 outline-none transition-all"
-                    style={inputStyle}
-                    placeholder={t('phonePlaceholder')}
-                  />
-                </div>
+                <PhoneField
+                  value={formData.phone}
+                  onChange={v => setFormData({ ...formData, phone: v })}
+                  className="w-full px-4 py-3 outline-none transition-all"
+                  style={inputStyle}
+                  selectClassName="px-2 py-3 outline-none text-sm"
+                  selectStyle={inputStyle}
+                  placeholder={t('phonePlaceholder')}
+                />
               </div>
 
               <div className="space-y-2">
