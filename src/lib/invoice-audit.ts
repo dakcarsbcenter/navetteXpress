@@ -68,6 +68,7 @@ export const INVOICE_TRACKED_FIELDS = [
   { key: 'amount', labelFr: 'Montant HT', kind: 'money' },
   { key: 'taxRate', labelFr: 'Taux de TVA', kind: 'rate' },
   { key: 'totalAmount', labelFr: 'Total', kind: 'money' },
+  { key: 'commissionAmount', labelFr: 'Commission citee', kind: 'money' },
   { key: 'status', labelFr: 'Statut', kind: 'status' },
   { key: 'paymentMethod', labelFr: 'Moyen de paiement', kind: 'text' },
   { key: 'notes', labelFr: 'Note client', kind: 'excerpt' },

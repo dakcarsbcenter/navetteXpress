@@ -401,6 +401,11 @@ export const invoicesTable = pgTable('invoices', {
   taxRate: decimal('tax_rate', { precision: 5, scale: 2 }).notNull().default('18.00'), // TVA en % (18 % au Senegal)
   taxAmount: decimal('tax_amount', { precision: 10, scale: 2 }).notNull(),
   totalAmount: decimal('total_amount', { precision: 10, scale: 2 }).notNull(),
+  // Commission Navettexpress citee sur le PDF client (« dont commission ... »).
+  // Mention informative : elle n'entre dans aucun total. NULL = non incluse.
+  // Montant fige a l'emission, pour qu'un futur changement de taux ne reecrive
+  // pas une facture deja envoyee.
+  commissionAmount: decimal('commission_amount', { precision: 10, scale: 2 }),
   status: invoiceStatusEnum('status').notNull().default('pending'),
   issueDate: timestamp('issue_date').notNull().defaultNow(),
   dueDate: timestamp('due_date').notNull(), // Date d'échéance

@@ -82,6 +82,9 @@ export const InvoicePatchSchema = z
     /** Note imprimee dans le pied legal du PDF client : ce n'est PAS une note interne. */
     notes: nullableText(1000),
 
+    /** Cite (ou retire) la commission Navettexpress sur la facture : mention, jamais un total. */
+    includeCommission: z.boolean().optional(),
+
     /**
      * Renvoi de la facture corrigee au client. Defaut volontairement inverse de
      * `notifyOnUpdate` des reservations (qui notifie sauf refus explicite) : ici

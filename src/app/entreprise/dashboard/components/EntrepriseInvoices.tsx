@@ -31,6 +31,7 @@ interface Invoice {
   customerAddress?: string;
   customerNinea?: string;
   items?: Array<{ description: string; details?: string; quantity: number; price: number; total: number }>;
+  commissionAmount?: number | null;
 }
 
 const STATUS_STYLE: Record<InvoiceStatus, string> = {
@@ -93,6 +94,7 @@ export function EntrepriseInvoices() {
     quoteReference: invoice.quoteReference,
     customerAddress: invoice.customerAddress,
     customerNinea: invoice.customerNinea,
+    commissionAmount: invoice.commissionAmount,
   });
 
   const handleDownload = async (invoice: Invoice) => {

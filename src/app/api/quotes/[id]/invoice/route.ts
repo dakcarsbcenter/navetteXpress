@@ -157,7 +157,7 @@ export async function POST(
     }
 
     const body = await request.json().catch(() => ({}));
-    const { taxRate, dueDate, dueDays, notes } = body as Record<string, unknown>;
+    const { taxRate, dueDate, dueDays, notes, includeCommission } = body as Record<string, unknown>;
 
     let rate: number | undefined;
     if (taxRate !== undefined && taxRate !== null && taxRate !== '') {
@@ -186,6 +186,7 @@ export async function POST(
       taxRate: rate,
       dueDate: due,
       notes: notes ? String(notes).trim().slice(0, 1000) : null,
+      includeCommission: includeCommission === true,
     });
 
     return NextResponse.json({

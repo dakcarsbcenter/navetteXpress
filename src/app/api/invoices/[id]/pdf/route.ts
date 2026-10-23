@@ -78,6 +78,7 @@ export async function GET(
       quoteReference: invoice.quoteReference,
       items: invoice.items ?? undefined,
       notes: invoice.notes ?? undefined,
+      commissionAmount: invoice.commissionAmount ? parseFloat(invoice.commissionAmount) : null,
     });
 
     const disposition = request.nextUrl.searchParams.get('download') ? 'attachment' : 'inline';

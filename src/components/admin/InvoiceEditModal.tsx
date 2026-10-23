@@ -26,6 +26,7 @@ import {
 } from "@phosphor-icons/react"
 import { DEFAULT_TAX_RATE, TAX_RATE_CHOICES } from '@/lib/pdf/brand'
 import { MAX_INVOICE_ITEMS } from '@/lib/invoice-validation'
+import { COMMISSION_RATE, computeCommission } from '@/lib/commission'
 import { useNotification } from '@/hooks/useNotification'
 import { NotificationCenter } from '@/components/ui/NotificationCenter'
 
@@ -58,6 +59,8 @@ export interface Invoice {
     vatAmount: number
     amountTTC: number
     taxRate?: number
+    /** Commission Navettexpress citee sur le PDF (hors totaux). null/absent = non incluse. */
+    commissionAmount?: number | null
     status: InvoiceStatus
     issueDate: Date
     dueDate: Date
@@ -178,6 +181,7 @@ export default function InvoiceEditModal({ invoice, isOpen, onClose, onSaved }: 
     const [internalNotes, setInternalNotes] = useState('')
     const [expectedUpdatedAt, setExpectedUpdatedAt] = useState<string | null>(null)
     const [notifyCustomer, setNotifyCustomer] = useState(false)
+    const [includeCommission, setIncludeCommission] = useState(false)
 
     /**
      * Rechargement depuis l'API à l'ouverture, et non depuis la ligne déjà en
@@ -221,6 +225,7 @@ export default function InvoiceEditModal({ invoice, isOpen, onClose, onSaved }: 
                 notes: data.notes ?? '',
             })
             setInternalNotes(data.internalNotes ?? '')
+            setIncludeCommission(data.commissionAmount != null)
             setExpectedUpdatedAt(data.updatedAt ? new Date(data.updatedAt).toISOString() : null)
         }
 
@@ -341,6 +346,7 @@ export default function InvoiceEditModal({ invoice, isOpen, onClose, onSaved }: 
                 paymentMethod: form.paymentMethod.trim() || null,
                 notes: form.notes.trim() || null,
                 notifyCustomer,
+                includeCommission,
                 ...(expectedUpdatedAt ? { expectedUpdatedAt } : {}),
             }
 
@@ -658,6 +664,25 @@ export default function InvoiceEditModal({ invoice, isOpen, onClose, onSaved }: 
                                     Ancien total : {formatCurrency(invoice.amountTTC)} → nouveau : {formatCurrency(totalAmount)}
                                 </p>
                             )}
+                            <label className="flex items-start gap-2" style={{ cursor: 'pointer', marginTop: '14px', fontSize: '12.5px', color: '#12100E', lineHeight: 1.4 }}>
+                                <input
+                                    type="checkbox"
+                                    checked={includeCommission}
+                                    onChange={(e) => setIncludeCommission(e.target.checked)}
+                                    style={{ marginTop: '2px', accentColor: '#1F5245' }}
+                                />
+                                <span>
+                                    Citer la commission Navettexpress ({Math.round(COMMISSION_RATE * 100)} %)
+                                    {includeCommission && subtotal > 0 && (
+                                        <span style={{ fontFamily: 'var(--font-mono)', color: '#1F5245', fontWeight: 600 }}>
+                                            {' '}— {formatCurrency(computeCommission(subtotal))}
+                                        </span>
+                                    )}
+                                    <span style={{ display: 'block', ...hintText, margin: 0 }}>
+                                        Ligne « Dont commission » sous le total du PDF client. Mention seulement : HT, TVA et TTC ne changent pas.
+                                    </span>
+                                </span>
+                            </label>
                         </div>
 
                         {/* Statut & paiement */}

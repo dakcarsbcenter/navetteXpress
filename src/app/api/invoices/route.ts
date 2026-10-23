@@ -88,6 +88,8 @@ export async function GET(request: NextRequest) {
       vatAmount: invoice.taxAmount ? parseFloat(invoice.taxAmount) : 0,
       amountTTC: invoice.totalAmount ? parseFloat(invoice.totalAmount) : 0,
       taxRate: invoice.taxRate ? parseFloat(invoice.taxRate) : 18,
+      // Mention informative du PDF (hors totaux) ; null = commission non citee.
+      commissionAmount: invoice.commissionAmount ? parseFloat(invoice.commissionAmount) : null,
       status: invoice.status,
       // Champs du document officiel : sans eux, le PDF téléchargé depuis les
       // vues admin/client serait plus pauvre que celui envoyé par email.

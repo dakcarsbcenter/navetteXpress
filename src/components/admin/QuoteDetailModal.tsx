@@ -35,6 +35,7 @@ import { NotificationCenter } from "@/components/ui/NotificationCenter"
 import { StatusBadge } from "@/components/shared/StatusBadge"
 import { QUOTE_SERVICES, getQuoteServiceLabel, MAX_QUOTE_TRIPS } from "@/lib/quote-services"
 import { DEFAULT_TAX_RATE, TAX_RATE_CHOICES } from "@/lib/pdf/brand"
+import { COMMISSION_RATE, computeCommission } from "@/lib/commission"
 import {
     QUOTE_PIPELINE,
     QUOTE_STATUS_LABELS,
@@ -191,6 +192,7 @@ export function QuoteDetailModal({ isOpen, onClose, quote, onUpdate }: QuoteDeta
     const [invoiceTaxRate, setInvoiceTaxRate] = useState(String(DEFAULT_TAX_RATE))
     const [invoiceDueDays, setInvoiceDueDays] = useState('30')
     const [invoiceNotes, setInvoiceNotes] = useState('')
+    const [invoiceIncludeCommission, setInvoiceIncludeCommission] = useState(false)
 
     const loadInvoice = useCallback(async (quoteId: number) => {
         try {
@@ -219,6 +221,7 @@ export function QuoteDetailModal({ isOpen, onClose, quote, onUpdate }: QuoteDeta
             setInvoiceTaxRate(rate)
             setInvoiceDueDays('30')
             setInvoiceNotes('')
+            setInvoiceIncludeCommission(false)
             setShowInvoiceForm(false)
             setInvoice(null)
             loadInvoice(quote.id)
@@ -390,6 +393,7 @@ export function QuoteDetailModal({ isOpen, onClose, quote, onUpdate }: QuoteDeta
                     taxRate: parseFloat(invoiceTaxRate) || 0,
                     dueDays: parseInt(invoiceDueDays, 10) || 30,
                     notes: invoiceNotes || null,
+                    includeCommission: invoiceIncludeCommission,
                 })
             })
             const data = await response.json().catch(() => null)
@@ -993,6 +997,25 @@ export function QuoteDetailModal({ isOpen, onClose, quote, onUpdate }: QuoteDeta
                                                 style={smallInput}
                                             />
                                         </div>
+                                        <label className="flex items-start gap-2" style={{ cursor: 'pointer', fontSize: '12px', color: '#12100E', lineHeight: 1.4 }}>
+                                            <input
+                                                type="checkbox"
+                                                checked={invoiceIncludeCommission}
+                                                onChange={(e) => setInvoiceIncludeCommission(e.target.checked)}
+                                                style={{ marginTop: '2px', accentColor: '#1F5245' }}
+                                            />
+                                            <span>
+                                                Citer la commission Navettexpress ({Math.round(COMMISSION_RATE * 100)} %)
+                                                {quote?.estimatedPrice && parseFloat(quote.estimatedPrice) > 0 && (
+                                                    <span style={{ fontFamily: 'var(--font-mono)', color: '#6E6A63' }}>
+                                                        {' '}— {computeCommission(parseFloat(quote.estimatedPrice)).toLocaleString('fr-FR')} FCFA
+                                                    </span>
+                                                )}
+                                                <span style={{ display: 'block', fontSize: '11px', color: '#6E6A63' }}>
+                                                    Mention sur la facture : les totaux ne changent pas.
+                                                </span>
+                                            </span>
+                                        </label>
                                         <div className="flex gap-2">
                                             <button
                                                 type="button"

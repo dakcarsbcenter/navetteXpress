@@ -114,6 +114,7 @@ export function ClientInvoicesView() {
         quoteReference: invoice.quoteReference,
         customerAddress: invoice.customerAddress,
         customerNinea: invoice.customerNinea,
+        commissionAmount: invoice.commissionAmount,
         notes: invoice.notes || invoice.quote?.clientNotes || undefined
       }
 

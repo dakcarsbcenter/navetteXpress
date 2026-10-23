@@ -154,6 +154,7 @@ export async function sendInvoiceEmail(
             quoteReference: invoice.quoteReference,
             items: invoice.items ?? undefined,
             notes: invoice.notes ?? undefined,
+            commissionAmount: invoice.commissionAmount ? parseFloat(invoice.commissionAmount) : null,
           });
           attachments = [{ filename: `${invoice.invoiceNumber}.pdf`, content: pdf.toString('base64') }];
         }

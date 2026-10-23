@@ -10,7 +10,8 @@
  * est inchangee : les quatre vues qui l'utilisent n'ont pas eu a bouger.
  */
 
-import { COLORS, COMPANY_INFO, DEFAULT_TAX_RATE, TAX_EXEMPT_MENTION } from './pdf/brand';
+import { COLORS, COMPANY_INFO, DEFAULT_TAX_RATE, PAGE, TAX_EXEMPT_MENTION, formatAmount } from './pdf/brand';
+import { COMMISSION_RATE } from './commission';
 import {
   createDocument,
   drawCorridor,
@@ -49,6 +50,8 @@ interface InvoiceData {
   quoteReference?: string | null;
   items?: DocumentItem[];
   notes?: string;
+  /** Commission Navettexpress citee (mention informative, hors totaux). Absent = non incluse. */
+  commissionAmount?: number | null;
 }
 
 const STATUS_BADGES: Record<string, DocumentBadge> = {
@@ -126,6 +129,21 @@ export async function generateInvoicePDF(invoiceData: InvoiceData): Promise<PdfD
     taxAmount: invoiceData.vatAmount,
     total: invoiceData.amountTTC,
   });
+
+  // Mention informative sous le bandeau du total : la commission est comprise
+  // dans les montants ci-dessus, elle ne s'y ajoute pas.
+  if (invoiceData.commissionAmount != null && invoiceData.commissionAmount > 0) {
+    y += 5;
+    doc.setFont('helvetica', 'italic');
+    doc.setFontSize(8.5);
+    doc.setTextColor(...COLORS.muted);
+    doc.text(
+      `Dont commission Navettexpress (${Math.round(COMMISSION_RATE * 100)} %) : ${formatAmount(invoiceData.commissionAmount)}`,
+      PAGE.right - 4,
+      y,
+      { align: 'right' }
+    );
+  }
 
   drawSignatures(doc, y + 14, ['Cachet et signature Navette Xpress', 'Reçu / payé le :']);
 

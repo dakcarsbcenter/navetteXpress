@@ -1,4 +1,5 @@
 import { DEFAULT_TAX_RATE } from './pdf/brand'
+import { computeCommission } from './commission'
 
 /**
  * Numérotation des factures.
@@ -26,6 +27,14 @@ export function calculateInvoiceAmounts(amount: number, taxRate: number = DEFAUL
     taxAmount: taxAmount.toFixed(2),
     totalAmount: totalAmount.toFixed(2)
   }
+}
+
+/**
+ * Commission Navettexpress citée sur la facture, calculée sur le HT.
+ * Mention informative : elle ne s'ajoute à aucun total.
+ */
+export function calculateInvoiceCommission(amountHT: number): string {
+  return computeCommission(amountHT).toFixed(2)
 }
 
 /**

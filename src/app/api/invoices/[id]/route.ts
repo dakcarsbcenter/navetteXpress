@@ -9,7 +9,7 @@ import { db } from '@/db';
 import { invoicesTable, quotesTable, type SelectInvoice } from '@/schema';
 import { eq } from 'drizzle-orm';
 import { DEFAULT_TAX_RATE } from '@/lib/pdf/brand';
-import { calculateInvoiceAmounts } from '@/lib/invoice-utils';
+import { calculateInvoiceAmounts, calculateInvoiceCommission } from '@/lib/invoice-utils';
 import { InvoicePatchSchema, normalizeInvoiceItems, round2 } from '@/lib/invoice-validation';
 import { appendInvoiceAuditEntry, buildInvoiceChanges, type EmailOutcome } from '@/lib/invoice-audit';
 import { sendWithRetry } from '@/lib/notification-queue';
@@ -53,6 +53,7 @@ export async function GET(
       taxRate: invoicesTable.taxRate,
       taxAmount: invoicesTable.taxAmount,
       totalAmount: invoicesTable.totalAmount,
+      commissionAmount: invoicesTable.commissionAmount,
       status: invoicesTable.status,
       issueDate: invoicesTable.issueDate,
       dueDate: invoicesTable.dueDate,
@@ -114,6 +115,7 @@ export async function GET(
       amountHT: invoiceData.amount ? parseFloat(invoiceData.amount) : 0,
       vatAmount: invoiceData.taxAmount ? parseFloat(invoiceData.taxAmount) : 0,
       amountTTC: invoiceData.totalAmount ? parseFloat(invoiceData.totalAmount) : 0,
+      commissionAmount: invoiceData.commissionAmount ? parseFloat(invoiceData.commissionAmount) : null,
       taxRate: invoiceData.taxRate ? parseFloat(invoiceData.taxRate) : DEFAULT_TAX_RATE,
       quote: invoiceData.quoteId ? {
         id: invoiceData.quoteId,
@@ -300,6 +302,16 @@ export async function PATCH(
           );
         }
       }
+    }
+
+    // Commission citée sur le PDF. Elle suit le HT : si les lignes changent alors
+    // qu'elle est déjà incluse, le montant est recalculé, sinon la mention
+    // contredirait le tableau. `false` la retire.
+    const commissionIncluded = body.includeCommission ?? current.commissionAmount !== null;
+    if (body.includeCommission !== undefined || updateData.amount !== undefined) {
+      updateData.commissionAmount = commissionIncluded
+        ? calculateInvoiceCommission(parseFloat(updateData.amount ?? current.amount))
+        : null;
     }
 
     // Une échéance antérieure à l'émission sort un PDF absurde : on refuse ici,

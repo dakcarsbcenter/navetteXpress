@@ -17,7 +17,7 @@ import {
   type SelectQuote,
 } from '@/schema';
 import { eq } from 'drizzle-orm';
-import { calculateDueDate, calculateInvoiceAmounts, generateInvoiceNumber } from './invoice-utils';
+import { calculateDueDate, calculateInvoiceAmounts, calculateInvoiceCommission, generateInvoiceNumber } from './invoice-utils';
 import { sendWithRetry } from './notification-queue';
 import { buildQuoteDocumentData, quoteTaxRate } from './quote-document';
 import { getQuoteTrips } from './quote-trips';
@@ -53,7 +53,7 @@ export async function findInvoiceForQuote(quoteId: number): Promise<SelectInvoic
  */
 export async function createInvoiceForQuote(
   quote: SelectQuote,
-  options: { taxRate?: number; dueDate?: Date; notes?: string | null } = {},
+  options: { taxRate?: number; dueDate?: Date; notes?: string | null; includeCommission?: boolean } = {},
 ): Promise<SelectInvoice> {
   if (!quote.estimatedPrice) {
     throw new Error('Le devis doit avoir un prix estimé pour générer une facture');
@@ -83,6 +83,7 @@ export async function createInvoiceForQuote(
       taxRate: amounts.taxRate,
       taxAmount: amounts.taxAmount,
       totalAmount: amounts.totalAmount,
+      commissionAmount: options.includeCommission ? calculateInvoiceCommission(parseFloat(amounts.amount)) : null,
       status: 'pending',
       issueDate,
       dueDate,
