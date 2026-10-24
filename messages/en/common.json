@@ -63,5 +63,12 @@
     "learnMore": "Learn more",
     "accept": "Accept",
     "refuse": "Decline"
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "text": "This page does not exist or has moved. You can book your ride or check our rates.",
+    "home": "Back to home",
+    "book": "Book a ride",
+    "rates": "See rates"
   }
 }

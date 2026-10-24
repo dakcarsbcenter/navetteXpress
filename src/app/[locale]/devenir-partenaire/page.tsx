@@ -5,6 +5,7 @@ import DevenirPartenaireClient from './DevenirPartenaireClient';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { buildAlternates } from '@/lib/seo/localized-metadata';
 import { schemaBreadcrumb, schemaFAQ, schemaJobPosting } from '@/lib/schema';
+import { ClientMessages } from "@/i18n/ClientMessages";
 
 interface DriverFaq {
     question: string;
@@ -85,7 +86,7 @@ export default async function Page({
             />
             <JsonLd data={schemaFAQ(faqs)} />
             <JsonLd data={schemaBreadcrumb(breadcrumbs)} />
-            <DevenirPartenaireClient />
+            <ClientMessages namespaces={["devenir-partenaire"]}><DevenirPartenaireClient /></ClientMessages>
         </>
     );
 }

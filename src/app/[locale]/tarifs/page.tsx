@@ -7,6 +7,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { schemaBreadcrumb } from '@/lib/schema';
 import { buildAlternates } from '@/lib/seo/localized-metadata';
 import { moneyRoutePathForNodes } from '@/lib/seo/internal-links';
+import { ClientMessages } from "@/i18n/ClientMessages";
 
 export async function generateMetadata({
     params,
@@ -57,7 +58,7 @@ export default async function Page({
     return (
         <>
             <JsonLd data={schemaBreadcrumb(breadcrumbs)} />
-            <TarifsClient initialSegments={segments} />
+            <ClientMessages namespaces={["tarifs"]}><TarifsClient initialSegments={segments} /></ClientMessages>
         </>
     );
 }

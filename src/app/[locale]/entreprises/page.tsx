@@ -5,6 +5,7 @@ import EntreprisesClient from './EntreprisesClient';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { schemaBreadcrumb } from '@/lib/schema';
 import { buildAlternates } from '@/lib/seo/localized-metadata';
+import { ClientMessages } from "@/i18n/ClientMessages";
 
 export async function generateMetadata({
     params,
@@ -38,7 +39,7 @@ export default async function Page({
     return (
         <>
             <JsonLd data={schemaBreadcrumb(breadcrumbs)} />
-            <EntreprisesClient />
+            <ClientMessages namespaces={["entreprises"]}><EntreprisesClient /></ClientMessages>
         </>
     );
 }

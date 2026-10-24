@@ -15,9 +15,17 @@ const LOCALE_LABELS: Record<string, string> = {
 interface LanguageSwitcherProps {
   variant?: "dropdown" | "inline";
   className?: string;
+  /** Variante inline : couleurs des liens, à adapter au fond (le pied de page est sombre). */
+  linkClassName?: string;
+  activeLinkClassName?: string;
 }
 
-export function LanguageSwitcher({ variant = "dropdown", className = "" }: LanguageSwitcherProps) {
+export function LanguageSwitcher({
+  variant = "dropdown",
+  className = "",
+  linkClassName = "text-foreground/70 hover:text-accent",
+  activeLinkClassName = "text-accent",
+}: LanguageSwitcherProps) {
   const locale = useLocale();
   const pathname = usePathname();
 
@@ -41,7 +49,7 @@ export function LanguageSwitcher({ variant = "dropdown", className = "" }: Langu
             key={l}
             {...localeLinkProps(l)}
             className={`text-sm font-medium transition-colors ${
-              l === locale ? "text-accent" : "text-foreground/70 hover:text-accent"
+              l === locale ? activeLinkClassName : linkClassName
             }`}
             aria-current={l === locale ? "true" : undefined}
           >

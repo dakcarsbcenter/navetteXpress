@@ -63,7 +63,7 @@ export default async function HomeClient({ faqs, segments, vehicles }: HomeClien
     <div className="min-h-screen bg-background font-sans selection:bg-gold/30 selection:text-gold">
       <Navigation variant="transparent" />
 
-      <main id="main-content" tabIndex={-1} className="pt-28 md:pt-36 focus:outline-none">
+      <main className="pt-28 md:pt-36">
         {/* Corridor strip */}
         <div className="border-b border-line">
           <div className="max-w-7xl mx-auto px-6 py-3 flex items-center overflow-x-auto">
@@ -97,17 +97,13 @@ export default async function HomeClient({ faqs, segments, vehicles }: HomeClien
               {t("corridor")}
             </p>
 
-            <h1
-              className="animate-fade-in-up text-4xl md:text-6xl font-semibold text-foreground leading-[1.05] tracking-tight"
-              style={{ animationDelay: "0.1s" }}
-            >
+            {/* Pas d'animation sur le h1 ni le sous-titre : ce sont les candidats LCP, une
+                entrée en fondu retardait la mesure de plus d'une seconde sur mobile. */}
+            <h1 className="text-4xl md:text-6xl font-semibold text-foreground leading-[1.05] tracking-tight">
               {t("hero.titleLine1")}<br />{t("hero.titleLine2")}
             </h1>
 
-            <p
-              className="animate-fade-in-up text-body text-lg max-w-lg leading-relaxed"
-              style={{ animationDelay: "0.2s" }}
-            >
+            <p className="text-body text-lg max-w-lg leading-relaxed">
               {t("hero.subtitle")}
             </p>
 
@@ -176,7 +172,7 @@ export default async function HomeClient({ faqs, segments, vehicles }: HomeClien
                 <span className="font-[family-name:var(--font-ibm-plex-mono)] text-xs tracking-[0.14em] text-gold-deep">
                   {d.n}
                 </span>
-                <h3 className="text-lg font-semibold text-foreground">{d.title}</h3>
+                <h2 className="text-lg font-semibold text-foreground">{d.title}</h2>
                 <p className="text-sm text-body leading-relaxed">{d.desc}</p>
               </StaggerItem>
             ))}

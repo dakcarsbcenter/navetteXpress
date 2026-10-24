@@ -89,6 +89,10 @@ sleep 15
 echo "==> Vérification de santé..."
 if docker compose exec -T app wget -qO- http://127.0.0.1:3000/api/health; then
   echo
+  echo "==> Régénération des pages publiques (tarifs, flotte... figés vides au build)..."
+  # Non bloquant : le site tourne déjà, au pire les pages se régénèrent
+  # d'elles-mêmes à leur prochaine revalidation.
+  ./scripts/warm-public-pages.sh || echo "    (préchauffage en échec : relancez ./scripts/warm-public-pages.sh)"
   echo "==> Déploiement terminé avec succès."
 else
   echo

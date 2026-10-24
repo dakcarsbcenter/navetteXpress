@@ -7,6 +7,7 @@ import { schemaService, schemaBreadcrumb } from '@/lib/schema';
 import { serviceTypes, type ServiceLocale } from '@/lib/services';
 import { buildAlternates } from '@/lib/seo/localized-metadata';
 import { getActiveServicesSafe } from '@/lib/public-catalog';
+import { ClientMessages } from "@/i18n/ClientMessages";
 
 export async function generateMetadata({
     params,
@@ -54,7 +55,7 @@ export default async function Page({
         <>
             <JsonLd data={schemaService(schemaServices[0])} /> {/* Main service focus */}
             <JsonLd data={schemaBreadcrumb(breadcrumbs)} />
-            <ServicesClient services={services} />
+            <ClientMessages namespaces={["services"]}><ServicesClient services={services} /></ClientMessages>
         </>
     );
 }

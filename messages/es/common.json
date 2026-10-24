@@ -63,5 +63,12 @@
     "learnMore": "Más información",
     "accept": "Aceptar",
     "refuse": "Rechazar"
+  },
+  "NotFound": {
+    "title": "Página no encontrada",
+    "text": "Esta página no existe o ha sido movida. Puede reservar su trayecto o consultar nuestras tarifas.",
+    "home": "Volver al inicio",
+    "book": "Reservar un trayecto",
+    "rates": "Ver tarifas"
   }
 }

@@ -23,6 +23,14 @@ import { CONSENT_STORAGE_KEY } from '@/lib/consent';
  * internes du routeur Next.js. Ne pas réintroduire d'appel `gtag('config')` à
  * chaque changement de route : il s'ajouterait à celui-là et compterait chaque
  * vue deux fois — c'est précisément le bug qu'avait `PageViewTracker`.
+ *
+ * `lazyOnload` : gtag.js pèse environ 140 Ko et bloquait le fil principal
+ * ~340 ms pendant le chargement mobile (Lighthouse, 24/10/2026). Il est
+ * maintenant chargé une fois la page prête. Un consentement donné avant ce
+ * moment n'est pas perdu : il est relu dans localStorage ci-dessous. Les
+ * événements envoyés avant le chargement sont ignorés (trackEvent teste
+ * window.gtag), ce qui ne concerne en pratique que des clics dans la première
+ * seconde.
  */
 export function GoogleAnalytics() {
   if (!GA_MEASUREMENT_ID) return null;
@@ -31,9 +39,9 @@ export function GoogleAnalytics() {
     <>
       <Script
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-        strategy="afterInteractive"
+        strategy="lazyOnload"
       />
-      <Script id="google-analytics" strategy="afterInteractive">
+      <Script id="google-analytics" strategy="lazyOnload">
         {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}

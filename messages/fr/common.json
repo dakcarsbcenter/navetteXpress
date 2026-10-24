@@ -63,5 +63,12 @@
     "learnMore": "En savoir plus",
     "accept": "Accepter",
     "refuse": "Refuser"
+  },
+  "NotFound": {
+    "title": "Page introuvable",
+    "text": "Cette page n'existe pas ou a été déplacée. Vous pouvez réserver votre trajet ou consulter nos tarifs.",
+    "home": "Retour à l'accueil",
+    "book": "Réserver un trajet",
+    "rates": "Voir les tarifs"
   }
 }

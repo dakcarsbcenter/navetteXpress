@@ -5,6 +5,7 @@ import FaqClient from './FaqClient';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { schemaFAQ, schemaBreadcrumb } from '@/lib/schema';
 import { buildAlternates } from '@/lib/seo/localized-metadata';
+import { ClientMessages } from "@/i18n/ClientMessages";
 
 export async function generateMetadata({
     params,
@@ -44,7 +45,7 @@ export default async function Page({
         <>
             <JsonLd data={schemaFAQ(schemaFaqs)} />
             <JsonLd data={schemaBreadcrumb(breadcrumbs)} />
-            <FaqClient categories={categories} />
+            <ClientMessages namespaces={["faq"]}><FaqClient categories={categories} /></ClientMessages>
         </>
     );
 }

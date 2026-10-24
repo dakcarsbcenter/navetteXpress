@@ -64,7 +64,8 @@ export default function TarifsClient({ initialSegments }: { initialSegments?: Se
 
         {/* Hero */}
         <section className="max-w-7xl mx-auto px-6 pt-12 pb-8 md:pt-14 md:pb-10">
-          <div className="animate-fade-in-up max-w-2xl space-y-5">
+          {/* Sans fondu : le texte du hero est l'élément LCP de la page */}
+          <div className="max-w-2xl space-y-5">
             <h1 className="font-bold text-4xl md:text-5xl leading-[1.06] tracking-tight text-foreground">
               {t("hero.title")}
             </h1>

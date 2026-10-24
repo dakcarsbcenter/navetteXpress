@@ -1,26 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import { AuthSessionProvider } from "@/components/providers/session-provider";
-import { MotionProvider } from "@/components/motion/MotionProvider";
-import { GoogleAnalytics } from "./google-analytics";
-import { CapacitorAppUrlListener } from '@/components/mobile/CapacitorAppUrlListener';
-import { getLocale, getTranslations } from 'next-intl/server';
-
-const archivo = Archivo({
-  variable: "--font-archivo",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
-
-const ibmPlexMono = IBM_Plex_Mono({
-  variable: "--font-ibm-plex-mono",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  display: "swap",
-});
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -122,37 +101,16 @@ export const metadata: Metadata = {
 };
 
 
-export default async function RootLayout({
+/**
+ * Layout racine en simple passe-plat (modèle next-intl) : le document HTML est
+ * rendu par chaque layout de premier niveau via RootShell
+ * (src/components/layout/RootShell.tsx). Ici, plus aucun appel à getLocale() :
+ * il rendait toutes les pages publiques dynamiques.
+ */
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const locale = await getLocale();
-  const t = await getTranslations('Navigation');
-  return (
-    <html lang={locale} suppressHydrationWarning className={`scroll-smooth ${archivo.variable} ${ibmPlexMono.variable}`} data-scroll-behavior="smooth">
-      <head />
-      <body className="antialiased font-body bg-background text-foreground">
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-accent focus:text-white focus:px-4 focus:py-2 focus:rounded focus:font-semibold"
-        >
-          {t('skipToContent')}
-        </a>
-        <CapacitorAppUrlListener />
-        <AuthSessionProvider>
-          <ThemeProvider
-            attribute="data-theme"
-            defaultTheme="light"
-            storageKey="nx-theme"
-            enableSystem={false}
-            disableTransitionOnChange
-          >
-            <MotionProvider>{children}</MotionProvider>
-          </ThemeProvider>
-        </AuthSessionProvider>
-        <GoogleAnalytics />
-      </body>
-    </html>
-  );
+  return children;
 }

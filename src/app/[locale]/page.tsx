@@ -9,6 +9,7 @@ import { buildAlternates } from '@/lib/seo/localized-metadata';
 import { getActivePricingSegmentsSafe, cheapestBetweenNodes } from '@/lib/pricing-segments';
 import { getActiveVehiclesSafe } from '@/lib/public-catalog';
 import { moneyRoutePathForNodes } from '@/lib/seo/internal-links';
+import { ClientMessages } from "@/i18n/ClientMessages";
 
 // Les tarifs affiches (cartes de segments, FAQ et JSON-LD FAQPage) viennent de la
 // table pricing_segments geree en admin. Cette page est rendue a la demande : la
@@ -90,7 +91,7 @@ export default async function Page({
         <>
             <JsonLd data={schemaService()} />
             <JsonLd data={schemaFAQ(faqs)} />
-            <HomeClient faqs={faqs} segments={homeSegments} vehicles={vehicles} />
+            <ClientMessages namespaces={["home","flotte"]}><HomeClient faqs={faqs} segments={homeSegments} vehicles={vehicles} /></ClientMessages>
         </>
     );
 }

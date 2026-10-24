@@ -251,6 +251,9 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
           </div>
         </div>
       </header>
+      {/* Cible du lien « Aller au contenu » (RootShell) : posée juste après l'en-tête,
+          elle sert toutes les pages publiques, qui n'ont pas toutes un <main>. */}
+      <div id="main-content" tabIndex={-1} className="outline-none" />
     </>
   );
 }

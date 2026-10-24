@@ -122,7 +122,13 @@ export function Footer() {
                         <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#8a8378] mb-4">
                             {t("languageHeading")}
                         </p>
-                        <LanguageSwitcher variant="inline" className="flex-col items-start gap-3 [&_a]:text-[#9a938a] [&_a.text-accent]:text-gold" />
+                        {/* gold-light : le gold seul passe sous 4,5:1 de contraste sur ce fond sombre */}
+                        <LanguageSwitcher
+                          variant="inline"
+                          className="flex-col items-start gap-3"
+                          linkClassName="text-[#9a938a] hover:text-gold-light"
+                          activeLinkClassName="text-gold-light"
+                        />
 
                         <div className="mt-8">
                             <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] tracking-[0.14em] uppercase text-[#8a8378] mb-3">

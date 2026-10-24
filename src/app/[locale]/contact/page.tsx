@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import ContactClient from './ContactClient';
 import { buildAlternates } from '@/lib/seo/localized-metadata';
+import { ClientMessages } from "@/i18n/ClientMessages";
 
 export async function generateMetadata({
     params,
@@ -26,5 +27,5 @@ export default async function Page({
 }) {
     const { locale } = await params;
     setRequestLocale(locale);
-    return <ContactClient />;
+    return <ClientMessages namespaces={["contact"]}><ContactClient /></ClientMessages>;
 }

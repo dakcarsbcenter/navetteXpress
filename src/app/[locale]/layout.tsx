@@ -1,9 +1,11 @@
-import { NextIntlClientProvider, hasLocale } from "next-intl";
-import { getMessages, setRequestLocale } from "next-intl/server";
+import { hasLocale } from "next-intl";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { ClientMessages } from "@/i18n/ClientMessages";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { CookieBanner } from "@/components/CookieBanner";
 import { ContactTracking } from "@/components/analytics/ContactTracking";
+import { RootShell } from "@/components/layout/RootShell";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { schemaLocalBusiness, schemaWebSite } from "@/lib/schema";
 
@@ -25,10 +27,13 @@ export default async function LocaleLayout({
   }
 
   setRequestLocale(locale);
-  const messages = await getMessages();
+  const t = await getTranslations({ locale, namespace: "Navigation" });
 
+  // Langue issue du segment d'URL : la page reste statique (voir RootShell).
   return (
-    <NextIntlClientProvider messages={messages}>
+    <RootShell locale={locale} skipLabel={t("skipToContent")}>
+    {/* Traductions partagées seulement ; chaque page ajoute les siennes (ClientMessages) */}
+    <ClientMessages>
       {/* Pages publiques seulement : les espaces connectes (admin, chauffeur,
           client) vivent hors de [locale] et n'ont pas a porter ces donnees. */}
       <JsonLd data={schemaLocalBusiness} />
@@ -36,6 +41,7 @@ export default async function LocaleLayout({
       {children}
       <CookieBanner />
       <ContactTracking />
-    </NextIntlClientProvider>
+    </ClientMessages>
+    </RootShell>
   );
 }
