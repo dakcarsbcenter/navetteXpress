@@ -13,6 +13,8 @@ export interface GAEvent {
   category?: string;
   label?: string;
   value?: number;
+  /** Sans devise, GA4 ignore `value` dans les rapports de conversion. */
+  currency?: string;
 }
 
 // Fonction pour envoyer des événements à Google Analytics
@@ -22,41 +24,17 @@ export const trackEvent = (event: GAEvent) => {
       event_category: event.category,
       event_label: event.label,
       value: event.value,
+      ...(event.currency ? { currency: event.currency } : {}),
     });
   }
 };
 
 // Événements prédéfinis pour Navette Xpress
-export const trackReservation = (serviceType: string, price: number) => {
-  trackEvent({
-    action: 'reservation',
-    category: 'engagement',
-    label: serviceType,
-    value: price,
-  });
-};
-
-export const trackPhoneCall = (source: string) => {
-  trackEvent({
-    action: 'phone_call',
-    category: 'contact',
-    label: source,
-  });
-};
-
 export const trackEmailClick = (source: string) => {
   trackEvent({
     action: 'email_click',
     category: 'contact',
     label: source,
-  });
-};
-
-export const trackQuoteRequest = (service: string) => {
-  trackEvent({
-    action: 'quote_request',
-    category: 'lead',
-    label: service,
   });
 };
 
@@ -66,22 +44,6 @@ export const trackQuoteRequest = (service: string) => {
 // uniquement sur l'accueil, il doublait donc les vues de cette seule page, ce
 // qui faussait aussi la comparaison entre pages. Les vues sont desormais
 // entierement laissees a GA4 (voir src/app/google-analytics.tsx).
-
-export const trackFormSubmission = (formName: string) => {
-  trackEvent({
-    action: 'form_submission',
-    category: 'engagement',
-    label: formName,
-  });
-};
-
-export const trackServiceView = (serviceName: string) => {
-  trackEvent({
-    action: 'service_view',
-    category: 'engagement',
-    label: serviceName,
-  });
-};
 
 // ── Conversions ──
 // Ces trois evenements sont les seuls qui comptent vraiment : ils marquent le
@@ -147,6 +109,30 @@ export const trackBookingSubmitted = (params: {
     category: 'conversion',
     label: [params.serviceType, params.vehicleType].filter(Boolean).join(' / ') || 'reservation',
     value: params.price,
+    currency: params.price !== undefined ? 'XOF' : undefined,
+  });
+};
+
+/** Passage à l'étape 2 ou 3 du formulaire de réservation. */
+export const trackBookingStep = (step: number) => {
+  trackEvent({
+    action: 'booking_step',
+    category: 'funnel',
+    label: `step_${step}`,
+    value: step,
+  });
+};
+
+/**
+ * Clic sur un lien téléphone ou WhatsApp, posé par src/components/analytics/ContactTracking.tsx.
+ * `source` = valeur de data-track du lien, sinon le chemin de la page : on sait
+ * quelle page pousse à appeler.
+ */
+export const trackContactClick = (action: 'phone_call' | 'whatsapp_click', source: string) => {
+  trackEvent({
+    action,
+    category: 'conversion',
+    label: source,
   });
 };
 

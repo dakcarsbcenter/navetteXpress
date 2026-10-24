@@ -62,6 +62,12 @@ interface Booking {
   airline?: string | null
   flightStatus?: string | null
   flightLastCheckedAt?: string | null
+  landingPage?: string | null
+  referrer?: string | null
+  utmSource?: string | null
+  utmMedium?: string | null
+  utmCampaign?: string | null
+  gclid?: string | null
   driver?: {
     id: string
     name: string
@@ -205,6 +211,12 @@ export function BookingsManagement() {
               airline: b.airline,
               flightStatus: b.flightStatus,
               flightLastCheckedAt: b.flightLastCheckedAt,
+              landingPage: b.landingPage,
+              referrer: b.referrer,
+              utmSource: b.utmSource,
+              utmMedium: b.utmMedium,
+              utmCampaign: b.utmCampaign,
+              gclid: b.gclid,
               driver: row.driver,
               vehicle: row.vehicle
             }

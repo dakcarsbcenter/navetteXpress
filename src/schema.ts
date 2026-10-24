@@ -232,6 +232,15 @@ export const bookingsTable = pgTable('bookings', {
   // Elles restent traitées individuellement par l'admin mais partagent cet
   // identifiant. NULL = demande à un seul trajet, on ne crée pas de faux groupe.
   bookingGroupId: text('booking_group_id'),
+  // Provenance de la demande (src/lib/attribution.ts) : page d'entrée du site,
+  // hôte référent et paramètres de campagne. NULL pour les réservations créées en
+  // back-office ou avant la mise en place du suivi.
+  landingPage: text('landing_page'),
+  referrer: text('referrer'),
+  utmSource: text('utm_source'),
+  utmMedium: text('utm_medium'),
+  utmCampaign: text('utm_campaign'),
+  gclid: text('gclid'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
 }, (table) => ({

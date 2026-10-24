@@ -3,6 +3,7 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { CookieBanner } from "@/components/CookieBanner";
+import { ContactTracking } from "@/components/analytics/ContactTracking";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { schemaLocalBusiness, schemaWebSite } from "@/lib/schema";
 
@@ -34,6 +35,7 @@ export default async function LocaleLayout({
       <JsonLd data={schemaWebSite} />
       {children}
       <CookieBanner />
+      <ContactTracking />
     </NextIntlClientProvider>
   );
 }

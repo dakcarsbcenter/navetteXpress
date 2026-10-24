@@ -53,6 +53,12 @@ interface Booking {
   cancellationReason?: string | null
   cancelledBy?: string | null
   cancelledAt?: string | null
+  landingPage?: string | null
+  referrer?: string | null
+  utmSource?: string | null
+  utmMedium?: string | null
+  utmCampaign?: string | null
+  gclid?: string | null
   createdAt: string
   driver?: {
     name: string
@@ -806,6 +812,23 @@ export function BookingDetailsModal({
                         </div>
                       </div>
                     </>
+                  )}
+
+                  {!isEditing && (booking.landingPage || booking.referrer || booking.utmSource || booking.gclid) && (
+                    <div style={fieldWrap}>
+                      <p style={fieldLabel}>Provenance (lecture seule)</p>
+                      <p style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: '#12100E' }} className="break-all">
+                        {booking.landingPage || '—'}
+                      </p>
+                      <p style={{ margin: '4px 0 0', fontFamily: 'var(--font-mono)', fontSize: '10.5px', color: '#6E6A63' }}>
+                        {[
+                          booking.gclid ? 'Google Ads' : null,
+                          booking.utmSource ? `${booking.utmSource}${booking.utmMedium ? ` / ${booking.utmMedium}` : ''}` : null,
+                          booking.utmCampaign,
+                          booking.referrer ? `via ${booking.referrer}` : null,
+                        ].filter(Boolean).join(' · ') || 'Accès direct'}
+                      </p>
+                    </div>
                   )}
 
                   {!isEditing && booking.flightNumber && (

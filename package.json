@@ -29,7 +29,8 @@
     "email:resend": "npx tsx generate-resend-templates.ts",
     "email:all": "npx tsx generate-all-resend-templates.ts",
     "email:generate-all": "npx tsx generate-all-resend-templates.ts",
-    "seo:refresh:monthly": "npx tsx scripts/seo-monthly-refresh.ts"
+    "seo:refresh:monthly": "npx tsx scripts/seo-monthly-refresh.ts",
+    "seo:bookings": "npx tsx scripts/bookings-by-source.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.135.0",

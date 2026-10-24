@@ -15,6 +15,7 @@ import { requireValidPhone, InvalidPhoneError } from '@/lib/phone';
 import { resolvePrice } from '@/lib/pricing';
 import { BookingTripSchema, MAX_BOOKING_TRIPS, type BookingTripParsed } from '@/lib/booking-trips';
 import { guardPublicFormSubmission } from '@/lib/security/publicFormGuard';
+import { normalizeAttribution } from '@/lib/attribution';
 
 // Fonction pour vérifier les permissions dynamiques des bookings
 async function hasBookingsPermission(userRole: string, action: 'read' | 'create' | 'update' | 'delete'): Promise<boolean> {
@@ -280,6 +281,10 @@ export async function POST(request: NextRequest) {
     // demande à un seul trajet : pas de faux groupe.
     const bookingGroupId = trips.length > 1 ? randomUUID() : null;
 
+    // Même provenance pour tous les trajets de la demande : c'est la visite qui a
+    // amené la soumission, pas chaque course.
+    const attribution = normalizeAttribution(body.attribution);
+
     // Tout ou rien : une demande ne doit jamais se retrouver à moitié créée, le client
     // repartirait avec la moitié de son séjour réservée sans le savoir.
     const createdBookings = await db.transaction(async (tx) => {
@@ -321,6 +326,7 @@ Precision service: ${trip.customServiceType}`
             flightNumber: trip.flightNumber || null,
             airline: trip.airline || null,
             bookingGroupId,
+            ...attribution,
             notes: `Service: ${trip.serviceType}\nVéhicule souhaité: ${trip.vehicleType === 'suv' ? 'SUV' : 'Berline'}\nContact: ${normalizedContactPhone}${contactEmail ? ` - ${contactEmail}` : ''}\nServices additionnels: ${additionalServices?.join(', ') || 'Aucun'}\nDemandes spéciales: ${flatSpecialRequests || 'Aucune'}${customServiceLine}${tripLine}`,
             updatedAt: new Date()
           })

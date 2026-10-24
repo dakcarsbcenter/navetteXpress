@@ -23,7 +23,8 @@ import {
 } from "@/lib/pricing";
 import { MAX_BOOKING_TRIPS } from "@/lib/booking-trips";
 import { fetchPublicApi } from "@/lib/apiClient";
-import { trackBookingSubmitted } from "@/lib/analytics";
+import { trackBookingSubmitted, trackBookingStep } from "@/lib/analytics";
+import { getAttribution } from "@/lib/attribution";
 import { Combobox } from "@/components/ui/Combobox";
 import PhoneField from "@/components/shared/PhoneField";
 import { isCompleteInternationalPhone } from "@/lib/phone-countries";
@@ -490,6 +491,9 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
           // formulaire (voir src/lib/security/publicFormGuard.ts)
           companyWebsite,
           formStartedAt: formStartedAtRef.current,
+          // Page d'entrée et campagne de la visite, pour savoir quelles pages amènent
+          // des réservations (src/lib/attribution.ts)
+          attribution: getAttribution(),
         }),
       });
 
@@ -531,7 +535,12 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
     }
   };
 
-  const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 3));
+  const nextStep = () => {
+    const next = Math.min(currentStep + 1, 3);
+    // Entonnoir : on voit à quelle étape les visiteurs abandonnent
+    if (next !== currentStep) trackBookingStep(next);
+    setCurrentStep(next);
+  };
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
 
   const formatPrice = (value: number) => `${value.toLocaleString('fr-FR')} FCFA`;

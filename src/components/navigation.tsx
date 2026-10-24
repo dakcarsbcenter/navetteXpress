@@ -8,7 +8,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { Link } from "@/i18n/navigation";
 import { Phone, EnvelopeSimple, List, X, CaretDown, UserCircle, SignOut, SquaresFour } from "@phosphor-icons/react";
-import { trackPhoneCall, trackEmailClick } from "@/lib/analytics";
+import { trackEmailClick } from "@/lib/analytics";
 
 interface NavigationProps {
   variant?: "transparent" | "solid";
@@ -61,7 +61,7 @@ export function Navigation({ variant = "solid" }: NavigationProps) {
             <a
               href="tel:+221784651302"
               className="flex items-center gap-1.5 hover:text-gold transition-colors"
-              onClick={() => trackPhoneCall('header')}
+              data-track="header"
             >
               <Phone size={12} weight="light" className="text-gold" />
               <span>+221 78 465 13 02</span>
