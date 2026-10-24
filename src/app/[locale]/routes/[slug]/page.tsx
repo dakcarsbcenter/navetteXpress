@@ -126,7 +126,7 @@ export default async function RouteMoneyPage({ params }: Params) {
             </div>
 
             <div className="rounded-2xl border border-border bg-surface-2/40 p-6">
-              <h2 className="text-2xl font-display mb-4">{t('processHeading')}</h2>
+              <h2 className="text-2xl font-display mb-4">{translation.processHeading ?? t('processHeading')}</h2>
               <ol className="space-y-3 text-text-secondary list-decimal list-inside">
                 {translation.aibdProcess.map((step) => (
                   <li key={step}>{step}</li>
@@ -134,6 +134,17 @@ export default async function RouteMoneyPage({ params }: Params) {
               </ol>
             </div>
           </section>
+
+          {translation.sections && translation.sections.length > 0 && (
+            <section className="space-y-6">
+              {translation.sections.map((section) => (
+                <div key={section.heading} className="space-y-2">
+                  <h2 className="text-2xl font-display">{section.heading}</h2>
+                  <p className="text-text-secondary leading-relaxed">{section.body}</p>
+                </div>
+              ))}
+            </section>
+          )}
 
           <ReviewsSection locale={locale} />
 

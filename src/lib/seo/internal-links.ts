@@ -32,9 +32,9 @@ export function moneyServicePathForSlug(slug: string): string | null {
 }
 
 // Segment de tarif -> money page route, d'apres ses points canoniques
-// (src/lib/route-nodes.ts). Dakar <-> AIBD a deux pages (une par sens) ; la
-// Petite Cote n'a qu'une page par destination, depuis l'AIBD, qui sert aussi le
-// trajet retour.
+// (src/lib/route-nodes.ts). Dakar <-> AIBD a deux pages (une par sens), comme
+// Saly, Mbour et Somone (pages depart, DEPARTURE_TO_AIBD_SLUG) ; les autres
+// destinations n'ont qu'une page, depuis l'AIBD, qui sert aussi le retour.
 const AIBD_DESTINATION_SLUG: Record<string, string> = {
     SALY: 'aibd-saly',
     SOMONE: 'aibd-somone',
@@ -43,6 +43,13 @@ const AIBD_DESTINATION_SLUG: Record<string, string> = {
     NGAPAROU: 'aibd-ngaparou',
     NIANING: 'aibd-nianing',
     SAINT_LOUIS: 'aibd-saint-louis',
+};
+
+// Destinations qui ont aussi leur page dans le sens départ (-> AIBD)
+const DEPARTURE_TO_AIBD_SLUG: Record<string, string> = {
+    SALY: 'saly-aibd',
+    MBOUR: 'mbour-aibd',
+    SOMONE: 'somone-aibd',
 };
 
 export function moneyRoutePathForNodes(
@@ -55,7 +62,7 @@ export function moneyRoutePathForNodes(
     if (departNode === 'DAKAR' && arriveeNode === 'AIBD') slug = 'dakar-aibd';
     else if (departNode === 'AIBD' && arriveeNode === 'DAKAR') slug = 'aibd-dakar';
     else if (departNode === 'AIBD') slug = AIBD_DESTINATION_SLUG[arriveeNode];
-    else if (arriveeNode === 'AIBD') slug = AIBD_DESTINATION_SLUG[departNode];
+    else if (arriveeNode === 'AIBD') slug = DEPARTURE_TO_AIBD_SLUG[departNode] ?? AIBD_DESTINATION_SLUG[departNode];
 
     return slug ? (getMoneyRouteBySlug(slug)?.canonicalPath ?? null) : null;
 }

@@ -42,6 +42,13 @@ const fromAibd = (node: RouteNodeKey): MoneyPageBooking => ({
   prices: { kind: 'pair', a: 'AIBD', b: node },
 });
 
+const toAibd = (node: RouteNodeKey): MoneyPageBooking => ({
+  service: 'transfert-aibd-dakar',
+  pickup: NODE_PARAM[node],
+  destination: NODE_PARAM.AIBD,
+  prices: { kind: 'pair', a: node, b: 'AIBD' },
+});
+
 export const MONEY_PAGE_BOOKING: Record<string, MoneyPageBooking> = {
   // Services
   'transfert-aeroport-aibd': { service: 'transfert-aibd-dakar', pickup: 'AIBD', destination: 'DAKAR', prices: { kind: 'touches', node: 'AIBD' } },
@@ -61,6 +68,10 @@ export const MONEY_PAGE_BOOKING: Record<string, MoneyPageBooking> = {
   'aibd-saint-louis': fromAibd('SAINT_LOUIS'),
   'aibd-ngaparou': fromAibd('NGAPAROU'),
   'aibd-nianing': fromAibd('NIANING'),
+  // Départs vers l'aéroport
+  'saly-aibd': toAibd('SALY'),
+  'mbour-aibd': toAibd('MBOUR'),
+  'somone-aibd': toAibd('SOMONE'),
 };
 
 /** URL de réservation pré-remplie pour une money page (sans préfixe de langue). */
@@ -94,6 +105,14 @@ export function moneyPagePriceRows(slug: string, segments: SelectPricingSegment[
         (s.departNode === scope.b && s.arriveeNode === scope.a)
       );
     })
-    .map((s) => ({ id: s.id, route: s.route, berline: s.berline, suv: s.suv }))
+    .map((s) => {
+      // Les tarifs valent dans les deux sens : sur une page départ (Saly -> AIBD),
+      // le libellé « AIBD → Saly Portudal » de la grille est affiché à l'endroit.
+      const reversed = scope.kind === 'pair' && s.departNode === scope.b && s.arriveeNode === scope.a;
+      const route = reversed && s.route.includes('→')
+        ? s.route.split('→').map((part) => part.trim()).reverse().join(' → ')
+        : s.route;
+      return { id: s.id, route, berline: s.berline, suv: s.suv };
+    })
     .sort((x, y) => x.berline - y.berline);
 }

@@ -1,3 +1,5 @@
+import { departureRoutePages } from '@/lib/seo/money-pages-departures';
+
 export type MoneyPageKind = 'service' | 'route';
 export type MoneyPageLocale = 'fr' | 'en' | 'es';
 
@@ -11,8 +13,13 @@ export interface MoneyPageTranslation {
   description: string;
   h1: string;
   intentKeyword: string;
-  travelTime: string;  valuePoints: string[];
+  travelTime: string;
+  valuePoints: string[];
   aibdProcess: string[];
+  /** Titre du bloc « process » quand ce n'est pas un accueil à l'arrivée (pages départ). */
+  processHeading?: string;
+  /** Paragraphes propres à la page (conseils, couverture) : du contenu unique, pas du gabarit. */
+  sections?: { heading: string; body: string }[];
   faqs: MoneyFaq[];
 }
 
@@ -58,7 +65,8 @@ export const moneyServicePages: MoneyPageDefinition[] = [
           'Réservez votre transfert AIBD vers Dakar avec chauffeur privé 24/7. Prix fixe, suivi de vol, accueil personnalisé et départ immédiat.',
         h1: 'Transfert Aéroport AIBD Dakar: Prix Fixe et Service 24/7',
         intentKeyword: 'transfert aeroport aibd dakar',
-        travelTime: '45-70 min selon trafic',        valuePoints: ['Prix fixe annoncé', 'Service de nuit 24/7', 'Chauffeurs professionnels', 'Véhicules climatisés'],
+        travelTime: '45-70 min selon trafic',
+        valuePoints: ['Prix fixe annoncé', 'Service de nuit 24/7', 'Chauffeurs professionnels', 'Véhicules climatisés'],
         aibdProcess: commonAibdProcess.fr,
         faqs: [
           {
@@ -81,7 +89,8 @@ export const moneyServicePages: MoneyPageDefinition[] = [
           'Book your AIBD airport transfer to Dakar with a private driver, 24/7. Fixed price, live flight tracking, meet & greet and prompt departure.',
         h1: 'AIBD Airport Transfer to Dakar: Fixed Price and 24/7 Service',
         intentKeyword: 'aibd airport transfer dakar',
-        travelTime: '45-70 min depending on traffic',        valuePoints: ['Fixed price announced', '24/7 night service', 'Professional drivers', 'Air-conditioned vehicles'],
+        travelTime: '45-70 min depending on traffic',
+        valuePoints: ['Fixed price announced', '24/7 night service', 'Professional drivers', 'Air-conditioned vehicles'],
         aibdProcess: commonAibdProcess.en,
         faqs: [
           {
@@ -104,7 +113,8 @@ export const moneyServicePages: MoneyPageDefinition[] = [
           'Reserve su traslado desde el AIBD a Dakar con chofer privado 24/7. Precio fijo, seguimiento de vuelo, recepción personalizada y salida inmediata.',
         h1: 'Traslado Aeropuerto AIBD a Dakar: Precio Fijo y Servicio 24/7',
         intentKeyword: 'traslado aeropuerto aibd dakar',
-        travelTime: '45-70 min según el tráfico',        valuePoints: ['Precio fijo anunciado', 'Servicio nocturno 24/7', 'Choferes profesionales', 'Vehículos climatizados'],
+        travelTime: '45-70 min según el tráfico',
+        valuePoints: ['Precio fijo anunciado', 'Servicio nocturno 24/7', 'Choferes profesionales', 'Vehículos climatizados'],
         aibdProcess: commonAibdProcess.es,
         faqs: [
           {
@@ -136,7 +146,8 @@ export const moneyServicePages: MoneyPageDefinition[] = [
           'Service chauffeur privé à Dakar pour rendez-vous business, city tours et transferts confortables. Réservation rapide, prix fixe, disponibilité 24/7.',
         h1: 'Chauffeur Privé Dakar pour Tous Vos Déplacements',
         intentKeyword: 'chauffeur prive dakar',
-        travelTime: 'Sur mesure selon itinéraire',        valuePoints: ['Mise à disposition flexible', 'Facturation claire', 'Trajet confortable', 'Support client réactif'],
+        travelTime: 'Sur mesure selon itinéraire',
+        valuePoints: ['Mise à disposition flexible', 'Facturation claire', 'Trajet confortable', 'Support client réactif'],
         aibdProcess: commonAibdProcess.fr,
         faqs: [
           {
@@ -159,7 +170,8 @@ export const moneyServicePages: MoneyPageDefinition[] = [
           'Private driver service in Dakar for business meetings, city tours and comfortable transfers. Quick booking, fixed price, available 24/7.',
         h1: 'Private Driver in Dakar for All Your Journeys',
         intentKeyword: 'private driver dakar',
-        travelTime: 'Tailored to your itinerary',        valuePoints: ['Flexible chauffeur hire', 'Clear invoicing', 'Comfortable ride', 'Responsive customer support'],
+        travelTime: 'Tailored to your itinerary',
+        valuePoints: ['Flexible chauffeur hire', 'Clear invoicing', 'Comfortable ride', 'Responsive customer support'],
         aibdProcess: commonAibdProcess.en,
         faqs: [
           {
@@ -182,7 +194,8 @@ export const moneyServicePages: MoneyPageDefinition[] = [
           'Servicio de chofer privado en Dakar para citas de negocios, recorridos por la ciudad y traslados cómodos. Reserva rápida, precio fijo, disponibilidad 24/7.',
         h1: 'Chofer Privado en Dakar para Todos sus Desplazamientos',
         intentKeyword: 'chofer privado dakar',
-        travelTime: 'A medida según el itinerario',        valuePoints: ['Disponibilidad flexible', 'Facturación clara', 'Viaje cómodo', 'Atención al cliente reactiva'],
+        travelTime: 'A medida según el itinerario',
+        valuePoints: ['Disponibilidad flexible', 'Facturación clara', 'Viaje cómodo', 'Atención al cliente reactiva'],
         aibdProcess: commonAibdProcess.es,
         faqs: [
           {
@@ -214,7 +227,8 @@ export const moneyServicePages: MoneyPageDefinition[] = [
           'Réservez un véhicule avec chauffeur privé à Dakar pour quelques heures ou la journée complète. Flexibilité maximale et prix négocié à l’avance.',
         h1: 'Mise à Disposition Chauffeur à Dakar',
         intentKeyword: 'mise a disposition chauffeur dakar',
-        travelTime: 'Itinéraire flexible',        valuePoints: ['Forfaits demi-journée ou journée', 'Gestion multi-arrêts', 'Tarif négocié à l’avance', 'Idéal business et famille'],
+        travelTime: 'Itinéraire flexible',
+        valuePoints: ['Forfaits demi-journée ou journée', 'Gestion multi-arrêts', 'Tarif négocié à l’avance', 'Idéal business et famille'],
         aibdProcess: commonAibdProcess.fr,
         faqs: [
           {
@@ -237,7 +251,8 @@ export const moneyServicePages: MoneyPageDefinition[] = [
           'Book a vehicle with a private driver in Dakar for a few hours or a full day. Maximum flexibility and price agreed in advance.',
         h1: 'Chauffeur Hire in Dakar',
         intentKeyword: 'chauffeur hire dakar',
-        travelTime: 'Flexible itinerary',        valuePoints: ['Half-day or full-day packages', 'Multiple-stop itineraries', 'Price agreed in advance', 'Ideal for business and family'],
+        travelTime: 'Flexible itinerary',
+        valuePoints: ['Half-day or full-day packages', 'Multiple-stop itineraries', 'Price agreed in advance', 'Ideal for business and family'],
         aibdProcess: commonAibdProcess.en,
         faqs: [
           {
@@ -260,7 +275,8 @@ export const moneyServicePages: MoneyPageDefinition[] = [
           'Reserve un vehículo con chofer privado en Dakar por unas horas o el día completo. Máxima flexibilidad y precio acordado por adelantado.',
         h1: 'Chofer a Disposición en Dakar',
         intentKeyword: 'chofer a disposición dakar',
-        travelTime: 'Itinerario flexible',        valuePoints: ['Paquetes de medio día o día completo', 'Gestión de múltiples paradas', 'Tarifa acordada por adelantado', 'Ideal para negocios y familia'],
+        travelTime: 'Itinerario flexible',
+        valuePoints: ['Paquetes de medio día o día completo', 'Gestión de múltiples paradas', 'Tarifa acordada por adelantado', 'Ideal para negocios y familia'],
         aibdProcess: commonAibdProcess.es,
         faqs: [
           {
@@ -292,7 +308,8 @@ export const moneyServicePages: MoneyPageDefinition[] = [
           'Transport pour mariages, conférences, séminaires et délégations à Dakar. Coordination logistique, ponctualité et flotte adaptée.',
         h1: 'Navette Événementielle Dakar: Logistique Fiable et Ponctuelle',
         intentKeyword: 'navette evenementielle dakar',
-        travelTime: 'Selon programme événementiel',        valuePoints: ['Coordination multi-véhicules', 'Chauffeurs briefés événement', 'Ponctualité stricte', 'Support opérationnel dédié'],
+        travelTime: 'Selon programme événementiel',
+        valuePoints: ['Coordination multi-véhicules', 'Chauffeurs briefés événement', 'Ponctualité stricte', 'Support opérationnel dédié'],
         aibdProcess: commonAibdProcess.fr,
         faqs: [
           {
@@ -315,7 +332,8 @@ export const moneyServicePages: MoneyPageDefinition[] = [
           'Transport for weddings, conferences, seminars and delegations in Dakar. Logistics coordination, punctuality and a fleet to match your needs.',
         h1: 'Event Shuttle Dakar: Reliable, Punctual Logistics',
         intentKeyword: 'event shuttle dakar',
-        travelTime: 'Based on the event schedule',        valuePoints: ['Multi-vehicle coordination', 'Drivers briefed on the event', 'Strict punctuality', 'Dedicated operational support'],
+        travelTime: 'Based on the event schedule',
+        valuePoints: ['Multi-vehicle coordination', 'Drivers briefed on the event', 'Strict punctuality', 'Dedicated operational support'],
         aibdProcess: commonAibdProcess.en,
         faqs: [
           {
@@ -338,7 +356,8 @@ export const moneyServicePages: MoneyPageDefinition[] = [
           'Transporte para bodas, conferencias, seminarios y delegaciones en Dakar. Coordinación logística, puntualidad y flota adaptada.',
         h1: 'Traslado para Eventos en Dakar: Logística Fiable y Puntual',
         intentKeyword: 'traslado para eventos dakar',
-        travelTime: 'Según el programa del evento',        valuePoints: ['Coordinación de múltiples vehículos', 'Choferes informados sobre el evento', 'Puntualidad estricta', 'Soporte operativo dedicado'],
+        travelTime: 'Según el programa del evento',
+        valuePoints: ['Coordinación de múltiples vehículos', 'Choferes informados sobre el evento', 'Puntualidad estricta', 'Soporte operativo dedicado'],
         aibdProcess: commonAibdProcess.es,
         faqs: [
           {
@@ -370,7 +389,8 @@ export const moneyServicePages: MoneyPageDefinition[] = [
           'Transfert aéroport vers hôtels à Dakar, Saly, Somone et Mbour. Accueil AIBD, assistance bagages, prix fixe et réservation instantanée.',
         h1: 'Transfert Hôtel depuis AIBD: Dakar, Saly, Somone, Mbour',
         intentKeyword: 'transfert hotel aibd',
-        travelTime: '45 à 120 min selon destination',        valuePoints: ['Accueil personnalisé AIBD', 'Itinéraires optimisés', 'Prix fixe annoncé', 'Disponibilité 24/7'],
+        travelTime: '45 à 120 min selon destination',
+        valuePoints: ['Accueil personnalisé AIBD', 'Itinéraires optimisés', 'Prix fixe annoncé', 'Disponibilité 24/7'],
         aibdProcess: commonAibdProcess.fr,
         faqs: [
           {
@@ -393,7 +413,8 @@ export const moneyServicePages: MoneyPageDefinition[] = [
           'Airport transfer to hotels in Dakar, Saly, Somone and Mbour. AIBD meet & greet, luggage assistance, fixed price and instant booking.',
         h1: 'Hotel Transfer from AIBD: Dakar, Saly, Somone, Mbour',
         intentKeyword: 'aibd hotel transfer',
-        travelTime: '45 to 120 min depending on destination',        valuePoints: ['Personal meet & greet at AIBD', 'Optimized routes', 'Fixed price quoted upfront', '24/7 availability'],
+        travelTime: '45 to 120 min depending on destination',
+        valuePoints: ['Personal meet & greet at AIBD', 'Optimized routes', 'Fixed price quoted upfront', '24/7 availability'],
         aibdProcess: commonAibdProcess.en,
         faqs: [
           {
@@ -416,7 +437,8 @@ export const moneyServicePages: MoneyPageDefinition[] = [
           'Traslado desde el aeropuerto a hoteles en Dakar, Saly, Somone y Mbour. Recepción en el AIBD, asistencia con el equipaje, precio fijo y reserva instantánea.',
         h1: 'Traslado al Hotel desde el AIBD: Dakar, Saly, Somone, Mbour',
         intentKeyword: 'traslado hotel aibd',
-        travelTime: '45 a 120 min según el destino',        valuePoints: ['Recepción personalizada en el AIBD', 'Rutas optimizadas', 'Precio fijo indicado de antemano', 'Disponibilidad 24/7'],
+        travelTime: '45 a 120 min según el destino',
+        valuePoints: ['Recepción personalizada en el AIBD', 'Rutas optimizadas', 'Precio fijo indicado de antemano', 'Disponibilidad 24/7'],
         aibdProcess: commonAibdProcess.es,
         faqs: [
           {
@@ -448,7 +470,8 @@ export const moneyServicePages: MoneyPageDefinition[] = [
           'Transport d’affaires à Dakar pour dirigeants, équipes et délégations. Ponctualité, discrétion, facturation entreprise et réservation simple.',
         h1: 'Chauffeur Affaires Dakar pour Entreprises et Délégations',
         intentKeyword: 'chauffeur affaires dakar',
-        travelTime: 'Optimisé selon agenda professionnel',        valuePoints: ['Discrétion absolue', 'Facturation entreprise', 'Planning multi-rendez-vous', 'Support dédié comptes pro'],
+        travelTime: 'Optimisé selon agenda professionnel',
+        valuePoints: ['Discrétion absolue', 'Facturation entreprise', 'Planning multi-rendez-vous', 'Support dédié comptes pro'],
         aibdProcess: commonAibdProcess.fr,
         faqs: [
           {
@@ -471,7 +494,8 @@ export const moneyServicePages: MoneyPageDefinition[] = [
           'Business transport in Dakar for executives, teams and delegations. Punctuality, discretion, corporate invoicing and simple booking.',
         h1: 'Business Chauffeur in Dakar for Companies and Delegations',
         intentKeyword: 'business chauffeur dakar',
-        travelTime: 'Optimized around your business schedule',        valuePoints: ['Absolute discretion', 'Corporate invoicing', 'Multi-appointment scheduling', 'Dedicated support for corporate accounts'],
+        travelTime: 'Optimized around your business schedule',
+        valuePoints: ['Absolute discretion', 'Corporate invoicing', 'Multi-appointment scheduling', 'Dedicated support for corporate accounts'],
         aibdProcess: commonAibdProcess.en,
         faqs: [
           {
@@ -494,7 +518,8 @@ export const moneyServicePages: MoneyPageDefinition[] = [
           'Transporte de negocios en Dakar para directivos, equipos y delegaciones. Puntualidad, discreción, facturación corporativa y reserva sencilla.',
         h1: 'Chofer de Negocios en Dakar para Empresas y Delegaciones',
         intentKeyword: 'chofer de negocios dakar',
-        travelTime: 'Optimizado según la agenda profesional',        valuePoints: ['Discreción absoluta', 'Facturación corporativa', 'Planificación de múltiples citas', 'Soporte dedicado para cuentas corporativas'],
+        travelTime: 'Optimizado según la agenda profesional',
+        valuePoints: ['Discreción absoluta', 'Facturación corporativa', 'Planificación de múltiples citas', 'Soporte dedicado para cuentas corporativas'],
         aibdProcess: commonAibdProcess.es,
         faqs: [
           {
@@ -526,7 +551,8 @@ export const moneyServicePages: MoneyPageDefinition[] = [
           'Transfert famille à Dakar : véhicules spacieux, siège enfant sur demande, chauffeur privé et prix fixe annoncé vers et depuis l’AIBD.',
         h1: 'Transfert Famille à Dakar avec Chauffeur Privé',
         intentKeyword: 'transfert famille dakar',
-        travelTime: '45-90 min selon destination',        valuePoints: ['Véhicules spacieux', 'Sièges enfant sur demande', 'Accueil à l’AIBD avec pancarte', 'Prix annoncé avant la réservation'],
+        travelTime: '45-90 min selon destination',
+        valuePoints: ['Véhicules spacieux', 'Sièges enfant sur demande', 'Accueil à l’AIBD avec pancarte', 'Prix annoncé avant la réservation'],
         aibdProcess: commonAibdProcess.fr,
         faqs: [
           {
@@ -549,7 +575,8 @@ export const moneyServicePages: MoneyPageDefinition[] = [
           'Family transfer in Dakar: spacious vehicles, child seat on request, private driver and a fixed price announced for trips to and from AIBD.',
         h1: 'Family Transfer in Dakar with a Private Driver',
         intentKeyword: 'family transfer dakar',
-        travelTime: '45-90 min depending on destination',        valuePoints: ['Spacious vehicles', 'Child seats on request', 'Name-board welcome at AIBD', 'Price announced before booking'],
+        travelTime: '45-90 min depending on destination',
+        valuePoints: ['Spacious vehicles', 'Child seats on request', 'Name-board welcome at AIBD', 'Price announced before booking'],
         aibdProcess: commonAibdProcess.en,
         faqs: [
           {
@@ -572,7 +599,8 @@ export const moneyServicePages: MoneyPageDefinition[] = [
           'Traslado familiar en Dakar: vehículos espaciosos, silla infantil bajo petición, chofer privado y precio fijo anunciado desde y hacia el AIBD.',
         h1: 'Traslado Familiar en Dakar con Chofer Privado',
         intentKeyword: 'traslado familiar dakar',
-        travelTime: '45-90 min según el destino',        valuePoints: ['Vehículos espaciosos', 'Sillas infantiles bajo petición', 'Recepción con cartel en el AIBD', 'Precio anunciado antes de reservar'],
+        travelTime: '45-90 min según el destino',
+        valuePoints: ['Vehículos espaciosos', 'Sillas infantiles bajo petición', 'Recepción con cartel en el AIBD', 'Precio anunciado antes de reservar'],
         aibdProcess: commonAibdProcess.es,
         faqs: [
           {
@@ -595,7 +623,8 @@ export const moneyServicePages: MoneyPageDefinition[] = [
   },
 ];
 
-export const moneyRoutePages: MoneyPageDefinition[] = [
+// Sens arrivée (AIBD -> destination) ; les départs vivent dans money-pages-departures.ts
+const arrivalRoutePages: MoneyPageDefinition[] = [
   {
     kind: 'route',
     slug: 'aibd-dakar',
@@ -607,7 +636,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'Réservez votre transfert AIBD vers Dakar avec chauffeur privé local. Prix fixe, accueil aéroport, suivi de vol et réservation rapide 24/7.',
         h1: 'Trajet AIBD vers Dakar en Chauffeur Privé',
         intentKeyword: 'transfert aibd dakar',
-        travelTime: '45-70 min',        valuePoints: ['Accueil personnalisé AIBD', 'Prix fixe annoncé', 'Disponibilité 24/7', 'Chauffeurs expérimentés Dakar'],
+        travelTime: '45-70 min',
+        valuePoints: ['Accueil personnalisé AIBD', 'Prix fixe annoncé', 'Disponibilité 24/7', 'Chauffeurs expérimentés Dakar'],
         aibdProcess: commonAibdProcess.fr,
         faqs: [
           {
@@ -630,7 +660,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'Book your AIBD to Dakar transfer with a local private driver. Fixed price, airport meet & greet, flight tracking and fast 24/7 booking.',
         h1: 'AIBD to Dakar Route with a Private Driver',
         intentKeyword: 'aibd to dakar transfer',
-        travelTime: '45-70 min',        valuePoints: ['Personal meet & greet at AIBD', 'Fixed price announced', '24/7 availability', 'Experienced Dakar drivers'],
+        travelTime: '45-70 min',
+        valuePoints: ['Personal meet & greet at AIBD', 'Fixed price announced', '24/7 availability', 'Experienced Dakar drivers'],
         aibdProcess: commonAibdProcess.en,
         faqs: [
           {
@@ -653,7 +684,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'Reserve su traslado del AIBD a Dakar con chofer privado local. Precio fijo, recepción en el aeropuerto, seguimiento de vuelo y reserva rápida 24/7.',
         h1: 'Trayecto AIBD a Dakar en Chofer Privado',
         intentKeyword: 'traslado aibd dakar',
-        travelTime: '45-70 min',        valuePoints: ['Recepción personalizada en el AIBD', 'Precio fijo anunciado', 'Disponibilidad 24/7', 'Choferes experimentados en Dakar'],
+        travelTime: '45-70 min',
+        valuePoints: ['Recepción personalizada en el AIBD', 'Precio fijo anunciado', 'Disponibilidad 24/7', 'Choferes experimentados en Dakar'],
         aibdProcess: commonAibdProcess.es,
         faqs: [
           {
@@ -685,7 +717,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'Réservez votre trajet Dakar vers AIBD avec chauffeur privé. Prix fixe, temps de trajet maîtrisé, prise en charge ponctuelle 24h/24.',
         h1: 'Trajet Dakar vers AIBD en Chauffeur Privé',
         intentKeyword: 'dakar aibd transfert',
-        travelTime: '45-70 min',        valuePoints: ['Départ ponctuel', 'Tarif fixe confirmé', 'Suivi trafic en direct', 'Trajet confortable'],
+        travelTime: '45-70 min',
+        valuePoints: ['Départ ponctuel', 'Tarif fixe confirmé', 'Suivi trafic en direct', 'Trajet confortable'],
         aibdProcess: commonAibdProcess.fr,
         faqs: [
           {
@@ -708,7 +741,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'Book your Dakar to AIBD trip with a private driver. Fixed price, controlled journey time, punctual pickup around the clock.',
         h1: 'Dakar to AIBD Route with a Private Driver',
         intentKeyword: 'dakar to aibd transfer',
-        travelTime: '45-70 min',        valuePoints: ['Punctual departure', 'Confirmed fixed rate', 'Live traffic monitoring', 'Comfortable ride'],
+        travelTime: '45-70 min',
+        valuePoints: ['Punctual departure', 'Confirmed fixed rate', 'Live traffic monitoring', 'Comfortable ride'],
         aibdProcess: commonAibdProcess.en,
         faqs: [
           {
@@ -731,7 +765,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'Reserve su trayecto de Dakar al AIBD con chofer privado. Precio fijo, tiempo de trayecto controlado, recogida puntual las 24 horas.',
         h1: 'Trayecto Dakar al AIBD en Chofer Privado',
         intentKeyword: 'traslado dakar aibd',
-        travelTime: '45-70 min',        valuePoints: ['Salida puntual', 'Tarifa fija confirmada', 'Seguimiento del tráfico en directo', 'Viaje cómodo'],
+        travelTime: '45-70 min',
+        valuePoints: ['Salida puntual', 'Tarifa fija confirmada', 'Seguimiento del tráfico en directo', 'Viaje cómodo'],
         aibdProcess: commonAibdProcess.es,
         faqs: [
           {
@@ -763,7 +798,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'Transfert privé AIBD vers Saly avec chauffeur local expérimenté. Prix fixe, accueil aéroport et trajet confortable vers la Petite Côte.',
         h1: 'Transfert AIBD vers Saly: Confort et Ponctualité',
         intentKeyword: 'aibd saly transfert',
-        travelTime: '60-90 min',        valuePoints: ['Destination touristique prioritaire', 'Accueil AIBD optimisé', 'Véhicules climatisés', 'Tarif sans surprise'],
+        travelTime: '60-90 min',
+        valuePoints: ['Destination touristique prioritaire', 'Accueil AIBD optimisé', 'Véhicules climatisés', 'Tarif sans surprise'],
         aibdProcess: commonAibdProcess.fr,
         faqs: [
           {
@@ -786,7 +822,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'Private transfer from AIBD to Saly with an experienced local driver. Fixed price, airport meet & greet and a comfortable ride to the Petite Côte.',
         h1: 'AIBD to Saly Transfer: Comfort and Punctuality',
         intentKeyword: 'aibd saly transfer',
-        travelTime: '60-90 min',        valuePoints: ['Priority tourist destination', 'Streamlined AIBD welcome', 'Air-conditioned vehicles', 'No hidden fees'],
+        travelTime: '60-90 min',
+        valuePoints: ['Priority tourist destination', 'Streamlined AIBD welcome', 'Air-conditioned vehicles', 'No hidden fees'],
         aibdProcess: commonAibdProcess.en,
         faqs: [
           {
@@ -809,7 +846,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'Traslado privado del AIBD a Saly con chofer local experimentado. Precio fijo, recepción en el aeropuerto y trayecto cómodo hacia la Petite Côte.',
         h1: 'Traslado AIBD a Saly: Confort y Puntualidad',
         intentKeyword: 'traslado aibd saly',
-        travelTime: '60-90 min',        valuePoints: ['Destino turístico prioritario', 'Recepción optimizada en el AIBD', 'Vehículos climatizados', 'Tarifa sin sorpresas'],
+        travelTime: '60-90 min',
+        valuePoints: ['Destino turístico prioritario', 'Recepción optimizada en el AIBD', 'Vehículos climatizados', 'Tarifa sin sorpresas'],
         aibdProcess: commonAibdProcess.es,
         faqs: [
           {
@@ -828,7 +866,7 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
       },
     },
     relatedServiceSlugs: ['transfert-hotel-aibd', 'transfert-aeroport-aibd'],
-    relatedRouteSlugs: ['aibd-somone', 'aibd-mbour'],
+    relatedRouteSlugs: ['saly-aibd', 'aibd-somone', 'aibd-mbour'],
   },
   {
     kind: 'route',
@@ -841,7 +879,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'Trajet AIBD vers Somone en chauffeur privé avec accueil aéroport et service attentionné. Réservation simple et prise en charge ponctuelle.',
         h1: 'Transfert AIBD vers Somone en Chauffeur Privé',
         intentKeyword: 'aibd somone chauffeur prive',
-        travelTime: '70-100 min',        valuePoints: ['Service idéal pour voyageurs loisirs', 'Trajet direct sans attente', 'Ponctualité mesurée', 'Support WhatsApp'],
+        travelTime: '70-100 min',
+        valuePoints: ['Service idéal pour voyageurs loisirs', 'Trajet direct sans attente', 'Ponctualité mesurée', 'Support WhatsApp'],
         aibdProcess: commonAibdProcess.fr,
         faqs: [
           {
@@ -864,7 +903,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'AIBD to Somone trip with a private driver, airport meet & greet and attentive service. Simple booking and punctual pickup.',
         h1: 'AIBD to Somone Transfer with a Private Driver',
         intentKeyword: 'aibd somone private driver',
-        travelTime: '70-100 min',        valuePoints: ['Ideal for leisure travelers', 'Direct trip with no waiting', 'Measured punctuality', 'WhatsApp support'],
+        travelTime: '70-100 min',
+        valuePoints: ['Ideal for leisure travelers', 'Direct trip with no waiting', 'Measured punctuality', 'WhatsApp support'],
         aibdProcess: commonAibdProcess.en,
         faqs: [
           {
@@ -887,7 +927,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'Trayecto del AIBD a Somone con chofer privado, recepción en el aeropuerto y servicio atento. Reserva sencilla y recogida puntual.',
         h1: 'Traslado AIBD a Somone en Chofer Privado',
         intentKeyword: 'aibd somone chofer privado',
-        travelTime: '70-100 min',        valuePoints: ['Ideal para viajeros de ocio', 'Trayecto directo sin esperas', 'Puntualidad medida', 'Soporte por WhatsApp'],
+        travelTime: '70-100 min',
+        valuePoints: ['Ideal para viajeros de ocio', 'Trayecto directo sin esperas', 'Puntualidad medida', 'Soporte por WhatsApp'],
         aibdProcess: commonAibdProcess.es,
         faqs: [
           {
@@ -906,7 +947,7 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
       },
     },
     relatedServiceSlugs: ['transfert-hotel-aibd', 'mise-a-disposition-chauffeur'],
-    relatedRouteSlugs: ['aibd-saly', 'aibd-mbour'],
+    relatedRouteSlugs: ['somone-aibd', 'aibd-saly', 'aibd-mbour'],
   },
   {
     kind: 'route',
@@ -919,7 +960,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'Transfert aéroport AIBD vers Mbour avec chauffeur privé. Service 24/7, prix fixe, assistance bagages et réservation en ligne.',
         h1: 'Trajet AIBD vers Mbour: Transport Privé Fiable',
         intentKeyword: 'aibd mbour transfert prive',
-        travelTime: '75-110 min',        valuePoints: ['Process d’accueil AIBD standardisé', 'Confort longue distance', 'Prix transparent', 'Équipe support réactive'],
+        travelTime: '75-110 min',
+        valuePoints: ['Process d’accueil AIBD standardisé', 'Confort longue distance', 'Prix transparent', 'Équipe support réactive'],
         aibdProcess: commonAibdProcess.fr,
         faqs: [
           {
@@ -942,7 +984,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'AIBD airport transfer to Mbour with a private driver. 24/7 service, fixed price, luggage assistance and online booking.',
         h1: 'AIBD to Mbour Route: Reliable Private Transport',
         intentKeyword: 'aibd mbour private transfer',
-        travelTime: '75-110 min',        valuePoints: ['Standardized AIBD welcome process', 'Long-distance comfort', 'Transparent pricing', 'Responsive support team'],
+        travelTime: '75-110 min',
+        valuePoints: ['Standardized AIBD welcome process', 'Long-distance comfort', 'Transparent pricing', 'Responsive support team'],
         aibdProcess: commonAibdProcess.en,
         faqs: [
           {
@@ -965,7 +1008,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'Traslado desde el aeropuerto AIBD a Mbour con chofer privado. Servicio 24/7, precio fijo, asistencia con el equipaje y reserva en línea.',
         h1: 'Trayecto AIBD a Mbour: Transporte Privado Fiable',
         intentKeyword: 'aibd mbour traslado privado',
-        travelTime: '75-110 min',        valuePoints: ['Proceso de recepción estandarizado en el AIBD', 'Confort para larga distancia', 'Precio transparente', 'Equipo de soporte reactivo'],
+        travelTime: '75-110 min',
+        valuePoints: ['Proceso de recepción estandarizado en el AIBD', 'Confort para larga distancia', 'Precio transparente', 'Equipo de soporte reactivo'],
         aibdProcess: commonAibdProcess.es,
         faqs: [
           {
@@ -984,7 +1028,7 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
       },
     },
     relatedServiceSlugs: ['transfert-hotel-aibd', 'navette-evenementielle'],
-    relatedRouteSlugs: ['aibd-saly', 'aibd-somone'],
+    relatedRouteSlugs: ['mbour-aibd', 'aibd-saly', 'aibd-somone'],
   },
   {
     kind: 'route',
@@ -997,7 +1041,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'Besoin d’un transfert AIBD vers Thiès ? Profitez d’un service chauffeur privé rapide, ponctuel et disponible 24/7.',
         h1: 'Transfert AIBD vers Thiès en Toute Sérénité',
         intentKeyword: 'aibd thies chauffeur prive',
-        travelTime: '45-75 min',        valuePoints: ['Trajet optimisé vers Thiès', 'Service professionnel', 'Prix fixe', 'Réseau local fiable'],
+        travelTime: '45-75 min',
+        valuePoints: ['Trajet optimisé vers Thiès', 'Service professionnel', 'Prix fixe', 'Réseau local fiable'],
         aibdProcess: commonAibdProcess.fr,
         faqs: [
           {
@@ -1020,7 +1065,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'Need a transfer from AIBD to Thies? Enjoy a fast, punctual private driver service, available 24/7.',
         h1: 'AIBD to Thies Transfer with Total Peace of Mind',
         intentKeyword: 'aibd thies private driver',
-        travelTime: '45-75 min',        valuePoints: ['Optimized route to Thies', 'Professional service', 'Fixed price', 'Reliable local network'],
+        travelTime: '45-75 min',
+        valuePoints: ['Optimized route to Thies', 'Professional service', 'Fixed price', 'Reliable local network'],
         aibdProcess: commonAibdProcess.en,
         faqs: [
           {
@@ -1043,7 +1089,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           '¿Necesita un traslado del AIBD a Thies? Disfrute de un servicio de chofer privado rápido, puntual y disponible 24/7.',
         h1: 'Traslado AIBD a Thies con Total Tranquilidad',
         intentKeyword: 'aibd thies chofer privado',
-        travelTime: '45-75 min',        valuePoints: ['Ruta optimizada hacia Thies', 'Servicio profesional', 'Precio fijo', 'Red local fiable'],
+        travelTime: '45-75 min',
+        valuePoints: ['Ruta optimizada hacia Thies', 'Servicio profesional', 'Precio fijo', 'Red local fiable'],
         aibdProcess: commonAibdProcess.es,
         faqs: [
           {
@@ -1075,7 +1122,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'Transfert privé AIBD vers Saint-Louis avec chauffeur expérimenté. Longue distance confortable, tarif transparent et assistance complète.',
         h1: 'Transfert AIBD vers Saint-Louis: Longue Distance',
         intentKeyword: 'aibd saint louis transfert',
-        travelTime: '3h15-4h15',        valuePoints: ['Confort longue durée', 'Chauffeurs habitués aux longues routes', 'Prix annoncé à l’avance', 'Support durant tout le trajet'],
+        travelTime: '3h15-4h15',
+        valuePoints: ['Confort longue durée', 'Chauffeurs habitués aux longues routes', 'Prix annoncé à l’avance', 'Support durant tout le trajet'],
         aibdProcess: commonAibdProcess.fr,
         faqs: [
           {
@@ -1098,7 +1146,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'Private transfer from AIBD to Saint-Louis with an experienced driver. Comfortable long-distance travel, transparent pricing and full assistance.',
         h1: 'AIBD to Saint-Louis Transfer: Long-Distance Travel',
         intentKeyword: 'aibd saint louis transfer',
-        travelTime: '3h15-4h15',        valuePoints: ['Long-duration comfort', 'Drivers experienced on long routes', 'Price quoted in advance', 'Support throughout the journey'],
+        travelTime: '3h15-4h15',
+        valuePoints: ['Long-duration comfort', 'Drivers experienced on long routes', 'Price quoted in advance', 'Support throughout the journey'],
         aibdProcess: commonAibdProcess.en,
         faqs: [
           {
@@ -1121,7 +1170,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'Traslado privado del AIBD a Saint-Louis con chofer experimentado. Larga distancia cómoda, tarifa transparente y asistencia completa.',
         h1: 'Traslado AIBD a Saint-Louis: Larga Distancia',
         intentKeyword: 'traslado aibd saint louis',
-        travelTime: '3h15-4h15',        valuePoints: ['Confort para larga duración', 'Choferes acostumbrados a rutas largas', 'Precio indicado por adelantado', 'Soporte durante todo el trayecto'],
+        travelTime: '3h15-4h15',
+        valuePoints: ['Confort para larga duración', 'Choferes acostumbrados a rutas largas', 'Precio indicado por adelantado', 'Soporte durante todo el trayecto'],
         aibdProcess: commonAibdProcess.es,
         faqs: [
           {
@@ -1153,7 +1203,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'Transfert AIBD vers Ngaparou en chauffeur privé avec accueil aéroport, bagages assistés et tarif fixe. Disponible 24/7.',
         h1: 'Transfert AIBD vers Ngaparou en Chauffeur Privé',
         intentKeyword: 'transfert aibd ngaparou',
-        travelTime: '65-95 min',        valuePoints: ['Route Petite Côte optimisée', 'Prix fixe confirmé', 'Service aéroport 24/7', 'Véhicules climatisés'],
+        travelTime: '65-95 min',
+        valuePoints: ['Route Petite Côte optimisée', 'Prix fixe confirmé', 'Service aéroport 24/7', 'Véhicules climatisés'],
         aibdProcess: commonAibdProcess.fr,
         faqs: [
           {
@@ -1176,7 +1227,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'AIBD to Ngaparou transfer with a private driver, airport meet & greet, luggage assistance and fixed rate. Available 24/7.',
         h1: 'AIBD to Ngaparou Transfer with a Private Driver',
         intentKeyword: 'aibd ngaparou transfer',
-        travelTime: '65-95 min',        valuePoints: ['Optimized Petite Côte route', 'Confirmed fixed price', '24/7 airport service', 'Air-conditioned vehicles'],
+        travelTime: '65-95 min',
+        valuePoints: ['Optimized Petite Côte route', 'Confirmed fixed price', '24/7 airport service', 'Air-conditioned vehicles'],
         aibdProcess: commonAibdProcess.en,
         faqs: [
           {
@@ -1199,7 +1251,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'Traslado del AIBD a Ngaparou con chofer privado, recepción en el aeropuerto, asistencia con el equipaje y tarifa fija. Disponible 24/7.',
         h1: 'Traslado AIBD a Ngaparou en Chofer Privado',
         intentKeyword: 'traslado aibd ngaparou',
-        travelTime: '65-95 min',        valuePoints: ['Ruta optimizada hacia la Petite Côte', 'Precio fijo confirmado', 'Servicio de aeropuerto 24/7', 'Vehículos climatizados'],
+        travelTime: '65-95 min',
+        valuePoints: ['Ruta optimizada hacia la Petite Côte', 'Precio fijo confirmado', 'Servicio de aeropuerto 24/7', 'Vehículos climatizados'],
         aibdProcess: commonAibdProcess.es,
         faqs: [
           {
@@ -1231,7 +1284,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'Navette aéroport AIBD vers Nianing avec chauffeur privé fiable. Prix fixe, accueil personnalisé et trajet sécurisé vers la Petite Côte.',
         h1: 'Navette AIBD vers Nianing: Service Privé Fiable',
         intentKeyword: 'transfert aibd nianing',
-        travelTime: '80-115 min',        valuePoints: ['Disponibilité continue 24/7', 'Confort longue distance', 'Tarif sans surprise', 'Support WhatsApp dédié'],
+        travelTime: '80-115 min',
+        valuePoints: ['Disponibilité continue 24/7', 'Confort longue distance', 'Tarif sans surprise', 'Support WhatsApp dédié'],
         aibdProcess: commonAibdProcess.fr,
         faqs: [
           {
@@ -1254,7 +1308,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'AIBD airport shuttle to Nianing with a reliable private driver. Fixed price, personal welcome and a secure ride to the Petite Côte.',
         h1: 'AIBD to Nianing Shuttle: Reliable Private Service',
         intentKeyword: 'aibd nianing transfer',
-        travelTime: '80-115 min',        valuePoints: ['Round-the-clock availability', 'Long-distance comfort', 'No hidden fees', 'Dedicated WhatsApp support'],
+        travelTime: '80-115 min',
+        valuePoints: ['Round-the-clock availability', 'Long-distance comfort', 'No hidden fees', 'Dedicated WhatsApp support'],
         aibdProcess: commonAibdProcess.en,
         faqs: [
           {
@@ -1277,7 +1332,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
           'Traslado de aeropuerto AIBD a Nianing con chofer privado fiable. Precio fijo, recepción personalizada y trayecto seguro hacia la Petite Côte.',
         h1: 'Traslado AIBD a Nianing: Servicio Privado Fiable',
         intentKeyword: 'traslado aibd nianing',
-        travelTime: '80-115 min',        valuePoints: ['Disponibilidad continua 24/7', 'Confort para larga distancia', 'Tarifa sin sorpresas', 'Soporte dedicado por WhatsApp'],
+        travelTime: '80-115 min',
+        valuePoints: ['Disponibilidad continua 24/7', 'Confort para larga distancia', 'Tarifa sin sorpresas', 'Soporte dedicado por WhatsApp'],
         aibdProcess: commonAibdProcess.es,
         faqs: [
           {
@@ -1299,6 +1355,8 @@ export const moneyRoutePages: MoneyPageDefinition[] = [
     relatedRouteSlugs: ['aibd-ngaparou', 'aibd-saly'],
   },
 ];
+
+export const moneyRoutePages: MoneyPageDefinition[] = [...arrivalRoutePages, ...departureRoutePages];
 
 export const allMoneyPages: MoneyPageDefinition[] = [...moneyServicePages, ...moneyRoutePages];
 
