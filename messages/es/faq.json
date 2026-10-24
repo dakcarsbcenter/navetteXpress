@@ -52,11 +52,11 @@
         },
         {
           "question": "¿Hay cargos ocultos?",
-          "answer": "No, nuestras tarifas son totalmente transparentes. El precio indicado incluye el transporte, la asistencia con el equipaje y 30 minutos de espera gratuita. Solo los peajes y aparcamientos pueden añadirse según el trayecto."
+          "answer": "No, nuestras tarifas son totalmente transparentes. El precio indicado incluye el transporte, la asistencia con el equipaje hasta 60 minutos de espera gratuita, el peaje y el combustible. Solo un recargo nocturno (medianoche-5 h) o un vehículo más grande cambia el precio, y se indica al reservar."
         },
         {
           "question": "¿Puedo cancelar mi reserva?",
-          "answer": "Sí, puede cancelar hasta 2 horas antes de la hora prevista sin cargo alguno. Para cancelaciones de última hora, pueden aplicarse tarifas."
+          "answer": "Sí, la cancelación es gratuita hasta 24 horas antes de la hora prevista. Pasado ese plazo, pueden aplicarse gastos: contáctenos por WhatsApp o por teléfono."
         }
       ]
     },
@@ -107,7 +107,7 @@
       "questions": [
         {
           "question": "¿Qué medios de pago aceptan?",
-          "answer": "Aceptamos pagos en efectivo (FCFA), tarjeta bancaria, transferencia bancaria y dinero móvil (Orange Money, Free Money). El pago suele realizarse al finalizar el servicio."
+          "answer": "Aceptamos Wave, Orange Money, efectivo a bordo (FCFA), tarjeta bancaria y transferencia. El pago suele realizarse al finalizar el servicio."
         },
         {
           "question": "¿Puedo pagar por adelantado?",

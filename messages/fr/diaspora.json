@@ -15,7 +15,7 @@
   "changements": [
     { "eyebrow": "BAGAGES", "title": "Cinq valises, ça rentre", "text": "Dites-nous combien vous êtes et ce que vous ramenez : nous envoyons le véhicule qui convient, pas celui qui reste." },
     { "eyebrow": "FAMILLE", "title": "Vous réservez pour eux", "text": "Le chauffeur appelle la personne qui voyage, pas vous. Vous recevez seulement la confirmation qu'elle est montée." },
-    { "eyebrow": "PAIEMENT", "title": "Depuis l'étranger", "text": "Virement international, Wave ou espèces à l'arrivée. Le tarif est fixé à la réservation, sans variation de change." }
+    { "eyebrow": "PAIEMENT", "title": "Depuis l'étranger", "text": "Virement international, carte bancaire, Wave ou espèces à l'arrivée. Le tarif est fixé à la réservation, sans variation de change." }
   ],
   "longStays": {
     "title": "Séjours longs",

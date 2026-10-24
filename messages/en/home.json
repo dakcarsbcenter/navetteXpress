@@ -64,9 +64,9 @@
   "booking": {
     "title": "Ready for your trip?",
     "subtitle": "Book your airport transfer or private ride now with transparent pricing.",
-    "perk1": "Free waiting time at the airport",
+    "perk1": "60 min free waiting at the airport",
     "perk2": "Free cancellation 24h in advance",
-    "perk3": "Secure payment on board",
+    "perk3": "Wave, Orange Money, cash or card",
     "tabAirport": "AIBD Transfer",
     "tabCity": "City & Regions",
     "placeholder": "Simplify the organization of your trips with Navette Xpress.",
@@ -106,7 +106,7 @@
     },
     {
       "question": "Do you accept Orange Money and Wave payments?",
-      "answer": "Yes, we accept Orange Money, Wave, cash on board and bank transfers. Payment is simple and secure."
+      "answer": "Yes, we accept Wave, Orange Money, cash on board, bank card and bank transfer."
     },
     {
       "question": "What happens if my flight is delayed?",

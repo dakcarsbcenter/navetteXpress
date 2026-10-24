@@ -313,7 +313,7 @@ export const moneyServicePages: MoneyPageDefinition[] = [
         h1: 'Navette Événementielle Dakar: Logistique Fiable et Ponctuelle',
         intentKeyword: 'navette evenementielle dakar',
         travelTime: 'Selon programme événementiel',
-        priceFrom: 'Devis rapide sous 30 min',
+        priceFrom: 'Sur devis',
         valuePoints: ['Coordination multi-véhicules', 'Chauffeurs briefés événement', 'Ponctualité stricte', 'Support opérationnel dédié'],
         aibdProcess: commonAibdProcess.fr,
         faqs: [
@@ -338,7 +338,7 @@ export const moneyServicePages: MoneyPageDefinition[] = [
         h1: 'Event Shuttle Dakar: Reliable, Punctual Logistics',
         intentKeyword: 'event shuttle dakar',
         travelTime: 'Based on the event schedule',
-        priceFrom: 'Fast quote within 30 minutes',
+        priceFrom: 'On quote',
         valuePoints: ['Multi-vehicle coordination', 'Drivers briefed on the event', 'Strict punctuality', 'Dedicated operational support'],
         aibdProcess: commonAibdProcess.en,
         faqs: [
@@ -363,7 +363,7 @@ export const moneyServicePages: MoneyPageDefinition[] = [
         h1: 'Traslado para Eventos en Dakar: Logística Fiable y Puntual',
         intentKeyword: 'traslado para eventos dakar',
         travelTime: 'Según el programa del evento',
-        priceFrom: 'Presupuesto rápido en 30 minutos',
+        priceFrom: 'Bajo presupuesto',
         valuePoints: ['Coordinación de múltiples vehículos', 'Choferes informados sobre el evento', 'Puntualidad estricta', 'Soporte operativo dedicado'],
         aibdProcess: commonAibdProcess.es,
         faqs: [

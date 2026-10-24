@@ -64,9 +64,9 @@
   "booking": {
     "title": "Prêt pour votre trajet ?",
     "subtitle": "Réservez maintenant votre transfert aéroport ou votre trajet privé avec une tarification transparente.",
-    "perk1": "Attente gratuite à l'aéroport",
+    "perk1": "60 min d'attente gratuite à l'aéroport",
     "perk2": "Annulation gratuite 24h avant",
-    "perk3": "Paiement sécurisé à bord",
+    "perk3": "Wave, Orange Money, espèces ou carte",
     "tabAirport": "Transfert AIBD",
     "tabCity": "Ville & Régions",
     "placeholder": "Simplifiez l'organisation de vos déplacements avec Navette Xpress.",
@@ -106,7 +106,7 @@
     },
     {
       "question": "Acceptez-vous les paiements par Orange Money et Wave ?",
-      "answer": "Oui, nous acceptons Orange Money, Wave, les espèces à bord et les virements bancaires. Le paiement est simple et sécurisé."
+      "answer": "Oui, nous acceptons Wave, Orange Money, les espèces à bord, la carte bancaire et le virement."
     },
     {
       "question": "Que se passe-t-il si mon vol est retardé ?",

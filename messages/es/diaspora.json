@@ -15,7 +15,7 @@
   "changements": [
     { "eyebrow": "EQUIPAJE", "title": "Cinco maletas, sin problema", "text": "Díganos cuántos son y qué traen: enviamos el vehículo adecuado, no el que quede disponible." },
     { "eyebrow": "FAMILIA", "title": "Usted reserva para ellos", "text": "El chófer llama a la persona que viaja, no a usted. Solo recibe la confirmación de que ya subió al vehículo." },
-    { "eyebrow": "PAGO", "title": "Desde el extranjero", "text": "Transferencia internacional, Wave o efectivo a la llegada. La tarifa se fija al reservar, sin variación por tipo de cambio." }
+    { "eyebrow": "PAGO", "title": "Desde el extranjero", "text": "Transferencia internacional, tarjeta bancaria, Wave o efectivo a la llegada. La tarifa se fija al reservar, sin variación por tipo de cambio." }
   ],
   "longStays": {
     "title": "Estancias largas",

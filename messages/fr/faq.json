@@ -52,11 +52,11 @@
         },
         {
           "question": "Y a-t-il des frais cachés ?",
-          "answer": "Non, nos tarifs sont transparents. Le prix indiqué inclut le transport, l'assistance bagages et l'attente gratuite de 30 minutes. Seuls les péages et parkings peuvent s'ajouter selon l'itinéraire."
+          "answer": "Non, nos tarifs sont transparents. Le prix indiqué inclut le transport, l'assistance bagages et jusqu'à 60 minutes d'attente gratuite, le péage et le carburant. Seule une majoration de nuit (minuit-5 h) ou un véhicule plus grand change le prix, et elle est annoncée à la réservation."
         },
         {
           "question": "Puis-je annuler ma réservation ?",
-          "answer": "Oui, vous pouvez annuler jusqu'à 2 heures avant l'heure prévue sans frais. Pour les annulations de dernière minute, des frais peuvent s'appliquer."
+          "answer": "Oui, l'annulation est gratuite jusqu'à 24 heures avant l'heure prévue. Passé ce délai, des frais peuvent s'appliquer : contactez-nous par WhatsApp ou téléphone."
         }
       ]
     },
@@ -107,7 +107,7 @@
       "questions": [
         {
           "question": "Quels modes de paiement acceptez-vous ?",
-          "answer": "Nous acceptons les paiements en espèces (FCFA), par carte bancaire, virement bancaire et mobile money (Orange Money, Free Money). Le paiement s'effectue généralement à la fin du service."
+          "answer": "Nous acceptons Wave, Orange Money, les espèces à bord (FCFA), la carte bancaire et le virement. Le paiement s'effectue généralement à la fin du service."
         },
         {
           "question": "Puis-je payer à l'avance ?",

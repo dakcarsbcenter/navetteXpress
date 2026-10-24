@@ -52,11 +52,11 @@
         },
         {
           "question": "Are there any hidden fees?",
-          "answer": "No, our rates are fully transparent. The price shown includes transport, luggage assistance and 30 minutes of free waiting time. Only tolls and parking may be added depending on the route."
+          "answer": "No, our rates are fully transparent. The price shown includes transport, luggage assistance up to 60 minutes of free waiting, tolls and fuel. Only a night surcharge (midnight-5 am) or a larger vehicle changes the price, and it is announced at booking."
         },
         {
           "question": "Can I cancel my booking?",
-          "answer": "Yes, you can cancel up to 2 hours before the scheduled time free of charge. For last-minute cancellations, fees may apply."
+          "answer": "Yes, cancellation is free up to 24 hours before the scheduled time. After that, fees may apply: contact us on WhatsApp or by phone."
         }
       ]
     },
@@ -107,7 +107,7 @@
       "questions": [
         {
           "question": "What payment methods do you accept?",
-          "answer": "We accept cash (FCFA), bank card, bank transfer and mobile money (Orange Money, Free Money). Payment is usually made at the end of the service."
+          "answer": "We accept Wave, Orange Money, cash on board (FCFA), bank card and bank transfer. Payment is usually made at the end of the service."
         },
         {
           "question": "Can I pay in advance?",

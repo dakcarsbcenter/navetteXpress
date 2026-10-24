@@ -15,7 +15,7 @@
   "changements": [
     { "eyebrow": "LUGGAGE", "title": "Five suitcases, no problem", "text": "Tell us how many you are and what you're bringing back: we send the vehicle that fits, not whichever one is free." },
     { "eyebrow": "FAMILY", "title": "You book, they travel", "text": "The driver calls the person traveling, not you. You simply get a message confirming they're in the car." },
-    { "eyebrow": "PAYMENT", "title": "From abroad", "text": "International transfer, Wave, or cash on arrival. The fare is fixed at booking, with no exchange-rate surprises." }
+    { "eyebrow": "PAYMENT", "title": "From abroad", "text": "International transfer, bank card, Wave, or cash on arrival. The fare is fixed at booking, with no exchange-rate surprises." }
   ],
   "longStays": {
     "title": "Longer stays",
