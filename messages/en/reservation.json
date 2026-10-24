@@ -90,7 +90,7 @@
     "subtitle": "We confirm by phone within thirty minutes.",
     "nameLabel": "Full name",
     "namePlaceholder": "Alpha Oumar Sow",
-    "emailLabel": "Email",
+    "emailLabel": "Email (optional)",
     "emailPlaceholder": "your@email.com",
     "phoneLabel": "Phone / WhatsApp",
     "phonePlaceholder": "77 XXX XX XX",
@@ -126,10 +126,10 @@
   },
   "success": {
     "title": "Booking received!",
-    "message": "Got it. We'll confirm by phone within 30 minutes. Our team will contact you to finalize the details and the fare.",
+    "message": "Reference: {reference}. You will receive an acknowledgement on WhatsApp, then your driver's confirmation. The price shown is fixed; for a ride on request, we send you the price before confirming.",
     "confirm": "Great!",
     "titleMulti": "{count} bookings registered!",
-    "messageMulti": "Noted. Your {count} trips are registered and we will confirm within 30 minutes by phone. Our team will contact you to validate the details and the rate."
+    "messageMulti": "References: {reference}. Your {count} rides are recorded. You will receive an acknowledgement on WhatsApp, then each driver's confirmation. For a ride on request, we send you the price before confirming."
   },
   "errors": {
     "forbiddenTitle": "Action not allowed",

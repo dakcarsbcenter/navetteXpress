@@ -3,6 +3,9 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Footer } from '@/components/footer';
 import { Navigation } from '@/components/navigation';
 import { JsonLd } from '@/components/seo/JsonLd';
+import { moneyPagePriceLabel } from '@/components/seo/MoneyPageBooking';
+import { getActivePricingSegmentsSafe } from '@/lib/pricing-segments';
+import { moneyPagePriceRows } from '@/lib/seo/money-page-booking';
 import { Link } from '@/i18n/navigation';
 import { type Locale } from '@/i18n/routing';
 import { schemaBreadcrumb } from '@/lib/schema';
@@ -46,6 +49,17 @@ export default async function RoutesHubPage({
   const alternates = buildAlternates('/routes', locale);
   const localeKey = locale as Locale;
 
+  // Prix d'appel lus dans la grille admin, comme sur chaque money page.
+  const segments = await getActivePricingSegmentsSafe();
+  const priceLabels: Record<string, string> = Object.fromEntries(
+    await Promise.all(
+      [...moneyRoutePages, ...moneyServicePages].map(async (page) => [
+        page.slug,
+        await moneyPagePriceLabel(moneyPagePriceRows(page.slug, segments), locale),
+      ]),
+    ),
+  );
+
   const breadcrumbs = [
     { name: t('breadcrumbs.home'), item: 'https://navettexpress.com' },
     { name: t('breadcrumbs.routes'), item: alternates.canonical },
@@ -80,7 +94,7 @@ export default async function RoutesHubPage({
         </h3>
         <p className="text-sm text-text-secondary line-clamp-3">{tr.description}</p>
         <div className="flex flex-wrap gap-2 text-xs text-text-muted pt-1">
-          <span className="px-2.5 py-1 rounded-full border border-border">{tr.priceFrom}</span>
+          <span className="px-2.5 py-1 rounded-full border border-border">{priceLabels[page.slug]}</span>
           <span className="px-2.5 py-1 rounded-full border border-border">
             {t('hub.travelTimeLabel')}: {tr.travelTime}
           </span>

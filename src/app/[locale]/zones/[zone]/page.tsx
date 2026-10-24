@@ -7,6 +7,7 @@ import { buildAlternates } from '@/lib/seo/localized-metadata';
 import { zoneSlugs } from '@/lib/seo/zone-slugs';
 import { zoneMoneyLinks } from '@/lib/seo/internal-links';
 import { ClientMessages } from "@/i18n/ClientMessages";
+import { MobileContactBar } from "@/components/seo/MobileContactBar";
 
 interface ZoneData {
     id: string;
@@ -59,5 +60,10 @@ export default async function Page({ params }: Params) {
         { name: zone.name, item: buildAlternates(`/zones/${zone.id}`, locale).canonical },
     ];
 
-    return <ClientMessages namespaces={["zones"]}><ZoneClient zone={zone} breadcrumbs={breadcrumbs} links={zoneMoneyLinks(locale)} /></ClientMessages>;
+    return (
+    <>
+      <ClientMessages namespaces={["zones"]}><ZoneClient zone={zone} breadcrumbs={breadcrumbs} links={zoneMoneyLinks(locale)} /></ClientMessages>
+      <MobileContactBar locale={locale} bookingHref="/reservation?service=chauffeur-prive-dakar&pickup=DAKAR" />
+    </>
+  );
 }

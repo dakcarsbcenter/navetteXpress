@@ -4,6 +4,10 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Footer } from '@/components/footer';
 import { Navigation } from '@/components/navigation';
 import { JsonLd } from '@/components/seo/JsonLd';
+import { MoneyPageBooking, moneyPagePriceLabel } from '@/components/seo/MoneyPageBooking';
+import { MobileContactBar } from '@/components/seo/MobileContactBar';
+import { getActivePricingSegmentsSafe } from '@/lib/pricing-segments';
+import { moneyPageBookingHref, moneyPagePriceRows } from '@/lib/seo/money-page-booking';
 import { Link } from '@/i18n/navigation';
 import { routing, type Locale } from '@/i18n/routing';
 import { buildAlternates } from '@/lib/seo/localized-metadata';
@@ -67,6 +71,12 @@ export default async function RouteMoneyPage({ params }: Params) {
   const localeKey = locale as Locale;
   const translation = page.translations[localeKey] ?? page.translations.fr;
 
+  // Prix de la grille admin (jamais un texte en dur) et réservation pré-remplie.
+  const bookingHref = moneyPageBookingHref(page.slug);
+  const priceRows = moneyPagePriceRows(page.slug, await getActivePricingSegmentsSafe());
+  const priceLabel = await moneyPagePriceLabel(priceRows, locale);
+  const tripLabel = moneyPageLabel(page, locale);
+
   const canonical = toAbsoluteUrl(page.canonicalPath);
   const relatedRoutes = page.relatedRouteSlugs
     .map((slug) => getMoneyRouteBySlug(slug))
@@ -96,11 +106,13 @@ export default async function RouteMoneyPage({ params }: Params) {
             <h1 className="text-4xl md:text-5xl font-display leading-tight">{translation.h1}</h1>
             <p className="text-lg text-text-secondary">{translation.description}</p>
             <div className="flex flex-wrap gap-3 pt-2 text-sm text-text-muted">
-              <span className="px-3 py-1 rounded-full border border-border">{translation.priceFrom}</span>
+              <span className="px-3 py-1 rounded-full border border-border">{priceLabel}</span>
               <span className="px-3 py-1 rounded-full border border-border">{t('travelTimeLabel')}: {translation.travelTime}</span>
               <span className="px-3 py-1 rounded-full border border-border">{t('availability247')}</span>
             </div>
           </header>
+
+          <MoneyPageBooking locale={locale} rows={priceRows} bookingHref={bookingHref} tripLabel={tripLabel} />
 
           <section className="grid gap-6 md:grid-cols-2">
             <div className="rounded-2xl border border-border bg-surface-2/40 p-6">
@@ -169,7 +181,7 @@ export default async function RouteMoneyPage({ params }: Params) {
               <Link href="/routes" className="text-gold-deep hover:underline">
                 {t('routesHub')}
               </Link>
-              <Link href="/reservation" className="text-gold-deep hover:underline">
+              <Link href={bookingHref} className="text-gold-deep hover:underline">
                 {t('bookNow')}
               </Link>
             </div>
@@ -177,6 +189,7 @@ export default async function RouteMoneyPage({ params }: Params) {
         </main>
 
         <Footer />
+        <MobileContactBar locale={locale} bookingHref={bookingHref} whatsappMessage={tripLabel} />
       </div>
     </>
   );

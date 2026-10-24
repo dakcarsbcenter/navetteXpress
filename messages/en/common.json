@@ -70,5 +70,29 @@
     "home": "Back to home",
     "book": "Book a ride",
     "rates": "See rates"
+  },
+  "MoneyPage": {
+    "pricesHeading": "Rates for this route",
+    "route": "Route",
+    "sedan": "Sedan",
+    "suv": "SUV",
+    "from": "From {price} FCFA",
+    "onQuote": "Price on request",
+    "onQuoteText": "No published rate for this route yet. Book online or message us: we confirm a fixed price on WhatsApp before departure.",
+    "included": "Price per vehicle, tolls and fuel included. 5,000 FCFA surcharge between midnight and 5 am, shown at booking.",
+    "book": "Book this ride",
+    "whatsapp": "Ask on WhatsApp",
+    "whatsappMessage": "Hello, I would like to book: {trip}",
+    "trust": {
+      "cancel": "Free cancellation up to 24 h before",
+      "wait": "60 min free waiting at the airport",
+      "payment": "Wave, Orange Money, cash or card",
+      "noAccount": "No account needed"
+    },
+    "bar": {
+      "call": "Call",
+      "whatsapp": "WhatsApp",
+      "book": "Book"
+    }
   }
 }

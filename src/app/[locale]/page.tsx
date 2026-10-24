@@ -10,6 +10,7 @@ import { getActivePricingSegmentsSafe, cheapestBetweenNodes } from '@/lib/pricin
 import { getActiveVehiclesSafe } from '@/lib/public-catalog';
 import { moneyRoutePathForNodes } from '@/lib/seo/internal-links';
 import { ClientMessages } from "@/i18n/ClientMessages";
+import { MobileContactBar } from "@/components/seo/MobileContactBar";
 
 // Les tarifs affiches (cartes de segments, FAQ et JSON-LD FAQPage) viennent de la
 // table pricing_segments geree en admin. Cette page est rendue a la demande : la
@@ -92,6 +93,7 @@ export default async function Page({
             <JsonLd data={schemaService()} />
             <JsonLd data={schemaFAQ(faqs)} />
             <ClientMessages namespaces={["home","flotte"]}><HomeClient faqs={faqs} segments={homeSegments} vehicles={vehicles} /></ClientMessages>
+      <MobileContactBar locale={locale} />
         </>
     );
 }

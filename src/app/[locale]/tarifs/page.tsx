@@ -8,6 +8,7 @@ import { schemaBreadcrumb } from '@/lib/schema';
 import { buildAlternates } from '@/lib/seo/localized-metadata';
 import { moneyRoutePathForNodes } from '@/lib/seo/internal-links';
 import { ClientMessages } from "@/i18n/ClientMessages";
+import { MobileContactBar } from "@/components/seo/MobileContactBar";
 
 export async function generateMetadata({
     params,
@@ -59,6 +60,7 @@ export default async function Page({
         <>
             <JsonLd data={schemaBreadcrumb(breadcrumbs)} />
             <ClientMessages namespaces={["tarifs"]}><TarifsClient initialSegments={segments} /></ClientMessages>
+      <MobileContactBar locale={locale} />
         </>
     );
 }

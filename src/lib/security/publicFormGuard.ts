@@ -38,8 +38,15 @@ const DEFAULT_EMAIL_LIMIT = { limit: 3, windowMs: 60 * 60_000 };
 export interface PublicFormGuardOptions {
   /** Préfixe des clés de rate limit et des logs, ex. 'quote' ou 'convention'. */
   scope: string;
-  /** Email saisi, déjà extrait du corps (non normalisé). */
+  /** Email saisi, déjà extrait du corps (non normalisé). Vide = formulaire sans email. */
   email: string;
+  /**
+   * Clé de quota quand l'email est facultatif et absent (téléphone pour une
+   * réservation) : sans elle, un robot sans email échapperait au quota par contact.
+   */
+  fallbackLimitKey?: string;
+  /** true = un email vide est accepté (réservation au téléphone). Par défaut, il est refusé. */
+  emailOptional?: boolean;
   body: PublicFormAntiBotFields;
   /**
    * Réponse renvoyée au robot quand le honeypot est déclenché : elle doit être
@@ -144,16 +151,20 @@ export async function guardPublicFormSubmission(
 
   // 6. Adresse email : format, domaines jetables, astuce des points Gmail et
   //    adresses ayant déjà rebondi (liste alimentée par le webhook Resend).
-  const normalizedEmail = options.email.toLowerCase().trim();
-  const emailCheck = await validatePublicEmail(normalizedEmail);
-  if (!emailCheck.allowed) {
-    logSecurityEvent('public_api_rejected', { ip, path, scope, reason: emailCheck.reason });
-    return reject(400, 'Cette adresse email ne peut pas être utilisée. Merci d\u2019en saisir une autre.');
+  //    Sauté seulement quand le formulaire autorise l'absence d'email et qu'il n'y en a pas.
+  const normalizedEmail = (options.email || '').toLowerCase().trim();
+  if (normalizedEmail || !options.emailOptional) {
+    const emailCheck = await validatePublicEmail(normalizedEmail);
+    if (!emailCheck.allowed) {
+      logSecurityEvent('public_api_rejected', { ip, path, scope, reason: emailCheck.reason });
+      return reject(400, 'Cette adresse email ne peut pas être utilisée. Merci d\u2019en saisir une autre.');
+    }
   }
 
   // 7. Rate limit par email, pour le cas d'un robot distribué sur plusieurs IP.
   const emailLimit = options.emailLimit ?? DEFAULT_EMAIL_LIMIT;
-  const byEmail = consumeRateLimit(`${scope}:email:${normalizedEmail}`, emailLimit.limit, emailLimit.windowMs);
+  const contactKey = normalizedEmail ? `email:${normalizedEmail}` : `contact:${options.fallbackLimitKey || 'none'}`;
+  const byEmail = consumeRateLimit(`${scope}:${contactKey}`, emailLimit.limit, emailLimit.windowMs);
   if (!byEmail.allowed) {
     logSecurityEvent('rate_limit_exceeded', { ip, path, scope, by: 'email', ...emailLimit });
     return {

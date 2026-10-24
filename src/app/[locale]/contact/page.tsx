@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import ContactClient from './ContactClient';
 import { buildAlternates } from '@/lib/seo/localized-metadata';
 import { ClientMessages } from "@/i18n/ClientMessages";
+import { MobileContactBar } from "@/components/seo/MobileContactBar";
 
 export async function generateMetadata({
     params,
@@ -27,5 +28,10 @@ export default async function Page({
 }) {
     const { locale } = await params;
     setRequestLocale(locale);
-    return <ClientMessages namespaces={["contact"]}><ContactClient /></ClientMessages>;
+    return (
+    <>
+      <ClientMessages namespaces={["contact"]}><ContactClient /></ClientMessages>
+      <MobileContactBar locale={locale} />
+    </>
+  );
 }

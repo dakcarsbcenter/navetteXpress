@@ -70,5 +70,29 @@
     "home": "Volver al inicio",
     "book": "Reservar un trayecto",
     "rates": "Ver tarifas"
+  },
+  "MoneyPage": {
+    "pricesHeading": "Tarifas de este trayecto",
+    "route": "Trayecto",
+    "sedan": "Sedán",
+    "suv": "SUV",
+    "from": "Desde {price} FCFA",
+    "onQuote": "Precio bajo presupuesto",
+    "onQuoteText": "Todavía no hay tarifa publicada para este trayecto. Reserve en línea o escríbanos: le confirmamos un precio fijo por WhatsApp antes de la salida.",
+    "included": "Precio por vehículo, peaje y combustible incluidos. Recargo de 5 000 FCFA entre medianoche y las 5 h, indicado al reservar.",
+    "book": "Reservar este trayecto",
+    "whatsapp": "Preguntar por WhatsApp",
+    "whatsappMessage": "Hola, quisiera reservar: {trip}",
+    "trust": {
+      "cancel": "Cancelación gratuita hasta 24 h antes",
+      "wait": "60 min de espera gratuita en el aeropuerto",
+      "payment": "Wave, Orange Money, efectivo o tarjeta",
+      "noAccount": "Sin crear cuenta"
+    },
+    "bar": {
+      "call": "Llamar",
+      "whatsapp": "WhatsApp",
+      "book": "Reservar"
+    }
   }
 }

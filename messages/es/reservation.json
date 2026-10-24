@@ -90,7 +90,7 @@
     "subtitle": "Confirmamos por teléfono en un plazo de treinta minutos.",
     "nameLabel": "Nombre y apellido",
     "namePlaceholder": "Alpha Oumar Sow",
-    "emailLabel": "Correo electrónico",
+    "emailLabel": "Correo electrónico (opcional)",
     "emailPlaceholder": "tu@email.com",
     "phoneLabel": "Teléfono / WhatsApp",
     "phonePlaceholder": "77 XXX XX XX",
@@ -126,10 +126,10 @@
   },
   "success": {
     "title": "¡Reserva registrada!",
-    "message": "Anotado. Te confirmaremos por teléfono en 30 minutos. Nuestro equipo te contactará para validar los detalles y la tarifa.",
+    "message": "Referencia: {reference}. Recibirá un acuse de recibo por WhatsApp y luego la confirmación de su chófer. El precio indicado es fijo; para un trayecto bajo presupuesto, le comunicamos el precio antes de confirmar.",
     "confirm": "¡Perfecto!",
     "titleMulti": "¡{count} reservas registradas!",
-    "messageMulti": "Tomado nota. Sus {count} trayectos están registrados y se lo confirmaremos en 30 minutos por teléfono. Nuestro equipo le contactará para validar los detalles y la tarifa."
+    "messageMulti": "Referencias: {reference}. Sus {count} trayectos están registrados. Recibirá un acuse de recibo por WhatsApp y luego la confirmación de cada chófer. Para un trayecto bajo presupuesto, le comunicamos el precio antes de confirmar."
   },
   "errors": {
     "forbiddenTitle": "Acción no autorizada",

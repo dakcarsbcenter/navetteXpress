@@ -204,6 +204,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
   // Nombre de trajets réellement enregistrés : le formulaire est remis à zéro à la
   // fermeture de la modale, la modale doit garder le compte de ce qui a été envoyé.
   const [submittedTripCount, setSubmittedTripCount] = useState(1);
+  const [submittedReferences, setSubmittedReferences] = useState('');
   const [errorModal, setErrorModal] = useState<{ open: boolean; title: string; message: string }>({ open: false, title: '', message: '' });
   const [locations, setLocations] = useState<LocationOption[]>([]);
   const [dbServices, setDbServices] = useState<DbServiceOption[]>([]);
@@ -305,6 +306,26 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
       return [first, ...prev.slice(1)];
     });
   }, [searchParams]);
+
+  // Un lien pré-rempli (CTA des pages trajets) désigne le lieu par un nom
+  // canonique ("AIBD") ; le <select> attend le libellé exact de la liste
+  // ("AEROPORT AIBD"), sans quoi il affiche le placeholder et le prix ne sort pas.
+  useEffect(() => {
+    if (locations.length === 0) return;
+    const snapToOption = (value: string) => {
+      if (!value || value === OTHER_LOCATION_VALUE || locations.some((l) => l.name === value)) return value;
+      const node = getRouteNodeFromName(value);
+      const option = node ? locations.find((l) => getRouteNodeFromName(l.name) === node) : undefined;
+      return option ? option.name : value;
+    };
+    setTrips((prev) => {
+      const first = prev[0];
+      const pickupAddress = snapToOption(first.pickupAddress);
+      const destinationAddress = snapToOption(first.destinationAddress);
+      if (pickupAddress === first.pickupAddress && destinationAddress === first.destinationAddress) return prev;
+      return [{ ...first, pickupAddress, destinationAddress }, ...prev.slice(1)];
+    });
+  }, [locations]);
 
   const handleInputChange = (field: keyof FormData, value: string | number | boolean | string[]) => {
     setFormData(prev => {
@@ -510,6 +531,9 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
           });
         });
         setSubmittedTripCount(trips.length);
+        // Référence affichée au client, la même que dans son accusé WhatsApp
+        const created: { id: number }[] = Array.isArray(result.bookings) ? result.bookings : result.data ? [result.data] : [];
+        setSubmittedReferences(created.map((booking) => `BOOK-${booking.id}`).join(', '));
         setIsSubmitting(false);
         setShowSuccessModal(true);
       } else {
@@ -645,15 +669,14 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
   const isStep3Complete = Boolean(
     isCompleteInternationalPhone(formData.contactPhone) &&
     !isPassengerPhoneInvalid &&
-    (isSignedIn || (formData.clientName && formData.clientEmail)) &&
+    // L'e-mail est facultatif : le téléphone (WhatsApp) est le canal de confirmation.
+    (isSignedIn || formData.clientName.trim().length > 0) &&
     (formData.bookingFor === 'self' || formData.passengerName.trim().length >= 2)
   );
 
-  if (!isLoaded) {
-    return <div className="min-h-screen bg-background flex items-center justify-center">
-      <div className="text-center text-foreground">{t('loading.auth')}</div>
-    </div>;
-  }
+  // Le formulaire s'affiche sans attendre la session : un écran « Chargement… »
+  // plein page retardait l'affichage (et le LCP) de plusieurs centaines de ms
+  // sur mobile, pour tous les visiteurs, connectés ou non.
 
   /**
    * Les champs d'un trajet. Rendu à l'identique pour chacun : le client retrouve la
@@ -699,6 +722,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
         <div className="space-y-2">
           <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block">{t('step1.serviceTypeLabel')}</span>
           <select
+            aria-label={t('step1.serviceTypeLabel')}
             value={trip.serviceType}
             onChange={(e) => updateTrip(trip.key, 'serviceType', e.target.value)}
             className="w-full bg-white border border-border rounded px-3 py-3 text-foreground font-medium focus:outline-none focus:ring-1 focus:ring-accent cursor-pointer"
@@ -729,6 +753,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
               <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block mb-1">{t('step1.departureLabel')}</span>
               {locations.length > 0 ? (
                 <select
+                  aria-label={t('step1.departureLabel')}
                   value={trip.pickupAddress}
                   onChange={(e) => handleLocationChange(trip.key, 'pickupAddress', e.target.value)}
                   className="w-full bg-white border border-border rounded px-3 py-3 text-foreground font-medium focus:outline-none focus:ring-1 focus:ring-accent cursor-pointer"
@@ -768,6 +793,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
               <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block mb-1">{t('step1.arrivalLabel')}</span>
               {locations.length > 0 ? (
                 <select
+                  aria-label={t('step1.arrivalLabel')}
                   value={trip.destinationAddress}
                   onChange={(e) => handleLocationChange(trip.key, 'destinationAddress', e.target.value)}
                   className="w-full bg-white border border-border rounded px-3 py-3 text-foreground font-medium focus:outline-none focus:ring-1 focus:ring-accent cursor-pointer"
@@ -813,6 +839,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
             <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block">{t('step1.zoneLabel')}</span>
             <div className="bg-white border border-border rounded p-3">
               <select
+                aria-label={t('step1.zoneLabel')}
                 value={trip.pricingSegmentId ?? ''}
                 onChange={(e) => updateTrip(trip.key, 'pricingSegmentId', e.target.value ? Number(e.target.value) : null)}
                 className="bg-transparent text-foreground font-medium focus:outline-none w-full cursor-pointer"
@@ -836,6 +863,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
           <div className="bg-white border border-border rounded p-3 sm:col-span-2">
             <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block mb-1">{t('step1.datetimeLabel')}</span>
             <input
+              aria-label={t('step1.datetimeLabel')}
               type="datetime-local"
               value={trip.datetime}
               onChange={(e) => updateTrip(trip.key, 'datetime', e.target.value)}
@@ -848,6 +876,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
             <div className="flex-1">
               <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block mb-1">{t('step1.passengersLabel')}</span>
               <select
+                aria-label={t('step1.passengersLabel')}
                 value={trip.passengers}
                 onChange={(e) => updateTrip(trip.key, 'passengers', Number(e.target.value))}
                 className="bg-transparent text-foreground font-medium focus:outline-none w-full cursor-pointer"
@@ -863,6 +892,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
             <div className="flex-1">
               <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block mb-1">{t('step1.luggageLabel')}</span>
               <select
+                aria-label={t('step1.luggageLabel')}
                 value={trip.luggage}
                 onChange={(e) => updateTrip(trip.key, 'luggage', Number(e.target.value))}
                 className="bg-transparent text-foreground font-medium focus:outline-none w-full cursor-pointer"
@@ -951,7 +981,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
               className="relative z-10"
             >
               {/* Message pour les utilisateurs non connectés */}
-              {!isSignedIn && currentStep === 1 && (
+              {isLoaded && !isSignedIn && currentStep === 1 && (
                 <div className="mb-8 p-5 rounded border border-border bg-white flex flex-col md:flex-row items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
                     <div>
@@ -1252,6 +1282,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                               <User size={16} weight="light" className="text-[#6E6A63] shrink-0" />
                               <input
                                 type="text"
+                                aria-label={t('step3.nameLabel')}
                                 value={formData.clientName}
                                 onChange={(e) => handleInputChange('clientName', e.target.value)}
                                 placeholder={t('step3.namePlaceholder')}
@@ -1265,6 +1296,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                               <EnvelopeSimple size={16} weight="light" className="text-[#6E6A63] shrink-0" />
                               <input
                                 type="email"
+                                aria-label={t('step3.emailLabel')}
                                 value={formData.clientEmail}
                                 onChange={(e) => handleInputChange('clientEmail', e.target.value)}
                                 placeholder={t('step3.emailPlaceholder')}
@@ -1423,7 +1455,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
             isOpen={showSuccessModal}
             onClose={() => setShowSuccessModal(false)}
             title={submittedTripCount > 1 ? t('success.titleMulti', { count: submittedTripCount }) : t('success.title')}
-            message={submittedTripCount > 1 ? t('success.messageMulti', { count: submittedTripCount }) : t('success.message')}
+            message={submittedTripCount > 1 ? t('success.messageMulti', { count: submittedTripCount, reference: submittedReferences }) : t('success.message', { reference: submittedReferences })}
             type="success"
             confirmText={t('success.confirm')}
             onConfirm={() => {

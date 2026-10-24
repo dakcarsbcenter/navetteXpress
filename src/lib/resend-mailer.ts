@@ -7,6 +7,7 @@
  */
 
 import { Resend } from 'resend';
+import { skipBlankRecipients } from './email-recipient-guard';
 import { getQuoteServiceLabel } from './quote-services';
 import {
   biSubject,
@@ -39,6 +40,8 @@ function getResendClient(): Resend {
 const resend = new Proxy({} as Resend, {
   get(_target, prop, receiver) {
     const client = getResendClient();
+    // Envois sans destinataire (réservation au seul téléphone) ignorés : voir email-recipient-guard
+    if (prop === 'emails') return skipBlankRecipients(client.emails);
     const value = Reflect.get(client, prop, client);
     return typeof value === 'function' ? value.bind(client) : value;
   },

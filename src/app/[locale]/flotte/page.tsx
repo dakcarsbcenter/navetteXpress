@@ -7,6 +7,7 @@ import { schemaBreadcrumb } from '@/lib/schema';
 import { buildAlternates } from '@/lib/seo/localized-metadata';
 import { getActiveVehiclesSafe } from '@/lib/public-catalog';
 import { ClientMessages } from "@/i18n/ClientMessages";
+import { MobileContactBar } from "@/components/seo/MobileContactBar";
 
 export async function generateMetadata({
     params,
@@ -43,6 +44,7 @@ export default async function Page({
         <>
             <JsonLd data={schemaBreadcrumb(breadcrumbs)} />
             <ClientMessages namespaces={["flotte"]}><FleetClient vehicles={vehicles} /></ClientMessages>
+      <MobileContactBar locale={locale} />
         </>
     );
 }

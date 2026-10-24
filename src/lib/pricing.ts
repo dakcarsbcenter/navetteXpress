@@ -59,6 +59,17 @@ export const ROUTES_ALLOWED_PAIRS = new Set<string>([
   'SALY|AIBD',
   'AIBD|SOMONE',
   'SOMONE|AIBD',
+  // Routes AIBD qui ont leur page (/routes/aibd-thies, -ngaparou, -nianing,
+  // -saint-louis) : le lien « Réserver ce trajet » doit pouvoir les pré-remplir.
+  // Sans tarif publié, elles partent sur devis (prix fixé par l'admin).
+  'AIBD|THIES',
+  'THIES|AIBD',
+  'AIBD|NGAPAROU',
+  'NGAPAROU|AIBD',
+  'AIBD|NIANING',
+  'NIANING|AIBD',
+  'AIBD|SAINT_LOUIS',
+  'SAINT_LOUIS|AIBD',
   // Corridor Nord (campagne de recrutement 2026) : commercialisé mais sans tarif
   // publié tant que le segment Dakar->Saint-Louis reste inactif en base.
   'DAKAR|SAINT_LOUIS',

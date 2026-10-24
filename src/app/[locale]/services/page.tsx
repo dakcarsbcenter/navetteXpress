@@ -8,6 +8,7 @@ import { serviceTypes, type ServiceLocale } from '@/lib/services';
 import { buildAlternates } from '@/lib/seo/localized-metadata';
 import { getActiveServicesSafe } from '@/lib/public-catalog';
 import { ClientMessages } from "@/i18n/ClientMessages";
+import { MobileContactBar } from "@/components/seo/MobileContactBar";
 
 export async function generateMetadata({
     params,
@@ -56,6 +57,7 @@ export default async function Page({
             <JsonLd data={schemaService(schemaServices[0])} /> {/* Main service focus */}
             <JsonLd data={schemaBreadcrumb(breadcrumbs)} />
             <ClientMessages namespaces={["services"]}><ServicesClient services={services} /></ClientMessages>
+      <MobileContactBar locale={locale} />
         </>
     );
 }

@@ -93,7 +93,7 @@ export default function ZoneClient({
                                         </div>
 
                                         <Link
-                                            href="/reservation"
+                                            href="/reservation?service=chauffeur-prive-dakar&pickup=DAKAR"
                                             className="flex items-center justify-center gap-3 w-full py-4 bg-accent hover:bg-accent-hover text-white font-semibold rounded transition-colors"
                                         >
                                             <span>{t("sidebar.reserveNow")}</span>

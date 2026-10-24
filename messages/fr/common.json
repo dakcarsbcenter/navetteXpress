@@ -70,5 +70,29 @@
     "home": "Retour à l'accueil",
     "book": "Réserver un trajet",
     "rates": "Voir les tarifs"
+  },
+  "MoneyPage": {
+    "pricesHeading": "Tarifs de ce trajet",
+    "route": "Trajet",
+    "sedan": "Berline",
+    "suv": "SUV",
+    "from": "À partir de {price} FCFA",
+    "onQuote": "Prix sur devis",
+    "onQuoteText": "Pas encore de tarif publié pour ce trajet. Réservez en ligne ou écrivez-nous : nous vous confirmons un prix ferme par WhatsApp avant le départ.",
+    "included": "Prix par véhicule, péage et carburant inclus. Majoration de 5 000 FCFA entre minuit et 5 h, annoncée à la réservation.",
+    "book": "Réserver ce trajet",
+    "whatsapp": "Demander sur WhatsApp",
+    "whatsappMessage": "Bonjour, je souhaite réserver : {trip}",
+    "trust": {
+      "cancel": "Annulation gratuite jusqu'à 24 h avant",
+      "wait": "60 min d'attente gratuite à l'aéroport",
+      "payment": "Wave, Orange Money, espèces ou carte",
+      "noAccount": "Sans création de compte"
+    },
+    "bar": {
+      "call": "Appeler",
+      "whatsapp": "WhatsApp",
+      "book": "Réserver"
+    }
   }
 }

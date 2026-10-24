@@ -149,11 +149,15 @@ export async function POST(request: NextRequest) {
     }
     const trips: BookingTripParsed[] = parsedTrips.data;
 
-    // Pour les utilisateurs non connectés, vérifier les champs client
-    if (!userId && (!clientName || !fallbackClientEmail)) {
+    // Pour les utilisateurs non connectés : le nom est requis, l'email non. Le
+    // canal réel est le téléphone / WhatsApp (contactPhone, obligatoire plus haut) ;
+    // exiger un email faisait abandonner des clients qui n'en utilisent pas. Les
+    // emails client d'une réservation sans adresse sont ignorés à l'envoi
+    // (src/lib/email-recipient-guard.ts).
+    if (!userId && !clientName) {
       return NextResponse.json({
         success: false,
-        error: 'Nom et email requis pour les utilisateurs non connectés'
+        error: 'Nom requis pour les utilisateurs non connectés'
       }, { status: 400 });
     }
 
@@ -168,7 +172,10 @@ export async function POST(request: NextRequest) {
     if (!session?.user?.id) {
       const guard = await guardPublicFormSubmission(request, {
         scope: 'booking',
-        email: fallbackClientEmail,
+        email: typeof fallbackClientEmail === 'string' ? fallbackClientEmail : '',
+        emailOptional: true,
+        // Sans email, le quota par contact se fait sur le numéro saisi.
+        fallbackLimitKey: typeof contactPhone === 'string' ? contactPhone.replace(/\D/g, '') : undefined,
         body,
         decoyResponse: () => NextResponse.json({
           success: true,
