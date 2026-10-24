@@ -47,12 +47,13 @@ export default function ZoneClient({
                         <nav className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-text-muted mb-8">
                             <Link href="/" className="hover:text-accent transition-colors">{t("breadcrumbs.home")}</Link>
                             <span className="text-text-muted/40">/</span>
-                            <span className="text-accent">{t("breadcrumbs.zones")}</span>
+                            <Link href="/zones" className="text-accent hover:underline">{t("breadcrumbs.zones")}</Link>
                             <span className="text-text-muted/40">/</span>
                             <span className="text-foreground">{zone.name}</span>
                         </nav>
 
-                        <div className="animate-fade-in-up">
+                        {/* Sans fondu : le h1 est l'élément LCP de la page */}
+                        <div>
                             <h1 className="text-4xl md:text-5xl lg:text-6xl text-foreground font-bold leading-[1.08] tracking-tight mb-6">
                                 {t("hero.titlePrefix")} <br />
                                 <span className="text-accent">{zone.name}</span>

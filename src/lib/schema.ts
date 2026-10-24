@@ -11,20 +11,26 @@ export const schemaLocalBusiness = {
     url: 'https://navettexpress.com',
     telephone: '+221784651302',
     email: 'contact@navettexpress.com',
-    foundingDate: '2023',
+    // Pas de foundingDate : 2023 ici contre un RCCM de 2014 (legal.json), date
+    // non confirmée. Pas de postalCode : « BP 0000 » était un faux.
+    // Adresse confirmée par le fondateur le 24/10/2026 ; elle doit rester
+    // identique à celle de /contact et de la fiche Google (cohérence NAP).
     address: {
         '@type': 'PostalAddress',
-        streetAddress: 'Dakar',
+        streetAddress: 'Cité Magistrats, Cices Foire',
         addressLocality: 'Dakar',
         addressRegion: 'Dakar',
-        postalCode: 'BP 0000',
         addressCountry: 'SN',
     },
+    // Mêmes coordonnées que la carte de /contact (ContactClient.tsx)
     geo: {
         '@type': 'GeoCoordinates',
-        latitude: 14.7167,
-        longitude: -17.4677,
+        latitude: 14.74342,
+        longitude: -17.472408,
     },
+    hasMap: 'https://g.page/r/CWZ1tVchWCgbEAI',
+    // Langues de service annoncées (page diaspora : « en français ou en anglais »)
+    knowsLanguage: ['fr', 'en'],
     areaServed: [
         { '@type': 'City', name: 'Dakar', containedIn: { '@type': 'Country', name: 'Sénégal' } },
         { '@type': 'Place', name: 'Aéroport International Blaise Diagne', alternateName: 'AIBD' },
@@ -34,6 +40,9 @@ export const schemaLocalBusiness = {
         // Petite Cote) : la zone doit figurer ici aussi, sinon le schema decrit
         // une couverture plus etroite que celle annoncee au visiteur.
         { '@type': 'Place', name: 'Petite Côte', alternateName: 'Somone, Ngaparou, Nianing' },
+        { '@type': 'City', name: 'Diamniadio' },
+        { '@type': 'City', name: 'Thiès' },
+        { '@type': 'City', name: 'Saint-Louis' },
     ],
     openingHoursSpecification: {
         '@type': 'OpeningHoursSpecification',
@@ -43,7 +52,8 @@ export const schemaLocalBusiness = {
     },
     priceRange: '$$',
     currenciesAccepted: 'XOF, EUR',
-    paymentAccepted: 'Orange Money, Wave, Cash, Bank Transfer',
+    // Moyens de paiement confirmés le 24/10/2026 (mêmes que la FAQ et les CGV)
+    paymentAccepted: 'Wave, Orange Money, Cash, Credit Card, Bank Transfer',
     image: 'https://navettexpress.com/og/og-default.jpg',
     logo: 'https://navettexpress.com/icons/logo.png',
     // Pas d'aggregateRating ici tant qu'aucun avis n'est affiche sur le site.

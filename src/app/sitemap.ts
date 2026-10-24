@@ -19,6 +19,7 @@ const staticRoutes: string[] = [
   '/',
   '/services',
   '/routes',
+  '/zones',
   '/flotte',
   '/contact',
   '/faq',

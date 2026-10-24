@@ -7,6 +7,7 @@ import { getServerSession } from 'next-auth/next'
 import type { Session } from "next-auth";
 import { authOptions } from '@/lib/auth'
 import { db } from '@/db'
+import { revalidatePublicReviews } from '@/lib/public-reviews'
 import { reviewsTable, rolePermissionsTable } from '@/schema'
 import { eq, and } from 'drizzle-orm'
 
@@ -69,6 +70,8 @@ export async function PUT(
       })
       .where(eq(reviewsTable.id, reviewId))
     
+    // Les pages publiques affichent les avis approuvés : on purge leur cache
+    revalidatePublicReviews()
     return NextResponse.json({
       success: true,
       message: 'Avis mis à jour avec succès'
@@ -108,6 +111,8 @@ export async function DELETE(
     
     await db.delete(reviewsTable).where(eq(reviewsTable.id, reviewId))
 
+    // Les pages publiques affichent les avis approuvés : on purge leur cache
+    revalidatePublicReviews()
     return NextResponse.json({
       success: true,
       message: 'Avis supprimé avec succès'

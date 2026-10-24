@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/db"
+import { revalidatePublicReviews } from '@/lib/public-reviews'
 import { reviewsTable, rolePermissionsTable } from "@/schema"
 import { inArray, and, eq } from "drizzle-orm"
 
@@ -53,6 +54,8 @@ export async function DELETE(request: NextRequest) {
             .where(inArray(reviewsTable.id, ids))
             .returning({ id: reviewsTable.id })
 
+        // Les pages publiques affichent les avis approuvés : on purge leur cache
+        revalidatePublicReviews()
         return NextResponse.json({
             success: true,
             message: `${deletedReviews.length} avis supprimé(s)`,

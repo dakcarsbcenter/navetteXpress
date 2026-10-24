@@ -50,5 +50,17 @@
   },
   "links": {
     "heading": "Related routes and services"
+  },
+  "hub": {
+    "meta": {
+      "title": "Private driver by district in Dakar | Navette Xpress",
+      "description": "Private driver and AIBD transfer from Almadies, Plateau, Ngor, Yoff and Sacré-Cœur. Fixed price, 24/7 online booking."
+    },
+    "eyebrow": "Areas",
+    "h1": "Private driver in your Dakar district",
+    "intro": "We pick you up at home, at your hotel or at the office anywhere in Dakar. Choose your district for details, or book your ride to AIBD airport directly.",
+    "seeZone": "See the district",
+    "routesHeading": "Rides from Dakar",
+    "ratesLink": "See all rates"
   }
 }

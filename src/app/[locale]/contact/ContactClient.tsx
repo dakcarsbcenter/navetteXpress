@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { GOOGLE_BUSINESS_URL } from "@/lib/contact";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { CorridorStrip } from "@/components/marketing/CorridorStrip";
@@ -106,7 +107,8 @@ export default function ContactClient() {
       title: t("methods.office.title"),
       details: "Cité Magistrats, Cices Foire",
       sub: t("methods.office.sub"),
-      link: "https://maps.google.com"
+      // Fiche Google de l'entreprise (itinéraire, avis) plutôt que Google Maps générique
+      link: GOOGLE_BUSINESS_URL
     }
   ];
 

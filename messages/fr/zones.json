@@ -50,5 +50,17 @@
   },
   "links": {
     "heading": "Trajets et services associés"
+  },
+  "hub": {
+    "meta": {
+      "title": "Chauffeur privé par quartier à Dakar | Navette Xpress",
+      "description": "Chauffeur privé et transfert AIBD depuis les Almadies, le Plateau, Ngor, Yoff et Sacré-Cœur. Prix fixe, réservation en ligne 24/7."
+    },
+    "eyebrow": "Zones",
+    "h1": "Chauffeur privé dans votre quartier de Dakar",
+    "intro": "Nous prenons en charge à domicile, à l'hôtel ou au bureau dans tout Dakar. Choisissez votre quartier pour voir le détail du service, ou réservez directement votre trajet vers l'aéroport AIBD.",
+    "seeZone": "Voir le quartier",
+    "routesHeading": "Trajets au départ de Dakar",
+    "ratesLink": "Voir tous les tarifs"
   }
 }

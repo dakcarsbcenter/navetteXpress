@@ -9,3 +9,9 @@ export function whatsappHref(message?: string): string {
   const base = `https://wa.me/${WHATSAPP_NUMBER}`;
   return message ? `${base}?text=${encodeURIComponent(message)}` : base;
 }
+
+/**
+ * Fiche Google Business (racine, sans /review : ce suffixe ouvre le formulaire
+ * de notation). Même valeur que le sameAs de schemaLocalBusiness.
+ */
+export const GOOGLE_BUSINESS_URL = 'https://g.page/r/CWZ1tVchWCgbEAI';

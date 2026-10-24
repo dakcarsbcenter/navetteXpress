@@ -21,7 +21,7 @@
     "skipToContent": "Skip to content"
   },
   "Footer": {
-    "tagline": "Dakar, Senegal",
+    "tagline": "Cité Magistrats, Cices Foire — Dakar, Senegal",
     "routesHeading": "Routes",
     "services": {
       "airportTransfer": "AIBD Airport Transfer",
@@ -93,6 +93,12 @@
       "call": "Call",
       "whatsapp": "WhatsApp",
       "book": "Book"
+    },
+    "reviews": {
+      "heading": "What our customers say",
+      "intro": "Reviews left by customers after their ride, published after verification.",
+      "google": "Read our reviews on Google",
+      "stars": "{rating} out of 5"
     }
   }
 }

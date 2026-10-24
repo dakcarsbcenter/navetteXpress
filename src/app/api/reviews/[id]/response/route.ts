@@ -7,6 +7,7 @@ import { getServerSession } from 'next-auth/next'
 import type { Session } from "next-auth";
 import { authOptions } from '@/lib/auth'
 import { db } from '@/db'
+import { revalidatePublicReviews } from '@/lib/public-reviews'
 import { reviewsTable } from '@/schema'
 import { eq } from 'drizzle-orm'
 
@@ -44,6 +45,8 @@ export async function POST(
       })
       .where(eq(reviewsTable.id, reviewId))
     
+    // Les pages publiques affichent les avis approuvés : on purge leur cache
+    revalidatePublicReviews()
     return NextResponse.json({
       success: true,
       message: 'Réponse ajoutée avec succès'

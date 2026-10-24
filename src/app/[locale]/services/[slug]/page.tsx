@@ -6,6 +6,7 @@ import { Navigation } from '@/components/navigation';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { MoneyPageBooking, moneyPagePriceLabel } from '@/components/seo/MoneyPageBooking';
 import { MobileContactBar } from '@/components/seo/MobileContactBar';
+import { ReviewsSection } from '@/components/seo/ReviewsSection';
 import { getActivePricingSegmentsSafe } from '@/lib/pricing-segments';
 import { moneyPageBookingHref, moneyPagePriceRows } from '@/lib/seo/money-page-booking';
 import { Link } from '@/i18n/navigation';
@@ -132,6 +133,8 @@ export default async function ServiceMoneyPage({ params }: Params) {
               </ol>
             </div>
           </section>
+
+          <ReviewsSection locale={locale} />
 
           <section className="rounded-2xl border border-border bg-surface-2/40 p-6 space-y-4">
             <h2 className="text-2xl font-display">{t('faqHeading')}</h2>

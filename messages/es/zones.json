@@ -50,5 +50,17 @@
   },
   "links": {
     "heading": "Trayectos y servicios relacionados"
+  },
+  "hub": {
+    "meta": {
+      "title": "Chofer privado por barrio en Dakar | Navette Xpress",
+      "description": "Chofer privado y traslado al AIBD desde Almadies, Plateau, Ngor, Yoff y Sacré-Cœur. Precio fijo, reserva en línea 24/7."
+    },
+    "eyebrow": "Zonas",
+    "h1": "Chofer privado en su barrio de Dakar",
+    "intro": "Le recogemos en su domicilio, hotel u oficina en todo Dakar. Elija su barrio para ver el detalle del servicio o reserve directamente su trayecto al aeropuerto AIBD.",
+    "seeZone": "Ver el barrio",
+    "routesHeading": "Trayectos desde Dakar",
+    "ratesLink": "Ver todas las tarifas"
   }
 }
