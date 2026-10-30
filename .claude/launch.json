@@ -4,21 +4,43 @@
     {
       "name": "Next.js Dev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "port": 3000,
       "autoPort": true
     },
     {
       "name": "Drizzle Studio",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "db:studio"],
+      "runtimeArgs": [
+        "run",
+        "db:studio"
+      ],
       "port": 4983
     },
     {
       "name": "React Email Preview",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["react-email", "dev", "--port", "3001"],
+      "runtimeArgs": [
+        "react-email",
+        "dev",
+        "--port",
+        "3001"
+      ],
       "port": 3001
+    },
+    {
+      "name": "Next.js Prod (local)",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "next",
+        "start",
+        "-p",
+        "3100"
+      ],
+      "port": 3100
     }
   ]
 }
