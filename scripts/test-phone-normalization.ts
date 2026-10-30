@@ -14,6 +14,8 @@ import {
   buildInternationalPhone,
   splitInternationalPhone,
   isCompleteInternationalPhone,
+  countryForDial,
+  PHONE_COUNTRIES,
 } from '../src/lib/phone-countries';
 import { requireValidPhone, InvalidPhoneError } from '../src/lib/phone';
 
@@ -75,10 +77,24 @@ expect('+221771234567 → 221', splitInternationalPhone('+221771234567').dial, '
 expect('0033612345678 → 33', splitInternationalPhone('0033612345678').dial, '33');
 expect('771234567 (historique) → 221', splitInternationalPhone('771234567').dial, '221');
 expect('vide → 221', splitInternationalPhone('').dial, '221');
+expect('+31621247033 → 31 (réservation #29)', splitInternationalPhone('+31621247033').dial, '31');
+expect('+31621247033 → national', splitInternationalPhone('+31621247033').national, '621247033');
+expect('+18765551234 → 1', splitInternationalPhone('+18765551234').dial, '1');
+expect('+79161234567 → 7', splitInternationalPhone('+79161234567').dial, '7');
+expect('+2250701020304 → 225 (pas 22…)', splitInternationalPhone('+2250701020304').dial, '225');
 expect('aller-retour', (() => {
   const { dial, national } = splitInternationalPhone('+33612345678');
   return buildInternationalPhone(dial, national);
 })(), '+33612345678');
+
+console.log('\n🗺️  Liste des pays et indicatifs partagés');
+expect('codes ISO uniques', new Set(PHONE_COUNTRIES.map((c) => c.iso)).size, PHONE_COUNTRIES.length);
+expect('indicatifs numériques sans "+"', PHONE_COUNTRIES.every((c) => /^[1-9]\d{0,2}$/.test(c.dial)), true);
+expect('liste mondiale (≥ 230 pays)', PHONE_COUNTRIES.length >= 230, true);
+expect('countryForDial("1") → US', countryForDial('1').iso, 'US');
+expect('countryForDial("1", "CA") garde le Canada', countryForDial('1', 'CA').iso, 'CA');
+expect('countryForDial("1", "FR") → US', countryForDial('1', 'FR').iso, 'US');
+expect('countryForDial("31") → NL', countryForDial('31').iso, 'NL');
 
 console.log('\n🛡️  requireValidPhone — saisies publiques');
 expect('E.164 accepté', requireValidPhone('+33612345678'), '+33612345678');
