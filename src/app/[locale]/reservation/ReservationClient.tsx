@@ -588,9 +588,9 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
    * sans tarif paramétré ne matche rien — l'admin renseignera le prix manuellement.
    *
    * Certains couples (ex: DAKAR<->AIBD) ont plusieurs tarifs actifs, un par secteur
-   * ("Dakar Plateau", "Almadies / Ngor"...). On affichait alors une fourchette, que le
-   * client devait accepter sans connaître le montant réel. Le secteur lui est désormais
-   * demandé, ce qui rend le prix ferme, affiché avant envoi et persisté sur la réservation.
+   * ("Dakar Plateau", "Almadies / Ngor"...). Le secteur n'est pas demandé au client (le
+   * champ bloquait l'envoi) : aucun montant n'est alors annoncé et l'admin fixe le prix,
+   * comme pour un trajet sur devis. Les couples à tarif unique gardent leur prix ferme.
    */
   const tripPricing = trips.map((trip) => {
     const isInvalidCombination = Boolean(
@@ -604,13 +604,10 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
       trip.vehicleType === 'suv' ? 'suv' : 'berline',
       trip.pricingSegmentId,
     );
-    const zoneOptions = priceResolution.alternatives;
-    const needsZoneChoice = zoneOptions.length > 1;
-    const hasZoneChoice =
-      !needsZoneChoice || zoneOptions.some((zone) => zone.segment.id === trip.pricingSegmentId);
-    // Tant que le secteur n'est pas tranché, aucun montant n'est annoncé : afficher le tarif
-    // d'un secteur non choisi reviendrait à annoncer un prix qui n'est pas celui de la course.
-    const price = hasZoneChoice ? priceResolution.price : null;
+    const needsZoneChoice = priceResolution.alternatives.length > 1;
+    // Plusieurs secteurs possibles : aucun montant n'est annoncé, afficher le tarif d'un
+    // secteur au hasard reviendrait à annoncer un prix qui n'est pas celui de la course.
+    const price = needsZoneChoice ? null : priceResolution.price;
 
     // Transfert impliquant l'aéroport AIBD : on propose la saisie du numéro de
     // vol pour permettre le suivi en direct côté client une fois la demande créée.
@@ -628,16 +625,12 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
       trip.destinationAddress &&
       !(trip.destinationAddress === OTHER_LOCATION_VALUE && !trip.destinationCustomLocation.trim()) &&
       !isInvalidCombination &&
-      // Le secteur conditionne le montant annoncé : on ne laisse pas avancer sans lui.
-      hasZoneChoice &&
       trip.datetime
     );
 
     return {
       isInvalidCombination,
-      zoneOptions,
       needsZoneChoice,
-      hasZoneChoice,
       price,
       priceLabel: price === null ? null : formatPrice(price),
       isAirportTrip,
@@ -830,33 +823,6 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
             </p>
           )}
         </div>
-
-        {/* Secteur tarifaire. Plusieurs tarifs couvrent ce couple de noeuds
-            (un par quartier) : sans ce choix, le client ne verrait qu'une
-            fourchette et découvrirait le montant réel après la réservation. */}
-        {pricing.needsZoneChoice && (
-          <div className="space-y-2">
-            <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block">{t('step1.zoneLabel')}</span>
-            <div className="bg-white border border-border rounded p-3">
-              <select
-                aria-label={t('step1.zoneLabel')}
-                value={trip.pricingSegmentId ?? ''}
-                onChange={(e) => updateTrip(trip.key, 'pricingSegmentId', e.target.value ? Number(e.target.value) : null)}
-                className="bg-transparent text-foreground font-medium focus:outline-none w-full cursor-pointer"
-              >
-                <option value="">{t('step1.zoneSelectPlaceholder')}</option>
-                {pricing.zoneOptions.map((zone) => (
-                  <option key={zone.segment.id} value={zone.segment.id}>
-                    {zone.label} — {formatPrice(zone.price)}
-                  </option>
-                ))}
-              </select>
-            </div>
-            {!pricing.hasZoneChoice && (
-              <p className="text-xs text-[#6E6A63]">{t('step1.zoneHint')}</p>
-            )}
-          </div>
-        )}
 
         {/* Date, heure, passagers, bagages */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1106,7 +1072,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                                 <span>{t('step1.requestSummary.rate')}</span>
                                 <span className={tripPricing[0].priceLabel !== null ? "text-white" : undefined}>
                                   {/* "SUR DEVIS" annoncerait à tort qu'aucun tarif n'existe pour ce
-                                      trajet, alors qu'il n'attend que le choix du quartier. */}
+                                      trajet, alors qu'il dépend seulement du quartier (fixé par l'admin). */}
                                   {tripPricing[0].priceLabel ?? (tripPricing[0].needsZoneChoice
                                     ? t('step1.requestSummary.ratePendingZone')
                                     : t('step1.requestSummary.onQuote'))}
