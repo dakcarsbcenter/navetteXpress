@@ -41,8 +41,6 @@ interface TripRow {
   passengers: string
   luggage: string
   note: string
-  /** Secteur tarifaire retenu quand plusieurs segments admin couvrent le trajet. */
-  pricingSegmentId: number | null
 }
 
 interface TripErrors {
@@ -70,7 +68,6 @@ const emptyTrip = (overrides: Partial<TripRow> = {}): TripRow => ({
   passengers: '1',
   luggage: '0',
   note: '',
-  pricingSegmentId: null,
   ...overrides,
 })
 
@@ -157,24 +154,19 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
   // Tarif : résolu par la fonction partagée (src/lib/pricing.ts) à partir des segments
   // paramétrés dans /admin/dashboard?tab=pricing, comme le fait /reservation et comme le
   // back-office le refait quand l'admin corrige un trajet. Certains couples (ex:
-  // DAKAR<->AIBD) ont un tarif par secteur : tant que le client n'a pas indiqué le sien,
-  // aucun montant n'est annoncé — afficher celui d'un autre secteur serait un faux prix.
+  // DAKAR<->AIBD) ont un tarif par secteur, que le client n'indique pas : aucun montant
+  // n'est annoncé — afficher celui d'un secteur au hasard serait un faux prix.
   const tripPricing = trips.map((trip) => {
     const departure = trip.departure.trim()
     const destination = trip.destination.trim()
-    const resolved = resolvePrice(pricingSegments, departure, destination, 'berline', trip.pricingSegmentId)
-    const zones = resolved.alternatives
-    const needsZoneChoice = zones.length > 1
-    const zoneChosen = !needsZoneChoice || zones.some((zone) => zone.segment.id === trip.pricingSegmentId)
-    // Un trajet complet qu'aucun segment admin ne couvre n'a pas de prix public :
-    // il est annoncé "Sur devis" plutôt que laissé sans indication.
-    const isQuoteOnly = Boolean(departure && destination) && resolved.segment === null
+    const resolved = resolvePrice(pricingSegments, departure, destination, 'berline')
+    const needsZoneChoice = resolved.alternatives.length > 1
+    // Un trajet complet sans tarif unique (aucun segment admin, ou un par secteur) n'a
+    // pas de prix public : il est annoncé "Sur devis" plutôt que laissé sans indication.
+    const isQuoteOnly = Boolean(departure && destination) && (resolved.segment === null || needsZoneChoice)
     return {
-      zones,
-      needsZoneChoice,
-      zoneChosen,
       isQuoteOnly,
-      price: zoneChosen ? resolved.price : null,
+      price: needsZoneChoice ? null : resolved.price,
     }
   })
   const pricedCount = tripPricing.filter((t) => t.price !== null).length
@@ -187,9 +179,7 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
   const updateTrip = (key: string, field: keyof TripRow, value: string) => {
     setTrips(prev => prev.map(trip => {
       if (trip.key !== key) return trip
-      // Changer de lieu change les secteurs proposés : celui déjà retenu ne vaut plus.
-      const resetZone = field === 'departure' || field === 'destination'
-      return { ...trip, [field]: value, ...(resetZone ? { pricingSegmentId: null } : {}) }
+      return { ...trip, [field]: value }
     }))
     // L'erreur disparaît dès que le champ est corrigé.
     setTripErrors(prev => {
@@ -198,10 +188,6 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
       const { [field as keyof TripErrors]: _removed, ...rest } = current
       return { ...prev, [key]: rest }
     })
-  }
-
-  const setTripZone = (key: string, segmentId: number | null) => {
-    setTrips(prev => prev.map(trip => (trip.key === key ? { ...trip, pricingSegmentId: segmentId } : trip)))
   }
 
   // Étape suivante d'un séjour : on repart d'où le trajet précédent s'arrête.
@@ -755,25 +741,6 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
                         </button>
                       </div>
                     </div>
-
-                    {/* Secteur : demandé seulement quand plusieurs tarifs admin couvrent le trajet */}
-                    {pricing.needsZoneChoice && (
-                      <div className="mt-2 space-y-1.5 lg:max-w-xs">
-                        <label className={labelBase}>Secteur (pour un tarif ferme)</label>
-                        <select
-                          value={trip.pricingSegmentId ?? ''}
-                          onChange={(e) => setTripZone(trip.key, e.target.value ? Number(e.target.value) : null)}
-                          className={inputBase}
-                        >
-                          <option value="">Sélectionner un secteur</option>
-                          {pricing.zones.map((zone) => (
-                            <option key={zone.segment.id} value={zone.segment.id}>
-                              {zone.label} — {zone.price.toLocaleString('fr-FR')} FCFA
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    )}
 
                     {/* Prix de la ligne, tel que paramétré dans l'admin des tarifs.
                         Hors de ces segments, le trajet est chiffré à la main : "Sur devis". */}
