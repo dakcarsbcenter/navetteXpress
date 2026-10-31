@@ -1,21 +1,27 @@
-import { Archivo, IBM_Plex_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import { GoogleAnalytics } from "@/app/google-analytics";
 import { CapacitorAppUrlListener } from "@/components/mobile/CapacitorAppUrlListener";
 
-const archivo = Archivo({
+// Polices hébergées dans le dépôt (sous-ensemble latin de Google Fonts) :
+// next/font/google les téléchargeait à chaque build, et le build Docker du VPS
+// échouait quand Google y renvoyait un CSS inattendu.
+const archivo = localFont({
   variable: "--font-archivo",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  src: "../../fonts/archivo-latin.woff2",
+  weight: "400 700",
   display: "swap",
 });
 
-const ibmPlexMono = IBM_Plex_Mono({
+const ibmPlexMono = localFont({
   variable: "--font-ibm-plex-mono",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  src: [
+    { path: "../../fonts/ibm-plex-mono-400-latin.woff2", weight: "400" },
+    { path: "../../fonts/ibm-plex-mono-500-latin.woff2", weight: "500" },
+    { path: "../../fonts/ibm-plex-mono-600-latin.woff2", weight: "600" },
+  ],
   display: "swap",
 });
 
