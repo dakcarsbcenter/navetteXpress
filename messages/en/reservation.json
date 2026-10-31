@@ -77,7 +77,6 @@
     "airlinePlaceholder": "Type Air France, AF...",
     "airlineNoResults": "Unknown airline — enter it freely",
     "flightSectionHint": "Add your flight to track its status live from your client dashboard.",
-    "optionsLabel": "Options at no extra cost",
     "notesLabel": "Notes for the driver — optional",
     "notesPlaceholder": "Exact meeting point, gate code, hotel name, stop along the way...",
     "tripSectionLabel": "Trip {number}"

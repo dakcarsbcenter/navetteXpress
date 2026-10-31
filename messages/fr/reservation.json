@@ -77,7 +77,6 @@
     "airlinePlaceholder": "Tapez Air France, AF...",
     "airlineNoResults": "Compagnie inconnue — saisissez-la librement",
     "flightSectionHint": "Renseignez votre vol pour suivre son statut en direct depuis votre espace client.",
-    "optionsLabel": "Options sans supplément",
     "notesLabel": "Précisions pour le chauffeur — facultatif",
     "notesPlaceholder": "Point de rendez-vous exact, code portail, nom de l'hôtel, arrêt en route...",
     "tripSectionLabel": "Trajet {number}"

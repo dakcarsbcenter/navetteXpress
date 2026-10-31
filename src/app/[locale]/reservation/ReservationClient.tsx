@@ -12,7 +12,7 @@ import { BookNowIcon } from "@/components/icons/custom-icons";
 import { m, AnimatePresence } from "framer-motion";
 import { DURATION, EASE } from "@/components/motion/variants";
 import { Users, Bag, Phone, EnvelopeSimple, ArrowRight, ArrowLeft, ChatCircle, User, Airplane, Plus, ArrowsLeftRight, X, DeviceMobile, Bank, Money } from "@phosphor-icons/react";
-import { serviceTypes, additionalServices, getServiceById } from "@/lib/services";
+import { serviceTypes, getServiceById } from "@/lib/services";
 import { useRouter } from "@/i18n/navigation";
 import NextLink from "next/link";
 import { type RouteNodeKey, getRouteNodeFromName } from "@/lib/route-nodes";
@@ -102,7 +102,7 @@ const DEFAULT_SERVICE_TYPE = "transfert-aibd-dakar";
  * Un trajet de la demande. Une même soumission peut en porter plusieurs
  * (aller-retour, séjour enchaînant plusieurs transferts) : chacun devient une
  * course à part entière, avec son itinéraire, sa date, son véhicule et son vol.
- * Les coordonnées, le passager tiers, les options et les précisions chauffeur
+ * Les coordonnées, le passager tiers et les précisions chauffeur
  * valent pour toute la demande et vivent dans `FormData`.
  */
 interface TripRow {
@@ -131,7 +131,6 @@ interface TripRow {
 
 /** Ce qui vaut pour toute la demande, quel que soit le nombre de trajets. */
 interface FormData {
-  additionalServices: string[];
   specialRequests: string;
   contactPhone: string;
   // Champs pour les utilisateurs non connectés
@@ -169,7 +168,6 @@ const emptyTrip = (overrides: Partial<TripRow> = {}): TripRow => ({
 });
 
 const EMPTY_FORM_DATA: FormData = {
-  additionalServices: [],
   specialRequests: "",
   contactPhone: "",
   clientName: "",
@@ -414,15 +412,6 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
     setTrips(prev => (prev.length <= 1 ? prev : prev.filter(trip => trip.key !== key)));
   };
 
-  const handleAdditionalServiceToggle = (serviceId: string) => {
-    setFormData(prev => ({
-      ...prev,
-      additionalServices: prev.additionalServices.includes(serviceId)
-        ? prev.additionalServices.filter(id => id !== serviceId)
-        : [...prev.additionalServices, serviceId]
-    }));
-  };
-
   // Suggestions de vol : le code IATA de la compagnie sert aussi de filtre, pour que
   // taper "air france" propose AF718 autant que "AF7".
   const flightOptions = FLIGHTS.map((flight) => ({
@@ -500,7 +489,6 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
               airline: tripPricing[index].isAirportTrip ? trip.airline.trim() || undefined : undefined,
             };
           }),
-          additionalServices: formData.additionalServices,
           // Le secteur étant tranché à l'étape 1, le serveur retrouve le montant exact
           // quand un tarif est paramétré. La fourchette autrefois recopiée dans les
           // demandes spéciales n'a plus d'objet : elle polluait la ligne lue par le chauffeur.
@@ -1145,25 +1133,6 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                         <p className="text-[11px] text-[#6E6A63]">{t('step2.flightSectionHint')}</p>
                       </div>
                     ))}
-
-                    <div className="space-y-2">
-                      <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block">{t('step2.optionsLabel')}</span>
-                      <div className="flex flex-wrap gap-2">
-                        {additionalServices.map((service) => (
-                          <button
-                            key={service.id}
-                            type="button"
-                            onClick={() => handleAdditionalServiceToggle(service.id)}
-                            className={`px-4 py-2.5 rounded text-sm font-medium transition-colors ${formData.additionalServices.includes(service.id)
-                              ? 'bg-[#12100E] text-white'
-                              : 'border border-[#c9c3b8] text-[#3d3a35] hover:border-[#12100E]'
-                              }`}
-                          >
-                            {service.translations[locale]?.name ?? service.translations.fr.name}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
 
                     <div className="space-y-2">
                       <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block">{t('step2.notesLabel')}</span>
