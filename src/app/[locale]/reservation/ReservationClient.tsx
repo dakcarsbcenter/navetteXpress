@@ -868,6 +868,35 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
           </div>
         </div>
 
+        {/* Un trajet par étape du séjour : le client ne ressaisit ni ses
+            coordonnées ni ses options d'un trajet à l'autre. Placé dans le dernier
+            trajet, avant son type de véhicule. */}
+        {index === trips.length - 1 && (
+          <div className="space-y-2">
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={addTrip}
+                disabled={!canAddTrip}
+                className="flex items-center gap-2 px-4 min-h-[44px] rounded border border-dashed border-[#12100E]/30 text-sm font-medium text-[#3d3a35] hover:border-accent hover:text-accent transition-colors disabled:opacity-40 disabled:hover:border-[#12100E]/30 disabled:hover:text-[#3d3a35]"
+              >
+                <Plus size={16} weight="regular" /> {t('step1.addTrip')}
+              </button>
+              <button
+                type="button"
+                onClick={addReturnTrip}
+                disabled={!canAddTrip}
+                className="flex items-center gap-2 px-4 min-h-[44px] rounded border border-dashed border-[#12100E]/30 text-sm font-medium text-[#3d3a35] hover:border-accent hover:text-accent transition-colors disabled:opacity-40 disabled:hover:border-[#12100E]/30 disabled:hover:text-[#3d3a35]"
+              >
+                <ArrowsLeftRight size={16} weight="regular" /> {t('step1.addReturnTrip')}
+              </button>
+            </div>
+            <p className="text-[11px] text-[#6E6A63]">
+              {canAddTrip ? t('step1.tripsHint') : t('step1.maxTripsReached', { max: MAX_BOOKING_TRIPS })}
+            </p>
+          </div>
+        )}
+
         {/* Type de véhicule */}
         <div className="space-y-2">
           <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block">{t('step1.vehicleTypeLabel')}</span>
@@ -990,32 +1019,6 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                       </div>
 
                       {trips.map((trip, index) => renderTripFields(trip, index))}
-
-                      {/* Un trajet par étape du séjour : le client ne ressaisit ni ses
-                          coordonnées ni ses options d'un trajet à l'autre. */}
-                      <div className="space-y-2">
-                        <div className="flex flex-wrap gap-2">
-                          <button
-                            type="button"
-                            onClick={addTrip}
-                            disabled={!canAddTrip}
-                            className="flex items-center gap-2 px-4 min-h-[44px] rounded border border-dashed border-[#12100E]/30 text-sm font-medium text-[#3d3a35] hover:border-accent hover:text-accent transition-colors disabled:opacity-40 disabled:hover:border-[#12100E]/30 disabled:hover:text-[#3d3a35]"
-                          >
-                            <Plus size={16} weight="regular" /> {t('step1.addTrip')}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={addReturnTrip}
-                            disabled={!canAddTrip}
-                            className="flex items-center gap-2 px-4 min-h-[44px] rounded border border-dashed border-[#12100E]/30 text-sm font-medium text-[#3d3a35] hover:border-accent hover:text-accent transition-colors disabled:opacity-40 disabled:hover:border-[#12100E]/30 disabled:hover:text-[#3d3a35]"
-                          >
-                            <ArrowsLeftRight size={16} weight="regular" /> {t('step1.addReturnTrip')}
-                          </button>
-                        </div>
-                        <p className="text-[11px] text-[#6E6A63]">
-                          {canAddTrip ? t('step1.tripsHint') : t('step1.maxTripsReached', { max: MAX_BOOKING_TRIPS })}
-                        </p>
-                      </div>
                     </div>
 
                     {/* Estimation */}
