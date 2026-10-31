@@ -24,7 +24,7 @@
   },
   "step1": {
     "title": "¿Dónde en el corredor?",
-    "subtitle": "Describe tu trayecto. Nosotros asignamos el vehículo en el siguiente paso.",
+    "subtitle": "Describe tu trayecto. Nosotros asignamos el vehículo.",
     "serviceTypeLabel": "Tipo de servicio",
     "serviceTypeSelectPlaceholder": "Selecciona un servicio...",
     "customServicePlaceholder": "Especifica tu necesidad (transporte para eventos, rodaje...)",

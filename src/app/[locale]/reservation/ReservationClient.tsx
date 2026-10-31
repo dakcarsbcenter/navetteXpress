@@ -187,7 +187,10 @@ interface ReservationFormProps {
 export function ReservationForm({ onClose, isEmbedded = false }: ReservationFormProps = {}) {
   const t = useTranslations("reservation");
   const locale = useLocale() as "fr" | "en" | "es";
-  const STEP_LABELS = [t('steps.trip'), t('steps.needs'), t('steps.contact')] as const;
+  // Les coordonnées passent avant les besoins : le contact est acquis même si le
+  // client abandonne à la dernière étape. Les clés i18n step2/step3 gardent leur
+  // contenu (besoins / contact), seul l'ordre d'affichage change.
+  const STEP_LABELS = [t('steps.trip'), t('steps.contact'), t('steps.needs')] as const;
   const { data: session, status } = useSession();
   const router = useRouter();
   const nextRouter = useNextRouter();
@@ -652,7 +655,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
     formData.passengerPhone !== "" &&
     !isCompleteInternationalPhone(formData.passengerPhone);
 
-  const isStep3Complete = Boolean(
+  const isContactComplete = Boolean(
     isCompleteInternationalPhone(formData.contactPhone) &&
     !isPassengerPhoneInvalid &&
     // L'e-mail est facultatif : le téléphone (WhatsApp) est le canal de confirmation.
@@ -1085,8 +1088,8 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                   </div>
                 )}
 
-                {/* Étape 2: Besoins */}
-                {currentStep === 2 && (
+                {/* Étape 3: Besoins */}
+                {currentStep === 3 && (
                   <div className="space-y-8 max-w-2xl">
                     <div>
                       <h1 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight mb-2">{t('step2.title')}</h1>
@@ -1147,8 +1150,8 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                   </div>
                 )}
 
-                {/* Étape 3: Contact */}
-                {currentStep === 3 && (
+                {/* Étape 2: Contact */}
+                {currentStep === 2 && (
                   <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-10">
                     <div className="space-y-7">
                       <div>
@@ -1408,7 +1411,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                       <Button
                         variant="primary"
                         onClick={nextStep}
-                        disabled={currentStep === 1 && !isStep1Complete}
+                        disabled={(currentStep === 1 && !isStep1Complete) || (currentStep === 2 && !isContactComplete)}
                         icon={<ArrowRight size={18} weight="regular" />}
                         iconPosition="right"
                       >
@@ -1419,7 +1422,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                     <Button
                       variant="primary"
                       onClick={handleSubmit}
-                      disabled={isSubmitting || hasInvalidCombination || !isStep3Complete}
+                      disabled={isSubmitting || hasInvalidCombination || !isContactComplete}
                       loading={isSubmitting}
                       icon={<BookNowIcon size={18} color="white" />}
                     >

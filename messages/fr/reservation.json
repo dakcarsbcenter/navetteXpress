@@ -24,7 +24,7 @@
   },
   "step1": {
     "title": "Où sur le corridor ?",
-    "subtitle": "Décrivez votre trajet. Le véhicule est attribué par nos soins à l'étape suivante.",
+    "subtitle": "Décrivez votre trajet. Le véhicule est attribué par nos soins.",
     "serviceTypeLabel": "Type de service",
     "serviceTypeSelectPlaceholder": "Sélectionnez un service...",
     "customServicePlaceholder": "Précisez votre besoin (transport événementiel, tournage...)",

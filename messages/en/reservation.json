@@ -24,7 +24,7 @@
   },
   "step1": {
     "title": "Where on the corridor?",
-    "subtitle": "Describe your trip. We assign the vehicle for you in the next step.",
+    "subtitle": "Describe your trip. We assign the vehicle for you.",
     "serviceTypeLabel": "Service type",
     "serviceTypeSelectPlaceholder": "Select a service...",
     "customServicePlaceholder": "Tell us what you need (event transport, film shoot...)",
