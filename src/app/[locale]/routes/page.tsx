@@ -112,7 +112,7 @@ export default async function RoutesHubPage({
       <div className="min-h-screen bg-background text-foreground">
         <Navigation variant="solid" />
 
-        <main className="max-w-6xl mx-auto px-6 pt-32 pb-20 space-y-14">
+        <main id="main-content" className="max-w-6xl mx-auto px-6 pt-32 pb-20 space-y-14">
           <header className="space-y-4 max-w-3xl">
             <p className="text-sm uppercase tracking-widest text-gold-deep">{t('hub.eyebrow')}</p>
             <h1 className="text-4xl md:text-5xl font-display leading-tight">{t('hub.h1')}</h1>

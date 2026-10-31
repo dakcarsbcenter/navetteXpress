@@ -101,7 +101,7 @@ export default async function RouteMoneyPage({ params }: Params) {
       <div className="min-h-screen bg-background text-foreground">
         <Navigation variant="solid" />
 
-        <main className="max-w-5xl mx-auto px-6 pt-32 pb-20 space-y-12">
+        <main id="main-content" className="max-w-5xl mx-auto px-6 pt-32 pb-20 space-y-12">
           <header className="space-y-4">
             <p className="text-sm uppercase tracking-widest text-gold-deep">{t('eyebrow')}</p>
             <h1 className="text-4xl md:text-5xl font-display leading-tight">{translation.h1}</h1>

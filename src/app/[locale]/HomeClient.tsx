@@ -63,7 +63,7 @@ export default async function HomeClient({ faqs, segments, vehicles }: HomeClien
     <div className="min-h-screen bg-background font-sans selection:bg-gold/30 selection:text-gold">
       <Navigation variant="transparent" />
 
-      <main className="pt-28 md:pt-36">
+      <main id="main-content" className="pt-28 md:pt-36">
         {/* Corridor strip */}
         <div className="border-b border-line">
           <div className="max-w-7xl mx-auto px-6 py-3 flex items-center overflow-x-auto">

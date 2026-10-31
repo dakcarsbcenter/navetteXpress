@@ -228,7 +228,7 @@ export default function SignUpClient() {
       </div>
 
       {/* ── PANNEAU DROIT : FORMULAIRE ── */}
-      <div className="flex-1 flex flex-col justify-center px-6 py-12 relative overflow-y-auto">
+      <main id="main-content" className="flex-1 flex flex-col justify-center px-6 py-12 relative overflow-y-auto">
         <div className="lg:hidden absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none"
           style={{
             background: 'radial-gradient(circle, rgba(155,27,48,0.06) 0%, transparent 70%)',
@@ -556,7 +556,7 @@ export default function SignUpClient() {
             </Link>
           </p>
         </div>
-      </div>
+      </main>
     </div>
   )
 }

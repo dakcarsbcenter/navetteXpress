@@ -34,9 +34,9 @@ export default async function QuoteRequestPage({
   return (
     <div className="min-h-screen bg-background">
       <Navigation variant="solid" />
-      <div className="pt-28 pb-16">
+      <main id="main-content" className="pt-28 pb-16">
         <QuoteRequestForm />
-      </div>
+      </main>
       <Footer />
     </div>
   )

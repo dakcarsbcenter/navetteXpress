@@ -59,7 +59,7 @@ export default function TarifsClient({ initialSegments }: { initialSegments?: Se
     <div className="min-h-screen bg-background">
       <Navigation variant="solid" />
 
-      <div className="pt-24 md:pt-36">
+      <main id="main-content" className="pt-24 md:pt-36">
         <CorridorStrip />
 
         {/* Hero */}
@@ -182,7 +182,7 @@ export default function TarifsClient({ initialSegments }: { initialSegments?: Se
             </Link>
           </div>
         </section>
-      </div>
+      </main>
 
       <Footer />
     </div>

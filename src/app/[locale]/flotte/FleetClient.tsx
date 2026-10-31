@@ -66,7 +66,7 @@ export default function FleetClient({ vehicles: rows }: { vehicles: PublicVehicl
     <div className="min-h-screen bg-background">
       <Navigation variant="solid" />
 
-      <div className="pt-24 md:pt-36">
+      <main id="main-content" className="pt-24 md:pt-36">
         <CorridorStrip />
 
         {/* Hero */}
@@ -210,7 +210,7 @@ export default function FleetClient({ vehicles: rows }: { vehicles: PublicVehicl
             </Link>
           </div>
         </section>
-      </div>
+      </main>
 
       <Footer />
     </div>

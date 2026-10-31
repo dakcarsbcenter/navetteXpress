@@ -66,7 +66,7 @@ export default async function ZonesHubPage({
       <div className="min-h-screen bg-background text-foreground">
         <Navigation variant="solid" />
 
-        <main className="max-w-5xl mx-auto px-6 pt-32 pb-20 space-y-12">
+        <main id="main-content" className="max-w-5xl mx-auto px-6 pt-32 pb-20 space-y-12">
           <header className="space-y-4">
             <nav className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-text-muted">
               <Link href="/" className="hover:text-accent transition-colors">{t('breadcrumbs.home')}</Link>

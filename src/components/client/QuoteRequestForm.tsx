@@ -383,7 +383,7 @@ export function QuoteRequestForm({ onClose }: QuoteRequestFormProps = {}) {
 
   // Shared input class helpers — champs compacts, alignés en colonnes dans le tableau de trajets.
   const inputBase =
-    'w-full px-3 py-2.5 rounded border border-border bg-white text-foreground placeholder-[#a8a199] text-sm transition-colors focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent'
+    'w-full px-3 py-2.5 rounded border border-border bg-white text-foreground placeholder-[#736c63] text-sm transition-colors focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent'
   const inputReadOnly = 'bg-[#F7F3EC] cursor-not-allowed text-[#6E6A63]'
   const inputError = 'border-[#B8493C] focus:ring-[#B8493C] focus:border-[#B8493C]'
   const labelBase =

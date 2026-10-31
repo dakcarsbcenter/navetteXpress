@@ -11,7 +11,7 @@ export default async function LocaleNotFound() {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      <main className="max-w-3xl mx-auto px-6 pt-36 pb-24 space-y-6 text-center">
+      <main id="main-content" className="max-w-3xl mx-auto px-6 pt-36 pb-24 space-y-6 text-center">
         <p className="font-[family-name:var(--font-ibm-plex-mono)] text-xs tracking-[0.16em] uppercase text-accent">404</p>
         <h1 className="text-4xl md:text-5xl font-semibold text-foreground">{t("title")}</h1>
         <p className="text-body text-lg">{t("text")}</p>

@@ -376,9 +376,11 @@ export default function DevenirPartenaireClient() {
     return (
       <div className="min-h-screen bg-background font-sans">
         <Navigation />
-        <AnimatePresence mode="wait">
-          <SuccessState key="success" t={t} />
-        </AnimatePresence>
+        <main id="main-content">
+          <AnimatePresence mode="wait">
+            <SuccessState key="success" t={t} />
+          </AnimatePresence>
+        </main>
       </div>
     );
   }
@@ -387,6 +389,7 @@ export default function DevenirPartenaireClient() {
     <div className="min-h-screen bg-background font-sans">
       <Navigation />
 
+      <main id="main-content">
       {/* ── HERO ── */}
       <section className="pt-40 pb-16 border-b border-[#e2dacd]">
         <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
@@ -776,6 +779,7 @@ export default function DevenirPartenaireClient() {
           </m.div>
         </div>
       </section>
+      </main>
 
       <Footer />
     </div>

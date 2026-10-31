@@ -18,7 +18,7 @@ export async function LegalPage({ locale, doc }: { locale: string; doc: LegalDoc
     <div className="min-h-screen bg-background">
       <Navigation variant="solid" />
 
-      <main className="pt-24 md:pt-36">
+      <main id="main-content" className="pt-24 md:pt-36">
         <article className="max-w-3xl mx-auto px-6 pt-12 pb-20">
           <h1 className="font-bold text-4xl md:text-5xl leading-[1.06] tracking-tight text-foreground">
             {t("title")}

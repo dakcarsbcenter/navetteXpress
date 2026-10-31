@@ -302,7 +302,7 @@ function SignInForm() {
       </div>
 
       {/* ── PANNEAU DROIT : FORMULAIRE ── */}
-      <div className="flex-1 flex items-center justify-center px-6 py-12 relative overflow-hidden">
+      <main id="main-content" className="flex-1 flex items-center justify-center px-6 py-12 relative overflow-hidden">
         {/* Orbe subtile mobile (visible seulement sur mobile) */}
         <div className="lg:hidden absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none"
           style={{
@@ -504,7 +504,7 @@ function SignInForm() {
             </Link>
           </p>
         </div>
-      </div>
+      </main>
     </div>
   )
 }

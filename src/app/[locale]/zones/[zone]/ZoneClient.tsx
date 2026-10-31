@@ -41,7 +41,7 @@ export default function ZoneClient({
             <div className="pt-24 md:pt-36">
                 <CorridorStrip />
 
-                <main className="py-12 md:py-16">
+                <main id="main-content" className="py-12 md:py-16">
                     <div className="max-w-4xl mx-auto px-6">
                         {/* Breadcrumb */}
                         <nav className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-text-muted mb-8">
