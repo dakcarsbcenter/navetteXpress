@@ -159,6 +159,13 @@ const nextConfig: NextConfig = {
             key: 'X-Content-Type-Options',
             value: 'nosniff',
           },
+          // Isole la fenêtre des pages ouvertes depuis un autre site. La variante
+          // allow-popups garde fonctionnels les popups que nous ouvrons nous-mêmes
+          // (connexion Google, partage WhatsApp).
+          {
+            key: 'Cross-Origin-Opener-Policy',
+            value: 'same-origin-allow-popups',
+          },
           {
             key: 'Referrer-Policy',
             value: 'origin-when-cross-origin',

@@ -19,12 +19,12 @@ navettexpress.com {
 	}
 	request_header @not_cloudflare -CF-Connecting-IP
 
-	# HSTS volontairement court (5 min) : difficile a annuler une fois en cache
-	# navigateur. Montee prevue : 3600 -> 604800 (1 semaine) -> 15552000 (6 mois),
+	# HSTS volontairement court : difficile a annuler une fois en cache navigateur.
+	# Montee prevue : 300 -> 3600 (2026-10-31) -> 604800 (1 semaine) -> 15552000 (6 mois),
 	# sans includeSubDomains ni preload tant que tous les sous-domaines ne sont pas
 	# valides en HTTPS. Verifier que l'option HSTS de Cloudflare n'est pas aussi
 	# activee (doublon).
-	header Strict-Transport-Security "max-age=300"
+	header Strict-Transport-Security "max-age=3600"
 
 	reverse_proxy app:3000
 }
