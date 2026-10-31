@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef, Suspense } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { useSearchParams, useRouter as useNextRouter } from "next/navigation";
+import { useRouter as useNextRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
@@ -178,7 +178,7 @@ const EMPTY_FORM_DATA: FormData = {
   paymentMethod: "",
 };
 
-// Composant interne qui utilise useSearchParams
+// Formulaire de réservation (page /reservation ou intégré au tableau de bord client)
 interface ReservationFormProps {
   onClose?: () => void;
   isEmbedded?: boolean;
@@ -194,7 +194,6 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
   const { data: session, status } = useSession();
   const router = useRouter();
   const nextRouter = useNextRouter();
-  const searchParams = useSearchParams();
   const isSignedIn = !!session;
   const isLoaded = status !== "loading";
   const user = session?.user as unknown as { id?: string; name?: string; email?: string; role?: string } | undefined;
@@ -286,12 +285,16 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
 
   // Gérer la pré-sélection du formulaire depuis l'URL. Elle décrit une course : elle
   // s'applique au premier trajet, les suivants sont ajoutés à la main par le client.
+  // Lecture de window.location plutôt que useSearchParams : ce hook, sur une page
+  // statique, faisait basculer tout le formulaire en rendu client (le HTML serveur
+  // ne contenait que le message de chargement, d'où 1,2 s de délai LCP).
   useEffect(() => {
-    const serviceParam = searchParams?.get('service');
-    const pickupParam = searchParams?.get('pickup');
-    const destinationParam = searchParams?.get('destination');
-    const datetimeParam = searchParams?.get('datetime');
-    const passengersParam = searchParams?.get('passengers');
+    const searchParams = new URLSearchParams(window.location.search);
+    const serviceParam = searchParams.get('service');
+    const pickupParam = searchParams.get('pickup');
+    const destinationParam = searchParams.get('destination');
+    const datetimeParam = searchParams.get('datetime');
+    const passengersParam = searchParams.get('passengers');
 
     setTrips(prev => {
       const first = { ...prev[0] };
@@ -310,7 +313,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
 
       return [first, ...prev.slice(1)];
     });
-  }, [searchParams]);
+  }, []);
 
   // Un lien pré-rempli (CTA des pages trajets) désigne le lieu par un nom
   // canonique ("AIBD") ; le <select> attend le libellé exact de la liste
@@ -730,7 +733,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
               value={trip.customServiceType}
               onChange={(e) => updateTrip(trip.key, 'customServiceType', e.target.value)}
               placeholder={t('step1.customServicePlaceholder')}
-              className="mt-2 w-full bg-white border border-border rounded p-3 text-foreground placeholder:text-[#a8a199] focus:outline-none focus:ring-1 focus:ring-accent transition-all"
+              className="mt-2 w-full bg-white border border-border rounded p-3 text-foreground placeholder:text-[#736c63] focus:outline-none focus:ring-1 focus:ring-accent transition-all"
             />
           )}
         </div>
@@ -769,7 +772,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                   value={trip.pickupCustomLocation}
                   onChange={(e) => updateTrip(trip.key, 'pickupCustomLocation', e.target.value)}
                   placeholder={t('step1.pickupCustomPlaceholder')}
-                  className="mt-2 w-full bg-white border border-border rounded px-3 py-3 text-foreground font-medium placeholder:text-[#a8a199] focus:outline-none focus:ring-1 focus:ring-accent"
+                  className="mt-2 w-full bg-white border border-border rounded px-3 py-3 text-foreground font-medium placeholder:text-[#736c63] focus:outline-none focus:ring-1 focus:ring-accent"
                 />
               )}
             </div>
@@ -809,7 +812,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                   value={trip.destinationCustomLocation}
                   onChange={(e) => updateTrip(trip.key, 'destinationCustomLocation', e.target.value)}
                   placeholder={t('step1.destinationCustomPlaceholder')}
-                  className="mt-2 w-full bg-white border border-border rounded px-3 py-3 text-foreground font-medium placeholder:text-[#a8a199] focus:outline-none focus:ring-1 focus:ring-accent"
+                  className="mt-2 w-full bg-white border border-border rounded px-3 py-3 text-foreground font-medium placeholder:text-[#736c63] focus:outline-none focus:ring-1 focus:ring-accent"
                 />
               )}
             </div>
@@ -923,11 +926,15 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
     );
   };
 
+  // Integre au tableau de bord client, le formulaire vit deja dans le <main> du
+  // DashboardShell : un second landmark main serait invalide.
+  const Content = isEmbedded ? "div" : "main";
+
   return (
     <div className={isEmbedded ? "relative overflow-x-hidden font-archivo" : "min-h-screen relative overflow-x-hidden bg-background font-archivo"}>
       {!isEmbedded && <Navigation variant="transparent" />}
 
-      <div className={`${isEmbedded ? 'pt-8' : 'pt-32'} pb-16 px-4 sm:px-6`}>
+      <Content id={isEmbedded ? undefined : "main-content"} className={`${isEmbedded ? 'pt-8' : 'pt-32'} pb-16 px-4 sm:px-6`}>
         {/* Fil de progression — le corridor */}
         <div className="max-w-2xl mx-auto mb-12 px-2">
           <div className="flex items-center justify-between relative">
@@ -952,7 +959,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                       }`}
                     aria-label={STEP_LABELS[i]}
                   />
-                  <span className={`text-[11px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.12em] whitespace-nowrap ${isActive ? 'text-[#12100E] font-medium' : isPast ? 'text-[#12100E]' : 'text-[#a8a199]'
+                  <span className={`text-[11px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.12em] whitespace-nowrap ${isActive ? 'text-[#12100E] font-medium' : isPast ? 'text-[#12100E]' : 'text-[#736c63]'
                     }`}>
                     {step} · {STEP_LABELS[i]}
                   </span>
@@ -963,7 +970,10 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
         </div>
 
         <div className="max-w-4xl mx-auto">
-          <AnimatePresence mode="wait">
+          {/* initial={false} : l'étape affichée au chargement sort telle quelle du
+              HTML serveur, sans attendre l'hydratation (délai LCP relevé par
+              Lighthouse) ; seuls les changements d'étape sont animés. */}
+          <AnimatePresence mode="wait" initial={false}>
             <m.div
               key={currentStep}
               initial={{ opacity: 0, x: 16 }}
@@ -1203,7 +1213,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                             </div>
                             <div className="bg-white border border-border rounded p-3">
                               <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block mb-1">
-                                {t('step3.passengerPhoneLabel')} <span className="text-[#a8a199] normal-case tracking-normal">· {t('step3.passengerOptional')}</span>
+                                {t('step3.passengerPhoneLabel')} <span className="text-[#736c63] normal-case tracking-normal">· {t('step3.passengerOptional')}</span>
                               </span>
                               <div className="flex items-center gap-2">
                                 <Phone size={16} weight="light" className="text-[#6E6A63] shrink-0" />
@@ -1472,21 +1482,15 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
             onConfirm={() => setErrorModal({ ...errorModal, open: false })}
           />
         </div>
-      </div>
+      </Content>
       {!isEmbedded && <Footer />}
     </div>
   );
 }
 
+// Pas de <Suspense> : il n'existait que pour useSearchParams. Avec lui, le
+// formulaire arrivait dans un bloc masqué révélé après coup par React, ce qui
+// retardait son affichage.
 export default function ReservationClient() {
-  const t = useTranslations("reservation");
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center text-foreground animate-pulse">{t('loading.page')}</div>
-      </div>
-    }>
-      <ReservationForm />
-    </Suspense>
-  );
+  return <ReservationForm />;
 }
