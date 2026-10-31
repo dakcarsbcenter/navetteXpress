@@ -1,5 +1,7 @@
 // src/app/[locale]/page.tsx
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { hasLocale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import HomeClient from './HomeClient';
 import type { HomeSegment } from './SegmentsShowcase';
@@ -11,6 +13,7 @@ import { getActiveVehiclesSafe } from '@/lib/public-catalog';
 import { moneyRoutePathForNodes } from '@/lib/seo/internal-links';
 import { ClientMessages } from "@/i18n/ClientMessages";
 import { MobileContactBar } from "@/components/seo/MobileContactBar";
+import { routing } from "@/i18n/routing";
 
 // Les tarifs affiches (cartes de segments, FAQ et JSON-LD FAQPage) viennent de la
 // table pricing_segments geree en admin. Cette page est rendue a la demande : la
@@ -23,6 +26,7 @@ export async function generateMetadata({
     params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
     const { locale } = await params;
+    if (!hasLocale(routing.locales, locale)) notFound();
     const t = await getTranslations({ locale, namespace: 'home.meta' });
 
     return {
@@ -52,6 +56,11 @@ export default async function Page({
     params: Promise<{ locale: string }>;
 }) {
     const { locale } = await params;
+    // Le layout appelle deja notFound() pour une langue inconnue, mais Next rend
+    // la page en parallele : sans ce garde-fou, /llms.txt arrivait ici avec
+    // locale="llms.txt", Intl.NumberFormat levait une RangeError et la reponse
+    // etait un 500 au lieu d'un 404.
+    if (!hasLocale(routing.locales, locale)) notFound();
     setRequestLocale(locale);
     const t = await getTranslations({ locale, namespace: 'home' });
 
