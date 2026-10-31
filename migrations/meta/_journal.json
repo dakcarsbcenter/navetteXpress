@@ -288,6 +288,13 @@
       "when": 1792865261657,
       "tag": "0040_booking_attribution",
       "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1793454360026,
+      "tag": "0041_booking_preferred_payment",
+      "breakpoints": true
     }
   ]
 }

@@ -207,6 +207,9 @@ export const bookingsTable = pgTable('bookings', {
   notes: text('notes'),
   passengerName: text('passenger_name'), // Réservation pour un tiers : nom du passager réellement transporté. NULL = le client voyage lui-même.
   passengerPhone: text('passenger_phone'), // Optionnel : permet au chauffeur de joindre directement le passager sur place.
+  // Moyen de paiement que le client dit préférer à la réservation (src/lib/payment-methods.ts).
+  // Simple intention : le moyen réellement encaissé est invoices.payment_method.
+  preferredPaymentMethod: text('preferred_payment_method'),
   flightNumber: text('flight_number'),
   airline: text('airline'),
   flightStatus: flightStatusEnum('flight_status'),

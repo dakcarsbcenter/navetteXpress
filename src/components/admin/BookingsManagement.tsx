@@ -52,6 +52,7 @@ interface Booking {
   requestedVehicleType?: 'berline' | 'suv' | null
   passengerName?: string | null
   passengerPhone?: string | null
+  preferredPaymentMethod?: string | null
   /** Compte client rattache, recopie lors d'une duplication. */
   userId?: string | null
   // Demande a plusieurs trajets : les courses issues de la meme soumission du
@@ -202,6 +203,7 @@ export function BookingsManagement() {
               requestedVehicleType: b.requestedVehicleType || 'berline',
               passengerName: b.passengerName,
               passengerPhone: b.passengerPhone,
+              preferredPaymentMethod: b.preferredPaymentMethod,
               userId: b.userId,
               // Sans ce champ, buildBookingGroupPositions ne voit aucun groupe et
               // le badge « Trajet x/y » ne s'affiche jamais.

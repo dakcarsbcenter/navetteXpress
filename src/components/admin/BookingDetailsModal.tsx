@@ -21,12 +21,14 @@ import {
   ArrowSquareOut,
   PaperPlaneTilt,
   CheckCircle,
-  Copy
+  Copy,
+  Wallet
 } from "@phosphor-icons/react"
 import { StatusBadge } from "@/components/shared/StatusBadge"
 import { isRouteCombinationAllowed } from "@/lib/pricing"
 import { LocationSelect, isCustomLocation } from "./LocationSelect"
 import PhoneField from "@/components/shared/PhoneField"
+import { bookingPaymentMethodLabel } from "@/lib/payment-methods"
 
 interface Booking {
   id: number
@@ -46,6 +48,7 @@ interface Booking {
   notes?: string
   passengerName?: string | null
   passengerPhone?: string | null
+  preferredPaymentMethod?: string | null
   flightNumber?: string | null
   airline?: string | null
   flightStatus?: string | null
@@ -590,6 +593,16 @@ export function BookingDetailsModal({
                             </div>
                           )}
                         </>
+                      )}
+
+                      {bookingPaymentMethodLabel(booking.preferredPaymentMethod) && (
+                        <div className="flex items-center gap-3" style={fieldWrap}>
+                          <Wallet size={16} style={{ color: '#1F5245' }} />
+                          <div style={{ flex: 1 }}>
+                            <p style={fieldLabel}>Paiement préféré</p>
+                            <p style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: '#12100E' }}>{bookingPaymentMethodLabel(booking.preferredPaymentMethod)}</p>
+                          </div>
+                        </div>
                       )}
                     </>
                   )}

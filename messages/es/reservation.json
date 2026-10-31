@@ -100,6 +100,16 @@
     "passengerPhoneLabel": "Teléfono del pasajero",
     "passengerPhonePlaceholder": "77 XXX XX XX",
     "passengerOptional": "opcional",
+    "paymentLabel": "Forma de pago",
+    "paymentMethods": {
+      "bank_transfer": "Transferencia bancaria",
+      "wave": "Wave",
+      "orange_money": "Orange Money",
+      "cash": "Efectivo"
+    },
+    "paymentMobileHint": "Pago al <strong>{phone}</strong>, tras la confirmación de su viaje.",
+    "paymentTransferHint": "Le enviaremos nuestros datos bancarios al confirmar.",
+    "paymentCashHint": "A pagar directamente al conductor.",
     "summary": {
       "label": "Tu trayecto",
       "notDefined": "Sin definir",

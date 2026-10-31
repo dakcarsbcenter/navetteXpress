@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/Button";
 import { BookNowIcon } from "@/components/icons/custom-icons";
 import { m, AnimatePresence } from "framer-motion";
 import { DURATION, EASE } from "@/components/motion/variants";
-import { Users, Bag, Phone, EnvelopeSimple, ArrowRight, ArrowLeft, ChatCircle, User, Airplane, Plus, ArrowsLeftRight, X } from "@phosphor-icons/react";
+import { Users, Bag, Phone, EnvelopeSimple, ArrowRight, ArrowLeft, ChatCircle, User, Airplane, Plus, ArrowsLeftRight, X, DeviceMobile, Bank, Money } from "@phosphor-icons/react";
 import { serviceTypes, additionalServices, getServiceById } from "@/lib/services";
 import { useRouter } from "@/i18n/navigation";
 import NextLink from "next/link";
@@ -28,6 +28,7 @@ import { getAttribution } from "@/lib/attribution";
 import { Combobox } from "@/components/ui/Combobox";
 import PhoneField from "@/components/shared/PhoneField";
 import { isCompleteInternationalPhone } from "@/lib/phone-countries";
+import { BOOKING_PAYMENT_METHODS, MOBILE_MONEY_PHONE, type BookingPaymentMethod } from "@/lib/payment-methods";
 import { AIRLINES, FLIGHTS, airlineFromFlightNumber } from "@/lib/flights";
 
 type LocationOption = { id: string; name: string };
@@ -141,6 +142,8 @@ interface FormData {
   bookingFor: 'self' | 'other';
   passengerName: string;
   passengerPhone: string;
+  // Moyen de paiement préféré, obligatoire pour confirmer. '' = pas encore choisi.
+  paymentMethod: BookingPaymentMethod | '';
 }
 
 let tripKeySeed = 0;
@@ -174,6 +177,7 @@ const EMPTY_FORM_DATA: FormData = {
   bookingFor: "self",
   passengerName: "",
   passengerPhone: "",
+  paymentMethod: "",
 };
 
 // Composant interne qui utilise useSearchParams
@@ -507,6 +511,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
           clientEmail: formData.clientEmail,
           passengerName: formData.bookingFor === 'other' ? formData.passengerName.trim() : null,
           passengerPhone: formData.bookingFor === 'other' ? formData.passengerPhone.trim() || null : null,
+          preferredPaymentMethod: formData.paymentMethod,
           userId: user?.id,
           // Champs anti-bot : honeypot invisible + horodatage de montage du
           // formulaire (voir src/lib/security/publicFormGuard.ts)
@@ -664,7 +669,8 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
     !isPassengerPhoneInvalid &&
     // L'e-mail est facultatif : le téléphone (WhatsApp) est le canal de confirmation.
     (isSignedIn || formData.clientName.trim().length > 0) &&
-    (formData.bookingFor === 'self' || formData.passengerName.trim().length >= 2)
+    (formData.bookingFor === 'self' || formData.passengerName.trim().length >= 2) &&
+    formData.paymentMethod !== ''
   );
 
   // Le formulaire s'affiche sans attendre la session : un écran « Chargement… »
@@ -1289,8 +1295,9 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                       </div>
                     </div>
 
+                    <div className="space-y-4 h-fit">
                     {/* Récapitulatif */}
-                    <div className="bg-white border border-border rounded p-6 space-y-4 h-fit">
+                    <div className="bg-white border border-border rounded p-6 space-y-4">
                       <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.16em] text-[#6E6A63] uppercase block">{t('step3.summary.label')}</span>
 
                       {trips.map((trip, index) => (
@@ -1361,6 +1368,45 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                           </div>
                         </>
                       )}
+                    </div>
+
+                    {/* Moyen de paiement préféré : le client choisit, l'équipe encaisse ensuite. */}
+                    <div className="bg-white border border-border rounded p-6 space-y-3">
+                      <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.16em] text-[#6E6A63] uppercase block">{t('step3.paymentLabel')}</span>
+                      <div className="grid grid-cols-2 gap-2" role="group" aria-label={t('step3.paymentLabel')}>
+                        {BOOKING_PAYMENT_METHODS.map((method) => {
+                          const selected = formData.paymentMethod === method;
+                          const Icon = method === 'bank_transfer' ? Bank : method === 'cash' ? Money : DeviceMobile;
+                          return (
+                            <button
+                              key={method}
+                              type="button"
+                              onClick={() => handleInputChange('paymentMethod', method)}
+                              aria-pressed={selected}
+                              className={`flex items-center gap-2 px-3 py-2.5 rounded text-[13px] font-medium font-[family-name:var(--font-ibm-plex-mono)] text-left transition-colors ${selected
+                                ? 'bg-[#12100E] text-white'
+                                : 'border border-[#c9c3b8] text-[#3d3a35] hover:border-[#12100E]'
+                                }`}
+                            >
+                              <Icon size={16} weight="light" className="shrink-0" />
+                              {t(`step3.paymentMethods.${method}`)}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {formData.paymentMethod !== '' && (
+                        <p className="text-xs text-[#3d3a35] leading-relaxed">
+                          {formData.paymentMethod === 'wave' || formData.paymentMethod === 'orange_money'
+                            ? t.rich('step3.paymentMobileHint', {
+                              phone: MOBILE_MONEY_PHONE,
+                              strong: (chunks) => <strong className="font-semibold text-foreground whitespace-nowrap">{chunks}</strong>,
+                            })
+                            : formData.paymentMethod === 'bank_transfer'
+                              ? t('step3.paymentTransferHint')
+                              : t('step3.paymentCashHint')}
+                        </p>
+                      )}
+                    </div>
                     </div>
                   </div>
                 )}

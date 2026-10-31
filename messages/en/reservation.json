@@ -100,6 +100,16 @@
     "passengerPhoneLabel": "Passenger phone",
     "passengerPhonePlaceholder": "77 XXX XX XX",
     "passengerOptional": "optional",
+    "paymentLabel": "Payment method",
+    "paymentMethods": {
+      "bank_transfer": "Bank transfer",
+      "wave": "Wave",
+      "orange_money": "Orange Money",
+      "cash": "Cash"
+    },
+    "paymentMobileHint": "Pay to <strong>{phone}</strong> once your ride is confirmed.",
+    "paymentTransferHint": "We will send you our bank details when we confirm.",
+    "paymentCashHint": "Pay the driver directly.",
     "summary": {
       "label": "Your ride",
       "notDefined": "Not set",

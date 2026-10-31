@@ -16,6 +16,7 @@ import { resolvePrice } from '@/lib/pricing';
 import { BookingTripSchema, MAX_BOOKING_TRIPS, type BookingTripParsed } from '@/lib/booking-trips';
 import { guardPublicFormSubmission } from '@/lib/security/publicFormGuard';
 import { normalizeAttribution } from '@/lib/attribution';
+import { isBookingPaymentMethod, bookingPaymentMethodLabel } from '@/lib/payment-methods';
 
 // Fonction pour vérifier les permissions dynamiques des bookings
 async function hasBookingsPermission(userRole: string, action: 'read' | 'create' | 'update' | 'delete'): Promise<boolean> {
@@ -103,6 +104,7 @@ export async function POST(request: NextRequest) {
       clientEmail: fallbackClientEmail,
       passengerName,
       passengerPhone,
+      preferredPaymentMethod,
       // Champs pour utilisateurs connectés
       userId
     } = body;
@@ -190,6 +192,16 @@ export async function POST(request: NextRequest) {
     // transportée (cas courant : un proche réserve pour quelqu'un qui ne lit pas).
     const finalPassengerName = typeof passengerName === 'string' ? passengerName.trim() : '';
     const finalPassengerPhone = typeof passengerPhone === 'string' ? passengerPhone.trim() : '';
+    // Le formulaire rend le choix obligatoire. Côté serveur on refuse une valeur
+    // inconnue, mais on tolère l'absence : un onglet ouvert avant la mise en ligne
+    // envoie l'ancien payload, et perdre la réservation coûterait plus que le champ.
+    if (preferredPaymentMethod != null && preferredPaymentMethod !== '' && !isBookingPaymentMethod(preferredPaymentMethod)) {
+      return NextResponse.json({
+        success: false,
+        error: 'Moyen de paiement inconnu',
+      }, { status: 400 });
+    }
+    const finalPaymentMethod = isBookingPaymentMethod(preferredPaymentMethod) ? preferredPaymentMethod : null;
     // Numéro remis au format international dès la saisie : la ligne `Contact:` des
     // notes et la colonne customer_phone doivent afficher la même chose.
     //
@@ -330,6 +342,7 @@ Precision service: ${trip.customServiceType}`
             price: priceForTrip(trip).toString(),
             passengerName: finalPassengerName || null,
             passengerPhone: normalizedPassengerPhone,
+            preferredPaymentMethod: finalPaymentMethod,
             flightNumber: trip.flightNumber || null,
             airline: trip.airline || null,
             bookingGroupId,
@@ -368,6 +381,7 @@ Precision service: ${trip.customServiceType}`
         luggage: createdBooking.luggage || 1,
         passengerName: createdBooking.passengerName,
         passengerPhone: createdBooking.passengerPhone,
+        paymentMethod: bookingPaymentMethodLabel(createdBooking.preferredPaymentMethod),
         // Les trajets de la demande sont listés sous la fiche du premier : l'admin voit
         // d'un coup d'œil que la demande en compte plusieurs et peut les traiter ensemble.
         trips: createdBookings.length > 1

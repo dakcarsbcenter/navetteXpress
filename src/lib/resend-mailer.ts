@@ -402,6 +402,8 @@ export async function sendNewBookingRequestEmail(
     /** Réservation passée pour un tiers : personne réellement transportée. */
     passengerName?: string | null;
     passengerPhone?: string | null;
+    /** Moyen de paiement préféré du client, déjà en libellé lisible. */
+    paymentMethod?: string;
     /**
      * Demande multi-trajets : toutes les courses créées par la même soumission,
      * première comprise. Absent ou à un seul élément pour une demande simple, qui
@@ -457,6 +459,7 @@ export async function sendNewBookingRequestEmail(
           { fr: 'Heure', en: 'Time', value: bookingData.pickupTime },
           { fr: 'Passagers', en: 'Passengers', value: bookingData.passengers || 1 },
           { fr: 'Bagages', en: 'Luggage', value: bookingData.luggage },
+          { fr: 'Paiement', en: 'Payment', value: bookingData.paymentMethod },
         ],
         isMultiTrip
           ? { fr: 'Premier trajet', en: 'First trip' }
