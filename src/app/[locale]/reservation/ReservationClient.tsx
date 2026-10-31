@@ -1212,7 +1212,7 @@ export function ReservationForm({ onClose, isEmbedded = false }: ReservationForm
                         </div>
 
                         {formData.bookingFor === 'other' && (
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 gap-4">
                             <div className="bg-white border border-border rounded p-3">
                               <span className="text-[10px] font-[family-name:var(--font-ibm-plex-mono)] tracking-[0.14em] text-[#6E6A63] uppercase block mb-1">{t('step3.passengerNameLabel')}</span>
                               <div className="flex items-center gap-2">
