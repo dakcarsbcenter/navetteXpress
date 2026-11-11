@@ -131,6 +131,7 @@ export function UsersManagement({ openCreate, initialRoleFilter }: UsersManageme
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false)
   const [rejectingUser, setRejectingUser] = useState<User | null>(null)
   const [rejectReason, setRejectReason] = useState('')
+  const [detailUser, setDetailUser] = useState<User | null>(null)
   const { notifications, showSuccess, showError, removeNotification } = useNotification()
 
   const [filters, setFilters] = useState<{ role: string; status: string; search: string }>({
@@ -276,6 +277,25 @@ export function UsersManagement({ openCreate, initialRoleFilter }: UsersManageme
     if (diffMins < 60) return `Il y a ${diffMins} min`
     if (diffMins < 1440) return `Hier à ${loginDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`
     return formatDate(lastLogin)
+  }
+
+  const getChosenCorridors = (user: User) =>
+    CORRIDOR_KEYS.filter((key) => user[CORRIDOR_DB_FIELDS[key]] === true)
+
+  // Fermeture de la fiche detail a la touche Echap.
+  useEffect(() => {
+    if (!detailUser) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setDetailUser(null) }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [detailUser])
+
+  /** Ferme la fiche puis ouvre l'action demandee. */
+  const fromDetail = (action: (user: User) => void) => {
+    if (!detailUser) return
+    const user = detailUser
+    setDetailUser(null)
+    action(user)
   }
 
   const openDeleteModal = (user: User) => {
@@ -703,7 +723,13 @@ export function UsersManagement({ openCreate, initialRoleFilter }: UsersManageme
                         />
                       </td>
                       <td style={{ padding: '12px 16px' }}>
-                        <div className="flex items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setDetailUser(user)}
+                          title="Voir la fiche"
+                          className="group flex items-center gap-3 text-left"
+                          style={{ cursor: 'pointer', background: 'none', border: 'none', padding: 0 }}
+                        >
                           <div className="relative">
                             {user.image ? (
                               <Image src={user.image} alt={user.name} width={36} height={36} style={{ borderRadius: '3px', objectFit: 'cover', border: '1px solid #E2DACD' }} />
@@ -715,10 +741,10 @@ export function UsersManagement({ openCreate, initialRoleFilter }: UsersManageme
                             <div style={{ position: 'absolute', bottom: '-3px', right: '-3px', width: '10px', height: '10px', borderRadius: '50%', border: '2px solid #FFFFFF', backgroundColor: user.isActive ? '#1F5245' : '#9a938a' }} />
                           </div>
                           <div>
-                            <div style={{ fontSize: '13px', fontWeight: 600, color: '#12100E' }}>{user.name}</div>
+                            <div className="group-hover:underline" style={{ fontSize: '13px', fontWeight: 600, color: '#12100E' }}>{user.name}</div>
                             <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10.5px', color: '#6E6A63' }}>{user.email}</div>
                           </div>
-                        </div>
+                        </button>
                       </td>
                       <td style={{ padding: '12px 16px' }}>
                         <div className="flex items-center gap-1.5 flex-wrap">
@@ -767,29 +793,28 @@ export function UsersManagement({ openCreate, initialRoleFilter }: UsersManageme
                             Hors critère véhicule
                           </div>
                         )}
-                        {user.role === 'driver' && CORRIDOR_KEYS.some((key) => user[CORRIDOR_DB_FIELDS[key]]) && (
-                          <div className="flex items-center gap-1.5" style={{ marginTop: '5px' }}>
-                            {CORRIDOR_KEYS.filter((key) => user[CORRIDOR_DB_FIELDS[key]]).map((key) => (
-                              <span
-                                key={key}
-                                title={CORRIDOR_SHORT_LABELS[key]}
-                                style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', fontWeight: 600, letterSpacing: '0.08em', padding: '2px 6px', borderRadius: '3px', border: '1px solid #1F5245', color: '#1F5245' }}
-                              >
-                                {key.toUpperCase()}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                        {user.role === 'driver' && user.declaredAvailability && user.declaredAvailability.length > 0 && (
-                          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: '#6E6A63', marginTop: '4px' }}>
-                            Déclaré : {user.declaredAvailability.map((day) => DRIVER_DAY_LABELS[day] ?? day).join(' · ')}
-                          </div>
-                        )}
-                        {user.role === 'driver' && (user.utmSource || user.utmMedium || user.utmCampaign) && (
-                          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: '#6E6A63', marginTop: '4px' }}>
-                            Provenance : {[user.utmSource, user.utmMedium, user.utmCampaign].filter(Boolean).join(' / ')}
-                          </div>
-                        )}
+                        {user.role === 'driver' && (() => {
+                          const chosen = getChosenCorridors(user)
+                          if (chosen.length === 0) {
+                            return (
+                              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: '#9a938a', marginTop: '5px' }}>
+                                Corridor : non renseigné
+                              </div>
+                            )
+                          }
+                          return (
+                            <div style={{ marginTop: '6px' }}>
+                              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#6E6A63', marginBottom: '3px' }}>
+                                {chosen.length > 1 ? 'Corridors' : 'Corridor'}
+                              </div>
+                              {chosen.map((key) => (
+                                <div key={key} style={{ fontSize: '11px', fontWeight: 500, color: '#1F5245', lineHeight: 1.5 }}>
+                                  {CORRIDOR_SHORT_LABELS[key]}
+                                </div>
+                              ))}
+                            </div>
+                          )
+                        })()}
                         {user.driverStatus === 'rejected' && user.driverRejectionReason && (
                           <div style={{ fontSize: '10.5px', color: '#B8493C', marginTop: '4px', fontStyle: 'italic' }} title={user.driverRejectionReason}>
                             Motif : {user.driverRejectionReason}
@@ -1241,6 +1266,153 @@ export function UsersManagement({ openCreate, initialRoleFilter }: UsersManageme
         userEmail={deletingUser?.email}
         userRole={deletingUser?.role}
       />
+
+      {/* Fiche detail utilisateur */}
+      {detailUser && (() => {
+        const u = detailUser
+        const isDriver = u.role === 'driver'
+        const chosen = getChosenCorridors(u)
+        const summary = availabilitySummary[u.id]
+        const roleMeta = ROLE_META[u.role] ?? ROLE_META.customer
+        const statusLabel = u.driverStatus === 'pending' ? 'Candidature en attente'
+          : u.driverStatus === 'rejected' ? 'Candidature rejetée'
+          : u.isActive ? 'Actif' : 'En pause'
+        const statusColor = u.driverStatus === 'pending' ? '#B4643A'
+          : u.driverStatus === 'rejected' ? '#B8493C'
+          : u.isActive ? '#1F5245' : '#B4643A'
+        const empty = <span style={{ color: '#9a938a', fontStyle: 'italic' }}>non renseigné</span>
+        const row = (label: string, value: React.ReactNode) => (
+          <div className="flex justify-between gap-4" style={{ padding: '6px 0', borderBottom: '1px solid #F0EAE0' }}>
+            <span style={{ fontSize: '12px', color: '#6E6A63' }}>{label}</span>
+            <span style={{ fontSize: '12.5px', color: '#12100E', textAlign: 'right' }}>{value ?? empty}</span>
+          </div>
+        )
+        const section = (title: string, children: React.ReactNode) => (
+          <div>
+            <span style={fieldLabel}>{title}</span>
+            {children}
+          </div>
+        )
+        const actionBtn: React.CSSProperties = {
+          display: 'inline-flex', alignItems: 'center', gap: '6px', height: '34px', padding: '0 12px',
+          border: '1px solid #E2DACD', borderRadius: '3px', fontSize: '12px', fontWeight: 500, color: '#12100E', cursor: 'pointer', background: '#FFFFFF',
+        }
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0" style={{ backgroundColor: 'rgba(18,16,14,.55)' }} onClick={() => setDetailUser(null)} />
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-label={`Fiche de ${u.name}`}
+              className="relative w-full max-w-lg flex flex-col"
+              style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2DACD', borderRadius: '4px', overflow: 'hidden', maxHeight: '90vh' }}
+            >
+              <div className="flex items-center justify-between" style={{ padding: '20px 24px', borderBottom: '1px solid #E2DACD' }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#12100E' }}>{u.name}</h3>
+                  <p style={{ margin: '4px 0 0', fontFamily: 'var(--font-mono)', fontSize: '9.5px', letterSpacing: '0.12em', textTransform: 'uppercase', color: roleMeta.color }}>
+                    {roleMeta.label} · <span style={{ color: statusColor }}>{statusLabel}</span>
+                  </p>
+                </div>
+                <button type="button" onClick={() => setDetailUser(null)} aria-label="Fermer" style={{ color: '#6E6A63' }}>
+                  <X size={18} />
+                </button>
+              </div>
+
+              <div style={{ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: '20px', overflowY: 'auto' }}>
+                {section('Identité', (
+                  <>
+                    {row('Email', u.email)}
+                    {row('Téléphone', u.phone || null)}
+                    {row('Inscrit le', formatDate(u.createdAt))}
+                    {row('Dernière connexion', u.lastLogin ? getLastConnection(u.lastLogin) : 'Jamais')}
+                    {u.companyName && row('Société', u.companyName)}
+                    {u.driverStatus === 'rejected' && row('Motif du rejet', u.driverRejectionReason || null)}
+                  </>
+                ))}
+
+                {isDriver && section('Corridors souhaités', (
+                  <div className="flex flex-col gap-1.5">
+                    {CORRIDOR_KEYS.map((key) => {
+                      const on = chosen.includes(key)
+                      return (
+                        <div key={key} className="flex items-center gap-2" style={{ fontSize: '12.5px', color: on ? '#1F5245' : '#9a938a', fontWeight: on ? 600 : 400 }}>
+                          <span style={{ display: 'grid', placeItems: 'center', width: '16px', height: '16px', borderRadius: '3px', border: `1px solid ${on ? '#1F5245' : '#E2DACD'}`, backgroundColor: on ? '#1F5245' : 'transparent' }}>
+                            {on && <Check size={11} weight="bold" color="#FFFFFF" />}
+                          </span>
+                          {CORRIDOR_SHORT_LABELS[key]}
+                        </div>
+                      )
+                    })}
+                    {chosen.length === 0 && (
+                      <p style={{ margin: '4px 0 0', fontSize: '11.5px', color: '#9a938a', fontStyle: 'italic' }}>
+                        Aucun corridor choisi (compte antérieur à la campagne de recrutement).
+                      </p>
+                    )}
+                  </div>
+                ))}
+
+                {isDriver && section('Véhicule', (
+                  <>
+                    {row('Marque / modèle', [u.vehicleBrand, u.vehicleModel].filter(Boolean).join(' ') || null)}
+                    {row('Immatriculation', u.vehiclePlateNumber || null)}
+                    {row('Mise en circulation', u.vehicleYear ?? null)}
+                    {u.vehicleOutsideCriteria && (
+                      <div className="inline-flex items-center gap-1.5" style={{ marginTop: '8px', fontFamily: 'var(--font-mono)', fontSize: '9.5px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#B4643A' }}>
+                        <WarningCircle size={12} />
+                        Hors critère véhicule (plus de 8 ans)
+                      </div>
+                    )}
+                  </>
+                ))}
+
+                {isDriver && section('Disponibilités', (
+                  <>
+                    {row('Jours déclarés', u.declaredAvailability && u.declaredAvailability.length > 0
+                      ? u.declaredAvailability.map((day) => DRIVER_DAY_LABELS[day] ?? day).join(' · ')
+                      : null)}
+                    {u.driverStatus !== 'pending' && u.driverStatus !== 'rejected' && row('Planning réel',
+                      summary && summary.openDays > 0
+                        ? `${summary.openDays} j/sem${summary.exceptions > 0 ? ` · ${summary.exceptions} exception${summary.exceptions > 1 ? 's' : ''}` : ''}`
+                        : 'aucun')}
+                  </>
+                ))}
+
+                {isDriver && section('Permis', row('Numéro de permis', u.licenseNumber || null))}
+
+                {isDriver && (u.utmSource || u.utmMedium || u.utmCampaign) && section('Provenance', (
+                  <>
+                    {row('Source', u.utmSource || null)}
+                    {row('Support', u.utmMedium || null)}
+                    {row('Campagne', u.utmCampaign || null)}
+                  </>
+                ))}
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap" style={{ padding: '14px 24px', borderTop: '1px solid #E2DACD' }}>
+                {u.driverStatus === 'pending' && (
+                  <>
+                    <button type="button" onClick={() => fromDetail(openApproveModal)} style={{ ...actionBtn, borderColor: 'rgba(31,82,69,.3)', color: '#1F5245' }}>
+                      <Check size={13} weight="bold" /> Approuver
+                    </button>
+                    <button type="button" onClick={() => fromDetail(openRejectModal)} style={{ ...actionBtn, borderColor: 'rgba(184,73,60,.3)', color: '#B8493C' }}>
+                      <X size={13} /> Rejeter
+                    </button>
+                  </>
+                )}
+                {isDriver && (
+                  <button type="button" onClick={() => fromDetail(setPlanningUser)} style={actionBtn}>
+                    <CalendarBlank size={13} /> Planning
+                  </button>
+                )}
+                <button type="button" onClick={() => fromDetail(openEditModal)} style={actionBtn}>
+                  <Edit size={13} /> Modifier
+                </button>
+              </div>
+            </div>
+          </div>
+        )
+      })()}
 
       {/* Driver Planning Modal */}
       {planningUser && (
